@@ -2,23 +2,14 @@
 <div id="app">
 	<div id="nav">
 		<div class="branding">
-			<div class="branding__icon">
-			</div>
-		</div>
-		<div class="user">
 		</div>
 		<div class="title">
 			<div class="title__main">
 				classhopper
 			</div>
 		</div>
-
-		<!-- <svg class="border__top" width="100vw" height="4px">
-			<line x1="0" y1="1" x2="100vw" y2="1" class="line" vector-effect="non-scaling-stroke" />
-		</svg>
-		<svg class="border__bottom" width="100vw" height="4px">
-			<line x1="0" y1="1" x2="100vw" y2="1" class="line" vector-effect="non-scaling-stroke" />
-		</svg> -->
+	</div>
+	<div id="content">
 	</div>
 	<router-view/>
 </div>
@@ -31,11 +22,11 @@
 }
 
 :root {
-  --sm: 0.25mm;
+  --sm: 0.1rem;
   --md: 1rem;
-  --lg: 3rem;
+  --lg: 4rem;
 
-  font-size: 12px;
+  font-size: 10px;
 }
 
 #app {
@@ -50,6 +41,10 @@
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: flex-start;
 }
 
 .line {
@@ -59,68 +54,58 @@
 	stroke-dasharray: 4px 4px;
 }
 
-#nav {
-	width: 100%;
-	height: var(--lg);
+#content {
+	height: 100%;
+	flex-grow: 1;
 
-	margin-bottom: var(--md);
+	background: gainsboro;
+}
+
+#nav {
+	width: var(--lg);
+	height: 100%;
+
+	margin-right: var(--md);
 
 	display: flex;
-	flex-direction: row;
+	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
-}
-
-.border__top {
-	position: absolute;
-	transform: translateX(4px);
-	top: calc(5em - 8px);
-}
-
-.border__bottom {
-	position: absolute;
-	top: calc(5em - 4px);
 }
 
 #nav .branding {
-	height: var(--lg);
-
-	display: flex;
-	flex-direction: row;
-	justify-content: flex-start;
-	align-items: center;
-}
-
-#nav .branding__icon {
 	width: var(--lg);
 	height: var(--lg);
 
-	margin-right: var(--md);
+	margin-bottom: var(--md);
 
 	background: black;
 }
 
 #nav .title {
-	height: var(--lg);
-	flex-grow: 1;
-
-	padding-right: var(--md);
+	width: var(--lg);
+	width: 100%;
 
 	box-sizing: border-box;
+	padding-top: var(--md);
+	padding-bottom: var(--md);
 
-	border-top: var(--sm) solid rgb(54, 54, 54);
+	margin-bottom: var(--md);
+
+	border-left: var(--sm) solid rgb(54, 54, 54);
 	border-right: var(--sm) solid rgb(54, 54, 54);
 	border-bottom: var(--sm) solid rgb(54, 54, 54);
 }
 
 #nav .title__main {
-	height: 100%;
 	width: 100%;
 
-	transform: translateY(-0.08em);
+	transform: translateX(0.1em);
 
+	writing-mode: vertical-rl;
+	text-orientation: mixed;
 	text-align: right;
-	font-size: 2rem;
+	font-size: calc(1.75 * var(--md));
 	line-height: var(--lg);
 	vertical-align: middle;
 }
