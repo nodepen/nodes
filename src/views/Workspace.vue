@@ -1,6 +1,6 @@
 <template>
 <div id="workspace">
-    OK
+    
 </div>
 </template>
 
@@ -8,12 +8,15 @@
 #workspace {
     width: 100%;
     height: 100%;
+
+    background: gainsboro;
 }
 </style>
 
 <script lang="ts">
 import Vue from 'vue'
 import Resthopper from 'resthopper';
+import Svgar from 'svgar';
 
 export default Vue.extend({
     name: 'workspace',
@@ -22,6 +25,8 @@ export default Vue.extend({
         const pi = Resthopper.ParameterIndex;
 
         let def = new Resthopper.Definition();
+
+        let t = new Resthopper.Component();
 
         const n = pi.createParameter("Number", 2);
         n.isUserInput = true;
