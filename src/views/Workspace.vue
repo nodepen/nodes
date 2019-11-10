@@ -23,21 +23,36 @@ export default Vue.extend({
 
         let def = new Resthopper.Definition();
 
-        const n = pi.createParameter("Number", 1);
+        const n = pi.createParameter("Number", 2);
         n.isUserInput = true;
 
         let pt = ci.createComponent("ConstructPoint");
         pt.setInputByIndex(0, n);
         pt.setInputByIndex(1, n);
         pt.setInputByIndex(2, n);
+        let point = pt.getOutputByIndex(0);
 
-        def.parameters = [n];
-        def.components = [pt];
+        let dept = ci.createComponent("Deconstruct");
+        dept.setInputByIndex(0, point!);
+        let x = dept.getOutputByIndex(0);
+        let y = dept.getOutputByIndex(1);
 
-        console.log(def.compile());
-        console.log(JSON.stringify(def.toRequest()));
+        let m = ci.createComponent("Multiplication");
+        m.setInputByIndex(0, x!);
+        m.setInputByIndex(1, y!);
+        let result = m.getOutputByIndex(0);
 
-        this.$http.post(`http://localhost:8081`, JSON.stringify(def.toRequest()))
+        let out = pi.createParameter("Number");
+        out.isUserOutput = true;
+        out.setSource(result!);
+
+        def.parameters = [n, out];
+        def.components = [pt, dept, m];
+
+        //console.log(def.compile());
+        //console.log(JSON.stringify(def.toRequest()));
+
+        this.$http.post(`http://localhost:8081/grasshopper`, JSON.stringify(def.toRequest()))
         .then(x => {
             console.log(Resthopper.Parse.ResthopperSchemaAsOutputValue(x.data));
         })
