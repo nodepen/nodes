@@ -1,1 +1,3 @@
-# classhopper.co
+# Classhopper
+
+Web-based interactive grasshopper tutorials
