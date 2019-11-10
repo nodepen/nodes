@@ -8,10 +8,14 @@
 				classhopper
 			</div>
 		</div>
+		<div class="user">
+			<div class="user__icon">
+			</div>
+		</div>
 	</div>
 	<div id="content">
+		<router-view/>
 	</div>
-	<router-view/>
 </div>
 </template>
 
@@ -26,6 +30,8 @@
   --md: 1rem;
   --lg: 4rem;
 
+  --bl: #222;
+
   font-size: 10px;
 }
 
@@ -34,9 +40,7 @@
 
 	box-sizing: border-box;
 
-	padding-top: var(--md);
 	padding-left: var(--md);
-	padding-right: var(--md);
 
 	width: 100vw;
 	height: 100vh;
@@ -47,18 +51,13 @@
 	justify-content: flex-start;
 }
 
-.line {
-	stroke: #222;
-	stroke-width: 6px;
-	fill: none;
-	stroke-dasharray: 4px 4px;
-}
-
 #content {
 	height: 100%;
 	flex-grow: 1;
 
-	background: gainsboro;
+	padding-right: var(--md);
+
+	background: var(--bl);
 }
 
 #nav {
@@ -77,9 +76,10 @@
 	width: var(--lg);
 	height: var(--lg);
 
+	margin-top: var(--md);
 	margin-bottom: var(--md);
 
-	background: black;
+	background: var(--bl);
 }
 
 #nav .title {
@@ -92,9 +92,9 @@
 
 	margin-bottom: var(--md);
 
-	border-left: var(--sm) solid rgb(54, 54, 54);
-	border-right: var(--sm) solid rgb(54, 54, 54);
-	border-bottom: var(--sm) solid rgb(54, 54, 54);
+	border-left: var(--sm) solid var(--bl);
+	border-right: var(--sm) solid var(--bl);
+	border-bottom: var(--sm) solid var(--bl);
 }
 
 #nav .title__main {
@@ -111,14 +111,26 @@
 }
 
 #nav .user {
-	height: var(--lg);
 	width: var(--lg);
-
-	margin-right: var(--md);
+	flex-grow: 1;
 
 	box-sizing: border-box;
 
-	border: var(--sm) solid rgb(54, 54, 54);
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	margin-bottom: var(--md);
+}
+
+#nav .user__icon {
+	width: var(--lg);
+	height: var(--lg);
+
+	box-sizing: border-box;
+
+	border: var(--sm) solid var(--bl);
+	border-radius: var(--lg);
 }
 
 #nav a {
