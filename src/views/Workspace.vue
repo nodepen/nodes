@@ -13,6 +13,13 @@
     @pointermove="onTrack"
     @touchend="onStopTrack">
     </div>
+    <div class="overlay__tools">
+    </div>
+    <div class="overlay__info">
+        <div class="overlay__info__title">
+            <div class="overlay__text--lg">exercise title here</div>
+        </div>
+    </div>
 </div>
 </template>
 
@@ -20,6 +27,47 @@
 #workspace {
     width: 100%;
     height: 100%;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+.overlay__tools {
+    flex-grow: 1;
+}
+
+.overlay__info {
+    width: 80ch;
+    max-width: calc(100vw - var(--lg) - var(--md) - var(--md));
+    height: 100%;
+
+    box-sizing: border-box;
+
+    padding: var(--md);
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+
+.overlay__info__title {
+    width: 100%;
+    height: var(--lg);
+    box-sizing: border-box;
+
+    border-bottom: var(--sm) solid #cccccc;
+}
+
+.overlay__text--lg {
+    height: 100%;
+    font-size: calc(1.75 * var(--md));
+    line-height: var(--lg);
+    vertical-align: middle;
+    color: white;
+
+    transform: translateY(-0.1rem);
 }
 
 .svgar {
