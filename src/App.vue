@@ -26,7 +26,7 @@
 }
 
 :root {
-  --sm: 0.1rem;
+  --sm: 0.15rem;
   --md: 1rem;
   --lg: 4rem;
 
@@ -37,6 +37,7 @@
 
 #app {
 	font-family: 'Major Mono Display', monospace;
+	font-weight: bold;
 
 	box-sizing: border-box;
 
@@ -54,8 +55,6 @@
 #content {
 	height: 100%;
 	flex-grow: 1;
-
-	padding-right: var(--md);
 
 	background: var(--bl);
 }
@@ -131,14 +130,5 @@
 
 	border: var(--sm) solid var(--bl);
 	border-radius: var(--lg);
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
 }
 </style>
