@@ -7,6 +7,7 @@
     @mousedown="onStartTrack"
     @mousemove="onTrack"
     @mouseup="onStopTrack"
+    @mouseleave="onStopTrack"
     @touchstart="onStartTrack"
     @touchmove="onTrack"
     @pointermove="onTrack"
@@ -22,8 +23,10 @@
 }
 
 .svgar {
-    width: 100%;
-    height: 100%;
+    position: absolute;
+    left: calc(var(--lg) + var(--md) + var(--md));
+    width: calc(100vw - var(--lg) - var(--md) - var(--md));
+    height: 100vh;
     touch-action: none;
 }
 
@@ -67,8 +70,6 @@ export default Vue.extend({
         const pi = Resthopper.ParameterIndex;
 
         let def = new Resthopper.Definition();
-
-        let t = new Resthopper.Component();
 
         const n = pi.createParameter("Number", 2);
         n.isUserInput = true;
@@ -115,10 +116,12 @@ export default Vue.extend({
 
         let defaultCanvas = new Svgar.Cube("resthopper");
 
-        let testComponent = this.drawComponent(this.definition.components[0], 0, 0);
+        let cA = this.drawComponent(this.definition.components[0], 0, 0);
+        let cB = this.drawComponent(this.definition.components[1], 15, 0);
+        let cC = this.drawComponent(this.definition.components[2], 30, 0);
 
-        defaultCanvas.slabs = [testComponent];
-        Update().svgar.cube(defaultCanvas).camera.extentsTo(-12, -12, 8, 8);
+        defaultCanvas.slabs = [cA, cB, cC];
+        Update().svgar.cube(defaultCanvas).camera.extentsTo(-15, -15, 45, 15);
 
         this.svgar = defaultCanvas;
     },
@@ -207,13 +210,15 @@ export default Vue.extend({
                 return;
             }
 
+            if (event instanceof PointerEvent && !event.isPrimary) {
+                return;
+            }
+
             let p = this.touchOrMouseCoordinates(event);
 
             if (event instanceof TouchEvent) {
                 event.stopImmediatePropagation();
             }
-
-            console.log("tracking...")
 
             if (this.state == 'panning') {
                 const a = this.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2);
@@ -267,9 +272,68 @@ export default Vue.extend({
 
             outline.setTag("outline");
 
+            let icon = new Svgar.Builder.Polyline(-1 + x, -1 + y)
+            .lineTo(-1 + x, 1 + y)
+            .lineTo(1 + x, 1 + y)
+            .lineTo(1 + x, -1 + y)
+            .close()
+            .build();
+
+            icon.setTag("icon");
+
             cslab.setAllGeometry([
-                outline
+                outline,
+                icon
             ]);
+
+            const numInputs = c.getInputCount();
+            const step = 5 / numInputs;
+            const inputs = Object.keys(c.input);
+            
+            for (let i = 0; i < numInputs; i++) {
+                const st = i * step;
+
+                let panel = new Svgar.Builder.Polyline(-5 + x, 2.5 + y - st)
+                .lineTo(x, 2.5 + y - st)
+                .lineTo(x, 2.5 + y - st - step)
+                .lineTo(-5 + x, 2.5 + y - st - step)
+                .close()
+                .build();
+
+                panel.setTag("panel");
+                panel.setElevation(-10);
+
+                cslab.addPath(panel);
+
+                let grip = new Svgar.Builder.Circle(-5 + x, 2.5 + y - st - (step / 2), 0.3).build();
+                grip.setTag("grip");
+                cslab.addPath(grip);
+            }
+
+            const numOutputs = c.getOutputCount();
+            const ostep = 5 / numOutputs;
+            const outputs = Object.keys(c.output);
+            
+            for (let i = 0; i < numOutputs; i++) {
+                const st = i * ostep;
+
+                let panel = new Svgar.Builder.Polyline(5 + x, 2.5 + y - st)
+                .lineTo(x, 2.5 + y - st)
+                .lineTo(x, 2.5 + y - st - ostep)
+                .lineTo(5 + x, 2.5 + y - st - ostep)
+                .close()
+                .build();
+
+                panel.setTag("panel");
+                panel.setElevation(-10);
+
+                cslab.addPath(panel);
+
+                let grip = new Svgar.Builder.Circle(5 + x, 2.5 + y - st - (ostep / 2), 0.3).build();
+                grip.setTag("grip");
+                cslab.addPath(grip);
+            }
+            
 
             cslab.setAllStyles([
                 {
@@ -278,8 +342,39 @@ export default Vue.extend({
                         "stroke": "#cccccc",
                         "stroke-width": "0.5mm",
                         "fill": "none",
+                    },
+                },
+                {
+                    name: "whitefill",
+                    attributes: {
+                        "stroke": "none",
+                        "stroke-width": "none",
+                        "fill": "#cccccc",
                     }
                 },
+                {
+                    name: "whitefill:hover",
+                    attributes: {
+                        "fill": "grey",
+                        "cursor": "pointer",
+                    }
+                },
+                {
+                    name: "panelwhite",
+                    attributes: {
+                        "fill": "white",
+                        "stroke": "#cccccc",
+                        "stroke-width": "0.2mm",
+                        "opacity": "0.95",
+                    }
+                },
+                {
+                    name: "panelwhite:hover",
+                    attributes: {
+                        "fill": "grey",
+                        "cursor": "pointer"
+                    }
+                }
             ]);
 
             cslab.setAllStates([
@@ -287,6 +382,9 @@ export default Vue.extend({
                     name: "default",
                     styles: {
                         "outline": "whitenofill",
+                        "icon": "whitefill",
+                        "panel": "panelwhite",
+                        "grip": "whitefill",
                     }
                 }
             ]);
