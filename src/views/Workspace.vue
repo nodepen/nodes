@@ -21,6 +21,10 @@
     width: 100%;
     height: 100%;
 }
+
+.svgar:hover {
+    cursor: move;
+}
 </style>
 
 <script lang="ts">
@@ -106,10 +110,10 @@ export default Vue.extend({
 
         let defaultCanvas = new Svgar.Cube("resthopper");
 
-        let testComponent = this.drawComponent(this.definition.components[0]);
+        let testComponent = this.drawComponent(this.definition.components[0], 0, 0);
 
         defaultCanvas.slabs = [testComponent];
-        Update().svgar.cube(defaultCanvas).camera.extentsTo(-12, -10, 8, 10);
+        Update().svgar.cube(defaultCanvas).camera.extentsTo(-12, -12, 8, 8);
 
         this.svgar = defaultCanvas;
     },
@@ -152,9 +156,9 @@ export default Vue.extend({
             const svgarYDomain = svgarYExtents[1] - svgarYExtents[0];
 
             const svgarX = (nX * svgarXDomain) + svgarXExtents[0];
-            const svgarY = (nY * svgarYDomain) + svgarYExtents[0];
-
-            return [svgarX, -svgarY];
+            const svgarY = svgarYDomain - ((nY * svgarYDomain) - svgarYExtents[0]);
+            
+            return [svgarX, svgarY];
         },
         onResize(): void {
             this.resizeSvgar();
@@ -212,13 +216,13 @@ export default Vue.extend({
 
             this.svgar.slabs.push(dot);
         },
-        drawComponent(c: ResthopperComponent): SvgarSlab {
+        drawComponent(c: ResthopperComponent, x: number, y: number): SvgarSlab {
             let cslab = new SvgarSlab(`${c.name}${c.guid.split("-")[0]}`);
 
-            let outline = new Svgar.Builder.Polyline(-5, 2.5)
-            .lineTo(5, 2.5)
-            .lineTo(5, -2.5)
-            .lineTo(-5, -2.5)
+            let outline = new Svgar.Builder.Polyline(-5 + x, 2.5 + y)
+            .lineTo(5 + x, 2.5 + y)
+            .lineTo(5 + x, -2.5 + y)
+            .lineTo(-5 + x, -2.5 + y)
             .close()
             .build();
 
