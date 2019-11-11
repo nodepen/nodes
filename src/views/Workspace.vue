@@ -40,8 +40,13 @@ export default Vue.extend({
         return {
             w: 0,
             h: 0,
+            state: "idle" as CanvasState,
+            start: 0,
+            prev: 0,
             px: 0,
             py: 0,
+            px2: 0,
+            py2: 0,
             dx: 0,
             dy: 0,
             svgar: {} as SvgarCube,
@@ -160,13 +165,41 @@ export default Vue.extend({
             this.h = canvas.clientHeight;
         },
         onStartTrack(event: MouseEvent): void {
-            console.log(this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY));
+            this.start = Date.now();
+            this.px = event.pageX;
+            this.py = event.pageY;
+            this.px2 = event.pageX;
+            this.py2 = event.pageY;
+
+            this.state = "panning";
+            //console.log(this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY));
         },
         onTrack(event: MouseEvent): void {
+            if (Date.now() - this.prev < 25) {
+                return;
+            }
 
+            if(this.state == 'panning') {
+                const a = this.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2);
+                const b = this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY);
+
+                Update().svgar.cube(this.svgar).camera.withPan(-(b[0] - a[0]), -(b[1] - a[1]));
+
+                this.px2 = event.pageX;
+                this.py2 = event.pageY;
+            }
+
+            this.prev = Date.now();
         },
         onStopTrack(event: MouseEvent): void {
+            if (Date.now() - this.start < 250) {
+                this.addTestDot(event);
+            }
 
+            this.px = 0;
+            this.py = 0;
+
+            this.state = 'idle';
         },
         addTestDot(event: MouseEvent): void {
             const coords = this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY);
