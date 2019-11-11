@@ -6,7 +6,11 @@
     v-html="svg"
     @mousedown="onStartTrack"
     @mousemove="onTrack"
-    @mouseup="onStopTrack">
+    @mouseup="onStopTrack"
+    @touchstart="onStartTrack"
+    @touchmove="onTrack"
+    @pointermove="onTrack"
+    @touchend="onStopTrack">
     </div>
 </div>
 </template>
@@ -20,6 +24,7 @@
 .svgar {
     width: 100%;
     height: 100%;
+    touch-action: none;
 }
 
 .svgar:hover {
@@ -168,45 +173,79 @@ export default Vue.extend({
             this.w = canvas.clientWidth;
             this.h = canvas.clientHeight;
         },
-        onStartTrack(event: MouseEvent): void {
+        touchOrMouseCoordinates(event: MouseEvent | TouchEvent | PointerEvent): number[] {
+            if (event instanceof MouseEvent || event instanceof PointerEvent) {
+                return [event.pageX, event.pageY];
+            }
+            else {
+                let x: number[] = [];
+                let y: number[] = [];
+
+                for(let i = 0; i < event.touches.length; i++) {
+                    x.push(event.touches[i].pageX);
+                    y.push(event.touches[i].pageY);
+                }
+
+                return [x[0], y[0]];
+            }
+        },
+        onStartTrack(event: MouseEvent | TouchEvent): void {
             this.start = Date.now();
-            this.px = event.pageX;
-            this.py = event.pageY;
-            this.px2 = event.pageX;
-            this.py2 = event.pageY;
+
+            let p = this.touchOrMouseCoordinates(event);
+
+            this.px = p[0];
+            this.py = p[1];
+            this.px2 = p[0];
+            this.py2 = p[1];
 
             this.state = "panning";
             //console.log(this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY));
         },
-        onTrack(event: MouseEvent): void {
+        onTrack(event: MouseEvent | TouchEvent | PointerEvent): void {
             if (Date.now() - this.prev < 25) {
                 return;
             }
 
-            if(this.state == 'panning') {
+            let p = this.touchOrMouseCoordinates(event);
+
+            if (event instanceof TouchEvent) {
+                event.stopImmediatePropagation();
+            }
+
+            console.log("tracking...")
+
+            if (this.state == 'panning') {
                 const a = this.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2);
-                const b = this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY);
+                const b = this.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
 
                 Update().svgar.cube(this.svgar).camera.withPan(-(b[0] - a[0]), -(b[1] - a[1]));
 
-                this.px2 = event.pageX;
-                this.py2 = event.pageY;
+                this.px2 = p[0];
+                this.py2 = p[1];
             }
 
             this.prev = Date.now();
         },
-        onStopTrack(event: MouseEvent): void {
+        onStopTrack(event: MouseEvent | TouchEvent): void {
             if (Date.now() - this.start < 250) {
                 this.addTestDot(event);
             }
+
+            console.log("stopped...")
 
             this.px = 0;
             this.py = 0;
 
             this.state = 'idle';
         },
-        addTestDot(event: MouseEvent): void {
-            const coords = this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY);
+        onScroll(event: any): void {
+            console.log(event);
+        },
+        addTestDot(event: MouseEvent | TouchEvent): void {
+            const p = this.touchOrMouseCoordinates(event);
+
+            const coords = this.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
 
             let dot = new SvgarSlab("dot");
 
