@@ -104,7 +104,7 @@ export default Vue.extend({
         let testComponent = this.drawComponent(this.definition.components[0]);
 
         defaultCanvas.slabs = [testComponent];
-        Update().svgar.cube(defaultCanvas).camera.extentsTo(-12, -8, 8, 12);
+        Update().svgar.cube(defaultCanvas).camera.extentsTo(-12, -10, 8, 10);
 
         this.svgar = defaultCanvas;
     },
@@ -124,8 +124,6 @@ export default Vue.extend({
             const nY = (pageY - svgarRect.top) / (svgarRect.bottom - svgarRect.top);
 
             const c = this.svgar.scope;
-            const aX = (c.maximum[0] + c.minimum[0]) / 2;
-            const aY = (c.maximum[1] + c.minimum[1]) / 2;
             let xDomain = c.maximum[0] - c.minimum[0];
             let yDomain = c.maximum[1] - c.minimum[1];
 
@@ -148,8 +146,8 @@ export default Vue.extend({
             const svgarXDomain = svgarXExtents[1] - svgarXExtents[0];
             const svgarYDomain = svgarYExtents[1] - svgarYExtents[0];
 
-            const svgarX = (nX * svgarXDomain) + svgarXExtents[0] + aX;
-            const svgarY = (nY * svgarYDomain) + svgarYExtents[0] + aY;
+            const svgarX = (nX * svgarXDomain) + svgarXExtents[0];
+            const svgarY = (nY * svgarYDomain) + svgarYExtents[0];
 
             return [svgarX, -svgarY];
         },
@@ -169,6 +167,17 @@ export default Vue.extend({
         },
         onStopTrack(event: MouseEvent): void {
 
+        },
+        addTestDot(event: MouseEvent): void {
+            const coords = this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY);
+
+            let dot = new SvgarSlab("dot");
+
+            let circle = new Svgar.Builder.Circle(coords[0], coords[1], 0.5).build();
+
+            dot.setAllGeometry([circle]);
+
+            this.svgar.slabs.push(dot);
         },
         drawComponent(c: ResthopperComponent): SvgarSlab {
             let cslab = new SvgarSlab(`${c.name}${c.guid.split("-")[0]}`);
