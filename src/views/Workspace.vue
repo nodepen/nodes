@@ -17,7 +17,13 @@
     </div>
     <div class="overlay__info">
         <div class="overlay__info__title">
-            <div class="overlay__text--lg">exercise title here</div>
+            <div class="overlay__text--lg">list item</div>
+        </div>
+        <div class="overlay__info__subtitle">
+            <span class="overlay__text--md">sets &gt; lists</span>
+        </div>
+        <div>
+            something
         </div>
     </div>
 </div>
@@ -39,11 +45,14 @@
 }
 
 .overlay__info {
-    width: 80ch;
+    width: 400px;
     max-width: calc(100vw - var(--lg) - var(--md) - var(--md));
     height: 100%;
 
+    pointer-events: none;
+
     box-sizing: border-box;
+    z-index: 100;
 
     padding: var(--md);
 
@@ -56,18 +65,31 @@
     width: 100%;
     height: var(--lg);
     box-sizing: border-box;
+    line-height: var(--lg);
+    vertical-align: middle;
 
-    border-bottom: var(--sm) solid #cccccc;
+}
+
+.overlay__info__subtitle {
+    width: 100%;
+    height: var(--md);
+    padding-bottom: var(--md);
+    margin-bottom: var(--md);
+
+    line-height: var(--md);
+    vertical-align: middle;
 }
 
 .overlay__text--lg {
-    height: 100%;
     font-size: calc(1.75 * var(--md));
-    line-height: var(--lg);
-    vertical-align: middle;
     color: white;
 
     transform: translateY(-0.1rem);
+}
+
+.overlay__text--md {
+    font-size: var(--md);
+    color: white;
 }
 
 .svgar {
@@ -93,6 +115,22 @@ import ResthopperDefinition from 'resthopper/dist/models/ResthopperDefinition';
 import SvgarSlab from 'svgar/dist/models/SvgarSlab';
 
 type CanvasState = "idle" | "panning" | "movingComponent" | "drawingWire";
+
+interface ClasshopperComponent {
+    component: ResthopperComponent,
+    position: {
+        x: number,
+        y: number,
+    }
+    inputGrips: {
+        x: number,
+        y: number,
+    }[],
+    outputGrips: {
+        x: number,
+        y: number,
+    }[]
+}
 
 export default Vue.extend({
     name: 'workspace',
@@ -169,7 +207,7 @@ export default Vue.extend({
         let cC = this.drawComponent(this.definition.components[2], 30, 0);
 
         defaultCanvas.slabs = [cA, cB, cC];
-        Update().svgar.cube(defaultCanvas).camera.extentsTo(-15, -15, 45, 15);
+        Update().svgar.cube(defaultCanvas).camera.extentsTo(-15, -20, 45, 20);
 
         this.svgar = defaultCanvas;
     },
@@ -184,35 +222,64 @@ export default Vue.extend({
     },
     methods: {
         mapPageCoordinateToSvgarCoordinate(pageX: number, pageY: number): number[] {
+            // Get normalized coordinate locations on html element
             const svgarRect = (<Element>this.$refs.svgar).getBoundingClientRect();
             const nX = (pageX - svgarRect.left) / (svgarRect.right - svgarRect.left);
             const nY = (pageY - svgarRect.top) / (svgarRect.bottom - svgarRect.top);
 
-            const c = this.svgar.scope;
-            let xDomain = c.maximum[0] - c.minimum[0];
-            let yDomain = c.maximum[1] - c.minimum[1];
+            // Compare page div proportion to svgar camera proportion
+            const camera = this.svgar.scope;
+            const svgarXDomain = camera.maximum[0] - camera.minimum[0];
+            const svgarYDomain = camera.maximum[1] - camera.minimum[1];
 
-            const xMod = yDomain > xDomain ? (1 / yDomain) * xDomain : 1;
-            const yMod = xDomain > yDomain ? (1 / xDomain) * yDomain : 1;
+            const svgarProportion = svgarXDomain / svgarYDomain;
 
-            const denominator = Math.min(...[this.w, this.h]);
-            const pX = this.w / denominator;
-            const pY = this.h / denominator;
+            const pageXDomain = svgarRect.right - svgarRect.left;
+            const pageYDomain = svgarRect.bottom - svgarRect.top;
 
-            const xMult = pX / xMod;
-            const yMult = pY / yMod;
+            const pageProportion = pageXDomain / pageYDomain;
 
-            const xDelta = ((xDomain * xMult) - xDomain) / 2;
-            const yDelta = ((yDomain * yMult) - yDomain) / 2;
+            // Calculate svgar domain modifiers based on relative proportions
+            const xModifier = pageProportion > svgarProportion 
+                ? (pageXDomain / svgarXDomain) * (svgarYDomain / pageYDomain)
+                : 1;
+            const yModifier = pageProportion < svgarProportion
+                ? (pageYDomain / svgarYDomain) * (svgarXDomain / pageXDomain)
+                : 1;
 
-            const svgarXExtents = [c.minimum[0] - xDelta, c.maximum[0] + xDelta];
-            const svgarYExtents = [c.minimum[1] - yDelta, c.maximum[1] + yDelta];
+            // Calculate visible svgar extents
+            // ( Chuck ) This process is necessary given how svg renders a viewBox with different proportions than the parent div
+            interface SvgarExtents {
+                x: {
+                    min: number,
+                    max: number
+                },
+                y: {
+                    min: number,
+                    max: number
+                }
+            }
 
-            const svgarXDomain = svgarXExtents[1] - svgarXExtents[0];
-            const svgarYDomain = svgarYExtents[1] - svgarYExtents[0];
+            const deltaX = ((svgarXDomain * xModifier) - svgarXDomain) / 2;
+            const deltaY = ((svgarYDomain * yModifier) - svgarYDomain) / 2;
 
-            const svgarX = (nX * svgarXDomain) + svgarXExtents[0];
-            const svgarY = svgarYDomain - ((nY * svgarYDomain) - svgarYExtents[0]);
+            const visibleSvgarExtents: SvgarExtents = {
+                x: {
+                    min: camera.minimum[0] - deltaX,
+                    max: camera.maximum[0] + deltaX
+                },
+                y: {
+                    min: camera.minimum[1] - deltaY,
+                    max: camera.maximum[1] + deltaY
+                }
+            }
+
+            const visibleSvgarXDomain = visibleSvgarExtents.x.max - visibleSvgarExtents.x.min;
+            const visibleSvgarYDomain = visibleSvgarExtents.y.max - visibleSvgarExtents.y.min;
+
+            // Map normalized coordinates to calculated visible svgar domain
+            const svgarX = (nX * visibleSvgarXDomain) + visibleSvgarExtents.x.min;
+            const svgarY = visibleSvgarYDomain - ((nY * visibleSvgarYDomain) - visibleSvgarExtents.y.min);
             
             return [svgarX, svgarY];
         },
