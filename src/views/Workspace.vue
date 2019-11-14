@@ -203,10 +203,14 @@ export default Vue.extend({
         let defaultCanvas = new Svgar.Cube("resthopper");
 
         let cA = this.drawComponent(this.definition.components[0], 0, 0);
-        let cB = this.drawComponent(this.definition.components[1], 15, 0);
-        let cC = this.drawComponent(this.definition.components[2], 30, 0);
+        let cB = this.drawComponent(this.definition.components[1], 15, 5);
+        let cC = this.drawComponent(this.definition.components[2], 32, -3.5);
 
-        defaultCanvas.slabs = [cA, cB, cC];
+        let wireTest = new Svgar.Slab("wires");
+        let wire = new Svgar.Builder.Curve(5, 0).via(6.5, 0).through(7.5, 2.5).via(8.5, 5).through(10, 5).build();
+        wireTest.addPath(wire);
+
+        defaultCanvas.slabs = [cA, cB, cC, wireTest];
         Update().svgar.cube(defaultCanvas).camera.extentsTo(-15, -20, 45, 20);
 
         this.svgar = defaultCanvas;
@@ -366,7 +370,7 @@ export default Vue.extend({
                 }
             ]);
 
-            const gs = 0.35;
+            const gs = 0.6;
 
             const numInputs = c.getInputCount();
             const step = 5 / numInputs;
@@ -387,13 +391,18 @@ export default Vue.extend({
 
                 cslab.addPath(panel);
 
-                let grip = new Svgar.Builder.Polyline(-5 + x, 2.5 - st)
-                .lineTo(-5 + gs + x, 2.5 - st)
-                .lineTo(-5 + gs + x, 2.5 - st - step)
-                .lineTo(-5 + x, 2.5 - st - step)
+                let status = new Svgar.Builder.Polyline(-5 + x, 2.5 + y - st)
+                .lineTo(-5 + gs + x, 2.5 + y - st)
+                .lineTo(-5 + gs + x, 2.5 + y - st - step)
+                .lineTo(-5 + x, 2.5 + y - st - step)
                 .build();
-                grip.setTag(c.input[inputs[i]].isOptional ? "grip-warn" : "grip-invalid");
-                grip.setElevation(-5);
+                status.setTag(c.input[inputs[i]].isOptional ? "grip-empty" : "grip-warn");
+                status.setElevation(-5);
+                cslab.addPath(status);
+
+                let grip = new Svgar.Builder.Circle(-5 + x, 2.5 + y - st - (step / 2), 0.3).build();
+                grip.setTag("grip-empty");
+                grip.setElevation(10);
                 cslab.addPath(grip);
             }
 
@@ -486,7 +495,8 @@ export default Vue.extend({
                         "pointer-events": "none",
                         "user-select": "none",
                         "text-anchor": "middle",
-                        "transform": `rotate(-0.25turn) translateX(${-x}px) translateY(${x + 0.375 - 0.1}px)`
+                        "transform-origin": `${x}px ${y}px`,
+                        "transform": `rotate(-0.25turn) translateX(${y * 2}px) translateY(0.2px)`
                     }
                 },
                 {
@@ -519,6 +529,21 @@ export default Vue.extend({
                         "opacity": "0.8",
                     }
                 },
+                {
+                    name: "empty",
+                    attributes: {
+                        "fill": "#F4F4F4",
+                        "stroke-width": "0.1px",
+                        "stroke": "#565656"
+                    }
+                },
+                {
+                    name: "empty:hover",
+                    attributes: {
+                        "cursor": "pointer",
+                        "fill": "grey",
+                    }
+                },
                 
             ]);
 
@@ -535,6 +560,7 @@ export default Vue.extend({
                         "shadow": "shadow",
                         "grip-invalid": "red",
                         "grip-warn": "orange",
+                        "grip-empty": "empty"
                     }
                 }
             ]);
