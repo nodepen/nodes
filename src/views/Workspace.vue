@@ -198,7 +198,7 @@ export default Vue.extend({
     },
     mounted() {
         this.resizeSvgar();
-        window.addEventListener('resize', this.onResize);
+        window.addEventListener('resize', this.resizeSvgar);
 
         let defaultCanvas = new Svgar.Cube("resthopper");
 
@@ -221,75 +221,14 @@ export default Vue.extend({
         }
     },
     methods: {
-        mapPageCoordinateToSvgarCoordinate(pageX: number, pageY: number): number[] {
-            // Get normalized coordinate locations on html element
-            const svgarRect = (<Element>this.$refs.svgar).getBoundingClientRect();
-            const nX = (pageX - svgarRect.left) / (svgarRect.right - svgarRect.left);
-            const nY = (pageY - svgarRect.top) / (svgarRect.bottom - svgarRect.top);
-
-            // Compare page div proportion to svgar camera proportion
-            const camera = this.svgar.scope;
-            const svgarXDomain = camera.maximum[0] - camera.minimum[0];
-            const svgarYDomain = camera.maximum[1] - camera.minimum[1];
-
-            const svgarProportion = svgarXDomain / svgarYDomain;
-
-            const pageXDomain = svgarRect.right - svgarRect.left;
-            const pageYDomain = svgarRect.bottom - svgarRect.top;
-
-            const pageProportion = pageXDomain / pageYDomain;
-
-            // Calculate svgar domain modifiers based on relative proportions
-            const xModifier = pageProportion > svgarProportion 
-                ? (pageXDomain / svgarXDomain) * (svgarYDomain / pageYDomain)
-                : 1;
-            const yModifier = pageProportion < svgarProportion
-                ? (pageYDomain / svgarYDomain) * (svgarXDomain / pageXDomain)
-                : 1;
-
-            // Calculate visible svgar extents
-            // ( Chuck ) This process is necessary given how svg renders a viewBox with different proportions than the parent div
-            interface SvgarExtents {
-                x: {
-                    min: number,
-                    max: number
-                },
-                y: {
-                    min: number,
-                    max: number
-                }
-            }
-
-            const deltaX = ((svgarXDomain * xModifier) - svgarXDomain) / 2;
-            const deltaY = ((svgarYDomain * yModifier) - svgarYDomain) / 2;
-
-            const visibleSvgarExtents: SvgarExtents = {
-                x: {
-                    min: camera.minimum[0] - deltaX,
-                    max: camera.maximum[0] + deltaX
-                },
-                y: {
-                    min: camera.minimum[1] - deltaY,
-                    max: camera.maximum[1] + deltaY
-                }
-            }
-
-            const visibleSvgarXDomain = visibleSvgarExtents.x.max - visibleSvgarExtents.x.min;
-            const visibleSvgarYDomain = visibleSvgarExtents.y.max - visibleSvgarExtents.y.min;
-
-            // Map normalized coordinates to calculated visible svgar domain
-            const svgarX = (nX * visibleSvgarXDomain) + visibleSvgarExtents.x.min;
-            const svgarY = visibleSvgarYDomain - ((nY * visibleSvgarYDomain) - visibleSvgarExtents.y.min);
-            
-            return [svgarX, svgarY];
-        },
         onResize(): void {
-            this.resizeSvgar();
+            this.$nextTick(this.resizeSvgar);
         },
         resizeSvgar(): void {
             const canvas = (<Element>this.$refs.svgar);
             this.w = canvas.clientWidth;
             this.h = canvas.clientHeight;
+            this.$forceUpdate;
         },
         touchOrMouseCoordinates(event: MouseEvent | TouchEvent | PointerEvent): number[] {
             if (event instanceof MouseEvent || event instanceof PointerEvent) {
@@ -336,8 +275,8 @@ export default Vue.extend({
             }
 
             if (this.state == 'panning') {
-                const a = this.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2);
-                const b = this.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
+                const a = this.svgar.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2);
+                const b = this.svgar.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
 
                 Update().svgar.cube(this.svgar).camera.withPan(-(b[0] - a[0]), -(b[1] - a[1]));
 
@@ -365,7 +304,7 @@ export default Vue.extend({
         addTestDot(event: MouseEvent | TouchEvent): void {
             const p = this.touchOrMouseCoordinates(event);
 
-            const coords = this.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
+            const coords = this.svgar.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
 
             let dot = new SvgarSlab("dot");
 
@@ -377,6 +316,7 @@ export default Vue.extend({
         },
         drawComponent(c: ResthopperComponent, x: number, y: number): SvgarSlab {
             let cslab = new SvgarSlab(`${c.name}${c.guid.split("-")[0]}`);
+            cslab.scaleStroke = true;
 
             let outline = new Svgar.Builder.Polyline(-5 + x, 2.5 + y)
             .lineTo(5 + x, 2.5 + y)
@@ -387,19 +327,46 @@ export default Vue.extend({
 
             outline.setTag("outline");
 
-            let icon = new Svgar.Builder.Polyline(-1 + x, -1 + y)
-            .lineTo(-1 + x, 1 + y)
-            .lineTo(1 + x, 1 + y)
-            .lineTo(1 + x, -1 + y)
+            const so = 0.25;
+            let shadow = new Svgar.Builder.Polyline(-5 - so + x, 2.5 - so + y)
+            .lineTo(5 - so + x, 2.5 - so + y)
+            .lineTo(5 - so + x, -2.5 - so + y)
+            .lineTo(-5 - so + x, -2.5 - so + y)
+            .close()
+            .build();
+
+            shadow.setTag("shadow");
+            shadow.setElevation(-50);
+
+            let icon = new Svgar.Builder.Polyline(-1 + x, -2.5 + y)
+            .lineTo(-1 + x, 2.5 + y)
+            .lineTo(1 + x, 2.5 + y)
+            .lineTo(1 + x, -2.5 + y)
             .close()
             .build();
 
             icon.setTag("icon");
+            icon.setElevation(-5);
 
             cslab.setAllGeometry([
                 outline,
+                shadow,
                 icon
             ]);
+
+            cslab.setAllText([
+                {
+                    text: c.nickName.toLowerCase(),
+                    tag: "title",
+                    elevation: 5,
+                    position: {
+                        x: x,
+                        y: y,
+                    },
+                }
+            ]);
+
+            const gs = 0.35;
 
             const numInputs = c.getInputCount();
             const step = 5 / numInputs;
@@ -420,8 +387,13 @@ export default Vue.extend({
 
                 cslab.addPath(panel);
 
-                let grip = new Svgar.Builder.Circle(-5 + x, 2.5 + y - st - (step / 2), 0.3).build();
-                grip.setTag("grip");
+                let grip = new Svgar.Builder.Polyline(-5 + x, 2.5 - st)
+                .lineTo(-5 + gs + x, 2.5 - st)
+                .lineTo(-5 + gs + x, 2.5 - st - step)
+                .lineTo(-5 + x, 2.5 - st - step)
+                .build();
+                grip.setTag(c.input[inputs[i]].isOptional ? "grip-warn" : "grip-invalid");
+                grip.setElevation(-5);
                 cslab.addPath(grip);
             }
 
@@ -454,17 +426,17 @@ export default Vue.extend({
                 {
                     name: "whitenofill",
                     attributes: {
-                        "stroke": "#cccccc",
-                        "stroke-width": "0.5mm",
+                        "stroke": "#565656",
+                        "stroke-width": "0.1px",
                         "fill": "none",
                     },
                 },
                 {
                     name: "whitefill",
                     attributes: {
+                        "fill": "#565656",
                         "stroke": "none",
-                        "stroke-width": "none",
-                        "fill": "#cccccc",
+                        "stroke-width": "none",  
                     }
                 },
                 {
@@ -477,9 +449,9 @@ export default Vue.extend({
                 {
                     name: "panelwhite",
                     attributes: {
-                        "fill": "white",
-                        "stroke": "#cccccc",
-                        "stroke-width": "0.2mm",
+                        "fill": "#F4F4F4",
+                        "stroke": "#565656",
+                        "stroke-width": "0.1px",
                         "opacity": "0.95",
                     }
                 },
@@ -489,7 +461,65 @@ export default Vue.extend({
                         "fill": "grey",
                         "cursor": "pointer"
                     }
-                }
+                },
+                {
+                    name: "shadow",
+                    attributes: {
+                        "fill": "black",
+                    }
+                },
+                {
+                    name: "mainfont",
+                    attributes: {
+                        "font": "0.5px 'Major Mono Display'",
+                        "font-weight": "bold",
+                        "pointer-events": "none",
+                        "user-select": "none",
+                    }
+                },
+                {
+                    name: "titlefont",
+                    attributes: {
+                        "font": "0.75px 'Major Mono Display'",
+                        "font-weight": "bold",
+                        "fill": "white",
+                        "pointer-events": "none",
+                        "user-select": "none",
+                        "text-anchor": "middle",
+                        "transform": `rotate(-0.25turn) translateX(${-x}px) translateY(${x + 0.375 - 0.1}px)`
+                    }
+                },
+                {
+                    name: "red",
+                    attributes: {
+                        "fill": "#722323",
+                        "stroke-width": "0.1px",
+                        "stroke": "#565656"
+                    }
+                },
+                {
+                    name: "red:hover",
+                    attributes: {
+                        "cursor": "pointer",
+                        "opacity": "0.8",
+                    }
+                },
+                {
+                    name: "orange",
+                    attributes: {
+                        "fill": "#F4B05D",
+                        "stroke-width": "0.1px",
+                        "stroke": "#565656"
+                    }
+                },
+                {
+                    name: "orange:hover",
+                    attributes: {
+                        "cursor": "pointer",
+                        "opacity": "0.8",
+                    }
+                },
+                
             ]);
 
             cslab.setAllStates([
@@ -499,7 +529,12 @@ export default Vue.extend({
                         "outline": "whitenofill",
                         "icon": "whitefill",
                         "panel": "panelwhite",
-                        "grip": "whitefill",
+                        "grip": "panelwhite",
+                        "text": "mainfont",
+                        "title": "titlefont",
+                        "shadow": "shadow",
+                        "grip-invalid": "red",
+                        "grip-warn": "orange",
                     }
                 }
             ]);
