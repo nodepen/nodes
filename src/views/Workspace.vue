@@ -139,6 +139,7 @@ export default Vue.extend({
             py2: 0,
             dx: 0,
             dy: 0,
+            wireSource: {} as ResthopperParameter,
             movingComponent: {} as ResthopperComponent,
             svgar: {} as SvgarCube,
             definition: {} as ResthopperDefinition,
@@ -205,10 +206,22 @@ export default Vue.extend({
                 return "";
             }
 
-            this.svgar = this.convertDefinitionToSvgar(this.definition);
-
             if (this.w == 0 || this.h == 0) {
                 return "";
+            }
+
+            this.svgar = this.convertDefinitionToSvgar(this.definition);
+
+            if (this.state == 'drawingWire') {
+                let w = this.svgar.slabs.find(x => x.getName() == "newwire");
+                let newW = this.drawNewWire();
+                
+                if (w) {
+                    w = newW;
+                }
+                else {
+                    this.svgar.slabs.push(newW);
+                }
             }
 
             return this.svgar.compile(this.w, this.h);
@@ -260,7 +273,7 @@ export default Vue.extend({
             }
         },
         onTrack(event: MouseEvent | TouchEvent | PointerEvent): void {
-            if (Date.now() - this.prev < 25) {
+            if (Date.now() - this.prev < 50) {
                 return;
             }
 
@@ -428,6 +441,36 @@ export default Vue.extend({
 
             return wires;
         },
+        drawNewWire(): SvgarSlab {
+            let w = new Svgar.Slab("newwire");
+            let el = <Element>this.$refs.svgar;
+            let a = this.wireSource.position;
+            let b = this.svgar.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2, el);
+
+            const o = 1.5;
+
+            w.addPath(new Svgar.Builder.Curve(a.x, a.y)
+            .via(a.x + o, a.y)
+            .through((a.x + b[0]) / 2, (a.y + b[1]) / 2)
+            .via(b[0] - o, b[1])
+            .through(b[0], b[1])
+            .build());
+            w.setElevation(50);
+
+            w.setAllStyles([
+                {
+                    name: "default",
+                    attributes: {
+                        "stroke": "#F4F4F4",
+                        "stroke-width": "2px",
+                        "fill": "none",
+                        "pointer-events": "none",
+                    }
+                }
+            ]);
+
+            return w;
+        },
         drawComponent(c: ResthopperComponent): SvgarSlab {
             let cslab = new SvgarSlab(`${c.name}${c.guid.split("-")[0]}`);
             cslab.scaleStroke = true;
@@ -553,6 +596,10 @@ export default Vue.extend({
 
                 let grip = new Svgar.Builder.Circle(5 + x, 2.5 + y - st - (ostep / 2), 0.3).build();
                 grip.setTag("grip");
+                grip.attach("mousedown", this.onClickOutputGrip)
+
+                this.map[grip.getId()] = { component: undefined, parameter: c.output[outputs[i]] };
+
                 cslab.addPath(grip);
             }
             
@@ -698,6 +745,10 @@ export default Vue.extend({
             this.movingComponent = this.map[(<Element>event.srcElement!).id].component!;
 
             //console.log(this.map[(<Element>event.srcElement!).id].component!.name);
+        },
+        onClickOutputGrip(event: MouseEvent): void {
+            this.state = 'drawingWire';
+            this.wireSource = this.map[(<Element>event.srcElement!).id].parameter!;
         }
     }
 })
