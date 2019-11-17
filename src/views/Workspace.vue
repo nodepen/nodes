@@ -139,7 +139,7 @@ export default Vue.extend({
             py2: 0,
             dx: 0,
             dy: 0,
-            wireSource: {} as ResthopperParameter,
+            wireSource: {} as ResthopperParameter | undefined,
             movingComponent: {} as ResthopperComponent,
             svgar: {} as SvgarCube,
             definition: {} as ResthopperDefinition,
@@ -319,6 +319,7 @@ export default Vue.extend({
 
             this.px = 0;
             this.py = 0;
+            this.wireSource = undefined;
 
             this.state = 'idle';
         },
@@ -444,7 +445,7 @@ export default Vue.extend({
         drawNewWire(): SvgarSlab {
             let w = new Svgar.Slab("newwire");
             let el = <Element>this.$refs.svgar;
-            let a = this.wireSource.position;
+            let a = this.wireSource!.position;
             let b = this.svgar.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2, el);
 
             const o = 1.5;
@@ -567,6 +568,11 @@ export default Vue.extend({
                 let grip = new Svgar.Builder.Circle(-5 + x, 2.5 + y - st - (step / 2), 0.3).build();
                 grip.setTag("grip-empty");
                 grip.setElevation(10);
+
+                grip.attach("mouseup", this.onSubmitWire)
+
+                this.map[grip.getId()] = { component: undefined, parameter: c.input[inputs[i]] };
+
                 cslab.addPath(grip);
             }
 
@@ -749,7 +755,15 @@ export default Vue.extend({
         onClickOutputGrip(event: MouseEvent): void {
             this.state = 'drawingWire';
             this.wireSource = this.map[(<Element>event.srcElement!).id].parameter!;
+        },
+        onSubmitWire(event: MouseEvent): void {
+            if (this.wireSource) {
+                console.log(this.wireSource);
+            }
+            let input = this.map[(<Element>event.srcElement!).id].parameter!;
+            input.setSource(this.wireSource!.instanceGuid);
         }
+
     }
 })
 </script>
