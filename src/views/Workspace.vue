@@ -819,16 +819,12 @@ export default Vue.extend({
             this.$store.commit('setActiveComponent', this.map[(<Element>event.srcElement!).id].component!);
         },
         onSubmitWire(event: MouseEvent): void {
-            if (this.wireSource) {
-                console.log(this.wireSource);
-            }
             let input = this.map[(<Element>event.srcElement!).id].parameter!;
             input.setSource(this.wireSource!.instanceGuid);
             this.$store.commit('setActiveComponent', this.map[(<Element>event.srcElement!).id].component!);
         },
         onSubmitComponent(): void {
             this.placing = false;
-            console.log(this.candidate);
 
             try {
                 let c = Resthopper.ComponentIndex.createComponent(this.candidate as GrasshopperComponent);
