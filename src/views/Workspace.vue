@@ -115,6 +115,13 @@ import ResthopperDefinition from 'resthopper/dist/models/ResthopperDefinition';
 import SvgarSlab from 'svgar/dist/models/SvgarSlab';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 
+interface ClasshopperMapping {
+    [svgarId: string]: {
+        component: ResthopperComponent | undefined,
+        parameter: ResthopperParameter | undefined,
+    }
+}
+
 type CanvasState = "idle" | "panning" | "movingComponent" | "drawingWire";
 
 export default Vue.extend({
@@ -134,6 +141,7 @@ export default Vue.extend({
             dy: 0,
             svgar: {} as SvgarCube,
             definition: {} as ResthopperDefinition,
+            map: {} as ClasshopperMapping,
         }
     },
     created() {
@@ -203,6 +211,11 @@ export default Vue.extend({
             }
 
             return this.svgar.compile(this.w, this.h);
+        }
+    },
+    watch: {
+        svgar: function() {
+            this.svgar.listen();
         }
     },
     methods: {
@@ -300,6 +313,8 @@ export default Vue.extend({
             this.svgar.slabs.push(dot);
         },
         convertDefinitionToSvgar(d: ResthopperDefinition): SvgarCube {
+            this.map = {};
+            
             let dwg = new Svgar.Cube("resthopper");
 
             d.components.forEach(c => {
@@ -308,8 +323,12 @@ export default Vue.extend({
 
             dwg.slabs.push(this.drawWires(d));
 
-            Update().svgar.cube(dwg).camera.extentsTo(-15, -20, 45, 20);
-            //dwg.scope = this.svgar.scope;
+            if (this.svgar.scope) {
+                dwg.scope = this.svgar.scope;
+            }
+            else {
+                Update().svgar.cube(dwg).camera.extentsTo(-15, -20, 45, 20);
+            }
 
             return dwg;
         },
@@ -321,15 +340,6 @@ export default Vue.extend({
                     let p = c.output[out];
 
                     if (p.instanceGuid == id) {
-                        console.log(`Found in component ${c.name}!`);
-                        
-                        const pt = this.calculateResthopperCoordinates(c, p);
-
-                        p.position = {
-                            x: pt[0],
-                            y: pt[1]
-                        }
-
                         param = c.output[out];
                     }
                 });
@@ -337,16 +347,11 @@ export default Vue.extend({
 
             d.parameters.forEach(p => {
                 if (p.instanceGuid == id) {
-                    console.log(`Found in parameter ${p.name}!`);
-                    console.log(p);
                     param = p;
                 }
             })
 
             return param;
-        },
-        calculateResthopperCoordinates(c: ResthopperComponent, p: ResthopperParameter): number[] {
-            return [c.position.x, c.position.y];
         },
         drawWires(c: ResthopperDefinition): SvgarSlab {
             let wireData: {
@@ -361,22 +366,19 @@ export default Vue.extend({
             }[] = [];
 
             c.components.forEach(component => {
-                console.log(component.name);
                 Object.keys(component.input).forEach(i => {
                     let p = component.input[i];
 
                     if (p.getSource()) {
-                        console.log(p.name);
-                        console.log(p.getSource());
-                        const a = p.position;
+                        const b = p.position;
 
                         let source = this.locateParameter(this.definition, p.getSource()!)
-                        console.log(source);
+
                         if (!source) {
                             return;
                         }
 
-                        const b = source.position;
+                        const a = source.position;
 
                         wireData.push({ a: { x: a.x, y: a.y }, b: { x: b.x, y: b.y } });
                     }
@@ -397,6 +399,19 @@ export default Vue.extend({
 
                 wires.addPath(wire);
             });
+
+            wires.setAllStyles([
+                {
+                    name: "default",
+                    attributes: {
+                        "stroke": "#F4F4F4",
+                        "stroke-width": "2px",
+                        "fill": "none",
+                    }
+                }
+            ]);
+
+            wires.setElevation(-100);
 
             return wires;
         },
@@ -434,8 +449,11 @@ export default Vue.extend({
             .close()
             .build();
 
+            icon.attach("mousedown", this.onClickComponent);
             icon.setTag("icon");
             icon.setElevation(-5);
+
+            this.map[icon.getId()] = { component: c, parameter: undefined };
 
             cslab.setAllGeometry([
                 outline,
@@ -463,6 +481,11 @@ export default Vue.extend({
             
             for (let i = 0; i < numInputs; i++) {
                 const st = i * step;
+
+                c.input[inputs[i]].position = {
+                    x: -5 + x,
+                    y: 2.5 + y - st - (step / 2)
+                }
 
                 let panel = new Svgar.Builder.Polyline(-5 + x, 2.5 + y - st)
                 .lineTo(x, 2.5 + y - st)
@@ -497,6 +520,11 @@ export default Vue.extend({
             
             for (let i = 0; i < numOutputs; i++) {
                 const st = i * ostep;
+
+                c.output[outputs[i]].position = {
+                    x: 5 + x,
+                    y: 2.5 + y - st - (ostep / 2)
+                }
 
                 let panel = new Svgar.Builder.Polyline(5 + x, 2.5 + y - st)
                 .lineTo(x, 2.5 + y - st)
@@ -651,6 +679,9 @@ export default Vue.extend({
             ]);
 
             return cslab;
+        },
+        onClickComponent(event: MouseEvent): void {
+            console.log(this.map[(<Element>event.srcElement!).id].component!.name);
         }
     }
 })
