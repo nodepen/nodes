@@ -113,24 +113,9 @@ import SvgarCube from 'svgar/dist/models/SvgarCube';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import ResthopperDefinition from 'resthopper/dist/models/ResthopperDefinition';
 import SvgarSlab from 'svgar/dist/models/SvgarSlab';
+import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 
 type CanvasState = "idle" | "panning" | "movingComponent" | "drawingWire";
-
-interface ClasshopperComponent {
-    component: ResthopperComponent,
-    position: {
-        x: number,
-        y: number,
-    }
-    inputGrips: {
-        x: number,
-        y: number,
-    }[],
-    outputGrips: {
-        x: number,
-        y: number,
-    }[]
-}
 
 export default Vue.extend({
     name: 'workspace',
@@ -161,17 +146,20 @@ export default Vue.extend({
         n.isUserInput = true;
 
         let pt = ci.createComponent("ConstructPoint");
+        pt.position = { x: 0, y: 0 };
         pt.setInputByIndex(0, n);
         pt.setInputByIndex(1, n);
         pt.setInputByIndex(2, n);
         let point = pt.getOutputByIndex(0);
 
         let dept = ci.createComponent("Deconstruct");
+        dept.position = { x: 15, y: 5 };
         dept.setInputByIndex(0, point!);
         let x = dept.getOutputByIndex(0);
         let y = dept.getOutputByIndex(1);
 
         let m = ci.createComponent("Multiplication");
+        m.position = { x: 32, y: -3.5 };
         m.setInputByIndex(0, x!);
         m.setInputByIndex(1, y!);
         let result = m.getOutputByIndex(0);
@@ -200,23 +188,16 @@ export default Vue.extend({
         this.resizeSvgar();
         window.addEventListener('resize', this.resizeSvgar);
 
-        let defaultCanvas = new Svgar.Cube("resthopper");
-
-        let cA = this.drawComponent(this.definition.components[0], 0, 0);
-        let cB = this.drawComponent(this.definition.components[1], 15, 5);
-        let cC = this.drawComponent(this.definition.components[2], 32, -3.5);
-
-        let wireTest = new Svgar.Slab("wires");
-        let wire = new Svgar.Builder.Curve(5, 0).via(6.5, 0).through(7.5, 2.5).via(8.5, 5).through(10, 5).build();
-        wireTest.addPath(wire);
-
-        defaultCanvas.slabs = [cA, cB, cC, wireTest];
-        Update().svgar.cube(defaultCanvas).camera.extentsTo(-15, -20, 45, 20);
-
-        this.svgar = defaultCanvas;
+        //Update().svgar.cube(this.svgar).camera.extentsTo(-15, -20, 45, 20);
     },
     computed: {
         svg(): string {
+            if (this.definition == undefined || (this.definition.components.length == 0 && this.definition.parameters.length == 0)) {
+                return "";
+            }
+
+            this.svgar = this.convertDefinitionToSvgar(this.definition);
+
             if (this.w == 0 || this.h == 0) {
                 return "";
             }
@@ -318,9 +299,113 @@ export default Vue.extend({
 
             this.svgar.slabs.push(dot);
         },
-        drawComponent(c: ResthopperComponent, x: number, y: number): SvgarSlab {
+        convertDefinitionToSvgar(d: ResthopperDefinition): SvgarCube {
+            let dwg = new Svgar.Cube("resthopper");
+
+            d.components.forEach(c => {
+                dwg.slabs.push(this.drawComponent(c));
+            });
+
+            dwg.slabs.push(this.drawWires(d));
+
+            Update().svgar.cube(dwg).camera.extentsTo(-15, -20, 45, 20);
+            //dwg.scope = this.svgar.scope;
+
+            return dwg;
+        },
+        locateParameter(d: ResthopperDefinition, id: string): ResthopperParameter |  undefined {
+            let param: ResthopperParameter | undefined = undefined;
+            
+            d.components.forEach(c => {
+                Object.keys(c.output).forEach(out => {
+                    let p = c.output[out];
+
+                    if (p.instanceGuid == id) {
+                        console.log(`Found in component ${c.name}!`);
+                        
+                        const pt = this.calculateResthopperCoordinates(c, p);
+
+                        p.position = {
+                            x: pt[0],
+                            y: pt[1]
+                        }
+
+                        param = c.output[out];
+                    }
+                });
+            });
+
+            d.parameters.forEach(p => {
+                if (p.instanceGuid == id) {
+                    console.log(`Found in parameter ${p.name}!`);
+                    console.log(p);
+                    param = p;
+                }
+            })
+
+            return param;
+        },
+        calculateResthopperCoordinates(c: ResthopperComponent, p: ResthopperParameter): number[] {
+            return [c.position.x, c.position.y];
+        },
+        drawWires(c: ResthopperDefinition): SvgarSlab {
+            let wireData: {
+                a: {
+                    x: number,
+                    y: number
+                },
+                b: {
+                    x: number,
+                    y: number
+                }
+            }[] = [];
+
+            c.components.forEach(component => {
+                console.log(component.name);
+                Object.keys(component.input).forEach(i => {
+                    let p = component.input[i];
+
+                    if (p.getSource()) {
+                        console.log(p.name);
+                        console.log(p.getSource());
+                        const a = p.position;
+
+                        let source = this.locateParameter(this.definition, p.getSource()!)
+                        console.log(source);
+                        if (!source) {
+                            return;
+                        }
+
+                        const b = source.position;
+
+                        wireData.push({ a: { x: a.x, y: a.y }, b: { x: b.x, y: b.y } });
+                    }
+                })
+            });
+
+            const o = 1.5;
+
+            let wires = new Svgar.Slab("wires");
+
+            wireData.forEach(w => {
+                let wire = new Svgar.Builder.Curve(w.a.x, w.a.y)
+                .via(w.a.x + o, w.a.y)
+                .through((w.a.x + w.b.x) / 2, (w.a.y + w.b.y) / 2 )
+                .via(w.b.x - o, w.b.y)
+                .through(w.b.x, w.b.y)
+                .build();
+
+                wires.addPath(wire);
+            });
+
+            return wires;
+        },
+        drawComponent(c: ResthopperComponent): SvgarSlab {
             let cslab = new SvgarSlab(`${c.name}${c.guid.split("-")[0]}`);
             cslab.scaleStroke = true;
+
+            const x = c.position.x;
+            const y = c.position.y;
 
             let outline = new Svgar.Builder.Polyline(-5 + x, 2.5 + y)
             .lineTo(5 + x, 2.5 + y)
