@@ -16,15 +16,7 @@
     <div class="overlay__tools">
     </div>
     <div class="overlay__info">
-        <div class="overlay__info__title">
-            <div class="overlay__text--lg">list item</div>
-        </div>
-        <div class="overlay__info__subtitle">
-            <span class="overlay__text--md">sets &gt; lists</span>
-        </div>
-        <div>
-            something
-        </div>
+        <workspace-overlay v-if="activeComponent != undefined" :c="activeComponent"></workspace-overlay>
     </div>
 </div>
 </template>
@@ -55,41 +47,6 @@
     z-index: 100;
 
     padding: var(--md);
-
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-}
-
-.overlay__info__title {
-    width: 100%;
-    height: var(--lg);
-    box-sizing: border-box;
-    line-height: var(--lg);
-    vertical-align: middle;
-
-}
-
-.overlay__info__subtitle {
-    width: 100%;
-    height: var(--md);
-    padding-bottom: var(--md);
-    margin-bottom: var(--md);
-
-    line-height: var(--md);
-    vertical-align: middle;
-}
-
-.overlay__text--lg {
-    font-size: calc(1.75 * var(--md));
-    color: white;
-
-    transform: translateY(-0.1rem);
-}
-
-.overlay__text--md {
-    font-size: var(--md);
-    color: white;
 }
 
 .svgar {
@@ -115,6 +72,8 @@ import ResthopperDefinition from 'resthopper/dist/models/ResthopperDefinition';
 import SvgarSlab from 'svgar/dist/models/SvgarSlab';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 
+import WorkspaceOverlay from './../components/WorkspaceOverlay.vue';
+
 interface ClasshopperMapping {
     [svgarId: string]: {
         component: ResthopperComponent | undefined,
@@ -126,6 +85,9 @@ type CanvasState = "idle" | "panning" | "movingComponent" | "drawingWire";
 
 export default Vue.extend({
     name: 'workspace',
+    components: {
+        WorkspaceOverlay,
+    },
     data() {
         return {
             w: 0,
@@ -156,22 +118,13 @@ export default Vue.extend({
         n.isUserInput = true;
 
         let pt = ci.createComponent("ConstructPoint");
-        pt.position = { x: 0, y: 0 };
-        pt.setInputByIndex(0, n);
-        pt.setInputByIndex(1, n);
-        pt.setInputByIndex(2, n);
-        let point = pt.getOutputByIndex(0);
+        pt.position = { x: 15, y: 0 };
 
         let dept = ci.createComponent("Deconstruct");
-        dept.position = { x: 15, y: 5 };
-        dept.setInputByIndex(0, point!);
-        let x = dept.getOutputByIndex(0);
-        let y = dept.getOutputByIndex(1);
+        dept.position = { x: 32, y: 5 };
 
         let m = ci.createComponent("Multiplication");
-        m.position = { x: 32, y: -3.5 };
-        m.setInputByIndex(0, x!);
-        m.setInputByIndex(1, y!);
+        m.position = { x: 0, y: -3.5 };
         let result = m.getOutputByIndex(0);
 
         let out = pi.createParameter("Number");
@@ -225,6 +178,9 @@ export default Vue.extend({
             }
 
             return this.svgar.compile(this.w, this.h);
+        },
+        activeComponent(): ResthopperComponent | undefined {
+            return this.$store.state.component;
         }
     },
     watch: {
@@ -518,17 +474,25 @@ export default Vue.extend({
                 icon
             ]);
 
-            cslab.setAllText([
-                {
-                    text: c.nickName.toLowerCase(),
-                    tag: "title",
-                    elevation: 5,
-                    position: {
-                        x: x,
-                        y: y,
-                    },
+            let text: {
+                text: string,
+                tag: string,
+                elevation: number,
+                position: {
+                    x: number,
+                    y: number
                 }
-            ]);
+            }[] = [];
+
+            text.push({
+                text: c.nickName.toLowerCase(),
+                tag: "title",
+                elevation: 5,
+                position: {
+                    x: x,
+                    y: y,
+                },
+            })
 
             const gs = 0.6;
 
@@ -543,6 +507,16 @@ export default Vue.extend({
                     x: -5 + x,
                     y: 2.5 + y - st - (step / 2)
                 }
+
+                text.push({
+                    text: c.input[inputs[i]].nickName.toLowerCase(),
+                    tag: "inputparam",
+                    elevation: 50,
+                    position: {
+                        x: -5 + x + 1,
+                        y: -(2.5 + y - st - (step / 2)),
+                    },
+                });
 
                 let panel = new Svgar.Builder.Polyline(-5 + x, 2.5 + y - st)
                 .lineTo(x, 2.5 + y - st)
@@ -561,7 +535,7 @@ export default Vue.extend({
                 .lineTo(-5 + gs + x, 2.5 + y - st - step)
                 .lineTo(-5 + x, 2.5 + y - st - step)
                 .build();
-                status.setTag(c.input[inputs[i]].isOptional ? "grip-empty" : "grip-warn");
+                status.setTag(c.input[inputs[i]].isOptional ? "grip-empty" : c.input[inputs[i]].sources.length > 0 ? "grip-empty" : "grip-warn");
                 status.setElevation(-5);
                 cslab.addPath(status);
 
@@ -571,7 +545,7 @@ export default Vue.extend({
 
                 grip.attach("mouseup", this.onSubmitWire)
 
-                this.map[grip.getId()] = { component: undefined, parameter: c.input[inputs[i]] };
+                this.map[grip.getId()] = { component: c, parameter: c.input[inputs[i]] };
 
                 cslab.addPath(grip);
             }
@@ -587,6 +561,16 @@ export default Vue.extend({
                     x: 5 + x,
                     y: 2.5 + y - st - (ostep / 2)
                 }
+
+                text.push({
+                    text: c.output[outputs[i]].nickName.toLowerCase(),
+                    tag: "outputparam",
+                    elevation: 50,
+                    position: {
+                        x: 5 + x - 1,
+                        y: -(2.5 + y - st - (ostep / 2)),
+                    },
+                });
 
                 let panel = new Svgar.Builder.Polyline(5 + x, 2.5 + y - st)
                 .lineTo(x, 2.5 + y - st)
@@ -604,11 +588,12 @@ export default Vue.extend({
                 grip.setTag("grip");
                 grip.attach("mousedown", this.onClickOutputGrip)
 
-                this.map[grip.getId()] = { component: undefined, parameter: c.output[outputs[i]] };
+                this.map[grip.getId()] = { component: c, parameter: c.output[outputs[i]] };
 
                 cslab.addPath(grip);
             }
             
+            cslab.setAllText(text);
 
             cslab.setAllStyles([
                 {
@@ -679,6 +664,32 @@ export default Vue.extend({
                     }
                 },
                 {
+                    name: "paramfontleft",
+                    attributes: {
+                        "font": "0.6px 'Major Mono Display'",
+                        "font-weight": "bold",
+                        "fill": "#222222",
+                        "pointer-events": "none",
+                        "user-select": "none",
+                        "text-anchor": "start",
+                        "transform-origin": `${x}px ${y}px`,
+                        "transform": "translateY(0.2px)",
+                    }
+                },
+                {
+                    name: "paramfontright",
+                    attributes: {
+                        "font": "0.6px 'Major Mono Display'",
+                        "font-weight": "bold",
+                        "fill": "#222222",
+                        "pointer-events": "none",
+                        "user-select": "none",
+                        "text-anchor": "end",
+                        "transform-origin": `${x}px ${y}px`,
+                        "transform": "translateY(0.2px)",
+                    }
+                },
+                {
                     name: "red",
                     attributes: {
                         "fill": "#722323",
@@ -736,6 +747,8 @@ export default Vue.extend({
                         "grip": "panelwhite",
                         "text": "mainfont",
                         "title": "titlefont",
+                        "inputparam": "paramfontleft",
+                        "outputparam": "paramfontright",
                         "shadow": "shadow",
                         "grip-invalid": "red",
                         "grip-warn": "orange",
@@ -749,12 +762,14 @@ export default Vue.extend({
         onClickComponent(event: MouseEvent): void {
             this.state = 'movingComponent';
             this.movingComponent = this.map[(<Element>event.srcElement!).id].component!;
+            this.$store.commit('setActiveComponent', this.movingComponent);
 
             //console.log(this.map[(<Element>event.srcElement!).id].component!.name);
         },
         onClickOutputGrip(event: MouseEvent): void {
             this.state = 'drawingWire';
             this.wireSource = this.map[(<Element>event.srcElement!).id].parameter!;
+            this.$store.commit('setActiveComponent', this.map[(<Element>event.srcElement!).id].component!);
         },
         onSubmitWire(event: MouseEvent): void {
             if (this.wireSource) {
@@ -762,6 +777,7 @@ export default Vue.extend({
             }
             let input = this.map[(<Element>event.srcElement!).id].parameter!;
             input.setSource(this.wireSource!.instanceGuid);
+            this.$store.commit('setActiveComponent', this.map[(<Element>event.srcElement!).id].component!);
         }
 
     }
