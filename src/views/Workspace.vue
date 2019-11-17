@@ -19,7 +19,22 @@
         <workspace-overlay v-if="activeComponent != undefined && activeComponent != {}" :component="activeComponent"></workspace-overlay>
     </div>
     <div v-if="placing" class="component_placer" :style="{ left: placerX - 125 + 'px', top: placerY + 'px' }">
-        <input ref="newc" @keyup.enter="onSubmitComponent" v-model="candidate" type='text' name='componentname' placeholder="type component name here..." />
+        <input 
+        ref="newc" 
+        @keyup.enter="onSubmitComponent" 
+        v-model="candidate" 
+        type='text' 
+        name='componentname' 
+        placeholder="type component name here..."
+        autocomplete="off" />
+    <div @click="onSelectComponent(c)" class="component_placer__suggestions" v-show="candidate.length > 3" v-for="(c, index) in closeMatches" :key="c.nickName + index" >
+        <div class="component_placer__suggestions__name">
+            {{c.name.toLowerCase()}}
+        </div>
+        <div class="component_placer__suggestions__info">
+            {{c.category.toLowerCase()}} &gt; {{c.subCategory.toLowerCase()}}
+        </div>
+    </div>
     </div>
 </div>
 </template>
@@ -39,14 +54,23 @@
     position: absolute;
     width: 250px;
     height: 25px;
-    background: white;
-    border: 2px solid black;
+    background: none;
+
+    border-bottom: 2px solid #ccc;
 }
 
 .component_placer > input {
     width: 100%;
-    height: 100%;
+    height: 25px;
     padding-left: var(--md);
+    background: none;
+
+    margin-bottom: var(--md);
+
+    color: #ccc;
+    font-family: 'Major Mono Display', monospace;
+    line-height: 25px;
+    vertical-align: middle;
 
     box-sizing: border-box;
 
@@ -56,6 +80,40 @@
 .component_placer > input:focus {
     border: none;
     outline: none;
+}
+
+.component_placer__suggestions {
+    width: 100%;
+    padding-left: var(--md);
+    padding-bottom: calc(var(--md) / 2);
+    background: none;
+    box-sizing: border-box;
+}
+
+.component_placer__suggestions:hover {
+    cursor: pointer;
+    background: grey;
+    opacity: 0.8;
+}
+
+.component_placer__suggestions__name {
+    width: 100%;
+    height: 25px;
+    color: #ccc;
+    font-size: calc(1.75 * var(--md));
+
+    line-height: 25px;
+    vertical-align: middle;
+}
+
+.component_placer__suggestions__info {
+    width: 100%;
+    height: 15px;
+    color: #ccc;
+    font-size: var(--md);
+
+    line-height: 15px;
+    vertical-align: middle;
 }
 
 .overlay__tools {
@@ -100,6 +158,8 @@ import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 
 import WorkspaceOverlay from './../components/WorkspaceOverlay.vue';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
+import { levDist } from './../utils/levDist';
+import { newGuid } from './../utils/newGuid';
 
 interface ClasshopperMapping {
     [svgarId: string]: {
@@ -131,6 +191,7 @@ export default Vue.extend({
             dy: 0,
             placing: false,
             candidate: "",
+            allowed: [] as ResthopperComponent[],
             placerX: 0,
             placerY: 0,
             cx: 0,
@@ -145,6 +206,8 @@ export default Vue.extend({
     created() {
         const ci = Resthopper.ComponentIndex;
         const pi = Resthopper.ParameterIndex;
+
+        this.allowed = ci.getAllComponents();
 
         let def = new Resthopper.Definition();
 
@@ -212,6 +275,10 @@ export default Vue.extend({
         },
         activeComponent(): ResthopperComponent | undefined {
             return this.$store.state.component;
+        },
+        closeMatches(): ResthopperComponent[] {
+            const c = this.candidate;
+            return this.allowed.sort((a, b) => levDist(c, a.name) - levDist(c, b.name)).slice(0, 5);
         }
     },
     watch: {
@@ -256,7 +323,7 @@ export default Vue.extend({
 
             this.placing = true;
 
-            this.$nextTick(() => { (<HTMLInputElement>this.$refs.newc).focus() })
+            this.$nextTick(() => { setTimeout(() => (<HTMLInputElement>this.$refs.newc).focus(), 50) })
         },
         onStartTrack(event: MouseEvent | TouchEvent): void {
             const d = Date.now();
@@ -323,6 +390,7 @@ export default Vue.extend({
             this.px = 0;
             this.py = 0;
             this.wireSource = undefined;
+            this.candidate = "";
 
             this.state = 'idle';
         },
@@ -357,7 +425,7 @@ export default Vue.extend({
                 dwg.scope = this.svgar.scope;
             }
             else {
-                Update().svgar.cube(dwg).camera.extentsTo(-15, -20, 45, 20);
+                Update().svgar.cube(dwg).camera.extentsTo(-30, -20, 30, 10);
             }
 
             return dwg;
@@ -476,7 +544,8 @@ export default Vue.extend({
             return w;
         },
         drawComponent(c: ResthopperComponent): SvgarSlab {
-            let cslab = new SvgarSlab(`${c.name}${c.guid.split("-")[0]}`);
+            const g = newGuid().split("-")[0];
+            let cslab = new SvgarSlab(`${c.name}${g}`);
             cslab.scaleStroke = true;
 
             const x = c.position.x;
@@ -839,6 +908,29 @@ export default Vue.extend({
             catch {
                 console.log(`${this.candidate} is not a valid grasshopper component.`);
             }
+        },
+        onSelectComponent(c: ResthopperComponent): void {
+            this.placing = false;
+
+            try {
+                let component = Resthopper.ComponentIndex.createComponent(c.name.replace(" ", "") as GrasshopperComponent);
+                component.position = {
+                        x: this.cx,
+                        y: this.cy,
+                }
+                this.definition.components.push(component);
+            }
+            catch {
+                console.log(`Unable to create ${c.name} component.`);
+            }
+
+            this.candidate = "";
+        },
+        separateCamelCase(string: string): string {
+            if (string == undefined) {
+                return "";
+            }
+            return string.match(/[A-Z][a-z]+/g)!.join(" ").toLowerCase();
         }
 
     }

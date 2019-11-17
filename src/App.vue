@@ -33,6 +33,8 @@
   --bl: #222;
 
   font-size: 10px;
+
+  overflow: hidden;
 }
 
 #app {
