@@ -67,7 +67,7 @@ import Vue from 'vue'
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent'
 export default Vue.extend({
     name: 'workspace-overlay',
-    props: ['c'],
+    props: ['component'],
     computed: {
         c(): ResthopperComponent {
             return this.$store.state.component;
@@ -78,6 +78,9 @@ export default Vue.extend({
     },
     methods: {
         separateCamelCase(string: string): string {
+            if (string == undefined) {
+                return "";
+            }
             return string.match(/[A-Z][a-z]+/g)!.join(" ").toLowerCase();
         }
     }

@@ -16,7 +16,10 @@
     <div class="overlay__tools">
     </div>
     <div class="overlay__info">
-        <workspace-overlay v-if="activeComponent != undefined" :c="activeComponent"></workspace-overlay>
+        <workspace-overlay v-if="activeComponent != undefined && activeComponent != {}" :component="activeComponent"></workspace-overlay>
+    </div>
+    <div v-if="placing" class="component_placer" :style="{ left: placerX - 125 + 'px', top: placerY + 'px' }">
+        <input ref="newc" @keyup.enter="onSubmitComponent" v-model="candidate" type='text' name='componentname' placeholder="type component name here..." />
     </div>
 </div>
 </template>
@@ -30,6 +33,29 @@
     flex-direction: row;
     justify-content: flex-end;
     flex-wrap: wrap;
+}
+
+.component_placer {
+    position: absolute;
+    width: 250px;
+    height: 25px;
+    background: white;
+    border: 2px solid black;
+}
+
+.component_placer > input {
+    width: 100%;
+    height: 100%;
+    padding-left: var(--md);
+
+    box-sizing: border-box;
+
+    border: none;
+}
+
+.component_placer > input:focus {
+    border: none;
+    outline: none;
 }
 
 .overlay__tools {
@@ -73,6 +99,7 @@ import SvgarSlab from 'svgar/dist/models/SvgarSlab';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 
 import WorkspaceOverlay from './../components/WorkspaceOverlay.vue';
+import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
 
 interface ClasshopperMapping {
     [svgarId: string]: {
@@ -94,6 +121,7 @@ export default Vue.extend({
             h: 0,
             state: "idle" as CanvasState,
             start: 0,
+            click: 0,
             prev: 0,
             px: 0,
             py: 0,
@@ -101,6 +129,12 @@ export default Vue.extend({
             py2: 0,
             dx: 0,
             dy: 0,
+            placing: false,
+            candidate: "",
+            placerX: 0,
+            placerY: 0,
+            cx: 0,
+            cy: 0,
             wireSource: {} as ResthopperParameter | undefined,
             movingComponent: {} as ResthopperComponent,
             svgar: {} as SvgarCube,
@@ -120,9 +154,6 @@ export default Vue.extend({
         let pt = ci.createComponent("ConstructPoint");
         pt.position = { x: 15, y: 0 };
 
-        let dept = ci.createComponent("Deconstruct");
-        dept.position = { x: 32, y: 5 };
-
         let m = ci.createComponent("Multiplication");
         m.position = { x: 0, y: -3.5 };
         let result = m.getOutputByIndex(0);
@@ -132,7 +163,7 @@ export default Vue.extend({
         out.setSource(result!);
 
         def.parameters = [n, out];
-        def.components = [pt, dept, m];
+        def.components = [pt, m];
 
         this.definition = def;
 
@@ -214,7 +245,29 @@ export default Vue.extend({
                 return [x[0], y[0]];
             }
         },
+        onDoubleClick(event: MouseEvent | TouchEvent) {
+            const xy = this.touchOrMouseCoordinates(event);
+            const pt = this.svgar.mapPageCoordinateToSvgarCoordinate(xy[0], xy[1]);
+
+            this.placerX = xy[0];
+            this.placerY = xy[1];
+            this.cx = pt[0];
+            this.cy = pt[1];
+
+            this.placing = true;
+
+            this.$nextTick(() => { (<HTMLInputElement>this.$refs.newc).focus() })
+        },
         onStartTrack(event: MouseEvent | TouchEvent): void {
+            const d = Date.now();
+
+            if (d - this.start < 500) {
+                this.onDoubleClick(event);
+                return;
+            }
+
+            this.placing = false;
+
             this.start = Date.now();
 
             let p = this.touchOrMouseCoordinates(event);
@@ -267,12 +320,6 @@ export default Vue.extend({
             this.prev = Date.now();
         },
         onStopTrack(event: MouseEvent | TouchEvent): void {
-            if (Date.now() - this.start < 250) {
-                this.addTestDot(event);
-            }
-
-            console.log("stopped...")
-
             this.px = 0;
             this.py = 0;
             this.wireSource = undefined;
@@ -778,6 +825,24 @@ export default Vue.extend({
             let input = this.map[(<Element>event.srcElement!).id].parameter!;
             input.setSource(this.wireSource!.instanceGuid);
             this.$store.commit('setActiveComponent', this.map[(<Element>event.srcElement!).id].component!);
+        },
+        onSubmitComponent(): void {
+            this.placing = false;
+            console.log(this.candidate);
+
+            try {
+                let c = Resthopper.ComponentIndex.createComponent(this.candidate as GrasshopperComponent);
+                c.position = {
+                    x: this.cx,
+                    y: this.cy,
+                }
+                this.definition.components.push(c);
+
+                this.candidate = "";
+            }
+            catch {
+                console.log(`${this.candidate} is not a valid grasshopper component.`);
+            }
         }
 
     }
