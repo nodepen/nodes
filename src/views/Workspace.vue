@@ -139,6 +139,7 @@ export default Vue.extend({
             py2: 0,
             dx: 0,
             dy: 0,
+            movingComponent: {} as ResthopperComponent,
             svgar: {} as SvgarCube,
             definition: {} as ResthopperDefinition,
             map: {} as ClasshopperMapping,
@@ -254,8 +255,9 @@ export default Vue.extend({
             this.px2 = p[0];
             this.py2 = p[1];
 
-            this.state = "panning";
-            //console.log(this.mapPageCoordinateToSvgarCoordinate(event.pageX, event.pageY));
+            if (this.state == 'idle') {
+                this.state = "panning";
+            }
         },
         onTrack(event: MouseEvent | TouchEvent | PointerEvent): void {
             if (Date.now() - this.prev < 25) {
@@ -272,15 +274,26 @@ export default Vue.extend({
                 event.stopImmediatePropagation();
             }
 
+            // Get current and previous positions
+            const a = this.svgar.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2);
+            const b = this.svgar.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
+
             if (this.state == 'panning') {
-                const a = this.svgar.mapPageCoordinateToSvgarCoordinate(this.px2, this.py2);
-                const b = this.svgar.mapPageCoordinateToSvgarCoordinate(p[0], p[1]);
-
                 Update().svgar.cube(this.svgar).camera.withPan(-(b[0] - a[0]), -(b[1] - a[1]));
-
-                this.px2 = p[0];
-                this.py2 = p[1];
             }
+            if (this.state == 'movingComponent') {
+                const dx = b[0] - a[0];
+                const dy = b[1] - a[1];
+
+                this.movingComponent.position = {
+                    x: this.movingComponent.position.x += dx,
+                    y: this.movingComponent.position.y += dy,
+                }
+            }
+
+            // Cache previous position
+            this.px2 = p[0];
+            this.py2 = p[1];
 
             this.prev = Date.now();
         },
@@ -314,7 +327,7 @@ export default Vue.extend({
         },
         convertDefinitionToSvgar(d: ResthopperDefinition): SvgarCube {
             this.map = {};
-            
+
             let dwg = new Svgar.Cube("resthopper");
 
             d.components.forEach(c => {
@@ -411,7 +424,7 @@ export default Vue.extend({
                 }
             ]);
 
-            wires.setElevation(-100);
+            wires.setElevation(-40);
 
             return wires;
         },
@@ -681,7 +694,10 @@ export default Vue.extend({
             return cslab;
         },
         onClickComponent(event: MouseEvent): void {
-            console.log(this.map[(<Element>event.srcElement!).id].component!.name);
+            this.state = 'movingComponent';
+            this.movingComponent = this.map[(<Element>event.srcElement!).id].component!;
+
+            //console.log(this.map[(<Element>event.srcElement!).id].component!.name);
         }
     }
 })
