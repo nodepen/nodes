@@ -7,7 +7,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    component: {} as ResthopperComponent,
+    component: {} as ResthopperComponent | undefined,
   },
   mutations: {
     setActiveComponent(state, component: ResthopperComponent) {

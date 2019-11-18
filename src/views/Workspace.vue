@@ -27,12 +27,13 @@
         name='componentname' 
         placeholder="type component name here..."
         autocomplete="off" />
-    <div @click="onSelectComponent(c)" class="component_placer__suggestions" v-show="candidate.length > 3" v-for="(c, index) in closeMatches" :key="c.nickName + index" >
+    <div @click="onSelectComponentOrParam(c)" class="component_placer__suggestions" v-show="candidate.length > 3" v-for="(c, index) in closeMatches" :key="c.nickName + index" >
         <div class="component_placer__suggestions__name">
             {{c.name.toLowerCase()}}
         </div>
         <div class="component_placer__suggestions__info">
-            {{c.category.toLowerCase()}} &gt; {{c.subCategory.toLowerCase()}}
+            <div v-if="isResthopperParameter(c)">param</div>
+            <span v-else>{{c.category.toLowerCase()}} &gt; {{c.subCategory.toLowerCase()}}</span>
         </div>
     </div>
     </div>
@@ -71,6 +72,7 @@
     font-family: 'Major Mono Display', monospace;
     line-height: 25px;
     vertical-align: middle;
+    text-transform: lowercase;
 
     box-sizing: border-box;
 
@@ -160,6 +162,7 @@ import WorkspaceOverlay from './../components/WorkspaceOverlay.vue';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
 import { levDist } from './../utils/levDist';
 import { newGuid } from './../utils/newGuid';
+import { GrasshopperParameter } from 'resthopper/dist/catalog/ParameterIndex';
 
 interface ClasshopperMapping {
     [svgarId: string]: {
@@ -191,7 +194,7 @@ export default Vue.extend({
             dy: 0,
             placing: false,
             candidate: "",
-            allowed: [] as ResthopperComponent[],
+            allowed: [] as (ResthopperComponent | ResthopperParameter)[],
             placerX: 0,
             placerY: 0,
             cx: 0,
@@ -207,11 +210,12 @@ export default Vue.extend({
         const ci = Resthopper.ComponentIndex;
         const pi = Resthopper.ParameterIndex;
 
-        this.allowed = ci.getAllComponents();
+        this.allowed = [...ci.getAllComponents(), ...pi.getAllParameters()];
 
         let def = new Resthopper.Definition();
 
         const n = pi.createParameter("Number", 2);
+        n.position = { x: -5, y: 1 }
         n.isUserInput = true;
 
         let pt = ci.createComponent("ConstructPoint");
@@ -221,11 +225,7 @@ export default Vue.extend({
         m.position = { x: 0, y: -3.5 };
         let result = m.getOutputByIndex(0);
 
-        let out = pi.createParameter("Number");
-        out.isUserOutput = true;
-        out.setSource(result!);
-
-        def.parameters = [n, out];
+        def.parameters = [n];
         def.components = [pt, m];
 
         this.definition = def;
@@ -276,10 +276,10 @@ export default Vue.extend({
         activeComponent(): ResthopperComponent | undefined {
             return this.$store.state.component;
         },
-        closeMatches(): ResthopperComponent[] {
+        closeMatches(): ( ResthopperComponent | ResthopperParameter )[] {
             const c = this.candidate;
             return this.allowed.sort((a, b) => levDist(c, a.name) - levDist(c, b.name)).slice(0, 5);
-        }
+        },
     },
     watch: {
         svgar: function() {
@@ -295,6 +295,9 @@ export default Vue.extend({
             this.w = canvas.clientWidth;
             this.h = canvas.clientHeight;
             this.$forceUpdate;
+        },
+        isResthopperParameter(object: ResthopperComponent | ResthopperParameter): boolean {
+            return object instanceof ResthopperParameter;
         },
         touchOrMouseCoordinates(event: MouseEvent | TouchEvent | PointerEvent): number[] {
             if (event instanceof MouseEvent || event instanceof PointerEvent) {
@@ -418,6 +421,10 @@ export default Vue.extend({
             d.components.forEach(c => {
                 dwg.slabs.push(this.drawComponent(c));
             });
+
+            d.parameters.forEach(p => {
+                dwg.slabs.push(this.drawParameter(p));
+            })
 
             dwg.slabs.push(this.drawWires(d));
 
@@ -875,6 +882,36 @@ export default Vue.extend({
 
             return cslab;
         },
+        drawParameter(p: ResthopperParameter): SvgarSlab {
+            let pSlab = new Svgar.Slab(`${p.name}${p.instanceGuid.split("-")[0]}`);
+            pSlab.scaleStroke = true;
+
+            const x = p.position.x;
+            const y = p.position.y;
+            const s = 1.25;
+
+            let outline = new Svgar.Builder.Polyline(x + s, y + s)
+                .lineTo(x - s, y + s)
+                .lineTo(x - s, y - s)
+                .lineTo(x + s, y - s)
+                .close()
+                .build();
+
+            pSlab.addPath(outline);
+
+            pSlab.setAllStyles([
+                {
+                    name: "default",
+                    attributes: {
+                        "stroke": "black",
+                        "stroke-width": "0.1px",
+                        "fill": "none",
+                    }
+                }
+            ])
+
+            return pSlab;
+        },
         onClickComponent(event: MouseEvent): void {
             this.state = 'movingComponent';
             this.movingComponent = this.map[(<Element>event.srcElement!).id].component!;
@@ -894,34 +931,33 @@ export default Vue.extend({
         },
         onSubmitComponent(): void {
             this.placing = false;
-
-            try {
-                let c = Resthopper.ComponentIndex.createComponent(this.candidate as GrasshopperComponent);
-                c.position = {
-                    x: this.cx,
-                    y: this.cy,
-                }
-                this.definition.components.push(c);
-
-                this.candidate = "";
-            }
-            catch {
-                console.log(`${this.candidate} is not a valid grasshopper component.`);
-            }
+            this.onSelectComponentOrParam(this.closeMatches[0]);
         },
-        onSelectComponent(c: ResthopperComponent): void {
+        onSelectComponentOrParam(c: ResthopperComponent | ResthopperParameter): void {
             this.placing = false;
 
-            try {
-                let component = Resthopper.ComponentIndex.createComponent(c.name.replace(" ", "") as GrasshopperComponent);
-                component.position = {
-                        x: this.cx,
-                        y: this.cy,
+            const name = c.name.replace(" ", "");
+            const position = { x: this.cx, y: this.cy }
+
+            if (c instanceof ResthopperComponent) {
+                try {
+                    let component = Resthopper.ComponentIndex.createComponent(name as GrasshopperComponent);
+                    component.position = position;
+                    this.definition.components.push(component);
                 }
-                this.definition.components.push(component);
+                catch {
+                    console.log(`Unable to create ${c.name} component.`);
+                }
             }
-            catch {
-                console.log(`Unable to create ${c.name} component.`);
+            else {
+                try {
+                    let param = Resthopper.ParameterIndex.createParameter(name as GrasshopperParameter);
+                    param.position = position;
+                    this.definition.parameters.push(param);
+                }
+                catch {
+                    console.log(`Unable to create ${c.name} parameter.`);
+                }
             }
 
             this.candidate = "";
