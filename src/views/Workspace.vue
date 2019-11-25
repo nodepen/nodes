@@ -423,7 +423,7 @@ export default Vue.extend({
             });
 
             d.parameters.forEach(p => {
-                dwg.slabs.push(this.drawParameter(p));
+                //dwg.slabs.push(this.drawParameter(p));
             })
 
             dwg.slabs.push(this.drawWires(d));
