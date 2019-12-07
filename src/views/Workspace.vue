@@ -650,6 +650,7 @@ export default Vue.extend({
 
                 panel.setTag("panel");
                 panel.setElevation(-10);
+                panel.attach("mousedown", this.onClickInput);
 
                 cslab.addPath(panel);
 
@@ -668,6 +669,7 @@ export default Vue.extend({
 
                 grip.attach("mouseup", this.onSubmitWire)
 
+                this.map[panel.getId()] = { component: c, parameter: c.input[inputs[i]] };
                 this.map[grip.getId()] = { component: c, parameter: c.input[inputs[i]] };
 
                 cslab.addPath(grip);
@@ -922,6 +924,11 @@ export default Vue.extend({
         onClickOutputGrip(event: MouseEvent): void {
             this.state = 'drawingWire';
             this.wireSource = this.map[(<Element>event.srcElement!).id].parameter!;
+            this.$store.commit('setActiveComponent', this.map[(<Element>event.srcElement!).id].component!);
+        },
+        onClickInput(event: MouseEvent): void {
+            let input = this.map[(<Element>event.srcElement!).id].parameter!;
+            this.$store.commit('setActiveParameter', input);
             this.$store.commit('setActiveComponent', this.map[(<Element>event.srcElement!).id].component!);
         },
         onSubmitWire(event: MouseEvent): void {
