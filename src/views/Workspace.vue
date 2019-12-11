@@ -1,5 +1,5 @@
 <template>
-<div id="workspace">
+<div @keyup.space="onRequestOutput" id="workspace">
     <div 
     class="svgar" 
     ref="svgar" 
@@ -141,10 +141,6 @@
     width: calc(100vw - var(--lg) - var(--md) - var(--md));
     height: 100vh;
     touch-action: none;
-}
-
-.svgar:hover {
-    cursor: move;
 }
 </style>
 
@@ -314,6 +310,9 @@ export default Vue.extend({
 
                 return [x[0], y[0]];
             }
+        },
+        onRequestOutput(): void {
+            console.log("Result!");
         },
         onDoubleClick(event: MouseEvent | TouchEvent) {
             const xy = this.touchOrMouseCoordinates(event);
