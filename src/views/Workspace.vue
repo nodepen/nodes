@@ -1,9 +1,15 @@
 <template>
-<div @keyup.space="onRequestOutput" id="workspace">
+<div id="workspace">
+    <div
+    class="three"
+    ref="three"
+    :style="{'width' : w + 'px', 'height': h + 'px'}">
+    </div>
     <div 
     class="svgar" 
     ref="svgar" 
     v-html="svg"
+    @keydown="onRequestOutput"
     @mousedown="onStartTrack"
     @mousemove="onTrack"
     @mouseup="onStopTrack"
@@ -49,6 +55,11 @@
     flex-direction: row;
     justify-content: flex-end;
     flex-wrap: wrap;
+}
+
+.three {
+    position: absolute;
+    z-index: -10;
 }
 
 .component_placer {
@@ -153,6 +164,7 @@ import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import ResthopperDefinition from 'resthopper/dist/models/ResthopperDefinition';
 import SvgarSlab from 'svgar/dist/models/SvgarSlab';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
+import * as THREE from 'three';
 
 import WorkspaceOverlay from './../components/WorkspaceOverlay.vue';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
@@ -200,6 +212,9 @@ export default Vue.extend({
             svgar: {} as SvgarCube,
             definition: {} as ResthopperDefinition,
             map: {} as ClasshopperMapping,
+            camera: {},
+            renderer: {},
+            scene: {},
         }
     },
     created() {
@@ -226,20 +241,43 @@ export default Vue.extend({
 
         this.definition = def;
 
-        //console.log(def.compile());
-        //console.log(JSON.stringify(def.toRequest()));
+        // set up three.js
 
-        // this.$http.post(`http://localhost:8081/grasshopper`, JSON.stringify(def.toRequest()))
-        // .then(x => {
-        //     console.log(Resthopper.Parse.ResthopperSchemaAsOutputValue(x.data));
-        // })
-        // .catch(err => {
-        //     console.log(err)
-        // });
+        this.camera = THREE.PerspectiveCamera;
+        this.renderer = new THREE.WebGLRenderer();
+        this.scene = new THREE.Scene();
     },
     mounted() {
         this.resizeSvgar();
         window.addEventListener('resize', this.resizeSvgar);
+
+        const el = this.$refs.three as Element;
+        this.camera = new THREE.PerspectiveCamera(
+        75,
+        this.w / this.h,
+        0.1,
+        1000
+        );
+        this.renderer.setSize(this.w, this.h);
+        el.appendChild(this.renderer.domElement);
+
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+        const cube = new THREE.Mesh(geometry, material);
+
+        this.scene.add(cube);
+        this.camera.position.z = 5;
+        
+        const animate = () => {
+        requestAnimationFrame(animate);
+
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
+        this.renderer.render(this.scene, this.camera);
+        };
+
+        animate();
 
         //Update().svgar.cube(this.svgar).camera.extentsTo(-15, -20, 45, 20);
     },

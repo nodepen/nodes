@@ -58,7 +58,7 @@
 	height: 100%;
 	flex-grow: 1;
 
-	background: var(--bl);
+	background: none;
 }
 
 #nav {
