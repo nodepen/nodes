@@ -5,7 +5,7 @@
 		</div>
 		<div class="title">
 			<div class="title__main">
-				classhopper
+				glasshopper
 			</div>
 		</div>
 		<div class="user">

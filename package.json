@@ -1,5 +1,5 @@
 {
-  "name": "classhopper",
+  "name": "glasshopper",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -13,6 +13,7 @@
     "core-js": "^3.3.2",
     "register-service-worker": "^1.6.2",
     "resthopper": "^0.2.0",
+    "rhino3dm": "^0.8.1",
     "svgar": "^0.4.3",
     "three": "^0.111.0",
     "vue": "^2.6.10",
