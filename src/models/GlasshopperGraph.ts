@@ -1,17 +1,27 @@
 import ResthopperDefinition from 'resthopper/dist/models/ResthopperDefinition';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
-import GlasshopperGraphObject from './GlasshopperGraphObject';
+import GraphObject from './GlasshopperGraphObject';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 
 export default class GlasshopperGraph {
 
-    private graphObjects: GlasshopperGraphObject[];
+    private graphObjects: GraphObject[];
     private svgar: SvgarCube;
+    public svg: string = "";
 
     constructor() {
         this.svgar = new SvgarCube("glasshopper");
         this.graphObjects = [];
+    }
+
+    public addObject(object: GraphObject): void {
+        this.graphObjects.push(object);
+        this.svgar.slabs.push(object.svgar);
+    }
+
+    public locateObject(guid: string): GraphObject | undefined {
+        return this.graphObjects.find(x => x.guid === guid);
     }
 
     public locateComponent(guid: string): ResthopperComponent | undefined {
@@ -29,6 +39,10 @@ export default class GlasshopperGraph {
         }
 
         return parameters.find(x => x.guid == guid);
+    }
+
+    public redraw(w: number, h: number): void {
+        this.svg = this.svgar.compile(w, h);
     }
 
     public compute(component: string, parameter?: string): void {

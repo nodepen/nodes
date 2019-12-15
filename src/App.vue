@@ -1,12 +1,29 @@
 <template>
 <div id="app">
 	<div id="nav">
-		<div class="branding">
-		</div>
-		<div class="title">
-			<div class="title__main">
-				glasshopper
+		<router-link to="/" class="tab tab--home">
+			<div class="tab__icon--home" :class="{'tab__icon--active' : this.$route.path == '/'}">
 			</div>
+		</router-link>
+		<div class="cat">
+			lab
+		</div>
+		<router-link to="/codex" class="tab">
+			<div class="tab__icon" :class="{'tab__icon--active' : this.$route.path == '/codex'}">
+			</div>
+			<!-- <div class="tab__label" :class="{'tab__label--active' : this.$route.path == '/codex'}">
+				codex
+			</div> -->
+		</router-link>
+		<router-link to="/lab" class="tab">
+			<div class="tab__icon" :class="{'tab__icon--active' : this.$route.path == '/lab'}">
+			</div>
+			<!-- <div class="tab__label" :class="{'tab__label--active' : this.$route.path == '/lab'}">
+				lab
+			</div> -->
+		</router-link>
+		<div class="cat">
+			index
 		</div>
 		<div class="user">
 			<div class="user__icon">
@@ -43,8 +60,6 @@
 
 	box-sizing: border-box;
 
-	padding-left: var(--md);
-
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
@@ -65,12 +80,15 @@
 	width: var(--lg);
 	height: 100%;
 
-	margin-right: var(--md);
+	padding-left: var(--md);
+	padding-right: var(--md);
 
 	display: flex;
 	flex-direction: column;
 	justify-content: flex-start;
 	align-items: center;
+
+	/* box-shadow: 0px 0px 10px gainsboro; */
 }
 
 #nav .branding {
@@ -81,6 +99,71 @@
 	margin-bottom: var(--md);
 
 	background: var(--bl);
+}
+
+a {
+	text-decoration: none;
+}
+
+.cat {
+	width: 100%;
+	height: calc(0.5 * var(--lg));
+	
+	margin-top: var(--md);
+
+	box-sizing: border-box;
+	/* border-top: 1px solid var(--bl);
+	border-bottom: 1px solid var(--bl); */
+
+	text-align: center;
+	line-height: calc(0.5 * var(--lg));
+	vertical-align: middle;
+	color: var(--bl);
+}
+
+.tab {
+	width: var(--lg);
+
+	margin-top: var(--md);
+}
+
+.tab--home {
+	height: var(--lg);
+}
+
+.tab__icon {
+	width: 100%;
+	height: var(--lg);
+
+	box-sizing: border-box;
+	border: 2px solid grey;
+	background: white;
+}
+
+.tab__icon--active {
+	border: 2px solid var(--bl);
+}
+
+.tab__icon--home {
+	width: 100%;
+	height: 100%;
+	box-sizing: border-box;
+
+	border: 2px solid var(--bl);
+}
+
+.tab__label {
+	width: 100%;
+	text-align: center;
+	line-height: var(--md);
+	vertical-align: middle;
+	text-decoration: none;
+	color: var(--bl);
+	box-sizing: border-box;
+}
+
+.tab__label--active {
+	font-weight: bolder;
 }
 
 #nav .title {

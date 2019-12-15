@@ -12,7 +12,7 @@
     "axios": "^0.19.0",
     "core-js": "^3.3.2",
     "register-service-worker": "^1.6.2",
-    "resthopper": "^0.2.0",
+    "resthopper": "^0.2.2",
     "rhino3dm": "^0.8.1",
     "svgar": "^0.4.3",
     "three": "^0.111.0",
@@ -23,6 +23,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-nullish-coalescing-operator": "^7.4.4",
+    "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@types/chai": "^4.1.0",
     "@types/mocha": "^5.2.4",
     "@vue/cli-plugin-babel": "^4.0.0",
