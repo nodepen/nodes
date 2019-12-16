@@ -30,9 +30,7 @@ export default Vue.extend({
         const w = el.clientWidth;
         const h = el.clientHeight;
 
-        const c = Resthopper.ComponentIndex.createComponent('FourPointSurface');
-
-        this.$store.dispatch('addGraphObject', 'FourPointSurface');
+        this.$store.dispatch('addGraphObject', 'Multiply');
 
         this.$store.dispatch('redrawGraph', {w: w, h: h});
     },
@@ -69,5 +67,18 @@ export default Vue.extend({
 .graph {
     width: 500px;
     height: 500px;
+}
+
+path.blackmediumdashed {
+    animation: march 60s linear infinite;
+}
+
+@keyframes march {
+    from {
+        stroke-dashoffset: 1500;
+    }
+    to {
+        stroke-dashoffset: 0;
+    }
 }
 </style>

@@ -15,7 +15,7 @@ export default class GlasshopperGraphObject {
     constructor(component: ResthopperComponent) {
         this.component = component;
         this.component.getAllOutputs().forEach(p => this.cache[p.name] = undefined);
-        this.svgar = new SvgarSlab(`${component.guid.split('-')[0]}${component.name}`);
+        this.svgar = new SvgarSlab(`${component.name}${component.guid.split('-')[0]}`);
         this.guid = newGuid();
     }
 
@@ -31,7 +31,7 @@ export default class GlasshopperGraphObject {
             ?.setSource(source);
     }
 
-    public draw(): void {
+    public draw(state?: string): void {
         // To be overridden by child class
         console.log('from parent');
     }

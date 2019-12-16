@@ -3,39 +3,215 @@ import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import SvgarStyle from 'svgar/dist/models/SvgarStyle';
 import SvgarState from 'svgar/dist/models/SvgarState';
 import Svgar, { Create } from 'svgar';
+import SvgarPath from 'svgar/dist/models/SvgarPath';
+import SvgarText from 'svgar/dist/models/SvgarText';
 
 export default class GenericComponent extends GraphObject {
+
+    private readonly size: number = 5;
+    private x: number;
+    private y: number;
     
     constructor(component: ResthopperComponent) {
         super(component);
-        this.draw();
+        this.x = component.position.x;
+        this.y = component.position.y;
+        this.draw('selected');
     }
 
     // Generate and compile svgar slab information for component
-    public draw(): void {
+    public draw(state?: string): void {
         const svg = this.svgar;
 
-        const x = this.component.position.x;
-        const y = this.component.position.y;
-        const w = 10;
-        const wStep = w / 2;
-        const h = 5;
-        const hStep = h / 2;
+        const x = this.x;
+        const y = this.y;
+        const s = this.size;
+        const sh = 0.21;
+        const wStep = s;
+        const hStep = s / 2;
 
-        const outline = Create().svgar.path
-        .withTag('outline')
-        .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
-            .lineTo(x - wStep, y + hStep)
-            .lineTo(x - wStep, y - hStep)
-            .lineTo(x + wStep, y - hStep)
-            .close())
+        const geometry: SvgarPath[] = [
+            Create().svgar.path
+            .withTag('background')
+            .withElevation(-10)
+            .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
+                .lineTo(x - wStep, y + hStep)
+                .lineTo(x - wStep, y - hStep)
+                .lineTo(x + wStep, y - hStep)
+                .close()),
+            Create().svgar.path
+            .withTag('spacer')
+            .withElevation(0)
+            .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
+                .lineTo(x - wStep, y + hStep)
+                .lineTo(x - wStep, y - hStep)
+                .lineTo(x + wStep, y - hStep)
+                .close()),
+            Create().svgar.path
+            .withTag('shadow')
+            .withElevation(2.5)
+            .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
+                .lineTo(x + wStep, y - hStep)
+                .lineTo(x - wStep, y - hStep)
+                .lineTo(x - wStep + sh, y - hStep - sh)
+                .lineTo(x + wStep + sh, y - hStep - sh)
+                .lineTo(x + wStep + sh, y + hStep - sh)
+                .close()),
+            Create().svgar.path
+            .withTag('outline')
+            .withElevation(3)
+            .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
+                .lineTo(x - wStep, y + hStep)
+                .lineTo(x - wStep, y - hStep)
+                .lineTo(x + wStep, y - hStep)
+                .close()),
+            Create().svgar.path
+            .withTag('outline')
+            .withElevation(7)
+            .from.polyline(new Svgar.Builder.Polyline(x + (hStep / 2), y + hStep)
+                .lineTo(x - (hStep / 2), y + hStep)
+                .lineTo(x - (hStep / 2), y - hStep)
+                .lineTo(x + (hStep / 2), y - hStep)
+                .close()),
+            Create().svgar.path
+            .withTag('icon')
+            .withElevation(10)
+            .from.polyline(new Svgar.Builder.Polyline(x + (s / 8), y + (s / 8))
+                .lineTo(x - (s / 8), y + (s / 8))
+                .lineTo(x - (s / 8), y - (s / 8))
+                .lineTo(x + (s / 8), y - (s / 8))
+                .close()),
+            Create().svgar.path
+            .withTag('spacer')
+            .withElevation(5)
+            .from.polyline(new Svgar.Builder.Polyline(x + (hStep / 2), y + hStep)
+                .lineTo(x + (hStep / 2), y - hStep)),
+            Create().svgar.path
+            .withTag('spacer')
+            .withElevation(5)
+            .from.polyline(new Svgar.Builder.Polyline(x - (hStep / 2), y + hStep)
+                .lineTo(x - (hStep / 2), y - hStep)),
+            Create().svgar.path
+            .withTag('spacer')
+            .withElevation(2)
+            .from.polyline(new Svgar.Builder.Polyline(x - wStep, y + hStep)
+                .lineTo(x - wStep, y - hStep)),
+            Create().svgar.path
+            .withTag('spacer')
+            .withElevation(2)
+            .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
+                .lineTo(x + wStep, y - hStep)),
+            Create().svgar.path
+            .withTag('selection')
+            .withElevation(0)
+            .from.circle(new Svgar.Builder.Circle(x, y, s * 1.5)) 
+        ]
 
-        this.svgar.addPath(outline);
+        const parameters = this.drawParameters();
+
+        this.svgar.setCurrentState(state ?? 'default');
+        this.svgar.setAllGeometry([...geometry, ...parameters]);
         this.svgar.setAllStyles(this.getSvgarStyles());
         this.svgar.setAllStates(this.getSvgarStates());
     }
 
+    private drawParameters(): SvgarPath[] {
+        let dividers: SvgarPath[] = [];
+        let grips: SvgarPath[] = [];
+        let labels: SvgarText[] = [];
+
+        const c = this.component;
+        const x = this.x;
+        const y = this.y;
+        const s = this.size;
+        const inputs = this.component.getAllInputs();
+        const inputCount = this.component.getInputCount();
+        const inputStep = s / inputCount;
+        const outputs = this.component.getAllOutputs();
+        const outputCount = this.component.getOutputCount();
+        const outputStep = s / outputCount;
+
+        for (let i = 0; i < inputCount; i++) {
+            const p = inputs[i];
+            const yDelta = inputStep * (i + 1); 
+            let xPosition = x - s;
+            let yPosition = y + (s / 2) - yDelta;
+
+            if (i != inputCount - 1) {
+                dividers.push(
+                    Create().svgar.path
+                    .withTag('divider')
+                    .withElevation(1)
+                    .from.polyline(new Svgar.Builder.Polyline(xPosition, yPosition)
+                        .lineTo(x - (s / 4), yPosition))
+                )
+            }
+
+            grips.push(
+                Create().svgar.path
+                .withTag('grip')
+                .withElevation(10)
+                .from.circle(new Svgar.Builder.Circle(xPosition, yPosition + (inputStep / 2), 0.25))
+            )
+
+            labels.push(
+                {
+                    text: p.nickName,
+                    position: {
+                        x: xPosition + (s / 10),
+                        y: yPosition + (inputStep / 2) + 0.25,
+                    },
+                    elevation: 10,
+                    tag: 'inputlabel'
+                }
+            )
+        }
+
+        for (let i = 0; i < outputCount; i++) {
+            const p = outputs[i];
+            const yDelta = outputStep * (i + 1);
+            let xPosition = x + s;
+            let yPosition = y + (s / 2) - yDelta;
+
+            if (i != inputCount - 1) {
+                dividers.push(
+                    Create().svgar.path
+                    .withTag('divider')
+                    .withElevation(1)
+                    .from.polyline(new Svgar.Builder.Polyline(xPosition, yPosition)
+                        .lineTo(x + (s / 4), yPosition))
+                )
+            }
+
+            grips.push(
+                Create().svgar.path
+                .withTag('grip')
+                .withElevation(10)
+                .from.circle(new Svgar.Builder.Circle(xPosition, yPosition + (outputStep / 2), 0.25))
+            )
+
+            labels.push(
+                {
+                    text: p.nickName,
+                    position: {
+                        x: xPosition - (s / 10),
+                        y: yPosition + (outputStep / 2) + 0.25,
+                    },
+                    elevation: 10,
+                    tag: 'outputlabel'
+                }
+            )
+        }
+
+        this.svgar.setAllText(labels);
+
+        return [...dividers, ...grips];
+    }
+
     private getSvgarStyles(): SvgarStyle[] {
+        const heavy = '2.1mm';
+        const medium = '0.7mm';
+
         return [
             {
                 name: 'default',
@@ -45,11 +221,100 @@ export default class GenericComponent extends GraphObject {
                 }
             },
             {
-                name: 'strokenofill',
+                name: 'whitefill',
+                attributes: {
+                    'stroke': 'none',
+                    'stroke-width': '0px',
+                    'fill': 'white'
+                }
+            },
+            {
+                name: 'greyfill',
+                attributes: {
+                    'stroke': 'none',
+                    'stroke-width': '0px',
+                    'fill': 'grey'
+                }
+            },
+            {
+                name: 'greymedium',
+                attributes: {
+                    'stroke': 'gainsboro',
+                    'stroke-width': medium,
+                    'fill': 'none',
+                    'pointer-events': 'none'
+                }
+            },
+            {
+                name: 'whitefill:hover',
+                attributes: {
+                    'stroke': 'none',
+                    'stroke-width': '0px',
+                    'fill': 'grey'
+                }
+            },
+            {
+                name: 'blackmedium',
                 attributes: {
                     'stroke': 'black',
-                    'stroke-width': '2px',
-                    'fill': 'none'
+                    'stroke-width': medium,
+                    'fill': 'none',
+                    'pointer-events': 'none'
+                }
+            },
+            {
+                name: 'blackmediumdashed',
+                attributes: {
+                    'stroke': 'black',
+                    'stroke-width': medium,
+                    'stroke-dasharray': heavy,
+                    'fill': 'none',
+                }
+            },
+            {
+                name: 'blackmediumwhitefill',
+                attributes: {
+                    'stroke': 'black',
+                    'stroke-width': medium,
+                    'fill': 'white'
+                }
+            },
+            {
+                name: 'whiteheavy',
+                attributes: {
+                    'stroke': 'white',
+                    'stroke-width': heavy,
+                    'fill': 'none',
+                    'stroke-linecap': 'square',
+                    'pointer-events': 'none'
+                }
+            },
+            {
+                name: "labelfontleftalign",
+                attributes: {
+                    "font": "0.75px 'Nova Mono'",
+                    "font-weight": "bold",
+                    "fill": "black",
+                    "pointer-events": "none",
+                    "user-select": "none",
+                    "text-anchor": "start",
+                }
+            },
+            {
+                name: "labelfontrightalign",
+                attributes: {
+                    "font": "0.75px 'Nova Mono'",
+                    "font-weight": "bold",
+                    "fill": "black",
+                    "pointer-events": "none",
+                    "user-select": "none",
+                    "text-anchor": "end",
+                }
+            },
+            {
+                name: 'hidden',
+                attributes: {
+                    'display': 'none',
                 }
             }
         ]
@@ -60,8 +325,62 @@ export default class GenericComponent extends GraphObject {
             { 
                 name: 'default', 
                 styles: { 
-                    'outline': 'strokenofill' 
+                    'background': 'whitefill',
+                    'shadow': 'greymedium',
+                    'outline': 'blackmedium',
+                    'divider': 'blackmedium',
+                    'icon': 'blackmediumwhitefill',
+                    'grip': 'blackmediumwhitefill',
+                    'spacer': 'whiteheavy',
+                    'selection': 'hidden',
+                    'inputlabel': 'labelfontleftalign',
+                    'outputlabel': 'labelfontrightalign',
                 } 
+            },
+            {
+                name: 'hidden',
+                styles: {
+                    'background': 'greyfill',
+                    'shadow': 'greymedium',
+                    'outline': 'blackmedium',
+                    'divider': 'blackmedium',
+                    'icon': 'blackmediumwhitefill',
+                    'grip': 'blackmediumwhitefill',
+                    'spacer': 'whiteheavy',
+                    'selection': 'hidden',
+                    'inputlabel': 'labelfontleftalign',
+                    'outputlabel': 'labelfontrightalign',
+                }
+            },
+            {
+                name: 'selected',
+                styles: {
+                    'background': 'whitefill',
+                    'shadow': 'greymedium',
+                    'outline': 'blackmedium',
+                    'divider': 'blackmedium',
+                    'icon': 'blackmediumwhitefill',
+                    'grip': 'blackmediumwhitefill',
+                    'spacer': 'whiteheavy',
+                    'selection': 'blackmediumdashed',
+                    'inputlabel': 'labelfontleftalign',
+                    'outputlabel': 'labelfontrightalign',                   
+                }
+            },
+            {
+                name: 'selectedhidden',
+                styles: {
+                    'background': 'greyfill',
+                    'shadow': 'greymedium',
+                    'outline': 'blackmedium',
+                    'divider': 'blackmedium',
+                    'icon': 'blackmediumwhitefill',
+                    'grip': 'blackmediumwhitefill',
+                    'spacer': 'whiteheavy',
+                    'selection': 'blackmediumdashed',
+                    'inputlabel': 'labelfontleftalign',
+                    'outputlabel': 'labelfontrightalign', 
+                }
             }
         ];
     }
