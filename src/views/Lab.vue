@@ -51,7 +51,6 @@ export default Vue.extend({
         this.h = h;
 
         this.$store.dispatch('addGraphObject', 'Multiply');
-
         this.$store.dispatch('redrawGraph', {w: w, h: h});
     },
     computed: {
@@ -101,8 +100,6 @@ export default Vue.extend({
 
     display: flex;
     flex-direction: row;
-
-    background: #FCFCFC;
 }
 
 .graph__svg {

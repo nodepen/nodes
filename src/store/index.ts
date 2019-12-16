@@ -13,6 +13,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     index: [] as ResthopperComponent[],
+    allCategories: [] as string[],
     component: {} as ResthopperComponent | undefined,
     parameter: {} as ResthopperParameter | undefined,
     currentGraph: {} as GlasshopperGraph,
@@ -27,6 +28,9 @@ export default new Vuex.Store({
     cacheComponentIndex(state, components: ResthopperComponent[]) {
       state.index = components;
     },
+    cacheComponentCategories(state, categories: string[]) {
+      state.allCategories = categories;
+    },
     addGraphObject(state, object: GlasshopperGraphObject) {
       state.currentGraph.addObject(object);
     },
@@ -40,8 +44,19 @@ export default new Vuex.Store({
   actions: {
     loadAllComponents(context) {
       if (context.state.index.length == 0) {
-        context.commit('cacheComponentIndex', Resthopper.ComponentIndex.getAllComponents());
+        const components = Resthopper.ComponentIndex.getAllComponents();
+        context.commit('cacheComponentIndex', components);
       }
+
+      let categories: string[] = [];
+
+      context.state.index.forEach(c => {
+        if (!categories.includes(c.category)) {
+          categories.push(c.category);
+        }
+      });
+
+      context.commit('cacheComponentCategories', categories);
     },
     initializeGraph(context) {
       context.commit('initializeGraph');
