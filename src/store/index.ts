@@ -1,11 +1,12 @@
 import Vue from 'vue'
-import Vuex from 'vuex'
+import Vuex, { ActionContext } from 'vuex'
 import Resthopper from 'resthopper';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 import GlasshopperGraph from '@/models/GlasshopperGraph';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
 import GlasshopperGraphObject from '@/models/GlasshopperGraphObject';
+import { getGraphObjectByComponent } from '@/services/GraphObjectService';
 
 Vue.use(Vuex)
 
@@ -28,6 +29,12 @@ export default new Vuex.Store({
     },
     addGraphObject(state, object: GlasshopperGraphObject) {
       state.currentGraph.addObject(object);
+    },
+    initializeGraph(state) {
+      state.currentGraph = new GlasshopperGraph();
+    },
+    redrawGraph(state: any, s: { w: number, h: number }) {
+      state.currentGraph.redraw(s.w, s.h);
     }
   },
   actions: {
@@ -36,10 +43,19 @@ export default new Vuex.Store({
         context.commit('cacheComponentIndex', Resthopper.ComponentIndex.getAllComponents());
       }
     },
-    addGraphObject(context, component: GrasshopperComponent, position: {x: number, y: number} = {x: 0, y: 0}) {
+    initializeGraph(context) {
+      context.commit('initializeGraph');
+    },
+    addGraphObject(context, component: GrasshopperComponent) {
       const c = Resthopper.ComponentIndex.createComponent(component);
+      const graphObject = getGraphObjectByComponent(c);
+
+      context.commit('addGraphObject', graphObject);
       // Locate graph object class with service
       // Add to graph
+    },
+    redrawGraph(context: any, s: { w: number, h: number }) {
+      context.commit('redrawGraph', s);
     }
   },
   modules: {

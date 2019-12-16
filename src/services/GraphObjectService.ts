@@ -4,7 +4,7 @@ import GenericComponent from './../models/components/GenericComponent';
 import Resthopper from 'resthopper';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 
-function getGraphObjectByComponent(component: ResthopperComponent): GlasshopperGraphObject {
+export function getGraphObjectByComponent(component: ResthopperComponent): GlasshopperGraphObject {
     switch(component.name) {
         default:
             return new GenericComponent(component);

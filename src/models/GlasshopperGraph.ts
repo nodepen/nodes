@@ -9,6 +9,9 @@ export default class GlasshopperGraph {
     private graphObjects: GraphObject[];
     private svgar: SvgarCube;
     public svg: string = "";
+    
+    private w: number = 100;
+    private h: number = 100;
 
     constructor() {
         this.svgar = new SvgarCube("glasshopper");
@@ -18,6 +21,7 @@ export default class GlasshopperGraph {
     public addObject(object: GraphObject): void {
         this.graphObjects.push(object);
         this.svgar.slabs.push(object.svgar);
+        this.redraw(this.w, this.h);
     }
 
     public locateObject(guid: string): GraphObject | undefined {
@@ -41,8 +45,16 @@ export default class GlasshopperGraph {
         return parameters.find(x => x.guid == guid);
     }
 
+    public setCamera(x: number, y: number, w: number, h: number): void {
+        this.svgar.frame([x, y], w, h);
+    }
+
     public redraw(w: number, h: number): void {
+        this.svgar.flag('root');
         this.svg = this.svgar.compile(w, h);
+
+        this.w = w;
+        this.h = h;
     }
 
     public compute(component: string, parameter?: string): void {

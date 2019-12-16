@@ -1,6 +1,8 @@
 <template>
     <div id="lab">
         <div class="window">
+            <div class="graph" ref="svgar" v-html="svg">
+            </div>
         </div>
     </div>
 </template>
@@ -8,19 +10,38 @@
 <script lang="ts">
 import Vue from 'vue'
 import GenericComponent from './../models/components/GenericComponent';
+import GlasshopperGraph from './../models/GlasshopperGraph';
 import Resthopper from 'resthopper';
 
 export default Vue.extend({
     data() {
         return {
-
+            
         }
     },
     created() {
         this.$store.dispatch('loadAllComponents');
+        this.$store.dispatch('initializeGraph');
+
+        (<GlasshopperGraph>this.$store.state.currentGraph).setCamera(0, 0, 20, 20);
+    },
+    mounted() {
+        const el = <Element>this.$refs.svgar;
+        const w = el.clientWidth;
+        const h = el.clientHeight;
 
         const c = Resthopper.ComponentIndex.createComponent('FourPointSurface');
-        const g = new GenericComponent(c);
+
+        this.$store.dispatch('addGraphObject', 'FourPointSurface');
+
+        this.$store.dispatch('redrawGraph', {w: w, h: h});
+    },
+    computed: {
+        svg(): string {
+            const g = this.$store.state.currentGraph;
+
+            return g.svg;
+        }
     }
     
 })
@@ -43,5 +64,10 @@ export default Vue.extend({
 
     box-sizing: border-box;
     border-left: 1px solid grey;
+}
+
+.graph {
+    width: 500px;
+    height: 500px;
 }
 </style>
