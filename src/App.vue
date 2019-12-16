@@ -5,9 +5,6 @@
 			<div class="tab__icon--home" :class="{'tab__icon--active' : this.$route.path == '/'}">
 			</div>
 		</router-link>
-		<div class="cat">
-			lab
-		</div>
 		<router-link to="/codex" class="tab">
 			<div class="tab__icon" :class="{'tab__icon--active' : this.$route.path == '/codex'}">
 			</div>
@@ -22,9 +19,6 @@
 				lab
 			</div> -->
 		</router-link>
-		<div class="cat">
-			index
-		</div>
 		<div class="user">
 			<div class="user__icon">
 			</div>
@@ -128,7 +122,9 @@ a {
 }
 
 .tab--home {
-	height: var(--lg);
+	padding-bottom: var(--md);
+	border-bottom: 1px solid gainsboro;
+	box-sizing: border-box;
 }
 
 .tab__icon {
@@ -146,7 +142,7 @@ a {
 
 .tab__icon--home {
 	width: 100%;
-	height: 100%;
+	height: var(--lg);
 	box-sizing: border-box;
 
 	border: 2px solid var(--bl);

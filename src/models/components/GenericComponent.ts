@@ -33,7 +33,7 @@ export default class GenericComponent extends GraphObject {
         const geometry: SvgarPath[] = [
             Create().svgar.path
             .withTag('background')
-            .withElevation(-10)
+            .withElevation(-8)
             .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
                 .lineTo(x - wStep, y + hStep)
                 .lineTo(x - wStep, y - hStep)
@@ -47,16 +47,16 @@ export default class GenericComponent extends GraphObject {
                 .lineTo(x - wStep, y - hStep)
                 .lineTo(x + wStep, y - hStep)
                 .close()),
-            Create().svgar.path
-            .withTag('shadow')
-            .withElevation(2.5)
-            .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
-                .lineTo(x + wStep, y - hStep)
-                .lineTo(x - wStep, y - hStep)
-                .lineTo(x - wStep + sh, y - hStep - sh)
-                .lineTo(x + wStep + sh, y - hStep - sh)
-                .lineTo(x + wStep + sh, y + hStep - sh)
-                .close()),
+            // Create().svgar.path
+            // .withTag('shadow')
+            // .withElevation(-5)
+            // .from.polyline(new Svgar.Builder.Polyline(x + wStep, y + hStep)
+            //     .lineTo(x + wStep, y - hStep)
+            //     .lineTo(x - wStep, y - hStep)
+            //     .lineTo(x - wStep + sh, y - hStep - sh)
+            //     .lineTo(x + wStep + sh, y - hStep - sh)
+            //     .lineTo(x + wStep + sh, y + hStep - sh)
+            //     .close()),
             Create().svgar.path
             .withTag('outline')
             .withElevation(3)
@@ -103,7 +103,7 @@ export default class GenericComponent extends GraphObject {
                 .lineTo(x + wStep, y - hStep)),
             Create().svgar.path
             .withTag('selection')
-            .withElevation(0)
+            .withElevation(-10)
             .from.circle(new Svgar.Builder.Circle(x, y, s * 1.5)) 
         ]
 
@@ -225,7 +225,8 @@ export default class GenericComponent extends GraphObject {
                 attributes: {
                     'stroke': 'none',
                     'stroke-width': '0px',
-                    'fill': 'white'
+                    'fill': 'white',
+                    'filter': 'drop-shadow(0px 2px 7px gainsboro)'
                 }
             },
             {
@@ -241,7 +242,7 @@ export default class GenericComponent extends GraphObject {
                 attributes: {
                     'stroke': 'gainsboro',
                     'stroke-width': medium,
-                    'fill': 'none',
+                    'fill': 'gainsboro',
                     'pointer-events': 'none'
                 }
             },
@@ -268,7 +269,7 @@ export default class GenericComponent extends GraphObject {
                     'stroke': 'black',
                     'stroke-width': medium,
                     'stroke-dasharray': heavy,
-                    'fill': 'none',
+                    'fill': 'white',
                 }
             },
             {
