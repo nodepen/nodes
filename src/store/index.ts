@@ -73,19 +73,14 @@ export default new Vuex.Store({
     initializeGraph(context) {
       context.commit('initializeGraph');
     },
-    addGraphObject(context, component: GrasshopperComponent) {
-      const c = Resthopper.ComponentIndex.createComponent(component);
-      const graphObject = getGraphObjectByComponent(c);
-
+    addGraphObject(context, component: ResthopperComponent) {
+      const graphObject = getGraphObjectByComponent(component);
       context.commit('addGraphObject', graphObject);
       // Locate graph object class with service
       // Add to graph
     },
     redrawGraph(context: any, s: { w: number, h: number }) {
       context.commit('redrawGraph', s);
-
-      // TODO: so bad, but it works for now
-      setTimeout(() => context.commit('activateEvents'), 50);
     }
   },
   modules: {

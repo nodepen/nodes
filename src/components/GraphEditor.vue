@@ -12,6 +12,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import { Update } from 'svgar';
+import Resthopper from 'resthopper';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
 import Graph from './../models/GlasshopperGraph';
 
@@ -46,16 +47,25 @@ export default Vue.extend({
 	mounted() {
 		const el = <Element>this.$refs.svgar;
 		this.w = el.clientWidth;
-		this.h = el.clientHeight;
+        this.h = el.clientHeight;
+        
+        const construct = Resthopper.ComponentIndex.createComponent('ConstructPoint');
+        construct.position = {x: -4, y: 0}
+        this.$store.dispatch('addGraphObject', construct);
 
-        this.$store.dispatch('addGraphObject', 'Multiply');
+        const deconstruct = Resthopper.ComponentIndex.createComponent('Deconstruct');
+        deconstruct.position = {x: 11, y: 0}
+        this.$store.dispatch('addGraphObject', deconstruct);
 
         (<Graph>this.$store.state.currentGraph).graphObjects.forEach((x:any) => x.attachToComponent('pointerdown', this.test));
 
         this.$store.dispatch('redrawGraph', {w: this.w, h: this.h});
 
         this.svgar = this.$store.state.currentGraph.svgar;
-	},
+    },
+    updated() {
+        this.svgar.listen();
+    },
 	computed: {
         svg(): string {
             const g = this.$store.state.currentGraph;
@@ -82,7 +92,7 @@ export default Vue.extend({
         },
         onTrack(event: PointerEvent): void {
             const time = Date.now();
-            if (time - this.prev < 50) {
+            if (time - this.prev < 25) {
                 return;
             }
 
@@ -94,7 +104,7 @@ export default Vue.extend({
 
             const svgarB = this.svgar.mapPageCoordinateToSvgarCoordinate(this.xb, this.yb);
 
-            if (this.state == 'movingCamera') {
+            if (this.state === 'movingCamera') {
                 const svgarA = this.svgar.mapPageCoordinateToSvgarCoordinate(this.xa, this.ya);
 
                 const dx = -(svgarB[0] - svgarA[0]);
@@ -112,7 +122,6 @@ export default Vue.extend({
         onEndTrack(event: PointerEvent): void {
             this.prev = 0;
             this.state = 'idle';
-            console.log('end');
         },
         onStartWire(event: PointerEvent): void {
 

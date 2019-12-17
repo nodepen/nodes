@@ -16,7 +16,7 @@ export default class GenericComponent extends GraphObject {
         super(component);
         this.x = component.position.x;
         this.y = component.position.y;
-        this.draw('selected');
+        this.draw('default');
     }
 
     public attachToComponent(event: string, callback: () => any): void {
@@ -178,7 +178,7 @@ export default class GenericComponent extends GraphObject {
             let xPosition = x + s;
             let yPosition = y + (s / 2) - yDelta;
 
-            if (i != inputCount - 1) {
+            if (i != outputCount - 1) {
                 dividers.push(
                     Create().svgar.path
                     .withTag('divider')
