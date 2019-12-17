@@ -70,11 +70,8 @@ a {
 	color: black;
 }
 
-#graph {
-	position: absolute;
-	width: 100vw;
-	height: 100vh;
-	z-index: -10;
+body {
+	pointer-events: none;
 }
 
 #app {
@@ -82,6 +79,8 @@ a {
 	font-weight: bold;
 
 	box-sizing: border-box;
+
+	pointer-events: none;
 
 	width: 100vw;
 	height: 100vh;
@@ -92,10 +91,15 @@ a {
 	justify-content: flex-start;
 }
 
+#app * {
+	pointer-events: all;
+}
+
 #content {
 	width: 100%;
 	flex-grow: 1;
 	background: none;
+	pointer-events: none;
 }
 
 nav {

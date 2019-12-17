@@ -19,6 +19,11 @@ export default class GenericComponent extends GraphObject {
         this.draw('selected');
     }
 
+    public attachToComponent(event: string, callback: () => any): void {
+        const paths: SvgarPath[] = this.svgar.getAllGeometry().filter(p => p.getTag() == 'icon' || p.getTag() == 'background');
+        paths.forEach(p => p.attach(event, callback));
+    }
+
     // Generate and compile svgar slab information for component
     public draw(state?: string): void {
         const svg = this.svgar;
@@ -226,7 +231,6 @@ export default class GenericComponent extends GraphObject {
                     'stroke': 'none',
                     'stroke-width': '0px',
                     'fill': 'white',
-                    'filter': 'drop-shadow(0px 2px 7px gainsboro)'
                 }
             },
             {

@@ -10,9 +10,18 @@ import { getGraphObjectByComponent } from '@/services/GraphObjectService';
 
 Vue.use(Vuex)
 
+interface GraphMapping {
+  [svgarGuid: string]: {
+      objectGuid: string,
+      componentGuid: string,
+      parameterGuid: string,
+  }
+}
+
 export default new Vuex.Store({
   state: {
     index: [] as ResthopperComponent[],
+    map: {} as GraphMapping,
     allCategories: [] as string[],
     component: {} as ResthopperComponent | undefined,
     parameter: {} as ResthopperParameter | undefined,
@@ -39,6 +48,9 @@ export default new Vuex.Store({
     },
     redrawGraph(state: any, s: { w: number, h: number }) {
       state.currentGraph.redraw(s.w, s.h);
+    },
+    activateEvents(state) {
+      state.currentGraph.svgar.listen();
     }
   },
   actions: {
@@ -71,6 +83,9 @@ export default new Vuex.Store({
     },
     redrawGraph(context: any, s: { w: number, h: number }) {
       context.commit('redrawGraph', s);
+
+      // TODO: so bad, but it works for now
+      setTimeout(() => context.commit('activateEvents'), 50);
     }
   },
   modules: {

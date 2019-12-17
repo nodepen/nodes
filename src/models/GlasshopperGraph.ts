@@ -6,8 +6,8 @@ import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 
 export default class GlasshopperGraph {
 
-    private graphObjects: GraphObject[];
-    private svgar: SvgarCube;
+    public graphObjects: GraphObject[];
+    public svgar: SvgarCube;
     public svg: string = "";
     
     private w: number = 100;

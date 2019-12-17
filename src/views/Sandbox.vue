@@ -34,6 +34,8 @@ export default Vue.extend({
     width: 100%;
     height: 100%;
 
+    pointer-events: none;
+
     box-sizing: border-box;
     padding: var(--md);
 
@@ -54,6 +56,7 @@ export default Vue.extend({
 
 .toolbar {
     width: 100%;
+    pointer-events: all;
 
     display: flex;
     flex-direction: row;
