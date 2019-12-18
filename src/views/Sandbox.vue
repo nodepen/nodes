@@ -8,7 +8,7 @@
                 :class="{'toolbar__category--active' : selectedCategory === category.name}" 
                 :style="{'animation-delay': `${index * 0.1}s`}"
                 class="toolbar__category"
-                @click="selectedCategory = category.name">
+                @click="onSelectCategory($event, category.name)">
                     {{category.name.toLowerCase()}}
                 </div>
             </div>
@@ -56,6 +56,12 @@ export default Vue.extend({
             return (<GrasshopperCategory[]>this.$store.state.configuration)
                 .find(x => x.name === this.selectedCategory)!.subCategories
                 .find(x => x.name === this.selectedSubCategory)!;
+        }
+    },
+    methods: {
+        onSelectCategory(event: any, category: string): void {
+            this.selectedCategory = category;
+            this.selectedSubCategory = '';
         }
     }
 })
