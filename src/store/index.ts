@@ -7,6 +7,7 @@ import GlasshopperGraph from '@/models/GlasshopperGraph';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
 import GlasshopperGraphObject from '@/models/GlasshopperGraphObject';
 import { getGraphObjectByComponent } from '@/services/GraphObjectService';
+import GrasshopperCategory from '@/models/GrasshopperCategory';
 
 Vue.use(Vuex)
 
@@ -22,6 +23,7 @@ export default new Vuex.Store({
   state: {
     index: [] as ResthopperComponent[],
     map: {} as GraphMapping,
+    configuration: [] as GrasshopperCategory[],
     allCategories: [] as string[],
     component: {} as ResthopperComponent | undefined,
     parameter: {} as ResthopperParameter | undefined,
@@ -39,6 +41,9 @@ export default new Vuex.Store({
     },
     cacheComponentCategories(state, categories: string[]) {
       state.allCategories = categories;
+    },
+    cacheConfiguration(state, categories: GrasshopperCategory[]) {
+      state.configuration = categories;
     },
     addGraphObject(state, object: GlasshopperGraphObject) {
       state.currentGraph.addObject(object);
@@ -60,15 +65,35 @@ export default new Vuex.Store({
         context.commit('cacheComponentIndex', components);
       }
 
-      let categories: string[] = [];
+      let configuration: GrasshopperCategory[] = [];
 
       context.state.index.forEach(c => {
-        if (!categories.includes(c.category)) {
-          categories.push(c.category);
+        // Instatiate top-level category if it does not already exist
+        if (!configuration.map(x => x.name).includes(c.category)) {
+          configuration.push({
+            name: c.category,
+            subCategories: []
+          })
         }
+
+        const category = configuration.find(x => x.name == c.category)!;
+
+        // Instantiate subcategory if it does not already exist
+        if (!category.subCategories.map(x => x.name).includes(c.subCategory)) {
+          category.subCategories.push({
+            name: c.subCategory,
+            components: []
+          })
+        }
+
+        const subCategory = category.subCategories.find(x => x.name == c.subCategory)!;
+
+        // Add component to subcategory
+        subCategory.components.push({ name: c.name });
+        
       });
 
-      context.commit('cacheComponentCategories', categories);
+      context.commit('cacheConfiguration', configuration);
     },
     initializeGraph(context) {
       context.commit('initializeGraph');
