@@ -39,7 +39,7 @@
         </div>
         <div 
         class="toolbar__preview"
-        v-if="isPreviewComponent"
+        v-if="isPreviewComponent && !isPlacingComponent"
         :style="{'left': previewPosition.x + 'px', 'top': previewPosition.y + 'px'}">
             {{stagedComponentName}}
         </div>
@@ -57,6 +57,7 @@ import Resthopper from 'resthopper';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import GrasshopperCategory from './../models/GrasshopperCategory';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
+import SvgarCube from 'svgar/dist/models/SvgarCube';
 
 export default Vue.extend({
     data() {
@@ -84,7 +85,7 @@ export default Vue.extend({
                 .find(x => x.name === this.selectedSubCategory)!;
         },
         stagedComponentName(): string {
-            return `${this.stagedComponent.name.toLowerCase()}`;
+            return `${this.stagedComponent!.name.toLowerCase()}`;
         }
     },
     methods: {
@@ -132,6 +133,18 @@ export default Vue.extend({
             this.prev = d;
         },
         onStopTrack(event: PointerEvent): void {
+            if (this.isPlacingComponent) {
+                const svgarPosition = (<SvgarCube>this.$store.state.currentGraph.svgar)
+                    .mapPageCoordinateToSvgarCoordinate(this.placingPosition.x, this.placingPosition.y);
+                
+                this.stagedComponent!.position = {
+                    x: svgarPosition[0],
+                    y: svgarPosition[1]
+                }
+
+                this.$store.dispatch('addGraphObject', this.stagedComponent)
+            }
+
             this.isPlacingComponent = false;
             this.placingPosition = {x: 0, y: 0};
             this.prev = 0;
@@ -183,6 +196,7 @@ export default Vue.extend({
     display: flex;
     flex-direction: row;
     margin-bottom: var(--sm);
+    user-select: none;
 
     overflow-x: auto;
 }

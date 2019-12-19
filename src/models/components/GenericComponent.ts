@@ -164,7 +164,7 @@ export default class GenericComponent extends GraphObject {
                     text: p.nickName,
                     position: {
                         x: xPosition + (s / 10),
-                        y: yPosition + (inputStep / 2) + 0.25,
+                        y: -1 * (yPosition + (inputStep / 2) - 0.25),
                     },
                     elevation: 10,
                     tag: 'inputlabel'
@@ -200,7 +200,7 @@ export default class GenericComponent extends GraphObject {
                     text: p.nickName,
                     position: {
                         x: xPosition - (s / 10),
-                        y: yPosition + (outputStep / 2) + 0.25,
+                        y: -1 * (yPosition + (outputStep / 2) - 0.25),
                     },
                     elevation: 10,
                     tag: 'outputlabel'
