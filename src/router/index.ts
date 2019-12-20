@@ -24,7 +24,7 @@ const routes = [
   {
     path: '/lab',
     name: 'lab',
-    component: Lab
+    component: Workspace
   }
 ]
 

@@ -212,9 +212,9 @@ export default Vue.extend({
             svgar: {} as SvgarCube,
             definition: {} as ResthopperDefinition,
             map: {} as ClasshopperMapping,
-            camera: {},
-            renderer: {},
-            scene: {},
+            camera: {} as any,
+            renderer: {} as any,
+            scene: {} as any,
         }
     },
     created() {
