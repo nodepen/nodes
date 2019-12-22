@@ -4,7 +4,7 @@
     ref="svgar" 
     v-html="svg"
     @pointerdown="onStartTrack"
-    @pointermove.prevent="onTrack"
+    @pointermove="onTrack"
     @pointerup="onEndTrack">
     </div>
 </template>
@@ -23,6 +23,7 @@ export default Vue.extend({
         return {
             w: 0,
             h: 0,
+            r: 25,
             xi: 0,
             yi: 0,
             xa: 0,
@@ -48,8 +49,14 @@ export default Vue.extend({
 		const el = <Element>this.$refs.svgar;
 		this.w = el.clientWidth;
         this.h = el.clientHeight;
+
+        if (this.h > this.w) {
+            const graph: any = this.$store.state.currentGraph;
+            graph.setCamera(0, 0, 20, 20);
+            graph.svgar.flag('root');
+        }
         
-        const construct = Resthopper.ComponentIndex.createComponent('ConstructPoint');
+        const construct = Resthopper.ComponentIndex.createComponent('Construct Point');
         construct.position = {x: -4, y: 2}
         this.$store.dispatch('addGraphObject', construct);
 
@@ -92,9 +99,11 @@ export default Vue.extend({
         },
         onTrack(event: PointerEvent): void {
             const time = Date.now();
-            if (time - this.prev < 25) {
+            if (time - this.prev < this.r) {
                 return;
             }
+
+            event.preventDefault();
 
             const x = event.pageX;
             const y = event.pageY;
@@ -137,6 +146,7 @@ export default Vue.extend({
 	height: 100vh;
 	z-index: -10;
     background: white;
+    touch-action: none;
 }
 
 </style>

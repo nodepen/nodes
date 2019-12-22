@@ -229,7 +229,7 @@ export default Vue.extend({
         n.position = { x: -5, y: 1 }
         n.isUserInput = true;
 
-        let pt = ci.createComponent("ConstructPoint");
+        let pt = ci.createComponent("Construct Point");
         pt.position = { x: 15, y: 0 };
 
         let m = ci.createComponent("Multiplication");

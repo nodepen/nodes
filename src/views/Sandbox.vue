@@ -1,6 +1,6 @@
 <template>
-    <div id="sandbox" :style="{'pointer-events': isPlacingComponent ? 'all' : 'inherit'}" @pointerup="onStopTrack" @pointermove="onTrack">
-        <div class="toolbar">
+    <div id="sandbox" :style="{'pointer-events': isPlacingComponent ? 'all' : 'inherit', 'touch-action': isPlacingComponent ? 'none' : 'inherit'}" @pointerup="onStopTrack" @pointermove="onTrack">
+        <div class="toolbar" :style="{'pointer-events': isPlacingComponent ? 'none' : 'inherit', 'touch-action': isPlacingComponent ? 'none' : 'inherit'}">
             <div class="toolbar__categories">
                 <div 
                 v-for="(category, index) in categories" 
@@ -237,6 +237,9 @@ export default Vue.extend({
     border: 0.7mm solid black;
     background: white;
 
+    user-select: none;
+    touch-action: none;
+
     animation-name: drop;
     animation-duration: 0.25s;
     animation-fill-mode: forwards;
@@ -262,6 +265,8 @@ export default Vue.extend({
     width: calc(var(--lg) * 3);
     height: calc(var(--lg) * 3);
     box-sizing: border-box;
+
+    touch-action: none;
 
     border: 0.7mm solid black;
 

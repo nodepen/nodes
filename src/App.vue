@@ -138,6 +138,8 @@ nav {
 	display: flex;
 	flex-direction: row;
 	overflow-x: auto;
+
+	user-select: none;
 }
 
 .tab {
