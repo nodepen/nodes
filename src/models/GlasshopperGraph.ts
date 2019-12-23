@@ -51,7 +51,7 @@ export default class GlasshopperGraph {
 
     public redraw(w: number, h: number): void {
         this.svgar.flag('root');
-        this.svg = this.svgar.compile(w, h);
+        //this.svg = this.svgar.compile(w, h);
 
         this.w = w;
         this.h = h;

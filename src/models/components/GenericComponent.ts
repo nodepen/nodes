@@ -26,9 +26,17 @@ export default class GenericComponent extends GraphObject {
         paths.forEach(p => p.attach(event, callback));
     }
 
+    public redraw(state?: string): void {
+        this.draw(state);
+        this.svgar.compile();
+    }
+
     // Generate and compile svgar slab information for component
     public draw(state?: string): void {
         const svg = this.svgar;
+
+        this.x = this.component.position.x;
+        this.y = this.component.position.y;
 
         const x = this.x;
         const y = this.y;
@@ -132,6 +140,12 @@ export default class GenericComponent extends GraphObject {
         this.svgar.setAllGeometry([...geometry, ...parameters]);
         this.svgar.setAllStyles(this.getSvgarStyles());
         this.svgar.setAllStates(this.getSvgarStates());
+        
+        this.svgar.flag('geometry');
+        this.svgar.flag('state');
+        this.svgar.flag('style');
+
+        this.svgar.compile();
     }
 
     private drawParameters(): SvgarPath[] {

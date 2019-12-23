@@ -16,6 +16,9 @@ import Resthopper from 'resthopper';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
 import Graph from './../models/GlasshopperGraph';
 import GlasshopperGraphMapping from '../models/GlasshopperGraphMapping';
+import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
+import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
+import GlasshopperGraph from './../models/GlasshopperGraph';
 
 type GraphState = 'idle' | 'movingCamera' | 'movingComponent' | 'drawingWire';
 
@@ -31,10 +34,11 @@ export default Vue.extend({
             ya: 0,
             xb: 0,
             yb: 0,
-            moving: true,
+            movingObject: {} as GlasshopperGraphObject,
             state: 'idle' as GraphState,
             prev: 0,
             svgar: {} as SvgarCube,
+            graph: {} as GlasshopperGraph,
         }
     },
     watch: {
@@ -44,7 +48,9 @@ export default Vue.extend({
         this.$store.dispatch('loadAllComponents');
         this.$store.dispatch('initializeGraph');
 
-        (<any>this.$store.state.currentGraph).setCamera(0, 0, 50, 50);
+        this.graph = this.$store.state.currentGraph;
+
+        this.graph.setCamera(0, 0, 50, 50);
 	},
 	mounted() {
 		const el = <Element>this.$refs.svgar;
@@ -70,24 +76,20 @@ export default Vue.extend({
         this.svgar = this.$store.state.currentGraph.svgar;
     },
     updated() {
-        (<Graph>this.$store.state.currentGraph).graphObjects.forEach((x:any) => x.attachToComponent('pointerdown', this.test));
+        (<Graph>this.$store.state.currentGraph).graphObjects.forEach((x:any) => x.attachToComponent('pointerdown', this.onStartMoveComponent));
         this.svgar.listen();
     },
 	computed: {
         svg(): string {
-            const g = this.$store.state.currentGraph;
-
-            return g.svg;
+            return this.graph.svgar.compile(this.w, this.h);
         }
     },
     methods: {
-        test(event: PointerEvent): void {
+        onStartMoveComponent(event: PointerEvent): void {
             const id = (<Element>event.srcElement).id;
             this.state = 'movingComponent';
             const map: GlasshopperGraphMapping = this.$store.state.map;
-            const component = map[id].component;
-
-            console.log(component.name);
+            this.movingObject = map[id].object;
         },
         onStartTrack(event: PointerEvent): void {
             this.prev = Date.now();
@@ -119,19 +121,28 @@ export default Vue.extend({
             this.yb = y;
 
             const svgarB = this.svgar.mapPageCoordinateToSvgarCoordinate(this.xb, this.yb);
+            const svgarA = this.svgar.mapPageCoordinateToSvgarCoordinate(this.xa, this.ya);
+            const dx = -(svgarB[0] - svgarA[0]);
+            const dy = -(svgarB[1] - svgarA[1]);
+
 
             if (this.state === 'movingCamera') {
-                const svgarA = this.svgar.mapPageCoordinateToSvgarCoordinate(this.xa, this.ya);
-
-                const dx = -(svgarB[0] - svgarA[0]);
-                const dy = -(svgarB[1] - svgarA[1]);
-
                 Update().svgar.cube(this.svgar).camera.withPan(dx, dy);
                 this.$store.state.currentGraph.redraw(this.w, this.h);
-
-                this.xa = this.xb;
-                this.ya = this.yb;
             }
+            if (this.state === 'movingComponent') {
+                const c = this.movingObject.component;
+                const start = c.position;
+                c.position = {
+                    x: start.x - dx,
+                    y: start.y - dy,
+                }
+                this.movingObject.draw();
+                //this.graph.redraw(this.w, this.h);
+            }
+
+            this.xa = this.xb;
+            this.ya = this.yb;
 
             this.prev = time;
         },
