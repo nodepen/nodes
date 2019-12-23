@@ -15,7 +15,7 @@ export default class GlasshopperGraphObject {
     constructor(component: ResthopperComponent) {
         this.component = component;
         this.component.getAllOutputs().forEach(p => this.cache[p.name] = undefined);
-        this.svgar = new SvgarSlab(`${component.nickName}${component.guid.split('-')[0]}`);
+        this.svgar = new SvgarSlab(`${component.name.split(' ')[0]}${component.guid.split('-')[0]}`);
         this.guid = newGuid();
     }
 

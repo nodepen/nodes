@@ -5,6 +5,8 @@ import SvgarState from 'svgar/dist/models/SvgarState';
 import Svgar, { Create } from 'svgar';
 import SvgarPath from 'svgar/dist/models/SvgarPath';
 import SvgarText from 'svgar/dist/models/SvgarText';
+import store from './../../store/index';
+import GraphMapping from './../GlasshopperGraphMapping';
 
 export default class GenericComponent extends GraphObject {
 
@@ -112,6 +114,18 @@ export default class GenericComponent extends GraphObject {
             .from.circle(new Svgar.Builder.Circle(x, y, s * 1.5)) 
         ]
 
+        const componentMappable = geometry
+        .filter(path => path.getTag() === 'background' || path.getTag() === 'icon')
+        .forEach(path => {
+            const map: GraphMapping = {};
+            map[path.getId()] = {
+                object: this,
+                component: this.component,
+                parameter: undefined,
+            }
+            store.dispatch('updateMap', map);
+        })
+
         const parameters = this.drawParameters();
 
         this.svgar.setCurrentState(state ?? 'default');
@@ -129,10 +143,10 @@ export default class GenericComponent extends GraphObject {
         const x = this.x;
         const y = this.y;
         const s = this.size;
-        const inputs = this.component.getAllInputs();
+        const inputs = this.component.getAllInputs().reverse();
         const inputCount = this.component.getInputCount();
         const inputStep = s / inputCount;
-        const outputs = this.component.getAllOutputs();
+        const outputs = this.component.getAllOutputs().reverse();
         const outputCount = this.component.getOutputCount();
         const outputStep = s / outputCount;
 

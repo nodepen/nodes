@@ -235,7 +235,7 @@ export default Vue.extend({
 
     box-sizing: border-box;
     border: 0.7mm solid black;
-    background: white;
+    background: none;
 
     user-select: none;
     touch-action: none;

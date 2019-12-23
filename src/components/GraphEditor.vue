@@ -15,6 +15,7 @@ import { Update } from 'svgar';
 import Resthopper from 'resthopper';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
 import Graph from './../models/GlasshopperGraph';
+import GlasshopperGraphMapping from '../models/GlasshopperGraphMapping';
 
 type GraphState = 'idle' | 'movingCamera' | 'movingComponent' | 'drawingWire';
 
@@ -64,13 +65,12 @@ export default Vue.extend({
         deconstruct.position = {x: 11, y: -1}
         this.$store.dispatch('addGraphObject', deconstruct);
 
-        (<Graph>this.$store.state.currentGraph).graphObjects.forEach((x:any) => x.attachToComponent('pointerdown', this.test));
-
         this.$store.dispatch('redrawGraph', {w: this.w, h: this.h});
 
         this.svgar = this.$store.state.currentGraph.svgar;
     },
     updated() {
+        (<Graph>this.$store.state.currentGraph).graphObjects.forEach((x:any) => x.attachToComponent('pointerdown', this.test));
         this.svgar.listen();
     },
 	computed: {
@@ -81,12 +81,19 @@ export default Vue.extend({
         }
     },
     methods: {
-        test(): void {
-            console.log('test');
+        test(event: PointerEvent): void {
+            const id = (<Element>event.srcElement).id;
+            this.state = 'movingComponent';
+            const map: GlasshopperGraphMapping = this.$store.state.map;
+            const component = map[id].component;
+
+            console.log(component.name);
         },
         onStartTrack(event: PointerEvent): void {
             this.prev = Date.now();
-            this.state = 'movingCamera';
+            if (this.state === 'idle') {
+                this.state = 'movingCamera';
+            }
 
             const x = event.pageX;
             const y = event.pageY;

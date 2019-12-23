@@ -8,16 +8,9 @@ import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
 import GlasshopperGraphObject from '@/models/GlasshopperGraphObject';
 import { getGraphObjectByComponent } from '@/services/GraphObjectService';
 import GrasshopperCategory from '@/models/GrasshopperCategory';
+import GraphMapping from '@/models/GlasshopperGraphMapping';
 
-Vue.use(Vuex)
-
-interface GraphMapping {
-  [svgarGuid: string]: {
-      objectGuid: string,
-      componentGuid: string,
-      parameterGuid: string,
-  }
-}
+Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
@@ -56,6 +49,9 @@ export default new Vuex.Store({
     },
     activateEvents(state) {
       state.currentGraph.svgar.listen();
+    },
+    updateMap(state, mapping: GraphMapping) {
+      Object.assign(state.map, mapping);
     }
   },
   actions: {
@@ -106,6 +102,9 @@ export default new Vuex.Store({
     },
     redrawGraph(context: any, s: { w: number, h: number }) {
       context.commit('redrawGraph', s);
+    },
+    updateMap(context, map: GraphMapping) {
+      context.commit('updateMap', map);
     }
   },
   modules: {
