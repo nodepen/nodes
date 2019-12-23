@@ -20,7 +20,7 @@ import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
 import GlasshopperGraph from './../models/GlasshopperGraph';
 
-type GraphState = 'idle' | 'movingCamera' | 'movingComponent' | 'drawingWire';
+type GraphState = 'idle' | 'movingCamera' | 'movingComponent' | 'selectingComponent' | 'drawingWire';
 
 export default Vue.extend({
     data() {
@@ -35,7 +35,9 @@ export default Vue.extend({
             xb: 0,
             yb: 0,
             movingObject: {} as GlasshopperGraphObject,
+            selectedObject: '',
             state: 'idle' as GraphState,
+            start: 0,
             prev: 0,
             svgar: {} as SvgarCube,
             graph: {} as GlasshopperGraph,
@@ -76,12 +78,18 @@ export default Vue.extend({
         this.svgar = this.$store.state.currentGraph.svgar;
     },
     updated() {
-        (<Graph>this.$store.state.currentGraph).graphObjects.forEach((x:any) => x.attachToComponent('pointerdown', this.onStartMoveComponent));
+        this.graph.graphObjects.forEach((x:any) => {
+            x.attachToComponent('pointerdown', this.onStartMoveComponent);
+            x.attachToComponent('pointerup', this.onSelectComponent);
+        });
         this.svgar.listen();
     },
 	computed: {
         svg(): string {
             return this.graph.svgar.compile(this.w, this.h);
+        },
+        selected(): GlasshopperGraphObject | undefined {
+            return this.graph.graphObjects.find(x => x.guid === this.selectedObject);
         }
     },
     methods: {
@@ -91,8 +99,27 @@ export default Vue.extend({
             const map: GlasshopperGraphMapping = this.$store.state.map;
             this.movingObject = map[id].object;
         },
+        onSelectComponent(event: PointerEvent): void {
+            const now = Date.now();
+
+            const id = (<Element>event.srcElement).id;
+            const map: GlasshopperGraphMapping = this.$store.state.map;
+            const object = map[id].object;
+
+            if (now - this.start > 200) {
+                return;
+            }
+
+            this.selectedObject = this.selectedObject === object.guid ? '' : object.guid;
+
+            object.state = 'selected';
+            object.svgar.setCurrentState('selected');
+            object.svgar.compile();
+            
+        },
         onStartTrack(event: PointerEvent): void {
-            this.prev = Date.now();
+            this.start = Date.now();
+            this.prev = this.start;
             if (this.state === 'idle') {
                 this.state = 'movingCamera';
             }
@@ -137,8 +164,7 @@ export default Vue.extend({
                     x: start.x - dx,
                     y: start.y - dy,
                 }
-                this.movingObject.draw();
-                //this.graph.redraw(this.w, this.h);
+                this.movingObject.draw(this.movingObject.state);
             }
 
             this.xa = this.xb;
@@ -148,6 +174,13 @@ export default Vue.extend({
         },
         onEndTrack(event: PointerEvent): void {
             this.prev = 0;
+
+            this.graph.graphObjects.filter(x => x.state === 'selected' && this.selectedObject != x.guid).forEach(x => {
+                x.state = 'visible';
+                x.svgar.setCurrentState('default');
+                x.svgar.compile();
+            });
+
             this.state = 'idle';
         },
         onStartWire(event: PointerEvent): void {

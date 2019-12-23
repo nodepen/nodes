@@ -122,16 +122,14 @@ export default class GenericComponent extends GraphObject {
             .from.circle(new Svgar.Builder.Circle(x, y, s * 1.5)) 
         ]
 
-        const componentMappable = geometry
-        .filter(path => path.getTag() === 'background' || path.getTag() === 'icon')
+        geometry.filter(path => path.getTag() === 'background' || path.getTag() === 'icon')
         .forEach(path => {
             const map: GraphMapping = {};
-            map[path.getId()] = {
+            store.state.map[path.getId()] = {
                 object: this,
                 component: this.component,
                 parameter: undefined,
             }
-            store.dispatch('updateMap', map);
         })
 
         const parameters = this.drawParameters();
@@ -357,6 +355,21 @@ export default class GenericComponent extends GraphObject {
         return [
             { 
                 name: 'default', 
+                styles: { 
+                    'background': 'whitefill',
+                    'shadow': 'greymedium',
+                    'outline': 'blackmedium',
+                    'divider': 'blackmedium',
+                    'icon': 'blackmediumwhitefill',
+                    'grip': 'blackmediumwhitefill',
+                    'spacer': 'whiteheavy',
+                    'selection': 'hidden',
+                    'inputlabel': 'labelfontleftalign',
+                    'outputlabel': 'labelfontrightalign',
+                } 
+            },
+            { 
+                name: 'visible', 
                 styles: { 
                     'background': 'whitefill',
                     'shadow': 'greymedium',
