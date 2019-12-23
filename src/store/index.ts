@@ -52,6 +52,10 @@ export default new Vuex.Store({
     },
     updateMap(state, mapping: GraphMapping) {
       Object.assign(state.map, mapping);
+    },
+    resetMap(state) {
+      state.map = {};
+      state.currentGraph.reset();
     }
   },
   actions: {
@@ -97,6 +101,8 @@ export default new Vuex.Store({
     addGraphObject(context, component: ResthopperComponent) {
       const graphObject = getGraphObjectByComponent(component);
       context.commit('addGraphObject', graphObject);
+      context.commit('resetMap');
+
       // Locate graph object class with service
       // Add to graph
     },

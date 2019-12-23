@@ -1,11 +1,14 @@
 <template>
     <div 
+    tabindex="0"
     id="graph" 
     ref="svgar" 
     v-html="svg"
     @pointerdown="onStartTrack"
     @pointermove="onTrack"
-    @pointerup="onEndTrack">
+    @pointerup="onEndTrack"
+    @keyup.left="test"
+    @contextmenu.prevent>
     </div>
 </template>
 
@@ -93,6 +96,12 @@ export default Vue.extend({
         }
     },
     methods: {
+        test(): void {
+            console.log('?');
+        },
+        stop(): boolean {
+            return false
+        },
         onStartMoveComponent(event: PointerEvent): void {
             const id = (<Element>event.srcElement).id;
             this.state = 'movingComponent';
@@ -198,6 +207,10 @@ export default Vue.extend({
 	z-index: -10;
     background: white;
     touch-action: none;
+}
+
+#graph:focus {
+    outline: none;
 }
 
 </style>

@@ -57,6 +57,12 @@ export default class GlasshopperGraph {
         this.h = h;
     }
 
+    public reset(): void {
+        this.graphObjects.forEach(x => {
+            x.draw(x.state);
+        })
+    }
+
     public compute(component: string, parameter?: string): void {
         const c = this.locateComponent(component);
         const targets = Object.values(c?.output ?? {}).map(t => t.guid).filter(t => parameter ? t === parameter : true);

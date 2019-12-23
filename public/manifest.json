@@ -1,21 +1,9 @@
 {
-    "short_name": "Classhopper",
-    "name": "Classhopper",
-    "icons": [
-      {
-        "src": "/images/icons-192.png",
-        "type": "image/png",
-        "sizes": "192x192"
-      },
-      {
-        "src": "/images/icons-512.png",
-        "type": "image/png",
-        "sizes": "512x512"
-      }
-    ],
+    "short_name": "glasshopper",
+    "name": "glasshopper",
     "start_url": "/",
     "background_color": "#FFFFFF",
-    "display": "fullscreen",
+    "display": "standalone",
     "scope": "/",
     "theme_color": "#FFFFFF"
   }
