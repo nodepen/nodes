@@ -8,7 +8,7 @@
     "test:unit": "vue-cli-service test:unit",
     "test:e2e": "vue-cli-service test:e2e",
     "test:ci": "start-server-and-test serve http-get://localhost:8080 cy:run",
-    "lint": "vue-cli-service lint",
+    "lint": "eslint . --ext .ts,.vue",
     "cy:run": "cypress run --env port=8080"
   },
   "dependencies": {
@@ -29,6 +29,8 @@
     "@babel/plugin-proposal-optional-chaining": "^7.7.5",
     "@types/chai": "^4.1.0",
     "@types/mocha": "^5.2.4",
+    "@typescript-eslint/eslint-plugin": "^2.13.0",
+    "@typescript-eslint/parser": "^2.13.0",
     "@vue/cli-plugin-babel": "^4.0.0",
     "@vue/cli-plugin-e2e-cypress": "^4.1.1",
     "@vue/cli-plugin-eslint": "^4.0.0",
@@ -42,7 +44,7 @@
     "@vue/test-utils": "1.0.0-beta.29",
     "chai": "^4.1.2",
     "eslint": "^5.16.0",
-    "eslint-plugin-vue": "^5.0.0",
+    "eslint-plugin-vue": "^5.2.3",
     "start-server-and-test": "^1.10.6",
     "typescript": "^3.7.2",
     "vue-template-compiler": "^2.6.10"
