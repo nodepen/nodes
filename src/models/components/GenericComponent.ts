@@ -147,9 +147,9 @@ export default class GenericComponent extends GraphObject {
     }
 
     private drawParameters(): SvgarPath[] {
-        let dividers: SvgarPath[] = [];
-        let grips: SvgarPath[] = [];
-        let labels: SvgarText[] = [];
+        const dividers: SvgarPath[] = [];
+        const grips: SvgarPath[] = [];
+        const labels: SvgarText[] = [];
 
         const c = this.component;
         const x = this.x;
@@ -165,8 +165,8 @@ export default class GenericComponent extends GraphObject {
         for (let i = 0; i < inputCount; i++) {
             const p = inputs[i];
             const yDelta = inputStep * (i + 1); 
-            let xPosition = x - s;
-            let yPosition = y + (s / 2) - yDelta;
+            const xPosition = x - s;
+            const yPosition = y + (s / 2) - yDelta;
 
             if (i != inputCount - 1) {
                 dividers.push(
@@ -201,8 +201,8 @@ export default class GenericComponent extends GraphObject {
         for (let i = 0; i < outputCount; i++) {
             const p = outputs[i];
             const yDelta = outputStep * (i + 1);
-            let xPosition = x + s;
-            let yPosition = y + (s / 2) - yDelta;
+            const xPosition = x + s;
+            const yPosition = y + (s / 2) - yDelta;
 
             if (i != outputCount - 1) {
                 dividers.push(

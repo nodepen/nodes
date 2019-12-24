@@ -1,39 +1,45 @@
 <template>
-<div id="app">
-	<graph-editor></graph-editor>
-	<div id="content">
-		<router-view/>
-	</div>
-	<nav>
-		<div class="tabs">
-			<router-link to="/" class="tab">
-			sandbox
-			</router-link>
-			<router-link to="/g" class="tab">
-			glossary
-			</router-link>
-			<router-link to="/t" class="tab">
-			tutorials
-			</router-link>
-		</div>
-		<div class="toggles">
-			<div class="toggle">
-			</div>
-			<div class="toggle">
-			</div>
-			<div class="toggle">
-			</div>
-		</div>
-	</nav>
-	<footer>
-		<div class="footer__title">
-			glasshopper.io
-		</div>
-		<div class="footer__version">
-			0.3.1
-		</div>
-	</footer>
-</div>
+  <div id="app">
+    <graph-editor />
+    <div id="content">
+      <router-view />
+    </div>
+    <nav>
+      <div class="tabs">
+        <router-link
+          to="/"
+          class="tab"
+        >
+          sandbox
+        </router-link>
+        <router-link
+          to="/g"
+          class="tab"
+        >
+          glossary
+        </router-link>
+        <router-link
+          to="/t"
+          class="tab"
+        >
+          tutorials
+        </router-link>
+      </div>
+      <div class="toggles">
+        <div class="toggle" />
+        <div class="toggle" />
+        <div class="toggle" />
+      </div>
+    </nav>
+    <footer>
+      <div class="footer__title">
+        glasshopper.io
+      </div>
+      <div class="footer__version">
+        0.3.1
+      </div>
+    </footer>
+  </div>
 </template>
 
 <script lang="ts">

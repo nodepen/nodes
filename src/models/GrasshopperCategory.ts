@@ -1,9 +1,9 @@
 export default interface GrasshopperCategory {
-    name: string,
+    name: string;
     subCategories: {
-      name: string,
+      name: string;
       components: {
-        name: string,
-      }[]
-    }[]
+        name: string;
+      }[];
+    }[];
   }

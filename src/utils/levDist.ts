@@ -1,9 +1,9 @@
 export function levDist(s: string, t: string): number {
-    var d: number[][] = []; //2d matrix
+    const d: number[][] = []; //2d matrix
 
     // Step 1
-    var n = s.length;
-    var m = t.length;
+    const n = s.length;
+    const m = t.length;
 
     if (n == 0) return m;
     if (m == 0) return n;
@@ -17,7 +17,7 @@ export function levDist(s: string, t: string): number {
 
     // Step 3
     for (var i = 1; i <= n; i++) {
-        var s_i = s.charAt(i - 1);
+        const s_i = s.charAt(i - 1);
 
         // Step 4
         for (var j = 1; j <= m; j++) {
@@ -25,13 +25,13 @@ export function levDist(s: string, t: string): number {
             //Check the jagged ld total so far
             if (i == j && d[i][j] > 4) return n;
 
-            var t_j = t.charAt(j - 1);
-            var cost = (s_i == t_j) ? 0 : 1; // Step 5
+            const t_j = t.charAt(j - 1);
+            const cost = (s_i == t_j) ? 0 : 1; // Step 5
 
             //Calculate the minimum
-            var mi = d[i - 1][j] + 1;
-            var b = d[i][j - 1] + 1;
-            var c = d[i - 1][j - 1] + cost;
+            let mi = d[i - 1][j] + 1;
+            const b = d[i][j - 1] + 1;
+            const c = d[i - 1][j - 1] + cost;
 
             if (b < mi) mi = b;
             if (c < mi) mi = c;

@@ -8,10 +8,10 @@ export default class GlasshopperGraph {
 
     public graphObjects: GraphObject[];
     public svgar: SvgarCube;
-    public svg: string = "";
+    public svg = "";
     
-    private w: number = 100;
-    private h: number = 100;
+    private w = 100;
+    private h = 100;
 
     constructor() {
         this.svgar = new SvgarCube("glasshopper");
@@ -35,7 +35,7 @@ export default class GlasshopperGraph {
     public locateParameter(guid: string, hint?: 'input' | 'output'): ResthopperParameter | undefined {
         const components = this.graphObjects.map(x => x.component);
 
-        var parameters: ResthopperParameter[] = [];
+        let parameters: ResthopperParameter[] = [];
 
         for (const c of components) {
             const p = hint ? hint == 'input' ? c.getAllInputs() : c.getAllOutputs() : [...c.getAllInputs(), ...c.getAllOutputs()];

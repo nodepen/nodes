@@ -63,7 +63,7 @@ export default Vue.extend({
         this.h = el.clientHeight;
 
         if (this.h > this.w) {
-            const graph: any = this.$store.state.currentGraph;
+            let graph = this.$store.state.currentGraph;
             graph.setCamera(0, 0, 20, 20);
             graph.svgar.flag('root');
         }

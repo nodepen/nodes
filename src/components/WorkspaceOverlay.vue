@@ -1,28 +1,32 @@
 <template>
-<div id="overlay">
+  <div id="overlay">
     <div class="overlay__title">
-        <div class="text--lg">{{name}} <span style="opacity: 0.5;">({{c.nickName.toLowerCase()}})</span></div>
+      <div class="text--lg">
+        {{ name }} <span style="opacity: 0.5;">({{ c.nickName.toLowerCase() }})</span>
+      </div>
     </div>
     <div class="overlay__subtitle">
-        <span class="text--md">{{c.category.toLowerCase()}} &gt; {{c.subCategory.toLowerCase()}}</span>
+      <span class="text--md">{{ c.category.toLowerCase() }} &gt; {{ c.subCategory.toLowerCase() }}</span>
     </div>
     <div class="overlay__description">
-        <span class="text--sm">{{c.description.toLowerCase()}}</span>
+      <span class="text--sm">{{ c.description.toLowerCase() }}</span>
     </div>
     <div class="overlay__parameter">
-        <span class="text--md">{{p.name.toLowerCase()}} : {{p.typeName.toLowerCase()}}</span>
+      <span class="text--md">{{ p.name.toLowerCase() }} : {{ p.typeName.toLowerCase() }}</span>
     </div>
     <div class="overlay__description">
-        <span class="text--md">{{p.description.toLowerCase()}}</span>
+      <span class="text--md">{{ p.description.toLowerCase() }}</span>
     </div>
     <div class="overlay__value">
-        <span class="text--md" @mouseenter="showEditValue = true" @mouseleave="showEditValue = false">{{p.getValue() || "no value"}}</span> <span v-show="showEditValue">E</span>
+      <span
+        class="text--md"
+        @mouseenter="showEditValue = true"
+        @mouseleave="showEditValue = false"
+      >{{ p.getValue() || "no value" }}</span> <span v-show="showEditValue">E</span>
     </div>
-    <div class="directions">
-    </div>
-    <div class="output">
-    </div>
-</div>
+    <div class="directions" />
+    <div class="output" />
+  </div>
 </template>
 
 <style scoped>
@@ -121,7 +125,7 @@ import Vue from 'vue'
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 export default Vue.extend({
-    name: 'workspace-overlay',
+    name: 'WorkspaceOverlay',
     props: ['component'],
     data() {
         return {

@@ -44,7 +44,7 @@ export default new Vuex.Store({
     initializeGraph(state) {
       state.currentGraph = new GlasshopperGraph();
     },
-    redrawGraph(state: any, s: { w: number, h: number }) {
+    redrawGraph(state: any, s: { w: number; h: number }) {
       state.currentGraph.redraw(s.w, s.h);
     },
     activateEvents(state) {
@@ -65,7 +65,7 @@ export default new Vuex.Store({
         context.commit('cacheComponentIndex', components);
       }
 
-      let configuration: GrasshopperCategory[] = [];
+      const configuration: GrasshopperCategory[] = [];
 
       context.state.index.forEach(c => {
         // Instatiate top-level category if it does not already exist
@@ -106,7 +106,7 @@ export default new Vuex.Store({
       // Locate graph object class with service
       // Add to graph
     },
-    redrawGraph(context: any, s: { w: number, h: number }) {
+    redrawGraph(context: any, s: { w: number; h: number }) {
       context.commit('redrawGraph', s);
     },
     updateMap(context, map: GraphMapping) {

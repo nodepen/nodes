@@ -9,6 +9,7 @@
     "test:e2e": "vue-cli-service test:e2e",
     "test:ci": "start-server-and-test serve http-get://localhost:8080 cy:run",
     "lint": "eslint . --ext .ts,.vue",
+    "lint:fix": "eslint . --ext .ts,.vue --fix",
     "cy:run": "cypress run --env port=8080"
   },
   "dependencies": {
