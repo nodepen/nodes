@@ -134,12 +134,12 @@ export default Vue.extend({
         },
         onStopTrack(event: PointerEvent): void {
             if (this.isPlacingComponent) {
-                const svgarPosition = (<SvgarCube>this.$store.state.currentGraph.svgar)
+                const [x, y] = (<SvgarCube>this.$store.state.currentGraph.svgar)
                     .mapPageCoordinateToSvgarCoordinate(this.placingPosition.x, this.placingPosition.y);
                 
                 this.stagedComponent!.position = {
-                    x: svgarPosition[0],
-                    y: svgarPosition[1]
+                    x: x,
+                    y: y
                 }
 
                 this.$store.dispatch('addGraphObject', this.stagedComponent)
