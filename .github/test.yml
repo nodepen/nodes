@@ -1,0 +1,25 @@
+name: test glasshopper
+
+on: [push]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [lts]
+
+    steps:
+    - uses: actions/checkout@v1
+    - name: initialize node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - name: install dependencies
+      run: npm install
+    - name: run unit tests
+      run: npm run test:unit
+    - name: run integration tests
+      run: npm run test:ci
