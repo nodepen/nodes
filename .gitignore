@@ -24,3 +24,7 @@ yarn-error.log*
 firebase.json
 .firebaserc
 .firebase/
+
+# Cypress
+**/screenshots/
+**/videos/
