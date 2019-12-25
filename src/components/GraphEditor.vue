@@ -26,6 +26,8 @@ import GlasshopperGraph from './../models/GlasshopperGraph';
 
 type GraphState = 'idle' | 'movingCamera' | 'movingComponent' | 'selectingComponent' | 'drawingWire';
 
+type Command = 'none' | 'copy' | 'delete'
+
 export default Vue.extend({
     data() {
         return {
@@ -109,9 +111,33 @@ export default Vue.extend({
             this.keyCache.push(event.code);
         },
         onKeyUp(event: KeyboardEvent): void {
-            console.log(event.code);
+
+            switch(this.determineCommand(event.code)) {
+                case 'copy':
+                    console.log('run copy');
+                    break;
+                case 'delete':
+                    console.log('run delete');
+                    break;
+                case 'none':
+                    console.log('do nothing');
+                    break;
+            }
 
             this.keyCache = this.keyCache.filter(x => x != event.code);
+        },
+        determineCommand(code: string): Command {
+            if (code === 'KeyC') {
+                if (this.keyCache.includes('ControlLeft')) {
+                    return 'copy';
+                }
+            }
+
+            if (code === 'Delete') {
+                return'delete';
+            }
+
+            return 'none';
         },
         onStartMoveComponent(event: PointerEvent): void {
             const id = (<Element>event.srcElement).id;
