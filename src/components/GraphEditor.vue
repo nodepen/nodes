@@ -84,6 +84,7 @@ export default Vue.extend({
         this.graph.graphObjects.forEach((x:any) => {
             x.attachToComponent('pointerdown', this.onStartMoveComponent);
             x.attachToComponent('pointerup', this.onSelectComponent);
+            x.attachToParameter('pointerup', this.test);
         });
         this.svgar.listen();
     },
@@ -96,8 +97,8 @@ export default Vue.extend({
         }
     },
     methods: {
-        test(): void {
-            console.log('?');
+        test(event: PointerEvent): void {
+            console.log(this.$store.state.map[(<Element>event.srcElement).id]);
         },
         stop(): boolean {
             return false
@@ -122,6 +123,7 @@ export default Vue.extend({
             this.selectedObject = this.selectedObject === object.guid ? '' : object.guid;
 
             object.state = 'selected';
+            object.svgar.setElevation(10);
             object.svgar.setCurrentState('selected');
             object.svgar.compile();
             
@@ -186,6 +188,7 @@ export default Vue.extend({
 
             this.graph.graphObjects.filter(x => x.state === 'selected' && this.selectedObject != x.guid).forEach(x => {
                 x.state = 'visible';
+                x.svgar.setElevation(0);
                 x.svgar.setCurrentState('default');
                 x.svgar.compile();
             });

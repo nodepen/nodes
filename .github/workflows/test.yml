@@ -1,4 +1,4 @@
-name: test glasshopper
+name: unit and integration tests
 
 on: [push]
 
@@ -13,13 +13,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v1
-    - name: initialize node.js
+    - name: Initialize node.js
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - name: install dependencies
+    - name: Install dependencies
       run: npm install
-    - name: run unit tests
+    - name: Run unit tests
       run: npm run test:unit
-    - name: run integration tests
+    - name: Run integration tests
       run: npm run test:ci

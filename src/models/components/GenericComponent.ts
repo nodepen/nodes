@@ -22,8 +22,13 @@ export default class GenericComponent extends GraphObject {
     }
 
     public attachToComponent(event: string, callback: () => any): void {
-        const paths: SvgarPath[] = this.svgar.getAllGeometry().filter(p => p.getTag() == 'icon' || p.getTag() == 'background');
+        const paths: SvgarPath[] = this.svgar.getAllGeometry().filter(p => p.getTag() === 'icon' || p.getTag() === 'background');
         paths.forEach(p => p.attach(event, callback));
+    }
+
+    public attachToParameter(event: string, callback: () => any): void {
+        const grips: SvgarPath[] = this.svgar.getAllGeometry().filter(p => p.getTag() === 'grip');
+        grips.forEach(p => p.attach(event, callback));
     }
 
     public redraw(state?: string): void {
@@ -178,12 +183,18 @@ export default class GenericComponent extends GraphObject {
                 )
             }
 
-            grips.push(
-                Create().svgar.path
+            const grip = Create().svgar.path
                 .withTag('grip')
                 .withElevation(10)
                 .from.circle(new Svgar.Builder.Circle(xPosition, yPosition + (inputStep / 2), 0.25))
-            )
+
+            store.state.map[grip.getId()] = {
+                object: this,
+                component: this.component,
+                parameter: p,
+            }
+
+            grips.push(grip);
 
             labels.push(
                 {
@@ -214,12 +225,18 @@ export default class GenericComponent extends GraphObject {
                 )
             }
 
-            grips.push(
-                Create().svgar.path
+            const grip = Create().svgar.path
                 .withTag('grip')
                 .withElevation(10)
-                .from.circle(new Svgar.Builder.Circle(xPosition, yPosition + (outputStep / 2), 0.25))
-            )
+                .from.circle(new Svgar.Builder.Circle(xPosition, yPosition + (outputStep / 2), 0.25));
+
+            store.state.map[grip.getId()] = {
+                object: this,
+                component: this.component,
+                parameter: p,
+            }
+
+            grips.push(grip);
 
             labels.push(
                 {
@@ -277,14 +294,6 @@ export default class GenericComponent extends GraphObject {
                 }
             },
             {
-                name: 'whitefill:hover',
-                attributes: {
-                    'stroke': 'none',
-                    'stroke-width': '0px',
-                    'fill': 'grey'
-                }
-            },
-            {
                 name: 'blackmedium',
                 attributes: {
                     'stroke': 'black',
@@ -299,7 +308,7 @@ export default class GenericComponent extends GraphObject {
                     'stroke': 'black',
                     'stroke-width': medium,
                     'stroke-dasharray': heavy,
-                    'fill': 'white',
+                    'fill': 'none',
                 }
             },
             {
