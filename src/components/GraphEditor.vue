@@ -7,7 +7,8 @@
     @pointerdown="onStartTrack"
     @pointermove="onTrack"
     @pointerup="onEndTrack"
-    @keyup.left="test"
+    @keydown="onKeyDown"
+    @keyup="onKeyUp"
     @contextmenu.prevent>
     </div>
 </template>
@@ -37,6 +38,7 @@ export default Vue.extend({
             ya: 0,
             xb: 0,
             yb: 0,
+            keyCache: [] as string[],
             movingObject: {} as GlasshopperGraphObject,
             selectedObject: '',
             state: 'idle' as GraphState,
@@ -103,6 +105,14 @@ export default Vue.extend({
         stop(): boolean {
             return false
         },
+        onKeyDown(event: KeyboardEvent): void {
+            this.keyCache.push(event.code);
+        },
+        onKeyUp(event: KeyboardEvent): void {
+            console.log(event.code);
+
+            this.keyCache = this.keyCache.filter(x => x != event.code);
+        },
         onStartMoveComponent(event: PointerEvent): void {
             const id = (<Element>event.srcElement).id;
             this.state = 'movingComponent';
@@ -122,6 +132,7 @@ export default Vue.extend({
 
             this.selectedObject = this.selectedObject === object.guid ? '' : object.guid;
 
+            this.state = 'selectingComponent';
             object.state = 'selected';
             object.svgar.setElevation(10);
             object.svgar.setCurrentState('selected');
@@ -184,6 +195,12 @@ export default Vue.extend({
             this.prev = time;
         },
         onEndTrack(event: PointerEvent): void {
+            const t = Date.now();
+
+            if (t - this.prev < 100 && Math.abs(this.xa - this.xi) < 5 && Math.abs(this.ya - this.yi) < 5 && this.state != 'selectingComponent') {
+                this.selectedObject = '';
+            }
+
             this.prev = 0;
 
             this.graph.graphObjects.filter(x => x.state === 'selected' && this.selectedObject != x.guid).forEach(x => {

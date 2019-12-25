@@ -3,11 +3,14 @@ import SvgarCube from 'svgar/dist/models/SvgarCube';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import GraphObject from './GlasshopperGraphObject';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
+import { SvgarSlab, SvgarPath } from 'svgar';
 
 export default class GlasshopperGraph {
 
     public graphObjects: GraphObject[];
     public svgar: SvgarCube;
+    public wires: SvgarSlab;
+    public currentWire: SvgarPath | undefined;
     public svg = "";
     
     private w = 100;
@@ -15,6 +18,9 @@ export default class GlasshopperGraph {
 
     constructor() {
         this.svgar = new SvgarCube("glasshopper");
+        this.wires = new SvgarSlab('wires');
+        this.wires.setElevation(-50);
+        this.svgar.slabs.push(this.wires);
         this.graphObjects = [];
     }
 
@@ -22,6 +28,26 @@ export default class GlasshopperGraph {
         this.graphObjects.push(object);
         this.svgar.slabs.push(object.svgar);
         this.redraw(this.w, this.h);
+    }
+
+    // Instantiate a new svgar path for the newly started wire
+    public startWire(svgarX: number, svgarY: number): void {
+
+    }
+
+    // Update the ending position for the newly started wire
+    public updateWire(svgarX: number, svgarY: number): void {
+
+    }
+
+    // Terminate the newly started wire
+    public cancelWire(): void {
+        this.currentWire = undefined;
+    }
+
+    // Commit the wire to the wires slab
+    public commitWire(): void {
+
     }
 
     public locateObject(guid: string): GraphObject | undefined {
