@@ -111,7 +111,7 @@ export default new Vuex.Store({
     },
     updateMap(context, map: GraphMapping) {
       context.commit('updateMap', map);
-    }
+    },
   },
   modules: {
   }

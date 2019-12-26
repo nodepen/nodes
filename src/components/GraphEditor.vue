@@ -26,7 +26,7 @@ import GlasshopperGraph from './../models/GlasshopperGraph';
 
 type GraphState = 'idle' | 'movingCamera' | 'movingComponent' | 'selectingComponent' | 'drawingWire';
 
-type Command = 'none' | 'copy' | 'delete'
+type Command = 'none' | 'debug' | 'copy' | 'delete';
 
 export default Vue.extend({
     data() {
@@ -48,6 +48,7 @@ export default Vue.extend({
             prev: 0,
             svgar: {} as SvgarCube,
             graph: {} as GlasshopperGraph,
+            stagedParameter: '',
         }
     },
     watch: {
@@ -89,6 +90,7 @@ export default Vue.extend({
             x.attachToComponent('pointerdown', this.onStartMoveComponent);
             x.attachToComponent('pointerup', this.onSelectComponent);
             x.attachToParameter('pointerdown', this.onStartWire);
+            x.attachToParameter('pointerup', this.onEndWire);
         });
         // this.graph.redrawWires()
         this.svgar.listen();
@@ -120,6 +122,9 @@ export default Vue.extend({
                 case 'delete':
                     console.log('run delete');
                     break;
+                case 'debug':
+                    this.graph.stage();
+                    break;
                 case 'none':
                     console.log('do nothing');
                     break;
@@ -135,7 +140,11 @@ export default Vue.extend({
             }
 
             if (code === 'Delete') {
-                return'delete';
+                return 'delete';
+            }
+
+            if (code === 'Slash') {
+                return 'debug';
             }
 
             return 'none';
@@ -221,6 +230,8 @@ export default Vue.extend({
             this.xa = this.xb;
             this.ya = this.yb;
 
+            this.graph.redrawWires();
+
             this.prev = time;
         },
         onEndTrack(event: PointerEvent): void {
@@ -243,7 +254,7 @@ export default Vue.extend({
             });
 
             // Reset wire in progress
-            //this.graph.cancelWire();
+            this.graph.cancelWire();
 
             // Reset state
             this.state = 'idle';
@@ -263,7 +274,22 @@ export default Vue.extend({
             const [x, y] = position;
 
             this.graph.startWire(x, y);
+            this.stagedParameter = entry.parameter!.instanceGuid;
             this.state = 'drawingWire';
+        },
+        onEndWire(event: PointerEvent): void {
+            const element = event.srcElement as Element;
+            const id = element.id;
+            const map: GlasshopperGraphMapping = this.$store.state.map;
+            const entry = map[id];
+
+            // TODO
+            // if (this.keyCache.includes('Control'))
+            // this.graph.disconnect
+            this.graph.connect(entry.parameter!.instanceGuid, this.stagedParameter);
+
+            this.graph.cancelWire();
+            this.stagedParameter = '';
         }
     }
 })

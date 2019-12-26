@@ -61,7 +61,7 @@ export default class GlasshopperGraph {
             .through(svgarX, svgarY)
             .build()
         ]);
-        
+
         this.currentWire.compile();
     }
 
@@ -70,24 +70,29 @@ export default class GlasshopperGraph {
         const xi = this.currentWireStart.x;
         const yi = this.currentWireStart.y;
 
-        const o = 1.25;
-        const offset = svgarX > xi ? o : o * -1;
-
         this.currentWire.setAllGeometry([
-            new Svgar.Builder.Curve(xi, yi)
-            .via(xi + offset, yi)
-            .through((xi + svgarX) / 2, (yi + svgarY) / 2)
-            .via(svgarX + (-offset), svgarY)
-            .through(svgarX, svgarY)
-            .build()
+            this.drawWire({x: xi, y: yi}, {x: svgarX, y: svgarY})
         ]);
 
         this.currentWire.compile();
     }
 
+    private drawWire(from: {x: number, y: number}, to: {x: number, y: number}): SvgarPath {
+        const o = 1.25;
+        const offset = to.x > from.x ? o : o * -1;
+
+        return new Svgar.Builder.Curve(from.x, from.y)
+            .via(from.x + offset, from.y)
+            .through((from.x + to.x) / 2, (from.y + to.y) / 2)
+            .via(to.x + (-offset), to.y)
+            .through(to.x, to.y)
+            .build()
+    }
+
     // Terminate the newly started wire
     public cancelWire(): void {
         this.currentWire.setAllGeometry([]);
+        this.redrawWires();
     }
 
     // Commit the wire to the wires slab
@@ -96,26 +101,112 @@ export default class GlasshopperGraph {
         this.cancelWire();
     }
 
+    // Set an output parameter as the source of an input parameter and draw their wire.
+    public connect(a: string, b: string): void {
+        // Verify that both parameters exist
+        const paramA = this.locateParameter(a);
+        const paramB = this.locateParameter(b);
+
+        if (paramA === undefined || paramB === undefined) {
+            return;
+        }
+
+        // Locate parent component for each
+        const componentA = this.locateComponentByParameter(paramA.instanceGuid);
+        const componentB = this.locateComponentByParameter(paramB.instanceGuid);
+
+        if (componentA === undefined || componentB === undefined) {
+            return;
+        }
+
+        // Verify connection is being attempted between an input and output
+        const isInputA = this.isInputParameter(componentA, paramA.instanceGuid);
+        const isInputB = this.isInputParameter(componentB, paramB.instanceGuid);
+
+        if (isInputA === isInputB) {
+            return;
+        }
+
+        // Set input param as source for output param
+        const inputParam = isInputA ? paramA : paramB;
+        const outputParam = isInputA ? paramB : paramA;
+
+        inputParam.setSource(outputParam.instanceGuid);
+
+        // Reset current wire
+        this.cancelWire();
+    }
+
+    public isInputParameter(component: ResthopperComponent, id: string): boolean {
+        for (const input of component.getAllInputs()) {
+            if (input.instanceGuid === id) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     public redrawWires(): void {
-        const wires = new SvgarCube('wires');
+        const wires: SvgarPath[] = [];
 
         this.graphObjects.forEach(o => {
             const inputs = o.component.getAllInputs();
 
             inputs.forEach(i => {
                 i.sources.forEach(source => {
+                    const sourceObject = this.locateObjectByParameter(source);
 
+                    const [xa, ya] = o.getParameterPosition(i.instanceGuid)!;
+                    const [xb, yb] = sourceObject?.getParameterPosition(source)!;
+
+                    wires.push(this.drawWire({x: xa, y: ya}, {x: xb, y: yb}));
                 })
             })
-        })
+        });
+
+        this.wires.setAllGeometry(wires);
     }
 
     public locateObject(guid: string): GraphObject | undefined {
         return this.graphObjects.find(x => x.guid === guid);
     }
 
+    public locateObjectByParameter(guid: string): GraphObject | undefined {
+        let search: GraphObject | undefined = undefined;
+
+        this.graphObjects.forEach(obj => {
+            const parameters = [...obj.component.getAllInputs(), ...obj.component.getAllOutputs()];
+            const filtered = parameters.filter(x => x.instanceGuid === guid);
+            if (filtered.length > 0) {
+                search = obj;
+            }
+        })
+
+        return search;
+    }
+
     public locateComponent(guid: string): ResthopperComponent | undefined {
         return this.graphObjects.find(x => x.guid == guid)?.component;
+    }
+
+    public locateComponentByParameter(guid: string): ResthopperComponent | undefined {
+        const components = this.graphObjects.map(x => x.component);
+
+        for (const c of components) {
+            for (const input of c.getAllInputs()) {
+                if (input.instanceGuid === guid) {
+                    return c;
+                }
+            }
+            for (const output of c.getAllOutputs()) {
+                if (output.instanceGuid === guid) {
+                    return c;
+                }
+            }
+        }
+
+        return undefined;
     }
 
     public locateParameter(guid: string, hint?: 'input' | 'output'): ResthopperParameter | undefined {
@@ -125,7 +216,7 @@ export default class GlasshopperGraph {
 
         for (const c of components) {
             const p = hint ? hint == 'input' ? c.getAllInputs() : c.getAllOutputs() : [...c.getAllInputs(), ...c.getAllOutputs()];
-            const search = p.find(x => x.guid === guid);
+            const search = p.find(x => x.instanceGuid === guid);
             
             if (search != undefined) {
                 return search;
@@ -141,7 +232,8 @@ export default class GlasshopperGraph {
 
     public redraw(w: number, h: number): void {
         this.svgar.flag('root');
-        //this.svg = this.svgar.compile(w, h);
+        
+        this.redrawWires();
 
         this.w = w;
         this.h = h;
@@ -164,5 +256,12 @@ export default class GlasshopperGraph {
             const ghdoc = rhdoc.toGrasshopperDocument([t]);
             // dispatch a solution
         })
+    }
+
+    public stage(): void {
+        const rhdoc = new ResthopperDefinition();
+        rhdoc.components = this.graphObjects.map(x => x.component);
+
+        console.log(JSON.stringify(rhdoc.toGrasshopperDocument([])));
     }
 }
