@@ -1,6 +1,6 @@
 <template>
-    <div id="sandbox" :style="{'pointer-events': isPlacingComponent ? 'all' : 'inherit', 'touch-action': isPlacingComponent ? 'none' : 'inherit'}" @pointerup="onStopTrack" @pointermove="onTrack">
-        <div class="toolbar" :style="{'pointer-events': isPlacingComponent ? 'none' : 'inherit', 'touch-action': isPlacingComponent ? 'none' : 'inherit'}">
+    <div id="sandbox" :style="{'pointer-events': isPlacingComponent ? 'all' : 'inherit'}" @pointerup="onStopTrack" @pointermove="onTrack">
+        <div class="toolbar" :style="{'pointer-events': isPlacingComponent ? 'none' : 'inherit'}">
             <div class="toolbar__categories">
                 <div 
                 v-for="(category, index) in categories" 
@@ -120,6 +120,8 @@ export default Vue.extend({
             this.prev = Date.now();
         },
         onTrack(event: PointerEvent): void {
+            event.preventDefault();
+
             const d = Date.now();
             if (d - this.prev < 15) {
                 return;

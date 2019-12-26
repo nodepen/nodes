@@ -88,8 +88,9 @@ export default Vue.extend({
         this.graph.graphObjects.forEach((x:any) => {
             x.attachToComponent('pointerdown', this.onStartMoveComponent);
             x.attachToComponent('pointerup', this.onSelectComponent);
-            x.attachToParameter('pointerup', this.onStartWire);
+            x.attachToParameter('pointerdown', this.onStartWire);
         });
+        // this.graph.redrawWires()
         this.svgar.listen();
     },
 	computed: {
@@ -174,7 +175,6 @@ export default Vue.extend({
 
             const x = event.pageX;
             const y = event.pageY;
-            const xs = this.svgar.mapPageCoordinateToSvgarCoordinate(x, y);
 
             this.xi = x;
             this.yi = y;
@@ -182,12 +182,12 @@ export default Vue.extend({
             this.ya = y;
         },
         onTrack(event: PointerEvent): void {
+            event.preventDefault();
+
             const time = Date.now();
             if (time - this.prev < this.r) {
                 return;
-            }
-
-            event.preventDefault();
+            }    
 
             const x = event.pageX;
             const y = event.pageY;
@@ -213,6 +213,9 @@ export default Vue.extend({
                     y: start.y - dy,
                 }
                 this.movingObject.draw(this.movingObject.state);
+            }
+            if (this.state === 'drawingWire') {
+                this.graph.updateWire(svgarB[0], svgarB[1]);
             }
 
             this.xa = this.xb;
@@ -240,7 +243,7 @@ export default Vue.extend({
             });
 
             // Reset wire in progress
-            this.graph.currentWire = undefined;
+            //this.graph.cancelWire();
 
             // Reset state
             this.state = 'idle';
@@ -258,6 +261,9 @@ export default Vue.extend({
             }
 
             const [x, y] = position;
+
+            this.graph.startWire(x, y);
+            this.state = 'drawingWire';
         }
     }
 })
@@ -270,6 +276,10 @@ export default Vue.extend({
 	height: 100vh;
 	z-index: -10;
     background: white;
+    touch-action: none;
+}
+
+path {
     touch-action: none;
 }
 

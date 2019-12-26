@@ -54,7 +54,7 @@ export default class GlasshopperGraphObject {
         const dx = isInput ? -5 : 5;
         const p = this.component.position;
 
-        return [p.x + dx, p.y + 2.5 - dy];
+        return [p.x + dx, p.y - 2.5 + dy];
     }
 
     public attachToComponent(event: string, callback: () => any): void {

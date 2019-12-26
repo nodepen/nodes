@@ -3,14 +3,18 @@ import SvgarCube from 'svgar/dist/models/SvgarCube';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import GraphObject from './GlasshopperGraphObject';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
-import { SvgarSlab, SvgarPath, Locate } from 'svgar';
+import Svgar,{ SvgarSlab, SvgarPath, Locate } from 'svgar';
 
 export default class GlasshopperGraph {
 
     public graphObjects: GraphObject[];
     public svgar: SvgarCube;
     public wires: SvgarSlab;
-    public currentWire: SvgarPath | undefined;
+    public currentWire: SvgarSlab;
+    public currentWireStart: {
+        x: number,
+        y: number
+    } = { x: 0, y: 0 }
     public svg = "";
     
     private w = 100;
@@ -18,9 +22,27 @@ export default class GlasshopperGraph {
 
     constructor() {
         this.svgar = new SvgarCube("glasshopper");
-        this.wires = new SvgarSlab('wires');
+
+        this.wires = new SvgarSlab("wires");
         this.wires.setElevation(-50);
         this.svgar.slabs.push(this.wires);
+
+        this.currentWire = new SvgarSlab("currentwire");
+        this.currentWire.setElevation(-50);
+        this.svgar.slabs.push(this.currentWire);
+        this.currentWire.setAllStyles([
+            {
+                name: 'default',
+                attributes: {
+                    'pointer-events': 'none',
+                    'touch-action': 'none',
+                    'stroke': 'black',
+                    'fill': 'none',
+                    'stroke-width': '0.7mm'
+                }
+            }
+        ])
+
         this.graphObjects = [];
     }
 
@@ -32,22 +54,46 @@ export default class GlasshopperGraph {
 
     // Instantiate a new svgar path for the newly started wire
     public startWire(svgarX: number, svgarY: number): void {
-
+        this.currentWireStart = { x: svgarX, y: svgarY };
+        this.currentWire.setAllGeometry([
+            new Svgar.Builder.Curve(svgarX, svgarY)
+            .via(svgarX, svgarY)
+            .through(svgarX, svgarY)
+            .build()
+        ]);
+        
+        this.currentWire.compile();
     }
 
     // Update the ending position for the newly started wire
     public updateWire(svgarX: number, svgarY: number): void {
+        const xi = this.currentWireStart.x;
+        const yi = this.currentWireStart.y;
 
+        const o = 1.25;
+        const offset = svgarX > xi ? o : o * -1;
+
+        this.currentWire.setAllGeometry([
+            new Svgar.Builder.Curve(xi, yi)
+            .via(xi + offset, yi)
+            .through((xi + svgarX) / 2, (yi + svgarY) / 2)
+            .via(svgarX + (-offset), svgarY)
+            .through(svgarX, svgarY)
+            .build()
+        ]);
+
+        this.currentWire.compile();
     }
 
     // Terminate the newly started wire
     public cancelWire(): void {
-        this.currentWire = undefined;
+        this.currentWire.setAllGeometry([]);
     }
 
     // Commit the wire to the wires slab
     public commitWire(): void {
-
+        this.wires.addPath(this.currentWire.getAllGeometry()[0]);
+        this.cancelWire();
     }
 
     public redrawWires(): void {
@@ -58,7 +104,7 @@ export default class GlasshopperGraph {
 
             inputs.forEach(i => {
                 i.sources.forEach(source => {
-                    
+
                 })
             })
         })
