@@ -88,7 +88,7 @@ export default Vue.extend({
         this.graph.graphObjects.forEach((x:any) => {
             x.attachToComponent('pointerdown', this.onStartMoveComponent);
             x.attachToComponent('pointerup', this.onSelectComponent);
-            x.attachToParameter('pointerup', this.test);
+            x.attachToParameter('pointerup', this.onStartWire);
         });
         this.svgar.listen();
     },
@@ -223,12 +223,15 @@ export default Vue.extend({
         onEndTrack(event: PointerEvent): void {
             const t = Date.now();
 
+            // Reset selection if clicking outside of a component
             if (t - this.prev < 100 && Math.abs(this.xa - this.xi) < 5 && Math.abs(this.ya - this.yi) < 5 && this.state != 'selectingComponent') {
                 this.selectedObject = '';
             }
 
+            // Reset timestamp
             this.prev = 0;
 
+            // Reset selection
             this.graph.graphObjects.filter(x => x.state === 'selected' && this.selectedObject != x.guid).forEach(x => {
                 x.state = 'visible';
                 x.svgar.setElevation(0);
@@ -236,10 +239,25 @@ export default Vue.extend({
                 x.svgar.compile();
             });
 
+            // Reset wire in progress
+            this.graph.currentWire = undefined;
+
+            // Reset state
             this.state = 'idle';
         },
         onStartWire(event: PointerEvent): void {
+            const element = event.srcElement as Element;
+            const id = element.id;
+            const map: GlasshopperGraphMapping = this.$store.state.map;
+            const entry = map[id];
 
+            const position = entry.object.getParameterPosition(entry.parameter!.instanceGuid);
+
+            if (position === undefined) {
+                return;
+            }
+
+            const [x, y] = position;
         }
     }
 })

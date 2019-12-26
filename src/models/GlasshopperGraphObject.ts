@@ -36,6 +36,27 @@ export default class GlasshopperGraphObject {
         console.log('from parent');
     }
 
+    public getParameterPosition(parameterId: string): number[] | undefined {
+        const inputs = this.component.getAllInputs();
+        const outputs = this.component.getAllOutputs();
+
+        const inputIndex = inputs.map(i => i.instanceGuid).indexOf(parameterId);
+        const outputIndex = outputs.map(o => o.instanceGuid).indexOf(parameterId);
+
+        if (inputIndex < 0 && outputIndex < 0) {
+            return undefined;
+        }
+
+        const isInput = inputIndex >= 0;
+        const index = isInput ? inputIndex : outputIndex;
+        const step = 5 / (isInput ? inputs.length : outputs.length);
+        const dy = (step / 2) + (index * step);
+        const dx = isInput ? -5 : 5;
+        const p = this.component.position;
+
+        return [p.x + dx, p.y + 2.5 - dy];
+    }
+
     public attachToComponent(event: string, callback: () => any): void {
         // To be overridden by child class
     }

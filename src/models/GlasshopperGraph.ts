@@ -3,7 +3,7 @@ import SvgarCube from 'svgar/dist/models/SvgarCube';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import GraphObject from './GlasshopperGraphObject';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
-import { SvgarSlab, SvgarPath } from 'svgar';
+import { SvgarSlab, SvgarPath, Locate } from 'svgar';
 
 export default class GlasshopperGraph {
 
@@ -50,6 +50,20 @@ export default class GlasshopperGraph {
 
     }
 
+    public redrawWires(): void {
+        const wires = new SvgarCube('wires');
+
+        this.graphObjects.forEach(o => {
+            const inputs = o.component.getAllInputs();
+
+            inputs.forEach(i => {
+                i.sources.forEach(source => {
+                    
+                })
+            })
+        })
+    }
+
     public locateObject(guid: string): GraphObject | undefined {
         return this.graphObjects.find(x => x.guid === guid);
     }
@@ -65,10 +79,14 @@ export default class GlasshopperGraph {
 
         for (const c of components) {
             const p = hint ? hint == 'input' ? c.getAllInputs() : c.getAllOutputs() : [...c.getAllInputs(), ...c.getAllOutputs()];
-            parameters = parameters.concat(p);
+            const search = p.find(x => x.guid === guid);
+            
+            if (search != undefined) {
+                return search;
+            }
         }
 
-        return parameters.find(x => x.guid == guid);
+        return undefined;
     }
 
     public setCamera(x: number, y: number, w: number, h: number): void {
