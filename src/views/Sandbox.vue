@@ -37,15 +37,15 @@
                 </div>
             </div>
         </div>
-        <div v-if="selectedComponent" :key="selectedComponent.guid" class="component">
+        <div v-if="selectedComponentExists" :key="selectedComponent.guid" class="component">
             <div class="component__title">
-                {{ selectedComponent.name.toLowerCase() }}
+                {{ selectedComponentTitle }}
             </div>
             <div class="component__categories">
                 {{ selectedComponentCategories }}
             </div>
             <div class="component__content">
-                {{ selectedComponent.description.toLowerCase() }}
+                {{ selectedComponentDescription }}
             </div>
             <div class="toolbar__categories">
                 <div 
@@ -117,12 +117,35 @@ export default Vue.extend({
         selectedComponent(): ResthopperComponent | undefined {
             return this.$store.state.component;
         },
+        selectedComponentExists(): boolean {
+            try {
+                const n = this.$store.state.component.name.toLowerCase();
+                return true;
+            }
+            catch {
+                return false;
+            }
+        },
+        selectedComponentTitle(): string {
+            const c: ResthopperComponent = this.$store.state.component;
+            if (c.name === undefined) {
+                return '';
+            }
+            return c.name.toLowerCase();
+        },
         selectedComponentCategories(): string {
             const c: ResthopperComponent = this.$store.state.component;
-            if (c === undefined) {
+            if (c.category === undefined) {
                 return '';
             }
             return `${c.category.toLowerCase()} > ${c.subCategory.toLowerCase()}`;
+        },
+        selectedComponentDescription(): string {
+            const c: ResthopperComponent = this.$store.state.component;
+            if (c.description === undefined) {
+                return '';
+            }
+            return c.description.toLowerCase();
         }
     },
     methods: {
