@@ -62,6 +62,21 @@
                     output
                 </div>
             </div>
+            <div class="component__parameter" v-for="(param, index) of selectedComponentParameters" :key="param.nickName + index">
+                <div class="component__parameter__icon">
+                    <svg width="100%" height="100%" viewBox='-1.1 -1.1 2.2 2.2'>
+                        <polyline 
+                        vector-effect="non-scaling-stroke" 
+                        stroke="black" 
+                        stroke-width="0.7mm" 
+                        fill="none" 
+                        points="0,0.866 -0.5,0.866 0.5,0.866 1,0 0.5,-0.866 -0.5,-0.866 -1,0 -0.5,0.866 0,0.866" />
+                    </svg>
+                </div>
+                <div class="component__parameter__name">
+                    {{ param.name.toLowerCase() }} ({{ param.nickName.toLowerCase() }})
+                </div>
+            </div>
         </div>
         <div 
         class="toolbar__preview"
@@ -81,6 +96,7 @@
 import Vue from 'vue'
 import Resthopper from 'resthopper';
 import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
+import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 import GrasshopperCategory from './../models/GrasshopperCategory';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
@@ -90,7 +106,7 @@ export default Vue.extend({
         return {
             selectedCategory: '',
             selectedSubCategory: '',
-            selectedComponentCategory: '',
+            selectedComponentCategory: 'output',
             stagedComponent: {} as ResthopperComponent,
             isPreviewComponent: false,
             previewPosition: {} as { x: number, y: number },
@@ -146,6 +162,14 @@ export default Vue.extend({
                 return '';
             }
             return c.description.toLowerCase();
+        },
+        selectedComponentParameters(): ResthopperParameter[] {
+            const c: ResthopperComponent = this.$store.state.component;
+            if (c.name === undefined) {
+                return [];
+            }
+            const p = this.selectedComponentCategory === 'input' ? c.getAllInputs() : c.getAllOutputs();
+            return p;
         }
     },
     methods: {
@@ -407,5 +431,24 @@ export default Vue.extend({
     font-size: var(--md);
 
     margin-bottom: calc(var(--md) + var(--sm));
+}
+
+.component__parameter {
+    width: 100%;
+    height: var(--lg);
+
+    margin-bottom: var(--md);
+
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+}
+
+.component__parameter__icon {
+    width: var(--lg);
+    height: 100%;
+
+    margin-right: var(--md);
 }
 </style>

@@ -23,25 +23,26 @@ export default class GlasshopperGraph {
     constructor() {
         this.svgar = new SvgarCube("glasshopper");
 
+        const wireStyle = {
+            name: 'default',
+            attributes: {
+                'pointer-events': 'none',
+                'touch-action': 'none',
+                'stroke': 'black',
+                'fill': 'none',
+                'stroke-width': '0.7mm'
+            }
+        }
+
         this.wires = new SvgarSlab("wires");
         this.wires.setElevation(-50);
         this.svgar.slabs.push(this.wires);
+        this.wires.setAllStyles([ wireStyle ]);
 
         this.currentWire = new SvgarSlab("currentwire");
-        this.currentWire.setElevation(-50);
+        this.currentWire.setElevation(50);
         this.svgar.slabs.push(this.currentWire);
-        this.currentWire.setAllStyles([
-            {
-                name: 'default',
-                attributes: {
-                    'pointer-events': 'none',
-                    'touch-action': 'none',
-                    'stroke': 'black',
-                    'fill': 'none',
-                    'stroke-width': '0.7mm'
-                }
-            }
-        ])
+        this.currentWire.setAllStyles([ wireStyle ])
 
         this.graphObjects = [];
     }
