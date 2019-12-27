@@ -168,6 +168,8 @@ export default Vue.extend({
 
             this.selectedObject = this.selectedObject === object.guid ? '' : object.guid;
 
+            this.$store.dispatch('setActiveComponentByReference', map[id].component );
+
             this.state = 'selectingComponent';
             object.state = 'selected';
             object.svgar.setElevation(10);
@@ -240,6 +242,10 @@ export default Vue.extend({
             // Reset selection if clicking outside of a component
             if (t - this.prev < 100 && Math.abs(this.xa - this.xi) < 5 && Math.abs(this.ya - this.yi) < 5 && this.state != 'selectingComponent') {
                 this.selectedObject = '';
+            }
+
+            if (this.selectedObject === '') {
+                this.$store.dispatch('clearSelection');
             }
 
             // Reset timestamp

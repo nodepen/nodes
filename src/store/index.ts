@@ -29,6 +29,10 @@ export default new Vuex.Store({
     setActiveParameter(state, parameter: ResthopperParameter) {
       state.parameter = parameter;
     },
+    clearSelection(state) {
+      state.component = undefined;
+      state.parameter = undefined;
+    },
     cacheComponentIndex(state, components: ResthopperComponent[]) {
       state.index = components;
     },
@@ -112,6 +116,19 @@ export default new Vuex.Store({
     updateMap(context, map: GraphMapping) {
       context.commit('updateMap', map);
     },
+    setActiveComponentById(context, guid: string) {
+      const component = context.state.currentGraph.locateComponent(guid);
+      if (component === undefined) {
+        return;
+      }
+      context.commit('setActiveComponent', component);
+    },
+    setActiveComponentByReference(context, component: ResthopperComponent) {
+      context.commit('setActiveComponent', component);
+    },
+    clearSelection(context) {
+      context.commit('clearSelection');
+    }
   },
   modules: {
   }

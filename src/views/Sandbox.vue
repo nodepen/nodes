@@ -23,7 +23,7 @@
                     {{subCategory.name.toLowerCase()}}
                 </div>
             </div>
-            <div class="toolbar__categories" v-if="selectedSubCategory != ''" :style="{'overflow-x': isPlacingComponent ? 'hidden' : 'auto'}">
+            <div class="toolbar__categories toolbar__components" v-if="selectedSubCategory != ''" :style="{'overflow-x': isPlacingComponent ? 'hidden' : 'auto'}">
                 <div
                 v-for="(component, index) in activeSubCategory.components"
                 :key="`${component.name}${index}`"
@@ -34,6 +34,32 @@
                 @pointerenter="onStageComponent($event, component.name)"
                 @pointerleave="onLeaveComponent"
                 @pointerdown="onStartTrack">
+                </div>
+            </div>
+        </div>
+        <div v-if="selectedComponent" :key="selectedComponent.guid" class="component">
+            <div class="component__title">
+                {{ selectedComponent.name.toLowerCase() }}
+            </div>
+            <div class="component__categories">
+                {{ selectedComponentCategories }}
+            </div>
+            <div class="component__content">
+                {{ selectedComponent.description.toLowerCase() }}
+            </div>
+            <div class="toolbar__categories">
+                <div 
+                :class="{'toolbar__category--active' : selectedComponentCategory === 'input'}" 
+                class="toolbar__category"
+                @click="onSelectComponentCategory($event, 'input')">
+                    input
+                </div>
+                <div 
+                :class="{'toolbar__category--active' : selectedComponentCategory === 'output'}" 
+                style="animation-delay: 0.6s;"
+                class="toolbar__category"
+                @click="onSelectComponentCategory($event, 'output')">
+                    output
                 </div>
             </div>
         </div>
@@ -64,6 +90,7 @@ export default Vue.extend({
         return {
             selectedCategory: '',
             selectedSubCategory: '',
+            selectedComponentCategory: '',
             stagedComponent: {} as ResthopperComponent,
             isPreviewComponent: false,
             previewPosition: {} as { x: number, y: number },
@@ -86,12 +113,25 @@ export default Vue.extend({
         },
         stagedComponentName(): string {
             return `${this.stagedComponent!.name.toLowerCase()}`;
+        },
+        selectedComponent(): ResthopperComponent | undefined {
+            return this.$store.state.component;
+        },
+        selectedComponentCategories(): string {
+            const c: ResthopperComponent = this.$store.state.component;
+            if (c === undefined) {
+                return '';
+            }
+            return `${c.category.toLowerCase()} > ${c.subCategory.toLowerCase()}`;
         }
     },
     methods: {
         onSelectCategory(event: PointerEvent, category: string): void {
             this.selectedCategory = category;
             this.selectedSubCategory = '';
+        },
+        onSelectComponentCategory(event: MouseEvent, category: string): void {
+            this.selectedComponentCategory = category;
         },
         onStageComponent(event: PointerEvent, componentName: string): void {
             const component = Resthopper.ComponentIndex.createComponent(componentName as GrasshopperComponent);
@@ -193,6 +233,12 @@ export default Vue.extend({
     font-size: var(--md);
 }
 
+@keyframes grow {
+    from {
+        height: 0%;
+    }
+}
+
 .toolbar__categories {
     width: 100%;
     display: flex;
@@ -201,6 +247,10 @@ export default Vue.extend({
     user-select: none;
 
     overflow-x: auto;
+}
+
+.toolbar__components {
+    margin-bottom: calc(var(--md) * 3);
 }
 
 .toolbar__subcategories {
@@ -283,5 +333,56 @@ export default Vue.extend({
         height: var(--lg);
         transform: translate(calc(((var(--lg) * 0.5) + 0.7mm) * -1), calc(((var(--lg) * 0.5) + 0.7mm) * -1));
     }
+}
+
+@keyframes fromleft {
+    from {
+        transform: translateX(calc(100vw * -1));
+    }
+}
+
+.component {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+}
+
+.component > *:not(.toolbar__categories) {
+    animation: fromleft 0.5s;
+}
+
+.component > .toolbar__categories > .toolbar__category {
+    animation-delay: 0.5s;
+    opacity: 0;
+    animation-fill-mode: forwards;
+}
+
+.component__title {
+    width: 100%;
+    font-size: var(--lg);
+
+    margin-bottom: var(--md);
+}
+
+.component__categories {
+    width: 100%;
+    font-size: var(--md);
+
+    margin-bottom: var(--md);
+}
+
+.component__subtitle {
+    width: 100%;
+    font-size: var(--sm);
+
+    margin-bottom: var(--sm);
+}
+
+.component__content {
+    width: 100%;
+    font-size: var(--md);
+
+    margin-bottom: calc(var(--md) + var(--sm));
 }
 </style>
