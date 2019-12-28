@@ -47,22 +47,11 @@
             <div class="component__content">
                 {{ selectedComponentDescription }}
             </div>
-            <div class="toolbar__categories">
-                <div 
-                :class="{'toolbar__category--active' : selectedComponentCategory === 'input'}" 
-                class="toolbar__category"
-                @click="onSelectComponentCategory($event, 'input')">
-                    input
-                </div>
-                <div 
-                :class="{'toolbar__category--active' : selectedComponentCategory === 'output'}" 
-                style="animation-delay: 0.6s;"
-                class="toolbar__category"
-                @click="onSelectComponentCategory($event, 'output')">
-                    output
-                </div>
-            </div>
-            <div class="component__parameter" v-for="(param, index) of selectedComponentParameters" :key="param.nickName + index">
+            <div 
+            class="component__parameter" 
+            v-for="(param, index) of selectedComponentParameters" 
+            :key="param.nickName + index"
+            :style="{'margin-bottom': index === selectedComponentInputParameters.length - 1 ? 'calc(var(--md) + var(--sm))' : 'var(--md)'}">
                 <div class="component__parameter__icon">
                     <svg width="100%" height="100%" viewBox='-1.1 -1.1 2.2 2.2'>
                         <polyline 
@@ -73,7 +62,7 @@
                         points="0,0.866 -0.5,0.866 0.5,0.866 1,0 0.5,-0.866 -0.5,-0.866 -1,0 -0.5,0.866 0,0.866" />
                     </svg>
                 </div>
-                <div class="component__parameter__name">
+                <div class="component__parameter__name" @pointerdown="test">
                     {{ param.name.toLowerCase() }} ({{ param.nickName.toLowerCase() }})
                 </div>
             </div>
@@ -168,11 +157,27 @@ export default Vue.extend({
             if (c.name === undefined) {
                 return [];
             }
-            const p = this.selectedComponentCategory === 'input' ? c.getAllInputs() : c.getAllOutputs();
-            return p;
+            return [...c.getAllInputs().reverse(), ...c.getAllOutputs().reverse()];
+        },
+        selectedComponentInputParameters(): ResthopperParameter[] {
+            const c: ResthopperComponent = this.$store.state.component;
+            if (c.name === undefined) {
+                return [];
+            }
+            return c.getAllInputs();
+        },
+        selectedComponentOutputParameters(): ResthopperParameter[] {
+            const c: ResthopperComponent = this.$store.state.component;
+            if (c.name === undefined) {
+                return [];
+            }
+            return c.getAllOutputs();
         }
     },
     methods: {
+        test(): void {
+            console.log('test');
+        },
         onSelectCategory(event: PointerEvent, category: string): void {
             this.selectedCategory = category;
             this.selectedSubCategory = '';
@@ -248,6 +253,7 @@ export default Vue.extend({
     height: 100%;
 
     pointer-events: none;
+    touch-action: none;
 
     box-sizing: border-box;
     padding: var(--md);
@@ -393,10 +399,13 @@ export default Vue.extend({
     display: flex;
     flex-direction: column;
     overflow-x: hidden;
+
+    pointer-events: none !important;
 }
 
 .component > *:not(.toolbar__categories) {
     animation: fromleft 0.5s;
+    pointer-events: none;
 }
 
 .component > .toolbar__categories > .toolbar__category {
@@ -434,10 +443,10 @@ export default Vue.extend({
 }
 
 .component__parameter {
-    width: 100%;
     height: var(--lg);
 
     margin-bottom: var(--md);
+    pointer-events: none !important;
 
     display: flex;
     flex-direction: row;
@@ -450,5 +459,16 @@ export default Vue.extend({
     height: 100%;
 
     margin-right: var(--md);
+}
+
+.component__parameter__name {
+    height: 100%;
+    line-height: var(--lg);
+    vertical-align: middle;
+    pointer-events: all;
+}
+
+.component__parameter__name:hover {
+    cursor: pointer;
 }
 </style>

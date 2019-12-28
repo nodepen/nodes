@@ -9,7 +9,8 @@
     @pointerup="onEndTrack"
     @keydown="onKeyDown"
     @keyup="onKeyUp"
-    @contextmenu.prevent>
+    @contextmenu.prevent
+    @dblclick="test">
     </div>
 </template>
 
@@ -104,8 +105,8 @@ export default Vue.extend({
         }
     },
     methods: {
-        test(event: PointerEvent): void {
-            console.log(this.$store.state.map[(<Element>event.srcElement).id]);
+        test(event: any): void {
+            console.log(event);
         },
         stop(): boolean {
             return false
