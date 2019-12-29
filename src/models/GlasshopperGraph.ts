@@ -4,6 +4,7 @@ import ResthopperComponent from 'resthopper/dist/models/ResthopperComponent';
 import GraphObject from './GlasshopperGraphObject';
 import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 import Svgar,{ SvgarSlab, SvgarPath, Locate } from 'svgar';
+import Axios from 'axios';
 
 export default class GlasshopperGraph {
 
@@ -136,6 +137,9 @@ export default class GlasshopperGraph {
 
         // Reset current wire
         this.cancelWire();
+
+        // Recompute graph with new configuration
+        this.computeAll();
     }
 
     public isInputParameter(component: ResthopperComponent, id: string): boolean {
@@ -246,16 +250,41 @@ export default class GlasshopperGraph {
         })
     }
 
-    public compute(component: string, parameter?: string): void {
-        const c = this.locateComponent(component);
-        const targets = Object.values(c?.output ?? {}).map(t => t.guid).filter(t => parameter ? t === parameter : true);
-
+    public compute(parameter: ResthopperParameter): void {       
         const rhdoc = new ResthopperDefinition();
         rhdoc.components = this.graphObjects.map(x => x.component);
+        const ghdoc = rhdoc.toGrasshopperDocument([parameter.instanceGuid]);
 
-        targets.forEach(t => {
-            const ghdoc = rhdoc.toGrasshopperDocument([t]);
-            // dispatch a solution
+        Axios.post(process.env.VUE_APP_COMPUTE_SERVER, JSON.stringify(ghdoc))
+        .then(x => {
+            console.log(x);
+        })
+        .catch(err => {
+            console.log(err);
+        })
+    }
+
+    public computeAll(): void {
+        const rhdoc = new ResthopperDefinition();
+        rhdoc.components = this.graphObjects.map(x => x.component);
+        
+        this.graphObjects.forEach(obj => {
+            const params = [...obj.component.getAllInputs(), ...obj.component.getAllOutputs()];
+
+            params.forEach(param => {
+                const ghdoc = rhdoc.toGrasshopperDocument([param.instanceGuid]);
+
+                Axios.post(process.env.VUE_APP_COMPUTE_SERVER, JSON.stringify(ghdoc))
+                .then(res => {
+                    const data = res.data[0].Data;
+                    obj.cache[param.instanceGuid] = data;
+
+                    console.log(`${obj.component.name} : ${param.name}`);
+                })
+                .catch(err => {
+                    console.log(err);
+                })
+            })
         })
     }
 

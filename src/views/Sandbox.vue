@@ -433,7 +433,7 @@ export default Vue.extend({
 
 .component > *:not(.toolbar__categories) {
     animation: fromleft 0.5s;
-    pointer-events: none;
+    pointer-events: none !important;
 }
 
 .component > .toolbar__categories > .toolbar__category {
@@ -447,6 +447,8 @@ export default Vue.extend({
     font-size: var(--lg);
 
     margin-bottom: var(--md);
+
+    pointer-events: none;
 }
 
 .component__categories {
@@ -454,6 +456,8 @@ export default Vue.extend({
     font-size: var(--md);
 
     margin-bottom: var(--md);
+
+    pointer-events: none;
 }
 
 .component__subtitle {
@@ -461,6 +465,8 @@ export default Vue.extend({
     font-size: var(--sm);
 
     margin-bottom: var(--sm);
+
+    pointer-events: none;
 }
 
 .component__content {
@@ -468,11 +474,17 @@ export default Vue.extend({
     font-size: var(--md);
 
     margin-bottom: calc(var(--md) + var(--sm));
+
+    pointer-events: none;
 }
 
 .component__parameter {
     margin-bottom: var(--md);
 
+    pointer-events: none !important;
+}
+
+.component__parameter > * {
     pointer-events: none !important;
 }
 

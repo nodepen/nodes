@@ -9,7 +9,7 @@ export default class GlasshopperGraphObject {
     public readonly component: ResthopperComponent;
     public readonly svgar: SvgarSlab;
     public readonly guid: string;
-    public readonly cache: { [param: string]: { path: number[], value: any }[] } = {};
+    public readonly cache: { [param: string]: { path: number[], type: string, value: any }[] } = {};
     public state: GraphObjectState = 'visible';
 
     constructor(component: ResthopperComponent) {
