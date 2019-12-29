@@ -52,18 +52,37 @@
             v-for="(param, index) of selectedComponentParameters" 
             :key="param.nickName + index"
             :style="{'margin-bottom': index === selectedComponentInputParameters.length - 1 ? 'calc(var(--md) + var(--sm))' : 'var(--md)'}">
-                <div class="component__parameter__icon">
-                    <svg width="100%" height="100%" viewBox='-1.1 -1.1 2.2 2.2'>
-                        <polyline 
-                        vector-effect="non-scaling-stroke" 
-                        stroke="black" 
-                        stroke-width="0.7mm" 
-                        fill="none" 
-                        points="0,0.866 -0.5,0.866 0.5,0.866 1,0 0.5,-0.866 -0.5,-0.866 -1,0 -0.5,0.866 0,0.866" />
-                    </svg>
+                <div class="component__parameter__label">
+                    <div class="component__parameter__icon">
+                        <svg width="100%" height="100%" viewBox='-1.1 -1.1 2.2 2.2'>
+                            <polyline 
+                            vector-effect="non-scaling-stroke" 
+                            stroke="black" 
+                            stroke-width="0.7mm" 
+                            fill="none" 
+                            points="0,0.866 -0.5,0.866 0.5,0.866 1,0 0.5,-0.866 -0.5,-0.866 -1,0 -0.5,0.866 0,0.866" />
+                        </svg>
+                    </div>
+                    <div class="component__parameter__name" @pointerdown="onToggleParameter($event, param)">
+                        {{ param.name.toLowerCase() }} ({{ param.nickName.toLowerCase() }})
+                    </div>
                 </div>
-                <div class="component__parameter__name" @pointerdown="test">
-                    {{ param.name.toLowerCase() }} ({{ param.nickName.toLowerCase() }})
+                <div v-if="openParameterGuids.includes(param.instanceGuid)" class="component__parameter__info">
+                    <div class="component__parameter__entry" style="margin-bottom: calc(var(--md) + var(--sm));">
+                        {{ param.description.toLowerCase() }}
+                    </div>
+                    <div class="component__parameter__entry" v-if="index < selectedComponentInputParameters.length">
+                        source - {{ param.instanceGuid }}
+                    </div>
+                    <div class="component__parameter__entry">
+                        type - {{ param.typeName.toLowerCase() }}
+                    </div>
+                    <div class="component__parameter__entry">
+                        values -
+                    </div>
+                    <div class="component__parameter__values">
+                        
+                    </div>
                 </div>
             </div>
         </div>
@@ -96,6 +115,7 @@ export default Vue.extend({
             selectedCategory: '',
             selectedSubCategory: '',
             selectedComponentCategory: 'output',
+            openParameterGuids: [] as string[],
             stagedComponent: {} as ResthopperComponent,
             isPreviewComponent: false,
             previewPosition: {} as { x: number, y: number },
@@ -201,6 +221,14 @@ export default Vue.extend({
         onLeaveComponent(event: PointerEvent): void {
             this.isPreviewComponent = false;
             this.previewPosition = { x: 0, y: 0 }
+        },
+        onToggleParameter(event: PointerEvent, parameter: ResthopperParameter): void {
+            if (this.openParameterGuids.includes(parameter.instanceGuid)) {
+                this.openParameterGuids = this.openParameterGuids.filter(x => x != parameter.instanceGuid);
+            }
+            else {
+                this.openParameterGuids.push(parameter.instanceGuid);
+            }
         },
         onStartTrack(event: PointerEvent): void {
             this.isPlacingComponent = true;
@@ -443,10 +471,15 @@ export default Vue.extend({
 }
 
 .component__parameter {
+    margin-bottom: var(--md);
+
+    pointer-events: none !important;
+}
+
+.component__parameter__label {
     height: var(--lg);
 
-    margin-bottom: var(--md);
-    pointer-events: none !important;
+    user-select: none;
 
     display: flex;
     flex-direction: row;
@@ -470,5 +503,18 @@ export default Vue.extend({
 
 .component__parameter__name:hover {
     cursor: pointer;
+}
+
+.component__parameter__info {
+    padding-left: calc(var(--lg) + var(--md));
+}
+
+.component__parameter__entry {
+    height: var(--md);
+    margin-top: var(--md);
+}
+
+.component__parameter__values {
+    max-height: calc(var(--md) * 5);
 }
 </style>

@@ -9,12 +9,12 @@ export default class GlasshopperGraphObject {
     public readonly component: ResthopperComponent;
     public readonly svgar: SvgarSlab;
     public readonly guid: string;
-    public readonly cache: { [param: string]: any | undefined } = {};
+    public readonly cache: { [param: string]: { path: number[], value: any }[] } = {};
     public state: GraphObjectState = 'visible';
 
     constructor(component: ResthopperComponent) {
         this.component = component;
-        this.component.getAllOutputs().forEach(p => this.cache[p.name] = undefined);
+        this.component.getAllOutputs().forEach(p => this.cache[p.instanceGuid] = []);
         this.svgar = new SvgarSlab(`${component.name.split(' ')[0].substr(0, 6)}${component.guid.split('-')[0]}`);
         this.guid = newGuid();
     }
