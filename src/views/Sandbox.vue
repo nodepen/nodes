@@ -78,7 +78,7 @@
                         type - {{ param.typeName.toLowerCase() }}
                     </div>
                     <div class="component__parameter__entry" >
-                        {{ selectedObject.cache[param.instanceGuid].length }} values -
+                        {{ selectedObject.cache[param.instanceGuid].length }} {{ selectedObject.cache[param.instanceGuid].length === 1 ? 'value' : 'values'}} -
                     </div>
                     <div class="component__parameter__values" v-if="selectedObject.cache[param.instanceGuid].length > 0">
                         <div class="component__parameter__value" v-for="(entry, index) in selectedObject.cache[param.instanceGuid]" :key="index + param.instanceGuid">
@@ -278,7 +278,8 @@ export default Vue.extend({
             this.prev = 0;
         },
         entryToString(entry: { path: number[], type: string, value: any }): string {
-            return `{ ${entry.path.join('; ')}; } ${entry.type === 'GH_Number' ? entry.value : entry.type.toLowerCase().replace('gh_', '')}`;
+            const n = entry.path.length;
+            return `{${entry.path.slice(0, n - 1).join(';')};} [${entry.path[n - 1]}] ${entry.type === 'GH_Number' ? entry.value : entry.type.toLowerCase().replace('gh_', '')}`;
         },
         parameterIdToSourceName(id: string): string {
             const param: ResthopperParameter = this.$store.state.currentGraph.locateParameter(id);
