@@ -277,7 +277,7 @@ export default class GlasshopperGraph {
                 Axios.post(process.env.VUE_APP_COMPUTE_SERVER, JSON.stringify(ghdoc))
                 .then(res => {
                     const data = res.data[0].Data;
-                    obj.cache[param.instanceGuid] = data;
+                    obj.cache[param.instanceGuid] = data.map((x:any) => { return { path: x.Path, type: x.Type, value: x.Value }});
 
                     console.log(`${obj.component.name} : ${param.name}`);
                 })

@@ -68,20 +68,22 @@
                     </div>
                 </div>
                 <div v-if="openParameterGuids.includes(param.instanceGuid)" class="component__parameter__info">
-                    <div class="component__parameter__entry" style="margin-bottom: calc(var(--md) + var(--sm));">
+                    <div class="component__parameter__entry">
                         {{ param.description.toLowerCase() }}
                     </div>
                     <div class="component__parameter__entry" v-if="index < selectedComponentInputParameters.length">
-                        source - {{ param.instanceGuid }}
+                        source - {{ parameterIdToSourceName(param.instanceGuid).toLowerCase() }}
                     </div>
-                    <div class="component__parameter__entry">
+                    <div class="component__parameter__entry" style="margin-bottom: calc(var(--md) + var(--sm));">
                         type - {{ param.typeName.toLowerCase() }}
                     </div>
-                    <div class="component__parameter__entry">
-                        values -
+                    <div class="component__parameter__entry" >
+                        {{ selectedObject.cache[param.instanceGuid].length }} values -
                     </div>
-                    <div class="component__parameter__values">
-                        
+                    <div class="component__parameter__values" v-if="selectedObject.cache[param.instanceGuid].length > 0">
+                        <div class="component__parameter__value" v-for="(entry, index) in selectedObject.cache[param.instanceGuid]" :key="index + param.instanceGuid">
+                            {{ entryToString(entry) }}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -108,6 +110,7 @@ import ResthopperParameter from 'resthopper/dist/models/ResthopperParameter';
 import GrasshopperCategory from './../models/GrasshopperCategory';
 import { GrasshopperComponent } from 'resthopper/dist/catalog/ComponentIndex';
 import SvgarCube from 'svgar/dist/models/SvgarCube';
+import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
 
 export default Vue.extend({
     data() {
@@ -138,6 +141,9 @@ export default Vue.extend({
         },
         stagedComponentName(): string {
             return `${this.stagedComponent!.name.toLowerCase()}`;
+        },
+        selectedObject(): GlasshopperGraphObject | undefined {
+            return this.$store.state.currentGraph.graphObjects.find((x:GlasshopperGraphObject) => x.component.guid === this.$store.state.component.guid);
         },
         selectedComponent(): ResthopperComponent | undefined {
             return this.$store.state.component;
@@ -270,6 +276,19 @@ export default Vue.extend({
             this.isPlacingComponent = false;
             this.placingPosition = {x: 0, y: 0};
             this.prev = 0;
+        },
+        entryToString(entry: { path: number[], type: string, value: any }): string {
+            return `{ ${entry.path.join('; ')}; } ${entry.type === 'GH_Number' ? entry.value : entry.type.toLowerCase().replace('gh_', '')}`;
+        },
+        parameterIdToSourceName(id: string): string {
+            const param: ResthopperParameter = this.$store.state.currentGraph.locateParameter(id);
+            if (param.sources.length === 0) {
+                return 'no sources'
+            }
+
+            const source = this.$store.state.currentGraph.locateComponentByParameter(param.getSource());
+
+            return source.name;
         }
     }
 })
@@ -527,6 +546,15 @@ export default Vue.extend({
 }
 
 .component__parameter__values {
-    max-height: calc(var(--md) * 5);
+    margin-top: var(--md);
+    max-height: calc(var(--md) * 4.5);
+    max-width: 40ch;
+    overflow-y: auto;
+}
+
+.component__parameter__value {
+    margin-bottom: var(--md);
+
+    pointer-events: none !important;
 }
 </style>

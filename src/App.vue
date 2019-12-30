@@ -36,7 +36,7 @@
         glasshopper.io
       </div>
       <div class="footer__version">
-        0.3.5
+        0.3.6
       </div>
     </footer>
   </div>
@@ -57,6 +57,10 @@ export default Vue.extend({
 * {
 	margin: 0;
 	padding: 0;
+}
+
+*::-webkit-scrollbar {
+  display: none;
 }
 
 :root {
