@@ -308,7 +308,7 @@ export default Vue.extend({
 	width: 100vw;
 	height: 100vh;
 	z-index: -10;
-    background: white;
+    background: none;
     touch-action: none;
 }
 

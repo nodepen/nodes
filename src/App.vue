@@ -1,5 +1,6 @@
 <template>
   <div id="app">
+	<graph-scene />
     <graph-editor />
     <div id="content">
       <router-view />
@@ -45,10 +46,12 @@
 <script lang="ts">
 import Vue from 'vue'
 import GraphEditor from './components/GraphEditor.vue';
+import GraphScene from './components/GraphScene.vue';
 
 export default Vue.extend({
 	components: {
-		GraphEditor
+		GraphEditor,
+		GraphScene
 	},
 })
 </script>
