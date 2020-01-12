@@ -9,6 +9,7 @@
 import Vue from 'vue'
 import * as THREE from 'three';
 import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
+import { GH_Box, GH_Point } from './../models/geometry/GrasshopperGeometry';
 
 export default Vue.extend({
     data() {
@@ -19,12 +20,12 @@ export default Vue.extend({
         }
     },
     computed: {
-        visibleGeometry(): any[] {
+        visibleGeometry(): { index: number, type: string, value: any }[] {
             const objects: GlasshopperGraphObject[] = this.$store.state.currentGraph.graphObjects;
             if (objects === undefined) {
                 return [];
             }
-            const geo: any[] = [];
+            const geo: { index: number, type: string, value: any }[] = [];
             objects.forEach(o => {
                 o.getOutputCacheValues().forEach(x => {
                     if (x.type !== 'GH_Number') {
@@ -41,6 +42,30 @@ export default Vue.extend({
             const s = this.scene;
 
             // Add geometry representations based on their rhino type
+            this.visibleGeometry.forEach(x => {
+                switch(x.type) {
+                    case 'GH_Box':
+                        const box = x.value as GH_Box;
+                        break;
+                    case 'GH_Point':
+                        const pt = x.value as GH_Point;
+                        const sphereGeometry = new THREE.SphereGeometry(0.5);
+                        sphereGeometry.translate(pt.X, pt.Z, -pt.Y);
+                        const sphereMaterial = new THREE.MeshBasicMaterial(
+                            { color: 0x000000 }
+                        );
+                        const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+                        s.add(sphere);
+
+                        // const edges = new THREE.EdgesGeometry(sphereGeometry);
+                        // const outline = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0xffffff }));
+                        // s.add(outline);
+
+                        break;
+                    default:
+                        break;
+                }
+            });
 
             this.renderer.render( this.scene, this.camera );
         }
@@ -113,10 +138,16 @@ export default Vue.extend({
             
             const ground = new THREE.PlaneGeometry(25, 25);
             ground.rotateX(-90 * (Math.PI / 180));
-            const groundMaterial = new THREE.MeshBasicMaterial( { color: new THREE.Color('gainsboro')});
+            const groundMaterial = new THREE.MeshBasicMaterial( { 
+                color: 0x000000,
+                opacity: 0.2,
+                transparent: true
+                });
             const plane = new THREE.Mesh( ground, groundMaterial );
-
             scene.add(plane);
+
+            const light = new THREE.AmbientLight( 0xffffff, 1 );
+            scene.add(light);
             
             this.scene = scene;
         }
