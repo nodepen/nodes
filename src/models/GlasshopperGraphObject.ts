@@ -75,6 +75,7 @@ export default class GlasshopperGraphObject {
                 })
             }
         });
+        //console.log(values.length);
         return values;
     }
 

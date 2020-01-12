@@ -13,12 +13,17 @@ import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
 export default Vue.extend({
     data() {
         return {
-
+            scene: {} as any,
+            camera: {} as any,
+            renderer: {} as any,
         }
     },
     computed: {
         visibleGeometry(): any[] {
             const objects: GlasshopperGraphObject[] = this.$store.state.currentGraph.graphObjects;
+            if (objects === undefined) {
+                return [];
+            }
             const geo: any[] = [];
             objects.forEach(o => {
                 o.getOutputCacheValues().forEach(x => {
@@ -28,6 +33,16 @@ export default Vue.extend({
                 });
             });
             return geo;
+        }
+    },
+    watch: {
+        visibleGeometry(): void {
+            this.resetScene();
+            const s = this.scene;
+
+            // Add geometry representations based on their rhino type
+
+            this.renderer.render( this.scene, this.camera );
         }
     },
     created() {
@@ -43,13 +58,16 @@ export default Vue.extend({
 
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("white");
+        this.scene = scene;
 
         const s = 40;
         const camera = new THREE.OrthographicCamera(-s * aspect, s * aspect, s, -s, 1, 1000 );
-        camera.position.set(25, 15, 20)
-        camera.lookAt(0, 0, 0)
+        camera.position.set(25, 15, 20);
+        camera.lookAt(0, 0, 0);
+        this.camera = camera;
 
         const renderer = new THREE.WebGLRenderer();
+        this.renderer = renderer;
         renderer.setSize(w, h);
         renderer.setViewport( 0, 0, w, h );
 
@@ -88,6 +106,21 @@ export default Vue.extend({
 
         
     },
+    methods: {
+        resetScene(): void {
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color("white");
+            
+            const ground = new THREE.PlaneGeometry(25, 25);
+            ground.rotateX(-90 * (Math.PI / 180));
+            const groundMaterial = new THREE.MeshBasicMaterial( { color: new THREE.Color('gainsboro')});
+            const plane = new THREE.Mesh( ground, groundMaterial );
+
+            scene.add(plane);
+            
+            this.scene = scene;
+        }
+    }
 
     
 })
