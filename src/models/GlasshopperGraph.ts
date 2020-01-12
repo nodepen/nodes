@@ -277,7 +277,38 @@ export default class GlasshopperGraph {
                 Axios.post(process.env.VUE_APP_COMPUTE_SERVER, JSON.stringify(ghdoc))
                 .then(res => {
                     const data = res.data[0].Data;
-                    obj.cache[param.instanceGuid] = data.map((x:any) => { return { path: x.Path, type: x.Type, value: x.Value }});
+                    obj.cache[param.instanceGuid] = [];
+                    const cache = obj.cache[param.instanceGuid];
+
+                    data.forEach((x:any) => {
+                        const p: number[] = x.Path;
+                        const n = p.length;
+
+                        const path = p.slice(0, n - 1);
+                        const index = p[n - 1];
+
+                        function isSamePath(a: number[], b: number[]): boolean {
+                            if (a === b) return true;
+                            if (a.length != b.length) return false;
+
+                            for (let i = 0; i < a.length; i++) {
+                                if (a[i] !== b[i]) return false;
+                            }
+
+                            return true;
+                        }
+
+                        const branch = cache.find(c => isSamePath(path, c.path));
+                        const entry = { index: index, type: x.Type, value: x.Value };
+
+                        if (branch === undefined) {
+                            cache.push( { path: path, values: [ entry ] } );
+                        }
+                        else {
+                            branch.values.push(entry);
+                        }
+                    })
+                    //obj.cache[param.instanceGuid] = data.map((x:any) => { return { path: x.Path, type: x.Type, value: x.Value }});
 
                     console.log(`${obj.component.name} : ${param.name}`);
                 })

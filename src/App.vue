@@ -37,7 +37,7 @@
         glasshopper.io
       </div>
       <div class="footer__version">
-        0.3.6
+        0.4.0
       </div>
     </footer>
   </div>

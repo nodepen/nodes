@@ -8,11 +8,26 @@
 <script lang="ts">
 import Vue from 'vue'
 import * as THREE from 'three';
+import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
 
 export default Vue.extend({
     data() {
         return {
 
+        }
+    },
+    computed: {
+        visibleGeometry(): any[] {
+            const objects: GlasshopperGraphObject[] = this.$store.state.currentGraph.graphObjects;
+            const geo: any[] = [];
+            objects.forEach(o => {
+                o.getOutputCacheValues().forEach(x => {
+                    if (x.type !== 'GH_Number') {
+                        geo.push(x);
+                    }
+                });
+            });
+            return geo;
         }
     },
     created() {
@@ -29,8 +44,9 @@ export default Vue.extend({
         const scene = new THREE.Scene();
         scene.background = new THREE.Color("white");
 
-        const camera = new THREE.OrthographicCamera(-100, 100, 100, -100, 1, 1000 );
-        camera.position.set(20, 20, 20)
+        const s = 40;
+        const camera = new THREE.OrthographicCamera(-s * aspect, s * aspect, s, -s, 1, 1000 );
+        camera.position.set(25, 15, 20)
         camera.lookAt(0, 0, 0)
 
         const renderer = new THREE.WebGLRenderer();
@@ -71,7 +87,8 @@ export default Vue.extend({
         renderer.render( scene, camera );
 
         
-    }
+    },
+
     
 })
 </script>

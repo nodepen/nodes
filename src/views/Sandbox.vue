@@ -81,8 +81,13 @@
                         {{ selectedObject.cache[param.instanceGuid].length }} {{ selectedObject.cache[param.instanceGuid].length === 1 ? 'value' : 'values'}} -
                     </div>
                     <div class="component__parameter__values" v-if="selectedObject.cache[param.instanceGuid].length > 0">
-                        <div class="component__parameter__value" v-for="(entry, index) in selectedObject.cache[param.instanceGuid]" :key="index + param.instanceGuid">
-                            {{ entryToString(entry) }}
+                        <div class="component__parameter__branch" v-for="(entry, index) in selectedObject.cache[param.instanceGuid]" :key="index + param.instanceGuid">
+                            <div class="component__parameter__value">
+                                {{ pathToString(entry.path) }}
+                            </div>
+                            <div class="component__parameter__value" v-for="(value, i) in entry.values" :key="i + value.type">
+                                {{ value.index }} : {{ valueToString(value) }}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -280,6 +285,17 @@ export default Vue.extend({
         entryToString(entry: { path: number[], type: string, value: any }): string {
             const n = entry.path.length;
             return `{${entry.path.slice(0, n - 1).join(';')};} [${entry.path[n - 1]}] ${entry.type === 'GH_Number' ? entry.value : entry.type.toLowerCase().replace('gh_', '')}`;
+        },
+        valueToString(value: { index: number, type: string, value: any }): string {
+            switch(value.type) {
+                case 'GH_Number':
+                    return value.value;
+                default:
+                    return value.type.toLowerCase().replace('gh_', '');
+            }
+        },
+        pathToString(path: number[]): string {
+            return `{ ${path.join(';')}; }`;
         },
         parameterIdToSourceName(id: string): string {
             const param: ResthopperParameter = this.$store.state.currentGraph.locateParameter(id);
@@ -551,6 +567,10 @@ export default Vue.extend({
     max-height: calc(var(--md) * 4.5);
     max-width: 40ch;
     overflow-y: auto;
+}
+
+.component__parameter__branch {
+    pointer-events: none !important;
 }
 
 .component__parameter__value {

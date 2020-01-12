@@ -9,7 +9,7 @@ export default class GlasshopperGraphObject {
     public readonly component: ResthopperComponent;
     public readonly svgar: SvgarSlab;
     public readonly guid: string;
-    public readonly cache: { [param: string]: { path: number[], type: string, value: any }[] } = {};
+    public readonly cache: { [param: string]: { path: number[], values: { index: number, type: string, value: any }[] }[] } = {};
     public state: GraphObjectState = 'visible';
 
     constructor(component: ResthopperComponent) {
@@ -55,6 +55,27 @@ export default class GlasshopperGraphObject {
         const p = this.component.position;
 
         return [p.x + dx, p.y - 2.5 + dy];
+    }
+
+    public getCacheValues(): { index: number, type: string, value: any }[] {
+        let values: { index: number, type: string, value: any } [] = [];
+        Object.values(this.cache).forEach(x => x.forEach(y => values = [...values, ...y.values]));
+        return values;
+    }
+
+    public getOutputCacheValues(): { index: number, type: string, value: any}[] {
+        const outputIds = this.component.getAllOutputs().map(x => x.instanceGuid);
+        let values: { index: number, type: string, value: any } [] = [];
+        Object.keys(this.cache).forEach(x => {
+            if (outputIds.includes(x)) {
+                this.cache[x].forEach(branch => {
+                    branch.values.forEach(entry => {
+                        values.push(entry);
+                    })
+                })
+            }
+        });
+        return values;
     }
 
     public attachToComponent(event: string, callback: () => any): void {
