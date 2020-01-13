@@ -4,6 +4,7 @@
     id="graph" 
     ref="svgar" 
     v-html="svg"
+    v-show="visible"
     @pointerdown="onStartTrack"
     @pointermove="onTrack"
     @pointerup="onEndTrack"
@@ -27,7 +28,7 @@ import GlasshopperGraph from './../models/GlasshopperGraph';
 
 type GraphState = 'idle' | 'movingCamera' | 'movingComponent' | 'selectingComponent' | 'drawingWire';
 
-type Command = 'none' | 'debug' | 'copy' | 'delete';
+type Command = 'none' | 'debug' | 'copy' | 'delete' | 'hidegraph';
 
 export default Vue.extend({
     data() {
@@ -102,6 +103,9 @@ export default Vue.extend({
         },
         selected(): GlasshopperGraphObject | undefined {
             return this.graph.graphObjects.find(x => x.guid === this.selectedObject);
+        },
+        visible(): boolean {
+            return this.$store.state.focus === 'graph';
         }
     },
     methods: {
@@ -115,7 +119,7 @@ export default Vue.extend({
             this.keyCache.push(event.code);
         },
         onKeyUp(event: KeyboardEvent): void {
-
+            //console.log(event.code);
             switch(this.determineCommand(event.code)) {
                 case 'copy':
                     console.log('run copy');
@@ -125,6 +129,9 @@ export default Vue.extend({
                     break;
                 case 'debug':
                     this.graph.stage();
+                    break;
+                case 'hidegraph':
+                    this.$store.dispatch('toggleFocus');
                     break;
                 case 'none':
                     console.log('do nothing');
@@ -146,6 +153,10 @@ export default Vue.extend({
 
             if (code === 'Slash') {
                 return 'debug';
+            }
+
+            if (code === 'Space') {
+                return 'hidegraph';
             }
 
             return 'none';

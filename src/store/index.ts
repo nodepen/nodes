@@ -21,6 +21,7 @@ export default new Vuex.Store({
     component: {} as ResthopperComponent | undefined,
     parameter: {} as ResthopperParameter | undefined,
     currentGraph: {} as GlasshopperGraph,
+    focus: 'graph' as 'graph' | 'scene'
   },
   mutations: {
     setActiveComponent(state, component: ResthopperComponent) {
@@ -60,6 +61,9 @@ export default new Vuex.Store({
     resetMap(state) {
       state.map = {};
       state.currentGraph.reset();
+    },
+    setFocus(state, target: 'graph' | 'scene') {
+      state.focus = target;
     }
   },
   actions: {
@@ -128,6 +132,14 @@ export default new Vuex.Store({
     },
     clearSelection(context) {
       context.commit('clearSelection');
+    },
+    toggleFocus(context) {
+      if (context.state.focus === 'graph') {
+        context.commit('setFocus', 'scene');
+      }
+      else {
+        context.commit('setFocus', 'graph');
+      }
     }
   },
   modules: {

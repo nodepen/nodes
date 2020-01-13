@@ -1,13 +1,15 @@
 <template>
     <div 
     id="graph-scene"
-    ref="three">
+    ref="three"
+    @keyup.space="onSpace">
     </div>
 </template>
 
 <script lang="ts">
 import Vue from 'vue'
 import * as THREE from 'three';
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
 import { GH_Box, GH_Point } from './../models/geometry/GrasshopperGeometry';
 
@@ -46,10 +48,37 @@ export default Vue.extend({
                 switch(x.type) {
                     case 'GH_Box':
                         const box = x.value as GH_Box;
+
+                        const xc = box.Center.X;
+                        const xmin = xc + box.X.T0;
+                        const xmax = xc + box.X.T1;
+
+                        const yc = box.Center.Y;
+                        const ymin = yc + box.Y.T0;
+                        const ymax = yc + box.Y.T1;
+
+                        const zc = box.Center.Z;
+                        const zmin = zc + box.Z.T0;
+                        const zmax = zc + box.Z.T1;
+                        
+                        const boxGeometry = new THREE.BoxBufferGeometry(xmax - xmin, ymax - ymin, zmax - zmin);
+                        boxGeometry.translate(xc, zc, -yc);
+                        const boxMaterial = new THREE.MeshPhongMaterial( { 
+                            color: 0xffffff,
+                            polygonOffset: true,
+                            polygonOffsetFactor: 1,
+                            polygonOffsetUnits: 1 });
+                        const boxObject = new THREE.Mesh(boxGeometry, boxMaterial);
+                        s.add(boxObject);
+
+                        const boxEdges = new THREE.EdgesGeometry(boxGeometry);
+                        const boxWireframe = new THREE.LineSegments( boxEdges,
+                            new THREE.LineBasicMaterial( { color: 0x000000 } ));
+                        s.add(boxWireframe);
                         break;
                     case 'GH_Point':
                         const pt = x.value as GH_Point;
-                        const sphereGeometry = new THREE.SphereGeometry(0.5);
+                        const sphereGeometry = new THREE.SphereGeometry(0.1);
                         sphereGeometry.translate(pt.X, pt.Z, -pt.Y);
                         const sphereMaterial = new THREE.MeshBasicMaterial(
                             { color: 0x000000 }
@@ -63,6 +92,7 @@ export default Vue.extend({
 
                         break;
                     default:
+                        console.log(`Type '${x.type}' is not yet implemented in glasshopper.`)
                         break;
                 }
             });
@@ -81,10 +111,6 @@ export default Vue.extend({
         const aspect = w / h;
         const frustumSize = 600;
 
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color("white");
-        this.scene = scene;
-
         const s = 40;
         const camera = new THREE.OrthographicCamera(-s * aspect, s * aspect, s, -s, 1, 1000 );
         camera.position.set(25, 15, 20);
@@ -98,40 +124,16 @@ export default Vue.extend({
 
         el.appendChild( renderer.domElement );
 
-        const ground = new THREE.PlaneGeometry(25, 25);
-        ground.rotateX(-90 * (Math.PI / 180));
-        const groundMaterial = new THREE.MeshBasicMaterial( { color: new THREE.Color('gainsboro')});
-        const plane = new THREE.Mesh( ground, groundMaterial );
-
-        scene.add(plane);
-
-        const geometry = new THREE.BoxGeometry(10, 10, 10);
-        geometry.translate(0, 5.5, 0)
-        const material = new THREE.MeshPhongMaterial( { 
-            color: 0xffffff,
-            polygonOffset: true,
-            polygonOffsetFactor: 1,
-            polygonOffsetUnits: 1 })
-        const cube = new THREE.Mesh( geometry, material );
-        const edges = new THREE.EdgesGeometry(geometry);
-        const lines = new THREE.LineSegments( edges, new THREE.LineBasicMaterial( { color: 0x000000 }))
-
-        scene.add(cube);
-        scene.add(lines);
-
-        const light = new THREE.AmbientLight( 0xffffff, 1 );
-        // const light = new THREE.DirectionalLight(new THREE.Color('white'), 1);
-        // light.position.set(-20, 20, -20);
-        // light.target.position.set(0, 0, 0);
-        // light.castShadow = true;
-
-        scene.add(light);
-
-        renderer.render( scene, camera );
-
+        this.resetScene();
+        this.renderer.render( this.scene, this.camera );    
         
+        const controls = new OrbitControls(this.camera, this.renderer.domElement );
+        controls.addEventListener( 'change', () => { this.renderer.render( this.scene, this.camera )})
     },
     methods: {
+        onSpace(): void {
+            this.$store.dispatch('toggleFocus');
+        },
         resetScene(): void {
             const scene = new THREE.Scene();
             scene.background = new THREE.Color("white");
