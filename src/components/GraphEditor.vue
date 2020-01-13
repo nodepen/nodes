@@ -75,15 +75,16 @@ export default Vue.extend({
             graph.svgar.flag('root');
         }
         
-        const construct = Resthopper.ComponentIndex.createComponent('Construct Point');
+        const construct = Resthopper.ComponentIndex.createComponent('Polygon');
         construct.position = {x: -4, y: 2}
         this.$store.dispatch('addGraphObject', construct);
 
-        const deconstruct = Resthopper.ComponentIndex.createComponent('Deconstruct');
-        deconstruct.position = {x: 11, y: -1}
-        this.$store.dispatch('addGraphObject', deconstruct);
+        // const deconstruct = Resthopper.ComponentIndex.createComponent('Deconstruct');
+        // deconstruct.position = {x: 11, y: -1}
+        // this.$store.dispatch('addGraphObject', deconstruct);
 
         this.$store.dispatch('redrawGraph', {w: this.w, h: this.h});
+        this.$store.state.currentGraph.computeAll();
 
         this.svgar = this.$store.state.currentGraph.svgar;
     },

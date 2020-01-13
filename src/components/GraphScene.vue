@@ -10,6 +10,7 @@
 <script lang="ts">
 import Vue from 'vue'
 import * as THREE from 'three';
+import rhino3dm, { CommonObject, Mesh } from 'rhino3dm';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import GlasshopperGraphObject from '../models/GlasshopperGraphObject';
 import { GH_Box, GH_Point } from './../models/geometry/GrasshopperGeometry';
@@ -20,6 +21,8 @@ export default Vue.extend({
             scene: {} as any,
             camera: {} as any,
             renderer: {} as any,
+            rhinoLoaded: false,
+            rhinoModule: undefined as any | undefined,
         }
     },
     computed: {
@@ -86,6 +89,35 @@ export default Vue.extend({
                             new THREE.LineBasicMaterial( { color: 0x000000 } ));
                         s.add(boxWireframe);
                         break;
+                    case 'GH_Mesh':
+                        if (this.rhinoModule === undefined) {
+                            rhino3dm().then((rhino:any) => {
+                                const m = rhino.CommonObject.decode(x.value);
+                                console.log(m);
+                                console.log(m.isClosed);
+                            });
+                        }
+                        else {
+                            const r = this.rhinoModule;
+                            const m = r.CommonObject.decode(x.value);
+                            const loader = new THREE.BufferGeometryLoader();
+                            const meshGeometry = loader.parse(m.toThreejsJSON());
+                            const meshMaterial =    new THREE.MeshPhongMaterial( { 
+                                color: 0xffffff,
+                                side: THREE.DoubleSide,
+                                polygonOffset: true,
+                                polygonOffsetFactor: 1,
+                                polygonOffsetUnits: 1 });
+                            const mesh = new THREE.Mesh(meshGeometry, meshMaterial);
+                            s.add(mesh);
+
+                            const meshEdges = new THREE.EdgesGeometry(meshGeometry);
+                            const meshWireframe = new THREE.LineSegments( meshEdges,
+                                new THREE.LineBasicMaterial( { color: 0x000000 } ));
+                            s.add(meshWireframe);
+                        }
+
+                        break;
                     case 'GH_Point':
                         const pt = x.value as GH_Point;
                         const sphereGeometry = new THREE.SphereGeometry(0.1);
@@ -103,6 +135,7 @@ export default Vue.extend({
                         break;
                     default:
                         console.log(`Type '${x.type}' is not yet implemented in glasshopper.`)
+                        console.log(x);
                         break;
                 }
             });
@@ -111,7 +144,11 @@ export default Vue.extend({
         }
     },
     created() {
-
+        rhino3dm().then((rhino:any) => {
+            this.rhinoLoaded = true;
+            this.rhinoModule = rhino;
+            console.log('rhino3dm initialized')
+        });
     },
     mounted() {
         const el: Element = this.$refs.three as Element;

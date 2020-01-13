@@ -72,7 +72,7 @@
                         {{ param.description.toLowerCase() }}
                     </div>
                     <div class="component__parameter__entry" v-if="index < selectedComponentInputParameters.length">
-                        source - {{ parameterIdToSourceName(param.instanceGuid).toLowerCase() }} <span v-if="parameterIdToSourceName(param.instanceGuid).toLowerCase() === 'no sources'">[ <span contenteditable="true" @input="onSetParameterValue($event, param.instanceGuid)">set value</span> ]</span>
+                        source - {{ parameterIdToSourceName(param.instanceGuid).toLowerCase() }} <span v-if="parameterIdToSourceName(param.instanceGuid).toLowerCase() === 'no sources'">[ <span contenteditable="true" @input="onSetParameterValue($event, param.instanceGuid)">{{param.getValue() || 'set value'}}</span> ]</span>
                     </div>
                     <div class="component__parameter__entry" style="margin-bottom: calc(var(--md) + var(--sm));">
                         type - {{ param.typeName.toLowerCase() }}
@@ -227,6 +227,12 @@ export default Vue.extend({
                 }
                 p.values = [numberValue]
                 console.log(p.values);
+            }
+            else if(p.typeName.toLowerCase() === 'integer') {
+                if (Number.isNaN(numberValue)) {
+                    return;
+                }
+                p.values = [Math.round(numberValue)]
             }
             else if (p.typeName.toLowerCase() === 'text') {
                 if (stringValue === '') {

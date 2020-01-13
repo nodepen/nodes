@@ -45,6 +45,7 @@
     "@vue/eslint-config-typescript": "^4.0.0",
     "@vue/test-utils": "1.0.0-beta.29",
     "chai": "^4.1.2",
+    "copy-webpack-plugin": "^5.1.1",
     "eslint": "^5.16.0",
     "eslint-plugin-vue": "^5.2.3",
     "start-server-and-test": "^1.10.6",
