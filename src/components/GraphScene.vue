@@ -2,6 +2,7 @@
     <div 
     id="graph-scene"
     ref="three"
+    :tabindex="isFocused ? 0 : undefined"
     @keyup.space="onSpace">
     </div>
 </template>
@@ -36,9 +37,18 @@ export default Vue.extend({
                 });
             });
             return geo;
+        },
+        isFocused(): boolean {
+            return this.$store.state.focus === 'scene';
         }
     },
     watch: {
+        isFocused(): void {
+            if (this.isFocused) {
+                const el: HTMLElement = this.$refs.three as HTMLElement;
+                this.$nextTick(() => { el.focus() });
+            }
+        },
         visibleGeometry(): void {
             this.resetScene();
             const s = this.scene;

@@ -72,7 +72,7 @@
                         {{ param.description.toLowerCase() }}
                     </div>
                     <div class="component__parameter__entry" v-if="index < selectedComponentInputParameters.length">
-                        source - {{ parameterIdToSourceName(param.instanceGuid).toLowerCase() }}
+                        source - {{ parameterIdToSourceName(param.instanceGuid).toLowerCase() }} <span v-if="parameterIdToSourceName(param.instanceGuid).toLowerCase() === 'no sources'">[ <span contenteditable="true" @input="onSetParameterValue($event, param.instanceGuid)">set value</span> ]</span>
                     </div>
                     <div class="component__parameter__entry" style="margin-bottom: calc(var(--md) + var(--sm));">
                         type - {{ param.typeName.toLowerCase() }}
@@ -208,6 +208,17 @@ export default Vue.extend({
     methods: {
         test(): void {
             console.log('test');
+        },
+        onSetParameterValue(event: InputEvent, guid: string): void {
+            console.log(guid);
+            const p = this.$store.state.currentGraph.locateParameter(guid);
+            const el: Element = event.target as Element;
+
+            if (p === undefined) {
+                return;
+            }
+
+            console.log(`${p.name} => ${el.textContent}`);
         },
         onSelectCategory(event: PointerEvent, category: string): void {
             this.selectedCategory = category;
