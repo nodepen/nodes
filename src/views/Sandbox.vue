@@ -211,14 +211,32 @@ export default Vue.extend({
         },
         onSetParameterValue(event: InputEvent, guid: string): void {
             console.log(guid);
-            const p = this.$store.state.currentGraph.locateParameter(guid);
+            const p: ResthopperParameter = this.$store.state.currentGraph.locateParameter(guid);
             const el: Element = event.target as Element;
 
             if (p === undefined) {
                 return;
             }
 
-            console.log(`${p.name} => ${el.textContent}`);
+            let stringValue = el.textContent ?? '';
+            let numberValue = stringValue === '' ? NaN : +stringValue ?? NaN;
+
+            if (p.typeName.toLowerCase() === 'number') {
+                if (Number.isNaN(numberValue)) {
+                    return;
+                }
+                p.values = [numberValue]
+                console.log(p.values);
+            }
+            else if (p.typeName.toLowerCase() === 'text') {
+                if (stringValue === '') {
+                    return;
+                }
+                p.values = [stringValue];
+                console.log(p.values)
+            }
+
+            this.$store.state.currentGraph.computeAll();
         },
         onSelectCategory(event: PointerEvent, category: string): void {
             this.selectedCategory = category;
