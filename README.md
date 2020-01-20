@@ -2,7 +2,7 @@
 
 *The grasshopper glossary. It's grasshopper, but just a little more transparent.*
 
-Glasshopper is a web-based grasshopper client powered by [svgar](https://github.com/cdriesler/svgar) in the frontend and [resthopper](https://github.com/cdriesler/compute.rhino3d/blob/master/src/compute.geometry/ResthopperEndpoints.cs) in the backend. 
+Glasshopper is a web-based grasshopper client powered by [svgar](https://github.com/cdriesler/svgar) in the frontend and [resthopper](https://github.com/cdriesler/compute.rhino3d/blob/master/src/compute.geometry/ResthopperEndpoints.cs) in the backend. You can find a quick video of it in action [here](https://twitter.com/cdriesler/status/1216726073473490946).
 
 ![](glasshopper_map.png)
 
@@ -14,7 +14,7 @@ This project began as a simple proof-of-concept that completed in January 2020. 
 
 - [ ] Dramatically improve performance of svgar's render loop
 - [X] Enable svgar to render a 3D scene
-- [ ] Adopt rhino3dm.js as svgar's geometry system
+- [ ] Adopt [rhino3dm.js](https://github.com/mcneel/rhino3dm/blob/master/docs/javascript/RHINO3DM.JS.md) as svgar's geometry system
 - [ ] Reduce payload size of [resthopper.js](https://github.com/cdriesler/resthopper)
 
 **March 2020**
