@@ -13,23 +13,17 @@
         >
           sandbox
         </router-link>
-        <router-link
+        <!-- <router-link
           to="/g"
           class="tab"
         >
           glossary
-        </router-link>
-        <router-link
-          to="/t"
-          class="tab"
-        >
-          tutorials
-        </router-link>
+        </router-link> -->
       </div>
       <div class="toggles">
-        <div class="toggle" />
-        <div class="toggle" />
-        <div class="toggle" />
+        <div class="toggle" @pointerdown="toggleGraphVisibility">
+			<i class="material-icons"> {{ visibilityIcon }}</i>
+		</div>
       </div>
     </nav>
     <footer>
@@ -37,7 +31,7 @@
         glasshopper.io
       </div>
       <div class="footer__version">
-        0.4.0
+        0.4.1
       </div>
     </footer>
   </div>
@@ -53,6 +47,16 @@ export default Vue.extend({
 		GraphEditor,
 		GraphScene
 	},
+	methods: {
+		toggleGraphVisibility(): void {
+			this.$store.dispatch('toggleFocus');
+		}
+	},
+	computed: {
+		visibilityIcon(): string {
+			return this.$store.state.focus === 'graph' ? 'visibility' : 'visibility_off'
+		}
+	}
 })
 </script>
 
@@ -144,6 +148,19 @@ nav {
 	box-sizing: border-box;
 
 	border: 0.7mm solid black;
+
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+.toggle:hover {
+	cursor: pointer;
+}
+
+.toggle > * {
+	font-size: 18px;
 }
 
 .tabs {
