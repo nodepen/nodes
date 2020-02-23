@@ -15,7 +15,7 @@ This project began as a simple proof-of-concept that completed in January 2020. 
 - [ ] Dramatically improve performance of svgar's render loop
 - [X] Enable svgar to render a 3D scene
 - [ ] Adopt [rhino3dm.js](https://github.com/mcneel/rhino3dm/blob/master/docs/javascript/RHINO3DM.JS.md) as svgar's geometry system
-- [ ] Reduce payload size of [resthopper.js](https://github.com/cdriesler/resthopper)
+- [X] Reduce payload size of [resthopper.js](https://github.com/cdriesler/resthopper)
 
 **March 2020**
 
