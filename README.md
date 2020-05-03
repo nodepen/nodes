@@ -10,14 +10,16 @@ Glasshopper is a web-based grasshopper client powered by [svgar](https://github.
 
 This project began as a simple proof-of-concept that completed in January 2020. I made a number of poor architectural decisions during this experimental phase, though, that prevented an immediate transition to a usable tool. (Unless you're ok using only 10 components at a time before chrome dies.) I'm currently improving the backbone graphics library, [svgar](https://github.com/cdriesler/svgar), and planning features for the next version of the project.
 
-**February 2020**
+*Timeline is a bit delayed by my finding a new job and an inconvenient pandemic.*
+
+**May 2020**
 
 - [ ] Dramatically improve performance of svgar's render loop
 - [X] Enable svgar to render a 3D scene
 - [ ] Adopt [rhino3dm.js](https://github.com/mcneel/rhino3dm/blob/master/docs/javascript/RHINO3DM.JS.md) as svgar's geometry system
 - [X] Reduce payload size of [resthopper.js](https://github.com/cdriesler/resthopper)
 
-**March 2020**
+**June 2020**
 
 - [ ] Give glasshopper a facelift
 - [ ] Add database to allow snippets to be saved and shared
