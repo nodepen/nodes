@@ -45,6 +45,9 @@ module.exports = {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv'
   ],
+  env: {
+    WS_URL: process.env.WS_URL || 'http://localhost:3000'
+  },
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
