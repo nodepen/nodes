@@ -17,6 +17,10 @@ html {
   box-sizing: border-box;
 }
 
+:root {
+  --green: #98e2c6;
+}
+
 *,
 *:before,
 *:after {

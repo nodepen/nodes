@@ -88,3 +88,7 @@ sw.*
 
 # Vim swap files
 *.swp
+
+# Google Cloud Platform
+app.yaml
+.gcloudignore
