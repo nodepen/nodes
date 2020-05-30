@@ -19,6 +19,7 @@
         >
           GitHub
         </a>
+        <button @click="pokeSocket">Tap</button>
       </div>
     </div>
   </div>
@@ -27,10 +28,21 @@
 <script lang="ts">
 import Vue from 'vue'
 import Logo from '~/components/Logo.vue'
+import socket from '~/plugins/socket'
 
 export default Vue.extend({
   components: {
     Logo
+  },
+  beforeMount() {
+    socket.on('howdy', (data: any) => {
+      console.log(data)
+    })
+  },
+  methods: {
+    pokeSocket(): void {
+      socket.emit('poke')
+    }
   }
 })
 </script>
