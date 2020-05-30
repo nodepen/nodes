@@ -6,13 +6,16 @@
   "private": true,
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node --project 'server/tsconfig.json' server/index.ts --watch server",
-    "build": "nuxt build",
+    "gcp-build": "nuxt-ts build",
+    "build": "nuxt-ts build",
+    "start:ts": "nuxt-ts start",
     "start": "cross-env NODE_ENV=production ts-node --project 'server/tsconfig.json' server/index.ts",
-    "generate": "nuxt generate",
+    "generate": "nuxt-ts generate",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "jest"
   },
   "dependencies": {
+    "@nuxt/typescript-runtime": "^0.4.8",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
     "cross-env": "^5.2.0",
@@ -20,13 +23,15 @@
     "nuxt": "^2.0.0",
     "socket.io": "^2.3.0",
     "socket.io-client": "^2.3.0",
-    "svgar-server": "0.0.2"
+    "svgar-server": "0.0.3",
+    "ts-node": "^8.10.2"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
     "@nuxtjs/eslint-config-typescript": "^1.0.0",
     "@nuxtjs/eslint-module": "^1.0.0",
     "@nuxtjs/tailwindcss": "^1.0.0",
+    "@types/jest": "^25.2.3",
     "@types/socket.io": "^2.1.8",
     "@types/socket.io-client": "^1.4.33",
     "@vue/test-utils": "^1.0.0-beta.27",
@@ -40,7 +45,6 @@
     "nodemon": "^1.18.9",
     "prettier": "^1.19.1",
     "ts-jest": "^25.0.0",
-    "ts-node": "^8.10.2",
     "vue-jest": "^4.0.0-0"
   }
 }

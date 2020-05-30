@@ -3,6 +3,7 @@ import http from 'http'
 import express from 'express'
 import SocketIO from 'socket.io'
 import consola from 'consola'
+// @ts-ignore
 import { Nuxt, Builder } from 'nuxt'
 
 // Import and Set Nuxt.js options
