@@ -1,9 +1,0 @@
-{
-    "short_name": "glasshopper",
-    "name": "glasshopper",
-    "start_url": "/",
-    "background_color": "#FFFFFF",
-    "display": "standalone",
-    "scope": "/",
-    "theme_color": "#FFFFFF"
-  }
