@@ -8,7 +8,7 @@
       "esnext.asynciterable",
       "dom"
     ],
-    "outDir": "../server-dist",
+    "outDir": "../dist",
     "resolveJsonModule": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
@@ -18,7 +18,7 @@
     "allowJs": true,
     "sourceMap": true,
     "strict": true,
-    "noEmit": true,
+    "noEmit": false,
     "baseUrl": ".",
     "paths": {
       "~/*": [
@@ -29,11 +29,18 @@
       ]
     },
     "types": [
-      "@types/jest",
       "@types/node",
+      "@types/socket.io",
+      "@types/socket.io-client",
+      // "@types/node",
+      // "@types/socket.io",
+      // "@types/"
       "@nuxt/types"
     ]
   },
+  "include": [
+    "index.ts",
+  ],
   "exclude": [
     "node_modules"
   ]
