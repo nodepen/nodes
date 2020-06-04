@@ -2,7 +2,7 @@ import * as http from 'http'
 import express, { Request, Response } from 'express'
 import socketIO, { Socket } from 'socket.io'
 
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 3100
 
 const app = express()
 app.set('port', PORT)
@@ -19,5 +19,5 @@ io.on('connection', (socket: Socket) => {
 })
 
 server.listen(PORT, () => {
-  console.log(`Server started. Listening on port ${3000}`)
+  console.log(`Server started. Listening on port ${PORT}`)
 })
