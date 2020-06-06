@@ -10,7 +10,33 @@ module.exports = {
     './layouts/**/*.vue',
     './pages/**/*.vue',
   ],
-  theme: {},
+  theme: {
+    extend: {
+      spacing: {
+        '76': '304px',
+        '128': '512px'
+      },
+      colors: {
+        dark: '#333333',
+        light: '#FFFFFF',
+        pale: '#eff2f2',
+        green: '#98E2C6',
+        darkgreen: '#093824'
+      },
+      width: {
+        'vw': '100vw',
+        'vh': '100vh'
+      },
+      height: {
+        'vw': '100vh',
+        'vh': '100vh'
+      },
+      boxShadow: {
+        'osm': '0 2px 0 0 #333333',
+        'omd': '0 4px 0 0 #333333'
+      }
+    }
+  },
   variants: {},
   plugins: []
 }
