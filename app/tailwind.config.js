@@ -11,8 +11,13 @@ module.exports = {
     './pages/**/*.vue',
   ],
   theme: {
+    fontFamily: {
+      display: ['NovaMono', 'sans-serif'],
+      sans: ['Inter', 'sans-serif']
+    },
     extend: {
       spacing: {
+        'hov-sm': '-2px',
         '76': '304px',
         '128': '512px'
       },
@@ -34,9 +39,11 @@ module.exports = {
       boxShadow: {
         'osm': '0 2px 0 0 #333333',
         'omd': '0 4px 0 0 #333333'
-      }
+      },
     }
   },
-  variants: {},
+  variants: {
+    cursor: ['responsive, hover']
+  },
   plugins: []
 }
