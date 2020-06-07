@@ -12,7 +12,7 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      display: ['NovaMono', 'sans-serif'],
+      display: [ 'Nova Mono', 'NovaMono', 'monospace'],
       sans: ['Inter', 'sans-serif']
     },
     extend: {
