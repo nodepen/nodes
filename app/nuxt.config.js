@@ -23,6 +23,14 @@ export default {
   /*
    ** Global CSS
    */
+  router: {
+    extendRoutes (routes, resolve) {
+      routes.push({
+        path: '*',
+        redirect: '/teaser'
+      })
+    }
+  },
   css: [],
   /*
    ** Plugins to load before mounting the App
