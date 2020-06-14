@@ -2,6 +2,8 @@ import * as http from 'http'
 import express, { Request, Response } from 'express'
 import socketIO, { Socket } from 'socket.io'
 
+import { UserRoutes } from './routes'
+
 const PORT = process.env.PORT || 3100
 
 const app = express()
@@ -12,6 +14,8 @@ const io = socketIO(server)
 app.get('/', (req: Request, res: Response) => {
   res.send('howdy')
 })
+
+app.use('/api', UserRoutes)
 
 io.on('connection', (socket: Socket) => {
   console.log('Connection made!')
