@@ -21,11 +21,14 @@
   },
   "homepage": "https://github.com/cdriesler/glasshopper.io#readme",
   "dependencies": {
+    "dotenv": "^8.2.0",
     "express": "^4.17.1",
+    "firebase-admin": "^8.12.1",
     "socket.io": "2.3.0",
     "typescript": "^3.9.3"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.6",
     "@types/socket.io": "^2.1.8",
     "@typescript-eslint/eslint-plugin": "^3.0.2",
