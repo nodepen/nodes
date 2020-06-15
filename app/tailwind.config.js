@@ -16,10 +16,12 @@ module.exports = {
       sans: ['Inter', 'sans-serif']
     },
     extend: {
-      spacing: {
-        'hov-sm': '-2px',
-        '76': '304px',
-        '128': '512px'
+      screens: {
+        "xs": '400px'
+      },
+      boxShadow: {
+        'osm': '0 2px 0 0 #333333',
+        'omd': '0 4px 0 0 #333333'
       },
       colors: {
         dark: '#333333',
@@ -28,18 +30,22 @@ module.exports = {
         green: '#98E2C6',
         darkgreen: '#093824'
       },
-      width: {
-        'vw': '100vw',
-        'vh': '100vh'
-      },
       height: {
         'vw': '100vh',
         'vh': '100vh'
       },
-      boxShadow: {
-        'osm': '0 2px 0 0 #333333',
-        'omd': '0 4px 0 0 #333333'
+      minWidth: {
+        '8': '32px'
       },
+      spacing: {
+        'hov-sm': '-2px',
+        '76': '304px',
+        '128': '512px'
+      },
+      width: {
+        'vw': '100vw',
+        'vh': '100vh'
+      },      
     }
   },
   variants: {
