@@ -16,7 +16,8 @@
     "@nuxt/typescript-runtime": "^0.4.0",
     "@nuxtjs/axios": "^5.3.6",
     "@nuxtjs/dotenv": "^1.4.0",
-    "nuxt": "^2.0.0"
+    "nuxt": "^2.0.0",
+    "three": "^0.120.0"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
