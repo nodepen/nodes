@@ -16,9 +16,8 @@
   </div>
 </template>
 
-<style scoped>
+<style>
 .div-mono {
   @apply border-b-4 border-solid border-dark bg-light;
 }
-
 </style>
