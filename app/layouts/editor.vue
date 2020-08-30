@@ -7,13 +7,12 @@
         <div class="min-w-8 flex flex-col xs:flex-grow">
           <div class="div-mono w-full h-8"></div>
           <div class="invisible flex-grow p-2 pb-0 xs:visible">
-            <div class="w-full h-full bg-red-300"></div>
+            <div class="w-full h-full"></div>
           </div>
         </div>
       </div>
     </div>
     <div class="flex-grow bg-gray-500"><nuxt /></div>
-    <div class="h-6 bg-green "></div>
   </div>
 </template>
 
