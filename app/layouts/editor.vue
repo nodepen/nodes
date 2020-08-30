@@ -18,6 +18,6 @@
 
 <style>
 .div-mono {
-  @apply border-b-4 border-solid border-dark bg-light;
+  @apply border-b-4 border-solid border-dark bg-light font-sans;
 }
 </style>
