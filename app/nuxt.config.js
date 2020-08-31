@@ -1,3 +1,5 @@
+import webpack from 'webpack';
+
 export default {
   mode: 'universal',
   /*
@@ -57,6 +59,9 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
   ],
+  transpile: [
+    "three",
+  ],
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
@@ -70,5 +75,8 @@ export default {
      ** You can extend webpack config here
      */
     extend(config, ctx) {}
+    //   config.plugins.push(new webpack.ProvidePlugin({
+    //     THREE: 'three'
+    // }));
   }
 }

@@ -12,7 +12,7 @@
         </div>
       </div>
     </div>
-    <div class="flex-grow bg-gray-500"><nuxt /></div>
+    <div class="flex-grow bg-pale"><nuxt /></div>
   </div>
 </template>
 
