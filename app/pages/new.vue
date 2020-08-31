@@ -99,10 +99,11 @@ export default Vue.extend({
   methods: {
     async doTest(x: number, y: number, z: number): Promise<void> {
         const res = await this.$axios.$get(`http://localhost:8081/test?x=${x}&y=${y}&z=${z}`)
+        console.log(res)
         const { X, Y, Z } = res
         const dx = X.T1 - X.T0
-        const dy = Y.T1 - X.T0
-        const dz = Y.T1 - X.T0
+        const dy = Z.T1 - Z.T0
+        const dz = Y.T1 - Y.T0
 
         while(this.scene.children.length > 0) {
             this.scene.remove(this.scene.children[0])
