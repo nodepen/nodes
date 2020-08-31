@@ -12,6 +12,7 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
+      panel: ['Major Mono Display', 'monospace'],
       display: [ 'Nova Mono', 'NovaMono', 'monospace'],
       sans: ['Inter', 'sans-serif']
     },
@@ -21,7 +22,8 @@ module.exports = {
       },
       boxShadow: {
         'osm': '0 2px 0 0 #333333',
-        'omd': '0 4px 0 0 #333333'
+        'omd': '0 4px 0 0 #333333',
+        'ism': '0 -2px 0 0 #333333'
       },
       colors: {
         dark: '#333333',

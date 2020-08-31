@@ -1,7 +1,7 @@
 <template>
   <div class="w-full h-full flex flex-col">
     <div id="graph" class="flex-grow">
-        <div id="scene" ref="scene" class="overflow-hidden" @click="doTest" />
+        <div id="scene" ref="scene" class="overflow-hidden" />
     </div>
     <div class="h-12 pl-8 pr-8 bg-green flex flex-row">
         <div class="w-full max-w-screen-xs h-full mr-6 flex flex-row items-center" >
@@ -35,6 +35,17 @@
     >
         {{ tooltip.component.NickName }}
     </div>
+    <div
+        v-if="creating"
+        :style="{ position: 'fixed', left: `${pipPosition[0] - 5}px`, top: `${pipPosition[1] - 5}px`}"
+        class="w-3 h-3 rounded-full border-darkgreen border-solid border-2 bg-opacity-0"
+    />
+    <glasshopper-component 
+        v-if="graph.component" 
+        :position="graph.position" 
+        :component="graph.component" 
+        @change="([x, y, z]) => doTest(x, y, z)"
+    />
   </div>
 </template>
 
@@ -46,6 +57,7 @@ import OrbitControls from 'orbit-controls-es6'
 //import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader.js'
 import { GrasshopperComponent, GrasshopperCategory } from '../../lib/dist'
+import GlasshopperComponent from '../components/GlasshopperComponent.vue'
 
 interface ComponentTooltip {
     component: GrasshopperComponent
@@ -54,6 +66,7 @@ interface ComponentTooltip {
 
 export default Vue.extend({
   layout: 'editor',
+  components: { GlasshopperComponent },
   data() {
       return {
           components: [] as GrasshopperComponent[],
@@ -84,8 +97,8 @@ export default Vue.extend({
       window.addEventListener('pointerup', this.handleEndComponentCreate)
   },
   methods: {
-    async doTest(): Promise<void> {
-        const res = await this.$axios.$get('http://localhost:8081/test')
+    async doTest(x: number, y: number, z: number): Promise<void> {
+        const res = await this.$axios.$get(`http://localhost:8081/test?x=${x}&y=${y}&z=${z}`)
         const { X, Y, Z } = res
         const dx = X.T1 - X.T0
         const dy = Y.T1 - X.T0
@@ -99,6 +112,9 @@ export default Vue.extend({
         const material = new THREE.MeshBasicMaterial( { color: '#98E2C6'} )
         const cube = new THREE.Mesh(box, material)
         this.scene.add(cube)
+        const edges = new THREE.EdgesGeometry(box)
+        const lines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: '#093824'} ))
+        this.scene.add(lines)
         this.animate()
 
         // console.log(res)
@@ -180,7 +196,9 @@ export default Vue.extend({
     handleStartComponentCreate(e: PointerEvent, component: GrasshopperComponent) {
         e.stopPropagation()
         this.creating = true
-        // this.pipPosition = [ pageX, pageY ]
+        const ex = e.clientX
+        const ey = e.clientY
+        this.pipPosition = [ ex, ey ]
         this.pipComponent = component
     },
     handleMoveComponentCreate(e: PointerEvent) {
@@ -189,10 +207,20 @@ export default Vue.extend({
             return
         }
         this.prev = t
-        console.log(e)
+        const [x, y] = this.pipPosition
+        const ex = e.clientX
+        const ey = e.clientY
+        const dx = ex - x
+        const dy = ey - y
+
+        this.pipPosition = [x + dx, y + dy]
     },
     handleEndComponentCreate(e: PointerEvent) {
         this.creating = false
+        this.graph = {
+            position: this.pipPosition,
+            component: this.pipComponent
+        }
     },
   },
   computed: {
