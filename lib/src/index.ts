@@ -4,3 +4,4 @@ export interface TestModel {
 }
 
 export { GrasshopperComponent } from './GrasshopperComponent'
+export { GrasshopperCategory } from './GrasshopperCategory'
