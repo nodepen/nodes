@@ -3,5 +3,6 @@ export interface TestModel {
   count: number
 }
 
-export { GrasshopperComponent } from './GrasshopperComponent'
 export { GrasshopperCategory } from './GrasshopperCategory'
+export { GrasshopperComponent } from './GrasshopperComponent'
+export { GrasshopperComponentParameter } from './GrasshopperComponentParameter'

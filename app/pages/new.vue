@@ -12,14 +12,20 @@
                 {{ selectedSubcategory }}
             </div>
         </div>
-        <div class="h-full max-w-2xl overflow-x-hidden items-center flex flex-row">
-            <img 
+        <div class="h-full pt-3 max-w-3xl overflow-hidden select-none whitespace-no-wrap">
+            <div 
+                class="w-6 h-6 mr-3 box-border inline-block" 
                 v-for="(comp, i) in activeComponents" :key="`${i}-${comp.NickName}`" 
-                :src="`data:image/png;base64,${comp.Icon}`" 
-                class="w-6 h-6 mr-3" 
                 @mouseenter="(e) => handleComponentIconEnter(e, comp)"
                 @mouseleave="handleComponentIconLeave"
-            />
+                @pointerdown="(e) => handleStartComponentCreate(e, comp)"
+                >
+                <img 
+                :src="`data:image/png;base64,${comp.Icon}`" 
+                class="w-6 h-6 pointer-events-none" 
+                />
+            </div>
+            
         </div>
     </div>
     <div 
@@ -58,7 +64,15 @@ export default Vue.extend({
           scene: {} as any, 
           controls: {} as any,
           camera: {} as any,
-          renderer: {} as any,    
+          renderer: {} as any,   
+          graph: {
+              component: undefined as GrasshopperComponent | undefined,
+              position: [0, 0]
+          },
+          prev: 0,
+          creating: false,
+          pipComponent: undefined as GrasshopperComponent | undefined,
+          pipPosition: [0, 0],
       }
   },
   created() {
@@ -66,6 +80,8 @@ export default Vue.extend({
   },
   mounted() {
       this.initScene()
+      window.addEventListener('pointermove', this.handleMoveComponentCreate)
+      window.addEventListener('pointerup', this.handleEndComponentCreate)
   },
   methods: {
     async doTest(): Promise<void> {
@@ -91,7 +107,7 @@ export default Vue.extend({
         const container: HTMLElement = this.$refs.scene as HTMLElement
 
         const camera = new THREE.PerspectiveCamera(60, 1, 1, 1000)
-        camera.position.set( 26, - 40, 5 );
+        camera.position.set( 5, - 10, 5 );
         const scene = new THREE.Scene()
         scene.background = new THREE.Color('#eff2f2')
 
@@ -160,7 +176,24 @@ export default Vue.extend({
     },
     handleComponentIconLeave(): void {
         this.tooltip = undefined
-    }
+    },
+    handleStartComponentCreate(e: PointerEvent, component: GrasshopperComponent) {
+        e.stopPropagation()
+        this.creating = true
+        // this.pipPosition = [ pageX, pageY ]
+        this.pipComponent = component
+    },
+    handleMoveComponentCreate(e: PointerEvent) {
+        const t = Date.now()
+        if (!this.creating || t - this.prev < 30) {
+            return
+        }
+        this.prev = t
+        console.log(e)
+    },
+    handleEndComponentCreate(e: PointerEvent) {
+        this.creating = false
+    },
   },
   computed: {
       activeComponents(): GrasshopperComponent[] {
