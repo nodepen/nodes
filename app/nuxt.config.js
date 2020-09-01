@@ -59,9 +59,6 @@ export default {
     // Doc: https://github.com/nuxt-community/dotenv-module
     '@nuxtjs/dotenv',
   ],
-  transpile: [
-    "three",
-  ],
   /*
    ** Axios module configuration
    ** See https://axios.nuxtjs.org/options
@@ -71,6 +68,9 @@ export default {
    ** Build configuration
    */
   build: {
+    transpile: [
+      "three",
+    ],
     /*
      ** You can extend webpack config here
      */

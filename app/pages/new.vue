@@ -53,8 +53,7 @@
 import Vue from 'vue'
 import rhino3dm from 'rhino3dm'
 import * as THREE from 'three'
-import OrbitControls from 'orbit-controls-es6'
-//import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader.js'
 import { GrasshopperComponent, GrasshopperCategory } from '../../lib/dist'
 import GlasshopperComponent from '../components/GlasshopperComponent.vue'
@@ -95,6 +94,8 @@ export default Vue.extend({
       this.initScene()
       window.addEventListener('pointermove', this.handleMoveComponentCreate)
       window.addEventListener('pointerup', this.handleEndComponentCreate)
+      const loader = new Rhino3dmLoader()
+      console.log((loader as any).decodeObjects)
   },
   methods: {
     async doTest(x: number, y: number, z: number): Promise<void> {
