@@ -129,13 +129,24 @@ namespace compute.geometry
             Console.WriteLine($"{x}, {y}, {z}");
             var box = new Box(Plane.WorldXY, new Interval(-x, x), new Interval(-y, y), new Interval(-z, z));
             var file = new File3dm();
+            file.AllLayers.Add(new Rhino.DocObjects.Layer());
+            var m = new Rhino.DocObjects.Material();
+            m.DiffuseColor = new Color();
+            file.AllMaterials.Add(m);
             var sphere = new Sphere(Plane.WorldXY, 1.5);
-            var id = file.Objects.AddSphere(sphere);
-            var id2 = file.Objects.AddSphere(new Sphere(Plane.WorldXY, 2.5));
-            Console.WriteLine(id);
-            Console.WriteLine(JsonConvert.SerializeObject(sphere));
-            Console.WriteLine(JsonConvert.SerializeObject(file));
-            return JsonConvert.SerializeObject(file);
+            var geo = new Box(Plane.WorldXY, new Interval(2, 3), new Interval(2, 3), new Interval(2, 3));
+            var b = Mesh.CreateFromBrep(geo.ToBrep(), MeshingParameters.QualityRenderMesh);
+            var oa = new Rhino.DocObjects.ObjectAttributes();
+            oa.LayerIndex = 0;
+            oa.MaterialIndex = 0;
+            b.ToList().ForEach(msh => file.Objects.AddMesh(msh, oa));
+            var t = DateTime.Now.Ticks.ToString();
+            file.Write($"test{t}.3dm", 2);
+            var res = System.IO.File.ReadAllBytes($"test{t}.3dm");
+            var f = Convert.ToBase64String(res);
+            Console.WriteLine(f);
+ 
+            return JsonConvert.SerializeObject(f);
         }
 
         static bool IsComponentVariable(IGH_ObjectProxy c)
