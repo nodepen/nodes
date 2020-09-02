@@ -57,6 +57,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader.js'
 import { GrasshopperComponent, GrasshopperCategory } from '../../lib/dist'
 import GlasshopperComponent from '../components/GlasshopperComponent.vue'
+import { MeshBasicMaterial } from 'three'
 
 interface ComponentTooltip {
     component: GrasshopperComponent
@@ -94,32 +95,32 @@ export default Vue.extend({
       this.initScene()
       window.addEventListener('pointermove', this.handleMoveComponentCreate)
       window.addEventListener('pointerup', this.handleEndComponentCreate)
-      const loader = new Rhino3dmLoader()
-      console.log((loader as any).decodeObjects)
+      window.addEventListener('keydown', (e) => {
+          if (e.altKey) {
+              this.doTest(1, 2, 3)
+          }
+      })
   },
   methods: {
     async doTest(x: number, y: number, z: number): Promise<void> {
         const res = await this.$axios.$get(`http://localhost:8081/test?x=${x}&y=${y}&z=${z}`)
-        console.log(res)
-        const { X, Y, Z } = res
-        const dx = X.T1 - X.T0
-        const dy = Z.T1 - Z.T0
-        const dz = Y.T1 - Y.T0
 
-        while(this.scene.children.length > 0) {
-            this.scene.remove(this.scene.children[0])
+        const base64ToArrayBuffer = (base64: string) => {
+            var binary_string = window.atob(base64);
+            var len = binary_string.length;
+            var bytes = new Uint8Array(len);
+            for (var i = 0; i < len; i++) {
+                bytes[i] = binary_string.charCodeAt(i);
+            }
+            return bytes.buffer;
         }
 
-        const box = new THREE.BoxGeometry(dx, dy, dz)
-        const material = new THREE.MeshBasicMaterial( { color: '#98E2C6'} )
-        const cube = new THREE.Mesh(box, material)
-        this.scene.add(cube)
-        const edges = new THREE.EdgesGeometry(box)
-        const lines = new THREE.LineSegments(edges, new THREE.LineBasicMaterial( { color: '#093824'} ))
-        this.scene.add(lines)
-        this.animate()
+        const loader = new Rhino3dmLoader() as any
 
-        // console.log(res)
+        (loader as any).parse(base64ToArrayBuffer(res), (obj: THREE.Object3D) => {
+            this.scene.add(obj)
+            this.animate()
+        })
     },
     initScene(): void {
         const container: HTMLElement = this.$refs.scene as HTMLElement
