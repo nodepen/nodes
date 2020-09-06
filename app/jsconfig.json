@@ -6,7 +6,6 @@
       "@/*": ["./*"],
       "~~/*": ["./*"],
       "@@/*": ["./*"],
-      "lib": ["./../lib/dist/index"],
     }
   },
   "exclude": ["node_modules", ".nuxt", "dist"]
