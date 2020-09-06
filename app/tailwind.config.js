@@ -22,7 +22,7 @@ module.exports = {
       },
       boxShadow: {
         'osm': '0 2px 0 0 #333333',
-        'omd': '0 4px 0 0 #333333',
+        'omd': '0 3px 0 0 #333333',
         'ism': '0 -2px 0 0 #333333'
       },
       colors: {
