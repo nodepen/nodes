@@ -1,8 +1,4 @@
-export interface TestModel {
-  name: string
-  count: number
-}
+import * as Glasshopper from './glasshopper'
+import * as Grasshopper from './grasshopper'
 
-export { GrasshopperCategory } from './GrasshopperCategory'
-export { GrasshopperComponent } from './GrasshopperComponent'
-export { GrasshopperComponentParameter } from './GrasshopperComponentParameter'
+export { Glasshopper, Grasshopper }

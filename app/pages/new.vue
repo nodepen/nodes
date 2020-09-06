@@ -37,8 +37,8 @@
     </div>
     <div
         v-if="creating"
-        :style="{ position: 'fixed', left: `${pipPosition[0] - 5}px`, top: `${pipPosition[1] - 5}px`}"
-        class="w-3 h-3 rounded-full border-darkgreen border-solid border-2 bg-opacity-0"
+        :style="{ position: 'fixed', left: `${pipPosition[0] - 10}px`, top: `${pipPosition[1] - 10}px`}"
+        class="w-6 h-6 rounded-md border-darkgreen border-solid border-2 bg-opacity-0"
     />
     <glasshopper-component 
         v-if="graph.component" 
@@ -55,12 +55,12 @@ import rhino3dm from 'rhino3dm'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader.js'
-import { GrasshopperComponent, GrasshopperCategory } from '../../lib/dist'
+import { Grasshopper } from 'glib'
 import GlasshopperComponent from '../components/GlasshopperComponent.vue'
 import { MeshBasicMaterial } from 'three'
 
 interface ComponentTooltip {
-    component: GrasshopperComponent
+    component: Grasshopper.Component
     position: [number, number]
 }
 
@@ -69,8 +69,8 @@ export default Vue.extend({
   components: { GlasshopperComponent },
   data() {
       return {
-          components: [] as GrasshopperComponent[],
-          categories: [] as GrasshopperCategory[],
+          components: [] as Grasshopper.Component[],
+          categories: [] as Grasshopper.Category[],
           selectedCategory: '...',
           selectedSubcategory: '...',
           tooltip: undefined as ComponentTooltip | undefined,
@@ -79,12 +79,12 @@ export default Vue.extend({
           camera: {} as any,
           renderer: {} as any,   
           graph: {
-              component: undefined as GrasshopperComponent | undefined,
+              component: undefined as Grasshopper.Component | undefined,
               position: [0, 0]
           },
           prev: 0,
           creating: false,
-          pipComponent: undefined as GrasshopperComponent | undefined,
+          pipComponent: undefined as Grasshopper.Component | undefined,
           pipPosition: [0, 0],
       }
   },
@@ -157,7 +157,7 @@ export default Vue.extend({
         this.renderer.render(this.scene, this.camera)
     },
     async getServerConfig() {
-      const res: GrasshopperComponent[] = await this.$axios.$get('http://localhost:8081/grasshopper')
+      const res: Grasshopper.Component[] = await this.$axios.$get('http://localhost:8081/grasshopper')
       res.forEach((c) => {
           const { Category, Subcategory } = c
           const cached = this.categories.find((cat) => cat.name === Category)
@@ -185,7 +185,7 @@ export default Vue.extend({
         const next = i === cat.subcategories.length - 1 ? 0 : i + 1
         this.selectedSubcategory = cat.subcategories[next]
     },
-    handleComponentIconEnter(e: any, component: GrasshopperComponent) {
+    handleComponentIconEnter(e: any, component: Grasshopper.Component) {
         const el = e.target as HTMLElement
         const { top, left } = el.getBoundingClientRect()
         this.tooltip = {
@@ -196,7 +196,7 @@ export default Vue.extend({
     handleComponentIconLeave(): void {
         this.tooltip = undefined
     },
-    handleStartComponentCreate(e: PointerEvent, component: GrasshopperComponent) {
+    handleStartComponentCreate(e: PointerEvent, component: Grasshopper.Component) {
         e.stopPropagation()
         this.creating = true
         const ex = e.clientX
@@ -227,8 +227,8 @@ export default Vue.extend({
     },
   },
   computed: {
-      activeComponents(): GrasshopperComponent[] {
-          return (this.components as GrasshopperComponent[]).filter((c) => c.Category === this.selectedCategory && c.Subcategory === this.selectedSubcategory).sort((a, b) => {
+      activeComponents(): Grasshopper.Component[] {
+          return (this.components as Grasshopper.Component[]).filter((c) => c.Category === this.selectedCategory && c.Subcategory === this.selectedSubcategory).sort((a, b) => {
               const first = a.NickName.toUpperCase()
               const second = b.NickName.toUpperCase()
               return (first < second) ? -1 : (first > second) ? 1 : 0

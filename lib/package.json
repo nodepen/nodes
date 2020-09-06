@@ -1,5 +1,5 @@
 {
-  "name": "glasshopper-lib",
+  "name": "glib",
   "version": "1.0.0",
   "description": "common glasshopper models",
   "main": "dist/index.js",
