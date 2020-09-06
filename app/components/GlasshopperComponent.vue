@@ -1,8 +1,8 @@
 <template>
-    <div ref="panel" class="border-solid border-dark border-2 shadow-osm rounded-md bg-light flex z-10 overflow-hidden" :style="{ position: 'fixed', left: `${component.position[0] - 5}px`, top: `${component.position[1] - 5}px`}" @click="handleSelect">
+    <div ref="panel" class="border-solid border-dark border-2 shadow-omd rounded-md bg-light flex z-10 overflow-hidden" :style="{ position: 'fixed', left: `${component.position[0] - 5}px`, top: `${component.position[1] - 5}px`}" @click="handleSelect">
         <div class="p-2 flex flex-col items-center justify-evenly">
             <div v-for="(input, i) in component.component.Inputs" :key="`${component.component.NickName}-${input.NickName}`" class="pip-left text-sm mt-1 mb-1 w-12 whitespace-no-wrap z-10" :class="i < component.component.Inputs.length - 1 ? 'border-b-2 border-dark pb-2' : ''">
-                    <div class="pip mr-1 z-0 w-3 h-3 bg-light border-solid border-dark border-2 rounded-sm inline-block hover:bg-gray-500 hover:cursor-pointer" />
+                    <div class="pip mr-1 z-0 w-3 h-3 bg-light border-solid border-dark border-2 rounded-sm inline-block hover:bg-gray-500 hover:cursor-pointer shadow-ism" />
                     <div class="inline-block"  @click="() => showInput(input.NickName)">{{ input.NickName }}</div>
                     <input v-if="open.includes(input.NickName)" class="w-6 rounded-md pl-1 text-gray-600 bg-pale" @change="(e) => handleChange(i - 1, e.target.value)" />
             </div>
@@ -13,7 +13,7 @@
         <div class="p-2 flex flex-col items-center justify-evenly">
             <div v-for="(output, i) in component.component.Outputs" :key="`${component.component.NickName}-${output.NickName}`" class="pip-right text-right text-sm mt-1 mb-1 w-8 whitespace-no-wrap z-10" :class="i < component.component.Outputs.length - 1 ? 'border-b-2 border-dark pb-2' : ''">
                 <div class="inline-block">{{ output.NickName }}</div>
-                <div class="pip ml-1 z-0 w-3 h-3 bg-light border-solid border-dark border-2 rounded-sm inline-block hover:bg-gray-500 hover:cursor-pointer" />
+                <div class="pip ml-1 z-0 w-3 h-3 bg-light border-solid border-dark border-2 rounded-sm inline-block hover:bg-gray-500 hover:cursor-pointer shadow-ism" />
             </div>
         </div>
         <div class="selection-test" :style="{ opacity: component.selected ? 1 : 0, transform: `translate(${tf[0]}px, ${tf[1]}px)`, 'clip-path': `circle(${component.selected ? `${r}px` : '0px'} at center)`, transition: 'clip-path', 'transition-duration': '300ms', 'transition-timing-function': 'ease' }" />
