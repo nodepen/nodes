@@ -4,4 +4,5 @@ export interface Component {
   component: GrasshopperComponent
   position: [number, number]
   selected: boolean
+  id: string
 }
