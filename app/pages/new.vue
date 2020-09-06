@@ -1,6 +1,6 @@
 <template>
   <div class="w-full h-full flex flex-col">
-    <div id="graph" class="flex-grow">
+    <div id="graph" class="flex-grow" @click="handleDeselect">
         <div id="scene" ref="scene" class="overflow-hidden" />
     </div>
     <div class="h-12 pl-8 pr-8 bg-green flex flex-row">
@@ -41,10 +41,10 @@
         class="w-6 h-6 rounded-md border-darkgreen border-solid border-2 bg-opacity-0"
     />
     <glasshopper-component 
-        v-if="graph.component" 
-        :position="graph.position" 
-        :component="graph.component" 
-        @change="([x, y, z]) => doTest(x, y, z)"
+        v-for="(component, i) in graph.components" 
+        :key="`${component.component.name}-${i}`"
+        :component="component" 
+        @select="handleComponentSelected"
     />
   </div>
 </template>
@@ -55,9 +55,10 @@ import rhino3dm from 'rhino3dm'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader.js'
-import { Grasshopper } from 'glib'
+import { Grasshopper, Glasshopper } from 'glib'
 import GlasshopperComponent from '../components/GlasshopperComponent.vue'
 import { MeshBasicMaterial } from 'three'
+import { newGuid } from '../utils/newGuid'
 
 interface ComponentTooltip {
     component: Grasshopper.Component
@@ -79,9 +80,12 @@ export default Vue.extend({
           camera: {} as any,
           renderer: {} as any,   
           graph: {
-              component: undefined as Grasshopper.Component | undefined,
-              position: [0, 0]
-          },
+              components: [],
+              targets: [],
+              session: {
+                  id: newGuid()
+              }
+          } as Glasshopper.Graph,
           prev: 0,
           creating: false,
           pipComponent: undefined as Grasshopper.Component | undefined,
@@ -219,12 +223,23 @@ export default Vue.extend({
         this.pipPosition = [x + dx, y + dy]
     },
     handleEndComponentCreate(e: PointerEvent) {
+        if (!this.creating) {
+            return
+        }
         this.creating = false
-        this.graph = {
-            position: this.pipPosition,
-            component: this.pipComponent
+        this.graph.components.push({ component: this.pipComponent, position: this.pipPosition, selected: false, id: newGuid() })
+    },
+    handleComponentSelected(id: string) {
+        const i = this.graph.components.findIndex((c) => c.id === id)
+
+        if (i >= 0) {
+            this.graph.components[i].selected = true
         }
     },
+    handleDeselect(): void {
+        console.log('deselect!')
+        this.graph.components.forEach((c, i) => { Vue.set(this.graph.components, i, Object.assign(this.graph.components[i], { selected: false }))})
+    }
   },
   computed: {
       activeComponents(): Grasshopper.Component[] {
