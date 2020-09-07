@@ -10,10 +10,6 @@ module.exports = {
     './layouts/**/*.vue',
     './pages/**/*.vue',
   ],
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
-  },
   theme: {
     fontFamily: {
       panel: ['Major Mono Display', 'monospace'],
