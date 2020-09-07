@@ -1,43 +1,25 @@
 {
   "name": "glasshopper.io",
-  "version": "1.0.0",
-  "description": "the grasshopper glossary",
-  "author": "chuck",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "nuxt-ts",
-    "build": "nuxt-ts build",
-    "generate": "nuxt-ts generate",
-    "start": "nuxt-ts start",
-    "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "test": "jest"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
   },
   "dependencies": {
-    "@nuxt/typescript-runtime": "^0.4.0",
-    "@nuxtjs/axios": "^5.3.6",
-    "@nuxtjs/dotenv": "^1.4.0",
-    "nuxt": "^2.0.0",
-    "orbit-controls-es6": "^2.0.1",
-    "rhino3dm": "^0.11.0",
-    "three": "^0.120.0"
+    "@fullhuman/postcss-purgecss": "^2.3.0",
+    "autoprefixer": "^9.8.6",
+    "next": "9.5.3",
+    "postcss-import": "^12.0.1",
+    "react": "16.13.1",
+    "react-dom": "16.13.1",
+    "tailwindcss": "^1.8.4"
   },
   "devDependencies": {
-    "@nuxt/types": "^2.14.4",
-    "@nuxt/typescript-build": "^0.6.0",
-    "@nuxtjs/eslint-config-typescript": "^1.0.0",
-    "@nuxtjs/eslint-module": "^1.0.0",
-    "@nuxtjs/tailwindcss": "^1.0.0",
-    "@vue/test-utils": "^1.0.0-beta.27",
-    "babel-eslint": "^10.0.1",
-    "babel-jest": "^24.1.0",
-    "eslint": "^6.1.0",
-    "eslint-config-prettier": "^6.10.0",
-    "eslint-plugin-nuxt": ">=0.4.2",
-    "eslint-plugin-prettier": "^3.1.2",
-    "glib": "file:../lib",
-    "jest": "^24.1.0",
-    "prettier": "^1.19.1",
-    "ts-jest": "^25.0.0",
-    "vue-jest": "^4.0.0-0"
+    "@types/node": "^14.6.4",
+    "@types/react": "^16.9.49",
+    "stylelint-config-recommended": "^3.0.0",
+    "typescript": "^4.0.2"
   }
 }
