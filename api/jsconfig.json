@@ -3,7 +3,6 @@
     "baseUrl": ".",
     "paths": {
       "~/*": ["./*"],
-      "lib": ["./../lib/dist/index"],
     }
   },
   "exclude": ["node_modules", "dist"]

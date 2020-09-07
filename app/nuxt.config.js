@@ -1,5 +1,3 @@
-import webpack from 'webpack';
-
 export default {
   mode: 'universal',
   /*
@@ -18,8 +16,15 @@ export default {
     ],
     link: [
       { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css?family=Nova+Mono&display=swap' },
-      { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap'}
+      {
+        rel: 'stylesheet',
+        href: 'https://fonts.googleapis.com/css?family=Nova+Mono&display=swap'
+      },
+      {
+        rel: 'stylesheet',
+        href:
+          'https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap'
+      }
     ]
   },
   /*
@@ -30,7 +35,7 @@ export default {
    ** Global CSS
    */
   router: {
-    extendRoutes (routes, resolve) {
+    extendRoutes(routes, _resolve) {
       routes.push({
         path: '*',
         redirect: '/teaser'
@@ -57,7 +62,7 @@ export default {
     // Doc: https://axios.nuxtjs.org/usage
     '@nuxtjs/axios',
     // Doc: https://github.com/nuxt-community/dotenv-module
-    '@nuxtjs/dotenv',
+    '@nuxtjs/dotenv'
   ],
   /*
    ** Axios module configuration
@@ -68,15 +73,10 @@ export default {
    ** Build configuration
    */
   build: {
-    transpile: [
-      "three",
-    ],
+    transpile: ['three'],
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
-    //   config.plugins.push(new webpack.ProvidePlugin({
-    //     THREE: 'three'
-    // }));
+    extend(_config, _ctx) {}
   }
 }
