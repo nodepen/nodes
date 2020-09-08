@@ -6,9 +6,9 @@
 */
 module.exports = {
   purge: [
-    './components/**/*.vue',
-    './layouts/**/*.vue',
-    './pages/**/*.vue',
+    './components/**/*.tsx',
+    './layouts/**/*.tsx',
+    './pages/**/*.tsx',
   ],
   future: {
     removeDeprecatedGapUtilities: true,
