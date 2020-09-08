@@ -1,4 +1,5 @@
 module.exports = {
+  distDir: 'build',
   async redirects() {
     return [
       {
