@@ -15,7 +15,7 @@
     "plugin:prettier/recommended"
   ],
   "plugins": [
-    "react-hooks",
+    "react-hooks"
   ],
   "rules": {
     "prettier/prettier": [ 
@@ -24,6 +24,7 @@
     "react/prop-types": "off",
     "react-hooks/rules-of-hooks": "error",
     "@typescript-eslint/no-var-requires": [ "off", [ "**/*.spec.tsx" ] ],
+    "@typescript-eslint/explicit-module-boundary-types": [ "off", [ "pages/**/*.tsx", "components/**/*.tsx" ] ]
   },
   "settings": {
       "react": {
