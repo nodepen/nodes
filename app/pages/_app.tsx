@@ -4,7 +4,7 @@ import type { AppProps } from 'next/app'
 import '../styles/tailwind.css'
 import '../styles/fonts.css'
 
-const MyApp = ({ Component, pageProps }: AppProps): React.ReactNode => {
+const MyApp = ({ Component, pageProps }: AppProps) => {
   return <Component {...pageProps} />
 }
 

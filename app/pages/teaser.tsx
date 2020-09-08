@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 
-const Teaser = (): React.ReactNode => {
+const Teaser = () => {
   const [[w, h], setCircleDimensions] = useState<[number, number]>([0, 0])
   const [offset, setOffset] = useState(0)
 
@@ -15,10 +15,28 @@ const Teaser = (): React.ReactNode => {
     for (let i = 0; i < stepCount; i++) {
       const pos = i * spacing
       svg.push(
-        <line x1={pos} y1="0" x2={pos} y2="10" stroke="#98E2C6" strokeWidth="1px" vectorEffect="non-scaling-stroke" />
+        <line
+          key={`grid-v-${i}`}
+          x1={pos}
+          y1="0"
+          x2={pos}
+          y2="10"
+          stroke="#98E2C6"
+          strokeWidth="1px"
+          vectorEffect="non-scaling-stroke"
+        />
       )
       svg.push(
-        <line x1="0" y1={pos} x2="10" y2={pos} stroke="#98E2C6" strokeWidth="1px" vectorEffect="non-scaling-stroke" />
+        <line
+          key={`grid-h-${i}`}
+          x1="0"
+          y1={pos}
+          x2="10"
+          y2={pos}
+          stroke="#98E2C6"
+          strokeWidth="1px"
+          vectorEffect="non-scaling-stroke"
+        />
       )
     }
 
