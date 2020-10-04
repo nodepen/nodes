@@ -4,9 +4,11 @@ import { Editor, Layout } from '@/components'
 const GraphPage = (): JSX.Element => {
   return (
     <Layout.Root>
-      <Editor.Header />
-      <Editor.Graph />
-      <Editor.Controls />
+      <Editor.Context>
+        <Editor.Header />
+        <Editor.Graph />
+        <Editor.Controls />
+      </Editor.Context>
     </Layout.Root>
   )
 }

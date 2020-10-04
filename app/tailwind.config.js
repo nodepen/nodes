@@ -42,6 +42,10 @@ module.exports = {
         'vw': '100vh',
         'vh': '100vh'
       },
+      minHeight: {
+        '10': '2.5rem',
+        '12': '3rem'
+      },
       minWidth: {
         '8': '32px'
       },
