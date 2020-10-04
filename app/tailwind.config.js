@@ -16,6 +16,7 @@ module.exports = {
   },
   theme: {
     fontFamily: {
+      barlow: ['Barlow', 'sans-serif'],
       panel: ['Major Mono Display', 'monospace'],
       display: [ 'Nova Mono', 'NovaMono', 'monospace'],
       sans: ['Inter', 'sans-serif']

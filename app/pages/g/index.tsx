@@ -1,8 +1,14 @@
 import React from 'react'
-import { Layout } from '@/components'
+import { Editor, Layout } from '@/components'
 
 const GraphPage = (): JSX.Element => {
-  return <Layout.Root />
+  return (
+    <Layout.Root>
+      <Editor.Header />
+      <Editor.Graph />
+      <Editor.Controls />
+    </Layout.Root>
+  )
 }
 
 export default GraphPage
