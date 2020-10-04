@@ -34,6 +34,7 @@ module.exports = {
         light: '#FFFFFF',
         pale: '#eff2f2',
         green: '#98E2C6',
+        swampgreen: '#7BBFA5',
         darkgreen: '#093824'
       },
       height: {
