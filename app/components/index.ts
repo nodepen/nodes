@@ -1,3 +1,4 @@
+import * as Editor from './editor'
 import * as Layout from './layout'
 
-export { Layout }
+export { Editor, Layout }
