@@ -11,6 +11,10 @@ export const EditorGraph = (): JSX.Element => {
   const [mode, setMode] = useState<PointerMoveMode>('idle')
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+    if (mode !== 'idle') {
+      return
+    }
+
     const { pageX, pageY } = e
     setStart([pageX, pageY])
     setAnchor([pageX, pageY])
@@ -58,7 +62,20 @@ export const EditorGraph = (): JSX.Element => {
   }
 
   const handleMouseUp = (e: MouseEvent): void => {
-    setMode('idle')
+    switch (e.button) {
+      case 0:
+        if (mode !== 'select') {
+          return
+        }
+        setMode('idle')
+        return
+      case 2:
+        if (mode !== 'pan') {
+          return
+        }
+        setMode('idle')
+        return
+    }
   }
 
   // Add pointermove and pointerup handlers to document
@@ -87,16 +104,13 @@ export const EditorGraph = (): JSX.Element => {
       }}
     >
       <div
-        className="border-2 border-dark rounded-sm"
+        className="relative border-2 border-dark rounded-sm transition-opacity duration-100"
         style={{
-          position: 'relative',
           left: Math.min(ax, sx),
           top: Math.min(ay, sy) - 115,
           width: Math.abs(ax - sx),
           height: Math.abs(ay - sy),
-          transition: 'opacity',
-          transitionDuration: '125ms',
-          opacity: mode === 'select' ? 1 : 0,
+          opacity: mode === 'select' ? 100 : 0,
         }}
       />
     </div>
