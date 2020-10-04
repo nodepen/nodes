@@ -11,9 +11,9 @@ export const EditorGraph = (): JSX.Element => {
   const [mode, setMode] = useState<PointerMoveMode>('idle')
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
-    const { screenX, screenY } = e
-    setStart([screenX, screenY])
-    setAnchor([screenX, screenY])
+    const { pageX, pageY } = e
+    setStart([pageX, pageY])
+    setAnchor([pageX, pageY])
 
     switch (e.button) {
       case 0:
@@ -28,13 +28,13 @@ export const EditorGraph = (): JSX.Element => {
   const handlePointerMove = (e: PointerEvent): void => {
     const now = Date.now()
 
-    if (now - previous < 50) {
+    if (now - previous < 25) {
       return
     }
 
     setPrevious(now)
 
-    const [x, y] = [e.screenX, e.screenY]
+    const [x, y] = [e.pageX, e.pageY]
 
     switch (mode) {
       case 'idle':
@@ -48,7 +48,6 @@ export const EditorGraph = (): JSX.Element => {
         return
       }
       case 'select':
-        console.log(`${sx},${sy} => ${x},${y}`)
         setAnchor([x, y])
         return
     }
@@ -76,14 +75,30 @@ export const EditorGraph = (): JSX.Element => {
   })
 
   return (
-    <div className="w-full flex-grow bg-pale" onMouseDown={handleMouseDown} onContextMenu={(e) => e.preventDefault()}>
-      {tx}/{ty}
-      {mode === 'select' ? (
-        <div
-          className="border-1 border-dark"
-          style={{ position: 'fixed', left: sx, top: sy, width: ax - sx, height: ay - sy }}
-        />
-      ) : null}
+    <div
+      className="w-full flex-grow bg-pale overflow-hidden"
+      onMouseDown={handleMouseDown}
+      onContextMenu={(e) => e.preventDefault()}
+      style={{
+        backgroundSize: '25px 25px',
+        backgroundPosition: `${tx % 25}px ${ty % 25}px`,
+        backgroundImage:
+          'linear-gradient(to right, #98e2c6 0.3mm, transparent 1px, transparent 10px), linear-gradient(to bottom, #98e2c6 0.3mm, transparent 1px, transparent 10px)',
+      }}
+    >
+      <div
+        className="border-2 border-dark rounded-sm"
+        style={{
+          position: 'relative',
+          left: Math.min(ax, sx),
+          top: Math.min(ay, sy) - 115,
+          width: Math.abs(ax - sx),
+          height: Math.abs(ay - sy),
+          transition: 'opacity',
+          transitionDuration: '125ms',
+          opacity: mode === 'select' ? 1 : 0,
+        }}
+      />
     </div>
   )
 }
