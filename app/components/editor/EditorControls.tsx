@@ -1,6 +1,7 @@
 import React, { useContext, useState, useMemo, useEffect } from 'react'
 import { Grasshopper } from '@/../lib'
 import { store } from './lib/state'
+import { CreateComponentDraggable } from './lib/components'
 
 export const EditorControls = (): JSX.Element => {
   const { state, dispatch } = useContext(store)
@@ -82,14 +83,7 @@ export const EditorControls = (): JSX.Element => {
       </div>
       <div className="h-full flex-grow overflow-hidden">
         {components.map((component) => (
-          <button
-            key={`sel-${component.Guid}`}
-            className="h-full w-8 mr-2 inline-block border-2 rounded-sm transition-colors duration-200 border-green hover:border-swampgreen"
-          >
-            <div className="w-full h-full flex justify-center items-center">
-              <img src={`data:image/png;base64,${component.Icon}`} alt={component.Name} />
-            </div>
-          </button>
+          <CreateComponentDraggable key={`sel-${component.Guid}`} component={component} />
         ))}
       </div>
     </div>
