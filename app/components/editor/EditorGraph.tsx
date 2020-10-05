@@ -12,6 +12,7 @@ export const EditorGraph = (): JSX.Element => {
   //const [[tx, ty], setPosition] = useState<[number, number]>([0, 0])
   const [[sx, sy], setStart] = useState<[number, number]>([0, 0])
   const [[ax, ay], setAnchor] = useState<[number, number]>([0, 0])
+  const [startTime, setStartTime] = useState(0)
   const [previous, setPrevious] = useState(0)
 
   const [mode, setMode] = useState<PointerMoveMode>('idle')
@@ -20,6 +21,8 @@ export const EditorGraph = (): JSX.Element => {
     if (mode !== 'idle') {
       return
     }
+
+    setStartTime(Date.now())
 
     const { pageX, pageY } = e
     setStart([pageX, pageY])
@@ -68,11 +71,19 @@ export const EditorGraph = (): JSX.Element => {
   }
 
   const handleMouseUp = (e: MouseEvent): void => {
+    const isShort = Date.now() - startTime < 150
+    const isStatic = Math.abs(sx - ax) < 15 && Math.abs(sy - ay) < 15
+
+    if (isShort && isStatic) {
+      dispatch({ type: 'graph/deselect-all' })
+    }
+
     switch (e.button) {
       case 0:
         if (mode !== 'select') {
           return
         }
+        dispatch({ type: 'graph/select-region', from: [sx, sy], to: [ax, ay] })
         setMode('idle')
         return
       case 2:
