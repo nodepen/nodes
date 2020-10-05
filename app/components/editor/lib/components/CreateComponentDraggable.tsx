@@ -33,11 +33,14 @@ export const CreateComponentDraggable = ({ component }: DraggableProps): JSX.Ele
     setPosition([x + dx, y + dy])
   }
 
-  const handlePointerUp = (): void => {
+  const handlePointerUp = (e: PointerEvent): void => {
     if (!isCreating) {
       return
     }
-    console.log(`Dispatching ${component.Name}`)
+
+    const [cx, cy] = [e.pageX, e.pageY]
+
+    dispatch({ type: 'graph/add-component', component: component, position: [cx, cy] })
     setIsCreating(false)
   }
 

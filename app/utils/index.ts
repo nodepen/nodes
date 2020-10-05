@@ -1,0 +1,1 @@
+export { newGuid } from './newGuid'

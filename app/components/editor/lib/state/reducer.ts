@@ -1,4 +1,6 @@
+import { Glasshopper } from '@/../lib/dist'
 import { EditorAction, EditorStore } from '../types'
+import { newGuid } from '@/utils'
 
 export const reducer = (state: EditorStore, action: EditorAction): EditorStore => {
   switch (action.type) {
@@ -13,8 +15,22 @@ export const reducer = (state: EditorStore, action: EditorAction): EditorStore =
       return next
     }
     case 'graph/add-component': {
-      console.log(action.component)
-      return state
+      const { component, position } = action
+
+      // ( Chuck ) Component position is page position on create
+      const [cx, cy] = position
+      const [tx, ty] = state.camera.position
+
+      const newComponent: Glasshopper.Component = {
+        component: component,
+        position: [cx - tx, -cy + ty],
+        selected: false,
+        id: newGuid(),
+      }
+
+      const graph = { ...state.graph, components: [...state.graph.components, newComponent] }
+
+      return { ...state, graph }
     }
     case 'library/load-server-config': {
       // Extract arguments
