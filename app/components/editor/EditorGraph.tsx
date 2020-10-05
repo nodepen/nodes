@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext } from 'react'
+import { GlasshopperComponent } from './lib/components'
 import { store } from './lib/state'
 
 type PointerMoveMode = 'idle' | 'pan' | 'select'
@@ -118,6 +119,9 @@ export const EditorGraph = (): JSX.Element => {
           opacity: mode === 'select' ? 100 : 0,
         }}
       />
+      {state.graph.components.map((component) => (
+        <GlasshopperComponent key={component.id} component={component} />
+      ))}
     </div>
   )
 }

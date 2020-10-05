@@ -65,7 +65,7 @@ export const EditorControls = (): JSX.Element => {
   }
 
   return (
-    <div className="w-full h-12 min-h-12 pl-8 pr-8 pt-2 pb-2 bg-green flex flex-row items-center">
+    <div className="w-full h-12 min-h-12 pl-8 pr-8 pt-2 pb-2 bg-green flex flex-row items-center z-20">
       <div className="w-64 min-w-64 h-full p-1 mr-4 border-2 border-swampgreen rounded-sm flex flex-row items-center justify-evenly">
         <button
           className="w-1/2 text-sm text-darkgreen text-center transition-colors duration-200 bg-green hover:bg-swampgreen focus:outline-none"
