@@ -4,7 +4,7 @@ import { EditorStore, EditorAction } from '../types'
 
 export const initialState: EditorStore = {
   graph: {
-    components: [{ component: {} as any, position: [0, -115], selected: false, id: 'test' }],
+    components: [],
     wires: [],
   },
   selection: {
