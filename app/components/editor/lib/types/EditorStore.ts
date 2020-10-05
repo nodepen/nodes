@@ -1,8 +1,8 @@
-import { Grasshopper } from '@/../lib'
+import { Grasshopper, Glasshopper } from '@/../lib'
 
 export type EditorStore = {
   graph: {
-    components: any[]
+    components: Glasshopper.Component[]
     wires: any[]
   }
   selection: {
