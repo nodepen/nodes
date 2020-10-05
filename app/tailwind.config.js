@@ -47,7 +47,8 @@ module.exports = {
         '12': '3rem'
       },
       minWidth: {
-        '8': '32px'
+        '8': '32px',
+        '64': '16rem'
       },
       spacing: {
         'hov-sm': '-2px',

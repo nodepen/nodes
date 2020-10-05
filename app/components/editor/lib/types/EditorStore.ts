@@ -1,3 +1,5 @@
+import { Grasshopper } from '@/../lib'
+
 export type EditorStore = {
   graph: {
     components: any[]
@@ -5,6 +7,9 @@ export type EditorStore = {
   }
   selection: {
     components: string[]
+  }
+  library: {
+    components: Grasshopper.Component[]
   }
   camera: {
     position: [number, number]

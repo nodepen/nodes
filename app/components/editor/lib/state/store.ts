@@ -10,6 +10,9 @@ export const initialState: EditorStore = {
   selection: {
     components: [],
   },
+  library: {
+    components: [],
+  },
   camera: {
     position: [0, 0],
   },
