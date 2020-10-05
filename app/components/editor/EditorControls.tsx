@@ -73,7 +73,7 @@ export const EditorControls = (): JSX.Element => {
         >
           {selectedCategory}
         </button>
-        <div className="text-sm text-darkgreen pl-1 pr-1">|</div>
+        <div className="text-sm text-swampgreen pl-1 pr-1">|</div>
         <button
           className="w-1/2 text-sm text-darkgreen text-center transition-colors duration-200 bg-green hover:bg-swampgreen focus:outline-none"
           onClick={handleToggleSubcategory}
