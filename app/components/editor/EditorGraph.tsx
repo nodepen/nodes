@@ -1,9 +1,14 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { store } from './lib/state'
 
 type PointerMoveMode = 'idle' | 'pan' | 'select'
 
 export const EditorGraph = (): JSX.Element => {
-  const [[tx, ty], setPosition] = useState<[number, number]>([0, 0])
+  const { state, dispatch } = useContext(store)
+
+  const [tx, ty] = state.camera.position
+
+  //const [[tx, ty], setPosition] = useState<[number, number]>([0, 0])
   const [[sx, sy], setStart] = useState<[number, number]>([0, 0])
   const [[ax, ay], setAnchor] = useState<[number, number]>([0, 0])
   const [previous, setPrevious] = useState(0)
@@ -47,7 +52,7 @@ export const EditorGraph = (): JSX.Element => {
         const dx = x - ax
         const dy = y - ay
 
-        setPosition([tx + dx, ty + dy])
+        dispatch({ type: 'camera/pan-camera', delta: [dx, dy] })
         setAnchor([x, y])
         return
       }
