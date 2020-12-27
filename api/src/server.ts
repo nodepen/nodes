@@ -1,6 +1,8 @@
 import express from 'express'
 import { Server } from 'http'
 import { setup } from './routes'
+import { configure } from './startup'
+import { serverConfig } from './store'
 import * as db from './db'
 import * as io from './io'
 
@@ -14,4 +16,9 @@ io.initialize(server)
 
 setup(router)
 
-server.listen(PORT)
+configure().then(() => {
+  server.listen(PORT)
+  console.log(
+    `Server started with ${serverConfig.length} available components.`
+  )
+})
