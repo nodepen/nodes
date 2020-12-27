@@ -1,29 +1,17 @@
-import * as http from 'http'
-import express, { Request, Response } from 'express'
+import express from 'express'
+import { Server } from 'http'
+import { setup } from './routes'
 import * as db from './db'
 import * as io from './io'
-
-import { UserRoutes } from './routes'
 
 const PORT = process.env.PORT || 3100
 
 const router = express().set('port', PORT)
-const server = new http.Server(router)
+const server = new Server(router)
 
 db.initialize()
 io.initialize(server)
 
-// api.get('/', (req: Request, res: Response) => {
-//   res.send('howdy')
-// })
+setup(router)
 
-// api.use('/api', UserRoutes)
-
-// io.on('connection', (socket: Socket) => {
-//   console.log('Connection made!')
-//   socket.emit('howdy', { message: 'Well howdy!' })
-// })
-
-server.listen(PORT, () => {
-  console.log(`Server started. Listening on port ${PORT}`)
-})
+server.listen(PORT)
