@@ -1,0 +1,1 @@
+export type GraphAction = { type: 'demo' }
