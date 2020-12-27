@@ -1,16 +1,16 @@
 import { ComponentParameter } from './ComponentParameter'
 
 export interface Component {
-  Category: string
-  Description: string
-  Guid: string
-  Icon: string
-  Inputs: ComponentParameter[]
-  IsObsolete: boolean
-  IsVariable: boolean
-  LibraryName: string
-  Name: string
-  NickName: string
-  Outputs: ComponentParameter[]
-  Subcategory: string
+  category: string
+  description: string
+  guid: string
+  icon: string
+  inputs: ComponentParameter[]
+  isObsolete: boolean
+  isVariable: boolean
+  libraryName: string
+  name: string
+  nickname: string
+  outputs: ComponentParameter[]
+  subcategory: string
 }

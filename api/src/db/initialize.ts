@@ -1,6 +1,18 @@
-import admin from 'firebase-admin'
-import auth from '~/auth.json'
+import redis from 'redis'
 
-admin.initializeApp({ credential: admin.credential.cert(JSON.stringify(auth)) })
+export const db = redis.createClient()
 
-export const db = admin.firestore()
+export const initialize = (): void => {
+  db.on('connect', () => {
+    console.log('Connected to db!')
+
+    db.hset('hash-test', 'first', '100', () => {
+      db.hkeys('hash-test', (err, reply) => {
+        console.log(reply)
+      })
+      // db.hgetall('hash-test', (err, reply) => {
+      //   console.log(reply)
+      // })
+    })
+  })
+}
