@@ -7,6 +7,7 @@ import { db } from './db'
  * Check in with db and store configurations.
  */
 export const configure = async (): Promise<void> => {
+  // TODO: Fallback to what's in redis store if this fails.
   const installed = await fetchRhinoConfiguration()
   const allowed = store.getAllowedIds()
 

@@ -19,6 +19,6 @@ setup(router)
 configure().then(() => {
   server.listen(PORT)
   console.log(
-    `Server started with ${serverConfig.length} available components.`
+    `Server listening on port ${PORT} with ${serverConfig.length} available components.`
   )
 })
