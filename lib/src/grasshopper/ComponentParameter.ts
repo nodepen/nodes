@@ -1,7 +1,7 @@
 export interface ComponentParameter {
-  Description: string
-  IsOptional: boolean
-  Name: string
-  NickName: string
-  TypeName: string
+  description: string
+  isOptional: boolean
+  name: string
+  nickName: string
+  type: string
 }

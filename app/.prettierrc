@@ -5,4 +5,5 @@
   "arrowParens": "always",
   "singleQuote": true,
   "endOfLine": "auto"
+  "tabWidth": 2,
 }
