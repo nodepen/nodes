@@ -1,3 +1,1 @@
-import UserRoutes from './users/router'
-
-export { UserRoutes }
+export { setup } from './setup'
