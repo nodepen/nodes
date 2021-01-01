@@ -17,12 +17,8 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     socket.emit('join_request', id)
   })
 
-  socket.on('room', (room) => {
-    console.log(room)
-  })
-
-  socket.on('connect_error', () => {
-    console.log('Error with connection')
+  socket.on('handshake', (message) => {
+    console.log(message)
   })
 
   const store = { io: socket, id }
