@@ -1,11 +1,11 @@
-import socketIO, { Socket } from 'socket.io'
-import { Server } from 'http'
+import { Socket, Server } from 'socket.io'
+import { Server as HTTP } from 'http'
 import { serverConfig } from '../store'
 
-export let io = new socketIO.Server()
+export let io = new Server()
 
-export const initialize = (server: Server): void => {
-  io = new socketIO.Server(server, {
+export const initialize = (server: HTTP): void => {
+  io = new Server(server, {
     cors: {
       origin: 'http://localhost:3000',
       methods: ['GET', 'POST'],
@@ -25,6 +25,7 @@ export const initialize = (server: Server): void => {
     socket.on('join_request', (id) => {
       console.log(id)
       socket.join(id)
+      io.to(id).emit('handshake', 'howdy from io')
     })
   })
 }
