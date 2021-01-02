@@ -5,6 +5,24 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'demo': {
       return state
     }
+    case 'io/register-socket': {
+      const { socket, id } = action
+
+      console.debug(`Registered socket connection ${id}.`)
+
+      socket.on('join-session-handshake', (message: string) => {
+        console.debug(message)
+      })
+
+      socket.emit('join-session', id)
+
+      state.socket = {
+        io: socket,
+        id
+      }
+
+      return state
+    }
     case 'lib/load-components': {
       const { components } = action
 

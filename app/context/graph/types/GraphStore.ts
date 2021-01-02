@@ -1,4 +1,5 @@
 import { Grasshopper } from 'glib'
+import { Socket } from 'socket.io-client'
 
 type LibraryCategory =
   | 'params'
@@ -13,6 +14,10 @@ export type GraphStore = {
     [key in LibraryCategory]: {
       [key: string]: Grasshopper.Component[]
     }
+  }
+  socket: {
+    io: Socket
+    id: string
   }
   ready: boolean
 }

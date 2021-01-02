@@ -14,7 +14,8 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
   const [store, dispatch] = useReducer(reducer, initial)
 
   const onLoad = (): void => {
-    console.log('setting up manager')
+    dispatch({ type: 'io/register-socket', socket: io, id })
+
     io.on('lib', (res: Grasshopper.Component[]) => {
       setTimeout(() => {
         if (!store.ready) {
@@ -26,12 +27,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
 
   useEffect(onLoad, [])
 
-  const doSomething = useCallback((): void => {
-    dispatch({ type: 'demo' })
-    io.emit('message', 'doSomething from manager')
-  }, [])
-
-  const manager = { store, dispatch: { doSomething } }
+  const manager = { store, dispatch }
 
   return <Context.Provider value={manager}>{children}</Context.Provider>
 }

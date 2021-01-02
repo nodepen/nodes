@@ -10,4 +10,4 @@ export const initial: GraphStore = {
     transform: {}
   },
   ready: false
-}
+} as GraphStore

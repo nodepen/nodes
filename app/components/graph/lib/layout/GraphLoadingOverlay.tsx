@@ -7,7 +7,7 @@ type GraphLoadingOverlayProps = {
 }
 
 export const GraphLoadingOverlay = ({ children }: GraphLoadingOverlayProps): React.ReactElement => {
-  const { ready } = useGraphManager()
+  const { store: { ready } } = useGraphManager()
 
   const d = 'M 0 12.5 Q 12.5 0 25 12.5 Q 37.5 25 50 12.5'
 

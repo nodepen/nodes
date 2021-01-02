@@ -10,6 +10,16 @@ export const setServerConfig = (installed: Grasshopper.Component[]): void => {
   )
 }
 
+export const socketSessions: { [key: string]: string } = {}
+
+export const registerSession = (socketId: string, sessionId: string): void => {
+  socketSessions[socketId] = sessionId
+}
+
+export const clearSession = (socketId: string): void => {
+  delete socketSessions[socketId]
+}
+
 export const getAllowedIds = (): string[] => {
   return Object.values(allowedComponents).reduce(
     (allowedIds, subcategories) => {

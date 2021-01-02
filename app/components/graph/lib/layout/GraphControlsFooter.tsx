@@ -5,7 +5,7 @@ import { Draggable } from '../utils'
 
 
 export const GraphControlsFooter = (): React.ReactElement => {
-  const { library } = useGraphManager()
+  const { store: { library } } = useGraphManager()
 
   const [selectedCategory, setSelectedCategory] = useState('params')
 
