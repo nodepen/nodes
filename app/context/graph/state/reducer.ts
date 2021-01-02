@@ -26,6 +26,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       return state
     }
     case 'session/load-components': {
+      if (state.preflight.getLibrary) {
+        return state
+      }
+
       const { components } = action
 
       state.preflight.getLibrary = true
@@ -69,6 +73,9 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       const element = new Glasshopper.Element.StaticComponent(guid, position, component)
 
       state.elements[element.id] = element
+
+      // TODO: This is to limit data sent over the socket server. Find a better way.
+      delete (state.elements[element.id] as Glasshopper.Element.StaticComponent).template.icon
 
       state.socket.io.emit('update-graph', JSON.stringify(state.elements))
 
