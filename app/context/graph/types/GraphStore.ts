@@ -21,4 +21,8 @@ export type GraphStore = {
     id: string
   }
   ready: boolean
+  preflight: {
+    getLibrary: boolean
+    getSession: boolean
+  }
 }

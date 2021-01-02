@@ -14,18 +14,29 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
   const [store, dispatch] = useReducer(reducer, initial)
 
   const onLoad = (): void => {
-    dispatch({ type: 'io/register-socket', socket: io, id })
+    dispatch({ type: 'session/register-socket', socket: io, id })
 
     io.on('lib', (res: Grasshopper.Component[]) => {
-      setTimeout(() => {
-        if (!store.ready) {
-          dispatch({ type: 'lib/load-components', components: res })
-        }
-      }, 500);
+      dispatch({ type: 'session/load-components', components: res })
+    })
+
+    io.on('restore-session', (res: string) => {
+      dispatch({ type: 'session/restore-session', elements: res })
     })
   }
 
   useEffect(onLoad, [])
+
+  useEffect(() => {
+    if (store.ready) {
+      return
+    }
+
+    if (!Object.values(store.preflight).some((done) => !done)) {
+      dispatch({ type: 'session/set-ready' })
+    }
+
+  })
 
   const manager = { store, dispatch }
 
