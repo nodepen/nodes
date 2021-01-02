@@ -32,6 +32,10 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
         * {
           box-sizing: border-box;
         }
+
+        button:focus:not(:focus-visible) {
+          outline: none;
+        }
       `}</style>
     </SessionManager>
   )
