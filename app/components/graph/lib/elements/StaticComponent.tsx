@@ -16,7 +16,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
 
   const { template, current } = elements[id] as Glasshopper.Element.StaticComponent
 
-  const [x, y] = current.position
+  const [dx, dy] = current.position
 
-  return <div className="block text-lg font-panel">{`${template.name} (${x}, ${y})`}</div>
+  return <div className="block text-lg font-panel absolute" style={{ left: dx, top: -dy }}>{`${template.name} (${dx}, ${dy})`}</div>
 }
