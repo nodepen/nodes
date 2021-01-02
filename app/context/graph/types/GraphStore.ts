@@ -1,4 +1,4 @@
-import { Grasshopper } from 'glib'
+import { Grasshopper, Glasshopper } from 'glib'
 import { Socket } from 'socket.io-client'
 
 type LibraryCategory =
@@ -10,6 +10,7 @@ type LibraryCategory =
   | 'transform'
 
 export type GraphStore = {
+  elements: { [key: string]: Glasshopper.Element.Base }
   library: {
     [key in LibraryCategory]: {
       [key: string]: Grasshopper.Component[]

@@ -1,6 +1,7 @@
 import { Socket, Server } from 'socket.io'
 import { Server as HTTP } from 'http'
 import { serverConfig, registerSession, clearSession } from '../store'
+import { onUpdateGraph } from './onUpdateGraph'
 
 export let io = new Server()
 
@@ -31,6 +32,10 @@ export const initialize = (server: HTTP): void => {
         'join-session-handshake',
         `Successfully joined session ${id}`
       )
+    })
+
+    socket.on('update-graph', (graph: string) => {
+      onUpdateGraph(socket, graph)
     })
   })
 }

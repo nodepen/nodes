@@ -1,4 +1,5 @@
 import { Grasshopper } from 'glib'
+import { db } from './db'
 
 export const serverConfig: Grasshopper.Component[] = []
 
@@ -10,14 +11,19 @@ export const setServerConfig = (installed: Grasshopper.Component[]): void => {
   )
 }
 
-export const socketSessions: { [key: string]: string } = {}
+export const sessions: { [key: string]: string } = {}
 
 export const registerSession = (socketId: string, sessionId: string): void => {
-  socketSessions[socketId] = sessionId
+  sessions[socketId] = sessionId
 }
 
 export const clearSession = (socketId: string): void => {
-  delete socketSessions[socketId]
+  const sessionId = sessions[socketId]
+
+  db.del(`session:${sessionId}:graph-gl`, () => {
+    console.log(`Cleared session ${sessionId}.`)
+    delete sessions[socketId]
+  })
 }
 
 export const getAllowedIds = (): string[] => {

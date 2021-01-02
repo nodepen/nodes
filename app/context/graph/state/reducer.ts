@@ -1,4 +1,6 @@
+import { Glasshopper } from 'glib'
 import { GraphAction, GraphStore } from './../types'
+import { newGuid } from '@/utils'
 
 export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
   switch (action.type) {
@@ -40,6 +42,18 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       })
 
       state.ready = true
+
+      return { ...state }
+    }
+    case 'graph/add-component': {
+      const { position, component } = action
+      const guid = newGuid()
+
+      const element = new Glasshopper.Element.StaticComponent(guid, position, component)
+
+      state.elements[element.id] = element
+
+      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
 
       return { ...state }
     }
