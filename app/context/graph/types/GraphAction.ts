@@ -7,5 +7,6 @@ export type GraphAction =
   | { type: 'session/load-components', components: Grasshopper.Component[] }
   | { type: 'session/restore-session', elements: string }
   | { type: 'session/set-ready' }
+  | { type: 'graph/register-camera', ref: React.MutableRefObject<HTMLDivElement> }
   | { type: 'graph/add-component', position: [number, number], component: Grasshopper.Component }
   | { type: 'graph/add-parameter', position: [number, number], component: Grasshopper.Component }

@@ -66,11 +66,27 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       state.ready = true
       return { ...state }
     }
+    case 'graph/register-camera': {
+      const { ref } = action
+
+      state.camera.ref = ref
+
+      return state
+    }
     case 'graph/add-component': {
       const { position, component } = action
+
       const guid = newGuid()
 
-      const element = new Glasshopper.Element.StaticComponent(guid, position, component)
+      const [ex, ey] = position
+      const [tx, ty] = state.camera.position
+      const { width, height, top } = state.camera.ref.current.getBoundingClientRect()
+      const [cx, cy] = [width / 2, (height / 2) + top]
+      const [dx, dy] = [ex - cx, cy - ey]
+
+      const [x, y] = [tx + dx, ty + dy]
+
+      const element = new Glasshopper.Element.StaticComponent(guid, [x, y], component)
 
       state.elements[element.id] = element
 
