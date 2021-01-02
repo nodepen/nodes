@@ -18,8 +18,11 @@ module.exports = {
     fontFamily: {
       barlow: ['Barlow', 'sans-serif'],
       panel: ['Major Mono Display', 'monospace'],
-      display: [ 'Nova Mono', 'NovaMono', 'monospace'],
+      display: ['Nova Mono', 'NovaMono', 'monospace'],
       sans: ['Inter', 'sans-serif']
+    },
+    scale: {
+      '1000': '10',
     },
     extend: {
       screens: {
@@ -58,7 +61,27 @@ module.exports = {
       width: {
         'vw': '100vw',
         'vh': '100vh'
-      },      
+      },
+      keyframes: {
+        swell: {
+          '0%, 100%': {
+            transform: 'scale(0.85)',
+            'transform-origin': 'center',
+          },
+          '50%': {
+            transform: 'scale(1)',
+            'transform-origin': 'center',
+          }
+        }
+      },
+      animation: {
+        swell: 'swell 3200ms ease-in-out infinite'
+      },
+      transitionProperty: {
+        'height': 'height',
+        'width': 'width',
+        'default': 'opacity, margin, padding, border-radius'
+      }
     }
   },
   variants: {
