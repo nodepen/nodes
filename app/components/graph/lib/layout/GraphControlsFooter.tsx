@@ -57,6 +57,20 @@ export const GraphControlsFooter = (): React.ReactElement => {
           ))}
         </div>
       </div>
+      <div id="button-container" className="flex flex-col items-center justify-evenly">
+        <button
+          className="w-6 h-6 border-2 border-swampgreen bg-none hover:border-darkgreen"
+          onClick={() => dispatch({ type: 'graph/clear' })}
+        >
+          D
+        </button>
+        <button
+          className="w-6 h-6 border-2 border-swampgreen bg-none hover:border-darkgreen"
+          onClick={() => dispatch({ type: 'camera/reset' })}
+        >
+          C
+        </button>
+      </div>
       { stagedComponent && start ? <Draggable start={start} template={stagedComponent} onCancel={() => setStagedComponent(undefined)} onDrop={handlePlacement} /> : null}
       {/* <div id="controls-container" className="w-20 bg-green" /> */}
     </div>

@@ -28,8 +28,6 @@ export const GraphCanvas = (): React.ReactElement => {
     setAnchor([pageX, pageY])
     setPrev(Date.now())
 
-    console.log('Start!')
-
     switch (e.button) {
       case 0:
         break
@@ -50,8 +48,6 @@ export const GraphCanvas = (): React.ReactElement => {
 
         const [dx, dy] = [ax - ex, ay - ey]
 
-        // console.log(`${dx} | ${dy}`)
-
         dispatch({ type: 'camera/pan', dx, dy })
 
         setAnchor([ex, ey])
@@ -61,7 +57,6 @@ export const GraphCanvas = (): React.ReactElement => {
   }
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
-    console.log('Done!')
     setMode('idle')
   }
 
