@@ -70,6 +70,12 @@ export const GraphCanvas = (): React.ReactElement => {
     <div
       ref={canvasRef}
       className="w-full flex-grow bg-pale z-0 overflow-visible relative"
+      style={{
+        backgroundSize: '25px 25px',
+        backgroundPosition: `${-dx % 25}px ${-dy % 25}px`,
+        backgroundImage:
+          'linear-gradient(to right, #98e2c6 0.3mm, transparent 1px, transparent 10px), linear-gradient(to bottom, #98e2c6 0.3mm, transparent 1px, transparent 10px)',
+      }}
       onContextMenu={blockContextMenu}
       onMouseDown={handleMouseDown}
       onPointerMove={handlePointerMove}
@@ -79,7 +85,7 @@ export const GraphCanvas = (): React.ReactElement => {
     >
       {
         canvasRef.current ? (
-          <div id="element-container" className="w-full h-full relative overflow-visible border-darkgreen border-2" style={{ transform: `translate(${-dx}px, ${-dy}px)`, left: canvasRef.current.clientWidth / 2, top: canvasRef.current.clientHeight / 2 }}>
+          <div id="element-container" className="w-full h-full relative overflow-visible" style={{ transform: `translate(${-dx}px, ${-dy}px)`, left: canvasRef.current.clientWidth / 2, top: canvasRef.current.clientHeight / 2 }}>
             {Object.values(elements).map((element) => {
               switch (element.template.type) {
                 case 'static-component': {
