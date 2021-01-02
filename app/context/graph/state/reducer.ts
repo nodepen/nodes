@@ -97,6 +97,18 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/clear': {
+      state.elements = {}
+
+      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+
+      return { ...state }
+    }
+    case 'camera/reset': {
+      state.camera.position = [0, 0]
+
+      return { ...state }
+    }
     case 'camera/pan': {
       const { dx, dy } = action
 
