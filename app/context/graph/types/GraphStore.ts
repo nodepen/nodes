@@ -11,6 +11,10 @@ type LibraryCategory =
 
 export type GraphStore = {
   elements: { [key: string]: Glasshopper.Element.Base }
+  camera: {
+    position: [number, number]
+    ref: React.MutableRefObject<HTMLDivElement>
+  }
   library: {
     [key in LibraryCategory]: {
       [key: string]: Grasshopper.Component[]

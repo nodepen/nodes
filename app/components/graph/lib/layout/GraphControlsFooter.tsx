@@ -31,7 +31,7 @@ export const GraphControlsFooter = (): React.ReactElement => {
   }
 
   return (
-    <div className="pl-6 pr-6 w-full bg-green flex flex-row">
+    <div className="pl-6 pr-6 w-full bg-green flex flex-row z-10">
       <div id="components-container" className="flex-grow flex flex-col overflow-hidden">
         <div className="w-full h-8 flex flex-row items-center">
           {Object.keys(library).map((category) => (

@@ -18,5 +18,5 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
 
   const [x, y] = current.position
 
-  return null
+  return <div className="block text-lg font-panel">{`${template.name} (${x}, ${y})`}</div>
 }

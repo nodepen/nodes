@@ -6,7 +6,7 @@ export const GraphContainer = (): React.ReactElement => {
     <main className="w-full flex-grow overflow-hidden">
       <LoadingOverlay>
         <div className="w-full h-full bg-pale flex flex-col items-center">
-          <div className="w-full h-12 bg-green" />
+          <div className="w-full h-12 bg-green z-10" />
           <Canvas />
           <Controls />
         </div>
