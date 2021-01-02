@@ -10,3 +10,4 @@ export type GraphAction =
   | { type: 'graph/register-camera', ref: React.MutableRefObject<HTMLDivElement> }
   | { type: 'graph/add-component', position: [number, number], component: Grasshopper.Component }
   | { type: 'graph/add-parameter', position: [number, number], component: Grasshopper.Component }
+  | { type: 'camera/pan', dx: number, dy: number }

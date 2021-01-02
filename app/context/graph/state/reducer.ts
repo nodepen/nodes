@@ -82,9 +82,9 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       const [tx, ty] = state.camera.position
       const { width, height, top } = state.camera.ref.current.getBoundingClientRect()
       const [cx, cy] = [width / 2, (height / 2) + top]
-      const [dx, dy] = [ex - cx, cy - ey]
+      const [dx, dy] = [ex - cx, ey - cy]
 
-      const [x, y] = [tx + dx, ty + dy]
+      const [x, y] = [tx + dx, -(ty + dy)]
 
       const element = new Glasshopper.Element.StaticComponent(guid, [x, y], component)
 
@@ -94,6 +94,15 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       delete (state.elements[element.id] as Glasshopper.Element.StaticComponent).template.icon
 
       state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+
+      return { ...state }
+    }
+    case 'camera/pan': {
+      const { dx, dy } = action
+
+      const [x, y] = state.camera.position
+
+      state.camera.position = [x + dx, y + dy]
 
       return { ...state }
     }
