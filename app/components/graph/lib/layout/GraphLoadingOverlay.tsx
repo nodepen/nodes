@@ -42,7 +42,7 @@ export const GraphLoadingOverlay = ({ children }: GraphLoadingOverlayProps): Rea
         {
           (ref) => (
             <div ref={ref} className="absolute left-0 top-0 w-full h-full z-20 flex flex-col justify-center items-center">
-              <h2 className="font-display text-2xl font-medium">loading</h2>
+              <h2 className="font-display text-2xl font-medium">{ready ? '👉😎👉' : 'loading'}</h2>
               <svg width="150" height="25" viewBox="0 0 150 25">
                 <g className="animate-scroll">
                   {[...Array(8)].map((e, i) => (

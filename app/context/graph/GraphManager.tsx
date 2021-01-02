@@ -16,7 +16,9 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
   const onLoad = (): void => {
     console.log('setting up manager')
     io.on('lib', (res: Grasshopper.Component[]) => {
-      dispatch({ type: 'lib/load-components', components: res })
+      setTimeout(() => {
+        dispatch({ type: 'lib/load-components', components: res })
+      }, 500);
     })
   }
 
