@@ -5,7 +5,7 @@ import { Draggable } from '../utils'
 
 
 export const GraphControlsFooter = (): React.ReactElement => {
-  const { store: { library } } = useGraphManager()
+  const { store: { library }, dispatch } = useGraphManager()
 
   const [selectedCategory, setSelectedCategory] = useState('params')
 
@@ -25,10 +25,9 @@ export const GraphControlsFooter = (): React.ReactElement => {
   }
 
   const handlePlacement = (position: [number, number], component: Grasshopper.Component): void => {
-    const [x, y] = position
-    console.log(`Dropped ${component.name} at ${x},${y}`)
     setStagedComponent(undefined)
     setStart(undefined)
+    dispatch({ type: 'graph/add-component', position, component })
   }
 
   return (

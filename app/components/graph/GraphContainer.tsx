@@ -1,5 +1,5 @@
 import React from 'react'
-import { LoadingOverlay, Controls } from './lib/layout'
+import { LoadingOverlay, Controls, Canvas } from './lib/layout'
 
 export const GraphContainer = (): React.ReactElement => {
   return (
@@ -7,7 +7,7 @@ export const GraphContainer = (): React.ReactElement => {
       <LoadingOverlay>
         <div className="w-full h-full bg-pale flex flex-col items-center">
           <div className="w-full h-12 bg-green" />
-          <div className="w-full flex-grow bg-pale" />
+          <Canvas />
           <Controls />
         </div>
       </LoadingOverlay>
