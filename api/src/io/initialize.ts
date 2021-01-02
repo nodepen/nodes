@@ -1,6 +1,7 @@
 import { Socket, Server } from 'socket.io'
 import { Server as HTTP } from 'http'
 import { serverConfig, registerSession, clearSession } from '../store'
+import { onJoinSession } from './onJoinSession'
 import { onUpdateGraph } from './onUpdateGraph'
 
 export let io = new Server()
@@ -19,19 +20,12 @@ export const initialize = (server: HTTP): void => {
       console.log(err)
     })
     socket.on('disconnect', (reason) => {
-      clearSession(socket.id)
       console.log(reason)
     })
     socket.emit('lib', serverConfig)
 
-    socket.on('join-session', (id) => {
-      socket.join(id)
-      registerSession(socket.id, id)
-
-      io.to(id).emit(
-        'join-session-handshake',
-        `Successfully joined session ${id}`
-      )
+    socket.on('join-session', (id: string) => {
+      onJoinSession(socket, id)
     })
 
     socket.on('update-graph', (graph: string) => {

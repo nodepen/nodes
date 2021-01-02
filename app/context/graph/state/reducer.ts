@@ -7,7 +7,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'demo': {
       return state
     }
-    case 'io/register-socket': {
+    case 'session/register-socket': {
       const { socket, id } = action
 
       console.debug(`Registered socket connection ${id}.`)
@@ -25,8 +25,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return state
     }
-    case 'lib/load-components': {
+    case 'session/load-components': {
       const { components } = action
+
+      state.preflight.getLibrary = true
 
       components.forEach((component) => {
         const { category, subcategory } = component
@@ -41,8 +43,23 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         libraryCategory[librarySubcategory].push(component)
       })
 
-      state.ready = true
+      return { ...state }
+    }
+    case 'session/restore-session': {
+      state.preflight.getSession = true
 
+      if (action.elements === 'none') {
+        return { ...state }
+      }
+
+      const elements: { [key: string]: Glasshopper.Element.Base } = JSON.parse(action.elements)
+
+      state.elements = elements
+
+      return { ...state }
+    }
+    case 'session/set-ready': {
+      state.ready = true
       return { ...state }
     }
     case 'graph/add-component': {
