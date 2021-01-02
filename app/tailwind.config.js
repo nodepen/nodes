@@ -16,10 +16,9 @@ module.exports = {
   },
   theme: {
     fontFamily: {
-      barlow: ['Barlow', 'sans-serif'],
-      panel: ['Major Mono Display', 'monospace'],
+      panel: ['Overpass Mono', 'monospace'],
       display: ['Nova Mono', 'NovaMono', 'monospace'],
-      sans: ['Inter', 'sans-serif']
+      sans: ['Barlow Semi Condensed', 'Inter', 'sans-serif']
     },
     scale: {
       '1000': '10',
@@ -72,10 +71,19 @@ module.exports = {
             transform: 'scale(1)',
             'transform-origin': 'center',
           }
+        },
+        scroll: {
+          '0%': {
+            transform: 'translateX(0)'
+          },
+          '100%': {
+            transform: 'translateX(-100%)'
+          }
         }
       },
       animation: {
-        swell: 'swell 3200ms ease-in-out infinite'
+        swell: 'swell 3200ms ease-in-out infinite',
+        scroll: 'scroll 3200ms linear infinite'
       },
       transitionProperty: {
         'height': 'height',

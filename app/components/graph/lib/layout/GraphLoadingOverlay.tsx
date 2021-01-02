@@ -9,6 +9,8 @@ type GraphLoadingOverlayProps = {
 export const GraphLoadingOverlay = ({ children }: GraphLoadingOverlayProps): React.ReactElement => {
   const { ready } = useGraphManager()
 
+  const d = 'M 0 12.5 Q 12.5 0 25 12.5 Q 37.5 25 50 12.5'
+
   return (
     <div className="relative w-full h-full">
       <Transition
@@ -30,6 +32,27 @@ export const GraphLoadingOverlay = ({ children }: GraphLoadingOverlayProps): Rea
             </svg>
           </div>
         )}
+      </Transition>
+      <Transition
+        show={!ready}
+        leave="transition ease duration-500"
+        leaveFrom="opacity-100"
+        leaveTo="opacity-0"
+      >
+        {
+          (ref) => (
+            <div ref={ref} className="absolute left-0 top-0 w-full h-full z-20 flex flex-col justify-center items-center">
+              <h2 className="font-display text-2xl font-medium">loading</h2>
+              <svg width="150" height="25" viewBox="0 0 150 25">
+                <g className="animate-scroll">
+                  {[...Array(8)].map((e, i) => (
+                    <path d={d} fill="none" stroke="#98E2C6" strokeWidth="0.7mm" style={{ transform: `translateX(${i * 50}px)` }} />
+                  ))}
+                </g>
+              </svg>
+            </div>
+          )
+        }
       </Transition>
       <div className="absolute left-0 top-0 w-full h-full z-0">
         {children}
