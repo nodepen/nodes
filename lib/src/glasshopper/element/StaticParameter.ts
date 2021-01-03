@@ -5,6 +5,10 @@ export interface StaticParameter extends GraphElementBase {
   template: { type: 'static-parameter' } & Component
   current: {
     position: [number, number]
+    dimensions: {
+      width: number
+      height: number
+    }
     values: { [key: string]: string[] }
   }
 }

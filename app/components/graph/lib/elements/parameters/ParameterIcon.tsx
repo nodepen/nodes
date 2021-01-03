@@ -6,7 +6,7 @@ export const ParameterIcon = (): React.ReactElement => {
   const points = `1,0 0.5,-${f} -0.5,-${f} -1,0 -0.5,${f} 0.5,${f}`
 
   return (
-    <svg width="24px" height="24px" viewBox="-1 -1 2 2" preserveAspectRatio="all">
+    <svg width="24px" height="24px" viewBox="-1 -1 2 2">
       <defs>
         <clipPath id="annoying">
           <polygon points={points} />
