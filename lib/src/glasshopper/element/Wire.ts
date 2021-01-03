@@ -1,7 +1,7 @@
 import { GraphElementBase } from './GraphElementBase'
 
 export interface Wire extends GraphElementBase {
-  template: { type: 'live-wire' }
+  template: { type: 'wire' }
   current: {
     position: [number, number]
     dimensions: {
@@ -9,14 +9,15 @@ export interface Wire extends GraphElementBase {
       height: number
     }
     anchors: { [key: string]: [number, number] }
+    mode: 'hidden' | 'thin' | 'thick' | 'dashed'
     from: [number, number]
     to: [number, number]
     sources: {
-      from: {
+      from?: {
         element: string
         parameter: string
       }
-      to: {
+      to?: {
         element: string
         parameter: string
       }
