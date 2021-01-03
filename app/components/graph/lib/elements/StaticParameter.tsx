@@ -9,7 +9,7 @@ type StaticComponentProps = {
 }
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
-  const { store: { elements }, dispatch } = useGraphManager()
+  const { store: { elements, selected }, dispatch } = useGraphManager()
 
   if (!elements[id] || elements[id].template.type !== 'static-parameter') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
@@ -26,10 +26,16 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'graph/register-element', ref: parameterRef, id })
   }, [])
 
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    e.stopPropagation()
+    dispatch({ type: 'graph/selection-add', id })
+  }
+
   const parameter = elements[id] as Glasshopper.Element.StaticParameter
 
   const { template, current } = parameter
   const [dx, dy] = current.position
+  const isSelected = selected.includes(id)
 
   const [[overPanel, overDetails], setHovers] = useState<[boolean, boolean]>([false, false])
 
@@ -41,11 +47,12 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           ref={parameterRef}
           onPointerEnter={() => setHovers(([panel, details]) => [true, details])}
           onPointerLeave={() => setHovers(([panel, details]) => [false, details])}
+          onClick={handleClick}
         >
           <div className="absolute z-0" style={{ left: '-12.5px', transform: 'translate(2px, 1.5px)' }}>
             <ParameterIcon />
           </div>
-          <div className="h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md bg-light shadow-osm relative z-20">
+          <div className={`${isSelected ? 'bg-green' : 'bg-light'} h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative z-20`}>
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
               <ParameterIcon />
             </div>

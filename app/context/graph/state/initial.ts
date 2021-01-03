@@ -5,6 +5,7 @@ export const initial: GraphStore = {
   camera: {
     position: [0, 0]
   },
+  selected: [],
   library: {
     params: {},
     maths: {},
