@@ -27,7 +27,13 @@ export const GraphControlsFooter = (): React.ReactElement => {
   const handlePlacement = (position: [number, number], component: Grasshopper.Component): void => {
     setStagedComponent(undefined)
     setStart(undefined)
-    dispatch({ type: 'graph/add-component', position, component })
+
+    if (component.category.toLowerCase() === 'params') {
+      dispatch({ type: 'graph/add-parameter', position, component })
+    }
+    else {
+      dispatch({ type: 'graph/add-component', position, component })
+    }
   }
 
   return (

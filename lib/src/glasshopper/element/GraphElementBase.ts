@@ -7,6 +7,5 @@ export interface GraphElementBase {
   }
   current: {
     position: [number, number]
-    values: { [key: string]: string[] }
   }
 }
