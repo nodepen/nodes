@@ -96,17 +96,14 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const element = state.elements[elementId]
 
-      if (!element) {
+      if (!element || !element.current.anchors) {
+        console.log(`Tried to register ${anchorKey} on non-existing element.`)
         return state
-      }
-
-      if (!element.current.anchors) {
-        element.current.anchors = {}
       }
 
       element.current.anchors[anchorKey] = [x, y]
 
-      return state
+      return { ...state }
     }
     case 'graph/add-component': {
       const { position, component: template } = action
@@ -278,18 +275,108 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/wire/update-live-wire': {
       const { to } = action
 
-      const next = pageToGraphCoordinates(to, state)
-
       const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
+      if (!!element.current.sources.to) {
+        // A claim has been snapped to, do not move the wire
+        return state
+      }
+
+      const next = pageToGraphCoordinates(to, state)
       element.current.to = next
+
+      return { ...state }
+    }
+    case 'graph/wire/capture-live-wire': {
+      const { targetElement, targetParameter } = action
+
+      const wire = state.elements['live-wire'] as Glasshopper.Element.Wire
+
+      if (!wire || !wire.current.sources.from) {
+        return state
+      }
+
+      // Source for live wire will always be in 'from'
+      // We swap from-to on commit if necessary
+      const { element: sourceElement, parameter: sourceParameter } = wire.current.sources.from
+
+      const targetType = isInputOrOutput(targetElement, targetParameter, state)
+      const sourceType = isInputOrOutput(sourceElement, sourceParameter, state)
+
+      if (targetType === sourceType) {
+        // Invalid claim. (i.e. input claiming and input source)
+        return state
+      }
+
+      // Assign new claim
+      wire.current.sources.to = { element: targetElement, parameter: targetParameter }
+
+      // Update position to claim
+      wire.current.to = state.elements[targetElement].current.anchors[targetParameter]
+
+      return { ...state }
+    }
+    case 'graph/wire/release-live-wire': {
+      const { targetElement, targetParameter } = action
+
+      const wire = state.elements['live-wire'] as Glasshopper.Element.Wire
+
+      if (!wire || !wire.current.sources.from) {
+        return state
+      }
+
+      if (wire.current.mode === 'hidden' || !wire.current.sources.to) {
+        return state
+      }
+
+      const claimant = wire.current.sources.to
+
+      if (claimant.element !== targetElement || claimant.parameter !== targetParameter) {
+        // Claim already released, do no work
+        return state
+      }
+
+      wire.current.sources.to = undefined
 
       return { ...state }
     }
     case 'graph/wire/stop-live-wire': {
       const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
+      if (!element.current.sources.from && !element.current.sources.to) {
+        // Wire did not make a connection, kill it with fire
+        element.current.mode = 'hidden'
+        return { ...state }
+      }
+
+      const from = element.current.sources.from
+      const to = element.current.sources.to
+
+      // Wire did make a connection, commit it as an element
+      const sourceType = isInputOrOutput(from.element, from.parameter, state)
+
+      if (sourceType === 'input') {
+        // Wire elements expect the 'from' source to be an output, swap current claims
+        const correctFrom = { ...to }
+        const correctTo = { ...from }
+
+        element.current.sources = {
+          from: correctFrom,
+          to: correctTo
+        }
+      }
+
+      // TODO: Verify connection does not already exist
+
+      const wireId = newGuid()
+      const wireToCommit = { ...element, id: wireId }
+
+      // Add new wire
+      state.elements[wireId] = wireToCommit
+
+      // Clear live wire
       element.current.mode = 'hidden'
+      element.current.sources = {}
 
       return { ...state }
     }
@@ -339,4 +426,27 @@ const assignDefaultComponentValues = (component: Glasshopper.Element.StaticCompo
   [...Object.keys(component.current.inputs), ...Object.keys(component.current.outputs)].forEach((id) => {
     component.current.values[id] = {}
   })
+}
+
+const isInputOrOutput = (elementId: string, parameterId: string, state: GraphStore): 'input' | 'output' => {
+  const element = state.elements[elementId]
+
+  if (element.template.type === 'static-parameter') {
+    return parameterId as 'input' | 'output'
+  }
+
+  if (element.template.type === 'static-component') {
+    const el = element as Glasshopper.Element.StaticComponent
+
+    if (Object.keys(el.current.inputs).includes(parameterId)) {
+      return 'input'
+    }
+
+    if (Object.keys(el.current.outputs).includes(parameterId)) {
+      return 'output'
+    }
+  }
+
+  console.log('isInputOrOutput used incorrectly!')
+  return 'input'
 }

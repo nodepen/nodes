@@ -21,6 +21,7 @@ export type GraphAction =
   | { type: 'graph/wire/update-live-wire', to: [number, number] }
   | { type: 'graph/wire/stop-live-wire' }
   | { type: 'graph/wire/capture-live-wire', targetElement: string, targetParameter: string }
+  | { type: 'graph/wire/release-live-wire', targetElement: string, targetParameter: string }
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan', dx: number, dy: number }

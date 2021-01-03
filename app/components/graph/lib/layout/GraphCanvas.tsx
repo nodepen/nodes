@@ -8,6 +8,20 @@ type ControlMode = 'idle' | 'panning' | 'selecting'
 export const GraphCanvas = (): React.ReactElement => {
   const { store: { elements, camera }, dispatch } = useGraphManager()
 
+  useEffect(() => {
+    const debug = (e: KeyboardEvent): void => {
+      if (e.code === 'Space') {
+        console.log(elements)
+      }
+    }
+
+    window.addEventListener('keypress', debug)
+
+    return () => {
+      window.removeEventListener('keypress', debug)
+    }
+  })
+
   const canvasRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
