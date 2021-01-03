@@ -254,6 +254,44 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/wire/start-live-wire': {
+      const { from, to, owner } = action
+
+      const wire: Glasshopper.Element.LiveWire = {
+        template: { type: 'live-wire' },
+        current: {
+          position: [0, 0],
+          dimensions: { width: 0, height: 0 },
+          anchors: {},
+          from: pageToGraphCoordinates(from, state),
+          to: pageToGraphCoordinates(to, state),
+          owner,
+          visible: true
+        }
+      }
+
+      state.elements['live-wire'] = wire
+
+      return { ...state }
+    }
+    case 'graph/wire/update-live-wire': {
+      const { to } = action
+
+      const next = pageToGraphCoordinates(to, state)
+
+      const element = state.elements['live-wire'] as Glasshopper.Element.LiveWire
+
+      element.current.to = next
+
+      return { ...state }
+    }
+    case 'graph/wire/stop-live-wire': {
+      const element = state.elements['live-wire'] as Glasshopper.Element.LiveWire
+
+      element.current.visible = false
+
+      return { ...state }
+    }
     case 'graph/clear': {
       state.elements = {}
 

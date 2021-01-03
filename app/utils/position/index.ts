@@ -1,0 +1,1 @@
+export { getExtents } from './getExtents'

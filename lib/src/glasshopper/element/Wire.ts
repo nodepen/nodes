@@ -1,6 +1,6 @@
 import { GraphElementBase } from './GraphElementBase'
 
-export interface LiveWire extends GraphElementBase {
+export interface Wire extends GraphElementBase {
   template: { type: 'live-wire' }
   current: {
     position: [number, number]
@@ -11,10 +11,15 @@ export interface LiveWire extends GraphElementBase {
     anchors: { [key: string]: [number, number] }
     from: [number, number]
     to: [number, number]
-    owner: {
-      element: string
-      id: string
+    sources: {
+      from: {
+        element: string
+        parameter: string
+      }
+      to: {
+        element: string
+        parameter: string
+      }
     }
-    visible: boolean
   }
 }
