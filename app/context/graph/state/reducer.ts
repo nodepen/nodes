@@ -137,7 +137,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       return { ...state }
     }
     case 'graph/selection-region': {
-      const { from, to } = action
+      const { from, to, partial } = action
 
       const [ax, ay] = pageToGraphCoordinates(from, state)
       const [bx, by] = pageToGraphCoordinates(to, state)
@@ -155,26 +155,35 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
         const extents: [[number, number], [number, number]] = [
           [cx - dx, cy - dy],
-          [cx + dx, cy - dy]
+          [cx + dx, cy]
         ]
-
-        console.log(extents)
 
         return extents
       }
 
-      const isContained = (region: [[number, number], [number, number]], extents: [[number, number], [number, number]]): boolean => {
+      const isContained = (region: [[number, number], [number, number]], extents: [[number, number], [number, number]], partial: boolean = false): boolean => {
         const [[rMinX, rMinY], [rMaxX, rMaxY]] = region
         const [[eMinX, eMinY], [eMaxX, eMaxY]] = extents
 
-        console.log(region)
+        const wContained = (rMinX < eMinX && rMaxX > eMaxX)
+        const wIntersect = (eMinX < rMinX && rMinX < eMaxX) || (eMinX < rMaxX && rMaxX < eMaxX)
+        const hContained = (rMinY < eMinY && rMaxY > eMaxY)
+        const hIntersect = (eMinY < rMinY && rMinY < eMaxY) || (eMinY < rMaxY && rMaxY < eMaxY)
 
-        return (rMinX < eMinX) && (rMinY < eMinY) && (rMaxX > eMaxX) && (rMaxY > eMaxY)
+        switch (partial) {
+          case true: {
+            // Capture if region at least crosses element
+            return (wIntersect && hIntersect) || (wIntersect && hContained) || (hIntersect && wContained) || (wContained && hContained)
+          }
+          case false: {
+            // Only capture if element totally enclosed by the region
+            // return (rMinX < eMinX) && (rMinY < eMinY) && (rMaxX > eMaxX) && (rMaxY > eMaxY)
+            return wContained && hContained
+          }
+        }
       }
 
-      const captured = Object.values(state.elements).filter((element) => isContained(region, getElementExtents(element))).map((element) => element.id)
-
-      console.log(`Captured ${captured.length}. ${captured}`)
+      const captured = Object.values(state.elements).filter((element) => isContained(region, getElementExtents(element), partial)).map((element) => element.id)
 
       state.selected = captured
 

@@ -78,7 +78,7 @@ export const GraphCanvas = (): React.ReactElement => {
           dispatch({ type: 'graph/selection-clear' })
         }
         else {
-          dispatch({ type: 'graph/selection-region', from: [sx, sy], to: [ax, ay] })
+          dispatch({ type: 'graph/selection-region', from: [sx, sy], to: [ax, ay], partial: sx > ax })
         }
       }
     }
@@ -126,7 +126,7 @@ export const GraphCanvas = (): React.ReactElement => {
         ) : null
       }
       <div
-        className="fixed border-2 border-dark rounded-sm transition-opacity duration-100"
+        className={`${sx > ax ? 'border-dashed' : ''} fixed border-2 border-dark rounded-sm transition-opacity duration-100`}
         style={{
           left: Math.min(ax, sx),
           top: Math.min(ay, sy),
