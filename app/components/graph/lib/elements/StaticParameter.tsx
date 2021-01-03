@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { ParameterIcon } from './parameters'
@@ -9,12 +9,22 @@ type StaticComponentProps = {
 }
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
-  const { store: { elements } } = useGraphManager()
+  const { store: { elements }, dispatch } = useGraphManager()
 
   if (!elements[id] || elements[id].template.type !== 'static-parameter') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
     return null
   }
+
+  const parameterRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!parameterRef) {
+      return
+    }
+
+    dispatch({ type: 'graph/register-element', ref: parameterRef, id })
+  }, [])
 
   const parameter = elements[id] as Glasshopper.Element.StaticParameter
 
@@ -28,6 +38,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
       <div className="flex flex-col items-center">
         <div
           className="flex flex-row justify-center items-center relative z-20"
+          ref={parameterRef}
           onPointerEnter={() => setHovers(([panel, details]) => [true, details])}
           onPointerLeave={() => setHovers(([panel, details]) => [false, details])}
         >
@@ -38,7 +49,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
               <ParameterIcon />
             </div>
-            <div className="ml-6 mr-6 font-panel text-base font-bold text-dark z-10" style={{ left: '0' }}>
+            <div className="ml-6 mr-6 font-panel text-base font-bold text-dark select-none z-10" style={{ left: '0' }}>
               {template.nickname.toLowerCase()}
             </div>
           </div>

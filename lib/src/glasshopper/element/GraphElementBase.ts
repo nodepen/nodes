@@ -7,5 +7,9 @@ export interface GraphElementBase {
   }
   current: {
     position: [number, number]
+    dimensions: {
+      width: number
+      height: number
+    }
   }
 }

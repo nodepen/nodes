@@ -73,6 +73,21 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return state
     }
+    case 'graph/register-element': {
+      const { ref, id } = action
+
+      const element = state.elements[id]
+
+      if (!element) {
+        return state
+      }
+
+      const { width, height } = ref.current.getBoundingClientRect()
+
+      element.current.dimensions = { width, height }
+
+      return { ...state }
+    }
     case 'graph/add-component': {
       const { position, component: template } = action
 
@@ -81,6 +96,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         template: { type: 'static-component', ...template },
         current: {
           position: pageToGraphCoordinates(position, state),
+          dimensions: { width: 50, height: 50 },
           inputs: assignParameterInstanceIds(template.inputs),
           outputs: assignParameterInstanceIds(template.outputs),
           values: {}
@@ -106,6 +122,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         template: { type: 'static-parameter', ...template },
         current: {
           position: pageToGraphCoordinates(position, state),
+          dimensions: { width: 50, height: 50 },
           values: {}
         }
       }
