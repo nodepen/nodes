@@ -1,4 +1,4 @@
-import { Glasshopper } from 'glib'
+import { Glasshopper, Grasshopper } from 'glib'
 import { GraphAction, GraphStore } from './../types'
 import { newGuid } from '@/utils'
 
@@ -74,24 +74,46 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       return state
     }
     case 'graph/add-component': {
-      const { position, component } = action
+      const { position, component: template } = action
 
-      const guid = newGuid()
+      const component: Glasshopper.Element.StaticComponent = {
+        id: newGuid(),
+        template: { type: 'static-component', ...template },
+        current: {
+          position: pageToGraphCoordinates(position, state),
+          inputs: assignParameterInstanceIds(template.inputs),
+          outputs: assignParameterInstanceIds(template.outputs),
+          values: {}
+        }
+      }
 
-      const [ex, ey] = position
-      const [tx, ty] = state.camera.position
-      const { width, height, top } = state.camera.ref.current.getBoundingClientRect()
-      const [cx, cy] = [width / 2, (height / 2) + top]
-      const [dx, dy] = [ex - cx, ey - cy]
+      assignDefaultComponentValues(component)
 
-      const [x, y] = [tx + dx, -(ty + dy)]
-
-      const element = new Glasshopper.Element.StaticComponent(guid, [x, y], component)
-
-      state.elements[element.id] = element
+      state.elements[component.id] = component
 
       // TODO: This is to limit data sent over the socket server. Find a better way.
-      delete (state.elements[element.id] as Glasshopper.Element.StaticComponent).template.icon
+      delete (state.elements[component.id] as Glasshopper.Element.StaticComponent).template.icon
+
+      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+
+      return { ...state }
+    }
+    case 'graph/add-parameter': {
+      const { position, component: template } = action
+
+      const parameter: Glasshopper.Element.StaticParameter = {
+        id: newGuid(),
+        template: { type: 'static-parameter', ...template },
+        current: {
+          position: pageToGraphCoordinates(position, state),
+          values: {}
+        }
+      }
+
+      state.elements[parameter.id] = parameter
+
+      // TODO: This is to limit data sent over the socket server. Find a better way.
+      delete (state.elements[parameter.id] as Glasshopper.Element.StaticComponent).template.icon
 
       state.socket.io.emit('update-graph', JSON.stringify(state.elements))
 
@@ -119,4 +141,28 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       return { ...state }
     }
   }
+}
+
+const pageToGraphCoordinates = (page: [number, number], state: GraphStore): [number, number] => {
+  const [ex, ey] = page
+  const [tx, ty] = state.camera.position
+  const { width, height, top } = state.camera.ref.current.getBoundingClientRect()
+  const [cx, cy] = [width / 2, (height / 2) + top]
+  const [dx, dy] = [ex - cx, ey - cy]
+
+  return [tx + dx, -(ty + dy)]
+}
+
+const assignParameterInstanceIds = (parameters: Grasshopper.ComponentParameter[]): { [key: string]: number } => {
+  return parameters.reduce((map, next, i) => {
+    map[newGuid()] = i
+    return map
+  }, {})
+}
+
+const assignDefaultComponentValues = (component: Glasshopper.Element.StaticComponent): void => {
+  // TODO: Actually check for values
+  [...Object.keys(component.current.inputs), ...Object.keys(component.current.outputs)].forEach((id) => {
+    component.current.values[id] = {}
+  })
 }
