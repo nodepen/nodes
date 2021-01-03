@@ -139,18 +139,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/selection-region': {
       const { from, to } = action
 
-      const [minX, maxX] = [from[0], to[0]].sort()
-      const [minY, maxY] = [from[1], to[1]].sort()
+      const [ax, ay] = pageToGraphCoordinates(from, state)
+      const [bx, by] = pageToGraphCoordinates(to, state)
 
-      const [ax, ay] = pageToGraphCoordinates([minX, minY], state)
-      const [bx, by] = pageToGraphCoordinates([maxX, maxY], state)
+      const [minX, maxX] = [Math.min(ax, bx), Math.max(ax, bx)]
+      const [minY, maxY] = [Math.min(ay, by), Math.max(ay, by)]
 
-      console.log({ minX, ax })
-      console.log({ maxX, bx })
-      console.log({ minY, ay })
-      console.log({ maxY, by })
-
-      const region = [[ax, ay], [bx, by]] as [[number, number], [number, number]]
+      const region = [[minX, minY], [maxX, maxY]] as [[number, number], [number, number]]
 
       const getElementExtents = (element: Glasshopper.Element.Base): [[number, number], [number, number]] => {
         const { width, height } = element.current.dimensions
