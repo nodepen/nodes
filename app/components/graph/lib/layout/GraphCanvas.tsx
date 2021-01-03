@@ -46,7 +46,7 @@ export const GraphCanvas = (): React.ReactElement => {
   }
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (Date.now() - previousTime < 50) {
+    if (Date.now() - previousTime < 5) {
       return
     }
 
