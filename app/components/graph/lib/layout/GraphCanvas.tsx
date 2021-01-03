@@ -3,7 +3,7 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { StaticComponent, StaticParameter } from '../elements'
 
-type ControlMode = 'idle' | 'panning'
+type ControlMode = 'idle' | 'panning' | 'selecting'
 
 export const GraphCanvas = (): React.ReactElement => {
   const { store: { elements, camera }, dispatch } = useGraphManager()
@@ -15,8 +15,10 @@ export const GraphCanvas = (): React.ReactElement => {
   }, [])
 
   const [mode, setMode] = useState<ControlMode>('idle')
+  const [[sx, sy], setStart] = useState<[number, number]>([0, 0])
   const [[ax, ay], setAnchor] = useState<[number, number]>([0, 0])
-  const [prev, setPrev] = useState(0)
+  const [startTime, setStartTime] = useState(0)
+  const [previousTime, setPreviousTime] = useState(0)
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     if (mode !== 'idle') {
@@ -25,11 +27,17 @@ export const GraphCanvas = (): React.ReactElement => {
 
     const { pageX, pageY } = e
 
+    setStart([pageX, pageY])
     setAnchor([pageX, pageY])
-    setPrev(Date.now())
+
+    const now = Date.now()
+    setStartTime(now)
+    setPreviousTime(now)
 
     switch (e.button) {
       case 0:
+        setMode('selecting')
+        console.log('selecting!')
         break
       case 2:
         setMode('panning')
@@ -38,25 +46,43 @@ export const GraphCanvas = (): React.ReactElement => {
   }
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (Date.now() - prev < 50) {
+    if (Date.now() - previousTime < 50) {
       return
     }
 
+    const { pageX: ex, pageY: ey } = e
+
     switch (mode) {
       case 'panning': {
-        const { pageX: ex, pageY: ey } = e
-
         const [dx, dy] = [ax - ex, ay - ey]
 
         dispatch({ type: 'camera/pan', dx, dy })
 
         setAnchor([ex, ey])
-        setPrev(Date.now())
+        setPreviousTime(Date.now())
+      }
+      case 'selecting': {
+        setAnchor([ex, ey])
+        setPreviousTime(Date.now())
       }
     }
   }
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
+    switch (mode) {
+      case 'selecting': {
+        const isShort = Date.now() - startTime < 150
+        const isStatic = Math.abs(sx - ax) < 15 && Math.abs(sy - ay) < 15
+
+        if (isShort && isStatic) {
+          dispatch({ type: 'graph/selection-clear' })
+        }
+        else {
+          dispatch({ type: 'graph/selection-region', from: [sx, sy], to: [ax, ay] })
+        }
+      }
+    }
+
     setMode('idle')
   }
 
@@ -85,7 +111,7 @@ export const GraphCanvas = (): React.ReactElement => {
     >
       {
         canvasRef.current ? (
-          <div id="element-container" className="w-full h-full relative overflow-visible" style={{ transform: `translate(${-dx}px, ${-dy}px)`, left: canvasRef.current.clientWidth / 2, top: canvasRef.current.clientHeight / 2 }}>
+          <div id="element-container" className="w-full h-full relative overflow-visible z-20" style={{ transform: `translate(${-dx}px, ${-dy}px)`, left: canvasRef.current.clientWidth / 2, top: canvasRef.current.clientHeight / 2 }}>
             {Object.values(elements).map((element) => {
               switch (element.template.type) {
                 case 'static-component': {
@@ -99,6 +125,16 @@ export const GraphCanvas = (): React.ReactElement => {
           </div>
         ) : null
       }
+      <div
+        className="fixed border-2 border-dark rounded-sm transition-opacity duration-100"
+        style={{
+          left: Math.min(ax, sx),
+          top: Math.min(ay, sy),
+          width: Math.abs(ax - sx),
+          height: Math.abs(ay - sy),
+          opacity: mode === 'selecting' ? 100 : 0,
+        }}
+      />
     </div>
   )
 }

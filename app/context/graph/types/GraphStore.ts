@@ -15,6 +15,7 @@ export type GraphStore = {
     position: [number, number]
     ref: React.MutableRefObject<HTMLDivElement>
   }
+  selected: string[]
   library: {
     [key in LibraryCategory]: {
       [key: string]: Grasshopper.Component[]

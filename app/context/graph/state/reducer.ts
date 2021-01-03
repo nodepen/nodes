@@ -136,6 +136,96 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/selection-region': {
+      const { from, to } = action
+
+      const [minX, maxX] = [from[0], to[0]].sort()
+      const [minY, maxY] = [from[1], to[1]].sort()
+
+      const [ax, ay] = pageToGraphCoordinates([minX, minY], state)
+      const [bx, by] = pageToGraphCoordinates([maxX, maxY], state)
+
+      console.log({ minX, ax })
+      console.log({ maxX, bx })
+      console.log({ minY, ay })
+      console.log({ maxY, by })
+
+      const region = [[ax, ay], [bx, by]] as [[number, number], [number, number]]
+
+      const getElementExtents = (element: Glasshopper.Element.Base): [[number, number], [number, number]] => {
+        const { width, height } = element.current.dimensions
+        const [cx, cy] = element.current.position
+
+        const [dx, dy] = [width / 2, height]
+
+        const extents: [[number, number], [number, number]] = [
+          [cx - dx, cy - dy],
+          [cx + dx, cy - dy]
+        ]
+
+        console.log(extents)
+
+        return extents
+      }
+
+      const isContained = (region: [[number, number], [number, number]], extents: [[number, number], [number, number]]): boolean => {
+        const [[rMinX, rMinY], [rMaxX, rMaxY]] = region
+        const [[eMinX, eMinY], [eMaxX, eMaxY]] = extents
+
+        console.log(region)
+
+        return (rMinX < eMinX) && (rMinY < eMinY) && (rMaxX > eMaxX) && (rMaxY > eMaxY)
+      }
+
+      const captured = Object.values(state.elements).filter((element) => isContained(region, getElementExtents(element))).map((element) => element.id)
+
+      console.log(`Captured ${captured.length}. ${captured}`)
+
+      state.selected = captured
+
+      return { ...state }
+    }
+    case 'graph/selection-add': {
+      const { id } = action
+
+      if (state.selected.includes(id)) {
+        return state
+      }
+
+      state.selected.push(id)
+
+      return { ...state }
+    }
+    case 'graph/selection-remove': {
+      const { id } = action
+
+      if (!state.selected.includes(id)) {
+        return state
+      }
+
+      state.selected = state.selected.filter((elementId) => elementId !== id)
+
+      return { ...state }
+    }
+    case 'graph/selection-toggle': {
+      const { id } = action
+
+      switch (state.selected.includes(id)) {
+        case true: {
+          state.selected = state.selected.filter((elementId) => elementId !== id)
+        }
+        case false: {
+          state.selected.push(id)
+        }
+      }
+
+      return { ...state }
+    }
+    case 'graph/selection-clear': {
+      state.selected = []
+
+      return { ...state }
+    }
     case 'graph/clear': {
       state.elements = {}
 
