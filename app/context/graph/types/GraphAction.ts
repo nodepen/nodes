@@ -11,7 +11,7 @@ export type GraphAction =
   | { type: 'graph/register-element', ref: React.MutableRefObject<HTMLDivElement>, id: string }
   | { type: 'graph/add-component', position: [number, number], component: Grasshopper.Component }
   | { type: 'graph/add-parameter', position: [number, number], component: Grasshopper.Component }
-  | { type: 'graph/selection-region', from: [number, number], to: [number, number] }
+  | { type: 'graph/selection-region', from: [number, number], to: [number, number], partial: boolean }
   | { type: 'graph/selection-add', id: string }
   | { type: 'graph/selection-remove', id: string }
   | { type: 'graph/selection-toggle', id: string }
