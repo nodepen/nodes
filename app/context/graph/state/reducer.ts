@@ -369,7 +369,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // TODO: Verify connection does not already exist
 
       const wireId = newGuid()
-      const wireToCommit = { ...element, id: wireId }
+      const wireToCommit = Object.assign({}, JSON.parse(JSON.stringify(element)), { id: wireId })
 
       // Add new wire
       state.elements[wireId] = wireToCommit
@@ -377,6 +377,9 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // Clear live wire
       element.current.mode = 'hidden'
       element.current.sources = {}
+
+      // Commit new graph to db
+      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
 
       return { ...state }
     }
