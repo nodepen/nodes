@@ -1,11 +1,11 @@
 import React from 'react'
 
 type DataTreeProps = {
+  label: string
   data: { [key: string]: string[] }
-  type?: string
 }
 
-export const DataTreeContainer = ({ data, type }: DataTreeProps): React.ReactElement => {
+export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactElement => {
 
   return <div>{Object.keys(data).length} branches</div>
 }

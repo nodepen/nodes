@@ -1,1 +1,1 @@
-export { NumberParameter as Number } from './NumberParameter'
+export { ParameterIcon } from './ParameterIcon'
