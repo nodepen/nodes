@@ -11,5 +11,6 @@ export interface GraphElementBase {
       width: number
       height: number
     }
+    anchors: { [key: string]: [number, number] } // Notable positions in graph coordinate space
   }
 }

@@ -9,6 +9,7 @@ export type GraphAction =
   | { type: 'session/set-ready' }
   | { type: 'graph/register-camera', ref: React.MutableRefObject<HTMLDivElement> }
   | { type: 'graph/register-element', ref: React.MutableRefObject<HTMLDivElement>, id: string }
+  | { type: 'graph/register-element-anchor', elementId: string, anchorKey: string, position: [number, number] }
   | { type: 'graph/add-component', position: [number, number], component: Grasshopper.Component }
   | { type: 'graph/add-parameter', position: [number, number], component: Grasshopper.Component }
   | { type: 'graph/selection-region', from: [number, number], to: [number, number], partial: boolean }

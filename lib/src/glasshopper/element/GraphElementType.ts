@@ -3,3 +3,4 @@ export type GraphElementType =
   | 'static-parameter'
   | 'panel'
   | 'wire'
+  | 'live-wire'

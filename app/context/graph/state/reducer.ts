@@ -88,6 +88,28 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/register-element-anchor': {
+      const { elementId, anchorKey, position } = action
+
+      // Position must be in page coordinate space
+      const [x, y] = pageToGraphCoordinates(position, state)
+
+      const element = state.elements[elementId]
+
+      if (!element) {
+        return state
+      }
+
+      if (!element.current.anchors) {
+        element.current.anchors = {}
+      }
+
+      element.current.anchors[anchorKey] = [x, y]
+
+      console.log(element)
+
+      return state
+    }
     case 'graph/add-component': {
       const { position, component: template } = action
 
@@ -97,6 +119,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         current: {
           position: pageToGraphCoordinates(position, state),
           dimensions: { width: 50, height: 50 },
+          anchors: {},
           inputs: assignParameterInstanceIds(template.inputs),
           outputs: assignParameterInstanceIds(template.outputs),
           values: {}
@@ -123,6 +146,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         current: {
           position: pageToGraphCoordinates(position, state),
           dimensions: { width: 50, height: 50 },
+          anchors: {},
           values: {}
         }
       }
