@@ -9,6 +9,7 @@ export interface StaticComponent extends GraphElementBase {
       width: number
       height: number
     }
+    anchors: { [key: string]: [number, number] }
     inputs: { [key: string]: number }
     outputs: { [key: string]: number }
     values: { [key: string]: { [key: string]: string[] } }

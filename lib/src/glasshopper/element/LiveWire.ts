@@ -1,8 +1,7 @@
 import { GraphElementBase } from './GraphElementBase'
-import { Component } from '../../grasshopper/Component'
 
-export interface StaticParameter extends GraphElementBase {
-  template: { type: 'static-parameter' } & Component
+export interface LiveWire extends GraphElementBase {
+  template: { type: 'live-wire' }
   current: {
     position: [number, number]
     dimensions: {
@@ -10,6 +9,7 @@ export interface StaticParameter extends GraphElementBase {
       height: number
     }
     anchors: { [key: string]: [number, number] }
-    values: { [key: string]: string[] }
+    from: [number, number]
+    to: [number, number]
   }
 }

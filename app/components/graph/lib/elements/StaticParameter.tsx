@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { ParameterIcon } from './parameters'
-import { Details } from './common'
+import { ParameterIcon, ParameterIconShadow } from './parameters'
+import { Details, Grip } from './common'
 
 type StaticComponentProps = {
   instanceId: string
@@ -50,15 +50,18 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           onClick={handleClick}
         >
           <div className="absolute z-0" style={{ left: '-12.5px', transform: 'translate(2px, 1.5px)' }}>
-            <ParameterIcon />
+            <ParameterIconShadow />
           </div>
           <div className={`${isSelected ? 'bg-green' : 'bg-light'} h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative z-20`}>
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
-              <ParameterIcon />
+              <ParameterIcon parent={parameter.id} />
             </div>
             <div className="ml-6 mr-6 font-panel text-base font-bold text-dark select-none z-10" style={{ left: '0' }}>
               {template.nickname.toLowerCase()}
             </div>
+          </div>
+          <div className="absolute z-0 flex flex-col justify-center items-center" style={{ right: -8 }}>
+            <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </div>
         {overPanel || overDetails ? (
