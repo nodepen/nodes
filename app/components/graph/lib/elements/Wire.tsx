@@ -3,11 +3,11 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { position } from '@/utils'
 
-type LiveWireProps = {
+type WireProps = {
   instanceId: string
 }
 
-export const LiveWire = ({ instanceId: id }: LiveWireProps): React.ReactElement | null => {
+export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null => {
   const { store: { elements } } = useGraphManager()
 
   if (!elements[id]) {
@@ -17,14 +17,14 @@ export const LiveWire = ({ instanceId: id }: LiveWireProps): React.ReactElement 
 
   const element = elements[id]
 
-  if (!isLiveWire(element)) {
-    console.error(`Element ${id} is not a 'live-wire' element.`)
+  if (!isWire(element)) {
+    console.error(`Element ${id} is not a 'wire' element.`)
     return null
   }
 
   const { current } = element
 
-  if (!current.visible) {
+  if (current.mode === 'hidden') {
     return null
   }
 
@@ -42,6 +42,6 @@ export const LiveWire = ({ instanceId: id }: LiveWireProps): React.ReactElement 
   return <div className="absolute bg-darkgreen z-10" style={{ left: min.x, top: -max.y, width, height }}></div>
 }
 
-const isLiveWire = (element: Glasshopper.Element.Base): element is Glasshopper.Element.LiveWire => {
-  return element.template.type === 'live-wire'
+const isWire = (element: Glasshopper.Element.Base): element is Glasshopper.Element.Wire => {
+  return element.template.type === 'wire'
 }

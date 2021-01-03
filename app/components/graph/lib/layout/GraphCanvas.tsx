@@ -1,7 +1,7 @@
-import React, { MouseEvent, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { LiveWire, StaticComponent, StaticParameter } from '../elements'
+import { Wire, StaticComponent, StaticParameter } from '../elements'
 
 type ControlMode = 'idle' | 'panning' | 'selecting'
 
@@ -120,8 +120,8 @@ export const GraphCanvas = (): React.ReactElement => {
                 case 'static-parameter': {
                   return <StaticParameter key={`param-${element.id}`} instanceId={element.id} />
                 }
-                case 'live-wire': {
-                  return <LiveWire key={`live-wire-element`} instanceId="live-wire" />
+                case 'wire': {
+                  return <Wire key={`wire-${element.id}`} instanceId={element.id} />
                 }
               }
             })}

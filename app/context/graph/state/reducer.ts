@@ -106,8 +106,6 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       element.current.anchors[anchorKey] = [x, y]
 
-      console.log(element)
-
       return state
     }
     case 'graph/add-component': {
@@ -257,16 +255,19 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/wire/start-live-wire': {
       const { from, to, owner } = action
 
-      const wire: Glasshopper.Element.LiveWire = {
-        template: { type: 'live-wire' },
+      const wire: Glasshopper.Element.Wire = {
+        id: 'live-wire',
+        template: { type: 'wire' },
         current: {
           position: [0, 0],
           dimensions: { width: 0, height: 0 },
           anchors: {},
           from: pageToGraphCoordinates(from, state),
           to: pageToGraphCoordinates(to, state),
-          owner,
-          visible: true
+          sources: {
+            from: owner
+          },
+          mode: 'thin'
         }
       }
 
@@ -279,16 +280,16 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const next = pageToGraphCoordinates(to, state)
 
-      const element = state.elements['live-wire'] as Glasshopper.Element.LiveWire
+      const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
       element.current.to = next
 
       return { ...state }
     }
     case 'graph/wire/stop-live-wire': {
-      const element = state.elements['live-wire'] as Glasshopper.Element.LiveWire
+      const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
-      element.current.visible = false
+      element.current.mode = 'hidden'
 
       return { ...state }
     }
