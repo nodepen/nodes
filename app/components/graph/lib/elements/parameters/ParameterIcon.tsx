@@ -16,7 +16,7 @@ export const ParameterIcon = (): React.ReactElement => {
         points={points}
         stroke="#333333"
         strokeWidth="4px"
-        fill="#F5F5F5"
+        fill="#FFFFFF"
         vectorEffect="non-scaling-stroke"
         clipPath="url(#annoying)"
       />
