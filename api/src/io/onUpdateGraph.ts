@@ -11,6 +11,6 @@ export const onUpdateGraph = (socket: Socket, graph: string): void => {
 
   db.set(key, graph, () => {
     console.log(`Updated graph for session ${sessionId}`)
-    syncSession(sessionId)
+    // syncSession(sessionId)
   })
 }
