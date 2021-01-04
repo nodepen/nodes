@@ -14,7 +14,7 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     window.localStorage.setItem('gl-session', id)
   }, [])
 
-  const socket = io('http://localhost:3100')
+  const socket = io(process.env.GL_API ?? 'http://localhost:3100')
 
   socket.on('connect', () => {
     console.log('Connection made!')

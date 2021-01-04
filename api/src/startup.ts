@@ -33,10 +33,10 @@ export const configure = async (): Promise<void> => {
 
 const fetchRhinoConfiguration = async (): Promise<Grasshopper.Component[]> => {
   const { data } = await axios.request({
-    url: 'http://localhost:8081/grasshopper',
+    url: process.env.GL_SRV ?? 'http://localhost:8081/grasshopper',
   })
 
-  const components = data.map((c) => {
+  const components = data.map((c: any) => {
     const component: Grasshopper.Component = {
       guid: c['Guid'],
       name: c['Name'],
