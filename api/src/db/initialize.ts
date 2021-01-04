@@ -1,6 +1,8 @@
 import redis from 'redis'
 
-export const db = redis.createClient()
+export const db = process.env.GL_DB
+  ? redis.createClient(process.env.GL_DB)
+  : redis.createClient()
 
 export const initialize = (): void => {
   db.on('connect', () => {

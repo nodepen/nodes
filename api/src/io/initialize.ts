@@ -9,7 +9,7 @@ export let io = new Server()
 export const initialize = (server: HTTP): void => {
   io = new Server(server, {
     cors: {
-      origin: 'http://localhost:3000',
+      origin: ['http://localhost:3000', 'https://glasshopper.io'],
       methods: ['GET', 'POST'],
     },
   })
