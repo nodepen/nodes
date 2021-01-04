@@ -2,6 +2,7 @@ import React from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { position } from '@/utils'
+import { SourceTooltip } from './common'
 
 type WireProps = {
   instanceId: string
@@ -15,7 +16,7 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
     return null
   }
 
-  const element = elements[id]
+  const element = elements[id] as Glasshopper.Element.Wire
 
   if (!isWire(element)) {
     console.error(`Element ${id} is not a 'wire' element.`)
@@ -70,9 +71,14 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
   return (
     <div className="absolute z-10 overflow-visible" style={{ left: min.x, top: -max.y, width, height }}>
       <div className="relative w-full h-full">
-        <svg className="absolute left-0 top-0 overflow-visible" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+        <svg className="absolute left-0 top-0 overflow-visible z-10" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
           <path d={d} strokeWidth="2px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
         </svg>
+        {id === 'live-wire' ? (
+          <div className={`${goingRight ? 'right-0' : 'left-0'} absolute`} style={{ top: goingDown ? height : 0 }}>
+            <SourceTooltip wire={element} />
+          </div>
+        ) : null}
       </div>
     </div>
   )

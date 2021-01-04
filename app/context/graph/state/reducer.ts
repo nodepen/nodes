@@ -348,9 +348,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/wire/stop-live-wire': {
       const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
-      if (!element.current.sources.from && !element.current.sources.to) {
+      console.log(element)
+
+      if (!element.current.sources.from || !element.current.sources.to) {
         // Wire did not make a connection, kill it with fire
         element.current.mode = 'hidden'
+        element.current.sources = {}
         return { ...state }
       }
 

@@ -1,8 +1,9 @@
 export { newGuid } from './newGuid'
 
+import * as graph from './graph'
 import * as position from './position'
 
 import * as option from './option'
 export type { Option } from './option/Option'
 
-export { option, position }
+export { graph, option, position }
