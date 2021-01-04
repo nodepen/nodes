@@ -41,6 +41,8 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
   const [[overPanel, overDetails], setHovers] = useState<[boolean, boolean]>([false, false])
   const [detailsPinned, setDetailsPinned] = useState(false)
 
+  const wireIsBlocking = elements['live-wire'] ? (elements['live-wire']?.current as any)?.mode !== 'hidden' : false
+
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
       <div className="flex flex-col items-center">
@@ -66,7 +68,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </div>
-        {detailsPinned || ((elements['live-wire']?.current as any)?.mode == 'hidden' && (overPanel || overDetails)) ? (
+        {detailsPinned || (!wireIsBlocking && (overPanel || overDetails)) ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10" style={{ transform: 'translate(0, -18px)' }}
             onPointerEnter={() => setHovers(([panel, details]) => [panel, true])}
