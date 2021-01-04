@@ -69,7 +69,7 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
   ].join('')
 
   return (
-    <div className="absolute z-10 overflow-visible" style={{ left: min.x, top: -max.y, width, height }}>
+    <div className="absolute z-10 overflow-visible pointer-events-none" style={{ left: min.x, top: -max.y, width, height }}>
       <div className="relative w-full h-full">
         <svg className="absolute left-0 top-0 overflow-visible z-10" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
           <path d={d} strokeWidth="2px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />

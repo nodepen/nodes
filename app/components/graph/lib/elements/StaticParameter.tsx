@@ -3,7 +3,7 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
-import { Details, Grip } from './common'
+import { Details, Grip, DataTree } from './common'
 
 type StaticComponentProps = {
   instanceId: string
@@ -75,7 +75,8 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Details pinned={detailsPinned} onPin={() => setDetailsPinned((current) => !current)}>
               {(() => {
                 if (Object.keys(current.values).length > 0) {
-                  return <div>Some values!</div>
+                  const valueCount = graph.getValueCount(current.values)
+                  return <DataTree label={`${valueCount} manual value${valueCount === 1 ? '' : 's'}`} data={current.values} />
                 }
 
                 const sourceCount = graph.getSourceCount(current.sources)
@@ -91,13 +92,6 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
                 return <ParameterSetValue element={id} keepOpen={() => setDetailsPinned(true)} />
               })()}
             </Details>
-            {/*<div className="w-full p-2">
-              <h3 className="block w-full mt-1 font-sans font-normal text-sm text-darkgreen">
-              {template.name}
-            </h3>
-            <p className="block w-full font-sans font-light text-xs text-darkgreen">
-              {template.description}
-            </p>*/}
           </div>
         ) : null}
       </div>

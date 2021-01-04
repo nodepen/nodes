@@ -399,6 +399,19 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/values/set-one-value': {
+      const { targetElement, targetParameter, value } = action
+
+      const data = { '{0}': [value] }
+
+      const el = state.elements[targetElement] as Glasshopper.Element.StaticParameter
+
+      el.current.values = data
+
+      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+
+      return { ...state }
+    }
     case 'graph/clear': {
       state.elements = {}
 
