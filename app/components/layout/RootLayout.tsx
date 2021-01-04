@@ -22,7 +22,7 @@ export const RootLayout = ({ children }: RootLayoutProps): JSX.Element => {
             pre-release
           </div>
           <div className="ml-2 p-1 pl-2 pr-2 rounded-sm bg-dark font-display text-xs font-thin text-light">
-            α&nbsp;02
+            α&nbsp;06
           </div>
         </a>
       </div>
