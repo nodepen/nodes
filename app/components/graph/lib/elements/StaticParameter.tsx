@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { graph } from '@/utils'
-import { ParameterIcon, ParameterIconShadow } from './parameters'
+import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
 import { Details, Grip } from './common'
 
 type StaticComponentProps = {
@@ -39,6 +39,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
   const isSelected = selected.includes(id)
 
   const [[overPanel, overDetails], setHovers] = useState<[boolean, boolean]>([false, false])
+  const [detailsPinned, setDetailsPinned] = useState(false)
 
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
@@ -65,13 +66,13 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </div>
-        {(elements['live-wire']?.current as any)?.mode == 'hidden' && (overPanel || overDetails) ? (
+        {detailsPinned || ((elements['live-wire']?.current as any)?.mode == 'hidden' && (overPanel || overDetails)) ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10" style={{ transform: 'translate(0, -18px)' }}
             onPointerEnter={() => setHovers(([panel, details]) => [panel, true])}
             onPointerLeave={() => setHovers(([panel, details]) => [panel, false])}
           >
-            <Details>
+            <Details pinned={detailsPinned} onPin={() => setDetailsPinned((current) => !current)}>
               {(() => {
                 if (Object.keys(current.values).length > 0) {
                   return <div>Some values!</div>
@@ -87,7 +88,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
                   )
                 }
 
-                return <button className="block w-full mt-1 p-1 text-center border-2 rounded-sm border-dashed border-green text-xs font-bold text-green hover:border-darkgreen hover:text-darkgreen">Set value</button>
+                return <ParameterSetValue element={id} keepOpen={() => setDetailsPinned(true)} />
               })()}
             </Details>
             {/*<div className="w-full p-2">
