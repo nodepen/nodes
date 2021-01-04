@@ -7,19 +7,24 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    env:
-      dir: ./app
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v1
         with:
           node-version: 12
-      - name: Install dependencies
+      - name: Install lib dependencies
         run: npm ci
-        working-directory: ${{env.dir}}
+        working-directory: ./lib
+      - name: Build lib
+        run: npm run Build
+        working-directory: ./lib
+      - name: Install app dependencies
+        run: npm ci
+        working-directory: ./app
       - name: Generate site
         run: npm run export
-        working-directory: ${{env.dir}}
+        working-directory: ./app
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
