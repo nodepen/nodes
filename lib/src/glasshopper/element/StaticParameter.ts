@@ -10,6 +10,12 @@ export interface StaticParameter extends GraphElementBase {
       height: number
     }
     anchors: { [key: string]: [number, number] }
+    sources: {
+      [key: string]: {
+        element: string
+        parameter: string
+      }[]
+    }
     values: { [key: string]: string[] }
   }
 }
