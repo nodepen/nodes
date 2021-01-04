@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
+import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow } from './parameters'
 import { Details, Grip } from './common'
 
@@ -64,20 +65,30 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </div>
-        {(elements['live-wire'].current as any).mode == 'hidden' && (overPanel || overDetails) ? (
+        {(elements['live-wire']?.current as any)?.mode == 'hidden' && (overPanel || overDetails) ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10" style={{ transform: 'translate(0, -18px)' }}
             onPointerEnter={() => setHovers(([panel, details]) => [panel, true])}
             onPointerLeave={() => setHovers(([panel, details]) => [panel, false])}
           >
             <Details>
-              {Object.keys(current.values).length > 0
-                ? (
-                  <div>Data!</div>
-                )
-                : (
-                  <button className="block w-full mt-1 p-1 text-center border-2 rounded-sm border-dashed border-green text-xs font-bold text-green hover:border-darkgreen hover:text-darkgreen">Set value</button>
-                )}
+              {(() => {
+                if (Object.keys(current.values).length > 0) {
+                  return <div>Some values!</div>
+                }
+
+                const sourceCount = graph.getSourceCount(current.sources)
+                if (sourceCount > 0) {
+                  return (
+                    <div className="mt-1 p-1 pl-2 pr-2 h-5 flex items-center rounded-sm bg-green">
+                      <p className="flex-grow font-panel font-bold text-darkgreen text-xs" style={{ transform: 'translateY(1px)' }}>{`${sourceCount} source${sourceCount === 1 ? '' : 's'}`}</p>
+                      <p className="text-sm text-pale">&#9660;</p>
+                    </div>
+                  )
+                }
+
+                return <button className="block w-full mt-1 p-1 text-center border-2 rounded-sm border-dashed border-green text-xs font-bold text-green hover:border-darkgreen hover:text-darkgreen">Set value</button>
+              })()}
             </Details>
             {/*<div className="w-full p-2">
               <h3 className="block w-full mt-1 font-sans font-normal text-sm text-darkgreen">
