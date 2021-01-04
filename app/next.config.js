@@ -9,4 +9,11 @@ module.exports = {
       },
     ]
   },
+  async exportPathMap() {
+    return {
+      '/': { page: '/teaser' },
+      '/teaser': { page: '/teaser' },
+      '/alpha': { page: '/alpha' }
+    }
+  }
 }
