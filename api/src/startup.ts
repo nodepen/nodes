@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import axios from 'axios'
 import { Grasshopper } from 'glib'
 import * as store from './store'
@@ -32,12 +34,10 @@ export const configure = async (): Promise<void> => {
 }
 
 const fetchRhinoConfiguration = async (): Promise<Grasshopper.Component[]> => {
-  const { data } = await axios.request({
-    url: process.env.GL_SRV ?? 'http://localhost:8081/grasshopper',
-  })
+  const components: Grasshopper.Component[] = []
 
-  const components = data.map((c: any) => {
-    const component: Grasshopper.Component = {
+  const toCamelCase = (c: any): Grasshopper.Component => {
+    return {
       guid: c['Guid'],
       name: c['Name'],
       nickname: c['NickName'],
@@ -51,8 +51,23 @@ const fetchRhinoConfiguration = async (): Promise<Grasshopper.Component[]> => {
       isObsolete: c['IsObsolete'],
       isVariable: c['IsVariable'],
     }
-    return component
-  })
+  }
+
+  try {
+    const { data } = await axios.request({
+      url: process.env.GL_SRV ?? 'http://localhost:8081/grasshopper',
+    })
+
+    data.forEach((c: any) => components.push(toCamelCase(c)))
+  } catch (err) {
+    const backup = JSON.parse(
+      fs
+        .readFileSync(path.join(__dirname, 'data', 'fallback_config.json'))
+        .toString()
+    )
+
+    backup.forEach((c: any) => components.push(toCamelCase(c)))
+  }
 
   return components
 }
