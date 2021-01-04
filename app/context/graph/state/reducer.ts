@@ -117,10 +117,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           anchors: {},
           inputs: assignParameterInstanceIds(template.inputs),
           outputs: assignParameterInstanceIds(template.outputs),
+          sources: {},
           values: {}
         }
       }
 
+      assignDefaultSources(component)
       assignDefaultComponentValues(component)
 
       state.elements[component.id] = component
@@ -142,9 +144,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           position: pageToGraphCoordinates(position, state),
           dimensions: { width: 50, height: 50 },
           anchors: {},
+          sources: {},
           values: {}
         }
       }
+
+      assignDefaultSources(parameter)
 
       state.elements[parameter.id] = parameter
 
@@ -369,7 +374,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // TODO: Verify connection does not already exist
 
       const wireId = newGuid()
-      const wireToCommit = Object.assign({}, JSON.parse(JSON.stringify(element)), { id: wireId })
+      const wireToCommit = Object.assign({}, JSON.parse(JSON.stringify(element)), { id: wireId }) as Glasshopper.Element.Wire
 
       // Add new wire
       state.elements[wireId] = wireToCommit
@@ -377,6 +382,14 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // Clear live wire
       element.current.mode = 'hidden'
       element.current.sources = {}
+
+      // Update sources in target
+      const source = wireToCommit.current.sources.from
+      const target = wireToCommit.current.sources.to
+
+      const sourceElement = state.elements[target.element] as Glasshopper.Element.StaticComponent
+
+      sourceElement.current.sources[target.parameter].push({ element: source.element, parameter: source.parameter })
 
       // Commit new graph to db
       state.socket.io.emit('update-graph', JSON.stringify(state.elements))
@@ -429,6 +442,19 @@ const assignDefaultComponentValues = (component: Glasshopper.Element.StaticCompo
   [...Object.keys(component.current.inputs), ...Object.keys(component.current.outputs)].forEach((id) => {
     component.current.values[id] = {}
   })
+}
+
+const assignDefaultSources = (element: Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter): void => {
+  switch (element.template.type) {
+    case 'static-component': {
+      const el = element as Glasshopper.Element.StaticComponent
+      Object.keys(el.current.inputs).forEach((key) => el.current.sources[key] = [])
+      return
+    }
+    case 'static-parameter': {
+      element.current.sources['input'] = []
+    }
+  }
 }
 
 const isInputOrOutput = (elementId: string, parameterId: string, state: GraphStore): 'input' | 'output' => {

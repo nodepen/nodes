@@ -10,8 +10,14 @@ export interface StaticComponent extends GraphElementBase {
       height: number
     }
     anchors: { [key: string]: [number, number] }
-    inputs: { [key: string]: number }
+    inputs: { [key: string]: number } // Maps instance id to template input
     outputs: { [key: string]: number }
-    values: { [key: string]: { [key: string]: string[] } }
+    sources: {
+      [key: string]: {
+        element: string
+        parameter: string
+      }[]
+    }
+    values: { [key: string]: { [key: string]: string[] } } // [instancedId][data tree path] = values
   }
 }
