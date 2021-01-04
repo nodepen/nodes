@@ -64,7 +64,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </div>
-        {overPanel || overDetails ? (
+        {(elements['live-wire'].current as any).mode == 'hidden' && (overPanel || overDetails) ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10" style={{ transform: 'translate(0, -18px)' }}
             onPointerEnter={() => setHovers(([panel, details]) => [panel, true])}
