@@ -17,7 +17,7 @@ jobs:
         run: npm ci
         working-directory: ./lib
       - name: Build lib
-        run: npm run Build
+        run: npm run build
         working-directory: ./lib
       - name: Install app dependencies
         run: npm ci
