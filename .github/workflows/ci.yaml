@@ -1,0 +1,69 @@
+on: ["push", "pull_request"]
+
+name: ci
+
+jobs:
+
+  app:
+    name: app
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v1
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Prepare glib
+      working-directory: ./lib
+      run: |
+        npm ci
+        npm run build
+
+    - name: Install dependencies
+      working-directory: ./app
+      run: npm ci
+
+    - name: Build
+      working-directory: ./app
+      run: npm run build
+
+    - name: Test
+      working-directory: ./app
+      run: npm run test
+
+    - name: Emit coverage
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        base-path: ./app
+
+  api:
+    name: api
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v1
+
+    - name: Setup Node
+      uses: actions/setup-node@v1
+      with:
+        node-version: 12.x
+
+    - name: Prepare glib
+      working-directory: ./lib
+      run: |
+        npm ci
+        npm run build
+
+    - name: Install dependencies
+      working-directory: ./api
+      run: npm ci
+
+    - name: Build
+      working-directory: ./api
+      run: npm run build
