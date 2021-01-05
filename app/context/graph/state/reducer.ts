@@ -20,7 +20,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.socket = {
         io: socket,
-        id
+        id,
       }
 
       return state
@@ -118,8 +118,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           inputs: assignParameterInstanceIds(template.inputs),
           outputs: assignParameterInstanceIds(template.outputs),
           sources: {},
-          values: {}
-        }
+          values: {},
+        },
       }
 
       assignDefaultSources(component)
@@ -145,8 +145,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           dimensions: { width: 50, height: 50 },
           anchors: {},
           sources: {},
-          values: {}
-        }
+          values: {},
+        },
       }
 
       assignDefaultSources(parameter)
@@ -169,7 +169,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       const [minX, maxX] = [Math.min(ax, bx), Math.max(ax, bx)]
       const [minY, maxY] = [Math.min(ay, by), Math.max(ay, by)]
 
-      const region = [[minX, minY], [maxX, maxY]] as [[number, number], [number, number]]
+      const region = [
+        [minX, minY],
+        [maxX, maxY],
+      ] as [[number, number], [number, number]]
 
       const getElementExtents = (element: Glasshopper.Element.Base): [[number, number], [number, number]] => {
         const { width, height } = element.current.dimensions
@@ -179,25 +182,34 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
         const extents: [[number, number], [number, number]] = [
           [cx - dx, cy - dy],
-          [cx + dx, cy]
+          [cx + dx, cy],
         ]
 
         return extents
       }
 
-      const isContained = (region: [[number, number], [number, number]], extents: [[number, number], [number, number]], partial: boolean = false): boolean => {
+      const isContained = (
+        region: [[number, number], [number, number]],
+        extents: [[number, number], [number, number]],
+        partial = false
+      ): boolean => {
         const [[rMinX, rMinY], [rMaxX, rMaxY]] = region
         const [[eMinX, eMinY], [eMaxX, eMaxY]] = extents
 
-        const wContained = (rMinX < eMinX && rMaxX > eMaxX)
+        const wContained = rMinX < eMinX && rMaxX > eMaxX
         const wIntersect = (eMinX < rMinX && rMinX < eMaxX) || (eMinX < rMaxX && rMaxX < eMaxX)
-        const hContained = (rMinY < eMinY && rMaxY > eMaxY)
+        const hContained = rMinY < eMinY && rMaxY > eMaxY
         const hIntersect = (eMinY < rMinY && rMinY < eMaxY) || (eMinY < rMaxY && rMaxY < eMaxY)
 
         switch (partial) {
           case true: {
             // Capture if region at least crosses element
-            return (wIntersect && hIntersect) || (wIntersect && hContained) || (hIntersect && wContained) || (wContained && hContained)
+            return (
+              (wIntersect && hIntersect) ||
+              (wIntersect && hContained) ||
+              (hIntersect && wContained) ||
+              (wContained && hContained)
+            )
           }
           case false: {
             // Only capture if element totally enclosed by the region
@@ -207,7 +219,9 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }
 
-      const captured = Object.values(state.elements).filter((element) => isContained(region, getElementExtents(element), partial)).map((element) => element.id)
+      const captured = Object.values(state.elements)
+        .filter((element) => isContained(region, getElementExtents(element), partial))
+        .map((element) => element.id)
 
       state.selected = captured
 
@@ -241,9 +255,11 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       switch (state.selected.includes(id)) {
         case true: {
           state.selected = state.selected.filter((elementId) => elementId !== id)
+          break
         }
         case false: {
           state.selected.push(id)
+          break
         }
       }
 
@@ -267,10 +283,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           from: pageToGraphCoordinates(from, state),
           to: pageToGraphCoordinates(to, state),
           sources: {
-            from: owner
+            from: owner,
           },
-          mode: 'thin'
-        }
+          mode: 'thin',
+        },
       }
 
       state.elements['live-wire'] = wire
@@ -282,7 +298,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
-      if (!!element.current.sources.to) {
+      if (element.current.sources.to) {
         // A claim has been snapped to, do not move the wire
         return state
       }
@@ -370,14 +386,16 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
         element.current.sources = {
           from: correctFrom,
-          to: correctTo
+          to: correctTo,
         }
       }
 
       // TODO: Verify connection does not already exist
 
       const wireId = newGuid()
-      const wireToCommit = Object.assign({}, JSON.parse(JSON.stringify(element)), { id: wireId }) as Glasshopper.Element.Wire
+      const wireToCommit = Object.assign({}, JSON.parse(JSON.stringify(element)), {
+        id: wireId,
+      }) as Glasshopper.Element.Wire
 
       // Add new wire
       state.elements[wireId] = wireToCommit
@@ -440,7 +458,7 @@ const pageToGraphCoordinates = (page: [number, number], state: GraphStore): [num
   const [ex, ey] = page
   const [tx, ty] = state.camera.position
   const { width, height, top } = state.camera.ref.current.getBoundingClientRect()
-  const [cx, cy] = [width / 2, (height / 2) + top]
+  const [cx, cy] = [width / 2, height / 2 + top]
   const [dx, dy] = [ex - cx, ey - cy]
 
   return [tx + dx, -(ty + dy)]
@@ -455,16 +473,18 @@ const assignParameterInstanceIds = (parameters: Grasshopper.ComponentParameter[]
 
 const assignDefaultComponentValues = (component: Glasshopper.Element.StaticComponent): void => {
   // TODO: Actually check for values
-  [...Object.keys(component.current.inputs), ...Object.keys(component.current.outputs)].forEach((id) => {
+  ;[...Object.keys(component.current.inputs), ...Object.keys(component.current.outputs)].forEach((id) => {
     component.current.values[id] = {}
   })
 }
 
-const assignDefaultSources = (element: Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter): void => {
+const assignDefaultSources = (
+  element: Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter
+): void => {
   switch (element.template.type) {
     case 'static-component': {
       const el = element as Glasshopper.Element.StaticComponent
-      Object.keys(el.current.inputs).forEach((key) => el.current.sources[key] = [])
+      Object.keys(el.current.inputs).forEach((key) => (el.current.sources[key] = []))
       return
     }
     case 'static-parameter': {

@@ -8,7 +8,7 @@ type SessionManagerProps = {
 }
 
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
-  const id = useMemo(() => process.browser ? window?.localStorage?.getItem('gl-session') ?? newGuid() : '', [])
+  const id = useMemo(() => (process.browser ? window?.localStorage?.getItem('gl-session') ?? newGuid() : ''), [])
 
   useEffect(() => {
     window.localStorage.setItem('gl-session', id)

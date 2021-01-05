@@ -18,9 +18,7 @@ export const RootLayout = ({ children }: RootLayoutProps): JSX.Element => {
           target="_blank"
           className="w-6 overflow-visible flex-grow flex flex-row justify-end items-center"
         >
-          <div className="font-display text-xs font-thin text-dark">
-            pre-release
-          </div>
+          <div className="font-display text-xs font-thin text-dark">pre-release</div>
           <div className="ml-2 p-1 pl-2 pr-2 rounded-sm bg-dark font-display text-xs font-thin text-light">
             α&nbsp;06
           </div>

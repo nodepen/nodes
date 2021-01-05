@@ -7,7 +7,9 @@ type StaticComponentProps = {
 }
 
 export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
-  const { store: { elements } } = useGraphManager()
+  const {
+    store: { elements },
+  } = useGraphManager()
 
   if (!elements[id] || elements[id].template.type !== 'static-component') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-component'`)
@@ -18,5 +20,10 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
 
   const [dx, dy] = current.position
 
-  return <div className="block text-lg font-panel absolute" style={{ left: dx, top: -dy }}>{`${template.name} (${dx}, ${dy})`}</div>
+  return (
+    <div
+      className="block text-lg font-panel absolute"
+      style={{ left: dx, top: -dy }}
+    >{`${template.name} (${dx}, ${dy})`}</div>
+  )
 }
