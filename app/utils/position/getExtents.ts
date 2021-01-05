@@ -5,5 +5,8 @@ export const getExtents = (a: [number, number], b: [number, number]): [[number, 
   const [minX, maxX] = [Math.min(ax, bx), Math.max(ax, bx)]
   const [minY, maxY] = [Math.min(ay, by), Math.max(ay, by)]
 
-  return [[minX, minY], [maxX, maxY]]
+  return [
+    [minX, minY],
+    [maxX, maxY],
+  ]
 }

@@ -10,14 +10,12 @@ type StaticComponentProps = {
 }
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
-  const { store: { elements, selected }, dispatch } = useGraphManager()
+  const {
+    store: { elements, selected },
+    dispatch,
+  } = useGraphManager()
 
-  if (!elements[id] || elements[id].template.type !== 'static-parameter') {
-    console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
-    return null
-  }
-
-  const parameterRef = useRef<HTMLDivElement>(null)
+  const parameterRef = useRef<HTMLButtonElement>(null)
 
   useEffect(() => {
     if (!parameterRef) {
@@ -27,7 +25,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'graph/register-element', ref: parameterRef, id })
   }, [])
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+  const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation()
     dispatch({ type: 'graph/selection-add', id })
   }
@@ -43,20 +41,29 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
 
   const wireIsBlocking = elements['live-wire'] ? (elements['live-wire']?.current as any)?.mode !== 'hidden' : false
 
+  if (!elements[id] || elements[id].template.type !== 'static-parameter') {
+    console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
+    return null
+  }
+
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
       <div className="flex flex-col items-center">
-        <div
+        <button
           className="flex flex-row justify-center items-center relative z-20"
           ref={parameterRef}
-          onPointerEnter={() => setHovers(([panel, details]) => [true, details])}
-          onPointerLeave={() => setHovers(([panel, details]) => [false, details])}
+          onPointerEnter={() => setHovers(([, details]) => [true, details])}
+          onPointerLeave={() => setHovers(([, details]) => [false, details])}
           onClick={handleClick}
         >
           <div className="absolute z-0" style={{ left: '-12.5px', transform: 'translate(2px, 1.5px)' }}>
             <ParameterIconShadow />
           </div>
-          <div className={`${isSelected ? 'bg-green' : 'bg-light'} h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative z-20`}>
+          <div
+            className={`${
+              isSelected ? 'bg-green' : 'bg-light'
+            } h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative z-20`}
+          >
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
               <ParameterIcon parent={parameter.id} />
             </div>
@@ -67,25 +74,34 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           <div className="absolute z-0 flex flex-col justify-center items-center" style={{ right: -8 }}>
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
-        </div>
+        </button>
         {detailsPinned || (!wireIsBlocking && (overPanel || overDetails)) ? (
           <div
-            className="flex flex-col w-48 overflow-hidden z-10" style={{ transform: 'translate(0, -18px)' }}
-            onPointerEnter={() => setHovers(([panel, details]) => [panel, true])}
-            onPointerLeave={() => setHovers(([panel, details]) => [panel, false])}
+            className="flex flex-col w-48 overflow-hidden z-10"
+            style={{ transform: 'translate(0, -18px)' }}
+            onPointerEnter={() => setHovers(([panel]) => [panel, true])}
+            onPointerLeave={() => setHovers(([panel]) => [panel, false])}
           >
             <Details pinned={detailsPinned} onPin={() => setDetailsPinned((current) => !current)}>
               {(() => {
                 if (Object.keys(current.values).length > 0) {
                   const valueCount = graph.getValueCount(current.values)
-                  return <DataTree label={`${valueCount} manual value${valueCount === 1 ? '' : 's'}`} data={current.values} />
+                  return (
+                    <DataTree
+                      label={`${valueCount} manual value${valueCount === 1 ? '' : 's'}`}
+                      data={current.values}
+                    />
+                  )
                 }
 
                 const sourceCount = graph.getSourceCount(current.sources)
                 if (sourceCount > 0) {
                   return (
                     <div className="mt-1 p-1 pl-2 pr-2 h-5 flex items-center rounded-sm bg-green">
-                      <p className="flex-grow font-panel font-bold text-darkgreen text-xs" style={{ transform: 'translateY(1px)' }}>{`${sourceCount} source${sourceCount === 1 ? '' : 's'}`}</p>
+                      <p
+                        className="flex-grow font-panel font-bold text-darkgreen text-xs"
+                        style={{ transform: 'translateY(1px)' }}
+                      >{`${sourceCount} source${sourceCount === 1 ? '' : 's'}`}</p>
                       <p className="text-sm text-pale">&#9660;</p>
                     </div>
                   )

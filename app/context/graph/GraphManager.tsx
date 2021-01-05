@@ -1,7 +1,6 @@
-import React, { useEffect, useCallback, useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { Grasshopper } from 'glib'
 import { context as Context, reducer, initial } from './state'
-import { GraphStore } from './types'
 import { useSessionManager } from '~/context/session'
 
 type GraphManagerProps = {
@@ -35,7 +34,6 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     if (!Object.values(store.preflight).some((done) => !done)) {
       dispatch({ type: 'session/set-ready' })
     }
-
   })
 
   const manager = { store, dispatch }

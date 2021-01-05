@@ -6,7 +6,7 @@ type ParameterIconProps = {
 }
 
 export const ParameterIcon = ({ parent }: ParameterIconProps): React.ReactElement => {
-  const { store, dispatch } = useGraphManager()
+  const { dispatch } = useGraphManager()
 
   const iconRef = useRef<SVGSVGElement>(null)
 
@@ -17,16 +17,16 @@ export const ParameterIcon = ({ parent }: ParameterIconProps): React.ReactElemen
 
     const { width, height, left, top } = iconRef.current.getBoundingClientRect()
 
-    const [cx, cy] = [left + (width / 2), top + (height / 2)]
+    const [cx, cy] = [left + width / 2, top + height / 2]
 
     dispatch({ type: 'graph/register-element-anchor', elementId: parent, anchorKey: 'input', position: [cx, cy] })
   }, [])
 
-  const handlePointerEnter = (e: React.PointerEvent<SVGSVGElement>): void => {
+  const handlePointerEnter = (): void => {
     dispatch({ type: 'graph/wire/capture-live-wire', targetElement: parent, targetParameter: 'input' })
   }
 
-  const handlePointerLeave = (e: React.PointerEvent<SVGSVGElement>): void => {
+  const handlePointerLeave = (): void => {
     dispatch({ type: 'graph/wire/release-live-wire', targetElement: parent, targetParameter: 'input' })
   }
 
@@ -40,7 +40,8 @@ export const ParameterIcon = ({ parent }: ParameterIconProps): React.ReactElemen
       onPointerLeave={handlePointerLeave}
       width="24px"
       height="24px"
-      viewBox="-1 -1 2 2">
+      viewBox="-1 -1 2 2"
+    >
       <defs>
         <clipPath id="annoying">
           <polygon points={points} />

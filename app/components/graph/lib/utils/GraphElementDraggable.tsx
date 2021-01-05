@@ -8,7 +8,12 @@ type GraphElementDraggableProps = {
   onCancel: () => void
 }
 
-export const GraphElementDraggable = ({ start, template, onDrop, onCancel }: GraphElementDraggableProps): React.ReactElement => {
+export const GraphElementDraggable = ({
+  start,
+  template,
+  onDrop,
+  onCancel,
+}: GraphElementDraggableProps): React.ReactElement => {
   const [[x, y], setPosition] = useState(start)
 
   const handlePointerMove = (e: PointerEvent): void => {
@@ -39,5 +44,7 @@ export const GraphElementDraggable = ({ start, template, onDrop, onCancel }: Gra
     }
   })
 
-  return <div className="w-8 h-8 bg-none border-2 border-darkgreen rounded-sm fixed" style={{ left: x - 16, top: y - 16 }} />
+  return (
+    <div className="w-8 h-8 bg-none border-2 border-darkgreen rounded-sm fixed" style={{ left: x - 16, top: y - 16 }} />
+  )
 }

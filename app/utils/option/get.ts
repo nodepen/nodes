@@ -2,7 +2,7 @@ import { Option } from './Option'
 import { NoneError } from './NoneError'
 
 class Match<T> {
-  private some: T;
+  private some: T
   private none: NoneError
 
   constructor(option: Option<T>) {

@@ -9,7 +9,9 @@ type WireProps = {
 }
 
 export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null => {
-  const { store: { elements } } = useGraphManager()
+  const {
+    store: { elements },
+  } = useGraphManager()
 
   if (!elements[id]) {
     console.error(`Element '${id}' does not exist.'`)
@@ -46,32 +48,39 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
   }
   const end = {
     x: start.x === 0 ? width : 0,
-    y: start.y === 0 ? height : 0
+    y: start.y === 0 ? height : 0,
   }
   const mid = {
     x: (start.x + end.x) / 2,
-    y: (start.y + end.y) / 2
+    y: (start.y + end.y) / 2,
   }
 
   const goingRight = start.x < end.x
   const goingDown = start.y < end.y
 
-  const o = goingRight ? 25 : -25
   const wc = width * (goingRight ? 0.15 : -0.35)
   const hc = height * (goingDown ? 0.35 : -0.35)
 
   const d = [
     `M ${start.x} ${start.y} `,
     // `L ${start.x + o} ${start.y} `,
-    `C ${start.x + wc} ${start.y} ${mid.x - (wc / 1.5)} ${mid.y - hc} ${mid.x} ${mid.y} `,
+    `C ${start.x + wc} ${start.y} ${mid.x - wc / 1.5} ${mid.y - hc} ${mid.x} ${mid.y} `,
     `S ${end.x - wc} ${end.y} ${end.x} ${end.y} `,
     // `L ${end.x} ${end.y}`
   ].join('')
 
   return (
-    <div className="absolute z-10 overflow-visible pointer-events-none" style={{ left: min.x, top: -max.y, width, height }}>
+    <div
+      className="absolute z-10 overflow-visible pointer-events-none"
+      style={{ left: min.x, top: -max.y, width, height }}
+    >
       <div className="relative w-full h-full">
-        <svg className="absolute left-0 top-0 overflow-visible z-10" width={width} height={height} viewBox={`0 0 ${width} ${height}`}>
+        <svg
+          className="absolute left-0 top-0 overflow-visible z-10"
+          width={width}
+          height={height}
+          viewBox={`0 0 ${width} ${height}`}
+        >
           <path d={d} strokeWidth="2px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
         </svg>
         {id === 'live-wire' ? (

@@ -3,9 +3,11 @@ import { Grasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Draggable } from '../utils'
 
-
 export const GraphControlsFooter = (): React.ReactElement => {
-  const { store: { library }, dispatch } = useGraphManager()
+  const {
+    store: { library },
+    dispatch,
+  } = useGraphManager()
 
   const [selectedCategory, setSelectedCategory] = useState('params')
 
@@ -30,8 +32,7 @@ export const GraphControlsFooter = (): React.ReactElement => {
 
     if (component.category.toLowerCase() === 'params') {
       dispatch({ type: 'graph/add-parameter', position, component })
-    }
-    else {
+    } else {
       dispatch({ type: 'graph/add-component', position, component })
     }
   }
@@ -43,7 +44,9 @@ export const GraphControlsFooter = (): React.ReactElement => {
           {Object.keys(library).map((category) => (
             <button
               key={`cat-${category}`}
-              className={`${category === selectedCategory ? 'text-darkgreen font-semibold' : 'text-swampgreen font-normal'} font-sans text-sm mr-4 hover:text-darkgreen`}
+              className={`${
+                category === selectedCategory ? 'text-darkgreen font-semibold' : 'text-swampgreen font-normal'
+              } font-sans text-sm mr-4 hover:text-darkgreen`}
               onClick={() => setSelectedCategory(category)}
             >
               {`${capitalize(category)}`}
@@ -54,11 +57,23 @@ export const GraphControlsFooter = (): React.ReactElement => {
           {visibleComponents.map((subcategories, i) => (
             <>
               {subcategories.map((component, j) => (
-                <button key={`${i}-component-${component.name}`} className={`w-8 min-w-8 h-8 mr-3 rounded-sm border-2 border-green hover:border-swampgreen flex justify-center items-center`} onPointerDown={(e) => handleStartPlacement(e, component)} >
-                  <img width="24px" height="24px" draggable="false" src={`data:image/png;base64,${component.icon}`} alt={component.name} />
+                <button
+                  key={`${i}-component-${component.name}`}
+                  className={`w-8 min-w-8 h-8 mr-3 rounded-sm border-2 border-green hover:border-swampgreen flex justify-center items-center`}
+                  onPointerDown={(e) => handleStartPlacement(e, component)}
+                >
+                  <img
+                    width="24px"
+                    height="24px"
+                    draggable="false"
+                    src={`data:image/png;base64,${component.icon}`}
+                    alt={component.name}
+                  />
                 </button>
               ))}
-              {(i < visibleComponents.length - 1) ? <div key={`div-${i}`} className="h-4 mr-3 inline-block border-r-2 border-swampgreen" /> : null}
+              {i < visibleComponents.length - 1 ? (
+                <div key={`div-${i}`} className="h-4 mr-3 inline-block border-r-2 border-swampgreen" />
+              ) : null}
             </>
           ))}
         </div>
@@ -77,8 +92,14 @@ export const GraphControlsFooter = (): React.ReactElement => {
           C
         </button>
       </div>
-      { stagedComponent && start ? <Draggable start={start} template={stagedComponent} onCancel={() => setStagedComponent(undefined)} onDrop={handlePlacement} /> : null}
-      {/* <div id="controls-container" className="w-20 bg-green" /> */}
+      {stagedComponent && start ? (
+        <Draggable
+          start={start}
+          template={stagedComponent}
+          onCancel={() => setStagedComponent(undefined)}
+          onDrop={handlePlacement}
+        />
+      ) : null}
     </div>
   )
 }

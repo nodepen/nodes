@@ -22,7 +22,7 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
     dispatch({ type: 'graph/wire/update-live-wire', to: [pageX, pageY] })
   }
 
-  const handlePointerUp = (e: PointerEvent): void => {
+  const handlePointerUp = (): void => {
     dispatch({ type: 'graph/wire/stop-live-wire' })
     setIsDrawingWire(false)
   }
@@ -54,14 +54,14 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
 
     const { width, height, left, top } = gripRef.current.getBoundingClientRect()
 
-    const [cx, cy] = [left + (width / 2), top + (height / 2)]
+    const [cx, cy] = [left + width / 2, top + height / 2]
 
     dispatch({ type: 'graph/register-element-anchor', elementId: element, anchorKey: parameter, position: [cx, cy] })
   }, [])
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
     const { width, height, left, top } = gripRef.current.getBoundingClientRect()
-    const [cx, cy] = [left + (width / 2), top + (height / 2)]
+    const [cx, cy] = [left + width / 2, top + height / 2]
 
     const { pageX: tx, pageY: ty } = e
 

@@ -6,7 +6,10 @@ import { Wire, StaticComponent, StaticParameter } from '../elements'
 type ControlMode = 'idle' | 'panning' | 'selecting'
 
 export const GraphCanvas = (): React.ReactElement => {
-  const { store: { elements, camera }, dispatch } = useGraphManager()
+  const {
+    store: { elements, camera },
+    dispatch,
+  } = useGraphManager()
 
   useEffect(() => {
     const debug = (e: KeyboardEvent): void => {
@@ -74,10 +77,12 @@ export const GraphCanvas = (): React.ReactElement => {
 
         setAnchor([ex, ey])
         setPreviousTime(Date.now())
+        break
       }
       case 'selecting': {
         setAnchor([ex, ey])
         setPreviousTime(Date.now())
+        break
       }
     }
   }
@@ -90,8 +95,7 @@ export const GraphCanvas = (): React.ReactElement => {
 
         if (isShort && isStatic) {
           dispatch({ type: 'graph/selection-clear' })
-        }
-        else {
+        } else {
           dispatch({ type: 'graph/selection-region', from: [sx, sy], to: [ax, ay], partial: sx > ax })
         }
       }
@@ -122,28 +126,37 @@ export const GraphCanvas = (): React.ReactElement => {
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
       onPointerCancel={handlePointerUp}
+      role="presentation"
     >
-      {
-        canvasRef.current ? (
-          <div id="element-container" className="w-full h-full relative overflow-visible z-20" style={{ transform: `translate(${-dx}px, ${-dy}px)`, left: canvasRef.current.clientWidth / 2, top: canvasRef.current.clientHeight / 2 }}>
-            {Object.values(elements).map((element) => {
-              switch (element.template.type) {
-                case 'static-component': {
-                  return <StaticComponent key={`el-${element.id}`} instanceId={element.id} />
-                }
-                case 'static-parameter': {
-                  return <StaticParameter key={`param-${element.id}`} instanceId={element.id} />
-                }
-                case 'wire': {
-                  return <Wire key={`wire-${element.id}`} instanceId={element.id} />
-                }
+      {canvasRef.current ? (
+        <div
+          id="element-container"
+          className="w-full h-full relative overflow-visible z-20"
+          style={{
+            transform: `translate(${-dx}px, ${-dy}px)`,
+            left: canvasRef.current.clientWidth / 2,
+            top: canvasRef.current.clientHeight / 2,
+          }}
+        >
+          {Object.values(elements).map((element) => {
+            switch (element.template.type) {
+              case 'static-component': {
+                return <StaticComponent key={`el-${element.id}`} instanceId={element.id} />
               }
-            })}
-          </div>
-        ) : null
-      }
+              case 'static-parameter': {
+                return <StaticParameter key={`param-${element.id}`} instanceId={element.id} />
+              }
+              case 'wire': {
+                return <Wire key={`wire-${element.id}`} instanceId={element.id} />
+              }
+            }
+          })}
+        </div>
+      ) : null}
       <div
-        className={`${sx > ax ? 'border-dashed' : ''} fixed border-2 border-dark rounded-sm transition-opacity duration-100`}
+        className={`${
+          sx > ax ? 'border-dashed' : ''
+        } fixed border-2 border-dark rounded-sm transition-opacity duration-100`}
         style={{
           left: Math.min(ax, sx),
           top: Math.min(ay, sy),
