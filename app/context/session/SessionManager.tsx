@@ -14,7 +14,8 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     window.localStorage.setItem('gl-session', id)
   }, [])
 
-  const socket = io('https://api.glasshopper.io')
+  // const socket = io('https://api.glasshopper.io')
+  const socket = io('localhost:3100')
 
   socket.on('connect', () => {
     console.log('Connection made!')

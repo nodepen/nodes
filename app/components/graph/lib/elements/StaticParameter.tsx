@@ -41,6 +41,8 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
 
   const wireIsBlocking = elements['live-wire'] ? (elements['live-wire']?.current as any)?.mode !== 'hidden' : false
 
+  const detailsVisible = !wireIsBlocking && (overPanel || overDetails)
+
   if (!elements[id] || elements[id].template.type !== 'static-parameter') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
     return null
@@ -75,7 +77,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </button>
-        {detailsPinned || (!wireIsBlocking && (overPanel || overDetails)) ? (
+        {detailsPinned || detailsVisible ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10"
             style={{ transform: 'translate(0, -18px)' }}
