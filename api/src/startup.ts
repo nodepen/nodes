@@ -37,7 +37,17 @@ const fetchRhinoConfiguration = async (): Promise<Grasshopper.Component[]> => {
   const components: Grasshopper.Component[] = []
 
   const toCamelCase = (c: any): Grasshopper.Component => {
-    return {
+    const paramToCamelCase = (p: any): Grasshopper.ComponentParameter => {
+      return {
+        description: p['Description'],
+        isOptional: p['IsOptional'],
+        name: p['Name'],
+        nickName: p['NickName'],
+        type: p['TypeName'],
+      }
+    }
+
+    const component: Grasshopper.Component = {
       guid: c['Guid'],
       name: c['Name'],
       nickname: c['NickName'],
@@ -46,11 +56,13 @@ const fetchRhinoConfiguration = async (): Promise<Grasshopper.Component[]> => {
       subcategory: c['Subcategory'],
       libraryName: c['LibraryName'],
       icon: c['Icon'],
-      inputs: c['Inputs'],
-      outputs: c['Outputs'],
+      inputs: c['Inputs'].map((i: any) => paramToCamelCase(i)),
+      outputs: c['Outputs'].map((o: any) => paramToCamelCase(o)),
       isObsolete: c['IsObsolete'],
       isVariable: c['IsVariable'],
     }
+
+    return component
   }
 
   try {

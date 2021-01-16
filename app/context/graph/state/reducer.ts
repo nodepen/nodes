@@ -321,11 +321,16 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // We swap from-to on commit if necessary
       const { element: sourceElement, parameter: sourceParameter } = wire.current.sources.from
 
+      if (targetElement === sourceElement) {
+        // Invalid claim. Wire cannot connect a component with itself.
+        return state
+      }
+
       const targetType = isInputOrOutput(targetElement, targetParameter, state)
       const sourceType = isInputOrOutput(sourceElement, sourceParameter, state)
 
       if (targetType === sourceType) {
-        // Invalid claim. (i.e. input claiming and input source)
+        // Invalid claim. Wire cannot connect two inputs or two outputs.
         return state
       }
 
