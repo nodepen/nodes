@@ -27,6 +27,14 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
     setIsDrawingWire(false)
   }
 
+  const handlePointerEnter = (): void => {
+    dispatch({ type: 'graph/wire/capture-live-wire', targetElement: source.element, targetParameter: source.parameter })
+  }
+
+  const handlePointerLeave = (): void => {
+    dispatch({ type: 'graph/wire/release-live-wire', targetElement: source.element, targetParameter: source.parameter })
+  }
+
   useEffect(() => {
     if (!isDrawingWire) {
       return
@@ -74,6 +82,8 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
       ref={gripRef}
       onMouseDown={(e) => e.stopPropagation()}
       onPointerDown={handlePointerDown}
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={handlePointerLeave}
       className="w-4 h-4 rounded-full border-2 border-dark bg-white hover:bg-green shadow-osm"
     />
   )
