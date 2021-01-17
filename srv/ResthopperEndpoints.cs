@@ -179,12 +179,16 @@ namespace compute.geometry
               var parameter = template.CreateInstance() as IGH_Param;
               parameter.NewInstanceGuid(new Guid(element.id.ToString()));
 
-              // var x = Convert.ToSingle(element.current.position[0].ToString());
-              // var y = Convert.ToSingle(element.current.position[1].ToString());
-              
-              // parameter.Attributes.Pivot = new PointF(x, y);
-
               ghdoc.AddObject(parameter, false);
+
+              // ghdoc.ExpireSolution();
+
+              var x = Convert.ToSingle(element.current.position[0].ToString());
+              var y = Convert.ToSingle(element.current.position[1].ToString());
+
+              ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.id.ToString()).Attributes.Pivot = new PointF(x, y);
+              //parameter.Attributes.Pivot = new PointF(x, y);
+
               break;
             }
         }
