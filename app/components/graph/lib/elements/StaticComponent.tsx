@@ -1,5 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect, useState, useMemo } from 'react'
 import { Glasshopper } from 'glib'
+import { Grip } from './common'
+import { ComponentParameter } from './parameters'
 import { useGraphManager } from '@/context/graph'
 
 type StaticComponentProps = {
@@ -25,14 +27,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
     setOffset([width / 2, height / 2])
   }, [])
 
-  useEffect(() => {
-    // Only register anchors after offset has been calculated
-    if (!componentRef.current || tx === 0) {
-      return
-    }
-
-    console.log(`Registering with offset ${tx},${ty}`)
-  }, [tx, ty])
+  const ready = useMemo(() => tx !== 0 && ty !== 0, [tx, ty])
 
   if (!elements[id] || elements[id].template.type !== 'static-component') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-component'`)
@@ -46,20 +41,71 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
   return (
     <div
       className="absolute flex flex-row items-stretch"
-      style={{ left: dx - tx, top: -dy - ty, opacity: tx === 0 ? 0 : 1 }}
+      style={{ left: dx - tx, top: -dy - ty, opacity: ready ? 1 : 0 }}
       ref={componentRef}
     >
-      <div id="inputs-column" className="flex flex-col justify-center">
-        {Object.entries(current.inputs).map(([id, i]) => (
-          <div key={`input-${id}-${i}`}>{template.inputs[i].nickName}</div>
+      <div
+        id="input-grips-container"
+        className="flex flex-col z-10"
+        style={{ paddingTop: '2px', paddingBottom: '2px' }}
+      >
+        {Object.keys(current.inputs).map((parameterId) => (
+          <div
+            key={`input-grip-${parameterId}`}
+            className="w-4 flex-grow flex flex-col justify-center"
+            style={{ transform: 'translateX(50%)' }}
+          >
+            {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
+          </div>
         ))}
       </div>
-      <div id="label-column" className="m-4 flex flex-col justify-center items-center">
-        {template.nickname}
+      <div
+        id="panel-container"
+        className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-20"
+      >
+        <div id="inputs-column" className="flex flex-col">
+          {Object.entries(current.inputs).map(([parameterId, i]) => (
+            <ComponentParameter
+              key={`input-${parameterId}-${i}`}
+              source={{ element: id, parameter: parameterId }}
+              mode="input"
+            />
+          ))}
+        </div>
+        <div
+          id="label-column"
+          className="w-8 m-4 mt-1 mb-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center"
+        >
+          <div
+            className="font-panel text-v"
+            style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
+          >
+            {template.nickname}
+          </div>
+        </div>
+        <div id="outputs-column" className="flex flex-col">
+          {Object.entries(current.outputs).map(([parameterId, i]) => (
+            <ComponentParameter
+              key={`output-${parameterId}-${i}`}
+              source={{ element: id, parameter: parameterId }}
+              mode="output"
+            />
+          ))}
+        </div>
       </div>
-      <div id="outputs-column" className="flex flex-col justify-center">
-        {Object.entries(current.outputs).map(([id, i]) => (
-          <div key={`output-${id}-${i}`}>{template.outputs[i].nickName}</div>
+      <div
+        id="output-grips-container"
+        className="flex flex-col z-10"
+        style={{ paddingTop: '2px', paddingBottom: '2px' }}
+      >
+        {Object.keys(current.outputs).map((parameterId) => (
+          <div
+            key={`output-grip-${parameterId}`}
+            className="w-4 flex-grow flex flex-col justify-center"
+            style={{ transform: 'translateX(-50%)' }}
+          >
+            {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
+          </div>
         ))}
       </div>
     </div>

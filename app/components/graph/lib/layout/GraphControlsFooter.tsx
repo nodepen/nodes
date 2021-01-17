@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Grasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { Draggable } from '../utils'
+import { Draggable } from '../annotation'
 
 export const GraphControlsFooter = (): React.ReactElement => {
   const {
