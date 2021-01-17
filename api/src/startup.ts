@@ -36,35 +36,6 @@ export const configure = async (): Promise<void> => {
 const fetchRhinoConfiguration = async (): Promise<Grasshopper.Component[]> => {
   const components: Grasshopper.Component[] = []
 
-  const toCamelCase = (c: any): Grasshopper.Component => {
-    const paramToCamelCase = (p: any): Grasshopper.ComponentParameter => {
-      return {
-        description: p['Description'],
-        isOptional: p['IsOptional'],
-        name: p['Name'],
-        nickName: p['NickName'],
-        type: p['TypeName'],
-      }
-    }
-
-    const component: Grasshopper.Component = {
-      guid: c['Guid'],
-      name: c['Name'],
-      nickname: c['NickName'],
-      description: c['Description'],
-      category: c['Category'],
-      subcategory: c['Subcategory'],
-      libraryName: c['LibraryName'],
-      icon: c['Icon'],
-      inputs: c['Inputs'].map((i: any) => paramToCamelCase(i)),
-      outputs: c['Outputs'].map((o: any) => paramToCamelCase(o)),
-      isObsolete: c['IsObsolete'],
-      isVariable: c['IsVariable'],
-    }
-
-    return component
-  }
-
   try {
     const { data } = await axios.request({
       url: process.env.GL_SRV ?? 'http://localhost:8081/grasshopper',
@@ -82,4 +53,33 @@ const fetchRhinoConfiguration = async (): Promise<Grasshopper.Component[]> => {
   }
 
   return components
+}
+
+const toCamelCase = (c: any): Grasshopper.Component => {
+  const paramToCamelCase = (p: any): Grasshopper.ComponentParameter => {
+    return {
+      description: p['Description'],
+      isOptional: p['IsOptional'],
+      name: p['Name'],
+      nickName: p['NickName'],
+      type: p['TypeName'],
+    }
+  }
+
+  const component: Grasshopper.Component = {
+    guid: c['Guid'],
+    name: c['Name'],
+    nickname: c['NickName'],
+    description: c['Description'],
+    category: c['Category'],
+    subcategory: c['Subcategory'],
+    libraryName: c['LibraryName'],
+    icon: c['Icon'],
+    inputs: c['Inputs'].map((i: any) => paramToCamelCase(i)),
+    outputs: c['Outputs'].map((o: any) => paramToCamelCase(o)),
+    isObsolete: c['IsObsolete'],
+    isVariable: c['IsVariable'],
+  }
+
+  return component
 }

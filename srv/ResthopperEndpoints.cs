@@ -6,6 +6,7 @@ using GH_IO.Serialization;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Grasshopper.Kernel.Data;
 using Resthopper.IO;
 using Grasshopper.Kernel.Parameters;
@@ -118,6 +119,73 @@ namespace compute.geometry
       Post["/grasshopper"] = _ => RunGrasshopper(Context);
       Post["/io"] = _ => GetIoNames(Context);
       Post["/rhino/grasshopper/evaluate"] = _ => EvaluateGrasshopper(Context);
+      Post["/grasshopper/graph"] = _ => CreateGrasshopperDefinition(Context);
+    }
+
+    static Response CreateGrasshopperDefinition(NancyContext ctx)
+    {
+      var config = JsonConvert.DeserializeObject<List<dynamic>>(ctx.Request.Body.AsString());
+
+      var ghdoc = new GH_Document();
+      var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies as List<IGH_ObjectProxy>;
+
+      // In first pass, create all instances
+      config.ForEach(element =>
+      {
+        var template = proxies.FirstOrDefault(proxy => proxy.Guid.ToString() == element.template.guid.ToString());
+
+        if (template == null)
+        {
+          Console.Write("No proxy found.");
+          return;
+        }
+
+        switch (element.template.type.ToString())
+        {
+          case "static-component":
+            var component = template.CreateInstance() as IGH_Component;
+            component.NewInstanceGuid(new Guid(element.id.ToString()));
+
+            // var inputInstanceIds = (element.current.inputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
+            // var outputInstanceIds = (element.current.outputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
+
+            var inputInstanceIds = (element.current.inputs as JObject).Properties().Select(p => p.Name).ToList();
+            var outputInstanceIds = (element.current.outputs as JObject).Properties().Select(p => p.Name).ToList();
+
+            for (var i = 0; i < component.Params.Input.Count; i++)
+            {
+              var instanceInputParam = component.Params.Input[i];
+              instanceInputParam.NewInstanceGuid(new Guid(inputInstanceIds[i]));
+            }
+
+            for (var i = 0; i < component.Params.Output.Count; i++)
+            {
+              var instanceOutputParam = component.Params.Output[i];
+              instanceOutputParam.NewInstanceGuid(new Guid(outputInstanceIds[i]));
+            }
+
+            ghdoc.AddObject(component, false);
+            break;
+          case "static-parameter":
+            var parameter = template.CreateInstance();
+            parameter.NewInstanceGuid(new Guid(element.id.ToString()));
+
+            ghdoc.AddObject(parameter, false);
+            break;
+        }
+      });
+      
+      var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
+      // ghdoc.FilePath = path;
+
+      var archive = new GH_Archive();
+      archive.Path = path;
+      archive.AppendObject(ghdoc, "Definition");
+      archive.WriteToFile(path, true, false);
+
+      return new Response();
+
+      // In second pass, assign any sources
     }
 
     static Response GetTestGeometry(NancyContext ctx)
@@ -180,6 +248,7 @@ namespace compute.geometry
       var libraries = new List<GH_AssemblyInfo>();
 
       var gha = Grasshopper.Instances.ComponentServer.Libraries;
+            Console.WriteLine(gha.Count);
       for (int i = 0; i < gha.Count; i++)
       {
         libraries.Add(gha[i]);
@@ -205,7 +274,7 @@ namespace compute.geometry
         var bytes = ms.ToArray();
         rc.Icon = Convert.ToBase64String(bytes);
 
-        rc.LibraryName = libraries.Find(x => x.Id == proxies[i].LibraryGuid).Name;
+        rc.LibraryName = libraries.Find(x => x.Id == proxies[i].LibraryGuid)?.Name ?? "Not found. :(";
 
         var obj = proxies[i].CreateInstance() as IGH_Component;
 
