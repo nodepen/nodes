@@ -267,7 +267,68 @@ namespace compute.geometry
         }
       });
 
-      //
+      // In third pass, assign any parameter values
+      config.ForEach(element =>
+      {
+        if (element.template.type.ToString() != "static-parameter")
+        {
+          // TODO: Handle component values too
+          return;
+        }
+
+        if (element.template.name.ToString() != "Number")
+        {
+          // TODO: Handle different param types
+          return;
+        }
+
+        var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.id.ToString()) as Param_Number;
+
+        JObject values = element.current.values;
+        var tree = new GH_Structure<GH_Number>();
+
+        values.Properties().ToList().ForEach(prop =>
+        {
+          var pathString = prop.Name;
+          var pathIndices = pathString.Replace("{", "").Replace("}", "").Split(';').Select(num => Convert.ToInt32(num)).ToArray();
+          
+          var branch = new GH_Path(pathIndices);
+            
+          var pathValues = (element.current.values as JObject).GetValue(pathString).ToObject<List<dynamic>>();
+
+          for (var i = 0; i < pathValues.Count; i++)
+          {
+            var pathValue = pathValues[i];
+            var sourceType = pathValue.source.ToString();
+
+            if (sourceType != "user")
+            {
+              // Value is computed, do not set as an override
+              // TODO: Should the api sanitize element values before sending them to rhino?
+            }
+
+            switch (pathValue.type.ToString())
+            {
+              case "number":
+                {
+                  var numberParam = instance as Param_Number;
+
+                  double value = Convert.ToDouble(pathValue.data.ToString());
+
+                  var number = new GH_Number(value);
+
+                  tree.Insert(number, branch, i);
+                  
+                  break;
+                }
+            }
+          }
+        });
+
+        instance.SetPersistentData(tree);
+      });
+
+
       var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
 
       var archive = new GH_Archive();
