@@ -9,6 +9,9 @@ export type GraphStore = {
     position: [number, number]
     ref: React.MutableRefObject<HTMLDivElement>
   }
+  solution: {
+    id?: string
+  }
   selected: string[]
   library: {
     [key in LibraryCategory]: {

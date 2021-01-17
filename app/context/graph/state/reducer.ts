@@ -425,13 +425,38 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/values/set-one-value': {
       const { targetElement, targetParameter, value } = action
 
-      const data = { '{0}': [value] }
+      const data: Glasshopper.Data.DataTree = {
+        '{0}': [{ source: 'user', type: 'number', data: Number.parseFloat(value) }],
+      }
 
-      const el = state.elements[targetElement] as Glasshopper.Element.StaticParameter
-
-      el.current.values = data
+      if (targetParameter === 'input' || targetParameter === 'output') {
+        // Target is a parameter, set data directly
+        const el = state.elements[targetElement] as Glasshopper.Element.StaticParameter
+        el.current.values = data
+      } else {
+        // Target is a component, navigate to parameter
+        const el = state.elements[targetElement] as Glasshopper.Element.StaticComponent
+        el.current.values[targetParameter] = data
+      }
 
       state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+
+      return { ...state }
+    }
+    case 'graph/values/set-parameter-values': {
+      const { solutionId, targetElement, targetParameter, values } = action
+
+      if (targetParameter === 'input' || targetParameter === 'output') {
+        const el = state.elements[targetElement] as Glasshopper.Element.StaticParameter
+
+        el.current.solution = solutionId
+        el.current.values = values
+      } else {
+        const el = state.elements[targetElement] as Glasshopper.Element.StaticComponent
+
+        el.current.solution = solutionId
+        el.current.values[targetParameter] = values
+      }
 
       return { ...state }
     }
@@ -519,4 +544,8 @@ const isInputOrOutput = (elementId: string, parameterId: string, state: GraphSto
 
   console.log('isInputOrOutput used incorrectly!')
   return 'input'
+}
+
+const expireSolution = (store: GraphStore): void => {
+  store.solution.id = undefined
 }

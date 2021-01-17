@@ -180,6 +180,7 @@ namespace compute.geometry
               var x = Convert.ToSingle(element.current.position[0].ToString());
               var y = Convert.ToSingle(element.current.position[1].ToString());
 
+              // Attributes appear to be null before adding to document
               ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.id.ToString()).Attributes.Pivot = new PointF(x, y);
 
               break;

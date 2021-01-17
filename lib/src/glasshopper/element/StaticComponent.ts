@@ -1,5 +1,6 @@
 import { GraphElementBase } from './GraphElementBase'
 import { Component } from '../../grasshopper/Component'
+import { DataTree } from '../tree'
 
 export interface StaticComponent extends GraphElementBase {
   template: { type: 'static-component' } & Component
@@ -18,6 +19,7 @@ export interface StaticComponent extends GraphElementBase {
         parameter: string
       }[]
     }
-    values: { [key: string]: { [key: string]: string[] } } // [instancedId][data tree path] = values
+    solution?: string
+    values: { [inputId: string]: DataTree } // [instancedId][data tree path] = values
   }
 }

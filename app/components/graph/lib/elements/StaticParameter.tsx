@@ -11,7 +11,7 @@ type StaticComponentProps = {
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements, selected },
+    store: { elements, selected, solution },
     dispatch,
   } = useGraphManager()
 
@@ -48,6 +48,8 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     return null
   }
 
+  const isLoading = !parameter.current.solution || parameter.current.solution !== solution.id
+
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
       <div className="flex flex-col items-center">
@@ -71,6 +73,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             </div>
             <div className="ml-6 mr-6 font-panel text-base font-bold text-dark select-none z-10" style={{ left: '0' }}>
               {template.nickname.toLowerCase()}
+              {isLoading ? '...' : null}
             </div>
           </div>
           <div className="absolute z-0 flex flex-col justify-center items-center" style={{ right: -8 }}>

@@ -1,8 +1,9 @@
 import React, { useState } from 'react'
+import { Glasshopper } from 'glib'
 
 type DataTreeProps = {
   label: string
-  data: { [key: string]: string[] }
+  data: Glasshopper.Data.DataTree
 }
 
 export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactElement => {
@@ -35,7 +36,7 @@ export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactEl
                   className="w-full p-1 flex items-center h-5 text-sm text-swampgreen hover:text-darkgreen"
                 >
                   <div className="w-4 mr-2 text-left border-r-2 border-green">{i}</div>
-                  {value}
+                  {value.data}
                 </div>
               ))}
             </>
