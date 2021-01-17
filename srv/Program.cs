@@ -134,9 +134,11 @@ namespace compute.geometry
             if (runheadless != null)
                 runheadless.Invoke(pluginObject, null);
 
-            var loadComputePlugsin = typeof(Rhino.PlugIns.PlugIn).GetMethod("LoadComputeExtensionPlugins");
-            if (loadComputePlugsin != null)
-                loadComputePlugsin.Invoke(null, null);
+            Console.WriteLine(pluginObject);
+
+            // var loadComputePlugsin = typeof(Rhino.PlugIns.PlugIn).GetMethod("LoadComputeExtensionPlugins");
+            // if (loadComputePlugsin != null)
+            //    loadComputePlugsin.Invoke(null, null);
 
             Nancy.StaticConfiguration.DisableErrorTraces = false;
             pipelines.OnError += (ctx, ex) => LogError(ctx, ex);
