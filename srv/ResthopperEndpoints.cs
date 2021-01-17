@@ -140,16 +140,12 @@ namespace compute.geometry
           return;
         }
 
-
         switch (element.template.type.ToString())
         {
           case "static-component":
             {
               var component = template.CreateInstance() as IGH_Component;
               component.NewInstanceGuid(new Guid(element.id.ToString()));
-
-              // var inputInstanceIds = (element.current.inputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
-              // var outputInstanceIds = (element.current.outputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
 
               var inputInstanceIds = (element.current.inputs as JObject).Properties().Select(p => p.Name).ToList();
               var outputInstanceIds = (element.current.outputs as JObject).Properties().Select(p => p.Name).ToList();
@@ -181,13 +177,10 @@ namespace compute.geometry
 
               ghdoc.AddObject(parameter, false);
 
-              // ghdoc.ExpireSolution();
-
               var x = Convert.ToSingle(element.current.position[0].ToString());
               var y = Convert.ToSingle(element.current.position[1].ToString());
 
               ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.id.ToString()).Attributes.Pivot = new PointF(x, y);
-              //parameter.Attributes.Pivot = new PointF(x, y);
 
               break;
             }
@@ -244,6 +237,30 @@ namespace compute.geometry
           case "static-parameter":
             {
               var parameterInstance = instance as IGH_Param;
+
+              var sources = (element.current.sources as JObject).GetValue("input").ToObject<List<dynamic>>();
+
+              sources.ForEach(source =>
+              {
+                var sourceElementInstanceId = source.element.ToString();
+                var sourceElementParameterInstanceId = source.parameter.ToString();
+
+                if (sourceElementParameterInstanceId == "output")
+                {
+                  // Source is a parameter, add directly
+                  var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
+
+                  parameterInstance.Sources.Add(sourceInstance);
+                }
+                else
+                {
+                  // Grab source component
+                  var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
+                  var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
+
+                  parameterInstance.Sources.Add(sourceInstanceParameter);
+                }
+              });
               break;
             }
         }
