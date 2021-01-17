@@ -140,52 +140,126 @@ namespace compute.geometry
           return;
         }
 
+
         switch (element.template.type.ToString())
         {
           case "static-component":
-            var component = template.CreateInstance() as IGH_Component;
-            component.NewInstanceGuid(new Guid(element.id.ToString()));
-
-            // var inputInstanceIds = (element.current.inputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
-            // var outputInstanceIds = (element.current.outputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
-
-            var inputInstanceIds = (element.current.inputs as JObject).Properties().Select(p => p.Name).ToList();
-            var outputInstanceIds = (element.current.outputs as JObject).Properties().Select(p => p.Name).ToList();
-
-            for (var i = 0; i < component.Params.Input.Count; i++)
             {
-              var instanceInputParam = component.Params.Input[i];
-              instanceInputParam.NewInstanceGuid(new Guid(inputInstanceIds[i]));
-            }
+              var component = template.CreateInstance() as IGH_Component;
+              component.NewInstanceGuid(new Guid(element.id.ToString()));
 
-            for (var i = 0; i < component.Params.Output.Count; i++)
-            {
-              var instanceOutputParam = component.Params.Output[i];
-              instanceOutputParam.NewInstanceGuid(new Guid(outputInstanceIds[i]));
-            }
+              // var inputInstanceIds = (element.current.inputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
+              // var outputInstanceIds = (element.current.outputs as object).GetType().GetProperties().Select(p => p.Name).ToList();
 
-            ghdoc.AddObject(component, false);
-            break;
+              var inputInstanceIds = (element.current.inputs as JObject).Properties().Select(p => p.Name).ToList();
+              var outputInstanceIds = (element.current.outputs as JObject).Properties().Select(p => p.Name).ToList();
+
+              for (var i = 0; i < component.Params.Input.Count; i++)
+              {
+                var instanceInputParam = component.Params.Input[i];
+                instanceInputParam.NewInstanceGuid(new Guid(inputInstanceIds[i]));
+              }
+
+              for (var i = 0; i < component.Params.Output.Count; i++)
+              {
+                var instanceOutputParam = component.Params.Output[i];
+                instanceOutputParam.NewInstanceGuid(new Guid(outputInstanceIds[i]));
+              }
+
+              var x = Convert.ToSingle(element.current.position[0].ToString());
+              var y = Convert.ToSingle(element.current.position[1].ToString()) * -1;
+
+              component.Attributes.Pivot = new PointF(x, y);
+
+              ghdoc.AddObject(component, false);
+              break;
+            }
           case "static-parameter":
-            var parameter = template.CreateInstance();
-            parameter.NewInstanceGuid(new Guid(element.id.ToString()));
+            {
+              var parameter = template.CreateInstance() as IGH_Param;
+              parameter.NewInstanceGuid(new Guid(element.id.ToString()));
 
-            ghdoc.AddObject(parameter, false);
-            break;
+              // var x = Convert.ToSingle(element.current.position[0].ToString());
+              // var y = Convert.ToSingle(element.current.position[1].ToString());
+              
+              // parameter.Attributes.Pivot = new PointF(x, y);
+
+              ghdoc.AddObject(parameter, false);
+              break;
+            }
         }
       });
-      
+
+      // In second pass, assign any sources
+      config.ForEach(element =>
+      {
+        var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.id.ToString());
+
+        switch (element.template.type.ToString())
+        {
+          case "static-component":
+            {
+              var componentInstance = instance as IGH_Component;
+
+              JObject inputs = element.current.sources;
+
+              inputs.Properties().ToList().ForEach(prop =>
+              {
+                var instanceInputId = prop.Name;
+
+                var sources = (element.current.sources as JObject).GetValue(instanceInputId).ToObject<List<dynamic>>();
+
+                sources.ForEach(source =>
+                {
+                  var sourceElementInstanceId = source.element.ToString();
+                  var sourceElementParameterInstanceId = source.parameter.ToString();
+
+                  // Grab component input instance
+                  var instanceInput = componentInstance.Params.Input.First(input => input.InstanceGuid.ToString() == instanceInputId);
+
+                  if (sourceElementParameterInstanceId == "output")
+                  {
+                    // Source is a parameter, add directly
+                    var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
+
+                    instanceInput.Sources.Add(sourceInstance);
+                  }
+                  else
+                  {
+                    // Grab source component
+                    var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
+                    var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
+
+                    instanceInput.Sources.Add(sourceInstanceParameter);
+                  }
+                });
+
+              });
+              break;
+            }
+          case "static-parameter":
+            {
+              var parameterInstance = instance as IGH_Param;
+              break;
+            }
+        }
+      });
+
+      //
       var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
-      // ghdoc.FilePath = path;
 
       var archive = new GH_Archive();
       archive.Path = path;
       archive.AppendObject(ghdoc, "Definition");
       archive.WriteToFile(path, true, false);
 
-      return new Response();
+      var bytes = System.Text.Encoding.UTF8.GetBytes(archive.Serialize_Xml());
 
-      // In second pass, assign any sources
+      var response = (Response)Convert.ToBase64String(bytes);
+      response.StatusCode = Nancy.HttpStatusCode.OK;
+      response.ContentType = "text/plain";
+
+      return response;
     }
 
     static Response GetTestGeometry(NancyContext ctx)
