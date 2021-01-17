@@ -6,8 +6,6 @@ Short term goals include stable-but-limited parity with vanilla grasshopper beha
 
 I'm still finishing a second 'proof-of-concept' phase after the [first prototype](https://twitter.com/cdriesler/status/1216726073473490946?s=20). But this one is going much better. Hopeful that I can share a public link to the latest versions soon.
 
-( Everything very WIP. Including the name. But I bought the domain before saying it out loud to people. 🤷‍♂️ )
-
 ## Project structure
 
 - `/app` - next.js client delivering a stylized version of the canvas
