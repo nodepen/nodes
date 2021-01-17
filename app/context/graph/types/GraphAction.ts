@@ -27,6 +27,7 @@ export type GraphAction =
   | { type: 'graph/wire/stop-live-wire' }
   | { type: 'graph/wire/capture-live-wire'; targetElement: string; targetParameter: string }
   | { type: 'graph/wire/release-live-wire'; targetElement: string; targetParameter: string }
+  | { type: 'graph/values/expire-solution'; newSolutionId: string }
   | { type: 'graph/values/set-one-value'; targetElement: string; targetParameter: string; value: string }
   | {
       type: 'graph/values/set-parameter-values'
@@ -38,3 +39,4 @@ export type GraphAction =
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan'; dx: number; dy: number }
+  | { type: 'debug/refresh-solution' }
