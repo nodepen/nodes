@@ -1,6 +1,4 @@
 import * as Element from './element'
+import * as Data from './tree'
 
-export { Element }
-
-export { Component } from './Component'
-export { Graph } from './Graph'
+export { Element, Data }

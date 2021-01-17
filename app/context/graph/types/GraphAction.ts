@@ -1,4 +1,4 @@
-import { Grasshopper } from 'glib'
+import { Grasshopper, Glasshopper } from 'glib'
 import { Socket } from 'socket.io-client'
 
 export type GraphAction =
@@ -28,6 +28,13 @@ export type GraphAction =
   | { type: 'graph/wire/capture-live-wire'; targetElement: string; targetParameter: string }
   | { type: 'graph/wire/release-live-wire'; targetElement: string; targetParameter: string }
   | { type: 'graph/values/set-one-value'; targetElement: string; targetParameter: string; value: string }
+  | {
+      type: 'graph/values/set-parameter-values'
+      solutionId: string
+      targetElement: string
+      targetParameter: string
+      values: Glasshopper.Data.DataTree
+    }
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan'; dx: number; dy: number }

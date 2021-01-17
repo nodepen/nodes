@@ -10,7 +10,7 @@ type StaticComponentProps = {
 
 export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements },
+    store: { elements, solution },
   } = useGraphManager()
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -35,6 +35,8 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
   }
 
   const { template, current } = elements[id] as Glasshopper.Element.StaticComponent
+
+  const isLoading = !current.solution || current.solution !== solution.id
 
   const [dx, dy] = current.position
 
@@ -81,6 +83,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
             style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
           >
             {template.nickname}
+            {isLoading ? '...' : null}
           </div>
         </div>
         <div id="outputs-column" className="flex flex-col">
