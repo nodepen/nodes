@@ -46,7 +46,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
     >
       <div
         id="input-grips-container"
-        className="flex flex-col z-10"
+        className="flex flex-col z-20"
         style={{ paddingTop: '2px', paddingBottom: '2px' }}
       >
         {Object.keys(current.inputs).map((parameterId) => (
@@ -61,7 +61,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
       </div>
       <div
         id="panel-container"
-        className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-20"
+        className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-30"
       >
         <div id="inputs-column" className="flex flex-col">
           {Object.entries(current.inputs).map(([parameterId, i]) => (
@@ -95,7 +95,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
       </div>
       <div
         id="output-grips-container"
-        className="flex flex-col z-10"
+        className="flex flex-col z-20"
         style={{ paddingTop: '2px', paddingBottom: '2px' }}
       >
         {Object.keys(current.outputs).map((parameterId) => (
