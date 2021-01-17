@@ -14,7 +14,11 @@ export const GraphCanvas = (): React.ReactElement => {
   useEffect(() => {
     const debug = (e: KeyboardEvent): void => {
       if (e.code === 'Space') {
-        console.log(elements)
+        console.log(
+          Object.values(elements).filter(
+            (el) => el.template.type === 'static-component' || el.template.type === 'static-parameter'
+          )
+        )
       }
     }
 
