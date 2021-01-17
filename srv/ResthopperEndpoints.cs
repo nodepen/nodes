@@ -120,6 +120,7 @@ namespace compute.geometry
       Post["/io"] = _ => GetIoNames(Context);
       Post["/rhino/grasshopper/evaluate"] = _ => EvaluateGrasshopper(Context);
       Post["/grasshopper/graph"] = _ => CreateGrasshopperDefinition(Context);
+      Post["/grasshopper/solve"] = _ => SolveGrasshopperDefinition(Context);
     }
 
     static Response CreateGrasshopperDefinition(NancyContext ctx)
@@ -305,6 +306,7 @@ namespace compute.geometry
             {
               // Value is computed, do not set as an override
               // TODO: Should the api sanitize element values before sending them to rhino?
+              return;
             }
 
             switch (pathValue.type.ToString())
@@ -343,6 +345,104 @@ namespace compute.geometry
       response.ContentType = "text/plain";
 
       return response;
+    }
+
+    private class SolutionData
+    {
+      public string ElementId { get; set; }
+      public string ParameterId { get; set; }
+      public List<SolutionDataBranch> Values { get; set; } = new List<SolutionDataBranch>();
+
+    }
+
+    private class SolutionDataBranch
+    {
+      public List<int> Path { get; set; } = new List<int>();
+      public List<SolutionDataValue> Data { get; set; } = new List<SolutionDataValue>();
+    }
+
+    private class SolutionDataValue
+    {
+      public string Value { get; set; }
+      public string Type { get; set; }
+    }
+
+    static Response SolveGrasshopperDefinition(NancyContext ctx)
+    {
+      var ghxData = ctx.Request.Body.AsString();
+      var ghxString = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(ghxData));
+
+      var archive = new GH_Archive();
+      archive.Deserialize_Xml(ghxString);
+
+      var definition = new GH_Document();
+      archive.ExtractObject(definition, "Definition");
+
+      definition.Enabled = true;
+      definition.NewSolution(true, GH_SolutionMode.CommandLine);
+
+      var response = new List<SolutionData>();
+
+      definition.Objects.ToList().ForEach(instance =>
+      {
+        if (instance.Category.ToLower() == "params")
+        {
+          var parameterInstance = instance as IGH_Param;
+
+          var elementId = parameterInstance.InstanceGuid.ToString();
+          var parameterId = "output";
+
+          var currentData = new SolutionData();
+          currentData.ElementId = elementId;
+          currentData.ParameterId = parameterId;
+
+          for (var i = 0; i < parameterInstance.VolatileData.PathCount; i++)
+          {
+            var currentPath = parameterInstance.VolatileData.get_Path(i);
+            var currentBranch = parameterInstance.VolatileData.get_Branch(currentPath);
+
+            var branchData = new SolutionDataBranch();
+            branchData.Path = currentPath.Indices.ToList();
+
+            for (var j = 0; j < currentBranch.Count; j++)
+            {
+              var goo = currentBranch[j] as IGH_Goo;
+
+              var data = new SolutionDataValue();
+
+              switch (goo.TypeName)
+              {
+                case "Number":
+                  {
+                    var numberGoo = goo as GH_Number;
+
+                    data.Value = numberGoo.Value.ToString();
+                    data.Type = "Number";
+                    break;
+                  }
+                default:
+                  {
+                    data.Value = JsonConvert.SerializeObject(goo);
+                    data.Type = "Data";
+                    break;
+                  }
+              }
+
+              branchData.Data.Add(data); 
+            }
+
+            currentData.Values.Add(branchData);
+          }
+
+          response.Add(currentData);
+        }
+        else
+        {
+
+        }
+      });
+
+      return (Response)JsonConvert.SerializeObject(response);
     }
 
     static Response GetTestGeometry(NancyContext ctx)

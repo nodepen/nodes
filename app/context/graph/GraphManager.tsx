@@ -1,5 +1,5 @@
 import React, { useEffect, useReducer } from 'react'
-import { Grasshopper } from 'glib'
+import { Grasshopper, Glasshopper } from 'glib'
 import { context as Context, reducer, initial } from './state'
 import { useSessionManager } from '~/context/session'
 
@@ -21,6 +21,14 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
 
     io.on('restore-session', (res: string) => {
       dispatch({ type: 'session/restore-session', elements: res })
+    })
+
+    io.on('solution-start', (res: string) => {
+      dispatch({ type: 'graph/values/expire-solution', newSolutionId: res })
+    })
+
+    io.on('solution-ready', (res: string) => {
+      console.log(res)
     })
   }
 

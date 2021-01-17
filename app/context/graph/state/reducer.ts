@@ -422,6 +422,15 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/values/expire-solution': {
+      const { newSolutionId } = action
+
+      state.solution.id = newSolutionId
+
+      console.log(`Awaiting solution ${newSolutionId}`)
+
+      return { ...state }
+    }
     case 'graph/values/set-one-value': {
       const { targetElement, targetParameter, value } = action
 
@@ -480,6 +489,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       state.camera.position = [x + dx, y + dy]
 
       return { ...state }
+    }
+    case 'debug/refresh-solution': {
+      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+      return state
     }
   }
 }
