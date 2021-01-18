@@ -392,57 +392,97 @@ namespace compute.geometry
           var elementId = parameterInstance.InstanceGuid.ToString();
           var parameterId = "output";
 
-          var currentData = new SolutionData();
-          currentData.ElementId = elementId;
-          currentData.ParameterId = parameterId;
-
-          for (var i = 0; i < parameterInstance.VolatileData.PathCount; i++)
-          {
-            var currentPath = parameterInstance.VolatileData.get_Path(i);
-            var currentBranch = parameterInstance.VolatileData.get_Branch(currentPath);
-
-            var branchData = new SolutionDataBranch();
-            branchData.Path = currentPath.Indices.ToList();
-
-            for (var j = 0; j < currentBranch.Count; j++)
-            {
-              var goo = currentBranch[j] as IGH_Goo;
-
-              var data = new SolutionDataValue();
-
-              switch (goo.TypeName)
-              {
-                case "Number":
-                  {
-                    var numberGoo = goo as GH_Number;
-
-                    data.Value = numberGoo.Value.ToString();
-                    data.Type = "Number";
-                    break;
-                  }
-                default:
-                  {
-                    data.Value = JsonConvert.SerializeObject(goo);
-                    data.Type = "Data";
-                    break;
-                  }
-              }
-
-              branchData.Data.Add(data); 
-            }
-
-            currentData.Values.Add(branchData);
-          }
-
-          response.Add(currentData);
+          var data = ExtractSolutionData(ref parameterInstance, elementId, parameterId);
+          response.Add(data);
         }
-        else
+        else if (instance.GetType().Name.ToLower().Contains("component"))
         {
+          var componentInstance = instance as IGH_Component;
 
+          var elementId = componentInstance.InstanceGuid.ToString();
+
+          var allParams = new List<IGH_Param>();
+          allParams.AddRange(componentInstance.Params.Output);
+          allParams.AddRange(componentInstance.Params.Input);
+
+          allParams.ForEach(param =>
+          {
+            var data = ExtractSolutionData(ref param, elementId);
+            response.Add(data);
+          });
         }
       });
 
       return (Response)JsonConvert.SerializeObject(response);
+    }
+
+    private static SolutionData ExtractSolutionData(ref IGH_Param parameter, string elementId)
+    {
+      return ExtractSolutionData(ref parameter, elementId, parameter.InstanceGuid.ToString());
+    }
+
+    private static SolutionData ExtractSolutionData(ref IGH_Param parameter, string elementId, string parameterId)
+    {
+      var result = new SolutionData();
+      result.ElementId = elementId;
+      result.ParameterId = parameterId;
+
+      Console.WriteLine(parameter.VolatileData.PathCount);
+
+      for (var i = 0; i < parameter.VolatileData.PathCount; i++)
+      {
+        var currentPath = parameter.VolatileData.get_Path(i);
+        var currentBranch = parameter.VolatileData.get_Branch(currentPath);
+
+        var branchData = new SolutionDataBranch();
+        branchData.Path = currentPath.Indices.ToList();
+
+        for (var j = 0; j < currentBranch.Count; j++)
+        {
+          var goo = currentBranch[j] as IGH_Goo;
+
+          var data = new SolutionDataValue();
+
+          switch (goo.TypeName)
+          {
+            case "Number":
+              {
+                var numberGoo = goo as GH_Number;
+
+                data.Value = numberGoo.Value.ToString();
+                data.Type = "number";
+                break;
+              }
+            case "Point":
+              {
+                var pointGoo = goo as GH_Point;
+
+                Console.WriteLine(pointGoo.ToString());
+
+                pointGoo.CastTo<Rhino.Geometry.Point3d>(out Point3d pt);
+
+                Console.WriteLine(JsonConvert.SerializeObject(pt));
+
+                data.Value = pointGoo.ToString();
+                data.Type = "point";
+                break;
+              }
+            default:
+              {
+                Console.WriteLine($"Using fallback parse for value type `{goo.TypeName}`");
+                data.Value = JsonConvert.SerializeObject(goo);
+                data.Type = "data";
+                break;
+              }
+          }
+
+          branchData.Data.Add(data);
+        }
+
+        result.Values.Add(branchData);
+      }
+
+      return result;
     }
 
     static Response GetTestGeometry(NancyContext ctx)
