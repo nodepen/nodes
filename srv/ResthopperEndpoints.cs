@@ -322,13 +322,12 @@ namespace compute.geometry
         instance.SetPersistentData(tree);
       });
 
-
-      var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
+      // var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
 
       var archive = new GH_Archive();
-      archive.Path = path;
       archive.AppendObject(ghdoc, "Definition");
-      archive.WriteToFile(path, true, false);
+      // archive.Path = path;
+      // archive.WriteToFile(path, true, false);
 
       var bytes = System.Text.Encoding.UTF8.GetBytes(archive.Serialize_Xml());
 
