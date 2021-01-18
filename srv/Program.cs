@@ -134,8 +134,6 @@ namespace compute.geometry
             if (runheadless != null)
                 runheadless.Invoke(pluginObject, null);
 
-            Console.WriteLine(pluginObject);
-
             // var loadComputePlugsin = typeof(Rhino.PlugIns.PlugIn).GetMethod("LoadComputeExtensionPlugins");
             // if (loadComputePlugsin != null)
             //    loadComputePlugsin.Invoke(null, null);
@@ -171,61 +169,6 @@ namespace compute.geometry
             string id = ctx.Request.Headers["X-Compute-Id"].FirstOrDefault();
             Log.Error(ex, "An exception occured while processing request \"{RequestId}\"", id);
             return null;
-        }
-    }
-
-    public class RhinoGetModule : NancyModule
-    {
-        public RhinoGetModule(IRouteCacheProvider routeCacheProvider)
-        {
-            Get["/sdk"] = _ =>
-            {
-                var result = new StringBuilder("<!DOCTYPE html><html><body>");
-                var cache = routeCacheProvider.GetCache();
-                result.AppendLine($" <a href=\"/sdk/csharp\">C# SDK</a><BR>");
-                result.AppendLine("<p>API<br>");
-
-                int route_index = 0;
-                foreach (var module in cache)
-                {
-                    foreach (var route in module.Value)
-                    {
-                        var method = route.Item2.Method;
-                        var path = route.Item2.Path;
-                        if (method == "GET")
-                        {
-                            route_index += 1;
-                            result.AppendLine($"{route_index} <a href='{path}'>{path}</a><BR>");
-                        }
-                    }
-                }
-
-                result.AppendLine("</p></body></html>");
-                return result.ToString();
-            };
-
-            foreach(var endpoint in GeometryEndPoint.AllEndPoints)
-            {
-                string key = endpoint.PathURL;
-                Get[key] = _ => endpoint.Get(Context);
-            }
-        }
-    }
-
-    public class RhinoPostModule : NancyModule
-    {
-        public RhinoPostModule(IRouteCacheProvider routeCacheProvider)
-        {
-            foreach (var endpoint in GeometryEndPoint.AllEndPoints)
-            {
-                string key = endpoint.PathURL;
-                Post[key] = _ =>
-                {
-                    var r = endpoint.Post(Context);
-                    r.ContentType = "application/json";
-                    return r;
-                };
-            }
         }
     }
 }

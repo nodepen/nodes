@@ -10,4 +10,4 @@ I'm still finishing a second 'proof-of-concept' phase after the [first prototype
 
 - `/app` - next.js client delivering a stylized version of the canvas
 - `/api` - socket.io service keeping you in sync with a redis database and rhino compute results
-- `/src` - modified rhino.compute server (still mostly the retro boilerplate)
+- `/src` - modified rhino.compute server
