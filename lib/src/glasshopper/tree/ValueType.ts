@@ -1,1 +1,1 @@
-export type ValueType = 'number' | 'point'
+export type ValueType = 'string' | 'number' | 'point'
