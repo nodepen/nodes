@@ -347,12 +347,17 @@ namespace compute.geometry
       return response;
     }
 
+    private class SolutionResponse
+    {
+      public List<SolutionData> Data { get; set; }
+      public List<SolutionMessage> Messages { get; set; }
+    }
+
     private class SolutionData
     {
       public string ElementId { get; set; }
       public string ParameterId { get; set; }
       public List<SolutionDataBranch> Values { get; set; } = new List<SolutionDataBranch>();
-
     }
 
     private class SolutionDataBranch
@@ -365,6 +370,13 @@ namespace compute.geometry
     {
       public string Value { get; set; }
       public string Type { get; set; }
+    }
+
+    private class SolutionMessage
+    {
+      public string ElementId { get; set; }
+      public string Message { get; set; }
+      public string Level { get; set; }
     }
 
     static Response SolveGrasshopperDefinition(NancyContext ctx)
@@ -381,22 +393,35 @@ namespace compute.geometry
       definition.Enabled = true;
       definition.NewSolution(true, GH_SolutionMode.CommandLine);
 
-      var response = new List<SolutionData>();
+      var results = new List<SolutionData>();
+      var messages = new List<SolutionMessage>();
 
       definition.Objects.ToList().ForEach(instance =>
       {
+        
         if (instance.Category.ToLower() == "params")
         {
+          // Gather any data
           var parameterInstance = instance as IGH_Param;
 
           var elementId = parameterInstance.InstanceGuid.ToString();
           var parameterId = "output";
 
-          var data = ExtractSolutionData(ref parameterInstance, elementId, parameterId);
-          response.Add(data);
+          var data = ExtractSolutionData(parameterInstance, elementId, parameterId);
+          results.Add(data);
+
+          // Gather any messages
+          if (parameterInstance.RuntimeMessageLevel == GH_RuntimeMessageLevel.Blank)
+          {
+            return;
+          }
+
+          var message = ExtractSolutionMessage(parameterInstance, elementId);
+          messages.Add(message);
         }
         else if (instance.GetType().Name.ToLower().Contains("component"))
         {
+          // Gather any data
           var componentInstance = instance as IGH_Component;
 
           var elementId = componentInstance.InstanceGuid.ToString();
@@ -407,27 +432,39 @@ namespace compute.geometry
 
           allParams.ForEach(param =>
           {
-            var data = ExtractSolutionData(ref param, elementId);
-            response.Add(data);
+            var data = ExtractSolutionData(param, elementId);
+            results.Add(data);
           });
+
+          // Gather any messages (i.e. warnings, errors)
+          if (componentInstance.RuntimeMessageLevel == GH_RuntimeMessageLevel.Blank)
+          {
+            return;
+          }
+
+          var message = ExtractSolutionMessage(componentInstance, elementId);
+          messages.Add(message);
         }
+        
       });
+
+      var response = new SolutionResponse();
+      response.Data = results;
+      response.Messages = messages;
 
       return (Response)JsonConvert.SerializeObject(response);
     }
 
-    private static SolutionData ExtractSolutionData(ref IGH_Param parameter, string elementId)
+    private static SolutionData ExtractSolutionData(IGH_Param parameter, string elementId)
     {
-      return ExtractSolutionData(ref parameter, elementId, parameter.InstanceGuid.ToString());
+      return ExtractSolutionData(parameter, elementId, parameter.InstanceGuid.ToString());
     }
 
-    private static SolutionData ExtractSolutionData(ref IGH_Param parameter, string elementId, string parameterId)
+    private static SolutionData ExtractSolutionData(IGH_Param parameter, string elementId, string parameterId)
     {
       var result = new SolutionData();
       result.ElementId = elementId;
       result.ParameterId = parameterId;
-
-      Console.WriteLine(parameter.VolatileData.PathCount);
 
       for (var i = 0; i < parameter.VolatileData.PathCount; i++)
       {
@@ -440,6 +477,12 @@ namespace compute.geometry
         for (var j = 0; j < currentBranch.Count; j++)
         {
           var goo = currentBranch[j] as IGH_Goo;
+
+          if (goo == null)
+          {
+            // `goo` appears to be null, not absent, on invalid solutions
+            continue;
+          }
 
           var data = new SolutionDataValue();
 
@@ -457,13 +500,9 @@ namespace compute.geometry
               {
                 var pointGoo = goo as GH_Point;
 
-                Console.WriteLine(pointGoo.ToString());
+                pointGoo.CastTo<Rhino.Geometry.Point3d>(out Point3d geo);
 
-                pointGoo.CastTo<Rhino.Geometry.Point3d>(out Point3d pt);
-
-                Console.WriteLine(JsonConvert.SerializeObject(pt));
-
-                data.Value = pointGoo.ToString();
+                data.Value = JsonConvert.SerializeObject(geo);
                 data.Type = "point";
                 break;
               }
@@ -483,6 +522,26 @@ namespace compute.geometry
       }
 
       return result;
+    }
+
+    private static SolutionMessage ExtractSolutionMessage(IGH_Param parameter, string elementId)
+    {
+      var message = new SolutionMessage();
+      message.ElementId = elementId;
+      message.Level = parameter.RuntimeMessageLevel.ToString().ToLower();
+      message.Message = parameter.RuntimeMessages(parameter.RuntimeMessageLevel)[0];
+
+      return message;
+    }
+
+    private static SolutionMessage ExtractSolutionMessage(IGH_Component component, string elementId)
+    {
+      var message = new SolutionMessage();
+      message.ElementId = elementId;
+      message.Level = component.RuntimeMessageLevel.ToString();
+      message.Message = component.RuntimeMessages(component.RuntimeMessageLevel)[0];
+
+      return message;
     }
 
     static Response GetTestGeometry(NancyContext ctx)
