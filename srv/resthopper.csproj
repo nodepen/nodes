@@ -48,13 +48,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataCache.cs" />
     <Compile Include="Environment.cs" />
-    <Compile Include="FixedEndpoints.cs" />
-    <Compile Include="GeometryEndPoint.cs" />
-    <Compile Include="IO\GhPath.cs" />
-    <Compile Include="IO\Utilities.cs" />
-    <Compile Include="IO\Schema.cs" />
     <Compile Include="Logging.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,12 +64,6 @@
     <EmbeddedResource Include="favicon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="AWSSDK.CloudWatchLogs">
-      <Version>3.3.4.10</Version>
-    </PackageReference>
-    <PackageReference Include="AWSSDK.S3">
-      <Version>3.3.24</Version>
-    </PackageReference>
     <PackageReference Include="Nancy">
       <Version>1.4.4</Version>
     </PackageReference>
