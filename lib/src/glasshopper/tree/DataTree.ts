@@ -7,7 +7,13 @@ export type DataTree = {
 }
 
 export type DataTreeValue<T extends ValueType> = {
-  source: SourceType
+  from: SourceType
   type: T
-  data: T extends 'number' ? GH.Number : T extends 'point' ? GH.Point : never
+  data: T extends 'string'
+    ? GH.String
+    : T extends 'number'
+    ? GH.Number
+    : T extends 'point'
+    ? GH.Point
+    : never
 }

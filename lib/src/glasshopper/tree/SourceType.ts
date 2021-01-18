@@ -1,1 +1,1 @@
-export type SourceType = 'solution' | 'default' | 'user'
+export type SourceType = 'solution' | 'defaults' | 'user'

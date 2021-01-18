@@ -44,7 +44,7 @@ export const onUpdateGraph = async (
 
   const now = Date.now()
 
-  console.log(`Dispatched solution ${solutionId}`)
+  console.log(`Solution ${solutionId} dispatched`)
 
   // Dispatch a solution
   const { data: solution } = await axios.post(
@@ -52,9 +52,94 @@ export const onUpdateGraph = async (
     ghx
   )
 
-  console.log(`Solution ${solutionId} complete in ${Date.now() - now}ms.`)
+  console.log(`Solution ${solutionId} received in ${Date.now() - now}ms`)
 
-  socket.emit('solution-ready', solution)
+  const solutionBatch = db.multi()
+  let valueCount = 0
+
+  solution['Data'].forEach((value: any) => {
+    const { ElementId: element, ParameterId: parameter, Values: values } = value
+
+    valueCount = valueCount + values.length
+
+    const result: Glasshopper.Data.DataTree = {}
+
+    values.forEach((branch: any) => {
+      const path: number[] = branch['Path']
+      const data: { Type: Glasshopper.Data.ValueType; Value: string }[] =
+        branch['Data']
+
+      const pathString = `{${path.join(';')}}`
+
+      result[pathString] = data.map(({ Type: type, Value: value }) => {
+        switch (type) {
+          case 'number': {
+            const branchValue: Glasshopper.Data.DataTreeValue<'number'> = {
+              from: 'solution',
+              type,
+              data: Number.parseFloat(value),
+            }
+
+            return branchValue
+          }
+          case 'point': {
+            const { X: x, Y: y, Z: z } = JSON.parse(value)
+
+            const branchValue: Glasshopper.Data.DataTreeValue<'point'> = {
+              from: 'solution',
+              type,
+              data: {
+                x: Number.parseFloat(x),
+                y: Number.parseFloat(y),
+                z: Number.parseFloat(z),
+              },
+            }
+
+            return branchValue
+          }
+          default: {
+            const branchValue: Glasshopper.Data.DataTreeValue<'string'> = {
+              from: 'solution',
+              type: 'string',
+              data: '' + value,
+            }
+
+            return branchValue
+          }
+        }
+      })
+    })
+
+    const solutionValueKey = `session:${sessionId}:solution:${solutionId}:${element}:${parameter}`
+
+    solutionBatch.set(solutionValueKey, JSON.stringify(result))
+  })
+
+  const runtimeMessages: Glasshopper.Payload.SolutionMessage[] = solution[
+    'Messages'
+  ].map((msg: any) => {
+    const { ElementId: element, Message: message, Level: level } = msg
+
+    const runtimeMessage: Glasshopper.Payload.SolutionMessage = {
+      element,
+      level,
+      message,
+    }
+
+    return runtimeMessage
+  })
+
+  const solutionReady: Glasshopper.Payload.SolutionReady = {
+    solutionId,
+    runtimeMessages,
+  }
+
+  solutionBatch.exec((err, reply) => {
+    console.log(
+      `Solution ${solutionId} cached with ${valueCount} values over ${solution['Data'].length} branches`
+    )
+    socket.emit('solution-ready', solutionReady)
+  })
 }
 
 // Snippet shared by StackOverflow user Fenton
