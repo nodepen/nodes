@@ -70,6 +70,16 @@ module.exports = {
             'transform-origin': 'center',
           },
         },
+        swellbig: {
+          '0%, 100%': {
+            transform: 'scale(0.5)',
+            'transform-origin': 'center',
+          },
+          '50%': {
+            transform: 'scale(2)',
+            'transform-origin': 'center',
+          },
+        },
         scroll: {
           '0%': {
             transform: 'translateX(0)',

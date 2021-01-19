@@ -140,7 +140,9 @@ export const onUpdateGraph = async (
     console.log(
       `Solution ${solutionId} cached with ${valueCount} values over ${solution['Data'].length} branches`
     )
-    socket.emit('solution-ready', solutionReady)
+    setTimeout(() => {
+      socket.emit('solution-ready', solutionReady)
+    }, 900)
   })
 }
 
