@@ -23,7 +23,7 @@ export interface StaticParameter extends GraphElementBase {
     }
     runtimeMessage?: {
       message: string
-      level: 'error' | 'warn' | 'info'
+      level: 'error' | 'warning' | 'info'
     }
     values: DataTree
   }

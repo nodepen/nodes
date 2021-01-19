@@ -1,4 +1,4 @@
-type SolutionMessageLevel = 'error' | 'warn' | 'info'
+type SolutionMessageLevel = 'error' | 'warning' | 'info'
 
 export type SolutionMessage = {
   element: string

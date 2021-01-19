@@ -429,14 +429,6 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.solution.id = newSolutionId
 
-      Object.values(state.elements).forEach((element) => {
-        if (!(element.template.type === 'static-component' || element.template.type === 'static-parameter')) {
-          return
-        }
-
-        ;(element as Glasshopper.Element.StaticComponent).current.runtimeMessage = undefined
-      })
-
       console.log(`Awaiting solution ${newSolutionId}`)
 
       return { ...state }
@@ -449,6 +441,17 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         return state
       }
 
+      const relevant = Object.values(state.elements).filter(
+        (el) => el.template.type === 'static-parameter' || el.template.type === 'static-component'
+      ) as (Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter)[]
+
+      // Reset instance for new solution data
+      relevant.forEach((el) => {
+        el.current.solution.id = status.solutionId
+        el.current.runtimeMessage = undefined
+      })
+
+      // Store new runtime messages
       status.runtimeMessages.forEach((msg) => {
         const { element, message, level } = msg
 
@@ -462,12 +465,6 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
         target.current.runtimeMessage = { message, level }
       })
-
-      const relevant = Object.values(state.elements).filter(
-        (el) => el.template.type === 'static-parameter' || el.template.type === 'static-component'
-      ) as (Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter)[]
-
-      relevant.forEach((el) => (el.current.solution.id = status.solutionId))
 
       const requireSolutions = relevant.filter((el) => el.current.solution.mode === 'immediate')
 

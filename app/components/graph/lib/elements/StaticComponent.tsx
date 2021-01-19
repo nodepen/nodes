@@ -3,7 +3,7 @@ import { Glasshopper } from 'glib'
 import { Grip } from './common'
 import { ComponentParameter } from './parameters'
 import { useGraphManager } from '@/context/graph'
-import { getElementStatus } from './utils'
+import { useElementStatus } from './utils'
 
 type StaticComponentProps = {
   instanceId: string
@@ -11,10 +11,12 @@ type StaticComponentProps = {
 
 export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements, solution },
+    store: { elements },
   } = useGraphManager()
 
   const componentRef = useRef<HTMLDivElement>(null)
+
+  const [status, color] = useElementStatus(id)
 
   const [[tx, ty], setOffset] = useState<[number, number]>([0, 0])
 
@@ -38,8 +40,6 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
   const component = elements[id] as Glasshopper.Element.StaticComponent
 
   const { template, current } = component
-
-  const status = getElementStatus(component, solution.id)
 
   const [dx, dy] = current.position
 
@@ -79,7 +79,8 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
         </div>
         <div
           id="label-column"
-          className="w-8 m-4 mt-1 mb-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center"
+          className="w-8 m-4 mt-1 mb-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
+          style={{ background: color }}
         >
           <div
             className="font-panel text-v"
@@ -113,7 +114,6 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
           </div>
         ))}
       </div>
-      {status}
     </div>
   )
 

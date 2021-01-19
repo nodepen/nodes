@@ -1,1 +1,1 @@
-export type ElementStatus = 'idle' | 'waiting' | 'info' | 'warn' | 'error'
+export type ElementStatus = 'idle' | 'waiting' | 'info' | 'warning' | 'error'
