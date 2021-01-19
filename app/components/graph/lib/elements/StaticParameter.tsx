@@ -76,8 +76,11 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
               <ParameterIcon parent={parameter.id} />
             </div>
-            <div className="ml-6 mr-6 font-panel text-base font-bold text-dark select-none z-10" style={{ left: '0' }}>
-              {template.nickname.toLowerCase()}
+            <div
+              className="ml-6 mr-6 font-panel font-bold text-sm text-dark select-none z-10"
+              style={{ left: '0', transform: 'translateY(1px)' }}
+            >
+              {template.nickname.toUpperCase()}
             </div>
           </div>
           <div className="absolute z-0 flex flex-col justify-center items-center" style={{ right: -8 }}>
