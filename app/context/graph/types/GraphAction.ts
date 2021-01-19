@@ -12,6 +12,7 @@ export type GraphAction =
   | { type: 'graph/register-element-anchor'; elementId: string; anchorKey: string; position: [number, number] }
   | { type: 'graph/add-component'; position: [number, number]; component: Grasshopper.Component }
   | { type: 'graph/add-parameter'; position: [number, number]; component: Grasshopper.Component }
+  | { type: 'graph/add-panel'; position: [number, number] }
   | { type: 'graph/selection-region'; from: [number, number]; to: [number, number]; partial: boolean }
   | { type: 'graph/selection-add'; id: string }
   | { type: 'graph/selection-remove'; id: string }

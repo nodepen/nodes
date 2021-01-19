@@ -162,6 +162,28 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/add-panel': {
+      const { position } = action
+
+      const reference = state.library.params['input'].find((component) => component.name.toLowerCase() === 'panel')
+
+      const panel: Glasshopper.Element.Panel = {
+        id: newGuid(),
+        template: { type: 'panel', ...reference },
+        current: {
+          position: pageToGraphCoordinates(position, state),
+          dimensions: { width: 50, height: 50 },
+          anchors: {},
+          sources: { input: [] },
+        },
+      }
+
+      state.elements[panel.id] = panel
+
+      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+
+      return { ...state }
+    }
     case 'graph/selection-region': {
       const { from, to, partial } = action
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { Wire, StaticComponent, StaticParameter } from '../elements'
+import { Wire, Panel, StaticComponent, StaticParameter } from '../elements'
 
 type ControlMode = 'idle' | 'panning' | 'selecting'
 
@@ -153,6 +153,12 @@ export const GraphCanvas = (): React.ReactElement => {
               }
               case 'wire': {
                 return <Wire key={`wire-${element.id}`} instanceId={element.id} />
+              }
+              case 'panel': {
+                return <Panel key={`panel-${element.id}`} instanceId={element.id} />
+              }
+              default: {
+                console.log(`Could not render '${element.template.type}'. ${element.id} `)
               }
             }
           })}
