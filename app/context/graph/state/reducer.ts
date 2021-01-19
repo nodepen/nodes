@@ -436,6 +436,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/values/prepare-solution': {
       const { status } = action
 
+      console.log(`Solution ${state.solution.id} ready.`)
+
       if (state.solution.id !== status.solutionId) {
         // Result came for a solution we don't care about anymore, do nothing
         return state

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useMemo } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { getElementStatus } from './getElementStatus'
@@ -17,26 +17,37 @@ export const useElementStatus = (id: string): [string, string] => {
   const element = elements[id] as Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter
   const status = getElementStatus(element, solution.id)
 
-  const [color, setColor] = useState('#FFFFFF')
-
-  useEffect(() => {
+  const color: string = useMemo(() => {
     if (selected.includes(id)) {
-      setColor('#98E2C6')
-      return
+      return '#98E2C6'
+    }
+
+    if (status === 'waiting') {
+      switch (element.current.runtimeMessage?.level ?? 'none') {
+        case 'warning': {
+          return '#FFBE71'
+        }
+        case 'error': {
+          return '#FF7171'
+        }
+        default: {
+          return '#FFFFFF'
+        }
+      }
     }
 
     switch (status) {
       case 'idle': {
-        setColor('#FFFFFF')
-        break
+        return '#FFFFFF'
       }
       case 'warning': {
-        setColor('#FFBE71')
-        break
+        return '#FFBE71'
       }
       case 'error': {
-        setColor('#FF7171')
-        break
+        return '#FF7171'
+      }
+      default: {
+        return '#FFFFFF'
       }
     }
   }, [element, id, selected, status])
