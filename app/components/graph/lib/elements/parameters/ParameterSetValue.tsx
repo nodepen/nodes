@@ -25,9 +25,9 @@ export const ParameterSetValue = ({ element: id, keepOpen }: ParameterSetValuePr
   return mode === 'idle' ? (
     <button
       onClick={() => setMode('setting')}
-      className="block w-full mt-1 p-1 text-center border-2 rounded-sm border-dashed border-green text-xs font-bold text-green hover:border-darkgreen hover:text-darkgreen"
+      className="block w-full mt-1 p-1 text-center border-2 rounded-sm border-dashed border-green text-xs font-panel font-semibold text-darkgreen hover:border-darkgreen"
     >
-      Set value
+      SET VALUE
     </button>
   ) : (
     <div className="w-full flex justify-between items-center mt-1">
