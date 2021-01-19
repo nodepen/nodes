@@ -10,8 +10,8 @@ type PanelSceneProps = {
 export const PanelScene: React.FunctionComponent<PanelSceneProps> = ({ points }) => {
   const Scene = useMemo(() => {
     return (
-      <Canvas>
-        <OrthographicCamera position={[2, 5, 2]} />
+      <Canvas camera={{ position: new Vector3(2, 2, 2) }}>
+        <OrthographicCamera />
         <OrbitControls />
         <Line
           points={[
