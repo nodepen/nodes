@@ -105,7 +105,7 @@ const SourceTooltipSet = ({ source, parameter, icon }: SourceTooltipSetProps): R
         <p className="font-sans font-medium text-base text-darkgreen whitespace-no-wrap">
           {source.template.type === 'static-component' ? source.template.name : `${source.template.name} param`}
         </p>
-        <p className="font-panel font-semibold text-xs text-darkgreen">
+        <p className="font-panel font-semibold text-xs text-darkgreen whitespace-no-wrap">
           {`${valueCount} value${valueCount === 1 ? '' : 's'}`}
         </p>
       </div>
@@ -158,7 +158,7 @@ const TargetTooltipSet = ({ target, parameter, icon }: TargetTooltipSetParams): 
       </div>
       <div className="flex flex-col justify-center">
         <p className="font-sans font-medium text-base text-darkgreen whitespace-no-wrap">{label}</p>
-        <p className="font-panel font-semibold text-xs text-darkgreen">{`${type} value`}</p>
+        <p className="font-panel font-semibold text-xs text-darkgreen whitespace-no-wrap">{`${type} value`}</p>
       </div>
     </div>
   )
