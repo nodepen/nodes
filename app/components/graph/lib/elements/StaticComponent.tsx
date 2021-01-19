@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react'
 import { Glasshopper } from 'glib'
-import { Grip } from './common'
+import { Grip, Loading } from './common'
 import { ComponentParameter } from './parameters'
 import { useGraphManager } from '@/context/graph'
 import { useElementStatus } from './utils'
@@ -49,70 +49,78 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
       style={{ left: dx - tx, top: -dy - ty, opacity: ready ? 1 : 0 }}
       ref={componentRef}
     >
-      <div
-        id="input-grips-container"
-        className="flex flex-col z-20"
-        style={{ paddingTop: '2px', paddingBottom: '2px' }}
-      >
-        {Object.keys(current.inputs).map((parameterId) => (
-          <div
-            key={`input-grip-${parameterId}`}
-            className="w-4 flex-grow flex flex-col justify-center"
-            style={{ transform: 'translateX(50%)' }}
-          >
-            {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
-          </div>
-        ))}
-      </div>
-      <div
-        id="panel-container"
-        className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-30"
-      >
-        <div id="inputs-column" className="flex flex-col">
-          {Object.entries(current.inputs).map(([parameterId, i]) => (
-            <ComponentParameter
-              key={`input-${parameterId}-${i}`}
-              source={{ element: id, parameter: parameterId }}
-              mode="input"
-            />
+      <div className="relative flex flex-row items-stretch">
+        <div
+          className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
+          style={{ top: '-1.2rem', right: '1rem' }}
+        >
+          <Loading visible={status === 'waiting'} />
+        </div>
+        <div
+          id="input-grips-container"
+          className="flex flex-col z-20"
+          style={{ paddingTop: '2px', paddingBottom: '2px' }}
+        >
+          {Object.keys(current.inputs).map((parameterId) => (
+            <div
+              key={`input-grip-${parameterId}`}
+              className="w-4 flex-grow flex flex-col justify-center"
+              style={{ transform: 'translateX(50%)' }}
+            >
+              {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
+            </div>
           ))}
         </div>
         <div
-          id="label-column"
-          className="w-8 m-4 mt-1 mb-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
-          style={{ background: color }}
+          id="panel-container"
+          className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-30"
         >
+          <div id="inputs-column" className="flex flex-col">
+            {Object.entries(current.inputs).map(([parameterId, i]) => (
+              <ComponentParameter
+                key={`input-${parameterId}-${i}`}
+                source={{ element: id, parameter: parameterId }}
+                mode="input"
+              />
+            ))}
+          </div>
           <div
-            className="font-panel text-v"
-            style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
+            id="label-column"
+            className="w-8 m-4 mt-1 mb-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
+            style={{ background: color }}
           >
-            {template.nickname}
+            <div
+              className="font-panel text-v"
+              style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
+            >
+              {template.nickname}
+            </div>
+          </div>
+          <div id="outputs-column" className="flex flex-col">
+            {Object.entries(current.outputs).map(([parameterId, i]) => (
+              <ComponentParameter
+                key={`output-${parameterId}-${i}`}
+                source={{ element: id, parameter: parameterId }}
+                mode="output"
+              />
+            ))}
           </div>
         </div>
-        <div id="outputs-column" className="flex flex-col">
-          {Object.entries(current.outputs).map(([parameterId, i]) => (
-            <ComponentParameter
-              key={`output-${parameterId}-${i}`}
-              source={{ element: id, parameter: parameterId }}
-              mode="output"
-            />
+        <div
+          id="output-grips-container"
+          className="flex flex-col z-20"
+          style={{ paddingTop: '2px', paddingBottom: '2px' }}
+        >
+          {Object.keys(current.outputs).map((parameterId) => (
+            <div
+              key={`output-grip-${parameterId}`}
+              className="w-4 flex-grow flex flex-col justify-center"
+              style={{ transform: 'translateX(-50%)' }}
+            >
+              {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
+            </div>
           ))}
         </div>
-      </div>
-      <div
-        id="output-grips-container"
-        className="flex flex-col z-20"
-        style={{ paddingTop: '2px', paddingBottom: '2px' }}
-      >
-        {Object.keys(current.outputs).map((parameterId) => (
-          <div
-            key={`output-grip-${parameterId}`}
-            className="w-4 flex-grow flex flex-col justify-center"
-            style={{ transform: 'translateX(-50%)' }}
-          >
-            {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
-          </div>
-        ))}
       </div>
     </div>
   )

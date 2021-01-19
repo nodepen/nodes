@@ -3,7 +3,7 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
-import { Details, Grip, DataTree, RuntimeMessage } from './common'
+import { Details, Grip, DataTree, RuntimeMessage, Loading } from './common'
 import { useElementStatus } from './utils'
 
 type StaticComponentProps = {
@@ -60,6 +60,12 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           onPointerLeave={() => setHovers(([, details]) => [false, details])}
           onClick={handleClick}
         >
+          <div
+            className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
+            style={{ top: '-1.2rem', right: 0 }}
+          >
+            <Loading visible={status === 'waiting'} />
+          </div>
           <div className="absolute z-0" style={{ left: '-12.5px', transform: 'translate(2px, 1.5px)' }}>
             <ParameterIconShadow />
           </div>
