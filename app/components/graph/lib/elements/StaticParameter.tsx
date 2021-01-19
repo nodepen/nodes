@@ -98,7 +98,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
                 ) : null}
                 {(() => {
                   if (Object.keys(current.values).length > 0) {
-                    const valueCount = graph.getValueCount(current.values)
+                    const valueCount = graph.getValueCount(parameter, 'output')
                     return (
                       <DataTree
                         label={`${valueCount} manual value${valueCount === 1 ? '' : 's'}`}
