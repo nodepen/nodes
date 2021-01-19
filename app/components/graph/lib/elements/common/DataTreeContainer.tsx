@@ -27,13 +27,13 @@ export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactEl
         <div className="w-full border-2 border-t-0 border-green rounded-sm rounded-t-none flex flex-col items-center font-panel">
           {Object.keys(data).map((key) => (
             <>
-              <div className="w-full h-6 pl-1 pr-1 text-right text-sm text-swampgreen border-b-2 border-green">
+              <div className="w-full h-6 pl-1 pr-1 text-right text-sm text-darkgreen border-b-2 border-green">
                 {key}
               </div>
               {data[key].map((value, i) => (
                 <div
                   key={`${key}-${i}-val`}
-                  className="w-full p-1 flex items-center h-5 text-sm text-swampgreen hover:text-darkgreen"
+                  className="w-full p-1 flex items-center h-5 text-sm text-darkgreen hover:bg-green"
                 >
                   <div className="w-4 mr-2 text-left border-r-2 border-green">{i}</div>
                   {value.data}

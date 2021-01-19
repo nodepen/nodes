@@ -86,14 +86,14 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
           </div>
           <div
             id="label-column"
-            className="w-8 m-4 mt-1 mb-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
+            className="w-10 m-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
             style={{ background: color }}
           >
             <div
-              className="font-panel text-v"
+              className="font-panel text-v font-bold text-sm select-none"
               style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
             >
-              {template.nickname}
+              {template.nickname.toUpperCase()}
             </div>
           </div>
           <div id="outputs-column" className="flex flex-col">

@@ -18,7 +18,7 @@ export const RuntimeMessageContainer = ({ message, level }: RuntimeMessageProps)
           />
         </svg>
       </div>
-      <div className="font-panel font-medium text-xs">{message.toUpperCase()}.</div>
+      <div className="font-panel font-medium text-xs text-darkgreen">{message}.</div>
     </div>
   )
 }
