@@ -36,7 +36,7 @@ export const PanelScene: React.FunctionComponent<PanelSceneProps> = ({ points })
         />
         {points.map(({ x, y, z }, i) => {
           return (
-            <Sphere key={`shape-${i}`} position={[x, y, z]} scale={new Vector3(0.03, 0.03, 0.03)}>
+            <Sphere key={`shape-${i}`} position={[x, z, y]} scale={new Vector3(0.03, 0.03, 0.03)}>
               <meshBasicMaterial attach="material" color="black" />
             </Sphere>
           )

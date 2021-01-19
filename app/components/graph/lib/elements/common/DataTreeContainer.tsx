@@ -29,7 +29,7 @@ export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactEl
         <p className="text-sm text-pale">{isOpen ? <>&#9650;</> : <>&#9660;</>}</p>
       </button>
       {isOpen ? (
-        <div className="w-full border-2 border-t-0 border-green rounded-sm rounded-t-none flex flex-col items-center font-panel">
+        <div className="w-full pb-1 border-2 border-t-0 border-green rounded-sm rounded-t-none flex flex-col items-center font-panel">
           {Object.keys(data).map((key) => (
             <>
               <div className="w-full h-6 pl-1 pr-1 text-right text-sm text-darkgreen border-b-2 border-green">
