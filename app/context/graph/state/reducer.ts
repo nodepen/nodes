@@ -468,7 +468,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         target.current.runtimeMessage = { message, level }
       })
 
-      const requireSolutions = relevant.filter((el) => el.current.solution.mode === 'immediate')
+      // TODO: Hash out a deferred solution strategy.
+      const requireSolutions = relevant.filter((el) => el.current.solution.mode === 'deferred')
 
       const solutionRequests: Glasshopper.Payload.SolutionValueRequest[] = requireSolutions.reduce((requests, el) => {
         switch (el.template.type) {
@@ -504,6 +505,16 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/values/consume-solution-values': {
       const { values } = action
 
+      const hasUserDefinedValues = (tree: Glasshopper.Data.DataTree): boolean => {
+        const valueSources = Object.values(tree).reduce((froms, branch) => {
+          const branchFroms = branch.reduce((all, value) => [...all, value.from], [] as string[])
+
+          return [...froms, ...branchFroms]
+        }, [] as string[])
+
+        return valueSources.includes('user')
+      }
+
       values.forEach((value) => {
         const {
           data,
@@ -523,6 +534,11 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         switch (el.template.type) {
           case 'static-parameter': {
             const p = el as Glasshopper.Element.StaticParameter
+
+            if (hasUserDefinedValues(p.current.values)) {
+              console.debug(`Skipping solution for ${element} because it has user-defined values.`)
+              break
+            }
 
             p.current.values = data
             break
