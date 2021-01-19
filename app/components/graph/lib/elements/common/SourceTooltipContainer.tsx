@@ -73,7 +73,11 @@ export const SourceTooltipContainer = ({ wire }: SourceTooltipProps): React.Reac
         </svg>
       </div>
       {targetElement ? (
-        <TargetTooltipSet target={targetElement} icon={toElementIcon} parameter={targetElementParam} />
+        (targetElement.template.type as string) === 'panel' ? (
+          <SourceTooltipUnset label="Panel" />
+        ) : (
+          <TargetTooltipSet target={targetElement} icon={toElementIcon} parameter={targetElementParam} />
+        )
       ) : (
         <SourceTooltipUnset />
       )}
@@ -113,10 +117,14 @@ const SourceTooltipSet = ({ source, parameter, icon }: SourceTooltipSetProps): R
   )
 }
 
-const SourceTooltipUnset = (): React.ReactElement => {
+type SourceParams = {
+  label?: string
+}
+
+const SourceTooltipUnset = ({ label }: SourceParams): React.ReactElement => {
   return (
     <div className="p-1 text-center border-2 border-green border-dashed rounded-sm">
-      <p className="ml-4 mr-4 font-sans font-semibold text-darkgreen text-xs">Selecting...</p>
+      <p className="ml-4 mr-4 font-sans font-semibold text-darkgreen text-xs">{label ?? 'Selecting...'}</p>
     </div>
   )
 }

@@ -31,7 +31,15 @@ export const GraphControlsFooter = (): React.ReactElement => {
     setStart(undefined)
 
     if (component.category.toLowerCase() === 'params') {
-      dispatch({ type: 'graph/add-parameter', position, component })
+      switch (component.name.toLowerCase()) {
+        case 'panel': {
+          dispatch({ type: 'graph/add-panel', position })
+          break
+        }
+        default: {
+          dispatch({ type: 'graph/add-parameter', position, component })
+        }
+      }
     } else {
       dispatch({ type: 'graph/add-component', position, component })
     }

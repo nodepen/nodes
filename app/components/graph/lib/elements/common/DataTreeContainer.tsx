@@ -9,6 +9,11 @@ type DataTreeProps = {
 export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactElement => {
   const [isOpen, setIsOpen] = useState(false)
 
+  const pointToString = (point: any): string => {
+    const { x, y, z } = point
+    return `{${x}, ${y}, ${z}}`
+  }
+
   return (
     <div className="w-full flex flex-col items-center">
       <button
@@ -36,7 +41,7 @@ export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactEl
                   className="w-full p-1 flex items-center h-5 text-sm text-darkgreen hover:bg-green"
                 >
                   <div className="w-4 mr-2 text-left border-r-2 border-green">{i}</div>
-                  {value.data}
+                  {value.type === 'string' || value.type === 'number' ? value.data : pointToString(value.data)}
                 </div>
               ))}
             </>
