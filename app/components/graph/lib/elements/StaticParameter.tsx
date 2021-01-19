@@ -3,8 +3,8 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
-import { Details, Grip, DataTree } from './common'
-import { getElementStatus } from './utils'
+import { Details, Grip, DataTree, RuntimeMessage } from './common'
+import { useElementStatus } from './utils'
 
 type StaticComponentProps = {
   instanceId: string
@@ -12,11 +12,13 @@ type StaticComponentProps = {
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements, selected, solution },
+    store: { elements },
     dispatch,
   } = useGraphManager()
 
   const parameterRef = useRef<HTMLButtonElement>(null)
+
+  const [status, color] = useElementStatus(id)
 
   useEffect(() => {
     if (!parameterRef) {
@@ -35,7 +37,6 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
 
   const { template, current } = parameter
   const [dx, dy] = current.position
-  const isSelected = selected.includes(id)
 
   const [[overPanel, overDetails], setHovers] = useState<[boolean, boolean]>([false, false])
   const [detailsPinned, setDetailsPinned] = useState(false)
@@ -48,8 +49,6 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
     return null
   }
-
-  const status = getElementStatus(parameter, solution.id)
 
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
@@ -65,9 +64,8 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <ParameterIconShadow />
           </div>
           <div
-            className={`${
-              isSelected ? 'bg-green' : 'bg-light'
-            } h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative z-20`}
+            className="h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative transition-colors duration-150 z-20"
+            style={{ background: color }}
           >
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
               <ParameterIcon parent={parameter.id} />
@@ -80,7 +78,6 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </button>
-        {status}
         {detailsPinned || detailsVisible ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10"
@@ -89,32 +86,37 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             onPointerLeave={() => setHovers(([panel]) => [panel, false])}
           >
             <Details pinned={detailsPinned} onPin={() => setDetailsPinned((current) => !current)}>
-              {(() => {
-                if (Object.keys(current.values).length > 0) {
-                  const valueCount = graph.getValueCount(current.values)
-                  return (
-                    <DataTree
-                      label={`${valueCount} manual value${valueCount === 1 ? '' : 's'}`}
-                      data={current.values}
-                    />
-                  )
-                }
+              <>
+                {current.runtimeMessage ? (
+                  <RuntimeMessage message={current.runtimeMessage.message} level={current.runtimeMessage.level} />
+                ) : null}
+                {(() => {
+                  if (Object.keys(current.values).length > 0) {
+                    const valueCount = graph.getValueCount(current.values)
+                    return (
+                      <DataTree
+                        label={`${valueCount} manual value${valueCount === 1 ? '' : 's'}`}
+                        data={current.values}
+                      />
+                    )
+                  }
 
-                const sourceCount = graph.getSourceCount(current.sources)
-                if (sourceCount > 0) {
-                  return (
-                    <div className="mt-1 p-1 pl-2 pr-2 h-5 flex items-center rounded-sm bg-green">
-                      <p
-                        className="flex-grow font-panel font-bold text-darkgreen text-xs"
-                        style={{ transform: 'translateY(1px)' }}
-                      >{`${sourceCount} source${sourceCount === 1 ? '' : 's'}`}</p>
-                      <p className="text-sm text-pale">&#9660;</p>
-                    </div>
-                  )
-                }
+                  const sourceCount = graph.getSourceCount(current.sources)
+                  if (sourceCount > 0) {
+                    return (
+                      <div className="mt-1 p-1 pl-2 pr-2 h-5 flex items-center rounded-sm bg-green">
+                        <p
+                          className="flex-grow font-panel font-bold text-darkgreen text-xs"
+                          style={{ transform: 'translateY(1px)' }}
+                        >{`${sourceCount} source${sourceCount === 1 ? '' : 's'}`}</p>
+                        <p className="text-sm text-pale">&#9660;</p>
+                      </div>
+                    )
+                  }
 
-                return <ParameterSetValue element={id} keepOpen={() => setDetailsPinned(true)} />
-              })()}
+                  return <ParameterSetValue element={id} keepOpen={() => setDetailsPinned(true)} />
+                })()}
+              </>
             </Details>
           </div>
         ) : null}

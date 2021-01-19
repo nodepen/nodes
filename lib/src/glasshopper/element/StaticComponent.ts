@@ -25,7 +25,7 @@ export interface StaticComponent extends GraphElementBase {
     }
     runtimeMessage?: {
       message: string
-      level: 'error' | 'warn' | 'info'
+      level: 'error' | 'warning' | 'info'
     }
     values: { [inputId: string]: DataTree } // [instancedId][data tree path] = values
   }

@@ -118,7 +118,9 @@ export const onUpdateGraph = async (
   const runtimeMessages: Glasshopper.Payload.SolutionMessage[] = solution[
     'Messages'
   ].map((msg: any) => {
-    const { ElementId: element, Message: message, Level: level } = msg
+    const { ElementId: element, Message: message } = msg
+
+    const level: any = msg['Level'].toLowerCase()
 
     const runtimeMessage: Glasshopper.Payload.SolutionMessage = {
       element,
