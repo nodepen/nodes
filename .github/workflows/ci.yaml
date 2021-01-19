@@ -35,13 +35,6 @@ jobs:
       working-directory: ./app
       run: npm run test
 
-    - name: Emit coverage
-      uses: coverallsapp/github-action@master
-      with:
-        github-token: ${{ secrets.GITHUB_TOKEN }}
-        path-to-lcov: ./app/coverage/lcov.info
-        base-path: ./app
-
   api:
     name: api
     runs-on: ubuntu-latest
