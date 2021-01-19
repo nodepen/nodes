@@ -22,8 +22,6 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
   // const parameterCount = Object.keys(element.current[mode === 'input' ? 'inputs' : 'outputs']).length
   const parameter = element.template[mode === 'input' ? 'inputs' : 'outputs'][parameterIndex]
 
-  console.log(parameterIndex)
-
   const { nickName } = parameter
 
   const handlePointerEnter = (): void => {
