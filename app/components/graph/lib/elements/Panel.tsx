@@ -1,8 +1,9 @@
-import React, { useMemo } from 'react'
+import React from 'react'
+import dynamic from 'next/dynamic'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree } from './common'
-import { Data } from '~/../lib/dist/glasshopper'
+// import { PanelScene } from './../scene'
 
 type PanelProps = {
   instanceId: string
@@ -34,6 +35,8 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
   const label = source ? (elements[source.element].template as any).nickname : 'N/A'
   const showScene = label === 'Pt'
 
+  const Canvas = dynamic(import('./scene/Panel'), { ssr: false })
+
   return (
     <div className="absolute flex flex-row" style={{ left: dx, top: -dy }}>
       <div id="grip-column" className="w-2 h-64 flex flex-col justify-center z-20">
@@ -52,7 +55,14 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
           <div className="w-full h-full mt-1 rounded-sm border-2 border-dashed border-green" />
         )}
       </div>
-      {showScene ? <div className="w-64 h-64 bg-pale" /> : null}
+      <div
+        className="w-64 h-64 bg-pale border-2 border-l-0 border-green rounded-tr-md rounded-br-md"
+        style={{ opacity: showScene && values ? 1 : 0, transform: 'translateY(2px)' }}
+      >
+        {showScene ? (
+          <Canvas points={values && showScene ? Object.values(values)[0].map((v) => v.data as any) : []} />
+        ) : null}
+      </div>
     </div>
   )
 }

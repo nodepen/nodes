@@ -38,10 +38,12 @@ export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactEl
               {data[key].map((value, i) => (
                 <div
                   key={`${key}-${i}-val`}
-                  className="w-full p-1 flex items-center h-5 text-sm text-darkgreen hover:bg-green"
+                  className="w-full p-1 h-5 text-sm text-darkgreen hover:bg-green whitespace-no-wrap overflow-hidden"
                 >
-                  <div className="w-4 mr-2 text-left border-r-2 border-green">{i}</div>
-                  {value.type === 'string' || value.type === 'number' ? value.data : pointToString(value.data)}
+                  <div className="inline-block w-4 mr-2 text-left border-r-2 border-green">{i}</div>
+                  <div className="inline-block">
+                    {value.type === 'string' || value.type === 'number' ? value.data : pointToString(value.data)}
+                  </div>
                 </div>
               ))}
             </>
