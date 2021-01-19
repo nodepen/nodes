@@ -19,7 +19,14 @@ export interface StaticComponent extends GraphElementBase {
         parameter: string
       }[]
     }
-    solution?: string
+    solution: {
+      id: string
+      mode: 'immediate' | 'deferred'
+    }
+    runtimeMessage?: {
+      message: string
+      level: 'error' | 'warn' | 'info'
+    }
     values: { [inputId: string]: DataTree } // [instancedId][data tree path] = values
   }
 }

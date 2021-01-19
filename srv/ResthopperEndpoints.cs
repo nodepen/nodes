@@ -292,7 +292,7 @@ namespace compute.geometry
           for (var i = 0; i < pathValues.Count; i++)
           {
             var pathValue = pathValues[i];
-            var sourceType = pathValue.source.ToString();
+            var sourceType = pathValue.from.ToString();
 
             if (sourceType != "user")
             {

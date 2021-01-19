@@ -4,6 +4,7 @@ import { useGraphManager } from '@/context/graph'
 import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
 import { Details, Grip, DataTree } from './common'
+import { getElementStatus } from './utils'
 
 type StaticComponentProps = {
   instanceId: string
@@ -48,7 +49,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     return null
   }
 
-  const isLoading = !parameter.current.solution || parameter.current.solution !== solution.id
+  const status = getElementStatus(parameter, solution.id)
 
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
@@ -73,13 +74,13 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             </div>
             <div className="ml-6 mr-6 font-panel text-base font-bold text-dark select-none z-10" style={{ left: '0' }}>
               {template.nickname.toLowerCase()}
-              {isLoading ? '...' : null}
             </div>
           </div>
           <div className="absolute z-0 flex flex-col justify-center items-center" style={{ right: -8 }}>
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </button>
+        {status}
         {detailsPinned || detailsVisible ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10"
