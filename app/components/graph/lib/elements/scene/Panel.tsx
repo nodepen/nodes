@@ -19,6 +19,7 @@ export const PanelScene: React.FunctionComponent<PanelSceneProps> = ({ points })
             [1, 0, 0],
           ]}
           color="red"
+          stencilMask={{}}
         />
         <Line
           points={[
@@ -26,6 +27,7 @@ export const PanelScene: React.FunctionComponent<PanelSceneProps> = ({ points })
             [0, 1, 0],
           ]}
           color="blue"
+          stencilMask={{}}
         />
         <Line
           points={[
@@ -33,6 +35,7 @@ export const PanelScene: React.FunctionComponent<PanelSceneProps> = ({ points })
             [0, 0, 1],
           ]}
           color="green"
+          stencilMask={{}}
         />
         {points.map(({ x, y, z }, i) => {
           return (
