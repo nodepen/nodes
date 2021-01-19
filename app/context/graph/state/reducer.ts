@@ -119,6 +119,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           outputs: assignParameterInstanceIds(template.outputs),
           sources: {},
           values: {},
+          solution: { id: '', mode: 'deferred' },
         },
       }
 
@@ -146,6 +147,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           anchors: {},
           sources: {},
           values: {},
+          solution: { id: '', mode: 'deferred' },
         },
       }
 
@@ -427,7 +429,113 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.solution.id = newSolutionId
 
+      Object.values(state.elements).forEach((element) => {
+        if (!(element.template.type === 'static-component' || element.template.type === 'static-parameter')) {
+          return
+        }
+
+        ;(element as Glasshopper.Element.StaticComponent).current.runtimeMessage = undefined
+      })
+
       console.log(`Awaiting solution ${newSolutionId}`)
+
+      return { ...state }
+    }
+    case 'graph/values/prepare-solution': {
+      const { status } = action
+
+      if (state.solution.id !== status.solutionId) {
+        // Result came for a solution we don't care about anymore, do nothing
+        return state
+      }
+
+      status.runtimeMessages.forEach((msg) => {
+        const { element, message, level } = msg
+
+        const target = state.elements[element] as
+          | Glasshopper.Element.StaticComponent
+          | Glasshopper.Element.StaticParameter
+
+        if (!target) {
+          return
+        }
+
+        target.current.runtimeMessage = { message, level }
+      })
+
+      const relevant = Object.values(state.elements).filter(
+        (el) => el.template.type === 'static-parameter' || el.template.type === 'static-component'
+      ) as (Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter)[]
+
+      relevant.forEach((el) => (el.current.solution.id = status.solutionId))
+
+      const requireSolutions = relevant.filter((el) => el.current.solution.mode === 'immediate')
+
+      const solutionRequests: Glasshopper.Payload.SolutionValueRequest[] = requireSolutions.reduce((requests, el) => {
+        switch (el.template.type) {
+          case 'static-parameter': {
+            const request: Glasshopper.Payload.SolutionValueRequest = {
+              solutionId: state.solution.id,
+              elementId: el.id,
+              parameterId: 'output',
+            }
+
+            return [...requests, request]
+          }
+          case 'static-component': {
+            const component = el as Glasshopper.Element.StaticComponent
+
+            const params = [...Object.keys(component.current.outputs), ...Object.keys(component.current.inputs)]
+
+            const componentRequests: Glasshopper.Payload.SolutionValueRequest[] = params.map((id) => ({
+              solutionId: state.solution.id,
+              elementId: el.id,
+              parameterId: id,
+            }))
+
+            return [...requests, ...componentRequests]
+          }
+        }
+      }, [] as Glasshopper.Payload.SolutionValueRequest[])
+
+      state.socket.io.emit('solution-values', solutionRequests)
+
+      return { ...state }
+    }
+    case 'graph/values/consume-solution-values': {
+      const { values } = action
+
+      values.forEach((value) => {
+        const {
+          data,
+          for: { solution, element, parameter },
+        } = value
+
+        if (state.solution.id !== solution) {
+          return
+        }
+
+        const el = state.elements[element]
+
+        if (!el) {
+          return
+        }
+
+        switch (el.template.type) {
+          case 'static-parameter': {
+            const p = el as Glasshopper.Element.StaticParameter
+
+            p.current.values = data
+            break
+          }
+          case 'static-component': {
+            const e = el as Glasshopper.Element.StaticComponent
+
+            e.current.values[parameter] = data
+            break
+          }
+        }
+      })
 
       return { ...state }
     }
@@ -435,7 +543,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       const { targetElement, targetParameter, value } = action
 
       const data: Glasshopper.Data.DataTree = {
-        '{0}': [{ source: 'user', type: 'number', data: Number.parseFloat(value) }],
+        '{0}': [{ from: 'user', type: 'number', data: Number.parseFloat(value) }],
       }
 
       if (targetParameter === 'input' || targetParameter === 'output') {
@@ -458,12 +566,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       if (targetParameter === 'input' || targetParameter === 'output') {
         const el = state.elements[targetElement] as Glasshopper.Element.StaticParameter
 
-        el.current.solution = solutionId
+        el.current.solution.id = solutionId
         el.current.values = values
       } else {
         const el = state.elements[targetElement] as Glasshopper.Element.StaticComponent
 
-        el.current.solution = solutionId
+        el.current.solution.id = solutionId
         el.current.values[targetParameter] = values
       }
 
@@ -557,8 +665,4 @@ const isInputOrOutput = (elementId: string, parameterId: string, state: GraphSto
 
   console.log('isInputOrOutput used incorrectly!')
   return 'input'
-}
-
-const expireSolution = (store: GraphStore): void => {
-  store.solution.id = undefined
 }

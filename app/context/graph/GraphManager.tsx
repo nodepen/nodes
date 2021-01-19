@@ -27,8 +27,17 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       dispatch({ type: 'graph/values/expire-solution', newSolutionId: res })
     })
 
-    io.on('solution-ready', (res: string) => {
-      console.log(res)
+    io.on('solution-ready', (res: Glasshopper.Payload.SolutionReady) => {
+      dispatch({ type: 'graph/values/prepare-solution', status: res })
+    })
+
+    io.on('solution-values', (values: Glasshopper.Payload.SolutionValue[]) => {
+      dispatch({ type: 'graph/values/consume-solution-values', values })
+    })
+
+    io.on('solution-failed', (res: any) => {
+      console.error(`Failed to run solution!`)
+      console.error(res)
     })
   }
 

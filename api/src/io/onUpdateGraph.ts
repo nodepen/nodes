@@ -42,7 +42,7 @@ export const onUpdateGraph = async (
     console.log(`Updated graph ghx for session ${sessionId}`)
   })
 
-  const now = Date.now()
+  const start = Date.now()
 
   console.log(`Solution ${solutionId} dispatched`)
 
@@ -52,7 +52,7 @@ export const onUpdateGraph = async (
     ghx
   )
 
-  console.log(`Solution ${solutionId} received in ${Date.now() - now}ms`)
+  console.log(`Solution ${solutionId} received in ${Date.now() - start}ms`)
 
   const solutionBatch = db.multi()
   let valueCount = 0

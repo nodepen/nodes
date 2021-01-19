@@ -3,6 +3,7 @@ import { Glasshopper } from 'glib'
 import { Grip } from './common'
 import { ComponentParameter } from './parameters'
 import { useGraphManager } from '@/context/graph'
+import { getElementStatus } from './utils'
 
 type StaticComponentProps = {
   instanceId: string
@@ -34,9 +35,11 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
     return null
   }
 
-  const { template, current } = elements[id] as Glasshopper.Element.StaticComponent
+  const component = elements[id] as Glasshopper.Element.StaticComponent
 
-  const isLoading = !current.solution || current.solution !== solution.id
+  const { template, current } = component
+
+  const status = getElementStatus(component, solution.id)
 
   const [dx, dy] = current.position
 
@@ -83,7 +86,6 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
             style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
           >
             {template.nickname}
-            {isLoading ? '...' : null}
           </div>
         </div>
         <div id="outputs-column" className="flex flex-col">
@@ -111,6 +113,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
           </div>
         ))}
       </div>
+      {status}
     </div>
   )
 

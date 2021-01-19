@@ -3,6 +3,8 @@ import { Server as HTTP } from 'http'
 import { serverConfig, registerSession, clearSession } from '../store'
 import { onJoinSession } from './onJoinSession'
 import { onUpdateGraph } from './onUpdateGraph'
+import { onRequestSolutionValues } from './onRequestSolutionValues'
+import { Glasshopper } from 'glib'
 
 export let io = new Server()
 
@@ -29,7 +31,16 @@ export const initialize = (server: HTTP): void => {
     })
 
     socket.on('update-graph', (graph: string) => {
-      onUpdateGraph(socket, graph)
+      onUpdateGraph(socket, graph).catch((err) => {
+        socket.emit('solution-failed', err)
+      })
     })
+
+    socket.on(
+      'solution-values',
+      (request: Glasshopper.Payload.SolutionValueRequest[]) => {
+        onRequestSolutionValues(socket, request)
+      }
+    )
   })
 }
