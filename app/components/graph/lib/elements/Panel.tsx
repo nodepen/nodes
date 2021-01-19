@@ -31,16 +31,28 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
 
   const [dx, dy] = current.position
 
+  const label = source ? (elements[source.element].template as any).nickname : 'N/A'
+  const showScene = label === 'Pt'
+
   return (
     <div className="absolute flex flex-row" style={{ left: dx, top: -dy }}>
       <div id="grip-column" className="w-2 h-64 flex flex-col justify-center z-20">
         <Grip source={{ element: id, parameter: 'input' }} />
       </div>
-      <div className="w-8 h-64 bg-light z-30"></div>
-      <div className="w-40 h-64 bg-green">
-        {values ? <DataTree data={values} label={(elements[source.element].template as any).nickname} /> : 'No data'}
+      <div className={`w-8 h-64 bg-light border-2 border-dark rounded-tl-md rounded-bl-md shadow-osm z-30`} />
+      <div
+        className={`w-40 h-64 p-2 pt-1 bg-pale border-2 border-green ${
+          showScene ? '' : 'rounded-tr-md rounded-br-md'
+        } overflow-hidden`}
+        style={{ transform: 'translateY(2px)' }}
+      >
+        {values ? (
+          <DataTree data={values} label={label} />
+        ) : (
+          <div className="w-full h-full mt-1 rounded-sm border-2 border-dashed border-green" />
+        )}
       </div>
-      <div className="w-64 h-64 bg-pale" />
+      {showScene ? <div className="w-64 h-64 bg-pale" /> : null}
     </div>
   )
 }
