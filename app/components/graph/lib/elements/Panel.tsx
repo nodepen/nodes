@@ -38,7 +38,7 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
   const Canvas = dynamic(import('./scene/Panel'), { ssr: false })
 
   return (
-    <div className="absolute flex flex-row" style={{ left: dx, top: -dy }}>
+    <div className="absolute flex flex-row" style={{ left: dx, top: -dy - 128 }}>
       <div id="grip-column" className="w-2 h-64 flex flex-col justify-center z-20">
         <Grip source={{ element: id, parameter: 'input' }} />
       </div>
