@@ -4,6 +4,7 @@ import { Glasshopper } from 'glib'
 import { sessions } from '../store'
 import { db } from '../db'
 import { syncSession } from './syncSession'
+import { io } from './initialize'
 
 export const onUpdateGraph = async (
   socket: Socket,
@@ -22,7 +23,7 @@ export const onUpdateGraph = async (
   // Begin new solution
   const solutionId = newGuid()
 
-  socket.emit('solution-start', solutionId)
+  io.to(sessionId).emit('solution-start', solutionId)
 
   // Generate new graph
   const ghxKey = `session:${sessionId}:graph-ghx`
@@ -140,9 +141,8 @@ export const onUpdateGraph = async (
     console.log(
       `Solution ${solutionId} cached with ${valueCount} values over ${solution['Data'].length} branches`
     )
-    setTimeout(() => {
-      socket.emit('solution-ready', solutionReady)
-    }, 900)
+
+    io.to(sessionId).emit('solution-ready', solutionReady)
   })
 }
 
