@@ -249,6 +249,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.selected = captured
 
+      localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
       return { ...state }
     }
     case 'graph/selection-add': {
@@ -260,6 +262,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.selected.push(id)
 
+      localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
       return { ...state }
     }
     case 'graph/selection-remove': {
@@ -270,6 +274,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       }
 
       state.selected = state.selected.filter((elementId) => elementId !== id)
+
+      localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
       return { ...state }
     }
@@ -287,10 +293,14 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }
 
+      localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
       return { ...state }
     }
     case 'graph/selection-clear': {
       state.selected = []
+
+      localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
       return { ...state }
     }

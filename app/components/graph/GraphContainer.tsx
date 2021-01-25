@@ -1,5 +1,6 @@
 import React from 'react'
-import { LoadingOverlay, Controls, Canvas } from './lib/layout'
+import { LoadingOverlay } from '../common'
+import { Controls, Canvas } from './lib/layout'
 
 export const GraphContainer = (): React.ReactElement => {
   return (

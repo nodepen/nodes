@@ -83,7 +83,7 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
         >
           <path d={d} strokeWidth="2px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
         </svg>
-        {id === 'live-wire' ? (
+        {id === 'never' ? (
           <div className={`${goingRight ? 'right-0' : 'left-0'} absolute`} style={{ top: goingDown ? height : 0 }}>
             <SourceTooltip wire={element} />
           </div>

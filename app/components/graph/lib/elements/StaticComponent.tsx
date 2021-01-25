@@ -12,6 +12,7 @@ type StaticComponentProps = {
 export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
     store: { elements },
+    dispatch,
   } = useGraphManager()
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -28,6 +29,8 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
     const { width, height } = componentRef.current.getBoundingClientRect()
 
     setOffset([width / 2, height / 2])
+
+    dispatch({ type: 'graph/register-element', ref: componentRef, id })
   }, [])
 
   const ready = useMemo(() => tx !== 0 && ty !== 0, [tx, ty])
