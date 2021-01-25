@@ -13,7 +13,7 @@ export const PointGeometry = ({ point, selected }: PointProps): React.ReactEleme
 
   return (
     <Sphere position={[x, z, y]} scale={new Vector3(0.03, 0.03, 0.03)}>
-      <meshBasicMaterial attach="material" color={selected ? 'green' : 'black'} />
+      <meshBasicMaterial attach="material" color={selected ? 'green' : 'darkred'} opacity={0.6} transparent={true} />
     </Sphere>
   )
 }

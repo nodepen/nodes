@@ -42,7 +42,7 @@ const Scene = (): React.ReactElement => {
     elements.forEach((el) => {
       const trees = getElementTrees(el)
       trees.forEach(([parameter, tree]) => {
-        Object.entries(tree).forEach(([branch, values]) => {
+        Object.entries(tree ?? {}).forEach(([branch, values]) => {
           values.forEach((value, i) => {
             const id: Id = {
               element: el.id,

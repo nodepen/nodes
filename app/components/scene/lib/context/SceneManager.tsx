@@ -1,5 +1,4 @@
 import React, { useEffect, useReducer } from 'react'
-import { useSessionManager } from '@/context/session'
 import { context as Context, initial, reducer } from './state'
 
 type SceneManagerProps = {
@@ -7,12 +6,13 @@ type SceneManagerProps = {
 }
 
 export const SceneManager = ({ children }: SceneManagerProps): React.ReactElement => {
-  const { io } = useSessionManager()
-
   const [store, dispatch] = useReducer(reducer, initial)
 
   const onStorageChange = (e: StorageEvent): void => {
-    console.log(e)
+    if (e.key === 'gh:selection') {
+      const selection = JSON.parse(e.newValue)
+      dispatch({ type: 'selection/set', selection })
+    }
   }
 
   useEffect(() => {
