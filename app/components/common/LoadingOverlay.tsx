@@ -2,11 +2,11 @@ import React from 'react'
 import { Transition } from '@headlessui/react'
 import { useGraphManager } from '@/context/graph'
 
-type GraphLoadingOverlayProps = {
+type LoadingOverlayProps = {
   children?: React.ReactNode
 }
 
-export const GraphLoadingOverlay = ({ children }: GraphLoadingOverlayProps): React.ReactElement => {
+export const LoadingOverlay = ({ children }: LoadingOverlayProps): React.ReactElement => {
   const {
     store: { ready },
   } = useGraphManager()
