@@ -5,6 +5,7 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { useSceneManager } from './lib/context'
 import { SceneElementId as Id } from './lib/types'
+import { SceneGrid as Grid } from './SceneGrid'
 import * as Geometry from './lib/geometry'
 
 const Scene = (): React.ReactElement => {
@@ -71,6 +72,7 @@ const Scene = (): React.ReactElement => {
     <Canvas>
       <OrthographicCamera />
       <OrbitControls />
+      <Grid />
       <>
         {elementsToValues(Object.values(elements)).map(([id, value]) => {
           const selected = selection.includes(id.element)
