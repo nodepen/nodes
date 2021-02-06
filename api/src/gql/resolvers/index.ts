@@ -1,5 +1,4 @@
-import * as Query from './Query'
+import { Query } from './Query'
+import { Mutation } from './Mutation'
 
-export const resolvers = {
-  hello: Query.hello,
-}
+export const resolvers = { ...Query, ...Mutation }
