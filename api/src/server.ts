@@ -1,24 +1,8 @@
 import express from 'express'
-import { Server } from 'http'
-import { setup } from './routes'
-import { configure } from './startup'
-import { serverConfig } from './store'
-import * as db from './db'
-import * as io from './io'
+import { gql } from './gql'
 
-const PORT = process.env.PORT || 3100
+const api = express()
 
-const router = express().set('port', PORT)
-const server = new Server(router)
+api.use('/graphql', gql)
 
-db.initialize()
-io.initialize(server)
-
-setup(router)
-
-configure().then(() => {
-  server.listen(PORT)
-  console.log(
-    `Server listening on port ${PORT} with ${serverConfig.length} available components.`
-  )
-})
+api.listen(4000)
