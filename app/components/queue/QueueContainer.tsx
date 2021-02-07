@@ -7,7 +7,7 @@ export const QueueContainer = (): React.ReactElement => {
   const { store, dispatch } = useGraphManager()
 
   const pokeSolution = (): void => {
-    dispatch({ type: 'session/new-solution' })
+    dispatch({ type: 'session/expire-solution' })
   }
 
   return (

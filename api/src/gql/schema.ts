@@ -4,6 +4,7 @@ export const schema = gql`
   type Query {
     getComputeConfiguration: [GrasshopperComponent]!
     getSession(id: String!): SessionManifest!
+    getSessionCurrentGraph(sessionId: String!): String!
     getSolutionStatus(sessionId: String!, solutionId: String!): SolutionStatus
     getUser(id: String!): UserManifest!
   }

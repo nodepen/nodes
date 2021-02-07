@@ -1,12 +1,10 @@
 import { Grasshopper, Glasshopper } from 'glib'
-import { Socket } from 'socket.io-client'
 
 export type GraphAction =
   | { type: 'demo' }
-  | { type: 'session/register-socket'; socket: Socket; id: string }
   | { type: 'session/load-components'; components: Grasshopper.Component[] }
-  | { type: 'session/restore-session'; elements: string }
-  | { type: 'session/new-solution' }
+  | { type: 'session/restore-session'; elements: Glasshopper.Element.Base[] }
+  | { type: 'session/expire-solution' }
   | { type: 'session/set-ready' }
   | { type: 'graph/register-camera'; ref: React.MutableRefObject<HTMLDivElement> }
   | { type: 'graph/register-element'; ref: React.MutableRefObject<HTMLDivElement | HTMLButtonElement>; id: string }

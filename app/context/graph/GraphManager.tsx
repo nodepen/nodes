@@ -2,8 +2,8 @@ import React, { useEffect, useReducer } from 'react'
 import { Grasshopper, Glasshopper } from 'glib'
 import { context as Context, reducer, initial } from './state'
 import { useSessionManager } from '~/context/session'
-import { useQuery } from '@apollo/client'
-import { COMPUTE_CONFIGURATION } from '@/queries'
+import { useQuery, useApolloClient } from '@apollo/client'
+import { COMPUTE_CONFIGURATION, SESSION_CURRENT_GRAPH } from '@/queries'
 import { useSolutionQuery } from './hooks'
 
 type GraphManagerProps = {
@@ -12,6 +12,7 @@ type GraphManagerProps = {
 
 export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
   const { session, user } = useSessionManager()
+  const client = useApolloClient()
 
   const [store, dispatch] = useReducer(reducer, initial)
 
@@ -29,6 +30,38 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
   }, [config])
 
   useSolutionQuery(session.id, store.solution.id)
+
+  useEffect(() => {
+    if (!session.id) {
+      // No session yet, do no work
+      console.log('⌚ Not restoring session yet because no id exists.')
+      return
+    }
+
+    if (Object.keys(store.elements).length > 0) {
+      console.log('🐍 Ignoring new session id because we have already restored it once.')
+      return
+    }
+
+    const getCurrentGraph = async (sessionId: string): Promise<Glasshopper.Element.Base[]> => {
+      const { data } = await client.query({
+        query: SESSION_CURRENT_GRAPH,
+        variables: {
+          sessionId: sessionId,
+        },
+      })
+
+      const elements = JSON.parse(data.getSessionCurrentGraph)
+
+      return elements
+    }
+
+    // Restore graph
+    console.log(`Restoring session for session:${session.id}`)
+    getCurrentGraph(session.id).then((elements) => {
+      dispatch({ type: 'session/restore-session', elements })
+    })
+  }, [session.id])
 
   const onLoad = (): void => {
     // dispatch({ type: 'session/register-socket', socket: io, id })
