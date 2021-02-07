@@ -1,3 +1,5 @@
 const withTM = require('next-transpile-modules')(['three', '@react-three/drei'])
 
-module.exports = withTM();
+module.exports = withTM({
+  distDir: 'build',
+});
