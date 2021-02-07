@@ -29,50 +29,28 @@ namespace NodePen.Compute
       Post["/grasshopper/solve"] = _ => TrySolveGrasshopperDefinition(Context);
     }
 
-    async static Task<Response> TryCreateGrasshopperDefinition(NancyContext ctx)
+    static Response TryCreateGrasshopperDefinition(NancyContext ctx)
     {
-      var response = (Response)"Definition creation exceeded 5000ms limit.";
-      response.StatusCode = HttpStatusCode.BadRequest;
-
       try
       {
-        await Task.WhenAny(
-          Task.Run(() =>
-            {
-              response = NodePenRoutes.CreateGrasshopperDefinition(ctx);
-              response.StatusCode = HttpStatusCode.OK;
-            }),
-          Task.Delay(5000)
-          );
-        return response;
+        return NodePenRoutes.CreateGrasshopperDefinition(ctx);
       } catch (Exception e)
       {
-        response = (Response)e.Message;
+        var response = (Response)e.Message;
         response.StatusCode = HttpStatusCode.InternalServerError;
         return response;
       }
     }
 
-    async static Task<Response> TrySolveGrasshopperDefinition(NancyContext ctx)
+    static Response TrySolveGrasshopperDefinition(NancyContext ctx)
     {
-      var response = (Response)"Definition execution exceeded 5000ms limit.";
-      response.StatusCode = HttpStatusCode.BadRequest;
-
       try
       {
-        await Task.WhenAny(
-          Task.Run(() =>
-          {
-            response = NodePenRoutes.SolveGrasshopperDefinition(ctx);
-            response.StatusCode = HttpStatusCode.OK;
-          }),
-          Task.Delay(5000)
-          );
-        return response;
+        return NodePenRoutes.SolveGrasshopperDefinition(ctx);
       }
       catch (Exception e)
       {
-        response = (Response)e.Message;
+        var response = (Response)e.Message;
         response.StatusCode = HttpStatusCode.InternalServerError;
         return response;
       }

@@ -24,13 +24,40 @@ namespace NodePen.Compute.Routes
       public NodePenTemplate Template { get; set; }
 
       [JsonProperty("current")]
-      public dynamic current { get; set; }
+      public NodePenElementState Current { get; set; }
     }
 
     private class NodePenTemplate : GrasshopperComponent
     {
       [JsonProperty("type")]
       public string Type { get; set; }
+    }
+
+    private class NodePenElementState
+    {
+      [JsonProperty("position")]
+      public List<double> Position { get; set; }
+
+      [JsonProperty("sources")]
+      public Dictionary<string, List<NodePenElementSource>> Sources { get; set; }
+
+      [JsonProperty("inputs")]
+      public Dictionary<string, int> Inputs { get; set; }
+
+      [JsonProperty("outputs")]
+      public Dictionary<string, int> Outputs { get; set; }
+
+      [JsonProperty("values")]
+      public dynamic Values { get; set; }
+    }
+
+    private class NodePenElementSource
+    {
+      [JsonProperty("element")]
+      public string Element { get; set; }
+
+      [JsonProperty("parameter")]
+      public string Parameter { get; set; }
     }
 
     public static Response CreateGrasshopperDefinition(NancyContext ctx)
@@ -45,7 +72,7 @@ namespace NodePen.Compute.Routes
       // In first pass, create all instances
       config.ForEach(element =>
       {
-        var template = proxies.FirstOrDefault(proxy => proxy.Guid.ToString() == element.Template.Guid.ToString());
+        var template = proxies.FirstOrDefault(proxy => proxy.Guid.ToString() == element.Template.Guid);
 
         if (template == null)
         {
@@ -58,10 +85,10 @@ namespace NodePen.Compute.Routes
           case "static-component":
             {
               var component = template.CreateInstance() as IGH_Component;
-              component.NewInstanceGuid(new Guid(element.Id.ToString()));
+              component.NewInstanceGuid(new Guid(element.Id));
 
-              var inputInstanceIds = (element.current.inputs as JObject).Properties().Select(p => p.Name).ToList();
-              var outputInstanceIds = (element.current.outputs as JObject).Properties().Select(p => p.Name).ToList();
+              var inputInstanceIds = element.Current.Inputs.Keys.ToList();
+              var outputInstanceIds = element.Current.Outputs.Keys.ToList();
 
               for (var i = 0; i < component.Params.Input.Count; i++)
               {
@@ -75,8 +102,8 @@ namespace NodePen.Compute.Routes
                 instanceOutputParam.NewInstanceGuid(new Guid(outputInstanceIds[i]));
               }
 
-              var x = Convert.ToSingle(element.current.position[0].ToString());
-              var y = Convert.ToSingle(element.current.position[1].ToString()) * -1;
+              var x = Convert.ToSingle(element.Current.Position[0]);
+              var y = Convert.ToSingle(element.Current.Position[1]) * -1;
 
               component.Attributes.Pivot = new PointF(x, y);
 
@@ -86,12 +113,12 @@ namespace NodePen.Compute.Routes
           case "static-parameter":
             {
               var parameter = template.CreateInstance() as IGH_Param;
-              parameter.NewInstanceGuid(new Guid(element.Id.ToString()));
+              parameter.NewInstanceGuid(new Guid(element.Id));
 
               ghdoc.AddObject(parameter, false);
 
-              var x = Convert.ToSingle(element.current.position[0].ToString());
-              var y = Convert.ToSingle(element.current.position[1].ToString());
+              var x = Convert.ToSingle(element.Current.Position[0]);
+              var y = Convert.ToSingle(element.Current.Position[1]);
 
               // Attributes appear to be null before adding to document
               ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.Id.ToString()).Attributes.Pivot = new PointF(x, y);
@@ -102,158 +129,156 @@ namespace NodePen.Compute.Routes
       });
 
       // In second pass, assign any sources
-      config.ForEach(element =>
-      {
-        var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString());
+      //config.ForEach(element =>
+      //{
+      //  var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString());
 
-        switch (element.Template.Type.ToString())
-        {
-          case "static-component":
-            {
-              var componentInstance = instance as IGH_Component;
+      //  switch (element.Template.Type.ToString())
+      //  {
+      //    case "static-component":
+      //      {
+      //        var componentInstance = instance as IGH_Component;
 
-              JObject inputs = element.current.sources;
+      //        element.Current.Sources.Keys.ToList().ForEach(inputParameterId =>
+      //        {
+      //          element.Current.Sources.TryGetValue(inputParameterId, out var sources);
+      //          var sources = element.Current.Sources
+      //          var sources = (element.current.sources as JObject).GetValue(instanceInputId).ToObject<List<dynamic>>();
 
-              inputs.Properties().ToList().ForEach(prop =>
-              {
-                var instanceInputId = prop.Name;
+      //          sources.ForEach(source =>
+      //          {
+      //            var sourceElementInstanceId = source.element.ToString();
+      //            var sourceElementParameterInstanceId = source.parameter.ToString();
 
-                var sources = (element.current.sources as JObject).GetValue(instanceInputId).ToObject<List<dynamic>>();
+      //            // Grab component input instance
+      //            var instanceInput = componentInstance.Params.Input.First(input => input.InstanceGuid.ToString() == instanceInputId);
 
-                sources.ForEach(source =>
-                {
-                  var sourceElementInstanceId = source.element.ToString();
-                  var sourceElementParameterInstanceId = source.parameter.ToString();
+      //            if (sourceElementParameterInstanceId == "output")
+      //            {
+      //              // Source is a parameter, add directly
+      //              var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
 
-                  // Grab component input instance
-                  var instanceInput = componentInstance.Params.Input.First(input => input.InstanceGuid.ToString() == instanceInputId);
+      //              instanceInput.Sources.Add(sourceInstance);
+      //            }
+      //            else
+      //            {
+      //              // Grab source component
+      //              var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
+      //              var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
 
-                  if (sourceElementParameterInstanceId == "output")
-                  {
-                    // Source is a parameter, add directly
-                    var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
+      //              instanceInput.Sources.Add(sourceInstanceParameter);
+      //            }
+      //          });
 
-                    instanceInput.Sources.Add(sourceInstance);
-                  }
-                  else
-                  {
-                    // Grab source component
-                    var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
-                    var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
+      //        });
+      //        break;
+      //      }
+      //    case "static-parameter":
+      //      {
+      //        var parameterInstance = instance as IGH_Param;
 
-                    instanceInput.Sources.Add(sourceInstanceParameter);
-                  }
-                });
+      //        var sources = (element.current.sources as JObject).GetValue("input").ToObject<List<dynamic>>();
 
-              });
-              break;
-            }
-          case "static-parameter":
-            {
-              var parameterInstance = instance as IGH_Param;
+      //        sources.ForEach(source =>
+      //        {
+      //          var sourceElementInstanceId = source.element.ToString();
+      //          var sourceElementParameterInstanceId = source.parameter.ToString();
 
-              var sources = (element.current.sources as JObject).GetValue("input").ToObject<List<dynamic>>();
+      //          if (sourceElementParameterInstanceId == "output")
+      //          {
+      //            // Source is a parameter, add directly
+      //            var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
 
-              sources.ForEach(source =>
-              {
-                var sourceElementInstanceId = source.element.ToString();
-                var sourceElementParameterInstanceId = source.parameter.ToString();
+      //            parameterInstance.Sources.Add(sourceInstance);
+      //          }
+      //          else
+      //          {
+      //            // Grab source component
+      //            var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
+      //            var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
 
-                if (sourceElementParameterInstanceId == "output")
-                {
-                  // Source is a parameter, add directly
-                  var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
-
-                  parameterInstance.Sources.Add(sourceInstance);
-                }
-                else
-                {
-                  // Grab source component
-                  var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
-                  var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
-
-                  parameterInstance.Sources.Add(sourceInstanceParameter);
-                }
-              });
-              break;
-            }
-        }
-      });
+      //            parameterInstance.Sources.Add(sourceInstanceParameter);
+      //          }
+      //        });
+      //        break;
+      //      }
+      //  }
+      //});
 
       // In third pass, assign any parameter values
-      config.ForEach(element =>
-      {
-        if (element.Template.Type.ToString() != "static-parameter")
-        {
-          // TODO: Handle component values too
-          return;
-        }
+      //config.ForEach(element =>
+      //{
+      //  if (element.Template.Type.ToString() != "static-parameter")
+      //  {
+      //    // TODO: Handle component values too
+      //    return;
+      //  }
 
-        if (element.Template.Name.ToString() != "Number")
-        {
-          // TODO: Handle different param types
-          return;
-        }
+      //  if (element.Template.Name.ToString() != "Number")
+      //  {
+      //    // TODO: Handle different param types
+      //    return;
+      //  }
 
-        var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString()) as Param_Number;
+      //  var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString()) as Param_Number;
 
-        JObject values = element.current.values;
-        var tree = new GH_Structure<GH_Number>();
+      //  JObject values = element.current.values;
+      //  var tree = new GH_Structure<GH_Number>();
 
-        values.Properties().ToList().ForEach(prop =>
-        {
-          var pathString = prop.Name;
-          var pathIndices = pathString.Replace("{", "").Replace("}", "").Split(';').Select(num => Convert.ToInt32(num)).ToArray();
+      //  values.Properties().ToList().ForEach(prop =>
+      //  {
+      //    var pathString = prop.Name;
+      //    var pathIndices = pathString.Replace("{", "").Replace("}", "").Split(';').Select(num => Convert.ToInt32(num)).ToArray();
 
-          var branch = new GH_Path(pathIndices);
+      //    var branch = new GH_Path(pathIndices);
 
-          var pathValues = (element.current.values as JObject).GetValue(pathString).ToObject<List<dynamic>>();
+      //    var pathValues = (element.current.values as JObject).GetValue(pathString).ToObject<List<dynamic>>();
 
-          for (var i = 0; i < pathValues.Count; i++)
-          {
-            var pathValue = pathValues[i];
-            var sourceType = pathValue.from.ToString();
+      //    for (var i = 0; i < pathValues.Count; i++)
+      //    {
+      //      var pathValue = pathValues[i];
+      //      var sourceType = pathValue.from.ToString();
 
-            if (sourceType != "user")
-            {
-              // Value is computed, do not set as an override
-              // TODO: Should the api sanitize element values before sending them to rhino?
-              return;
-            }
+      //      if (sourceType != "user")
+      //      {
+      //        // Value is computed, do not set as an override
+      //        // TODO: Should the api sanitize element values before sending them to rhino?
+      //        return;
+      //      }
 
-            switch (pathValue.type.ToString())
-            {
-              case "number":
-                {
-                  var numberParam = instance as Param_Number;
+      //      switch (pathValue.type.ToString())
+      //      {
+      //        case "number":
+      //          {
+      //            var numberParam = instance as Param_Number;
 
-                  double value = Convert.ToDouble(pathValue.data.ToString());
+      //            double value = Convert.ToDouble(pathValue.data.ToString());
 
-                  var number = new GH_Number(value);
+      //            var number = new GH_Number(value);
 
-                  tree.Insert(number, branch, i);
+      //            tree.Insert(number, branch, i);
 
-                  break;
-                }
-            }
-          }
-        });
+      //            break;
+      //          }
+      //      }
+      //    }
+      //  });
 
-        instance.SetPersistentData(tree);
-      });
+      //  instance.SetPersistentData(tree);
+      //});
 
-      // var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
+      var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
 
       var archive = new GH_Archive();
       archive.AppendObject(ghdoc, "Definition");
-      // archive.Path = path;
-      // archive.WriteToFile(path, true, false);
+      archive.Path = path;
+      archive.WriteToFile(path, true, false);
 
-      var bytes = System.Text.Encoding.UTF8.GetBytes(archive.Serialize_Xml());
+      var xml = archive.Serialize_Xml();
+
+      var bytes = System.Text.Encoding.UTF8.GetBytes(xml);
 
       var data = Convert.ToBase64String(bytes);
-
-      Console.WriteLine(data);
 
       var response = (Response)data;
       response.StatusCode = Nancy.HttpStatusCode.OK;
