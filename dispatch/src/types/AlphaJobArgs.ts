@@ -6,5 +6,5 @@ export type AlphaJobArgs =
       type: 'solution'
       sessionId: string
       solutionId: string
-      graph: Glasshopper.Element.Base[]
+      graph: { [key: string]: any }
     }

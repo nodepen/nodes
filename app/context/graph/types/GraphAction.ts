@@ -3,7 +3,7 @@ import { Grasshopper, Glasshopper } from 'glib'
 export type GraphAction =
   | { type: 'demo' }
   | { type: 'session/load-components'; components: Grasshopper.Component[] }
-  | { type: 'session/restore-session'; elements: Glasshopper.Element.Base[] }
+  | { type: 'session/restore-session'; elements: string }
   | { type: 'session/expire-solution' }
   | { type: 'session/set-ready' }
   | { type: 'graph/register-camera'; ref: React.MutableRefObject<HTMLDivElement> }

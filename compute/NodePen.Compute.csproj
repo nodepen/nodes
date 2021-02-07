@@ -52,10 +52,13 @@
     <Compile Include="Logging.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ResthopperEndpoints.cs" />
+    <Compile Include="Endpoints.cs" />
+    <Compile Include="Routes\CreateGrasshopperDefinition.cs" />
     <Compile Include="Routes\GetGrasshopperAssemblies.cs" />
+    <Compile Include="Routes\SolveGrasshopperDefinition.cs" />
     <Compile Include="Types\GrasshopperComponent.cs" />
     <Compile Include="Types\GrasshopperComponentParameter.cs" />
+    <Compile Include="Types\Solution.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

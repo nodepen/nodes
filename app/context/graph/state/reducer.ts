@@ -36,12 +36,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.preflight.getSession = true
 
-      const graph = elements.reduce((map, element) => {
-        map[element.id] = element
-        return map
-      }, {})
-
-      state.elements = graph
+      state.elements = JSON.parse(elements)
 
       return { ...state }
     }

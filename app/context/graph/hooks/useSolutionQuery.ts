@@ -42,7 +42,7 @@ export const useSolutionQuery = (session: string, target: string, store: GraphSt
       variables: {
         sessionId: session,
         solutionId: target,
-        graph: JSON.stringify(Object.values(store.elements)),
+        graph: JSON.stringify(store.elements),
       },
     })
   }, [waitingFor])

@@ -43,7 +43,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       return
     }
 
-    const getCurrentGraph = async (sessionId: string): Promise<Glasshopper.Element.Base[]> => {
+    const getCurrentGraph = async (sessionId: string): Promise<string> => {
       const { data } = await client.query({
         query: SESSION_CURRENT_GRAPH,
         variables: {
@@ -51,7 +51,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
         },
       })
 
-      const elements = JSON.parse(data.getSessionCurrentGraph)
+      const elements = data.getSessionCurrentGraph
 
       return elements
     }

@@ -22,15 +22,26 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const start = Date.now()
       db.hset(solutionKey, 'started_at', new Date(start).toISOString())
 
+      console.log({ graph })
+
       // Store json in redis
       const jsonkey = `${solutionKey}:json`
       db.set(jsonkey, JSON.stringify(graph))
 
       // Request a ghx graph be created
+      const elements = Object.values(graph).filter(
+        (el) =>
+          el.template.type === 'static-component' ||
+          el.template.type === 'static-parameter'
+      )
+
+      console.log({ elements })
       const { data: ghx } = await axios.post(
         `${COMPUTE}/grasshopper/graph`,
-        graph
+        elements
       )
+
+      console.log({ ghx })
 
       // Store ghx graph
       const ghxkey = `${solutionKey}:ghx`
@@ -42,6 +53,8 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
         ghx
       )
       console.log(solution)
+
+      // Store solution stats and messages
 
       // Batch store solution items
 
