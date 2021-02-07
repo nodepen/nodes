@@ -22,7 +22,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
   // const parameterCount = Object.keys(element.current[mode === 'input' ? 'inputs' : 'outputs']).length
   const parameter = element.template[mode === 'input' ? 'inputs' : 'outputs'][parameterIndex]
 
-  const { nickName } = parameter
+  const { nickname } = parameter
 
   const handlePointerEnter = (): void => {
     dispatch({ type: 'graph/wire/capture-live-wire', targetElement: source.element, targetParameter: source.parameter })
@@ -46,7 +46,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
         <div
           className={`${mode === 'input' ? 'ml-1' : 'mr-1'} mt-1 mb-1 font-panel font-semibold text-base select-none`}
         >
-          {nickName.toUpperCase()}
+          {nickname.toUpperCase()}
         </div>
       </div>
     </div>

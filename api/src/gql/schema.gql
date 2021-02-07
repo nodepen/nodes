@@ -1,6 +1,6 @@
 type Query {
   getUser(id: String!): UserManifest!
-  getComputeConfiguration(): [GrasshopperComponent]!
+  getComputeConfiguration: [GrasshopperComponent]!
 }
 
 type Mutation {

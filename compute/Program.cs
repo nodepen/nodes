@@ -156,7 +156,7 @@ namespace NodePen.Compute
 
         private byte[] LoadFavIcon()
         {
-            using (var resourceStream = GetType().Assembly.GetManifestResourceStream("compute.geometry.favicon.ico"))
+            using (var resourceStream = GetType().Assembly.GetManifestResourceStream("NodePen.Compute.favicon.ico"))
             {
                 var memoryStream = new System.IO.MemoryStream();
                 resourceStream.CopyTo(memoryStream);
