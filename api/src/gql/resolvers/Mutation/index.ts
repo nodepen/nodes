@@ -1,5 +1,5 @@
-import { updateConfiguration } from './updateConfiguration'
+import { newSolution } from './newSolution'
 
 export const Mutation = {
-  updateConfiguration,
+  newSolution,
 }

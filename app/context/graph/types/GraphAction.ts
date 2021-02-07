@@ -6,6 +6,7 @@ export type GraphAction =
   | { type: 'session/register-socket'; socket: Socket; id: string }
   | { type: 'session/load-components'; components: Grasshopper.Component[] }
   | { type: 'session/restore-session'; elements: string }
+  | { type: 'session/new-solution' }
   | { type: 'session/set-ready' }
   | { type: 'graph/register-camera'; ref: React.MutableRefObject<HTMLDivElement> }
   | { type: 'graph/register-element'; ref: React.MutableRefObject<HTMLDivElement | HTMLButtonElement>; id: string }

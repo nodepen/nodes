@@ -4,11 +4,12 @@ export const schema = gql`
   type Query {
     getComputeConfiguration: [GrasshopperComponent]!
     getSession(id: String!): SessionManifest!
+    getSolutionStatus(sessionId: String!, solutionId: String!): SolutionStatus
     getUser(id: String!): UserManifest!
   }
 
   type Mutation {
-    updateConfiguration: String
+    newSolution(sessionId: String!, solutionId: String!, graph: String!): String
     setConfiguration(config: String): String
   }
 
@@ -20,6 +21,12 @@ export const schema = gql`
   type SessionManifest {
     history: [String]!
     current: String
+  }
+
+  type SolutionStatus {
+    status: String!
+    started_at: String
+    finished_at: String
   }
 
   type GrasshopperComponent {

@@ -14,7 +14,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
 
   const [store, dispatch] = useReducer(reducer, initial)
 
-  const { data: config } = useQuery<Grasshopper.Component[]>(COMPUTE_CONFIGURATION)
+  const { data: config } = useQuery(COMPUTE_CONFIGURATION)
 
   useEffect(() => {
     if (store.preflight.getLibrary) {
@@ -23,7 +23,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     }
 
     if (config) {
-      dispatch({ type: 'session/load-components', components: config })
+      dispatch({ type: 'session/load-components', components: config.getComputeConfiguration })
     }
   }, [config])
 
@@ -52,15 +52,15 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
 
   useEffect(onLoad, [])
 
-  useEffect(() => {
-    if (store.ready) {
-      return
-    }
+  // useEffect(() => {
+  //   if (store.ready) {
+  //     return
+  //   }
 
-    if (!Object.values(store.preflight).some((done) => !done)) {
-      dispatch({ type: 'session/set-ready' })
-    }
-  })
+  //   if (!Object.values(store.preflight).some((done) => !done)) {
+  //     dispatch({ type: 'session/set-ready' })
+  //   }
+  // })
 
   const manager = { store, dispatch }
 

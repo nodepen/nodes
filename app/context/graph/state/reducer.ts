@@ -62,6 +62,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'session/new-solution': {
+      state.solution.id = newGuid()
+      return { ...state }
+    }
     case 'session/set-ready': {
       state.ready = true
       return { ...state }
