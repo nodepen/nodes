@@ -4,6 +4,7 @@ import { context as Context, reducer, initial } from './state'
 import { useSessionManager } from '~/context/session'
 import { useQuery } from '@apollo/client'
 import { COMPUTE_CONFIGURATION } from '@/queries'
+import { useSolutionQuery } from './hooks'
 
 type GraphManagerProps = {
   children?: React.ReactNode
@@ -26,6 +27,8 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       dispatch({ type: 'session/load-components', components: config.getComputeConfiguration })
     }
   }, [config])
+
+  useSolutionQuery(session.id, store.solution.id)
 
   const onLoad = (): void => {
     // dispatch({ type: 'session/register-socket', socket: io, id })

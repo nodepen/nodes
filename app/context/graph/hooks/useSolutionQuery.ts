@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { useQuery } from '@apollo/client'
-import { NEW_SOLUTION } from '@/queries'
+import { useQuery, useApolloClient } from '@apollo/client'
+import { NEW_SOLUTION, SOLUTION_STATUS } from '@/queries'
 
 /**
  *
@@ -9,22 +9,63 @@ import { NEW_SOLUTION } from '@/queries'
 export const useSolutionQuery = (session: string, target: string): void => {
   const [waitingFor, setWaitingFor] = useState(target)
 
-  // const { data, startPolling, stopPolling } = useQuery(NEW_SOLUTION, { variables: {
-  //   sessionId: session,
-  //   solutionId: target,
-  //   graph: JSON.stringify([]),
-  // }})
+  const client = useApolloClient()
+
+  const { data: solutionStatus, startPolling, stopPolling } = useQuery(SOLUTION_STATUS, {
+    variables: {
+      sessionId: session,
+      solutionId: waitingFor,
+    },
+  })
 
   useEffect(() => {
     if (target === waitingFor) {
-      console.log('🐍 Skipping useSolutionQuery become incoming target matches current.')
+      console.log('🐍 Skipping useSolutionQuery because incoming target matches current.')
       return
     }
 
     setWaitingFor(target)
     console.log(`Beginning polling for solution ${waitingFor}`)
-    // startPolling(500)
+    startPolling(500)
   }, [target])
+
+  useEffect(() => {
+    console.log('Value of `waitingFor` changed, triggering new solution.')
+
+    if (!session || !target) {
+      return
+    }
+
+    client.mutate({
+      mutation: NEW_SOLUTION,
+      variables: {
+        sessionId: session,
+        solutionId: target,
+        graph: JSON.stringify([]),
+      },
+    })
+  }, [waitingFor])
+
+  useEffect(() => {
+    console.log('New solution status polling data:')
+
+    if (!solutionStatus) {
+      console.log(undefined)
+      return
+    }
+
+    console.log(solutionStatus)
+
+    const status = solutionStatus?.getSolutionStatus?.status
+
+    if (status === 'SUCEEDED' || status === 'FAILED') {
+      console.log(`Stopping polling from solution ${waitingFor}`)
+
+      // Handle success or failure here!
+
+      stopPolling()
+    }
+  }, [solutionStatus])
 
   return
 }
