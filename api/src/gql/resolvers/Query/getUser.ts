@@ -1,12 +1,8 @@
-const graphs = async (): Promise<string[]> => {
-  return ['a', 'b']
+type GetUserArgs = {
+  id: string
 }
 
-const session = async (): Promise<string | undefined> => {
-  return 'session-id'
-}
-
-export const getUser = {
-  graphs,
-  session,
+export const getUser = async (args: GetUserArgs): Promise<any> => {
+  console.log(args)
+  return { args }
 }

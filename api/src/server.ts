@@ -1,17 +1,11 @@
 import fs from 'fs'
 import path from 'path'
-import express from 'express'
 import axios from 'axios'
 import { Grasshopper } from 'glib'
-import { gql } from './gql'
 import * as store from './store'
 import { db } from './db'
-
-const PORT = process.env.PORT || 4000
-
-const api = express()
-
-api.use('/graphql', gql)
+import { ApolloServer } from 'apollo-server'
+import { resolvers, schema } from './gql'
 
 const startup = async (): Promise<void> => {
   // Fetch grasshopper configuration from compute server
@@ -55,7 +49,12 @@ const startup = async (): Promise<void> => {
   })
 }
 
-startup().then(() => {
-  api.listen(PORT)
-  console.log(`api listening on port ${PORT}`)
-})
+const api = new ApolloServer({ typeDefs: schema, resolvers })
+
+startup()
+  .then(() => {
+    return api.listen()
+  })
+  .then(({ url }) => {
+    console.log(`api ready at ${url}`)
+  })

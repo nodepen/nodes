@@ -1,11 +1,14 @@
 import React from 'react'
 import { NextPage } from 'next'
 import { Layout, Graph } from '@/components'
+import { GraphManager } from '~/context/graph'
 
 const AlphaGraphPage: NextPage = () => {
   return (
     <Layout.Root>
-      <Graph.Container />
+      <GraphManager>
+        <Graph.Container />
+      </GraphManager>
     </Layout.Root>
   )
 }

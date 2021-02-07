@@ -1,16 +1,22 @@
 import React from 'react'
 import type { AppProps } from 'next/app'
 import { SessionManager } from '~/context/session'
-import { GraphManager } from '~/context/graph'
+
+import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
 
 import '../styles/tailwind.css'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
+  const client = new ApolloClient({
+    uri: process.env.NP_API_URL ?? 'http://localhost:4000/graphql',
+    cache: new InMemoryCache(),
+  })
+
   return (
-    <SessionManager>
-      <GraphManager>
+    <ApolloProvider client={client}>
+      <SessionManager>
         <Component {...pageProps} />
-      </GraphManager>
+      </SessionManager>
       <style global jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nova+Mono&display=swap');
@@ -36,7 +42,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           outline: none;
         }
       `}</style>
-    </SessionManager>
+    </ApolloProvider>
   )
 }
 

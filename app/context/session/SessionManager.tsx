@@ -1,31 +1,34 @@
 import React, { useMemo, useEffect } from 'react'
-import { io } from 'socket.io-client'
 import { context as Context } from './state/context'
-import { newGuid } from '~/utils'
+import { SessionStore } from './types'
+import { newGuid } from '@/utils'
+import { useQuery } from '@apollo/client'
+import { USER_SESSION } from '@/queries'
 
 type SessionManagerProps = {
   children?: React.ReactNode
 }
 
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
-  const id = useMemo(() => (process.browser ? window?.localStorage?.getItem('gl-session') ?? newGuid() : ''), [])
+  // TODO: Figure out auth at some point
+  const id = useMemo(() => (process.browser ? window?.localStorage?.getItem('np:user') ?? newGuid() : ''), [])
+
+  const { data } = useQuery(USER_SESSION, { variables: { id } })
 
   useEffect(() => {
-    window.localStorage.setItem('gl-session', id)
+    window.localStorage.setItem('np:user', id)
   }, [])
 
-  // const socket = io('https://api.glasshopper.io')
-  const socket = io('localhost:3100')
+  const session: SessionStore = {
+    user: {
+      id,
+      token: '',
+      name: 'chuck',
+    },
+    session: {
+      id: data?.getUser?.session,
+    },
+  }
 
-  socket.on('connect', () => {
-    console.log('Connection made!')
-  })
-
-  socket.on('handshake', (message) => {
-    console.log(message)
-  })
-
-  const store = { io: socket, id }
-
-  return <Context.Provider value={store}>{socket ? children : null}</Context.Provider>
+  return <Context.Provider value={session}>{children}</Context.Provider>
 }

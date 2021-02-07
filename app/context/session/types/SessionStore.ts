@@ -1,6 +1,10 @@
-import { Socket } from 'socket.io-client'
-
 export type SessionStore = {
-  io: Socket
-  id: string
+  session?: {
+    id: string
+  }
+  user?: {
+    id: string
+    token: string
+    name: string
+  }
 }
