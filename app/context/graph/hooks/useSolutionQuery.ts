@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useApolloClient } from '@apollo/client'
 import { NEW_SOLUTION, SOLUTION_STATUS } from '@/queries'
+import { GraphStore } from '../types'
 
 /**
  *
  * @param target The id of the 'current' solution we care about.
  */
-export const useSolutionQuery = (session: string, target: string): void => {
+export const useSolutionQuery = (session: string, target: string, store: GraphStore): void => {
   const [waitingFor, setWaitingFor] = useState(target)
 
   const client = useApolloClient()
@@ -41,7 +42,7 @@ export const useSolutionQuery = (session: string, target: string): void => {
       variables: {
         sessionId: session,
         solutionId: target,
-        graph: JSON.stringify([]),
+        graph: JSON.stringify(Object.values(store.elements)),
       },
     })
   }, [waitingFor])

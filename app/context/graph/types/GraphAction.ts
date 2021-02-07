@@ -42,4 +42,3 @@ export type GraphAction =
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan'; dx: number; dy: number }
-  | { type: 'debug/refresh-solution' }

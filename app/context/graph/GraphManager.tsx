@@ -29,7 +29,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     }
   }, [config])
 
-  useSolutionQuery(session.id, store.solution.id)
+  useSolutionQuery(session.id, store.solution.id, store)
 
   useEffect(() => {
     if (!session.id) {
@@ -88,15 +88,15 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
 
   useEffect(onLoad, [])
 
-  // useEffect(() => {
-  //   if (store.ready) {
-  //     return
-  //   }
+  useEffect(() => {
+    if (store.ready) {
+      return
+    }
 
-  //   if (!Object.values(store.preflight).some((done) => !done)) {
-  //     dispatch({ type: 'session/set-ready' })
-  //   }
-  // })
+    if (!Object.values(store.preflight).some((done) => !done)) {
+      dispatch({ type: 'session/set-ready' })
+    }
+  })
 
   const manager = { store, dispatch }
 

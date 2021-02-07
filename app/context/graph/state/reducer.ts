@@ -632,10 +632,6 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
-    case 'debug/refresh-solution': {
-      expireSolution(state)
-      return state
-    }
   }
 }
 
