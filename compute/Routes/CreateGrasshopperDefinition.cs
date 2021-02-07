@@ -64,7 +64,6 @@ namespace NodePen.Compute.Routes
     {
       var body = ctx.Request.Body.AsString();
       var config = JsonConvert.DeserializeObject<List<NodePenElement>>(body);
-      // Console.WriteLine(config);
 
       var ghdoc = new GH_Document();
       var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies as List<IGH_ObjectProxy>;
@@ -129,81 +128,79 @@ namespace NodePen.Compute.Routes
       });
 
       // In second pass, assign any sources
-      //config.ForEach(element =>
-      //{
-      //  var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString());
+      config.ForEach(element =>
+      {
+        var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString());
 
-      //  switch (element.Template.Type.ToString())
-      //  {
-      //    case "static-component":
-      //      {
-      //        var componentInstance = instance as IGH_Component;
+        switch (element.Template.Type.ToString())
+        {
+          case "static-component":
+            {
+              var componentInstance = instance as IGH_Component;
 
-      //        element.Current.Sources.Keys.ToList().ForEach(inputParameterId =>
-      //        {
-      //          element.Current.Sources.TryGetValue(inputParameterId, out var sources);
-      //          var sources = element.Current.Sources
-      //          var sources = (element.current.sources as JObject).GetValue(instanceInputId).ToObject<List<dynamic>>();
+              element.Current.Sources.Keys.ToList().ForEach(instanceInputId =>
+              {
+                element.Current.Sources.TryGetValue(instanceInputId, out var sources);
 
-      //          sources.ForEach(source =>
-      //          {
-      //            var sourceElementInstanceId = source.element.ToString();
-      //            var sourceElementParameterInstanceId = source.parameter.ToString();
+                sources.ForEach(source =>
+                {
+                  var sourceElementInstanceId = source.Element;
+                  var sourceElementParameterInstanceId = source.Parameter;
 
-      //            // Grab component input instance
-      //            var instanceInput = componentInstance.Params.Input.First(input => input.InstanceGuid.ToString() == instanceInputId);
+                  // Grab component input instance
+                  var instanceInput = componentInstance.Params.Input.First(input => input.InstanceGuid.ToString() == instanceInputId);
 
-      //            if (sourceElementParameterInstanceId == "output")
-      //            {
-      //              // Source is a parameter, add directly
-      //              var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
+                  if (sourceElementParameterInstanceId == "output")
+                  {
+                    // Source is a parameter, add directly
+                    var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
 
-      //              instanceInput.Sources.Add(sourceInstance);
-      //            }
-      //            else
-      //            {
-      //              // Grab source component
-      //              var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
-      //              var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
+                    instanceInput.Sources.Add(sourceInstance);
+                  }
+                  else
+                  {
+                    // Grab source component
+                    var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
+                    var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
 
-      //              instanceInput.Sources.Add(sourceInstanceParameter);
-      //            }
-      //          });
+                    instanceInput.Sources.Add(sourceInstanceParameter);
+                  }
+                });
 
-      //        });
-      //        break;
-      //      }
-      //    case "static-parameter":
-      //      {
-      //        var parameterInstance = instance as IGH_Param;
+              });
+              break;
+            }
+          case "static-parameter":
+            {
+              var parameterInstance = instance as IGH_Param;
 
-      //        var sources = (element.current.sources as JObject).GetValue("input").ToObject<List<dynamic>>();
+              element.Current.Sources.TryGetValue("input", out var sources);
 
-      //        sources.ForEach(source =>
-      //        {
-      //          var sourceElementInstanceId = source.element.ToString();
-      //          var sourceElementParameterInstanceId = source.parameter.ToString();
+              sources.ForEach(source =>
+              {
+                var sourceElementInstanceId = source.Element;
+                var sourceElementParameterInstanceId = source.Parameter;
 
-      //          if (sourceElementParameterInstanceId == "output")
-      //          {
-      //            // Source is a parameter, add directly
-      //            var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
+                if (sourceElementParameterInstanceId == "output")
+                {
+                  // Source is a parameter, add directly
+                  var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Param;
 
-      //            parameterInstance.Sources.Add(sourceInstance);
-      //          }
-      //          else
-      //          {
-      //            // Grab source component
-      //            var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
-      //            var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
+                  parameterInstance.Sources.Add(sourceInstance);
+                }
+                else
+                {
+                  // Grab source component
+                  var sourceInstance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == sourceElementInstanceId) as IGH_Component;
+                  var sourceInstanceParameter = sourceInstance.Params.Output.Find(param => param.InstanceGuid.ToString() == sourceElementParameterInstanceId);
 
-      //            parameterInstance.Sources.Add(sourceInstanceParameter);
-      //          }
-      //        });
-      //        break;
-      //      }
-      //  }
-      //});
+                  parameterInstance.Sources.Add(sourceInstanceParameter);
+                }
+              });
+              break;
+            }
+        }
+      });
 
       // In third pass, assign any parameter values
       //config.ForEach(element =>
@@ -267,12 +264,12 @@ namespace NodePen.Compute.Routes
       //  instance.SetPersistentData(tree);
       //});
 
-      var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
+      // var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
 
       var archive = new GH_Archive();
       archive.AppendObject(ghdoc, "Definition");
-      archive.Path = path;
-      archive.WriteToFile(path, true, false);
+      // archive.Path = path;
+      // archive.WriteToFile(path, true, false);
 
       var xml = archive.Serialize_Xml();
 
