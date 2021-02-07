@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace compute.geometry
+namespace NodePen.Compute
 {
     internal static class Env
     {

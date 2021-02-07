@@ -12,7 +12,7 @@ using Nancy.TinyIoc;
 using Serilog;
 using Topshelf;
 
-namespace compute.geometry
+namespace NodePen.Compute
 {
     class Program
     {

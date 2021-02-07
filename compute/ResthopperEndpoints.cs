@@ -14,103 +14,16 @@ using System.Reflection;
 using System.Linq;
 using System.Drawing;
 using Nancy.Extensions;
+using NodePen.Compute.Routes;
 
-namespace compute.geometry
+namespace NodePen.Compute
 {
-
-  [JsonObject(MemberSerialization.OptOut)]
-  public class ResthopperComponent
-  {
-    public string Guid { get; set; }
-    public string Name { get; set; }
-    public string NickName { get; set; }
-    public string Description { get; set; }
-    public string Category { get; set; }
-    public string Subcategory { get; set; }
-    public bool IsObsolete { get; set; }
-    public bool IsVariable { get; set; }
-    public string Icon { get; set; }
-    public List<ResthopperComponentParameter> Inputs { get; set; }
-    public List<ResthopperComponentParameter> Outputs { get; set; }
-
-    public string LibraryName { get; set; }
-
-    public ResthopperComponent()
-    {
-      Inputs = new List<ResthopperComponentParameter>();
-      Outputs = new List<ResthopperComponentParameter>();
-    }
-  }
-
-  [JsonObject(MemberSerialization.OptOut)]
-  public class ResthopperComponentParameter
-  {
-    public string Name { get; set; }
-    public string NickName { get; set; }
-    public string Description { get; set; }
-    public bool IsOptional { get; set; }
-    public string TypeName { get; set; }
-
-    public ResthopperComponentParameter(IGH_Param param)
-    {
-      Name = param.Name;
-      NickName = param.NickName;
-      Description = param.Description;
-      IsOptional = param.Optional;
-      TypeName = param.TypeName;
-    }
-  }
-
-  // Container classes from Resthopper javascript library.
-  public class GrasshopperDocument
-  {
-    public List<string> Targets { get; set; } = new List<string>();
-    public List<GrasshopperComponent> Components { get; set; } = new List<GrasshopperComponent>();
-  }
-
-  public class GrasshopperComponent
-  {
-    public string Name { get; set; }
-    public string Guid { get; set; }
-    public GrasshopperPosition Position { get; set; }
-    public List<GrasshopperParameter> Inputs = new List<GrasshopperParameter>();
-    public List<GrasshopperParameter> Outputs = new List<GrasshopperParameter>();
-  }
-
-  public class GrasshopperParameter
-  {
-    public string NickName { get; set; }
-    public string InstanceGuid { get; set; }
-    public List<string> Sources { get; set; } = new List<string>();
-    public string TypeName { get; set; }
-    public List<GrasshopperValue> Values { get; set; }
-  }
-
-  public class GrasshopperPosition
-  {
-    public double X { get; set; }
-    public double Y { get; set; }
-  }
-
-  public class GrasshopperValue
-  {
-    public List<int> Path { get; set; } = new List<int>();
-    public string Type { get; set; }
-    public dynamic Value { get; set; }
-  }
-
-  public class GrasshopperResult
-  {
-    public string Target { get; set; }
-    public List<GrasshopperValue> Data { get; set; } = new List<GrasshopperValue>();
-  }
-
   public class ResthopperEndpointsModule : Nancy.NancyModule
   {
 
     public ResthopperEndpointsModule(Nancy.Routing.IRouteCacheProvider routeCacheProvider)
     {
-      Get["/grasshopper"] = _ => TranspileGrasshopperAssemblies(Context);
+      Get["/grasshopper"] = _ => NodePenRoutes.GetGrasshopperAssemblies(Context);
       Post["/grasshopper/graph"] = _ => CreateGrasshopperDefinition(Context);
       Post["/grasshopper/solve"] = _ => SolveGrasshopperDefinition(Context);
     }
@@ -535,80 +448,5 @@ namespace compute.geometry
       return message;
     }
 
-    static Response TranspileGrasshopperAssemblies(NancyContext ctx)
-    {
-      var objs = new List<ResthopperComponent>();
-
-      // Convert ReadOnlyCollection of libraries to list for easy searching
-      var libraries = new List<GH_AssemblyInfo>();
-
-      var gha = Grasshopper.Instances.ComponentServer.Libraries;
-            Console.WriteLine(gha.Count);
-      for (int i = 0; i < gha.Count; i++)
-      {
-        libraries.Add(gha[i]);
-      }
-
-      // Convert Object Proxies to Resthopper Components
-      var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;
-
-      for (int i = 0; i < proxies.Count; i++)
-      {
-        var rc = new ResthopperComponent();
-        rc.Guid = proxies[i].Guid.ToString();
-        rc.Name = proxies[i].Desc.Name;
-        rc.NickName = proxies[i].Desc.NickName;
-        rc.Description = proxies[i].Desc.Description;
-        rc.Category = proxies[i].Desc.HasCategory ? proxies[i].Desc.Category : "";
-        rc.Subcategory = proxies[i].Desc.HasSubCategory ? proxies[i].Desc.SubCategory : "";
-        rc.IsObsolete = proxies[i].Obsolete;
-        rc.IsVariable = IsComponentVariable(proxies[i]);
-
-        var ms = new MemoryStream();
-        proxies[i].Icon.Save(ms, System.Drawing.Imaging.ImageFormat.Png);
-        var bytes = ms.ToArray();
-        rc.Icon = Convert.ToBase64String(bytes);
-
-        rc.LibraryName = libraries.Find(x => x.Id == proxies[i].LibraryGuid)?.Name ?? "Not found. :(";
-
-        var obj = proxies[i].CreateInstance() as IGH_Component;
-
-        if (obj != null)
-        {
-          var p = obj.Params;
-
-          //p.Input.Find(y => y.Name == "test").AddSource()
-
-          p.Input.ForEach(x => rc.Inputs.Add(new ResthopperComponentParameter(x)));
-          p.Output.ForEach(x => rc.Outputs.Add(new ResthopperComponentParameter(x)));
-        }
-
-        objs.Add(rc);
-      }
-      return JsonConvert.SerializeObject(objs);
-    }
-
-    static bool IsComponentVariable(IGH_ObjectProxy c)
-    {
-      try
-      {
-        var a = Assembly.LoadFrom(c.Location);
-
-        var assemblyType = a.GetTypes().FirstOrDefault(x => c.Type.ToString() == x.FullName);
-
-        if (assemblyType == null)
-        {
-          return false;
-        }
-
-        var res = assemblyType.GetTypeInfo().DeclaredMethods.Select(x => x.Name).ToList().Contains("CanInsertParameter");
-
-        return res;
-      }
-      catch (Exception e)
-      {
-        return false;
-      }
-    }
   }
 }

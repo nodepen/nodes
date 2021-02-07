@@ -1,6 +1,6 @@
 ﻿using Serilog;
 
-namespace compute.geometry
+namespace NodePen.Compute
 {
   static class Logging
   {

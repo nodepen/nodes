@@ -6,7 +6,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{01757ED0-58C4-47DA-926A-70ACD31B93E1}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <RootNamespace>compute.geometry</RootNamespace>
+    <RootNamespace>NodePen.Compute</RootNamespace>
     <AssemblyName>compute.geometry</AssemblyName>
     <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -53,6 +53,8 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResthopperEndpoints.cs" />
+    <Compile Include="Types\GrasshopperComponent.cs" />
+    <Compile Include="Types\GrasshopperComponentParameter.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

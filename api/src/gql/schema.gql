@@ -1,5 +1,6 @@
 type Query {
   getUser(id: String!): UserManifest!
+  getComputeConfiguration(): [GrasshopperComponent]!
 }
 
 type Mutation {
@@ -10,4 +11,27 @@ type Mutation {
 type UserManifest {
   graphs: [String]!
   session: String
+}
+
+type GrasshopperComponent {
+  guid: String!
+  name: String!
+  nickname: String!
+  description: String!
+  icon: String
+  libraryName: String!
+  category: String!
+  subcategory: String!
+  isObsolete: Boolean!
+  isVariable: Boolean!
+  inputs: [GrasshopperComponentParameter]!
+  outputs: [GrasshopperComponentParameter]!
+}
+
+type GrasshopperComponentParameter {
+  name: String!
+  nickname: String!
+  description: String!
+  type: String!
+  isOptional: Boolean!
 }
