@@ -2,8 +2,9 @@ import { gql } from 'apollo-server'
 
 export const schema = gql`
   type Query {
-    getUser(id: String!): UserManifest!
     getComputeConfiguration: [GrasshopperComponent]!
+    getSession(id: String!): SessionManifest!
+    getUser(id: String!): UserManifest!
   }
 
   type Mutation {
@@ -12,8 +13,13 @@ export const schema = gql`
   }
 
   type UserManifest {
-    graphs: [String]
-    session: String
+    graphs: [String]!
+    session: String!
+  }
+
+  type SessionManifest {
+    history: [String]!
+    current: String
   }
 
   type GrasshopperComponent {

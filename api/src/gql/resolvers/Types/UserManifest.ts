@@ -6,17 +6,12 @@ const graphs = async (parent: any): Promise<string[]> => {
   const key = `user:${id}:graphs`
 
   return new Promise<string[]>((resolve, reject) => {
-    db.get(key, (err, reply: string) => {
+    db.lrange(key, 0, -1, (err, reply: string[]) => {
       if (err) {
         reject(err)
       }
 
-      if (!reply) {
-        // Return an empty array, since one is expected
-        resolve([])
-      }
-
-      resolve(['b', 'c'])
+      resolve(reply ?? [])
     })
   })
 }
