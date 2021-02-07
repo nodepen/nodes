@@ -16,6 +16,8 @@ export const newSolution = async (
 
   await createSolutionStatus(sessionId, solutionId)
 
+  await addSolutionToSession(sessionId, solutionId)
+
   const { data } = await axios.post(
     process.env.NP_DISPATCH_URL ?? 'http://localhost:4100/new/solution',
     { sessionId, solutionId, graph: elements }
@@ -34,5 +36,20 @@ const createSolutionStatus = async (
     db.hset(key, 'status', 'WAITING', (err, reply) => {
       resolve()
     })
+  })
+}
+
+const addSolutionToSession = async (
+  sessionId: string,
+  solutionId: string
+): Promise<void> => {
+  const root = `session:${sessionId}`
+
+  return new Promise<void>((resolve, reject) => {
+    const batch = db.multi()
+
+    batch.lpush(`${root}:history`, solutionId)
+
+    batch.exec((err, res) => [resolve()])
   })
 }

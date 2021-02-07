@@ -25,7 +25,7 @@ export const useSolutionQuery = (session: string, target: string): void => {
     }
 
     setWaitingFor(target)
-    console.log(`Beginning polling for solution ${waitingFor}`)
+    console.log(`Beginning polling for solution ${target}`)
     startPolling(500)
   }, [target])
 
@@ -58,8 +58,8 @@ export const useSolutionQuery = (session: string, target: string): void => {
 
     const status = solutionStatus?.getSolutionStatus?.status
 
-    if (status === 'SUCEEDED' || status === 'FAILED') {
-      console.log(`Stopping polling from solution ${waitingFor}`)
+    if (status === 'SUCCEEDED' || status === 'FAILED') {
+      console.log(`Done waiting for solution ${waitingFor}`)
 
       // Handle success or failure here!
 
