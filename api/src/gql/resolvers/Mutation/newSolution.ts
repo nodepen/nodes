@@ -28,10 +28,10 @@ const createSolutionStatus = async (
   sessionId: string,
   solutionId: string
 ): Promise<void> => {
-  const key = `session:${sessionId}:solution:${solutionId}`
+  const key = `session:${sessionId}:graph:${solutionId}`
 
   return new Promise<void>((resolve, reject) => {
-    db.hset(key, { status: 'WAITING' }, (err, reply) => {
+    db.hset(key, 'status', 'WAITING', (err, reply) => {
       resolve()
     })
   })

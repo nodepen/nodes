@@ -1,6 +1,11 @@
 import express from 'express'
 import parser from 'body-parser'
 import { createJob } from './utils'
+import redis from 'async-redis'
+
+export const db = process.env.NP_DB
+  ? redis.createClient(process.env.NP_DB)
+  : redis.createClient()
 
 const dispatch = express()
 dispatch.use(parser.json())
