@@ -20,14 +20,5 @@ namespace NodePen.Compute
 
     [JsonProperty("isOptional")]
     public bool IsOptional { get; set; }
-
-    public GrasshopperComponentParameter(IGH_Param param)
-    {
-      Name = param.Name;
-      NickName = param.NickName;
-      Description = param.Description;
-      IsOptional = param.Optional;
-      TypeName = param.TypeName;
-    }
   }
 }

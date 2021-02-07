@@ -57,8 +57,29 @@ namespace NodePen.Compute.Routes
 
           //p.Input.Find(y => y.Name == "test").AddSource()
 
-          p.Input.ForEach(x => rc.Inputs.Add(new GrasshopperComponentParameter(x)));
-          p.Output.ForEach(x => rc.Outputs.Add(new GrasshopperComponentParameter(x)));
+          p.Input.ForEach(param => {
+            var input = new GrasshopperComponentParameter()
+            {
+              Name = param.Name,
+              NickName = param.NickName,
+              Description = param.Description,
+              IsOptional = param.Optional,
+              TypeName = param.TypeName,
+            };
+            rc.Inputs.Add(input);
+          });
+
+          p.Output.ForEach(param => {
+            var output = new GrasshopperComponentParameter()
+            {
+              Name = param.Name,
+              NickName = param.NickName,
+              Description = param.Description,
+              IsOptional = param.Optional,
+              TypeName = param.TypeName,
+            };
+            rc.Outputs.Add(output);
+          });
         }
 
         objs.Add(rc);

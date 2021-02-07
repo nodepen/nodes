@@ -18,6 +18,7 @@ const startup = async (): Promise<void> => {
 
     installed.push(...data)
   } catch {
+    console.log('Using backup config!')
     const backupConfig: Grasshopper.Component[] = JSON.parse(
       fs
         .readFileSync(path.join(__dirname, 'data', 'fallback_config.json'))
