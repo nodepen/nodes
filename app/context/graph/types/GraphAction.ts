@@ -1,11 +1,11 @@
 import { Grasshopper, Glasshopper } from 'glib'
-import { Socket } from 'socket.io-client'
 
 export type GraphAction =
   | { type: 'demo' }
-  | { type: 'session/register-socket'; socket: Socket; id: string }
   | { type: 'session/load-components'; components: Grasshopper.Component[] }
   | { type: 'session/restore-session'; elements: string }
+  | { type: 'session/expire-solution' }
+  | { type: 'session/declare-solution'; id: string }
   | { type: 'session/set-ready' }
   | { type: 'graph/register-camera'; ref: React.MutableRefObject<HTMLDivElement> }
   | { type: 'graph/register-element'; ref: React.MutableRefObject<HTMLDivElement | HTMLButtonElement>; id: string }
@@ -32,6 +32,7 @@ export type GraphAction =
   | { type: 'graph/values/prepare-solution'; status: Glasshopper.Payload.SolutionReady }
   | { type: 'graph/values/request-solution-values'; requests: Glasshopper.Payload.SolutionValueRequest[] }
   | { type: 'graph/values/consume-solution-values'; values: Glasshopper.Payload.SolutionValue[] }
+  | { type: 'graph/values/consume-solution-messages'; messages: Glasshopper.Payload.SolutionMessage[] }
   | { type: 'graph/values/set-one-value'; targetElement: string; targetParameter: string; value: string }
   | {
       type: 'graph/values/set-parameter-values'
@@ -43,4 +44,3 @@ export type GraphAction =
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan'; dx: number; dy: number }
-  | { type: 'debug/refresh-solution' }

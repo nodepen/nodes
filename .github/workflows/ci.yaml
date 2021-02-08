@@ -31,10 +31,6 @@ jobs:
       working-directory: ./app
       run: npm run build
 
-    - name: Test
-      working-directory: ./app
-      run: npm run test
-
   api:
     name: api
     runs-on: ubuntu-latest

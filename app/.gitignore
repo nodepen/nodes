@@ -35,5 +35,5 @@ yarn-error.log*
 
 # gcloud
 app.yaml
+app.dev.yaml
 .gcloudignore
-robots.txt

@@ -2,46 +2,167 @@ import React, { useEffect, useReducer } from 'react'
 import { Grasshopper, Glasshopper } from 'glib'
 import { context as Context, reducer, initial } from './state'
 import { useSessionManager } from '~/context/session'
+import { useQuery, useApolloClient } from '@apollo/client'
+import { COMPUTE_CONFIGURATION, SESSION_CURRENT_GRAPH, SOLUTION_MESSAGES, SOLUTION_VALUE } from '@/queries'
+import { useSolutionQuery } from './hooks'
 
 type GraphManagerProps = {
   children?: React.ReactNode
 }
 
 export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
-  const { io, id } = useSessionManager()
+  const { session, user } = useSessionManager()
+  const client = useApolloClient()
 
   const [store, dispatch] = useReducer(reducer, initial)
 
-  const onLoad = (): void => {
-    dispatch({ type: 'session/register-socket', socket: io, id })
+  const { data: config } = useQuery(COMPUTE_CONFIGURATION)
 
-    io.on('lib', (res: Grasshopper.Component[]) => {
-      dispatch({ type: 'session/load-components', components: res })
+  useEffect(() => {
+    if (store.preflight.getLibrary) {
+      console.log('🐍 Ignoring change in config query because library has already been loaded.')
+      return
+    }
+
+    if (config) {
+      dispatch({ type: 'session/load-components', components: config.getComputeConfiguration })
+    }
+  }, [config])
+
+  const { status } = useSolutionQuery(session.id, store.solution.id, store)
+
+  useEffect(() => {
+    if (!session.id) {
+      // No session yet, do no work
+      console.log('⌚ Not restoring session yet because no id exists.')
+      return
+    }
+
+    if (Object.keys(store.elements).length > 0) {
+      console.log('🐍 Ignoring new session id because we have already restored it once.')
+      return
+    }
+
+    const getCurrentGraph = async (sessionId: string): Promise<string> => {
+      const { data } = await client.query({
+        query: SESSION_CURRENT_GRAPH,
+        variables: {
+          sessionId: sessionId,
+        },
+      })
+
+      const elements = data.getSessionCurrentGraph
+
+      return elements
+    }
+
+    // Restore graph
+    console.log(`Restoring session for session:${session.id}`)
+    getCurrentGraph(session.id).then((elements) => {
+      dispatch({ type: 'session/restore-session', elements })
     })
+  }, [session.id])
 
-    io.on('restore-session', (res: string) => {
-      dispatch({ type: 'session/restore-session', elements: res })
-    })
+  useEffect(() => {
+    if (!store.solution.id || !session.id) {
+      return
+    }
 
-    io.on('solution-start', (res: string) => {
-      dispatch({ type: 'graph/values/expire-solution', newSolutionId: res })
-    })
+    const fetchSolutionMessages = async (
+      session: string,
+      solution: string
+    ): Promise<Glasshopper.Payload.SolutionMessage[]> => {
+      const { data } = await client.query({
+        query: SOLUTION_MESSAGES,
+        variables: {
+          sessionId: session,
+          solutionId: solution,
+        },
+      })
 
-    io.on('solution-ready', (res: Glasshopper.Payload.SolutionReady) => {
-      dispatch({ type: 'graph/values/prepare-solution', status: res })
-    })
+      const messages: any[] = JSON.parse(data.getSolutionMessages)
 
-    io.on('solution-values', (values: Glasshopper.Payload.SolutionValue[]) => {
-      dispatch({ type: 'graph/values/consume-solution-values', values })
-    })
+      const result: Glasshopper.Payload.SolutionMessage[] = messages.map(({ elementId, message, level }) => ({
+        element: elementId,
+        message,
+        level: level.toLowerCase(),
+      }))
 
-    io.on('solution-failed', (res: any) => {
-      console.error(`Failed to run solution!`)
-      console.error(res)
-    })
-  }
+      return result
+    }
 
-  useEffect(onLoad, [])
+    const fetchSolutionValue = async (
+      session: string,
+      solution: string,
+      element: string,
+      parameter: string
+    ): Promise<Glasshopper.Payload.SolutionValue> => {
+      const { data } = await client.query({
+        query: SOLUTION_VALUE,
+        variables: {
+          sessionId: session,
+          solutionId: solution,
+          elementId: element,
+          parameterId: parameter,
+        },
+      })
+
+      const tree: Glasshopper.Data.DataTree = JSON.parse(data.getSolutionValue.data)
+
+      return {
+        for: {
+          solution,
+          element,
+          parameter,
+        },
+        data: tree,
+      }
+    }
+
+    if (status === 'SUCCEEDED') {
+      fetchSolutionMessages(session.id, store.solution.id)
+        .then((messages) => {
+          // Store messages
+          dispatch({ type: 'graph/values/consume-solution-messages', messages })
+
+          // Collect all value requests that need to happen
+          const requests: { session: string; solution: string; element: string; parameter: string }[] = []
+
+          Object.values(store.elements).forEach((element) => {
+            switch (element.template.type) {
+              case 'static-parameter': {
+                requests.push({
+                  session: session.id,
+                  solution: store.solution.id,
+                  element: element.id,
+                  parameter: 'output',
+                })
+                break
+              }
+              case 'static-component': {
+                const component = element as Glasshopper.Element.StaticComponent
+
+                ;[...Object.keys(component.current.inputs), ...Object.keys(component.current.outputs)].forEach(
+                  (parameterId) => {
+                    requests.push({
+                      session: session.id,
+                      solution: store.solution.id,
+                      element: element.id,
+                      parameter: parameterId,
+                    })
+                  }
+                )
+              }
+            }
+          })
+
+          return Promise.all(requests.map((r) => fetchSolutionValue(r.session, r.solution, r.element, r.parameter)))
+        })
+        .then((values) => {
+          dispatch({ type: 'graph/values/consume-solution-values', values })
+        })
+    }
+  }, [status])
 
   useEffect(() => {
     if (store.ready) {
@@ -50,6 +171,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
 
     if (!Object.values(store.preflight).some((done) => !done)) {
       dispatch({ type: 'session/set-ready' })
+      dispatch({ type: 'session/expire-solution' })
     }
   })
 

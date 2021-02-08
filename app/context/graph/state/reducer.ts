@@ -7,24 +7,6 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'demo': {
       return state
     }
-    case 'session/register-socket': {
-      const { socket, id } = action
-
-      console.debug(`Registered socket connection ${id}.`)
-
-      socket.on('join-session-handshake', (message: string) => {
-        console.debug(message)
-      })
-
-      socket.emit('join-session', id)
-
-      state.socket = {
-        io: socket,
-        id,
-      }
-
-      return state
-    }
     case 'session/load-components': {
       if (state.preflight.getLibrary) {
         return state
@@ -50,15 +32,22 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       return { ...state }
     }
     case 'session/restore-session': {
+      const { elements } = action
+
       state.preflight.getSession = true
 
-      if (action.elements === 'none') {
-        return { ...state }
-      }
+      state.elements = JSON.parse(elements)
 
-      const elements: { [key: string]: Glasshopper.Element.Base } = JSON.parse(action.elements)
+      return { ...state }
+    }
+    case 'session/expire-solution': {
+      expireSolution(state)
+      return { ...state }
+    }
+    case 'session/declare-solution': {
+      const { id } = action
 
-      state.elements = elements
+      state.solution.id = id
 
       return { ...state }
     }
@@ -131,7 +120,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // TODO: This is to limit data sent over the socket server. Find a better way.
       delete (state.elements[component.id] as Glasshopper.Element.StaticComponent).template.icon
 
-      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+      expireSolution(state)
 
       return { ...state }
     }
@@ -158,7 +147,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // TODO: This is to limit data sent over the socket server. Find a better way.
       delete (state.elements[parameter.id] as Glasshopper.Element.StaticComponent).template.icon
 
-      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+      expireSolution(state)
 
       return { ...state }
     }
@@ -180,7 +169,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.elements[panel.id] = panel
 
-      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+      expireSolution(state)
 
       return { ...state }
     }
@@ -452,7 +441,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       sourceElement.current.sources[target.parameter].push({ element: source.element, parameter: source.parameter })
 
       // Commit new graph to db
-      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+      expireSolution(state)
 
       return { ...state }
     }
@@ -530,7 +519,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }, [] as Glasshopper.Payload.SolutionValueRequest[])
 
-      state.socket.io.emit('solution-values', solutionRequests)
+      // state.socket.io.emit('solution-values', solutionRequests)
 
       return { ...state }
     }
@@ -569,16 +558,53 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
             if (hasUserDefinedValues(p.current.values)) {
               console.debug(`Skipping solution for ${element} because it has user-defined values.`)
+              p.current.solution.id = solution
               break
             }
 
             p.current.values = data
+            p.current.solution.id = solution
             break
           }
           case 'static-component': {
             const e = el as Glasshopper.Element.StaticComponent
 
             e.current.values[parameter] = data
+            e.current.solution.id = solution
+            break
+          }
+        }
+      })
+
+      return { ...state }
+    }
+    case 'graph/values/consume-solution-messages': {
+      const { messages } = action
+
+      // Index messages by element id
+      const messagesByElement: { [key: string]: { message: string; level: any } } = messages.reduce((all, msg) => {
+        const { element, message, level } = msg
+
+        all[element] = { message, level }
+
+        return all
+      }, {})
+
+      // Assign new messages (or clear if it doesn't exist anymore)
+      Object.keys(state.elements).forEach((id) => {
+        const element = state.elements[id]
+
+        const message = messagesByElement[id]
+
+        switch (element.template.type) {
+          case 'static-component': {
+            const component = element as Glasshopper.Element.StaticComponent
+            component.current.runtimeMessage = message
+            break
+          }
+          case 'static-parameter': {
+            const parameter = element as Glasshopper.Element.StaticParameter
+            parameter.current.runtimeMessage = message
             break
           }
         }
@@ -603,7 +629,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         el.current.values[targetParameter] = data
       }
 
-      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+      expireSolution(state)
 
       return { ...state }
     }
@@ -627,7 +653,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/clear': {
       state.elements = {}
 
-      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
+      expireSolution(state)
 
       return { ...state }
     }
@@ -645,11 +671,11 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
-    case 'debug/refresh-solution': {
-      state.socket.io.emit('update-graph', JSON.stringify(state.elements))
-      return state
-    }
   }
+}
+
+const expireSolution = (state: GraphStore): void => {
+  state.solution.id = newGuid()
 }
 
 const pageToGraphCoordinates = (page: [number, number], state: GraphStore): [number, number] => {

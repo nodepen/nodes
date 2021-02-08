@@ -19,7 +19,7 @@ export const GraphCanvas = (): React.ReactElement => {
             (el) => el.template.type === 'static-component' || el.template.type === 'static-parameter'
           )
         )
-        dispatch({ type: 'debug/refresh-solution' })
+        dispatch({ type: 'session/expire-solution' })
       }
     }
 
