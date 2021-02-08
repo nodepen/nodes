@@ -18,10 +18,13 @@ export const newSolution = async (
 
   await addSolutionToSession(sessionId, solutionId)
 
-  const { data } = await axios.post(
-    process.env.NP_DISPATCH_URL ?? 'http://localhost:4100/new/solution',
-    { sessionId, solutionId, graph: elements }
-  )
+  const root = process.env.NP_DISPATCH_URL ?? 'http://localhost:4100'
+
+  const { data } = await axios.post(`${root}/new/solution`, {
+    sessionId,
+    solutionId,
+    graph: elements,
+  })
 
   return JSON.stringify(data)
 }

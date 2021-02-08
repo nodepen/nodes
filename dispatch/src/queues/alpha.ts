@@ -4,9 +4,15 @@ import { Glasshopper } from 'glib'
 import { AlphaJobArgs } from 'AlphaJobArgs'
 import { db } from '../server'
 
-export const alpha = new Queue('alpha')
+export const alpha = new Queue('alpha', {
+  redis: {
+    host: process.env.NP_DB_HOST,
+  },
+})
 
-const COMPUTE = process.env.NP_COMPUTE_URL ?? 'http://localhost:8081'
+console.log(`COMPUTE ${process.env.NP_COMPUTE_URL}`)
+
+const COMPUTE = process.env.NP_COMPUTE_URL ?? 'http://localhost:9900'
 
 type GrasshopperResult = {
   elementId: string
@@ -32,6 +38,8 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
     case 'solution': {
       const { sessionId, solutionId, graph } = job.data
       const solutionKey = `session:${sessionId}:graph:${solutionId}`
+
+      console.log(`STARTING ${solutionKey}`)
 
       // Store started_at at session:id:solution:id
       const start = Date.now()
@@ -94,7 +102,11 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       )
 
       await new Promise<void>((resolve, reject) => {
-        writeSolution.exec(() => {
+        writeSolution.exec((error, reply) => {
+          console.log(error ?? reply)
+          if (error) {
+            reject(error)
+          }
           resolve()
         })
       })

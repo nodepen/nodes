@@ -2,3 +2,6 @@ node_modules
 dist
 
 .env
+
+app.dev.yaml
+app.yaml

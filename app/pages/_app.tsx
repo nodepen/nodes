@@ -8,7 +8,7 @@ import '../styles/tailwind.css'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const client = new ApolloClient({
-    uri: process.env.NP_API_URL ?? 'http://localhost:4000/graphql',
+    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql',
     cache: new InMemoryCache({ addTypename: false }),
   })
 

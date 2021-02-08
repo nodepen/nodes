@@ -6,6 +6,11 @@ import * as store from './store'
 import { db } from './db'
 import { ApolloServer } from 'apollo-server'
 import { resolvers, schema } from './gql'
+import dotenv from 'dotenv'
+
+const backup = require('./data/fallback_config.json')
+
+dotenv.config()
 
 const startup = async (): Promise<void> => {
   // Fetch grasshopper configuration from compute server
@@ -18,12 +23,12 @@ const startup = async (): Promise<void> => {
 
     installed.push(...data)
   } catch {
-    console.log('Using backup config!')
-    const backupConfig: Grasshopper.Component[] = JSON.parse(
-      fs
-        .readFileSync(path.join(__dirname, 'data', 'fallback_config.json'))
-        .toString()
-    )
+    const p = path.join(__dirname, 'data', 'fallback_config.json')
+    console.log(`Using backup config @ ${p}`)
+    // const backupConfig: Grasshopper.Component[] = JSON.parse(
+    //   fs.readFileSync(p).toString()
+    // )
+    const backupConfig: Grasshopper.Component[] = backup
 
     installed.push(...backupConfig)
   }
@@ -52,9 +57,11 @@ const startup = async (): Promise<void> => {
 
 const api = new ApolloServer({ typeDefs: schema, resolvers })
 
+const PORT = process.env.PORT || 8080
+
 startup()
   .then(() => {
-    return api.listen()
+    return api.listen({ port: PORT })
   })
   .then(({ url }) => {
     console.log(`api ready at ${url}`)

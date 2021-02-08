@@ -1,11 +1,20 @@
 import express from 'express'
 import parser from 'body-parser'
 import { createJob } from './utils'
-import redis from 'async-redis'
+import redis from 'redis'
+import asyncRedis from 'async-redis'
+import dotenv from 'dotenv'
 
-export const db = process.env.NP_DB
-  ? redis.createClient(process.env.NP_DB)
+dotenv.config()
+
+const syncdb = process.env.NP_DB_HOST
+  ? redis.createClient({
+      host: process.env.NP_DB_HOST,
+      port: Number.parseInt(process.env.NP_DB_PORT),
+    })
   : redis.createClient()
+
+export const db = asyncRedis.decorate(syncdb)
 
 const dispatch = express()
 dispatch.use(parser.json())
@@ -20,6 +29,8 @@ dispatch.post('/new/solution', async (req, res) => {
   res.send(response)
 })
 
-dispatch.listen(4100)
+const PORT = process.env.PORT || 8080
 
-console.log('Dispatch listening on 4100')
+dispatch.listen(PORT)
+
+console.log(`Dispatch listening on ${PORT}`)
