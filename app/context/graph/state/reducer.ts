@@ -44,6 +44,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       expireSolution(state)
       return { ...state }
     }
+    case 'session/declare-solution': {
+      const { id } = action
+
+      state.solution.id = id
+
+      return { ...state }
+    }
     case 'session/set-ready': {
       state.ready = true
       return { ...state }

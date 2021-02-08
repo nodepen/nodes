@@ -1,21 +1,42 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Canvas } from 'react-three-fiber'
 import { OrthographicCamera, OrbitControls } from '@react-three/drei'
 import { Glasshopper } from 'glib'
+import { useSessionManager } from '@/context/session'
 import { useGraphManager } from '@/context/graph'
 import { useSceneManager } from './lib/context'
 import { SceneElementId as Id } from './lib/types'
 import { SceneGrid as Grid } from './SceneGrid'
 import * as Geometry from './lib/geometry'
+import { useQuery } from '@apollo/client'
+import { SESSION_CURRENT_SOLUTION } from '@/queries'
 
 const Scene = (): React.ReactElement => {
+  const { session } = useSessionManager()
+
   const {
     store: { elements },
+    dispatch,
   } = useGraphManager()
 
   const {
     store: { selection },
   } = useSceneManager()
+
+  const { data } = useQuery(SESSION_CURRENT_SOLUTION, { variables: { id: session.id }, pollInterval: 1000 })
+
+  useEffect(() => {
+    if (!data) {
+      return
+    }
+
+    const incoming = data.getSession.current
+
+    if (incoming && incoming !== session.id) {
+      console.log('🔔 Detected new solution, updating local reference.')
+      dispatch({ type: 'session/declare-solution', id: incoming })
+    }
+  }, [data])
 
   const getElementTrees = (element: Glasshopper.Element.Base): [string, Glasshopper.Data.DataTree][] => {
     switch (element.template.type) {
