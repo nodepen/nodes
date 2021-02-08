@@ -67,7 +67,8 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const end = Date.now()
       db.hset(solutionKey, 'finished_at', new Date(end).toISOString())
 
-      console.log(`${sessionId}:${solutionId} succeeded in ${end - start}ms`)
+      const duration = end - start
+      console.log(`${sessionId}:${solutionId} succeeded in ${duration}ms`)
 
       // Store solution stats and messages
       const { data: results, messages } = solution
@@ -75,7 +76,9 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       await db.hset(
         `${solutionKey}:solution`,
         'messages',
-        JSON.stringify(messages)
+        JSON.stringify(messages),
+        'duration',
+        duration.toString()
       )
 
       // Batch store solution items

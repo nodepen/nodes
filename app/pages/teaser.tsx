@@ -84,7 +84,7 @@ const Teaser = () => {
           </svg>
         </div>
         <div className="card-mono w-64 lg:w-76 z-10 p-2 flex flex-col justify-center items-center">
-          <h1 className="font-display text-3xl mb-2">glasshopper.io</h1>
+          <h1 className="font-display text-3xl mb-2">nodepen</h1>
           <p className="font-sans font-semibold text-sm mb-2">COMING SOON</p>
         </div>
       </div>
