@@ -9,6 +9,12 @@ export const alpha = new Queue('alpha')
 const COMPUTE = process.env.NP_COMPUTE_URL ?? 'http://localhost:8081'
 
 type GrasshopperResult = {
+  elementId: string
+  parameterId: string
+  values: GrasshopperResultValue[]
+}
+
+type GrasshopperResultValue = {
   path: number[]
   data: {
     value: string
@@ -66,19 +72,23 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       // Store solution stats and messages
       const { data: results, messages } = solution
 
-      await db.set(`${solutionKey}:messages`, JSON.stringify(messages))
+      await db.hset(
+        `${solutionKey}:solution`,
+        'messages',
+        JSON.stringify(messages)
+      )
 
       // Batch store solution items
       const writeSolution = db.multi()
 
-      console.log(results)
+      results.forEach(
+        ({ elementId, parameterId, values }: GrasshopperResult) => {
+          const key = `${solutionKey}:solution:${elementId}:${parameterId}`
+          const tree = resultsToDataTree(values)
 
-      results.forEach(({ elementId, parameterId, values }) => {
-        const key = `${solutionKey}:solution:${elementId}:${parameterId}`
-        const tree = resultsToDataTree(values)
-
-        writeSolution.set(key, JSON.stringify(tree))
-      })
+          writeSolution.set(key, JSON.stringify(tree))
+        }
+      )
 
       await new Promise<void>((resolve, reject) => {
         writeSolution.exec(() => {
@@ -143,7 +153,7 @@ alpha.on('failed', failed)
 console.log('Alpha queue is ready')
 
 const resultsToDataTree = (
-  results: GrasshopperResult[]
+  results: GrasshopperResultValue[]
 ): Glasshopper.Data.DataTree => {
   const tree: Glasshopper.Data.DataTree = {}
 

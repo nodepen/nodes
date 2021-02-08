@@ -5,7 +5,14 @@ export const schema = gql`
     getComputeConfiguration: [GrasshopperComponent]!
     getSession(id: String!): SessionManifest!
     getSessionCurrentGraph(sessionId: String!): String!
+    getSolutionMessages(sessionId: String!, solutionId: String!): String
     getSolutionStatus(sessionId: String!, solutionId: String!): SolutionStatus
+    getSolutionValue(
+      sessionId: String!
+      solutionId: String!
+      elementId: String!
+      parameterId: String!
+    ): SolutionValue!
     getUser(id: String!): UserManifest!
   }
 
@@ -28,6 +35,13 @@ export const schema = gql`
     status: String!
     started_at: String
     finished_at: String
+  }
+
+  type SolutionValue {
+    solutionId: String!
+    elementId: String!
+    parameterId: String!
+    data: String!
   }
 
   type GrasshopperComponent {

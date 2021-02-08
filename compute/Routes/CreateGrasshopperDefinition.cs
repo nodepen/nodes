@@ -203,66 +203,66 @@ namespace NodePen.Compute.Routes
       });
 
       // In third pass, assign any parameter values
-      //config.ForEach(element =>
-      //{
-      //  if (element.Template.Type.ToString() != "static-parameter")
-      //  {
-      //    // TODO: Handle component values too
-      //    return;
-      //  }
+      config.ForEach(element =>
+      {
+        if (element.Template.Type.ToString() != "static-parameter")
+        {
+          // TODO: Handle component values too
+          return;
+        }
 
-      //  if (element.Template.Name.ToString() != "Number")
-      //  {
-      //    // TODO: Handle different param types
-      //    return;
-      //  }
+        if (element.Template.Name.ToString() != "Number")
+        {
+          // TODO: Handle different param types
+          return;
+        }
 
-      //  var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString()) as Param_Number;
+        var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString()) as Param_Number;
 
-      //  JObject values = element.current.values;
-      //  var tree = new GH_Structure<GH_Number>();
+        JObject values = element.Current.Values;
+        var tree = new GH_Structure<GH_Number>();
 
-      //  values.Properties().ToList().ForEach(prop =>
-      //  {
-      //    var pathString = prop.Name;
-      //    var pathIndices = pathString.Replace("{", "").Replace("}", "").Split(';').Select(num => Convert.ToInt32(num)).ToArray();
+        values.Properties().ToList().ForEach(prop =>
+        {
+          var pathString = prop.Name;
+          var pathIndices = pathString.Replace("{", "").Replace("}", "").Split(';').Select(num => Convert.ToInt32(num)).ToArray();
 
-      //    var branch = new GH_Path(pathIndices);
+          var branch = new GH_Path(pathIndices);
 
-      //    var pathValues = (element.current.values as JObject).GetValue(pathString).ToObject<List<dynamic>>();
+          var pathValues = (element.Current.Values as JObject).GetValue(pathString).ToObject<List<dynamic>>();
 
-      //    for (var i = 0; i < pathValues.Count; i++)
-      //    {
-      //      var pathValue = pathValues[i];
-      //      var sourceType = pathValue.from.ToString();
+          for (var i = 0; i < pathValues.Count; i++)
+          {
+            var pathValue = pathValues[i];
+            var sourceType = pathValue.from.ToString();
 
-      //      if (sourceType != "user")
-      //      {
-      //        // Value is computed, do not set as an override
-      //        // TODO: Should the api sanitize element values before sending them to rhino?
-      //        return;
-      //      }
+            if (sourceType != "user")
+            {
+              // Value is computed, do not set as an override
+              // TODO: Should the api sanitize element values before sending them to rhino?
+              return;
+            }
 
-      //      switch (pathValue.type.ToString())
-      //      {
-      //        case "number":
-      //          {
-      //            var numberParam = instance as Param_Number;
+            switch (pathValue.type.ToString())
+            {
+              case "number":
+                {
+                  var numberParam = instance as Param_Number;
 
-      //            double value = Convert.ToDouble(pathValue.data.ToString());
+                  double value = Convert.ToDouble(pathValue.data.ToString());
 
-      //            var number = new GH_Number(value);
+                  var number = new GH_Number(value);
 
-      //            tree.Insert(number, branch, i);
+                  tree.Insert(number, branch, i);
 
-      //            break;
-      //          }
-      //      }
-      //    }
-      //  });
+                  break;
+                }
+            }
+          }
+        });
 
-      //  instance.SetPersistentData(tree);
-      //});
+        instance.SetPersistentData(tree);
+      });
 
       // var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
 

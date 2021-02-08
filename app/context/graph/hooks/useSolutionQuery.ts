@@ -3,11 +3,15 @@ import { useQuery, useApolloClient } from '@apollo/client'
 import { NEW_SOLUTION, SOLUTION_STATUS } from '@/queries'
 import { GraphStore } from '../types'
 
+type SolutionInfo = {
+  status: 'WAITING' | 'SUCCEEDED' | 'FAILED'
+}
+
 /**
  *
  * @param target The id of the 'current' solution we care about.
  */
-export const useSolutionQuery = (session: string, target: string, store: GraphStore): void => {
+export const useSolutionQuery = (session: string, target: string, store: GraphStore): SolutionInfo => {
   const [waitingFor, setWaitingFor] = useState(target)
 
   const client = useApolloClient()
@@ -48,25 +52,17 @@ export const useSolutionQuery = (session: string, target: string, store: GraphSt
   }, [waitingFor])
 
   useEffect(() => {
-    console.log('New solution status polling data:')
-
     if (!solutionStatus) {
       console.log(undefined)
       return
     }
 
-    console.log(solutionStatus)
-
     const status = solutionStatus?.getSolutionStatus?.status
 
     if (status === 'SUCCEEDED' || status === 'FAILED') {
-      console.log(`Done waiting for solution ${waitingFor}`)
-
-      // Handle success or failure here!
-
       stopPolling()
     }
   }, [solutionStatus])
 
-  return
+  return { status: solutionStatus?.getSolutionStatus?.status.toUpperCase() ?? 'WAITING' }
 }

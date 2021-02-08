@@ -31,6 +31,7 @@ export type GraphAction =
   | { type: 'graph/values/prepare-solution'; status: Glasshopper.Payload.SolutionReady }
   | { type: 'graph/values/request-solution-values'; requests: Glasshopper.Payload.SolutionValueRequest[] }
   | { type: 'graph/values/consume-solution-values'; values: Glasshopper.Payload.SolutionValue[] }
+  | { type: 'graph/values/consume-solution-messages'; messages: Glasshopper.Payload.SolutionMessage[] }
   | { type: 'graph/values/set-one-value'; targetElement: string; targetParameter: string; value: string }
   | {
       type: 'graph/values/set-parameter-values'

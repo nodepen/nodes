@@ -551,16 +551,53 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
             if (hasUserDefinedValues(p.current.values)) {
               console.debug(`Skipping solution for ${element} because it has user-defined values.`)
+              p.current.solution.id = solution
               break
             }
 
             p.current.values = data
+            p.current.solution.id = solution
             break
           }
           case 'static-component': {
             const e = el as Glasshopper.Element.StaticComponent
 
             e.current.values[parameter] = data
+            e.current.solution.id = solution
+            break
+          }
+        }
+      })
+
+      return { ...state }
+    }
+    case 'graph/values/consume-solution-messages': {
+      const { messages } = action
+
+      // Index messages by element id
+      const messagesByElement: { [key: string]: { message: string; level: any } } = messages.reduce((all, msg) => {
+        const { element, message, level } = msg
+
+        all[element] = { message, level }
+
+        return all
+      }, {})
+
+      // Assign new messages (or clear if it doesn't exist anymore)
+      Object.keys(state.elements).forEach((id) => {
+        const element = state.elements[id]
+
+        const message = messagesByElement[id]
+
+        switch (element.template.type) {
+          case 'static-component': {
+            const component = element as Glasshopper.Element.StaticComponent
+            component.current.runtimeMessage = message
+            break
+          }
+          case 'static-parameter': {
+            const parameter = element as Glasshopper.Element.StaticParameter
+            parameter.current.runtimeMessage = message
             break
           }
         }
