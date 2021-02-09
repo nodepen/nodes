@@ -1,5 +1,15 @@
 import axios from 'axios'
 import { db } from '../../../db'
+import { alpha } from '../../../queue'
+
+export type AlphaJobArgs =
+  | { type: 'config' }
+  | {
+      type: 'solution'
+      sessionId: string
+      solutionId: string
+      graph: { [key: string]: any }
+    }
 
 type NewSolutionArgs = {
   sessionId: string
@@ -18,15 +28,26 @@ export const newSolution = async (
 
   await addSolutionToSession(sessionId, solutionId)
 
-  const root = process.env.NP_DISPATCH_URL ?? 'http://localhost:4100'
+  // const root = process.env.NP_DISPATCH_URL ?? 'http://localhost:4100'
 
-  const { data } = await axios.post(`${root}/new/solution`, {
-    sessionId,
-    solutionId,
-    graph: elements,
-  })
+  const job = await alpha
+    .createJob<AlphaJobArgs>({
+      type: 'solution',
+      sessionId,
+      solutionId,
+      graph: elements,
+    })
+    .save()
 
-  return JSON.stringify(data)
+  console.log(`[ JOB #${job.id} ]  [ CREATE ]  ${sessionId}:${solutionId}`)
+
+  // const { data } = await axios.post(`${root}/new/solution`, {
+  //   sessionId,
+  //   solutionId,
+  //   graph: elements,
+  // })
+
+  return JSON.stringify({ id: job.id })
 }
 
 const createSolutionStatus = async (

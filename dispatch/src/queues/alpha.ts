@@ -4,15 +4,17 @@ import { Glasshopper } from 'glib'
 import { AlphaJobArgs } from 'AlphaJobArgs'
 import { db } from '../server'
 
-export const alpha = new Queue('alpha', {
-  redis: {
-    host: process.env.NP_DB_HOST,
-  },
-})
-
-console.log(`COMPUTE ${process.env.NP_COMPUTE_URL}`)
+export const alpha = process.env.NP_DB_HOST
+  ? new Queue('alpha', {
+      redis: {
+        host: process.env.NP_DB_HOST,
+      },
+    })
+  : new Queue('alpha')
 
 const COMPUTE = process.env.NP_COMPUTE_URL ?? 'http://localhost:9900'
+
+console.log(`COMPUTE ${COMPUTE}`)
 
 type GrasshopperResult = {
   elementId: string
@@ -29,7 +31,6 @@ type GrasshopperResultValue = {
 }
 
 const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
-  console.log(`Starting job ${job.id}`)
   switch (job.data.type) {
     case 'config': {
       // Get config
@@ -39,7 +40,7 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const { sessionId, solutionId, graph } = job.data
       const solutionKey = `session:${sessionId}:graph:${solutionId}`
 
-      console.log(`STARTING ${solutionKey}`)
+      console.log(`[ JOB #${job.id} ]  [ START ]  ${sessionId}:${solutionId}`)
 
       // Store started_at at session:id:solution:id
       const start = Date.now()
@@ -81,6 +82,10 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       // Store solution stats and messages
       const { data: results, messages } = solution
 
+      console.log(
+        `[ JOB #${job.id} ]  [ SOLUTION ]  ${results.length} parameters in ${duration}ms`
+      )
+
       await db.hset(
         `${solutionKey}:solution`,
         'messages',
@@ -103,7 +108,6 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
       await new Promise<void>((resolve, reject) => {
         writeSolution.exec((error, reply) => {
-          console.log(error ?? reply)
           if (error) {
             reject(error)
           }
@@ -123,41 +127,31 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 alpha.process(run)
 
 const succeeded = (job: Job<AlphaJobArgs>, result: string): void => {
+  console.log(`[ JOB #${job.id} ]  [ SUCCEEDED ]`)
   switch (job.data.type) {
     case 'solution': {
       // Store status='succeeded' at session:id:solution:id
       const { sessionId, solutionId, graph } = job.data
       const key = `session:${sessionId}:graph:${solutionId}`
 
-      console.log(
-        `Job ${job.id} (${sessionId}:${solutionId}) succeeded! [${result}]`
-      )
-
       db.hset(key, 'status', 'SUCCEEDED')
 
       return
-    }
-    default: {
-      console.log(`Job ${job.id} succeeded! [${result}]`)
     }
   }
 }
 
 const failed = (job: Job<AlphaJobArgs>): void => {
-  // Store status='failed' at session:id:solution:id
+  console.log(`[ JOB #${job.id} ]  [ FAILED ]`)
+
   switch (job.data.type) {
     case 'solution': {
       const { sessionId, solutionId, graph } = job.data
       const key = `session:${sessionId}:graph:${solutionId}`
 
-      console.log(`Job ${job.id} (${sessionId}:${solutionId}) failed!`)
-
       db.hset(key, 'status', 'FAILED')
 
       return
-    }
-    default: {
-      console.log(`Job ${job.id} failed.`)
     }
   }
 }

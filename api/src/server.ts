@@ -57,7 +57,7 @@ const startup = async (): Promise<void> => {
 
 const api = new ApolloServer({ typeDefs: schema, resolvers })
 
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 4000
 
 startup()
   .then(() => {
