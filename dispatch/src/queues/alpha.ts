@@ -3,6 +3,9 @@ import axios from 'axios'
 import { Glasshopper } from 'glib'
 import { AlphaJobArgs } from 'AlphaJobArgs'
 import { db } from '../server'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const alpha = process.env.NP_DB_HOST
   ? new Queue('alpha', {
