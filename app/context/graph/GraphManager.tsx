@@ -156,10 +156,32 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
             }
           })
 
-          return Promise.all(requests.map((r) => fetchSolutionValue(r.session, r.solution, r.element, r.parameter)))
+          return Promise.allSettled(
+            requests.map((r) => fetchSolutionValue(r.session, r.solution, r.element, r.parameter))
+          )
         })
         .then((values) => {
-          dispatch({ type: 'graph/values/consume-solution-values', values })
+          const resolved: PromiseFulfilledResult<Glasshopper.Payload.SolutionValue>[] = []
+          const rejected: PromiseRejectedResult[] = []
+
+          values.forEach((value) => {
+            switch (value.status) {
+              case 'fulfilled': {
+                resolved.push(value)
+                break
+              }
+              case 'rejected': {
+                rejected.push(value)
+                break
+              }
+            }
+          })
+
+          dispatch({ type: 'graph/values/consume-solution-values', values: resolved.map(({ value }) => value) })
+
+          rejected.forEach(({ reason }) => {
+            console.error(reason)
+          })
         })
     }
   }, [status])
