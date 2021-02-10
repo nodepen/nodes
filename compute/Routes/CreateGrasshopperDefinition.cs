@@ -225,7 +225,8 @@ namespace NodePen.Compute.Routes
         values.Properties().ToList().ForEach(prop =>
         {
           var pathString = prop.Name;
-          var pathIndices = pathString.Replace("{", "").Replace("}", "").Split(';').Select(num => Convert.ToInt32(num)).ToArray();
+          var pathCrumbs = pathString.Replace("{", "").Replace("}", "").Split(';').ToList().FindAll(key => key.Length > 0);
+          var pathIndices = pathCrumbs.Select(num => Convert.ToInt32(num)).ToArray();
 
           var branch = new GH_Path(pathIndices);
 
@@ -248,6 +249,8 @@ namespace NodePen.Compute.Routes
               case "number":
                 {
                   var numberParam = instance as Param_Number;
+
+                  var candidate = pathValue.data.ToString();
 
                   double value = Convert.ToDouble(pathValue.data.ToString());
 

@@ -62,7 +62,8 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
       const { data: ghx } = await axios.post(
         `${COMPUTE}/grasshopper/graph`,
-        elements
+        JSON.stringify(elements),
+        { headers: { 'Content-Type': 'text/plain; charset=UTF-8' } }
       )
 
       // Store ghx graph
@@ -168,7 +169,7 @@ const resultsToDataTree = (
   const tree: Glasshopper.Data.DataTree = {}
 
   results.forEach(({ path, data }) => {
-    const branch = `{${path.join(';')};}`
+    const branch = `{${path.join(';')}}`
     const values = data.map(({ value, type }) => {
       switch (type) {
         case 'point': {

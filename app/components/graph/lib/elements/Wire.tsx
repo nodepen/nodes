@@ -61,6 +61,68 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
   const wc = width * (goingRight ? 0.15 : -0.35)
   const hc = height * (goingDown ? 0.35 : -0.35)
 
+  const { from: fromSource, to: toSource } = element.current.sources
+
+  const getWireGraphics = (d: string): React.ReactNode => {
+    const fromElement = elements[fromSource.element]
+
+    const thin = <path d={d} strokeWidth="3px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
+
+    const thick = (
+      <>
+        <path d={d} strokeWidth="6px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
+        <path d={d} strokeWidth="2px" stroke="#FCFCFC" fill="none" vectorEffect="non-scaling-stroke" />
+      </>
+    )
+
+    const dashed = (
+      <>
+        <path
+          d={d}
+          strokeWidth="6px"
+          stroke="#333333"
+          fill="none"
+          strokeDasharray="6 9"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+        <path
+          d={d}
+          strokeWidth="2px"
+          stroke="#FCFCFC"
+          fill="none"
+          strokeDasharray="6 9"
+          strokeLinecap="round"
+          vectorEffect="non-scaling-stroke"
+        />
+      </>
+    )
+
+    if (id == 'live-wire' || !fromElement) {
+      return thin
+    }
+
+    let tree: Glasshopper.Data.DataTree = {}
+
+    switch (fromElement.template.type) {
+      case 'static-component':
+        tree = (fromElement as Glasshopper.Element.StaticComponent).current.values[fromSource.parameter] ?? {}
+        break
+      case 'static-parameter':
+        tree = (fromElement as Glasshopper.Element.StaticParameter).current.values ?? {}
+    }
+
+    const branches = Object.keys(tree)
+
+    if (branches.length > 1) {
+      return dashed
+    }
+
+    const values = Object.values(tree)?.[0] ?? []
+
+    return values.length > 1 ? thick : thin
+  }
+
   const d = [
     `M ${start.x} ${start.y} `,
     // `L ${start.x + o} ${start.y} `,
@@ -81,7 +143,7 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
           height={height}
           viewBox={`0 0 ${width} ${height}`}
         >
-          <path d={d} strokeWidth="2px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
+          {getWireGraphics(d)}
         </svg>
         {id === 'never' ? (
           <div className={`${goingRight ? 'right-0' : 'left-0'} absolute`} style={{ top: goingDown ? height : 0 }}>
