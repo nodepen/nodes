@@ -162,8 +162,6 @@ const failed = (job: Job<AlphaJobArgs>): void => {
 alpha.on('succeeded', succeeded)
 alpha.on('failed', failed)
 
-console.log('Alpha queue is ready')
-
 const resultsToDataTree = (
   results: GrasshopperResultValue[]
 ): Glasshopper.Data.DataTree => {

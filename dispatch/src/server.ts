@@ -17,3 +17,7 @@ export const db = asyncRedis.decorate(syncdb)
 alpha.on('error', (err) => {
   console.error(err)
 })
+
+alpha.on('ready', () => {
+  console.log('Alpha queue is ready')
+})
