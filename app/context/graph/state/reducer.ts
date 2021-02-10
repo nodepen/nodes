@@ -683,6 +683,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
 const expireSolution = (state: GraphStore): void => {
   state.solution.id = newGuid()
+
+  window.localStorage.setItem('np:solutionId', state.solution.id)
 }
 
 const pageToGraphCoordinates = (page: [number, number], state: GraphStore): [number, number] => {

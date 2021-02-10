@@ -3,7 +3,7 @@ import { context as Context, initial, reducer } from './state'
 import { useGraphManager } from '@/context/graph'
 import { useSessionManager } from '@/context/session'
 import { useQuery } from '@apollo/client'
-import { SESSION_CURRENT_SOLUTION, GRAPH_JSON } from '~/queries'
+import { GRAPH_JSON } from '~/queries'
 
 type SceneManagerProps = {
   children?: React.ReactNode
@@ -15,10 +15,16 @@ export const SceneManager = ({ children }: SceneManagerProps): React.ReactElemen
 
   const [store, dispatch] = useReducer(reducer, initial)
 
+  const [stagedSolutionId, setStagedSolutionId] = useState<string | undefined>()
+
   const onStorageChange = (e: StorageEvent): void => {
     if (e.key === 'gh:selection') {
       const selection = JSON.parse(e.newValue)
       dispatch({ type: 'selection/set', selection })
+    }
+
+    if (e.key === 'np:solutionId') {
+      setStagedSolutionId(e.newValue)
     }
   }
 
@@ -35,31 +41,19 @@ export const SceneManager = ({ children }: SceneManagerProps): React.ReactElemen
     graphManager({ type: 'graph/config/set-execution-mode', mode: 'paused' })
   }, [])
 
-  const [stagedSolutionId, setStagedSolutionId] = useState<string | undefined>()
   const [graphIsCurrent, setGraphIsCurrent] = useState(true)
 
-  const { data } = useQuery(SESSION_CURRENT_SOLUTION, { variables: { id: session.id }, pollInterval: 1000 })
   const { data: graph, startPolling, stopPolling } = useQuery(GRAPH_JSON, {
-    variables: { sessionId: session.id, solutionId: stagedSolutionId },
+    variables: { sessionId: session.id ?? 'invalid', solutionId: stagedSolutionId },
   })
 
   useEffect(() => {
-    if (!data) {
-      return
-    }
-
-    const incoming = data.getSession.current
-
-    if (incoming && incoming !== session.id) {
-      console.log(`🔔 Detected new solution: ${incoming}`)
-
-      setStagedSolutionId(incoming)
-      setGraphIsCurrent(false)
-    }
-  }, [data])
+    console.log(`🔔 Detected new solution: ${stagedSolutionId}`)
+    setGraphIsCurrent(false)
+  }, [stagedSolutionId])
 
   useEffect(() => {
-    // Response to graph changes
+    // Respond to graph changes
     if (!graph) {
       return
     }
