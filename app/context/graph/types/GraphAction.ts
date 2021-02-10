@@ -1,4 +1,5 @@
 import { Grasshopper, Glasshopper } from 'glib'
+import { GraphExecutionMode } from './GraphExecutionMode'
 
 export type GraphAction =
   | { type: 'demo' }
@@ -18,6 +19,7 @@ export type GraphAction =
   | { type: 'graph/selection-remove'; id: string }
   | { type: 'graph/selection-toggle'; id: string }
   | { type: 'graph/selection-clear' }
+  | { type: 'graph/config/set-execution-mode'; mode: GraphExecutionMode }
   | {
       type: 'graph/wire/start-live-wire'
       from: [number, number]

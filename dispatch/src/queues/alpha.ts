@@ -51,7 +51,7 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
       // Store json in redis
       const jsonkey = `${solutionKey}:json`
-      db.set(jsonkey, JSON.stringify(graph))
+      await db.set(jsonkey, JSON.stringify(graph))
 
       // Request a ghx graph be created
       const elements = Object.values(graph).filter(

@@ -3,6 +3,7 @@ import { gql } from 'apollo-server'
 export const schema = gql`
   type Query {
     getComputeConfiguration: [GrasshopperComponent]!
+    getGraphJson(sessionId: String!, solutionId: String!): String
     getSession(id: String!): SessionManifest!
     getSessionCurrentGraph(sessionId: String!): String!
     getSolutionMessages(sessionId: String!, solutionId: String!): String

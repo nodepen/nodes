@@ -293,6 +293,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/config/set-execution-mode': {
+      const { mode } = action
+
+      state.config.executionMode = mode
+
+      return { ...state }
+    }
     case 'graph/wire/start-live-wire': {
       const { from, to, owner } = action
 

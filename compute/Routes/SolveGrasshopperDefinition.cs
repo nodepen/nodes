@@ -53,8 +53,9 @@ namespace NodePen.Compute.Routes
           var message = ExtractSolutionMessage(parameterInstance, elementId);
           messages.Add(message);
         }
-        else if (instance.GetType().Name.ToLower().Contains("component"))
+        else 
         {
+          // instance.GetType().Name.ToLower().Contains("component")
           // Gather any data
           var componentInstance = instance as IGH_Component;
 

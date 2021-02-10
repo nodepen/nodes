@@ -184,6 +184,10 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
           })
         })
     }
+
+    if (status === 'FAILED') {
+      console.error('Compute failed to execute solution!')
+    }
   }, [status])
 
   useEffect(() => {

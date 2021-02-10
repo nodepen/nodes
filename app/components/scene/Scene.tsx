@@ -8,11 +8,12 @@ import { useSceneManager } from './lib/context'
 import { SceneElementId as Id } from './lib/types'
 import { SceneGrid as Grid } from './SceneGrid'
 import * as Geometry from './lib/geometry'
-import { useQuery } from '@apollo/client'
-import { SESSION_CURRENT_SOLUTION } from '@/queries'
+import { useQuery, useApolloClient } from '@apollo/client'
+import { SESSION_CURRENT_SOLUTION, SESSION_CURRENT_GRAPH } from '@/queries'
 
 const Scene = (): React.ReactElement => {
   const { session } = useSessionManager()
+  const client = useApolloClient()
 
   const {
     store: { elements },
@@ -22,21 +23,6 @@ const Scene = (): React.ReactElement => {
   const {
     store: { selection },
   } = useSceneManager()
-
-  const { data } = useQuery(SESSION_CURRENT_SOLUTION, { variables: { id: session.id }, pollInterval: 1000 })
-
-  useEffect(() => {
-    if (!data) {
-      return
-    }
-
-    const incoming = data.getSession.current
-
-    if (incoming && incoming !== session.id) {
-      console.log('🔔 Detected new solution, updating local reference.')
-      dispatch({ type: 'session/declare-solution', id: incoming })
-    }
-  }, [data])
 
   const getElementTrees = (element: Glasshopper.Element.Base): [string, Glasshopper.Data.DataTree][] => {
     switch (element.template.type) {

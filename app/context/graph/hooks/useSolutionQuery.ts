@@ -41,6 +41,11 @@ export const useSolutionQuery = (session: string, target: string, store: GraphSt
       return
     }
 
+    if (store.config.executionMode == 'paused') {
+      console.log('Blocking new solution because execution is paused.')
+      return
+    }
+
     client.mutate({
       mutation: NEW_SOLUTION,
       variables: {
