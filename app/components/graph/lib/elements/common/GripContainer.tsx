@@ -68,6 +68,8 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
   }, [])
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    e.stopPropagation()
+
     const { width, height, left, top } = gripRef.current.getBoundingClientRect()
     const [cx, cy] = [left + width / 2, top + height / 2]
 
