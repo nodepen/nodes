@@ -54,10 +54,13 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       await db.set(jsonkey, JSON.stringify(graph))
 
       // Request a ghx graph be created
-      const elements = Object.values(graph).filter(
-        (el) =>
-          el.template.type === 'static-component' ||
-          el.template.type === 'static-parameter'
+      const validTypes = [
+        'static-component',
+        'static-parameter',
+        'number-slider',
+      ]
+      const elements = Object.values(graph).filter((el) =>
+        validTypes.includes(el.template.type)
       )
 
       const { data: ghx } = await axios.post(

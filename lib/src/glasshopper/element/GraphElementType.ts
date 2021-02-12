@@ -4,3 +4,4 @@ export type GraphElementType =
   | 'panel'
   | 'wire'
   | 'live-wire'
+  | 'number-slider'

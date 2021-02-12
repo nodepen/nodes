@@ -152,6 +152,16 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
                     })
                   }
                 )
+                break
+              }
+              case 'number-slider': {
+                requests.push({
+                  session: session.id,
+                  solution: store.solution.id,
+                  element: element.id,
+                  parameter: 'output',
+                })
+                break
               }
             }
           })

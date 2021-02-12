@@ -151,6 +151,33 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/add-number-slider': {
+      const { position } = action
+
+      const reference = state.library.params['input'].find(
+        (component) => component.name.toLowerCase() === 'number slider'
+      )
+
+      const slider: Glasshopper.Element.NumberSlider = {
+        id: newGuid(),
+        template: { type: 'number-slider', ...reference },
+        current: {
+          position: pageToGraphCoordinates(position, state),
+          dimensions: { width: 100, height: 40 },
+          anchors: {},
+          sources: { input: [] },
+          domain: [0, 100],
+          value: 50,
+          precision: 0,
+        },
+      }
+
+      state.elements[slider.id] = slider
+
+      expireSolution(state)
+
+      return { ...state }
+    }
     case 'graph/add-panel': {
       const { position } = action
 

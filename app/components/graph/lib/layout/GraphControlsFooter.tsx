@@ -36,6 +36,10 @@ export const GraphControlsFooter = (): React.ReactElement => {
           dispatch({ type: 'graph/add-panel', position })
           break
         }
+        case 'number slider': {
+          dispatch({ type: 'graph/add-number-slider', position })
+          break
+        }
         default: {
           dispatch({ type: 'graph/add-parameter', position, component })
         }
