@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree } from './common'
@@ -17,18 +17,96 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
 
   const [status, color] = useElementStatus(id)
 
-  const { position, domain, precision, value } = slider.current
+  const { position, domain, precision: p, value } = slider.current
 
+  const precision = 3
+
+  const [isSliding, setIsSliding] = useState(false)
+  const [initialValue, setInitialValue] = useState(0)
+  const [[x, y], setAnchor] = useState<[number, number]>([0, 0])
   const [currentValue, setCurrentValue] = useState(value)
 
-  const [dx, dy] = position
-  const [min, max] = domain
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    e.stopPropagation()
 
-  const sliderPosition = (currentValue / (max - min)) * 240
+    const { pageX, pageY } = e
+
+    setAnchor([pageX, pageY])
+    setInitialValue(currentValue)
+    setIsSliding(true)
+  }
+
+  const [min, max] = domain
+  const sliderPosition = (currentValue / (max - min)) * 224
+
+  const handlePointerMove = (e: PointerEvent): void => {
+    if (!isSliding) {
+      return
+    }
+
+    const { pageX, pageY } = e
+
+    const dx = x - pageX
+
+    const stepPerPixel = (max - min) / 224
+
+    const valueDelta = -dx * stepPerPixel
+
+    const candidateValue = initialValue + valueDelta
+
+    if (candidateValue < min) {
+      setCurrentValue(min)
+      return
+    }
+
+    if (candidateValue > max) {
+      setCurrentValue(max)
+      return
+    }
+
+    // Round value to allowed precision
+    const f = Math.pow(10, precision)
+    const precisionValue = Math.round(candidateValue * f) / f
+
+    setCurrentValue(precisionValue)
+  }
+
+  const handlePointerUp = (): void => {
+    setIsSliding(false)
+
+    // dispatch update-slider that also expires solution
+  }
+
+  useEffect(() => {
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.addEventListener('pointerup', handlePointerUp)
+    }
+  })
+
+  const guaranteeZeros = (number: number, precision: number): string => {
+    const current = number.toString()
+
+    const [n, d] = current.split('.')
+
+    const decimals = [...Array(precision)].map((x, i) => d?.[i] ?? '0').join('')
+
+    return `${n}.${decimals}`
+  }
+
+  const [dx, dy] = position
 
   return (
     <div className="absolute flex flex-row" style={{ left: dx - 128, top: -dy - 20 }}>
-      <div className="relative w-64 h-10 p-2 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible">
+      <div
+        className="relative w-64 h-10 p-4 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible"
+        onPointerDown={(e) => e.stopPropagation()}
+        onMouseDown={(e) => e.stopPropagation()}
+        role="presentation"
+      >
         <button
           className="absolute w-8 h-8 rounded-full border-2 border-green bg-pale flex justify-center items-center"
           style={{ left: -42, transform: 'translateY(1px)' }}
@@ -52,13 +130,17 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
         </button>
         <div className="w-full relative bg-dark overflow-visible" style={{ height: '2px' }}>
           <button
-            className="w-4 h-4 absolute rounded-sm border-2 border-dark bg-white hover:bg-green transition-colors duration-150"
+            className={`${
+              isSliding ? 'bg-green' : 'bg-white'
+            } w-4 h-4 absolute rounded-sm border-2 border-dark hover:bg-green transition-colors duration-150`}
             style={{ top: -7, left: sliderPosition - 10, transform: 'rotate(45deg)' }}
+            onPointerDown={handlePointerDown}
+            onMouseDown={(e) => e.stopPropagation()}
           ></button>
         </div>
         <div
           className="absolute w-full h-12 flex flex-col justify-start items-center"
-          style={{ top: 46, left: 0, transform: `translateX(${sliderPosition - 120})` }}
+          style={{ top: 46, left: 0, transform: `translateX(${sliderPosition - 112}px)` }}
         >
           <svg width="24" height="24" viewBox="0 0 10 10" className="overflow-visible z-10">
             <polyline points="1,5 9,5 9,7 1,7" fill="#EFF2F2" stroke="none" />
@@ -78,7 +160,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
           >
             <div className="pl-2 pr-2 border-2 rounded-sm bg-pale border-green">
               <p className="font-sans font-medium text-darkgreen select-none" style={{ transform: 'translateY(-1px)' }}>
-                {value}
+                {guaranteeZeros(currentValue, precision)}
               </p>
             </div>
           </div>

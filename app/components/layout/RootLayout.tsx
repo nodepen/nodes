@@ -13,6 +13,20 @@ export const RootLayout = ({ children }: RootLayoutProps): JSX.Element => {
     setHeight(h)
   }, [])
 
+  const handleResize = (e: UIEvent): void => {
+    const h = window.innerHeight
+
+    setHeight(h)
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  })
+
   return (
     <div className="w-vw p-0 flex flex-col overflow-hidden" style={{ height: height ?? '100vh' }}>
       <div className="w-full h-10 min-h-10 pl-8 pr-8 border-b-2 border-dark bg-light flex flex-row justify-evenly items-center z-50">
