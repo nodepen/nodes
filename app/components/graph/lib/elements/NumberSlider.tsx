@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { Grip, DataTree } from './common'
+import { Grip, DataTree, Loading } from './common'
 import { useElementStatus } from './utils'
 
 type NumberSliderProps = {
@@ -11,6 +11,7 @@ type NumberSliderProps = {
 export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.ReactElement => {
   const {
     store: { elements, solution },
+    dispatch,
   } = useGraphManager()
 
   const slider = elements[id] as Glasshopper.Element.NumberSlider
@@ -69,11 +70,18 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
     setCurrentValue(precisionValue)
   }
 
-  const handlePointerUp = (): void => {
+  const handlePointerUp = (e: PointerEvent): void => {
+    e.stopPropagation()
     setIsSliding(false)
-
-    // dispatch update-slider that also expires solution
+    // dispatch({ type: 'graph/update-number-slider', id, value: currentValue, precision, domain })
   }
+
+  useEffect(() => {
+    if (!isSliding && currentValue !== value) {
+      console.log('ready to dispatch solution')
+      dispatch({ type: 'graph/update-number-slider', id, value: currentValue, precision, domain })
+    }
+  }, [isSliding])
 
   useEffect(() => {
     window.addEventListener('pointermove', handlePointerMove)
@@ -98,7 +106,6 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   useEffect(() => {
     if (value !== currentValue) {
       console.log(`🐍 Value from compute server did not match client value.`)
-      setCurrentValue(value)
     }
   }, [value])
 
@@ -169,6 +176,9 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
               </p>
             </div>
           </div>
+        </div>
+        <div className="absolute w-8 h-4" style={{ right: '0px', top: '-1.3rem' }}>
+          <Loading visible={status === 'waiting'} />
         </div>
       </div>
     </div>

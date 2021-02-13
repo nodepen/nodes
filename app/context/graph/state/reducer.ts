@@ -182,6 +182,25 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/update-number-slider': {
+      const { id, value, domain, precision } = action
+
+      const element = state.elements[id]
+
+      if (!element) {
+        return
+      }
+
+      const slider = element as Glasshopper.Element.NumberSlider
+
+      slider.current.value = value
+      slider.current.domain = domain
+      slider.current.precision = precision
+
+      expireSolution(state)
+
+      return { ...state }
+    }
     case 'graph/add-panel': {
       const { position } = action
 
@@ -615,6 +634,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
             const slider = el as Glasshopper.Element.NumberSlider
 
             slider.current.solution.id = solution
+            slider.current.value = Object.values(data)[0][0].data as number
             break
           }
         }

@@ -15,6 +15,7 @@ export type GraphAction =
   | { type: 'graph/add-parameter'; position: [number, number]; component: Grasshopper.Component }
   | { type: 'graph/add-panel'; position: [number, number] }
   | { type: 'graph/add-number-slider'; position: [number, number] }
+  | { type: 'graph/update-number-slider'; id: string; value: number; domain: [number, number]; precision: number }
   | { type: 'graph/selection-region'; from: [number, number]; to: [number, number]; partial: boolean }
   | { type: 'graph/selection-add'; id: string }
   | { type: 'graph/selection-remove'; id: string }
