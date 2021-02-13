@@ -92,7 +92,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
 
     const decimals = [...Array(precision)].map((x, i) => d?.[i] ?? '0').join('')
 
-    return `${n}.${decimals}`
+    return `${n}${precision > 0 ? '.' : ''}${decimals}`
   }
 
   const [dx, dy] = position
