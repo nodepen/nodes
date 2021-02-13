@@ -169,6 +169,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           domain: [0, 100],
           value: 50,
           precision: 0,
+          solution: {
+            id: '',
+            mode: 'deferred',
+          },
         },
       }
 
@@ -605,6 +609,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
             e.current.values[parameter] = data
             e.current.solution.id = solution
+            break
+          }
+          case 'number-slider': {
+            const slider = el as Glasshopper.Element.NumberSlider
+
+            slider.current.solution.id = solution
             break
           }
         }

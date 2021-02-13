@@ -14,7 +14,10 @@ export const useElementStatus = (id: string): [string, string] => {
     store: { elements, solution, selected },
   } = useGraphManager()
 
-  const element = elements[id] as Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter
+  const element = elements[id] as
+    | Glasshopper.Element.StaticComponent
+    | Glasshopper.Element.StaticParameter
+    | Glasshopper.Element.NumberSlider
   const status = getElementStatus(element, solution.id)
 
   const color: string = useMemo(() => {
@@ -22,32 +25,41 @@ export const useElementStatus = (id: string): [string, string] => {
       return '#98E2C6'
     }
 
-    if (status === 'waiting') {
-      switch (element.current.runtimeMessage?.level ?? 'none') {
-        case 'warning': {
-          return '#FFBE71'
-        }
-        case 'error': {
-          return '#FF7171'
-        }
-        default: {
-          return '#FFFFFF'
-        }
-      }
-    }
-
-    switch (status) {
-      case 'idle': {
+    switch (element.template.type) {
+      case 'number-slider': {
         return '#FFFFFF'
-      }
-      case 'warning': {
-        return '#FFBE71'
-      }
-      case 'error': {
-        return '#FF7171'
       }
       default: {
-        return '#FFFFFF'
+        const el = element as Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter
+
+        if (status === 'waiting') {
+          switch (el.current.runtimeMessage?.level ?? 'none') {
+            case 'warning': {
+              return '#FFBE71'
+            }
+            case 'error': {
+              return '#FF7171'
+            }
+            default: {
+              return '#FFFFFF'
+            }
+          }
+        }
+
+        switch (status) {
+          case 'idle': {
+            return '#FFFFFF'
+          }
+          case 'warning': {
+            return '#FFBE71'
+          }
+          case 'error': {
+            return '#FF7171'
+          }
+          default: {
+            return '#FFFFFF'
+          }
+        }
       }
     }
   }, [element, id, selected, status])

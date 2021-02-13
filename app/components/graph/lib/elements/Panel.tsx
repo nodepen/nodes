@@ -17,11 +17,43 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
   const panel = elements[id] as Glasshopper.Element.Panel
 
   const source = panel.current.sources['input'].length > 0 ? panel.current.sources['input'][0] : undefined
-  const values: Glasshopper.Data.DataTree = source
-    ? elements[source.element].template.type === 'static-parameter'
-      ? (elements[source.element].current as any).values
-      : (elements[source.element].current as any).values[source.parameter]
-    : undefined
+
+  const getValues = (): Glasshopper.Data.DataTree | undefined => {
+    if (!source) {
+      return undefined
+    }
+
+    const element = elements[source.element]
+
+    switch (element.template.type) {
+      case 'static-parameter': {
+        const parameter = element as Glasshopper.Element.StaticParameter
+        return parameter.current.values
+      }
+      case 'static-component': {
+        const component = element as Glasshopper.Element.StaticComponent
+        return component.current.values[source.parameter]
+      }
+      case 'number-slider': {
+        const slider = element as Glasshopper.Element.NumberSlider
+        const { value } = slider.current
+
+        const data: Glasshopper.Data.DataTree = {
+          '{0}': [
+            {
+              from: 'user',
+              type: 'number',
+              data: value,
+            },
+          ],
+        }
+
+        return data
+      }
+    }
+  }
+
+  const values = getValues()
 
   if (!elements[id]) {
     console.error(`Element '${id}' does not exist.'`)

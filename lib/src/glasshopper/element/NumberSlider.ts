@@ -19,5 +19,9 @@ export interface NumberSlider extends GraphElementBase {
     domain: [number, number]
     precision: number // 0 = int, >= 1 is 'digits' after 0
     value: number
+    solution: {
+      id: string
+      mode: 'immediate' | 'deferred'
+    }
   }
 }
