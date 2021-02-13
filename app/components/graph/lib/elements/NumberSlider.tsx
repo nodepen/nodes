@@ -17,9 +17,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
 
   const [status, color] = useElementStatus(id)
 
-  const { position, domain, precision: p, value } = slider.current
-
-  const precision = 3
+  const { position, domain, precision, value } = slider.current
 
   const [isSliding, setIsSliding] = useState(false)
   const [initialValue, setInitialValue] = useState(0)
