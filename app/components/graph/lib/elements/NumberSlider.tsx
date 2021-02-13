@@ -18,7 +18,9 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
 
   const [status, color] = useElementStatus(id)
 
-  const { position, domain, precision, value } = slider.current
+  const { position, domain, precision, values } = slider.current
+
+  const value = values['{0}'][0].data as number
 
   const [isSliding, setIsSliding] = useState(false)
   const [initialValue, setInitialValue] = useState(0)
@@ -114,7 +116,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   return (
     <div className="absolute flex flex-row" style={{ left: dx - 128, top: -dy - 20 }}>
       <div
-        className="relative w-64 h-10 p-4 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible"
+        className="relative w-64 h-10 p-4 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible z-30"
         onPointerDown={(e) => e.stopPropagation()}
         onMouseDown={(e) => e.stopPropagation()}
         role="presentation"
@@ -179,6 +181,14 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
         </div>
         <div className="absolute w-8 h-4" style={{ right: '0px', top: '-1.3rem' }}>
           <Loading visible={status === 'waiting'} />
+        </div>
+        <div
+          className="absolute w-4 h-10 z-20 flex flex-col justify-center overflow-hidden"
+          style={{ right: -18, top: -1 }}
+        >
+          <div className="h-4 flex flex-col justify-center" style={{ transform: 'translateX(-8px)' }}>
+            <Grip source={{ element: id, parameter: 'output' }} />
+          </div>
         </div>
       </div>
     </div>

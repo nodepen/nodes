@@ -1,6 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
-import { Glasshopper } from 'glib'
+import { Glasshopper, Grasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree } from './common'
 // import { PanelScene } from './../scene'
@@ -36,19 +36,7 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
       }
       case 'number-slider': {
         const slider = element as Glasshopper.Element.NumberSlider
-        const { value } = slider.current
-
-        const data: Glasshopper.Data.DataTree = {
-          '{0}': [
-            {
-              from: 'user',
-              type: 'number',
-              data: value,
-            },
-          ],
-        }
-
-        return data
+        return slider.current.values
       }
     }
   }

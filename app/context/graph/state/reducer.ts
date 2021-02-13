@@ -167,7 +167,15 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           anchors: {},
           sources: { input: [] },
           domain: [0, 100],
-          value: 50,
+          values: {
+            '{0}': [
+              {
+                type: 'number',
+                from: 'user',
+                data: 50,
+              },
+            ],
+          },
           precision: 0,
           solution: {
             id: '',
@@ -193,7 +201,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const slider = element as Glasshopper.Element.NumberSlider
 
-      slider.current.value = value
+      slider.current.values['{0}'][0].data = value
       slider.current.domain = domain
       slider.current.precision = precision
 
@@ -634,7 +642,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
             const slider = el as Glasshopper.Element.NumberSlider
 
             slider.current.solution.id = solution
-            slider.current.value = Object.values(data)[0][0].data as number
+            slider.current.values['{0}'][0].data = Object.values(data)[0][0].data as number
             break
           }
         }
@@ -786,7 +794,11 @@ const assignDefaultSources = (
 const isInputOrOutput = (elementId: string, parameterId: string, state: GraphStore): 'input' | 'output' => {
   const element = state.elements[elementId]
 
-  if (element.template.type === 'static-parameter') {
+  if (element.template.type === 'panel') {
+    return 'input'
+  }
+
+  if (element.template.type === 'static-parameter' || element.template.type === 'number-slider') {
     return parameterId as 'input' | 'output'
   }
 

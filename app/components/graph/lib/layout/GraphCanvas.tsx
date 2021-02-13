@@ -14,11 +14,8 @@ export const GraphCanvas = (): React.ReactElement => {
   useEffect(() => {
     const debug = (e: KeyboardEvent): void => {
       if (e.code === 'Space') {
-        console.log(
-          Object.values(elements).filter(
-            (el) => el.template.type === 'static-component' || el.template.type === 'static-parameter'
-          )
-        )
+        const watching = ['static-component', 'static-parameter', 'number-slider']
+        console.log(Object.values(elements).filter((el) => watching.includes(el.template.type)))
         dispatch({ type: 'session/expire-solution' })
       }
     }

@@ -55,9 +55,6 @@ namespace NodePen.Compute.Routes
       [JsonProperty("domain")]
       public List<decimal> Domain { get; set; } = new List<decimal>();
 
-      [JsonProperty("value")]
-      public decimal? Value { get; set; }
-
       [JsonProperty("precision")]
       public int? Precision { get; set; }
     }
@@ -159,7 +156,10 @@ namespace NodePen.Compute.Routes
 
               sliderInstance.Slider.FixDomain();
 
-              sliderInstance.SetSliderValue(element.Current.Value ?? 5);
+              var incoming = Convert.ToString(element.Current.Values["{0}"][0].data);
+              var success = decimal.TryParse(incoming, out decimal value);
+
+              sliderInstance.SetSliderValue(success ? value : 5);
 
               sliderInstance.Slider.FixValue();
 
