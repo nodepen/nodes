@@ -83,7 +83,7 @@ const Teaser = () => {
             {grid}
           </svg>
         </div>
-        <div className="card-mono w-64 lg:w-76 z-10 p-2 flex flex-col justify-center items-center">
+        <div className="card-mono rounded-md w-64 lg:w-76 z-10 p-2 flex flex-col justify-center items-center">
           <h1 className="font-display text-3xl mb-2">nodepen</h1>
           <p className="font-sans font-semibold text-sm mb-2">COMING SOON</p>
         </div>
@@ -94,8 +94,8 @@ const Teaser = () => {
         rel="noreferrer"
         className="font-sans font-semibold text-sm"
       >
-        <div className="w-48 h-10 card-mono transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
-          <div className="w-10 border-r border-dark flex justify-center items-center">
+        <div className="w-48 h-10 card-mono rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
+          <div className="w-10 border-r-2 border-dark flex justify-center items-center">
             <img alt="The official GitHub logo." src="/github.svg" width="24px" height="24px" />
           </div>
           <div className="flex-grow flex flex-row justify-center items-center">
