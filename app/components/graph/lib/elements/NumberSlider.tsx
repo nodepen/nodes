@@ -95,6 +95,13 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
     return `${n}${precision > 0 ? '.' : ''}${decimals}`
   }
 
+  useEffect(() => {
+    if (value !== currentValue) {
+      console.log(`🐍 Value from compute server did not match client value.`)
+      setCurrentValue(value)
+    }
+  }, [value])
+
   const [dx, dy] = position
 
   return (
