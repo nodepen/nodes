@@ -28,6 +28,7 @@ export const newSolution = async (
 
   await addSolutionToSession(sessionId, solutionId)
 
+  await addSolutionToQueueHistory(sessionId, solutionId)
   // const root = process.env.NP_DISPATCH_URL ?? 'http://localhost:4100'
 
   const job = await alpha
@@ -40,12 +41,6 @@ export const newSolution = async (
     .save()
 
   console.log(`[ JOB #${job.id} ]  [ CREATE ]  ${sessionId}:${solutionId}`)
-
-  // const { data } = await axios.post(`${root}/new/solution`, {
-  //   sessionId,
-  //   solutionId,
-  //   graph: elements,
-  // })
 
   return JSON.stringify({ id: job.id })
 }
@@ -75,5 +70,22 @@ const addSolutionToSession = async (
     batch.lpush(`${root}:history`, solutionId)
 
     batch.exec((err, res) => [resolve()])
+  })
+}
+
+const addSolutionToQueueHistory = async (
+  sessionId: string,
+  solutionId: string
+): Promise<void> => {
+  const entry = `${sessionId};${solutionId}`
+
+  return new Promise<void>((resolve, reject) => {
+    const batch = db.multi()
+
+    batch.lpush('queue:history', entry)
+    batch.hset('queue:meta', 'latest_created', new Date().toISOString())
+    batch.hset('queue:active', entry, 'active')
+
+    batch.exec((err, res) => resolve())
   })
 }

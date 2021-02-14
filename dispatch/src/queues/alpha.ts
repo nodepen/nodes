@@ -45,6 +45,9 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
       console.log(`[ JOB #${job.id} ]  [ START ]  ${sessionId}:${solutionId}`)
 
+      // Remove job from waiting
+      await db.hdel('queue:active', `${sessionId};${solutionId}`)
+
       // Store started_at at session:id:solution:id
       const start = Date.now()
       db.hset(solutionKey, 'started_at', new Date(start).toISOString())
@@ -81,10 +84,17 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
       // Store finished_at at session:id:solution:id
       const end = Date.now()
-      db.hset(solutionKey, 'finished_at', new Date(end).toISOString())
 
       const duration = end - start
       console.log(`${sessionId}:${solutionId} succeeded in ${duration}ms`)
+
+      db.hset(
+        solutionKey,
+        'finished_at',
+        new Date(end).toISOString(),
+        'duration',
+        duration.toString()
+      )
 
       // Store solution stats and messages
       const { data: results, messages } = solution
