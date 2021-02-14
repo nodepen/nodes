@@ -1,21 +1,16 @@
 import React from 'react'
-import { useSessionManager } from '@/context/session'
-import { useGraphManager } from '@/context/graph'
+import { useQuery } from '@apollo/client'
+import { QUEUE_STATUS } from '@/queries'
 
 export const QueueContainer = (): React.ReactElement => {
-  const { session, user } = useSessionManager()
-  const { store, dispatch } = useGraphManager()
-
-  const pokeSolution = (): void => {
-    dispatch({ type: 'session/expire-solution' })
-  }
+  const { data } = useQuery(QUEUE_STATUS, { variables: { depth: 20 }, pollInterval: 500 })
 
   return (
     <main className="w-full flex flex-col">
-      <p>session: {session?.id}</p>
-      <p>user: {user?.id}</p>
-      <p>library: {Object.keys(store.library)}</p>
-      <button onClick={pokeSolution}>GO!</button>
+      <h1>{data?.getQueueStatus?.active_count}</h1>
+      {data?.getQueueStatus?.jobs.map((entry, i) => (
+        <p key={i}>{entry}</p>
+      ))}
     </main>
   )
 }

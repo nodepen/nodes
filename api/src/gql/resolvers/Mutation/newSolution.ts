@@ -83,6 +83,7 @@ const addSolutionToQueueHistory = async (
     const batch = db.multi()
 
     batch.lpush('queue:history', entry)
+    batch.ltrim('queue:history', 0, 249)
     batch.hset('queue:meta', 'latest_created', new Date().toISOString())
     batch.hset('queue:active', entry, 'active')
 
