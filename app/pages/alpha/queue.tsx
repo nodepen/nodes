@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async ({ query }) => {
 
   const response: GetServerSidePropsResult<never> = { redirect: { destination: '/teaser', permanent: false } }
 
-  if (!password || password !== process.env.ALPHA_PASSWORD) {
+  if (!password || password !== process.env.ADMIN_PASSWORD) {
     return response
   }
 
