@@ -76,8 +76,7 @@ const Scene = (): React.ReactElement => {
   }
 
   return (
-    <Canvas>
-      <OrthographicCamera />
+    <Canvas orthographic camera={{ zoom: 50, position: [0, 20, 0], near: -5 }}>
       <OrbitControls />
       <Grid />
       <>
@@ -96,6 +95,7 @@ const Scene = (): React.ReactElement => {
           }
         })}
       </>
+      {/* </OrthographicCamera> */}
     </Canvas>
   )
 }
