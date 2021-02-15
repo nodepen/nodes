@@ -6,9 +6,10 @@ import { SOLUTION_STATUS, GRAPH_JSON } from '@/queries'
 type QueueJobEntryProps = {
   sessionId: string
   solutionId: string
+  registerGraph: (user: string, graph: Glasshopper.Element.Base[]) => void
 }
 
-export const QueueJobEntry = ({ sessionId, solutionId }: QueueJobEntryProps): React.ReactElement => {
+export const QueueJobEntry = ({ sessionId, solutionId, registerGraph }: QueueJobEntryProps): React.ReactElement => {
   const client = useApolloClient()
   const { data, stopPolling } = useQuery(SOLUTION_STATUS, { variables: { sessionId, solutionId }, pollInterval: 500 })
 
@@ -42,7 +43,9 @@ export const QueueJobEntry = ({ sessionId, solutionId }: QueueJobEntryProps): Re
       client.query({ query: GRAPH_JSON, variables: { sessionId, solutionId } }).then(({ data }) => {
         const json = data.getGraphJson
 
-        setGraph(Object.values(JSON.parse(json)))
+        const graph: Glasshopper.Element.Base[] = Object.values(JSON.parse(json))
+        setGraph(graph)
+        registerGraph(sessionId, graph)
       })
     }
   }, [status])
