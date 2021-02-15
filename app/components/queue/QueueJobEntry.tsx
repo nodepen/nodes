@@ -1,6 +1,7 @@
-import React, { useEffect } from 'react'
-import { useQuery } from '@apollo/client'
-import { SOLUTION_STATUS } from '@/queries'
+import React, { useEffect, useState } from 'react'
+import { Glasshopper } from 'glib'
+import { useQuery, useApolloClient } from '@apollo/client'
+import { SOLUTION_STATUS, GRAPH_JSON } from '@/queries'
 
 type QueueJobEntryProps = {
   sessionId: string
@@ -8,10 +9,14 @@ type QueueJobEntryProps = {
 }
 
 export const QueueJobEntry = ({ sessionId, solutionId }: QueueJobEntryProps): React.ReactElement => {
+  const client = useApolloClient()
   const { data, stopPolling } = useQuery(SOLUTION_STATUS, { variables: { sessionId, solutionId }, pollInterval: 500 })
 
   const status = data?.getSolutionStatus?.status?.toLowerCase() ?? 'waiting'
   const userColor = stringToColour(sessionId)
+
+  const [duration, setDuration] = useState<string>()
+  const [graph, setGraph] = useState<Glasshopper.Element.Base[]>()
 
   const getStatusColor = (status: string): string => {
     switch (status) {
@@ -32,6 +37,13 @@ export const QueueJobEntry = ({ sessionId, solutionId }: QueueJobEntryProps): Re
   useEffect(() => {
     if (status === 'succeeded' || status === 'failed') {
       stopPolling()
+      setDuration(data.getSolutionStatus.duration)
+
+      client.query({ query: GRAPH_JSON, variables: { sessionId, solutionId } }).then(({ data }) => {
+        const json = data.getGraphJson
+
+        setGraph(Object.values(JSON.parse(json)))
+      })
     }
   }, [status])
 
@@ -39,10 +51,22 @@ export const QueueJobEntry = ({ sessionId, solutionId }: QueueJobEntryProps): Re
     <div className={`${status === 'failed' ? 'bg-red-200' : ''} w-full h-10 p-2 mb-2 rounded-md flex items-center`}>
       <div className="w-6 h-6 mr-2 rounded-full" style={{ background: statusColor }} />
       <div className="w-6 h-6 mr-2 rounded-full" style={{ background: userColor }} />
-      <p>{sessionId.split('-')[1]}</p>
-      <p> : </p>
-      <p>{solutionId.split('-')[1]}</p>
-      <p>{status}</p>
+      {status === 'failed' ? (
+        <div className="flex-grow flex flex-col items-end">
+          <p className="text-xs">{sessionId}</p>
+          <p className="text-xs">{solutionId}</p>
+        </div>
+      ) : (
+        <>
+          <p>{sessionId.split('-')[1]}</p>
+          <p> : </p>
+          <p>{solutionId.split('-')[1]}</p>
+          <div className="flex-grow flex justify-end items-center">
+            {graph ? <p>({graph.length})</p> : null}
+            {duration ? <p className="ml-2">{duration}ms</p> : null}
+          </div>
+        </>
+      )}
     </div>
   )
 }

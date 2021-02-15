@@ -9,6 +9,7 @@ type SolutionStatus = {
   status: string
   started_at?: string
   finished_at?: string
+  duration?: string
 }
 
 export const getSolutionStatus = (

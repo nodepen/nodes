@@ -68,6 +68,7 @@ const addSolutionToSession = async (
     const batch = db.multi()
 
     batch.lpush(`${root}:history`, solutionId)
+    batch.ltrim(`${root}:history`, 0, 24)
 
     batch.exec((err, res) => [resolve()])
   })
