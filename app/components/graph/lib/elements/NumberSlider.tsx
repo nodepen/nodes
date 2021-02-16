@@ -3,6 +3,7 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree, Loading } from './common'
 import { useElementStatus } from './utils'
+import { Input } from '@/components'
 
 type NumberSliderProps = {
   instanceId: string
@@ -124,6 +125,18 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   const [editDomain, setEditDomain] = useState<[number, number]>([0, 0])
   const [editPrecision, setEditPrecision] = useState<number>(0)
 
+  useEffect(() => {
+    const [min, max] = editDomain
+
+    if (editValue < min) {
+      setEditValue(min)
+    }
+
+    if (editValue > max) {
+      setEditValue(max)
+    }
+  }, [editDomain])
+
   const handleStartEdit = (): void => {
     setMode('edit')
 
@@ -231,7 +244,39 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
           >
             <div className="w-full h-8 bg-green" />
             <div className="w-full p-2 flex flex-col">
-              <div className="w-full flex flex-row items-center gap-2">
+              <div className="w-full flex flex-row justify-evenly mb-1">
+                <div className="w-16">
+                  <Input.Number
+                    value={editDomain[0]}
+                    domain={[Number.MIN_SAFE_INTEGER, editDomain[1] - 1]}
+                    onChange={(value) => setEditDomain(([, end]) => [Number.parseFloat(value), end])}
+                  />
+                </div>
+                <p className="w-10 text-center">&lt;</p>
+                <div className="w-16">
+                  <Input.Number
+                    value={editValue}
+                    domain={editDomain}
+                    onChange={(value) => setEditValue(Number.parseFloat(value))}
+                  />
+                </div>
+                <p className="w-10 text-center">&lt;</p>
+                <div className="w-16">
+                  <Input.Number
+                    value={editDomain[1]}
+                    domain={[editDomain[0] + 1, Number.MAX_SAFE_INTEGER]}
+                    onChange={(value) => setEditDomain(([start]) => [start, Number.parseFloat(value)])}
+                  />
+                </div>
+                <div className="w-32 pl-2 flex flex-row items-center justify-between">
+                  <button className="w-6 h-6 rounded-full border-2 border-green flex items-center justify-center">
+                    -
+                  </button>
+                  <p className="font-medium text-lg">.{editPrecision}</p>
+                  <button className="w-6 h-6 rounded-full border-2 border-green items-center justify-center">+</button>
+                </div>
+              </div>
+              <div className="w-full mt-2 flex flex-row items-center gap-2">
                 <button
                   onClick={handleCancelEdit}
                   className="p-0 pt-1 flex-grow flex justify-center item-center border-2 border-green rounded-sm font-panel text-sm font-medium text-darkgreen hover:bg-green"
