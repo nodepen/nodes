@@ -8,6 +8,8 @@ type NumberSliderProps = {
   instanceId: string
 }
 
+type NumberSliderMode = 'input' | 'edit'
+
 export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.ReactElement => {
   const {
     store: { elements, solution },
@@ -30,6 +32,10 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
     e.stopPropagation()
 
+    if (mode !== 'input') {
+      return
+    }
+
     const { pageX, pageY } = e
 
     setAnchor([pageX, pageY])
@@ -45,7 +51,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
       return
     }
 
-    const { pageX, pageY } = e
+    const { pageX } = e
 
     const dx = x - pageX
 
@@ -75,7 +81,6 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   const handlePointerUp = (e: PointerEvent): void => {
     e.stopPropagation()
     setIsSliding(false)
-    // dispatch({ type: 'graph/update-number-slider', id, value: currentValue, precision, domain })
   }
 
   useEffect(() => {
@@ -113,82 +118,141 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
 
   const [dx, dy] = position
 
+  const [mode, setMode] = useState<NumberSliderMode>('input')
+
+  const [editValue, setEditValue] = useState<number>(0)
+  const [editDomain, setEditDomain] = useState<[number, number]>([0, 0])
+  const [editPrecision, setEditPrecision] = useState<number>(0)
+
+  const handleStartEdit = (): void => {
+    setMode('edit')
+
+    setEditValue(currentValue)
+    setEditDomain(domain)
+    setEditPrecision(precision)
+  }
+
+  const handleCancelEdit = (): void => {
+    setMode('input')
+  }
+
+  const handleSubmitEdit = (): void => {
+    // Fix any values that don't make sense
+
+    // Commit new values and expire solution
+
+    // Update component mode
+    setMode('input')
+  }
+
   return (
     <div className="absolute flex flex-row" style={{ left: dx - 128, top: -dy - 20 }}>
-      <div
-        className="relative w-64 h-10 p-4 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible z-30"
-        onPointerDown={(e) => e.stopPropagation()}
-        onMouseDown={(e) => e.stopPropagation()}
-        role="presentation"
-      >
-        <button
-          className="absolute w-8 h-8 rounded-full border-2 border-green bg-pale flex justify-center items-center"
-          style={{ left: -42, transform: 'translateY(1px)' }}
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="22"
-            height="22"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="#98E2C6"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-            />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        </button>
-        <div className="w-full relative bg-dark overflow-visible" style={{ height: '2px' }}>
-          <button
-            className={`${
-              isSliding ? 'bg-green' : 'bg-white'
-            } w-4 h-4 absolute rounded-sm border-2 border-dark hover:bg-green transition-colors duration-150`}
-            style={{ top: -7, left: sliderPosition - 10, transform: 'rotate(45deg)' }}
-            onPointerDown={handlePointerDown}
-            onMouseDown={(e) => e.stopPropagation()}
-          ></button>
-        </div>
+      <div className="relative w-64 h-10 ">
         <div
-          className="absolute w-full h-12 flex flex-col justify-start items-center"
-          style={{ top: 46, left: 0, transform: `translateX(${sliderPosition - 112}px)` }}
+          className="relative w-full h-full p-4 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible z-30"
+          onPointerDown={(e) => e.stopPropagation()}
+          onMouseDown={(e) => e.stopPropagation()}
+          role="presentation"
         >
-          <svg width="24" height="24" viewBox="0 0 10 10" className="overflow-visible z-10">
-            <polyline points="1,5 9,5 9,7 1,7" fill="#EFF2F2" stroke="none" />
-            <polyline
-              points="1,5 5,1 9,5"
-              fill="#EFF2F2"
-              stroke="#98E2C6"
-              strokeWidth="2px"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              vectorEffect="non-scaling-stroke"
-            />
-          </svg>
-          <div
-            className="w-full h-8 flex flex-row justify-center items-center z-0"
-            style={{ transform: 'translateY(-12px)' }}
-          >
-            <div className="pl-2 pr-2 border-2 rounded-sm bg-pale border-green">
-              <p className="font-sans font-medium text-darkgreen select-none" style={{ transform: 'translateY(-1px)' }}>
-                {guaranteeZeros(currentValue, precision)}
-              </p>
-            </div>
+          <div className="w-full relative bg-dark overflow-visible" style={{ height: '2px' }}>
+            <button
+              className={`${
+                isSliding ? 'bg-green' : 'bg-white'
+              } w-4 h-4 absolute rounded-sm border-2 border-dark hover:bg-green transition-colors duration-150`}
+              style={{ top: -7, left: sliderPosition - 10, transform: 'rotate(45deg)' }}
+              onPointerDown={handlePointerDown}
+              onMouseDown={(e) => e.stopPropagation()}
+            ></button>
           </div>
         </div>
+        {mode === 'input' ? (
+          <button
+            className="absolute w-8 h-8 rounded-full border-2 border-green bg-pale flex justify-center items-center"
+            style={{ left: -38, top: 6 }}
+            onClick={handleStartEdit}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="22"
+              height="22"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="#98E2C6"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+          </button>
+        ) : null}
+        {mode === 'input' ? (
+          <div
+            className="absolute w-full h-12 flex flex-col justify-start items-center"
+            style={{ top: 46, left: 0, transform: `translateX(${sliderPosition - 112}px)` }}
+          >
+            <svg width="24" height="24" viewBox="0 0 10 10" className="overflow-visible z-10">
+              <polyline points="1,5 9,5 9,7 1,7" fill="#EFF2F2" stroke="none" />
+              <polyline
+                points="1,5 5,1 9,5"
+                fill="#EFF2F2"
+                stroke="#98E2C6"
+                strokeWidth="2px"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                vectorEffect="non-scaling-stroke"
+              />
+            </svg>
+            <div
+              className="w-full h-8 flex flex-row justify-center items-center z-0"
+              style={{ transform: 'translateY(-12px)' }}
+            >
+              <div className="pl-2 pr-2 border-2 rounded-sm bg-pale border-green">
+                <p
+                  className="font-sans font-medium text-darkgreen select-none"
+                  style={{ transform: 'translateY(-1px)' }}
+                >
+                  {guaranteeZeros(currentValue, precision)}
+                </p>
+              </div>
+            </div>
+          </div>
+        ) : null}
+        {mode === 'edit' ? (
+          <div
+            className="absolute w-76 flex flex-col rounded-md border-2 border-green bg-pale z-0"
+            style={{ left: '-24px', top: '20px' }}
+            onMouseDown={(e) => e.stopPropagation()}
+            onPointerDown={(e) => e.stopPropagation()}
+            role="presentation"
+          >
+            <div className="w-full h-8 bg-green" />
+            <div className="w-full p-2 flex flex-col">
+              <div className="w-full flex flex-row items-center gap-2">
+                <button
+                  onClick={handleCancelEdit}
+                  className="p-0 pt-1 flex-grow flex justify-center item-center border-2 border-green rounded-sm font-panel text-sm font-medium text-darkgreen hover:bg-green"
+                >
+                  Cancel
+                </button>
+                <button
+                  onClick={handleSubmitEdit}
+                  className="p-0 pt-1 flex-grow flex justify-center item-center border-2 border-green rounded-sm font-panel text-sm font-medium text-darkgreen hover:bg-green"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : null}
         <div className="absolute w-8 h-4" style={{ right: '0px', top: '-1.3rem' }}>
           <Loading visible={status === 'waiting'} />
         </div>
-        <div
-          className="absolute w-4 h-10 z-20 flex flex-col justify-center overflow-hidden"
-          style={{ right: -18, top: -1 }}
-        >
-          <div className="h-4 flex flex-col justify-center" style={{ transform: 'translateX(-8px)' }}>
-            <Grip source={{ element: id, parameter: 'output' }} />
-          </div>
+        <div className="absolute w-4 h-4 z-20" style={{ right: -8, top: 2 }}>
+          <Grip source={{ element: id, parameter: 'output' }} />
         </div>
       </div>
     </div>

@@ -83,7 +83,7 @@ namespace NodePen.Compute.Routes
 
         if (template == null)
         {
-          Console.Write("No proxy found.");
+          Console.Write($"No proxy found for {element.Template.Name} in {element.Template.LibraryName}.");
           return;
         }
 
