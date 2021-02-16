@@ -4,9 +4,10 @@ type NumberInputProps = {
   value: string | number
   domain?: [number, number]
   onChange: (value: string) => void
+  onFocus?: () => void
 }
 
-export const NumberInput = ({ value, domain, onChange }: NumberInputProps): React.ReactElement => {
+export const NumberInput = ({ value, domain, onChange, onFocus }: NumberInputProps): React.ReactElement => {
   const [internalValue, setInternalValue] = useState(value)
 
   useEffect(() => {
@@ -43,11 +44,18 @@ export const NumberInput = ({ value, domain, onChange }: NumberInputProps): Reac
     }
   }
 
+  const handleFocus = (): void => {
+    if (onFocus) {
+      onFocus()
+    }
+  }
+
   return (
     <input
       className="w-full pr-2 pl-2 text-center text-lg font-medium text-darkgreen bg-pale border-b-2 border-green"
       type="text"
       value={internalValue}
+      onFocus={handleFocus}
       onBlur={handleBlur}
       onChange={handleChange}
     />

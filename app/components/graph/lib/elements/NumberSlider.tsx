@@ -45,7 +45,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   }
 
   const [min, max] = domain
-  const sliderPosition = (currentValue / (max - min)) * 224
+  const sliderPosition = ((currentValue - min) / (max - min)) * 224
 
   const handlePointerMove = (e: PointerEvent): void => {
     if (!isSliding) {
@@ -114,6 +114,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   useEffect(() => {
     if (value !== currentValue) {
       console.log(`🐍 Value from compute server did not match client value.`)
+      setCurrentValue(value)
     }
   }, [value])
 
@@ -266,7 +267,9 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
                   <Input.Number
                     value={editValue}
                     domain={editDomain}
-                    onChange={(value) => setEditValue(Number.parseFloat(value))}
+                    onChange={(value) => {
+                      setEditValue(Number.parseFloat(value))
+                    }}
                   />
                 </div>
                 <p className="w-10 text-center">&lt;</p>
