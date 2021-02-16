@@ -137,6 +137,16 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
     }
   }, [editDomain])
 
+  const handleEditPrecision = (step: number): void => {
+    const proposed = editPrecision + step
+
+    if (proposed < 0 || proposed > 6) {
+      return
+    }
+
+    setEditPrecision(Math.round(proposed))
+  }
+
   const handleStartEdit = (): void => {
     setMode('edit')
 
@@ -150,9 +160,8 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   }
 
   const handleSubmitEdit = (): void => {
-    // Fix any values that don't make sense
-
     // Commit new values and expire solution
+    dispatch({ type: 'graph/update-number-slider', id, value: editValue, domain: editDomain, precision: editPrecision })
 
     // Update component mode
     setMode('input')
@@ -268,12 +277,52 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
                     onChange={(value) => setEditDomain(([start]) => [start, Number.parseFloat(value)])}
                   />
                 </div>
-                <div className="w-32 pl-2 flex flex-row items-center justify-between">
-                  <button className="w-6 h-6 rounded-full border-2 border-green flex items-center justify-center">
-                    -
+                <div className="w-24 pl-2 flex flex-row items-center justify-between">
+                  <button
+                    className="w-5 h-5 rounded-full border-2 border-green flex items-center justify-center"
+                    onClick={() => handleEditPrecision(-1)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 10 10">
+                      <line
+                        x1={2}
+                        y1={5}
+                        x2={8}
+                        y2={5}
+                        stroke="#98E2C6"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </svg>
                   </button>
                   <p className="font-medium text-lg">.{editPrecision}</p>
-                  <button className="w-6 h-6 rounded-full border-2 border-green items-center justify-center">+</button>
+                  <button
+                    className="w-5 h-5 rounded-full border-2 border-green flex items-center justify-center"
+                    onClick={() => handleEditPrecision(1)}
+                  >
+                    <svg width="14" height="14" viewBox="0 0 10 10">
+                      <line
+                        x1={2}
+                        y1={5}
+                        x2={8}
+                        y2={5}
+                        stroke="#98E2C6"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                      <line
+                        x1={5}
+                        y1={2}
+                        x2={5}
+                        y2={8}
+                        stroke="#98E2C6"
+                        strokeWidth={2}
+                        strokeLinecap="round"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
               <div className="w-full mt-2 flex flex-row items-center gap-2">
