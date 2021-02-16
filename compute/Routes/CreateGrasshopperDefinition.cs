@@ -10,6 +10,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Special;
 using GH_IO.Serialization;
 
 namespace NodePen.Compute.Routes
@@ -49,6 +50,13 @@ namespace NodePen.Compute.Routes
 
       [JsonProperty("values")]
       public dynamic Values { get; set; }
+
+      // Number Slider properties
+      [JsonProperty("domain")]
+      public List<decimal> Domain { get; set; } = new List<decimal>();
+
+      [JsonProperty("precision")]
+      public int? Precision { get; set; }
     }
 
     private class NodePenElementSource
@@ -75,7 +83,7 @@ namespace NodePen.Compute.Routes
 
         if (template == null)
         {
-          Console.Write("No proxy found.");
+          Console.Write($"No proxy found for {element.Template.Name} in {element.Template.LibraryName}.");
           return;
         }
 
@@ -121,6 +129,39 @@ namespace NodePen.Compute.Routes
 
               // Attributes appear to be null before adding to document
               ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.Id.ToString()).Attributes.Pivot = new PointF(x, y);
+
+              break;
+            }
+          case "number-slider":
+            {
+              var slider = template.CreateInstance() as GH_NumberSlider;
+              slider.NewInstanceGuid(new Guid(element.Id));
+
+              ghdoc.AddObject(slider, false);
+
+              var x = Convert.ToSingle(element.Current.Position[0]);
+              var y = Convert.ToSingle(element.Current.Position[1]);
+
+              var sliderInstance = ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.Id) as GH_NumberSlider;
+
+              sliderInstance.Attributes.Pivot = new PointF(x, y);
+
+              var precision = element.Current.Precision ?? 0;
+              sliderInstance.Slider.Type = precision == 0 ? Grasshopper.GUI.Base.GH_SliderAccuracy.Integer : Grasshopper.GUI.Base.GH_SliderAccuracy.Float;
+              sliderInstance.Slider.DecimalPlaces = precision;
+
+              var domain = element.Current.Domain;
+              sliderInstance.Slider.Minimum = domain[0];
+              sliderInstance.Slider.Maximum = domain[1];
+
+              sliderInstance.Slider.FixDomain();
+
+              var incoming = Convert.ToString(element.Current.Values["{0}"][0].data);
+              var success = decimal.TryParse(incoming, out decimal value);
+
+              sliderInstance.SetSliderValue(success ? value : 5);
+
+              sliderInstance.Slider.FixValue();
 
               break;
             }
@@ -225,7 +266,8 @@ namespace NodePen.Compute.Routes
         values.Properties().ToList().ForEach(prop =>
         {
           var pathString = prop.Name;
-          var pathIndices = pathString.Replace("{", "").Replace("}", "").Split(';').Select(num => Convert.ToInt32(num)).ToArray();
+          var pathCrumbs = pathString.Replace("{", "").Replace("}", "").Split(';').ToList().Where(key => key.Length > 0);
+          var pathIndices = pathCrumbs.Select(num => Convert.ToInt32(num)).ToArray();
 
           var branch = new GH_Path(pathIndices);
 
@@ -248,6 +290,8 @@ namespace NodePen.Compute.Routes
               case "number":
                 {
                   var numberParam = instance as Param_Number;
+
+                  var candidate = pathValue.data.ToString();
 
                   double value = Convert.ToDouble(pathValue.data.ToString());
 

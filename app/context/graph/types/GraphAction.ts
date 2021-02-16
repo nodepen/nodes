@@ -1,4 +1,5 @@
 import { Grasshopper, Glasshopper } from 'glib'
+import { GraphExecutionMode } from './GraphExecutionMode'
 
 export type GraphAction =
   | { type: 'demo' }
@@ -13,11 +14,14 @@ export type GraphAction =
   | { type: 'graph/add-component'; position: [number, number]; component: Grasshopper.Component }
   | { type: 'graph/add-parameter'; position: [number, number]; component: Grasshopper.Component }
   | { type: 'graph/add-panel'; position: [number, number] }
+  | { type: 'graph/add-number-slider'; position: [number, number] }
+  | { type: 'graph/update-number-slider'; id: string; value: number; domain: [number, number]; precision: number }
   | { type: 'graph/selection-region'; from: [number, number]; to: [number, number]; partial: boolean }
   | { type: 'graph/selection-add'; id: string }
   | { type: 'graph/selection-remove'; id: string }
   | { type: 'graph/selection-toggle'; id: string }
   | { type: 'graph/selection-clear' }
+  | { type: 'graph/config/set-execution-mode'; mode: GraphExecutionMode }
   | {
       type: 'graph/wire/start-live-wire'
       from: [number, number]

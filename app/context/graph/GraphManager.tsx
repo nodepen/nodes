@@ -152,15 +152,51 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
                     })
                   }
                 )
+                break
+              }
+              case 'number-slider': {
+                requests.push({
+                  session: session.id,
+                  solution: store.solution.id,
+                  element: element.id,
+                  parameter: 'output',
+                })
+                break
               }
             }
           })
 
-          return Promise.all(requests.map((r) => fetchSolutionValue(r.session, r.solution, r.element, r.parameter)))
+          return Promise.allSettled(
+            requests.map((r) => fetchSolutionValue(r.session, r.solution, r.element, r.parameter))
+          )
         })
         .then((values) => {
-          dispatch({ type: 'graph/values/consume-solution-values', values })
+          const resolved: PromiseFulfilledResult<Glasshopper.Payload.SolutionValue>[] = []
+          const rejected: PromiseRejectedResult[] = []
+
+          values.forEach((value) => {
+            switch (value.status) {
+              case 'fulfilled': {
+                resolved.push(value)
+                break
+              }
+              case 'rejected': {
+                rejected.push(value)
+                break
+              }
+            }
+          })
+
+          dispatch({ type: 'graph/values/consume-solution-values', values: resolved.map(({ value }) => value) })
+
+          rejected.forEach(({ reason }) => {
+            console.error(reason)
+          })
         })
+    }
+
+    if (status === 'FAILED') {
+      console.error('Compute failed to execute solution!')
     }
   }, [status])
 

@@ -3,6 +3,8 @@ import { gql } from 'apollo-server'
 export const schema = gql`
   type Query {
     getComputeConfiguration: [GrasshopperComponent]!
+    getGraphJson(sessionId: String!, solutionId: String!): String
+    getQueueStatus(depth: Int!): QueueManifest!
     getSession(id: String!): SessionManifest!
     getSessionCurrentGraph(sessionId: String!): String!
     getSolutionMessages(sessionId: String!, solutionId: String!): String
@@ -21,6 +23,12 @@ export const schema = gql`
     setConfiguration(config: String): String
   }
 
+  type QueueManifest {
+    jobs: [String]!
+    active_count: Int!
+    latest_created: String!
+  }
+
   type UserManifest {
     graphs: [String]!
     session: String!
@@ -35,6 +43,7 @@ export const schema = gql`
     status: String!
     started_at: String
     finished_at: String
+    duration: Int
   }
 
   type SolutionValue {

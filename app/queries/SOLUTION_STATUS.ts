@@ -6,6 +6,7 @@ export const SOLUTION_STATUS = gql`
       status
       started_at
       finished_at
+      duration
     }
   }
 `

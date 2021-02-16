@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { Wire, Panel, StaticComponent, StaticParameter } from '../elements'
+import { Wire, Panel, StaticComponent, StaticParameter, NumberSlider } from '../elements'
 
 type ControlMode = 'idle' | 'panning' | 'selecting'
 
@@ -14,11 +14,8 @@ export const GraphCanvas = (): React.ReactElement => {
   useEffect(() => {
     const debug = (e: KeyboardEvent): void => {
       if (e.code === 'Space') {
-        console.log(
-          Object.values(elements).filter(
-            (el) => el.template.type === 'static-component' || el.template.type === 'static-parameter'
-          )
-        )
+        const watching = ['static-component', 'static-parameter', 'number-slider']
+        console.log(Object.values(elements).filter((el) => watching.includes(el.template.type)))
         dispatch({ type: 'session/expire-solution' })
       }
     }
@@ -42,7 +39,7 @@ export const GraphCanvas = (): React.ReactElement => {
   const [startTime, setStartTime] = useState(0)
   const [previousTime, setPreviousTime] = useState(0)
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement> | React.PointerEvent<HTMLDivElement>): void => {
     if (mode !== 'idle') {
       return
     }
@@ -56,7 +53,7 @@ export const GraphCanvas = (): React.ReactElement => {
     setStartTime(now)
     setPreviousTime(now)
 
-    switch (e.button) {
+    switch ((e as React.PointerEvent)?.pointerType == 'mouse' ? e.button : 2) {
       case 0:
         setMode('selecting')
         console.log('selecting!')
@@ -127,6 +124,7 @@ export const GraphCanvas = (): React.ReactElement => {
       }}
       onContextMenu={blockContextMenu}
       onMouseDown={handleMouseDown}
+      onPointerDown={handleMouseDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
@@ -156,6 +154,9 @@ export const GraphCanvas = (): React.ReactElement => {
               }
               case 'panel': {
                 return <Panel key={`panel-${element.id}`} instanceId={element.id} />
+              }
+              case 'number-slider': {
+                return <NumberSlider key={`number-slider-${element.id}`} instanceId={element.id} />
               }
               default: {
                 console.log(`Could not render '${element.template.type}'. ${element.id} `)

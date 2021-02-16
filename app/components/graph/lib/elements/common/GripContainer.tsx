@@ -14,6 +14,8 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
   // Parameter will be 'input' or 'output' on parameter-only elements
   const { element, parameter } = source
 
+  const gripRef = useRef<HTMLButtonElement>(null)
+
   const [isDrawingWire, setIsDrawingWire] = useState(false)
 
   const handlePointerMove = (e: PointerEvent): void => {
@@ -53,8 +55,6 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
     }
   })
 
-  const gripRef = useRef<HTMLButtonElement>(null)
-
   useEffect(() => {
     if (!gripRef.current) {
       return
@@ -68,6 +68,8 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
   }, [])
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    e.stopPropagation()
+
     const { width, height, left, top } = gripRef.current.getBoundingClientRect()
     const [cx, cy] = [left + width / 2, top + height / 2]
 
@@ -75,15 +77,19 @@ export const GripContainer = ({ source }: GripContainerProps): React.ReactElemen
 
     dispatch({ type: 'graph/wire/start-live-wire', from: [cx, cy], to: [tx, ty], owner: source })
     setIsDrawingWire(true)
+
+    gripRef.current.releasePointerCapture(e.pointerId)
   }
 
   return (
     <button
       ref={gripRef}
       onMouseDown={(e) => e.stopPropagation()}
+      onMouseEnter={handlePointerEnter}
       onPointerDown={handlePointerDown}
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
+      onPointerOver={() => console.log('Pointerover')}
       className="w-4 h-4 rounded-full border-2 border-dark bg-white hover:bg-green shadow-osm"
     />
   )

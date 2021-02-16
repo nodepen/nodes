@@ -1,5 +1,15 @@
 import axios from 'axios'
 import { db } from '../../../db'
+import { alpha } from '../../../queue'
+
+export type AlphaJobArgs =
+  | { type: 'config' }
+  | {
+      type: 'solution'
+      sessionId: string
+      solutionId: string
+      graph: { [key: string]: any }
+    }
 
 type NewSolutionArgs = {
   sessionId: string
@@ -18,15 +28,21 @@ export const newSolution = async (
 
   await addSolutionToSession(sessionId, solutionId)
 
-  const root = process.env.NP_DISPATCH_URL ?? 'http://localhost:4100'
+  await addSolutionToQueueHistory(sessionId, solutionId)
+  // const root = process.env.NP_DISPATCH_URL ?? 'http://localhost:4100'
 
-  const { data } = await axios.post(`${root}/new/solution`, {
-    sessionId,
-    solutionId,
-    graph: elements,
-  })
+  const job = await alpha
+    .createJob<AlphaJobArgs>({
+      type: 'solution',
+      sessionId,
+      solutionId,
+      graph: elements,
+    })
+    .save()
 
-  return JSON.stringify(data)
+  console.log(`[ JOB #${job.id} ]  [ CREATE ]  ${sessionId}:${solutionId}`)
+
+  return JSON.stringify({ id: job.id })
 }
 
 const createSolutionStatus = async (
@@ -52,7 +68,26 @@ const addSolutionToSession = async (
     const batch = db.multi()
 
     batch.lpush(`${root}:history`, solutionId)
+    batch.ltrim(`${root}:history`, 0, 24)
 
     batch.exec((err, res) => [resolve()])
+  })
+}
+
+const addSolutionToQueueHistory = async (
+  sessionId: string,
+  solutionId: string
+): Promise<void> => {
+  const entry = `${sessionId};${solutionId}`
+
+  return new Promise<void>((resolve, reject) => {
+    const batch = db.multi()
+
+    batch.lpush('queue:history', entry)
+    batch.ltrim('queue:history', 0, 249)
+    batch.hset('queue:meta', 'latest_created', new Date().toISOString())
+    batch.hset('queue:active', entry, 'active')
+
+    batch.exec((err, res) => resolve())
   })
 }

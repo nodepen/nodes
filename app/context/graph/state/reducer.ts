@@ -151,6 +151,64 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/add-number-slider': {
+      const { position } = action
+
+      const reference = state.library.params['input'].find(
+        (component) => component.name.toLowerCase() === 'number slider'
+      )
+
+      const slider: Glasshopper.Element.NumberSlider = {
+        id: newGuid(),
+        template: { type: 'number-slider', ...reference },
+        current: {
+          position: pageToGraphCoordinates(position, state),
+          dimensions: { width: 100, height: 40 },
+          anchors: {},
+          sources: { input: [] },
+          domain: [0, 100],
+          values: {
+            '{0}': [
+              {
+                type: 'number',
+                from: 'user',
+                data: 50,
+              },
+            ],
+          },
+          precision: 0,
+          solution: {
+            id: '',
+            mode: 'deferred',
+          },
+        },
+      }
+
+      state.elements[slider.id] = slider
+
+      expireSolution(state)
+
+      return { ...state }
+    }
+    case 'graph/update-number-slider': {
+      const { id, value, domain, precision } = action
+
+      const element = state.elements[id]
+
+      if (!element) {
+        return
+      }
+
+      const slider = element as Glasshopper.Element.NumberSlider
+
+      slider.current.values['{0}'][0].data = value
+      slider.current.domain = domain
+      slider.current.precision = precision
+
+      expireSolution(state)
+
+      return { ...state }
+    }
     case 'graph/add-panel': {
       const { position } = action
 
@@ -290,6 +348,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       state.selected = []
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
+      return { ...state }
+    }
+    case 'graph/config/set-execution-mode': {
+      const { mode } = action
+
+      state.config.executionMode = mode
 
       return { ...state }
     }
@@ -573,6 +638,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
             e.current.solution.id = solution
             break
           }
+          case 'number-slider': {
+            const slider = el as Glasshopper.Element.NumberSlider
+
+            slider.current.solution.id = solution
+            slider.current.values['{0}'][0].data = Object.values(data)[0][0].data as number
+            break
+          }
         }
       })
 
@@ -676,6 +748,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
 const expireSolution = (state: GraphStore): void => {
   state.solution.id = newGuid()
+
+  window.localStorage.setItem('np:solutionId', state.solution.id)
 }
 
 const pageToGraphCoordinates = (page: [number, number], state: GraphStore): [number, number] => {
@@ -720,7 +794,11 @@ const assignDefaultSources = (
 const isInputOrOutput = (elementId: string, parameterId: string, state: GraphStore): 'input' | 'output' => {
   const element = state.elements[elementId]
 
-  if (element.template.type === 'static-parameter') {
+  if (element.template.type === 'panel') {
+    return 'input'
+  }
+
+  if (element.template.type === 'static-parameter' || element.template.type === 'number-slider') {
     return parameterId as 'input' | 'output'
   }
 

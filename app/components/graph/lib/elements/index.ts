@@ -1,4 +1,5 @@
 export { Wire } from './Wire'
+export { NumberSlider } from './NumberSlider'
 export { Panel } from './Panel'
 export { StaticComponent } from './StaticComponent'
 export { StaticParameter } from './StaticParameter'

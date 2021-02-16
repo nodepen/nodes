@@ -36,6 +36,8 @@ namespace NodePen.Compute
         return NodePenRoutes.CreateGrasshopperDefinition(ctx);
       } catch (Exception e)
       {
+        Console.WriteLine(e.Message);
+        Console.WriteLine(e.StackTrace);
         var response = (Response)e.Message;
         response.StatusCode = HttpStatusCode.InternalServerError;
         return response;
@@ -50,6 +52,8 @@ namespace NodePen.Compute
       }
       catch (Exception e)
       {
+        Console.WriteLine(e.Message);
+        Console.WriteLine(e.StackTrace);
         var response = (Response)e.Message;
         response.StatusCode = HttpStatusCode.InternalServerError;
         return response;

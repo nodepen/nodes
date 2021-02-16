@@ -46,11 +46,19 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
 
   const [dx, dy] = current.position
 
+  const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
+    e.stopPropagation()
+
+    // Do something here about selection
+  }
+
   return (
     <div
       className="absolute flex flex-row items-stretch"
       style={{ left: dx - tx, top: -dy - ty, opacity: ready ? 1 : 0 }}
       ref={componentRef}
+      onMouseDown={captureMouseDown}
+      role="presentation"
     >
       <div className="relative flex flex-row items-stretch">
         <div

@@ -1,4 +1,5 @@
 import { Grasshopper, Glasshopper } from 'glib'
+import { GraphExecutionMode } from './GraphExecutionMode'
 
 type LibraryCategory = 'params' | 'maths' | 'sets' | 'vector' | 'curve' | 'transform'
 
@@ -7,6 +8,9 @@ export type GraphStore = {
   camera: {
     position: [number, number]
     ref: React.MutableRefObject<HTMLDivElement>
+  }
+  config: {
+    executionMode: GraphExecutionMode
   }
   solution: {
     id?: string
