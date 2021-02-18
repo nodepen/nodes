@@ -1,23 +1,19 @@
-import React, { useEffect } from 'react'
-import { Canvas } from 'react-three-fiber'
-import { OrthographicCamera, OrbitControls } from '@react-three/drei'
+import React from 'react'
+import { Canvas, extend } from 'react-three-fiber'
+import { OrbitControls } from '@react-three/drei'
+import * as MeshLine from 'threejs-meshline'
 import { Glasshopper } from 'glib'
-import { useSessionManager } from '@/context/session'
 import { useGraphManager } from '@/context/graph'
 import { useSceneManager } from './lib/context'
 import { SceneElementId as Id } from './lib/types'
 import { SceneGrid as Grid } from './SceneGrid'
 import * as Geometry from './lib/geometry'
-import { useQuery, useApolloClient } from '@apollo/client'
-import { SESSION_CURRENT_SOLUTION, SESSION_CURRENT_GRAPH } from '@/queries'
+
+extend(MeshLine)
 
 const Scene = (): React.ReactElement => {
-  const { session } = useSessionManager()
-  const client = useApolloClient()
-
   const {
     store: { elements },
-    dispatch,
   } = useGraphManager()
 
   const {
