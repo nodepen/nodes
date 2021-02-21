@@ -17,8 +17,6 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
     dispatch,
   } = useGraphManager()
 
-  const parameterRef = useRef<HTMLDivElement>(null)
-
   const element = elements[source.element] as Glasshopper.Element.StaticComponent
 
   const parameterIndex = element.current[mode === 'input' ? 'inputs' : 'outputs'][source.parameter]
@@ -50,7 +48,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
     }
   }
 
-  useLongHover(parameterRef, handleLongHover)
+  const parameterRef = useLongHover(handleLongHover)
 
   return (
     <div
