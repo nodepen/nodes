@@ -1,6 +1,7 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
+import { useLongHover } from '@/hooks'
 
 type ComponentParameterProps = {
   source: {
@@ -15,6 +16,8 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
     store: { elements },
     dispatch,
   } = useGraphManager()
+
+  const parameterRef = useRef<HTMLDivElement>(null)
 
   const element = elements[source.element] as Glasshopper.Element.StaticComponent
 
@@ -32,23 +35,39 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
     dispatch({ type: 'graph/wire/release-live-wire', targetElement: source.element, targetParameter: source.parameter })
   }
 
+  const { active: tooltipActive, position } = useLongHover(parameterRef)
+
+  useEffect(() => {
+    if (tooltipActive) {
+      console.log(`[${position[0]}, ${position[1]}]`)
+    }
+  }, [tooltipActive, position])
+
   return (
-    <div
-      onPointerEnter={handlePointerEnter}
-      onPointerLeave={handlePointerLeave}
-      className="flex-grow box-border pt-1 pb-1"
-    >
+    <>
       <div
-        className={`${
-          mode === 'input' ? 'pr-4 mr-1 ml-2' : 'pl-4 ml-1 mr-2'
-        } h-full flex flex-row items-center rounded-sm hover:bg-pale`}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
+        ref={parameterRef}
+        className="flex-grow box-border pt-1 pb-1"
       >
         <div
-          className={`${mode === 'input' ? 'ml-1' : 'mr-1'} mt-1 mb-1 font-panel font-semibold text-base select-none`}
+          className={`${
+            mode === 'input' ? 'pr-4 mr-1 ml-2' : 'pl-4 ml-1 mr-2'
+          } h-full flex flex-row items-center rounded-sm hover:bg-pale`}
         >
-          {nickname.toUpperCase()}
+          <div
+            className={`${mode === 'input' ? 'ml-1' : 'mr-1'} mt-1 mb-1 font-panel font-semibold text-base select-none`}
+          >
+            {nickname.toUpperCase()}
+          </div>
         </div>
       </div>
-    </div>
+      {tooltipActive ? (
+        <div className="fixed w-6 h-6 bg-red-200 z-90" style={{ left: 0, top: 0 }}>
+          C
+        </div>
+      ) : null}
+    </>
   )
 }
