@@ -743,6 +743,18 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'tooltip/set-tooltip': {
+      const { content, position } = action
+
+      state.overlay.tooltip = { content, position }
+
+      return { ...state }
+    }
+    case 'tooltip/clear-tooltip': {
+      state.overlay.tooltip = undefined
+
+      return { ...state }
+    }
   }
 }
 

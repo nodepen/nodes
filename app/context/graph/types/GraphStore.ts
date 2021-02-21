@@ -9,6 +9,12 @@ export type GraphStore = {
     position: [number, number]
     ref: React.MutableRefObject<HTMLDivElement>
   }
+  overlay: {
+    tooltip?: {
+      content: React.ReactNode
+      position: [number, number]
+    }
+  }
   config: {
     executionMode: GraphExecutionMode
   }

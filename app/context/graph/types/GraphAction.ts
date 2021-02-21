@@ -48,3 +48,5 @@ export type GraphAction =
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan'; dx: number; dy: number }
+  | { type: 'tooltip/set-tooltip'; content: React.ReactNode; position: [number, number] }
+  | { type: 'tooltip/clear-tooltip' }
