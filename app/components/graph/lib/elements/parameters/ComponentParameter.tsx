@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { useLongHover } from '@/hooks'
+import { Tooltip } from '../../annotation'
 
 type ComponentParameterProps = {
   source: {
@@ -36,25 +37,23 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
   const handleLongHover = (e: PointerEvent): void => {
     const { pageX, pageY } = e
 
-    dispatch({ type: 'tooltip/set-tooltip', content: null, position: [pageX, pageY] })
+    const tooltip = <Tooltip parameter={parameter} />
 
-    console.log('Tooltip active!')
+    dispatch({ type: 'tooltip/set-tooltip', content: tooltip, position: [pageX, pageY] })
   }
 
-  const handlePointerOver = (): void => {
+  const handleLongHoverCapture = (): void => {
     if (overlay.tooltip) {
       dispatch({ type: 'tooltip/clear-tooltip' })
-      console.log('Tooltip removed!')
     }
   }
 
-  const parameterRef = useLongHover(handleLongHover)
+  const parameterRef = useLongHover(handleLongHover, handleLongHoverCapture)
 
   return (
     <div
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
-      onPointerOver={handlePointerOver}
       ref={parameterRef}
       className="flex-grow box-border pt-1 pb-1"
     >

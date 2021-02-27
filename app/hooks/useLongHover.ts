@@ -2,7 +2,8 @@ import React, { useRef, useEffect, useCallback } from 'react'
 
 export const useLongHover = (
   onLongHover: (e: PointerEvent) => void,
-  delay = 900
+  onLongHoverCapture: (e: PointerEvent) => void,
+  delay = 500
 ): React.MutableRefObject<HTMLDivElement> => {
   const target = useRef<HTMLDivElement>(null)
 
@@ -20,9 +21,12 @@ export const useLongHover = (
 
       timer.current = setTimeout(() => {
         onLongHover(e)
+        timer.current = undefined
       }, delay)
+
+      onLongHoverCapture(e)
     },
-    [delay, onLongHover]
+    [delay, onLongHover, onLongHoverCapture]
   )
 
   const handlePointerOut = useCallback((): void => {
@@ -37,7 +41,7 @@ export const useLongHover = (
       return
     }
 
-    target.current.addEventListener('pointerover', handlePointerOver)
+    target.current.addEventListener('pointermove', handlePointerOver)
     target.current.addEventListener('pointerout', handlePointerOut)
   }, [target, handlePointerOver, handlePointerOut])
 

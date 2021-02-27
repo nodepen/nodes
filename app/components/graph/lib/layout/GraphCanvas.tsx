@@ -7,7 +7,7 @@ type ControlMode = 'idle' | 'panning' | 'selecting'
 
 export const GraphCanvas = (): React.ReactElement => {
   const {
-    store: { elements, camera },
+    store: { elements, camera, overlay },
     dispatch,
   } = useGraphManager()
 
@@ -131,6 +131,14 @@ export const GraphCanvas = (): React.ReactElement => {
       onPointerCancel={handlePointerUp}
       role="presentation"
     >
+      {overlay.tooltip ? (
+        <div
+          className="fixed z-50"
+          style={{ left: overlay.tooltip.position[0] + 5, top: overlay.tooltip.position[1] + 5 }}
+        >
+          {overlay.tooltip.content}
+        </div>
+      ) : null}
       {canvasRef.current ? (
         <div
           id="element-container"
