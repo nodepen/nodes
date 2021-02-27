@@ -8,6 +8,7 @@ export const useLongHover = (
   const target = useRef<HTMLDivElement>(null)
 
   const timer = useRef<any>(undefined)
+  const event = useRef<PointerEvent>(undefined)
 
   const handlePointerOver = useCallback(
     (e: PointerEvent): void => {
@@ -24,6 +25,8 @@ export const useLongHover = (
         timer.current = undefined
       }, delay)
 
+      event.current = e
+
       onLongHoverCapture(e)
     },
     [delay, onLongHover, onLongHoverCapture]
@@ -32,9 +35,13 @@ export const useLongHover = (
   const handlePointerOut = useCallback((): void => {
     if (timer.current) {
       clearTimeout(timer.current)
+
+      onLongHoverCapture(event.current)
+
       timer.current = undefined
+      event.current = undefined
     }
-  }, [])
+  }, [onLongHoverCapture])
 
   useEffect(() => {
     if (!target.current) {
@@ -42,7 +49,7 @@ export const useLongHover = (
     }
 
     target.current.addEventListener('pointermove', handlePointerOver)
-    target.current.addEventListener('pointerout', handlePointerOut)
+    target.current.addEventListener('pointerleave', handlePointerOut)
   }, [target, handlePointerOver, handlePointerOut])
 
   return target

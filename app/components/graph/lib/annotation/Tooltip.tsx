@@ -8,7 +8,7 @@ type TooltipProps = {
 }
 
 type TooltipInfo = {
-  icon: string
+  icon: React.ReactNode
   title: string
   description: string
 }
@@ -22,14 +22,18 @@ export const Tooltip = ({ component, parameter, data }: TooltipProps): React.Rea
     }
 
     if (isComponentParameter(template)) {
+      const icon = <svg width="24" height="24" className="mr-2 bg-gray-300"></svg>
+
       return {
-        icon: '',
+        icon,
         title: template.name,
         description: template.description,
       }
     } else {
+      const icon = <img src={`data:image/png;base64,${template.icon}`} alt={description} className="w-6 h-6 mr-2" />
+
       return {
-        icon: template.icon,
+        icon,
         title: template.name,
         description: template.description,
       }
@@ -41,7 +45,7 @@ export const Tooltip = ({ component, parameter, data }: TooltipProps): React.Rea
   return (
     <div className="bg-white border-2 border-dark rounded-md p-2 flex flex-col">
       <div className="flex-grow flex justify-start items-center">
-        <img src={icon} alt={description} />
+        {icon}
         <h4>{title}</h4>
       </div>
       <p>{description}</p>

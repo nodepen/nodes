@@ -1,9 +1,11 @@
 import React, { useRef, useEffect, useState, useMemo } from 'react'
 import { Glasshopper } from 'glib'
 import { Grip, Loading } from './common'
+import { Tooltip } from '../annotation'
 import { ComponentParameter } from './parameters'
 import { useGraphManager } from '@/context/graph'
 import { useElementStatus } from './utils'
+import { useLongHover } from '@/hooks'
 
 type StaticComponentProps = {
   instanceId: string
@@ -11,7 +13,7 @@ type StaticComponentProps = {
 
 export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements },
+    store: { elements, overlay, library },
     dispatch,
   } = useGraphManager()
 
@@ -34,6 +36,28 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
   }, [])
 
   const ready = useMemo(() => tx !== 0 && ty !== 0, [tx, ty])
+
+  const handleLongHover = (e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    const tooltip = (
+      <Tooltip
+        component={library[template.category.toLowerCase()][template.subcategory.toLowerCase()].find(
+          (t) => t.guid === template.guid
+        )}
+      />
+    )
+
+    dispatch({ type: 'tooltip/set-tooltip', position: [pageX, pageY], content: tooltip })
+  }
+
+  const handleLongHoverCapture = (): void => {
+    if (overlay.tooltip) {
+      dispatch({ type: 'tooltip/clear-tooltip' })
+    }
+  }
+
+  const longHoverTarget = useLongHover(handleLongHover, handleLongHoverCapture)
 
   if (!elements[id] || elements[id].template.type !== 'static-component') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-component'`)
@@ -99,6 +123,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
             id="label-column"
             className="w-10 m-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
             style={{ background: color }}
+            ref={longHoverTarget}
           >
             <div
               className="font-panel text-v font-bold text-sm select-none"

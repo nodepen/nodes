@@ -40,6 +40,10 @@ export const GraphCanvas = (): React.ReactElement => {
   const [previousTime, setPreviousTime] = useState(0)
 
   const handleMouseDown = (e: React.MouseEvent<HTMLDivElement> | React.PointerEvent<HTMLDivElement>): void => {
+    if (overlay.tooltip) {
+      dispatch({ type: 'tooltip/clear-tooltip' })
+    }
+
     if (mode !== 'idle') {
       return
     }
@@ -135,6 +139,7 @@ export const GraphCanvas = (): React.ReactElement => {
         <div
           className="fixed z-50"
           style={{ left: overlay.tooltip.position[0] + 5, top: overlay.tooltip.position[1] + 5 }}
+          onPointerOver={() => dispatch({ type: 'tooltip/clear-tooltip' })}
         >
           {overlay.tooltip.content}
         </div>
