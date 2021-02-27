@@ -42,13 +42,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
     dispatch({ type: 'tooltip/set-tooltip', content: tooltip, position: [pageX, pageY] })
   }
 
-  const handleLongHoverCapture = (): void => {
-    if (overlay.tooltip) {
-      dispatch({ type: 'tooltip/clear-tooltip' })
-    }
-  }
-
-  const parameterRef = useLongHover(handleLongHover, handleLongHoverCapture)
+  const parameterRef = useLongHover(handleLongHover)
 
   return (
     <div

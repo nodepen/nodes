@@ -13,7 +13,7 @@ type StaticComponentProps = {
 
 export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements, overlay, library },
+    store: { elements, library },
     dispatch,
   } = useGraphManager()
 
@@ -51,13 +51,7 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'tooltip/set-tooltip', position: [pageX, pageY], content: tooltip })
   }
 
-  const handleLongHoverCapture = (): void => {
-    if (overlay.tooltip) {
-      dispatch({ type: 'tooltip/clear-tooltip' })
-    }
-  }
-
-  const longHoverTarget = useLongHover(handleLongHover, handleLongHoverCapture)
+  const longHoverTarget = useLongHover(handleLongHover)
 
   if (!elements[id] || elements[id].template.type !== 'static-component') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-component'`)

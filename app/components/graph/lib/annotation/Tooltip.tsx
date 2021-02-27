@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Grasshopper, Glasshopper } from 'glib'
+import { useGraphManager } from '@/context/graph'
 
 type TooltipProps = {
   component?: Grasshopper.Component
@@ -14,6 +15,20 @@ type TooltipInfo = {
 }
 
 export const Tooltip = ({ component, parameter, data }: TooltipProps): React.ReactElement => {
+  const { dispatch } = useGraphManager()
+
+  useEffect(() => {
+    const handlePointerMove = (): void => {
+      dispatch({ type: 'tooltip/clear-tooltip' })
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+    }
+  })
+
   const getTooltipInfo = (template: Grasshopper.Component | Grasshopper.ComponentParameter): TooltipInfo => {
     const isComponentParameter = (
       template: Grasshopper.Component | Grasshopper.ComponentParameter
