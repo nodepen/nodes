@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Grasshopper, Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { getFlattenedValues, valueToString } from '@/utils/data'
@@ -7,6 +7,7 @@ type TooltipProps = {
   component?: Grasshopper.Component
   parameter?: Grasshopper.ComponentParameter
   data?: Glasshopper.Data.DataTree
+  corner?: CornerType
 }
 
 type TooltipInfo = {
@@ -16,8 +17,37 @@ type TooltipInfo = {
   description: string
 }
 
-export const Tooltip = ({ component, parameter, data }: TooltipProps): React.ReactElement => {
+type CornerType = 'TL' | 'BL'
+
+export const Tooltip = ({ component, parameter, data, corner = 'TL' }: TooltipProps): React.ReactElement => {
   const { dispatch } = useGraphManager()
+
+  const tooltipRef = useRef<HTMLDivElement>(null)
+
+  const [transform, setTransform] = useState<[number, number]>()
+
+  useEffect(() => {
+    if (!tooltipRef.current) {
+      setTransform([0, 0])
+      return
+    }
+
+    const { width, height } = tooltipRef.current.getBoundingClientRect()
+
+    switch (corner) {
+      case 'TL': {
+        setTransform([0, 0])
+        break
+      }
+      case 'BL': {
+        setTransform([0, -height])
+        break
+      }
+      default: {
+        setTransform([0, 0])
+      }
+    }
+  }, [])
 
   useEffect(() => {
     const handlePointerMove = (): void => {
@@ -39,7 +69,25 @@ export const Tooltip = ({ component, parameter, data }: TooltipProps): React.Rea
     }
 
     if (isComponentParameter(template)) {
-      const icon = <svg width="24" height="24" className="mr-2 bg-gray-300"></svg>
+      const f = Math.sqrt(3) / 2
+      const points = `1,0 0.5,-${f} -0.5,-${f} -1,0 -0.5,${f} 0.5,${f}`
+      const icon = (
+        <svg width="24px" height="24px" viewBox="-1 -1 2 2" className="mr-2">
+          <defs>
+            <clipPath id="annoying">
+              <polygon points={points} />
+            </clipPath>
+          </defs>
+          <polygon
+            points={points}
+            stroke="#333333"
+            strokeWidth="4px"
+            fill="#FFFFFF"
+            vectorEffect="non-scaling-stroke"
+            clipPath="url(#annoying)"
+          />
+        </svg>
+      )
 
       return {
         icon,
@@ -63,8 +111,14 @@ export const Tooltip = ({ component, parameter, data }: TooltipProps): React.Rea
 
   const values = data ? getFlattenedValues(data).map((value) => valueToString(value)) : []
 
+  const [tx, ty] = transform ?? [0, 0]
+
   return (
-    <div className="bg-white border-2 border-dark rounded-md p-1 flex flex-col w-56">
+    <div
+      className="bg-white border-2 border-dark rounded-md p-1 flex flex-col w-56"
+      ref={tooltipRef}
+      style={{ opacity: transform ? 1 : 0, transform: `translate(${tx}px, ${ty}px)` }}
+    >
       <div className="p-1 flex flex-col">
         <div className="mb-1 flex-grow flex justify-start items-center whitespace-no-wrap overflow-hidden">
           {icon}
