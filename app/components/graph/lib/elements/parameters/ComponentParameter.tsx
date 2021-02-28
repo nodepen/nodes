@@ -39,7 +39,9 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
   const handleLongHover = (e: PointerEvent): void => {
     const { pageX, pageY } = e
 
-    const tooltip = <Tooltip parameter={parameter} data={values} />
+    const tooltip = (
+      <Tooltip parameter={parameter} data={values} onDestroy={() => dispatch({ type: 'tooltip/clear-tooltip' })} />
+    )
 
     dispatch({ type: 'tooltip/set-tooltip', content: tooltip, position: [pageX, pageY] })
   }

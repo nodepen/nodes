@@ -131,6 +131,14 @@ namespace NodePen.Compute.Routes
                 data.Type = "number";
                 break;
               }
+            case "Integer":
+              {
+                var integerGoo = goo as GH_Integer;
+
+                data.Value = integerGoo.Value.ToString();
+                data.Type = "integer";
+                break;
+              }
             case "Point":
               {
                 var pointGoo = goo as GH_Point;

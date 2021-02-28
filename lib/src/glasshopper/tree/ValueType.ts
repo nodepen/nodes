@@ -1,1 +1,7 @@
-export type ValueType = 'string' | 'number' | 'point' | 'curve' | 'line'
+export type ValueType =
+  | 'string'
+  | 'number'
+  | 'integer'
+  | 'point'
+  | 'curve'
+  | 'line'

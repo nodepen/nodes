@@ -13,6 +13,8 @@ export type DataTreeValue<T extends ValueType> = {
     ? GH.String
     : T extends 'number'
     ? GH.Number
+    : T extends 'integer'
+    ? GH.Integer
     : T extends 'point'
     ? GH.Point
     : T extends 'curve'

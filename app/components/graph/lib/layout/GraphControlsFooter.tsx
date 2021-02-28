@@ -2,7 +2,7 @@ import React, { useState, useRef } from 'react'
 import { Grasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { useLongHover } from '@/hooks'
-import { Draggable } from '../annotation'
+import { ElementButton, ElementDraggable } from '../annotation'
 
 export const GraphControlsFooter = (): React.ReactElement => {
   const {
@@ -70,19 +70,11 @@ export const GraphControlsFooter = (): React.ReactElement => {
           {visibleComponents.map((subcategories, i) => (
             <>
               {subcategories.map((component, j) => (
-                <button
+                <ElementButton
                   key={`${i}-component-${component.name}`}
-                  className={`w-8 min-w-8 h-8 mr-3 rounded-sm border-2 border-green hover:border-swampgreen flex justify-center items-center`}
-                  onPointerDown={(e) => handleStartPlacement(e, component)}
-                >
-                  <img
-                    width="24px"
-                    height="24px"
-                    draggable="false"
-                    src={`data:image/png;base64,${component.icon}`}
-                    alt={component.name}
-                  />
-                </button>
+                  component={component}
+                  onStartPlacement={handleStartPlacement}
+                />
               ))}
               {i < visibleComponents.length - 1 ? (
                 <div key={`div-${i}`} className="h-4 mr-3 inline-block border-r-2 border-swampgreen" />
@@ -106,7 +98,7 @@ export const GraphControlsFooter = (): React.ReactElement => {
         </button>
       </div>
       {stagedComponent && start ? (
-        <Draggable
+        <ElementDraggable
           start={start}
           template={stagedComponent}
           onCancel={() => setStagedComponent(undefined)}

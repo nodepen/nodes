@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { Grasshopper, Glasshopper } from 'glib'
-import { useGraphManager } from '@/context/graph'
 import { getFlattenedValues, valueToString } from '@/utils/data'
 
 type TooltipProps = {
   component?: Grasshopper.Component
   parameter?: Grasshopper.ComponentParameter
   data?: Glasshopper.Data.DataTree
+  onDestroy: () => void
 }
 
 type TooltipInfo = {
@@ -18,9 +18,7 @@ type TooltipInfo = {
 
 type CornerType = 'TL' | 'TR' | 'BL' | 'BR'
 
-export const Tooltip = ({ component, parameter, data }: TooltipProps): React.ReactElement => {
-  const { dispatch } = useGraphManager()
-
+export const Tooltip = ({ component, parameter, data, onDestroy }: TooltipProps): React.ReactElement => {
   const tooltipRef = useRef<HTMLDivElement>(null)
 
   const [transform, setTransform] = useState<[number, number]>()
@@ -64,7 +62,7 @@ export const Tooltip = ({ component, parameter, data }: TooltipProps): React.Rea
 
   useEffect(() => {
     const handlePointerMove = (): void => {
-      dispatch({ type: 'tooltip/clear-tooltip' })
+      onDestroy()
     }
 
     window.addEventListener('pointermove', handlePointerMove)

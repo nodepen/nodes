@@ -2,6 +2,7 @@ import { Glasshopper } from 'glib'
 
 export const valueToString = (value: Glasshopper.Data.DataTreeValue<Glasshopper.Data.ValueType>): string => {
   switch (value.type) {
+    case 'integer':
     case 'number': {
       const data = value.data as number
       return data.toString()
@@ -15,6 +16,7 @@ export const valueToString = (value: Glasshopper.Data.DataTreeValue<Glasshopper.
       return `{${x}, ${y}, ${z}}`
     }
     default: {
+      console.log(value.data)
       return `${value.type[0].toUpperCase()}${value.type.slice(1)}`
     }
   }
