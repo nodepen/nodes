@@ -24,6 +24,8 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
   // const parameterCount = Object.keys(element.current[mode === 'input' ? 'inputs' : 'outputs']).length
   const parameter = element.template[mode === 'input' ? 'inputs' : 'outputs'][parameterIndex]
 
+  const values = element.current.values[source.parameter]
+
   const { nickname } = parameter
 
   const handlePointerEnter = (): void => {
@@ -37,7 +39,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
   const handleLongHover = (e: PointerEvent): void => {
     const { pageX, pageY } = e
 
-    const tooltip = <Tooltip parameter={parameter} />
+    const tooltip = <Tooltip parameter={parameter} data={values} />
 
     dispatch({ type: 'tooltip/set-tooltip', content: tooltip, position: [pageX, pageY] })
   }
@@ -59,7 +61,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
         <div
           className={`${mode === 'input' ? 'ml-1' : 'mr-1'} mt-1 mb-1 font-panel font-semibold text-base select-none`}
         >
-          {nickname.toUpperCase()}
+          {nickname}
         </div>
       </div>
     </div>
