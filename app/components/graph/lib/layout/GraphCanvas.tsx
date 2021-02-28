@@ -32,7 +32,7 @@ export const GraphCanvas = (): React.ReactElement => {
 
   const handleLongPress = (): void => {
     console.log('Canvas long press!')
-    window.navigator.vibrate(150)
+    window.navigator.vibrate(50)
   }
 
   useLongPress(handleLongPress, canvasRef)

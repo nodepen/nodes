@@ -42,6 +42,7 @@ export const useLongPress = (
     }
 
     target.current.addEventListener('pointerdown', handlePointerDown)
+    target.current.addEventListener('pointermove', handlePointerUp)
     target.current.addEventListener('pointerup', handlePointerUp)
   }, [target, handlePointerDown, handlePointerUp])
 
