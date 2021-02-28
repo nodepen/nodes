@@ -40,6 +40,8 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
   const handleLongHover = (e: PointerEvent): void => {
     const { pageX, pageY } = e
 
+    const h = window.innerHeight
+
     const tooltip = (
       <Tooltip
         component={library[template.category.toLowerCase()][template.subcategory.toLowerCase()].find(

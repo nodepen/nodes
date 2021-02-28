@@ -138,7 +138,7 @@ export const GraphCanvas = (): React.ReactElement => {
       {overlay.tooltip ? (
         <div
           className="fixed z-50"
-          style={{ left: overlay.tooltip.position[0] + 5, top: overlay.tooltip.position[1] + 5 }}
+          style={{ left: overlay.tooltip.position[0], top: overlay.tooltip.position[1] }}
           onPointerOver={() => dispatch({ type: 'tooltip/clear-tooltip' })}
         >
           {overlay.tooltip.content}

@@ -7,7 +7,6 @@ type TooltipProps = {
   component?: Grasshopper.Component
   parameter?: Grasshopper.ComponentParameter
   data?: Glasshopper.Data.DataTree
-  corner?: CornerType
 }
 
 type TooltipInfo = {
@@ -17,9 +16,9 @@ type TooltipInfo = {
   description: string
 }
 
-type CornerType = 'TL' | 'BL'
+type CornerType = 'TL' | 'TR' | 'BL' | 'BR'
 
-export const Tooltip = ({ component, parameter, data, corner = 'TL' }: TooltipProps): React.ReactElement => {
+export const Tooltip = ({ component, parameter, data }: TooltipProps): React.ReactElement => {
   const { dispatch } = useGraphManager()
 
   const tooltipRef = useRef<HTMLDivElement>(null)
@@ -32,15 +31,29 @@ export const Tooltip = ({ component, parameter, data, corner = 'TL' }: TooltipPr
       return
     }
 
-    const { width, height } = tooltipRef.current.getBoundingClientRect()
+    const { innerWidth, innerHeight } = window
+    const { width, height, top, left } = tooltipRef.current.getBoundingClientRect()
+
+    const vertical = top > innerHeight / 2 ? 'B' : 'T'
+    const horizontal = left > innerWidth * 0.75 ? 'R' : 'L'
+
+    const corner = `${vertical}${horizontal}` as CornerType
 
     switch (corner) {
       case 'TL': {
         setTransform([0, 0])
         break
       }
+      case 'TR': {
+        setTransform([-width, 0])
+        break
+      }
       case 'BL': {
         setTransform([0, -height])
+        break
+      }
+      case 'BR': {
+        setTransform([-width, -height])
         break
       }
       default: {
