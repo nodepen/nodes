@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
+import { useLongHover, useLongPress } from '@/hooks'
 import { Wire, Panel, StaticComponent, StaticParameter, NumberSlider } from '../elements'
 
 type ControlMode = 'idle' | 'panning' | 'selecting'
@@ -28,6 +29,8 @@ export const GraphCanvas = (): React.ReactElement => {
   })
 
   const canvasRef = useRef<HTMLDivElement>(null)
+
+  useLongPress(() => console.log('Start create!'), canvasRef)
 
   useEffect(() => {
     dispatch({ type: 'graph/register-camera', ref: canvasRef })

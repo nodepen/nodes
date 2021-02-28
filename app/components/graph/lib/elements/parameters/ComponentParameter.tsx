@@ -1,7 +1,7 @@
 import React, { useRef, useEffect } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { useLongHover } from '@/hooks'
+import { useLongHover, useLongPress } from '@/hooks'
 import { Tooltip } from '../../annotation'
 
 type ComponentParameterProps = {
@@ -48,10 +48,25 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
 
   const parameterRef = useLongHover(handleLongHover)
 
+  const handleLongPress = (e: PointerEvent): void => {
+    e.stopPropagation()
+
+    const [cx, cy] = element.current.anchors[source.parameter]
+
+    const { pageX: tx, pageY: ty } = e
+
+    dispatch({ type: 'graph/wire/start-live-wire', from: [cx, cy], to: [tx, ty], owner: source })
+
+    parameterRef.current.releasePointerCapture(e.pointerId)
+  }
+
+  useLongPress(handleLongPress, parameterRef)
+
   return (
     <div
       onPointerEnter={handlePointerEnter}
       onPointerLeave={handlePointerLeave}
+      onPointerDown={(e) => e.stopPropagation()}
       ref={parameterRef}
       className="flex-grow box-border pt-1 pb-1"
     >
