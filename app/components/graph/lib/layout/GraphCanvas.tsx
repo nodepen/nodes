@@ -30,7 +30,12 @@ export const GraphCanvas = (): React.ReactElement => {
 
   const canvasRef = useRef<HTMLDivElement>(null)
 
-  useLongPress(() => console.log('Start create!'), canvasRef)
+  const handleLongPress = (): void => {
+    console.log('Canvas long press!')
+    window.navigator.vibrate(150)
+  }
+
+  useLongPress(handleLongPress, canvasRef)
 
   useEffect(() => {
     dispatch({ type: 'graph/register-camera', ref: canvasRef })

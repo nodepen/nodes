@@ -386,6 +386,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
+      if (!element) {
+        return state
+      }
+
       if (element.current.sources.to) {
         // A claim has been snapped to, do not move the wire
         return state

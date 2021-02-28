@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { useLongHover, useLongPress } from '@/hooks'
@@ -17,6 +17,8 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
     store: { elements, overlay },
     dispatch,
   } = useGraphManager()
+
+  const [isDrawingWire, setIsDrawingWire] = useState(false)
 
   const element = elements[source.element] as Glasshopper.Element.StaticComponent
 
@@ -51,16 +53,51 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
   const handleLongPress = (e: PointerEvent): void => {
     e.stopPropagation()
 
-    const [cx, cy] = element.current.anchors[source.parameter]
+    const { width, height, left, top } = parameterRef.current.getBoundingClientRect()
+    const [cx, cy] = [mode === 'input' ? left - 8 : left + width + 8, top + height / 2]
 
     const { pageX: tx, pageY: ty } = e
 
     dispatch({ type: 'graph/wire/start-live-wire', from: [cx, cy], to: [tx, ty], owner: source })
 
+    window.navigator.vibrate(150)
+
+    setIsDrawingWire(true)
+
     parameterRef.current.releasePointerCapture(e.pointerId)
   }
 
   useLongPress(handleLongPress, parameterRef)
+
+  const handlePointerMove = (e: PointerEvent): void => {
+    if (!isDrawingWire) {
+      return
+    }
+
+    const { pageX, pageY } = e
+
+    dispatch({ type: 'graph/wire/update-live-wire', to: [pageX, pageY] })
+  }
+
+  const handlePointerUp = (): void => {
+    if (!isDrawingWire) {
+      return
+    }
+
+    dispatch({ type: 'graph/wire/stop-live-wire' })
+
+    setIsDrawingWire(false)
+  }
+
+  useEffect(() => {
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerUp)
+    }
+  })
 
   return (
     <div
