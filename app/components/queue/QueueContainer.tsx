@@ -6,7 +6,7 @@ import { ComponentCount } from './lib/types'
 import { Glasshopper } from 'glib'
 
 export const QueueContainer = (): React.ReactElement => {
-  const { data } = useQuery(QUEUE_STATUS, { variables: { depth: 20 }, pollInterval: 500 })
+  const { data } = useQuery(QUEUE_STATUS, { variables: { depth: 40 }, pollInterval: 500 })
 
   const jobs = data?.getQueueStatus?.jobs ?? []
 

@@ -206,6 +206,14 @@ const resultsToDataTree = (
           }
           return number
         }
+        case 'integer': {
+          const integer: Glasshopper.Data.DataTreeValue<'integer'> = {
+            from: 'solution',
+            type: 'integer',
+            data: Number.parseInt(value),
+          }
+          return integer
+        }
         default: {
           console.log(`Using default parse for type ${type}.`)
           const v = {

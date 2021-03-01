@@ -8,6 +8,7 @@ export const initial: GraphStore = {
   config: {
     executionMode: 'immediate',
   },
+  overlay: {},
   solution: {},
   selected: [],
   library: {

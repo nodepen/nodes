@@ -1,5 +1,5 @@
 {
-  "name": "glasshopper.io",
+  "name": "nodepen.io",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -20,7 +20,8 @@
     "react-dom": "17.0.1",
     "react-three-fiber": "^5.3.14",
     "tailwindcss": "^1.8.4",
-    "three": "^0.124.0"
+    "three": "^0.124.0",
+    "threejs-meshline": "^2.0.12"
   },
   "devDependencies": {
     "@fullhuman/postcss-purgecss": "^2.3.0",

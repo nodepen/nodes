@@ -386,6 +386,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const element = state.elements['live-wire'] as Glasshopper.Element.Wire
 
+      if (!element) {
+        return state
+      }
+
       if (element.current.sources.to) {
         // A claim has been snapped to, do not move the wire
         return state
@@ -740,6 +744,18 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       const [x, y] = state.camera.position
 
       state.camera.position = [x + dx, y + dy]
+
+      return { ...state }
+    }
+    case 'tooltip/set-tooltip': {
+      const { content, position } = action
+
+      state.overlay.tooltip = { content, position }
+
+      return { ...state }
+    }
+    case 'tooltip/clear-tooltip': {
+      state.overlay.tooltip = undefined
 
       return { ...state }
     }
