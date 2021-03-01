@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { useLongHover, useLongPress } from '@/hooks'
+import { useLongPress } from '@/hooks'
+import { LibraryCommand } from '../annotation'
 import { Wire, Panel, StaticComponent, StaticParameter, NumberSlider } from '../elements'
 
 type ControlMode = 'idle' | 'panning' | 'selecting'
@@ -14,6 +15,10 @@ export const GraphCanvas = (): React.ReactElement => {
 
   useEffect(() => {
     const debug = (e: KeyboardEvent): void => {
+      if (libraryMenuPosition) {
+        return
+      }
+
       if (e.code === 'Space') {
         const watching = ['static-component', 'static-parameter', 'number-slider']
         console.log(Object.values(elements).filter((el) => watching.includes(el.template.type)))
@@ -124,6 +129,16 @@ export const GraphCanvas = (): React.ReactElement => {
 
   const [dx, dy] = camera.position
 
+  const [libraryMenuPosition, setLibraryMenuPosition] = useState<[number, number]>(undefined)
+
+  const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>): void => {
+    const { pageX, pageY } = e
+
+    setLibraryMenuPosition([pageX, pageY])
+  }
+
+  const [mx, my] = libraryMenuPosition ?? [0, 0]
+
   return (
     <div
       ref={canvasRef}
@@ -141,8 +156,14 @@ export const GraphCanvas = (): React.ReactElement => {
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerUp}
       onPointerCancel={handlePointerUp}
+      onDoubleClick={handleDoubleClick}
       role="presentation"
     >
+      {libraryMenuPosition ? (
+        <div className="fixed z-50" style={{ left: mx, top: my }}>
+          <LibraryCommand />
+        </div>
+      ) : null}
       {overlay.tooltip ? (
         <div
           className="fixed z-50"
