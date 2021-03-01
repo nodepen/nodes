@@ -64,6 +64,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
 
     setIsDrawingWire(true)
 
+    parameterRef.current.setPointerCapture(e.pointerId)
     parameterRef.current.releasePointerCapture(e.pointerId)
   }
 
