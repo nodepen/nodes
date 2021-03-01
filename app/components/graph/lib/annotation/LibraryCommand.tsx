@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
 import { useGraphManager } from '@/context/graph'
 
 type LibraryCommandProps = {
   onDestroy: () => void
 }
 
-export const LibraryCommand = (): React.ReactElement => {
+export const LibraryCommand = ({ onDestroy }: LibraryCommandProps): React.ReactElement => {
   const {
     store: { library },
     dispatch,
@@ -17,6 +17,27 @@ export const LibraryCommand = (): React.ReactElement => {
       .reduce((all, current) => [...all, ...current], [])
   }, [library])
 
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const handlePointerDown = (e: PointerEvent): void => {
+    if (!menuRef.current) {
+      return
+    }
+
+    // If there is a click outside of the menu, destroy it
+    if (!menuRef.current.contains(e.target as any)) {
+      onDestroy()
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener('pointerdown', handlePointerDown)
+
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown)
+    }
+  })
+
   const [search, setSearch] = useState('')
 
   const options = [...installed]
@@ -25,7 +46,7 @@ export const LibraryCommand = (): React.ReactElement => {
     .reverse()
 
   return (
-    <div className="w-24 flex flex-col items-center">
+    <div className="w-24 flex flex-col items-center" ref={menuRef}>
       {options.map((option, i) => (
         <p className="whitespace-no-wrap" key={`search-opt-${option}-${i}`}>
           {option.name}
