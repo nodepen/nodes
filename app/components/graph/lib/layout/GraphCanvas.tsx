@@ -161,7 +161,7 @@ export const GraphCanvas = (): React.ReactElement => {
     >
       {libraryMenuPosition ? (
         <div className="fixed z-50" style={{ left: mx, top: my }}>
-          <LibraryCommand onDestroy={() => setLibraryMenuPosition(undefined)} />
+          <LibraryCommand position={libraryMenuPosition} onDestroy={() => setLibraryMenuPosition(undefined)} />
         </div>
       ) : null}
       {overlay.tooltip ? (

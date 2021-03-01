@@ -1,11 +1,13 @@
 import React, { useMemo, useState, useEffect, useRef } from 'react'
+import { Grasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 
 type LibraryCommandProps = {
+  position: [number, number]
   onDestroy: () => void
 }
 
-export const LibraryCommand = ({ onDestroy }: LibraryCommandProps): React.ReactElement => {
+export const LibraryCommand = ({ position, onDestroy }: LibraryCommandProps): React.ReactElement => {
   const {
     store: { library },
     dispatch,
@@ -18,6 +20,15 @@ export const LibraryCommand = ({ onDestroy }: LibraryCommandProps): React.ReactE
   }, [library])
 
   const menuRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!inputRef.current) {
+      return
+    }
+
+    inputRef.current.focus()
+  }, [])
 
   const handlePointerDown = (e: PointerEvent): void => {
     if (!menuRef.current) {
@@ -45,14 +56,75 @@ export const LibraryCommand = ({ onDestroy }: LibraryCommandProps): React.ReactE
     .slice(0, 5)
     .reverse()
 
+  const handlePlaceComponent = (component: Grasshopper.Component): void => {
+    if (component.category.toLowerCase() === 'params') {
+      switch (component.name.toLowerCase()) {
+        case 'panel': {
+          dispatch({ type: 'graph/add-panel', position })
+          break
+        }
+        case 'number slider': {
+          dispatch({ type: 'graph/add-number-slider', position })
+          break
+        }
+        default: {
+          dispatch({ type: 'graph/add-parameter', position, component })
+        }
+      }
+    } else {
+      dispatch({ type: 'graph/add-component', position, component })
+    }
+
+    onDestroy()
+  }
+
   return (
-    <div className="w-24 flex flex-col items-center" ref={menuRef}>
-      {options.map((option, i) => (
-        <p className="whitespace-no-wrap" key={`search-opt-${option}-${i}`}>
-          {option.name}
-        </p>
-      ))}
-      <input type="text" value={search} onChange={(e) => setSearch(e.target.value)} />
+    <div
+      className="w-48 h-64 flex flex-col items-center"
+      ref={menuRef}
+      style={{ transform: 'translate(-96px, -240px)' }}
+    >
+      <div className="w-full flex-grow p-2 bg-pale border-2 border-green rounded-md flex flex-col justify-between">
+        {options.map((option, i) => (
+          <button
+            key={`lib-opt-${option.nickname}-${i}`}
+            onClick={() => handlePlaceComponent(option)}
+            className="w-full h-6 p-1 pr-2 pl-2 mt-1 rounded-sm hover:bg-green flex items-center"
+          >
+            <img
+              width="18px"
+              height="18px"
+              draggable="false"
+              src={`data:image/png;base64,${option.icon}`}
+              alt={option.name}
+              className="mr-4"
+            />
+            <p className="whitespace-no-wrap text-md select-none" style={{ transform: 'translateY(-1px)' }}>
+              {option.name}
+            </p>
+          </button>
+        ))}
+        <input
+          type="text"
+          className="mt-2 mb-1 pl-2 pr-2 rounded-md border-2 border-dark shadow-osm"
+          ref={inputRef}
+          value={search}
+          placeholder="Search..."
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
+      <div className="w-full h-8 flex justify-center items-center" style={{ transform: 'translateY(-2px)' }}>
+        <svg width="32" height="32" viewBox="0 5 10 10">
+          <polyline
+            points="5,1 9,5 5,9 1,5 5,1"
+            fill="#eff2f2"
+            stroke="#98E2C6"
+            strokeWidth="2px"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </div>
     </div>
   )
 }
