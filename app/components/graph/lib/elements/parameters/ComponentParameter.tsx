@@ -60,12 +60,14 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
 
     dispatch({ type: 'graph/wire/start-live-wire', from: [cx, cy], to: [tx, ty], owner: source })
 
-    window.navigator.vibrate(50)
+    window.navigator.vibrate(30)
 
     setIsDrawingWire(true)
 
-    parameterRef.current.setPointerCapture(e.pointerId)
-    parameterRef.current.releasePointerCapture(e.pointerId)
+    if (parameterRef.current) {
+      parameterRef.current.setPointerCapture(e.pointerId)
+      parameterRef.current.releasePointerCapture(e.pointerId)
+    }
   }
 
   useLongPress(handleLongPress, parameterRef)
