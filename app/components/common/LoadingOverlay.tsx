@@ -14,7 +14,7 @@ export const LoadingOverlay = ({ children }: LoadingOverlayProps): React.ReactEl
   const d = 'M 0 12.5 Q 12.5 0 25 12.5 Q 37.5 25 50 12.5'
 
   return (
-    <div className="relative w-full h-full">
+    <div className="relative w-full h-full" style={{ minHeight: '-webkit-fill-available' }}>
       <Transition
         show={!ready}
         leave="transition-transform ease-in duration-1000 transform"
