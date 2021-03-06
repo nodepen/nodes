@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Grasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { useLongHover } from '@/hooks'
@@ -51,7 +51,7 @@ export const GraphControlsFooter = (): React.ReactElement => {
   }
 
   return (
-    <div className="pl-6 pr-6 w-full bg-green flex flex-row z-10">
+    <div className={`pl-6 pr-6 w-full bg-green flex flex-row z-10`}>
       <div id="components-container" className="flex-grow flex flex-col overflow-hidden">
         <div className="w-full h-8 flex flex-row items-center">
           {Object.keys(library).map((category) => (

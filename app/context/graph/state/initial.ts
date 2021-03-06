@@ -19,7 +19,7 @@ export const initial: GraphStore = {
     curve: {},
     transform: {},
   },
-  ready: false,
+  ready: true,
   preflight: {
     getLibrary: false,
     getSession: false,
