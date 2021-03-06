@@ -32,6 +32,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
         * {
           touch-action: none;
+          -webkit-user-select: none;
         }
 
         a {
