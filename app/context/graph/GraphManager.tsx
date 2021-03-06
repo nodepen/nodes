@@ -59,21 +59,10 @@ export const GraphManager = ({ children, config }: GraphManagerProps): React.Rea
 
     // Restore graph
     console.log(`Restoring session for session:${session.id}`)
-    getCurrentGraph(session.id)
-      .then((elements) => {
-        dispatch({ type: 'session/restore-session', elements })
-      })
-      .catch(() => {
-        console.error('Failed to restore session')
-        dispatch({ type: 'session/restore-session', elements: '[]' })
-      })
+    getCurrentGraph(session.id).then((elements) => {
+      dispatch({ type: 'session/restore-session', elements })
+    })
   }, [session.id])
-
-  useEffect(() => {
-    if (error) {
-      dispatch({ type: 'session/restore-session', elements: '[]' })
-    }
-  }, [error])
 
   useEffect(() => {
     if (!store.solution.id || !session.id) {

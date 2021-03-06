@@ -13,7 +13,7 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
   // TODO: Figure out auth at some point
   const id = useMemo(() => (process.browser ? window?.localStorage?.getItem('np:user') ?? newGuid() : ''), [])
 
-  const { data, error } = useQuery(USER_SESSION, { variables: { id } })
+  const { data } = useQuery(USER_SESSION, { variables: { id } })
 
   useEffect(() => {
     window.localStorage.setItem('np:user', id)
@@ -28,7 +28,6 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     session: {
       id: data?.getUser?.session,
     },
-    error,
   }
 
   return <Context.Provider value={session}>{children}</Context.Provider>

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { useLongPress } from '@/hooks'
@@ -9,7 +9,7 @@ type ControlMode = 'idle' | 'panning' | 'selecting'
 
 export const GraphCanvas = (): React.ReactElement => {
   const {
-    store: { elements, camera, overlay },
+    store: { elements, camera, overlay, solution },
     dispatch,
   } = useGraphManager()
 
@@ -132,6 +132,36 @@ export const GraphCanvas = (): React.ReactElement => {
 
   const [mx, my] = libraryMenuPosition ?? [0, 0]
 
+  const graphElements = useMemo(() => {
+    console.log('recompute!')
+    return (
+      <>
+        {Object.values(elements).map((element) => {
+          switch (element.template.type) {
+            case 'static-component': {
+              return <StaticComponent key={`el-${element.id}`} instanceId={element.id} />
+            }
+            case 'static-parameter': {
+              return <StaticParameter key={`param-${element.id}`} instanceId={element.id} />
+            }
+            case 'wire': {
+              return <Wire key={`wire-${element.id}`} instanceId={element.id} />
+            }
+            case 'panel': {
+              return <Panel key={`panel-${element.id}`} instanceId={element.id} />
+            }
+            case 'number-slider': {
+              return <NumberSlider key={`number-slider-${element.id}`} instanceId={element.id} />
+            }
+            default: {
+              console.log(`Could not render '${element.template.type}'. ${element.id} `)
+            }
+          }
+        })}
+      </>
+    )
+  }, [elements, solution.id])
+
   return (
     <div
       ref={canvasRef}
@@ -176,28 +206,7 @@ export const GraphCanvas = (): React.ReactElement => {
             top: canvasRef.current.clientHeight / 2,
           }}
         >
-          {Object.values(elements).map((element) => {
-            switch (element.template.type) {
-              case 'static-component': {
-                return <StaticComponent key={`el-${element.id}`} instanceId={element.id} />
-              }
-              case 'static-parameter': {
-                return <StaticParameter key={`param-${element.id}`} instanceId={element.id} />
-              }
-              case 'wire': {
-                return <Wire key={`wire-${element.id}`} instanceId={element.id} />
-              }
-              case 'panel': {
-                return <Panel key={`panel-${element.id}`} instanceId={element.id} />
-              }
-              case 'number-slider': {
-                return <NumberSlider key={`number-slider-${element.id}`} instanceId={element.id} />
-              }
-              default: {
-                console.log(`Could not render '${element.template.type}'. ${element.id} `)
-              }
-            }
-          })}
+          {graphElements}
         </div>
       ) : null}
       <div
