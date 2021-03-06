@@ -67,8 +67,6 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
   }
 
   const dom = useMemo(() => {
-    console.log('RENDER')
-
     return (
       <div
         className="absolute flex flex-row items-stretch"

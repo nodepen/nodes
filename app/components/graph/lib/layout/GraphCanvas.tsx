@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { useLongPress } from '@/hooks'
 import { LibraryCommand } from '../annotation'
 import { Wire, Panel, StaticComponent, StaticParameter, NumberSlider } from '../elements'
 
@@ -132,8 +131,9 @@ export const GraphCanvas = (): React.ReactElement => {
 
   const [mx, my] = libraryMenuPosition ?? [0, 0]
 
+  const liveWire = elements['live-wire'] ? <Wire key={'live-wire-element'} instanceId="live-wire" /> : null
+
   const graphElements = useMemo(() => {
-    console.log('recompute!')
     return (
       <>
         {Object.values(elements).map((element) => {
@@ -207,6 +207,7 @@ export const GraphCanvas = (): React.ReactElement => {
           }}
         >
           {graphElements}
+          {liveWire}
         </div>
       ) : null}
       <div
