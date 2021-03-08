@@ -3,12 +3,13 @@ import type { AppProps } from 'next/app'
 import { SessionManager } from '~/context/session'
 
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
+import { BatchHttpLink } from '@apollo/client/link/batch-http'
 
 import '../styles/tailwind.css'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const client = new ApolloClient({
-    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql',
+    link: new BatchHttpLink({ uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql' }),
     cache: new InMemoryCache({ addTypename: false }),
   })
 

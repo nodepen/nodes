@@ -11,7 +11,7 @@ type StaticComponentProps = {
   instanceId: string
 }
 
-export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
+const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
     store: { elements, library },
     dispatch,
@@ -160,3 +160,5 @@ export const StaticComponent = ({ instanceId: id }: StaticComponentProps): React
 
   return dom
 }
+
+export const StaticComponent = React.memo(StaticComponentComponent)
