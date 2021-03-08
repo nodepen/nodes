@@ -9,7 +9,11 @@ import '../styles/tailwind.css'
 
 const MyApp = ({ Component, pageProps }: AppProps) => {
   const client = new ApolloClient({
-    link: new BatchHttpLink({ uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql' }),
+    link: new BatchHttpLink({
+      uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql',
+      batchInterval: 25,
+      batchMax: 50,
+    }),
     cache: new InMemoryCache({ addTypename: false }),
   })
 
