@@ -1,5 +1,5 @@
 import React from 'react'
-import { NextPage, GetServerSideProps, GetServerSidePropsResult, GetStaticProps, GetStaticPropsResult } from 'next'
+import { NextPage, GetStaticProps } from 'next'
 import { Grasshopper } from 'glib'
 import { Layout, Graph } from '@/components'
 import { GraphManager } from '~/context/graph'

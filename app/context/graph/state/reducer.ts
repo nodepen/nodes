@@ -497,6 +497,33 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       // Add new wire
       state.elements[wireId] = wireToCommit
 
+      // Verify that a registry entry exists for source parameters
+      const [fromElementId, fromParameterId] = [
+        element.current.sources.from?.element,
+        element.current.sources.from?.parameter,
+      ]
+      const [toElementId, toParameterId] = [element.current.sources.to?.element, element.current.sources.to?.parameter]
+
+      if (!state.registry.wires.from[fromElementId]) {
+        state.registry.wires.from[fromElementId] = {}
+      }
+
+      if (!state.registry.wires.from[fromElementId][fromParameterId]) {
+        state.registry.wires.from[fromElementId][fromParameterId] = []
+      }
+
+      if (!state.registry.wires.to[toElementId]) {
+        state.registry.wires.to[toElementId] = {}
+      }
+
+      if (!state.registry.wires.to[toElementId][toParameterId]) {
+        state.registry.wires.to[toElementId][toParameterId] = []
+      }
+
+      // Update wire registry with new wire
+      state.registry.wires.from[fromElementId][fromParameterId].push(wireId)
+      state.registry.wires.to[toElementId][toParameterId].push(wireId)
+
       // Clear live wire
       element.current.mode = 'hidden'
       element.current.sources = {}
@@ -728,6 +755,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     }
     case 'graph/clear': {
       state.elements = {}
+      state.registry = {
+        wires: {
+          from: {},
+          to: {},
+        },
+      }
 
       expireSolution(state)
 
