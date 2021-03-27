@@ -1,6 +1,7 @@
 import { Glasshopper, Grasshopper } from 'glib'
 import { GraphAction, GraphStore } from './../types'
 import { newGuid } from '@/utils'
+import { Wire } from '~/../lib/dist/glasshopper/element'
 
 export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
   switch (action.type) {
@@ -364,6 +365,28 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       const [dx, dy] = motion
 
       component.current.position = [cx + dx, cy + dy]
+
+      // Move any attached wires
+      const [fromWires, toWires] = findAttachedWires(component, state)
+
+      fromWires.forEach((id) => {
+        const wire = state.elements[id] as Wire
+
+        const [wx, wy] = wire.current.from
+
+        wire.current.from = [wx + dx, wy + dy]
+      })
+
+      toWires.forEach((id) => {
+        const wire = state.elements[id] as Wire
+
+        const [wx, wy] = wire.current.to
+
+        wire.current.to = [wx + dx, wy + dy]
+      })
+
+      // Update all component anchors
+      updateAnchors(component, dx, dy)
 
       return { ...state }
     }
@@ -881,4 +904,77 @@ const isInputOrOutput = (elementId: string, parameterId: string, state: GraphSto
 
   console.log('isInputOrOutput used incorrectly!')
   return 'input'
+}
+
+/**
+ *
+ * @param element
+ * @param graph
+ * @returns [from, to]
+ */
+const findAttachedWires = (element: Glasshopper.Element.Base, state: GraphStore): [string[], string[]] => {
+  const fromLookup: [string, string][] = []
+  const toLookup: [string, string][] = []
+
+  switch (element.template.type) {
+    case 'static-component': {
+      const component = element as Glasshopper.Element.StaticComponent
+
+      Object.keys(component.current.outputs).forEach((id) => {
+        fromLookup.push([component.id, id])
+      })
+
+      Object.keys(component.current.inputs).forEach((id) => {
+        if (component.current.sources[id]?.length > 0) {
+          toLookup.push([component.id, id])
+        }
+      })
+      break
+    }
+    case 'static-parameter': {
+      const parameter = element as Glasshopper.Element.StaticParameter
+
+      fromLookup.push([parameter.id, 'output'])
+
+      if (parameter.current.sources['input']?.length > 0) {
+        toLookup.push([parameter.id, 'input'])
+      }
+      break
+    }
+    default: {
+      console.warn(`Wire lookup not yet implemented for ${element.template.type}`)
+    }
+  }
+
+  const fromWires: string[] = []
+  const toWires: string[] = []
+
+  fromLookup.forEach(([elementId, parameterId]) => {
+    const wireReferences = state.registry.wires.from?.[elementId]?.[parameterId]
+
+    if (wireReferences) {
+      fromWires.push(...wireReferences)
+    }
+  })
+
+  toLookup.forEach(([elementId, parameterId]) => {
+    const wireReferences = state.registry.wires.to?.[elementId]?.[parameterId]
+
+    if (wireReferences) {
+      toWires.push(...wireReferences)
+    }
+  })
+
+  return [fromWires, toWires]
+}
+
+const updateAnchors = (
+  element: Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter,
+  dx: number,
+  dy: number
+) => {
+  Object.keys(element.current.anchors).forEach((anchor) => {
+    const [x, y] = element.current.anchors[anchor]
+    element.current.anchors[anchor] = [x + dx, y + dy]
+  })
 }
