@@ -37,7 +37,14 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
 
   const ready = useMemo(() => tx !== 0 && ty !== 0, [tx, ty])
 
+  const moveAnchor = useRef<[number, number]>([0, 0])
+  const moveActive = useRef<boolean>(false)
+
   const handleLongHover = (e: PointerEvent): void => {
+    if (moveActive.current) {
+      return
+    }
+
     const { pageX, pageY } = e
 
     const tooltip = (
@@ -63,9 +70,6 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
   const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation()
   }
-
-  const moveAnchor = useRef<[number, number]>([0, 0])
-  const moveActive = useRef<boolean>(false)
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
