@@ -62,9 +62,53 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
 
   const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation()
-
-    // Do something here about selection
   }
+
+  const moveAnchor = useRef<[number, number]>([0, 0])
+  const moveActive = useRef<boolean>(false)
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
+    e.stopPropagation()
+
+    const { pageX: ex, pageY: ey } = e
+
+    moveAnchor.current = [ex, ey]
+    moveActive.current = true
+  }
+
+  const handlePointerMove = (e: PointerEvent): void => {
+    if (!moveActive.current) {
+      return
+    }
+
+    const { pageX: ex, pageY: ey } = e
+    const [ax, ay] = moveAnchor.current
+
+    const [dx, dy] = [ex - ax, ey - ay]
+
+    // Dispatch move
+    dispatch({ type: 'graph/mutation/move-component', id, motion: [dx, -dy] })
+
+    moveAnchor.current = [ex, ey]
+  }
+
+  const handlePointerUp = (): void => {
+    if (!moveActive.current) {
+      return
+    }
+
+    moveActive.current = false
+  }
+
+  useEffect(() => {
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerUp)
+    }
+  })
 
   const dom = useMemo(() => {
     return (
@@ -73,6 +117,7 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
         style={{ left: dx - tx, top: -dy - ty, opacity: ready ? 1 : 0 }}
         ref={componentRef}
         onMouseDown={captureMouseDown}
+        onPointerDown={handlePointerDown}
         role="presentation"
       >
         <div className="relative flex flex-row items-stretch">
@@ -151,7 +196,7 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
         </div>
       </div>
     )
-  }, [ready, status, color])
+  }, [ready, status, color, dx, dy])
 
   if (!elements[id] || elements[id].template.type !== 'static-component') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-component'`)

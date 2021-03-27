@@ -351,6 +351,22 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/mutation/move-component': {
+      const { id, motion } = action
+
+      const component = state.elements[id] as Glasshopper.Element.StaticComponent
+
+      if (!component) {
+        return
+      }
+
+      const [cx, cy] = component.current.position
+      const [dx, dy] = motion
+
+      component.current.position = [cx + dx, cy + dy]
+
+      return { ...state }
+    }
     case 'graph/config/set-execution-mode': {
       const { mode } = action
 
