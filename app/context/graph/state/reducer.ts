@@ -524,6 +524,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           from: correctFrom,
           to: correctTo,
         }
+
+        const correctFromPosition = element.current.to
+        const correctToPosition = element.current.from
+
+        element.current.from = correctFromPosition
+        element.current.to = correctToPosition
       }
 
       // TODO: Verify connection does not already exist
