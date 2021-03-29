@@ -22,7 +22,7 @@
     "react-three-fiber": "^5.3.14",
     "redux": "^4.0.5",
     "tailwindcss": "^1.8.4",
-    "three": "^0.124.0",
+    "three": "^0.125.0",
     "threejs-meshline": "^2.0.12"
   },
   "devDependencies": {
