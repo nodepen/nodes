@@ -12,23 +12,33 @@ export const GraphCanvas = (): React.ReactElement => {
     dispatch,
   } = useGraphManager()
 
+  // Handle global keyboard events
   useEffect(() => {
-    const debug = (e: KeyboardEvent): void => {
+    const handleKeyDown = (e: KeyboardEvent): void => {
       if (libraryMenuPosition) {
         return
       }
 
-      if (e.code === 'Space') {
-        const watching = ['static-component', 'static-parameter', 'number-slider']
-        console.log(Object.values(elements).filter((el) => watching.includes(el.template.type)))
-        dispatch({ type: 'session/expire-solution' })
+      console.log(e.code)
+
+      switch (e.code) {
+        case 'Space': {
+          const watching = ['static-component', 'static-parameter', 'number-slider']
+          console.log(Object.values(elements).filter((el) => watching.includes(el.template.type)))
+          dispatch({ type: 'session/expire-solution' })
+          break
+        }
+        case 'Delete': {
+          dispatch({ type: 'graph/mutation/delete-selection' })
+          break
+        }
       }
     }
 
-    window.addEventListener('keypress', debug)
+    window.addEventListener('keydown', handleKeyDown)
 
     return () => {
-      window.removeEventListener('keypress', debug)
+      window.removeEventListener('keydown', handleKeyDown)
     }
   })
 

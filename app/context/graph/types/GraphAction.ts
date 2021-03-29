@@ -21,6 +21,7 @@ export type GraphAction =
   | { type: 'graph/selection-remove'; id: string }
   | { type: 'graph/selection-toggle'; id: string }
   | { type: 'graph/selection-clear' }
+  | { type: 'graph/mutation/delete-selection' }
   | { type: 'graph/mutation/move-component'; id: string; motion: [number, number] }
   | { type: 'graph/config/set-execution-mode'; mode: GraphExecutionMode }
   | {
