@@ -89,7 +89,7 @@ const Teaser = () => {
         </div>
       </div>
       <a
-        href="https://github.com/cdriesler/glasshopper.io"
+        href="https://github.com/cdriesler/nodepen"
         target="_blank"
         rel="noreferrer"
         className="font-sans font-semibold text-sm"

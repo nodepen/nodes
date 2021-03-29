@@ -8,15 +8,16 @@ import { useSolutionQuery } from './hooks'
 
 type GraphManagerProps = {
   children?: React.ReactNode
+  config?: Grasshopper.Component[]
 }
 
-export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
-  const { session, user } = useSessionManager()
+export const GraphManager = ({ children, config }: GraphManagerProps): React.ReactElement => {
+  const { session, user, error } = useSessionManager()
   const client = useApolloClient()
 
   const [store, dispatch] = useReducer(reducer, initial)
 
-  const { data: config } = useQuery(COMPUTE_CONFIGURATION)
+  const { data } = useQuery(COMPUTE_CONFIGURATION, {})
 
   useEffect(() => {
     if (store.preflight.getLibrary) {
@@ -24,10 +25,10 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       return
     }
 
-    if (config) {
-      dispatch({ type: 'session/load-components', components: config.getComputeConfiguration })
+    if (data || config) {
+      dispatch({ type: 'session/load-components', components: data?.getComputeConfiguration ?? config })
     }
-  }, [config])
+  }, [data, config])
 
   const { status } = useSolutionQuery(session.id, store.solution.id, store)
 

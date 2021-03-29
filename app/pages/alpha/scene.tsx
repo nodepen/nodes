@@ -1,12 +1,19 @@
 import React from 'react'
-import { NextPage, GetServerSideProps, GetServerSidePropsResult } from 'next'
+import { NextPage, GetStaticProps } from 'next'
+import { Grasshopper } from 'glib'
 import { Layout, Scene } from '@/components'
 import { GraphManager } from '~/context/graph'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { COMPUTE_CONFIGURATION } from '@/queries'
 
-const AlphaScenePage: NextPage = () => {
+type ScenePageProps = {
+  config: Grasshopper.Component[]
+}
+
+const AlphaScenePage: NextPage<ScenePageProps> = ({ config }) => {
   return (
     <Layout.Root>
-      <GraphManager>
+      <GraphManager config={config}>
         <Scene.Container />
       </GraphManager>
     </Layout.Root>
@@ -15,14 +22,20 @@ const AlphaScenePage: NextPage = () => {
 
 export default AlphaScenePage
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const { password } = query
+export const getStaticProps: GetStaticProps = async () => {
+  const client = new ApolloClient({
+    ssrMode: true,
+    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'https://api.dev.nodepen.io/graphql',
+    cache: new InMemoryCache(),
+  })
 
-  const response: GetServerSidePropsResult<never> = { redirect: { destination: '/teaser', permanent: false } }
+  const { data } = await client.query({ query: COMPUTE_CONFIGURATION })
 
-  if (!password || password !== process.env.ALPHA_PASSWORD) {
-    return response
+  const installed = data.getComputeConfiguration
+
+  return {
+    props: {
+      config: installed,
+    },
   }
-
-  return { props: {} }
 }

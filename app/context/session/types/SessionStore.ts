@@ -7,4 +7,5 @@ export type SessionStore = {
     token: string
     name: string
   }
+  error?: any
 }

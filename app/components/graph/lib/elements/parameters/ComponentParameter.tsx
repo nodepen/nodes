@@ -60,7 +60,7 @@ export const ComponentParameter = ({ source, mode }: ComponentParameterProps): R
 
     dispatch({ type: 'graph/wire/start-live-wire', from: [cx, cy], to: [tx, ty], owner: source })
 
-    window.navigator.vibrate(30)
+    window.navigator?.vibrate?.(30)
 
     setIsDrawingWire(true)
 

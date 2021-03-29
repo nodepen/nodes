@@ -1,6 +1,7 @@
 import { Glasshopper, Grasshopper } from 'glib'
 import { GraphAction, GraphStore } from './../types'
 import { newGuid } from '@/utils'
+import { Wire } from '~/../lib/dist/glasshopper/element'
 
 export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
   switch (action.type) {
@@ -290,8 +291,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }
 
+      const selectable = ['static-component', 'static-parameter']
+
       const captured = Object.values(state.elements)
-        .filter((element) => isContained(region, getElementExtents(element), partial))
+        .filter(
+          (element) =>
+            selectable.includes(element.template.type) && isContained(region, getElementExtents(element), partial)
+        )
         .map((element) => element.id)
 
       state.selected = captured
@@ -348,6 +354,82 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       state.selected = []
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
+      return { ...state }
+    }
+    case 'graph/mutation/delete-selection': {
+      const elementsToDelete = [...state.selected]
+      const wiresToDelete: string[] = []
+
+      // Locate attached wires to also delete
+      for (const id of state.selected) {
+        const element = state.elements[id]
+
+        const [fromWires, toWires] = findAttachedWires(element, state)
+
+        wiresToDelete.push(...[...fromWires, ...toWires])
+
+        // Clear any registry references owned by this element
+        eraseElementFromRegistry(id, state)
+      }
+
+      // Perform delete operation
+      for (const id of elementsToDelete) {
+        if (id in state.elements) {
+          delete state.elements[id]
+        }
+      }
+
+      for (const id of wiresToDelete) {
+        const wire = state.elements[id] as Glasshopper.Element.Wire
+
+        if (id in state.elements) {
+          eraseWireFromRegistry(wire, state)
+
+          delete state.elements[id]
+        }
+      }
+
+      // Request new solution
+      expireSolution(state)
+
+      return { ...state }
+    }
+    case 'graph/mutation/move-component': {
+      const { id, motion } = action
+
+      const component = state.elements[id] as Glasshopper.Element.StaticComponent
+
+      if (!component) {
+        return
+      }
+
+      const [cx, cy] = component.current.position
+      const [dx, dy] = motion
+
+      component.current.position = [cx + dx, cy + dy]
+
+      // Move any attached wires
+      const [fromWires, toWires] = findAttachedWires(component, state)
+
+      fromWires.forEach((id) => {
+        const wire = state.elements[id] as Wire
+
+        const [wx, wy] = wire.current.from
+
+        wire.current.from = [wx + dx, wy + dy]
+      })
+
+      toWires.forEach((id) => {
+        const wire = state.elements[id] as Wire
+
+        const [wx, wy] = wire.current.to
+
+        wire.current.to = [wx + dx, wy + dy]
+      })
+
+      // Update all component anchors
+      updateAnchors(component, dx, dy)
 
       return { ...state }
     }
@@ -485,6 +567,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           from: correctFrom,
           to: correctTo,
         }
+
+        const correctFromPosition = element.current.to
+        const correctToPosition = element.current.from
+
+        element.current.from = correctFromPosition
+        element.current.to = correctToPosition
       }
 
       // TODO: Verify connection does not already exist
@@ -496,6 +584,33 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       // Add new wire
       state.elements[wireId] = wireToCommit
+
+      // Verify that a registry entry exists for source parameters
+      const [fromElementId, fromParameterId] = [
+        element.current.sources.from?.element,
+        element.current.sources.from?.parameter,
+      ]
+      const [toElementId, toParameterId] = [element.current.sources.to?.element, element.current.sources.to?.parameter]
+
+      if (!state.registry.wires.from[fromElementId]) {
+        state.registry.wires.from[fromElementId] = {}
+      }
+
+      if (!state.registry.wires.from[fromElementId][fromParameterId]) {
+        state.registry.wires.from[fromElementId][fromParameterId] = []
+      }
+
+      if (!state.registry.wires.to[toElementId]) {
+        state.registry.wires.to[toElementId] = {}
+      }
+
+      if (!state.registry.wires.to[toElementId][toParameterId]) {
+        state.registry.wires.to[toElementId][toParameterId] = []
+      }
+
+      // Update wire registry with new wire
+      state.registry.wires.from[fromElementId][fromParameterId].push(wireId)
+      state.registry.wires.to[toElementId][toParameterId].push(wireId)
 
       // Clear live wire
       element.current.mode = 'hidden'
@@ -728,6 +843,12 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     }
     case 'graph/clear': {
       state.elements = {}
+      state.registry = {
+        wires: {
+          from: {},
+          to: {},
+        },
+      }
 
       expireSolution(state)
 
@@ -832,4 +953,146 @@ const isInputOrOutput = (elementId: string, parameterId: string, state: GraphSto
 
   console.log('isInputOrOutput used incorrectly!')
   return 'input'
+}
+
+/**
+ *
+ * @param element
+ * @param graph
+ * @returns [from, to]
+ */
+const findAttachedWires = (element: Glasshopper.Element.Base, state: GraphStore): [string[], string[]] => {
+  const fromLookup: [string, string][] = []
+  const toLookup: [string, string][] = []
+
+  switch (element.template.type) {
+    case 'static-component': {
+      const component = element as Glasshopper.Element.StaticComponent
+
+      Object.keys(component.current.outputs).forEach((id) => {
+        fromLookup.push([component.id, id])
+      })
+
+      Object.keys(component.current.inputs).forEach((id) => {
+        if (component.current.sources[id]?.length > 0) {
+          toLookup.push([component.id, id])
+        }
+      })
+      break
+    }
+    case 'static-parameter': {
+      const parameter = element as Glasshopper.Element.StaticParameter
+
+      fromLookup.push([parameter.id, 'output'])
+
+      if (parameter.current.sources['input']?.length > 0) {
+        toLookup.push([parameter.id, 'input'])
+      }
+      break
+    }
+    default: {
+      console.warn(`Wire lookup not yet implemented for ${element.template.type}`)
+    }
+  }
+
+  const fromWires: string[] = []
+  const toWires: string[] = []
+
+  fromLookup.forEach(([elementId, parameterId]) => {
+    const wireReferences = state.registry.wires.from?.[elementId]?.[parameterId]
+    const validWireReferences: string[] = []
+
+    if (wireReferences) {
+      // Verify that wires still exist
+      for (const id of wireReferences) {
+        if (!(id in state.elements)) {
+          console.log(`Invalid wire reference found. ${elementId} : ${parameterId} : ${id}`)
+        } else {
+          validWireReferences.push(id)
+        }
+      }
+
+      // Repair registry entry if necessary
+      if (wireReferences.length !== validWireReferences.length) {
+        state.registry.wires.from[elementId][parameterId] = validWireReferences
+      }
+
+      fromWires.push(...validWireReferences)
+    }
+  })
+
+  toLookup.forEach(([elementId, parameterId]) => {
+    const wireReferences = state.registry.wires.to?.[elementId]?.[parameterId]
+    const validWireReferences: string[] = []
+
+    if (wireReferences) {
+      // Verify that wires still exist
+      for (const id of wireReferences) {
+        if (!(id in state.elements)) {
+          console.log(`Invalid wire reference found. ${elementId} : ${parameterId} : ${id}`)
+        } else {
+          validWireReferences.push(id)
+        }
+      }
+
+      // Repair registry entry if necessary
+      if (wireReferences.length !== validWireReferences.length) {
+        state.registry.wires.to[elementId][parameterId] = validWireReferences
+      }
+
+      toWires.push(...wireReferences)
+    }
+  })
+
+  return [fromWires, toWires]
+}
+
+const updateAnchors = (
+  element: Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter,
+  dx: number,
+  dy: number
+) => {
+  Object.keys(element.current.anchors).forEach((anchor) => {
+    const [x, y] = element.current.anchors[anchor]
+    element.current.anchors[anchor] = [x + dx, y + dy]
+  })
+}
+
+const eraseElementFromRegistry = (elementId: string, state: GraphStore): void => {
+  if (elementId in state.registry.wires.from) {
+    delete state.registry.wires.from[elementId]
+  }
+
+  if (elementId in state.registry.wires.to) {
+    delete state.registry.wires.to[elementId]
+  }
+}
+
+const eraseWireFromRegistry = (wire: Glasshopper.Element.Wire, state: GraphStore): void => {
+  const { element: fromElement, parameter: fromParameter } = wire.current.sources.from
+  const { element: toElement, parameter: toParameter } = wire.current.sources.to
+
+  if (state.registry.wires.from?.[fromElement]?.[fromParameter]) {
+    state.registry.wires.from[fromElement][fromParameter] = state.registry.wires.from[fromElement][
+      fromParameter
+    ].filter((id) => id !== wire.id)
+  }
+
+  if (state.registry.wires.from?.[toElement]?.[toParameter]) {
+    state.registry.wires.from[toElement][toParameter] = state.registry.wires.from[toElement][toParameter].filter(
+      (id) => id !== wire.id
+    )
+  }
+
+  if (state.registry.wires.to?.[toElement]?.[toParameter]) {
+    state.registry.wires.to[toElement][toParameter] = state.registry.wires.to[toElement][toParameter].filter(
+      (id) => id !== wire.id
+    )
+  }
+
+  if (state.registry.wires.to?.[fromElement]?.[fromParameter]) {
+    state.registry.wires.to[fromElement][fromParameter] = state.registry.wires.to[fromElement][fromParameter].filter(
+      (id) => id !== wire.id
+    )
+  }
 }
