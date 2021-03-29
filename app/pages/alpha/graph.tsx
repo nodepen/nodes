@@ -25,7 +25,7 @@ export default AlphaGraphPage
 export const getStaticProps: GetStaticProps = async () => {
   const client = new ApolloClient({
     ssrMode: true,
-    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql',
+    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'https://api.dev.nodepen.io/graphql',
     cache: new InMemoryCache(),
   })
 
