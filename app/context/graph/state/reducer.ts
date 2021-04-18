@@ -374,6 +374,21 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       }
 
       // Update element sources
+      fromWiresToDelete.forEach((id) => {
+        const wire = state.elements[id] as Glasshopper.Element.Wire
+
+        const { element: fromElement, parameter: fromParameter } = wire.current.sources?.from ?? {}
+        const { element: toElement, parameter: toParameter } = wire.current.sources?.to ?? {}
+
+        const target = state.elements[toElement] as
+          | Glasshopper.Element.StaticComponent
+          | Glasshopper.Element.StaticParameter
+
+        // Clear any sources that match an element being deleted
+        target.current.sources[toParameter] = target.current.sources[toParameter].filter(
+          (source) => source.element !== fromElement && source.parameter !== fromParameter
+        )
+      })
 
       // Perform delete operation
       for (const id of [...elementsToDelete, ...fromWiresToDelete, ...toWiresToDelete]) {
