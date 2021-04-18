@@ -315,6 +315,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       state.selected.push(id)
 
+      state.selected = [...state.selected]
+
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
       return { ...state }
@@ -326,7 +328,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         return state
       }
 
-      state.selected = state.selected.filter((elementId) => elementId !== id)
+      state.selected = [...state.selected.filter((elementId) => elementId !== id)]
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
@@ -345,6 +347,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           break
         }
       }
+
+      state.selected = [...state.selected]
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 

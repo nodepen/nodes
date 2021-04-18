@@ -71,6 +71,11 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     e.stopPropagation()
   }
 
+  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    console.log('component click')
+    dispatch({ type: 'graph/selection-add', id: id })
+  }
+
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
@@ -114,100 +119,97 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     }
   })
 
-  const dom = useMemo(() => {
-    return (
-      <div
-        className="absolute flex flex-row items-stretch"
-        style={{ left: dx - tx, top: -dy - ty, opacity: ready ? 1 : 0 }}
-        ref={componentRef}
-        onMouseDown={captureMouseDown}
-        onPointerDown={handlePointerDown}
-        role="presentation"
-      >
-        <div className="relative flex flex-row items-stretch">
-          <div
-            className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
-            style={{ top: '-1.2rem', right: '1rem' }}
-          >
-            <Loading visible={status === 'waiting'} />
-          </div>
-          <div
-            id="input-grips-container"
-            className="flex flex-col z-20"
-            style={{ paddingTop: '2px', paddingBottom: '2px' }}
-          >
-            {Object.keys(current.inputs).map((parameterId) => (
-              <div
-                key={`input-grip-${parameterId}`}
-                className="w-4 flex-grow flex flex-col justify-center"
-                style={{ transform: 'translateX(50%)' }}
-              >
-                {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
-              </div>
-            ))}
-          </div>
-          <div
-            id="panel-container"
-            className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-30"
-          >
-            <div id="inputs-column" className="flex flex-col">
-              {Object.entries(current.inputs).map(([parameterId, i]) => (
-                <ComponentParameter
-                  key={`input-${parameterId}-${i}`}
-                  source={{ element: id, parameter: parameterId }}
-                  mode="input"
-                />
-              ))}
-            </div>
-            <div
-              id="label-column"
-              className="w-10 m-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
-              style={{ background: color }}
-              ref={longHoverTarget}
-            >
-              <div
-                className="font-panel text-v font-bold text-sm select-none"
-                style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
-              >
-                {template.nickname.toUpperCase()}
-              </div>
-            </div>
-            <div id="outputs-column" className="flex flex-col">
-              {Object.entries(current.outputs).map(([parameterId, i]) => (
-                <ComponentParameter
-                  key={`output-${parameterId}-${i}`}
-                  source={{ element: id, parameter: parameterId }}
-                  mode="output"
-                />
-              ))}
-            </div>
-          </div>
-          <div
-            id="output-grips-container"
-            className="flex flex-col z-20"
-            style={{ paddingTop: '2px', paddingBottom: '2px' }}
-          >
-            {Object.keys(current.outputs).map((parameterId) => (
-              <div
-                key={`output-grip-${parameterId}`}
-                className="w-4 flex-grow flex flex-col justify-center"
-                style={{ transform: 'translateX(-50%)' }}
-              >
-                {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-    )
-  }, [ready, status, color, dx, dy])
-
   if (!elements[id] || elements[id].template.type !== 'static-component') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-component'`)
     return null
   }
 
-  return dom
+  return (
+    <div
+      className="absolute flex flex-row items-stretch"
+      style={{ left: dx - tx, top: -dy - ty, opacity: ready ? 1 : 0 }}
+      ref={componentRef}
+      onMouseDown={captureMouseDown}
+      onPointerDown={handlePointerDown}
+      onClick={handleClick}
+      role="presentation"
+    >
+      <div className="relative flex flex-row items-stretch">
+        <div
+          className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
+          style={{ top: '-1.2rem', right: '1rem' }}
+        >
+          <Loading visible={status === 'waiting'} />
+        </div>
+        <div
+          id="input-grips-container"
+          className="flex flex-col z-20"
+          style={{ paddingTop: '2px', paddingBottom: '2px' }}
+        >
+          {Object.keys(current.inputs).map((parameterId) => (
+            <div
+              key={`input-grip-${parameterId}`}
+              className="w-4 flex-grow flex flex-col justify-center"
+              style={{ transform: 'translateX(50%)' }}
+            >
+              {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
+            </div>
+          ))}
+        </div>
+        <div
+          id="panel-container"
+          className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-30"
+        >
+          <div id="inputs-column" className="flex flex-col">
+            {Object.entries(current.inputs).map(([parameterId, i]) => (
+              <ComponentParameter
+                key={`input-${parameterId}-${i}`}
+                source={{ element: id, parameter: parameterId }}
+                mode="input"
+              />
+            ))}
+          </div>
+          <div
+            id="label-column"
+            className="w-10 m-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
+            style={{ background: color }}
+            ref={longHoverTarget}
+          >
+            <div
+              className="font-panel text-v font-bold text-sm select-none"
+              style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
+            >
+              {template.nickname.toUpperCase()}
+            </div>
+          </div>
+          <div id="outputs-column" className="flex flex-col">
+            {Object.entries(current.outputs).map(([parameterId, i]) => (
+              <ComponentParameter
+                key={`output-${parameterId}-${i}`}
+                source={{ element: id, parameter: parameterId }}
+                mode="output"
+              />
+            ))}
+          </div>
+        </div>
+        <div
+          id="output-grips-container"
+          className="flex flex-col z-20"
+          style={{ paddingTop: '2px', paddingBottom: '2px' }}
+        >
+          {Object.keys(current.outputs).map((parameterId) => (
+            <div
+              key={`output-grip-${parameterId}`}
+              className="w-4 flex-grow flex flex-col justify-center"
+              style={{ transform: 'translateX(-50%)' }}
+            >
+              {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export const StaticComponent = React.memo(StaticComponentComponent)
