@@ -1,5 +1,5 @@
 import React from 'react'
-import { Canvas, extend } from 'react-three-fiber'
+import { Canvas, extend } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as MeshLine from 'threejs-meshline'
 import { Glasshopper } from 'glib'

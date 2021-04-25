@@ -1,5 +1,4 @@
 import React from 'react'
-import { Vector3 } from 'three'
 import { Sphere } from '@react-three/drei'
 import { Glasshopper } from 'glib'
 
@@ -12,7 +11,7 @@ export const PointGeometry = ({ point, selected }: PointProps): React.ReactEleme
   const { x, y, z } = point
 
   return (
-    <Sphere position={[x, z, -y]} scale={new Vector3(0.1, 0.1, 0.1)}>
+    <Sphere visible args={[0.1, 10, 10]} position={[x, z, -y]}>
       <meshBasicMaterial attach="material" color={selected ? 'green' : 'darkred'} opacity={0.6} transparent={true} />
     </Sphere>
   )
