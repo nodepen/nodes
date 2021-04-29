@@ -11,12 +11,12 @@ type SessionManagerProps = {
 
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
   // TODO: Figure out auth at some point
-  const id = useMemo(() => (process.browser ? window?.localStorage?.getItem('np:user') ?? newGuid() : ''), [])
+  const id = useMemo(() => (process.browser ? window?.localStorage?.getItem('np:alpha:user') ?? newGuid() : ''), [])
 
   const { data } = useQuery(USER_SESSION, { variables: { id } })
 
   useEffect(() => {
-    window.localStorage.setItem('np:user', id)
+    window.localStorage.setItem('np:alpha:user', id)
   }, [])
 
   const session: SessionStore = {
