@@ -47,14 +47,14 @@ export const allowedComponents = {
   params: {
     input: [
       '57da07bd-ecab-415d-9d86-af36d7073abc', // Number Slider
-      '59e0b89a-e487-49f8-bab8-b5bab16be14c', // Panel
+      // '59e0b89a-e487-49f8-bab8-b5bab16be14c', // Panel
     ],
     primitive: [
-      'cb95db89-6165-43b6-9c41-5702bc5bf137', // Boolean (Bool)
-      '15b7afe5-d0d0-43e1-b894-34fcfe3be384', // Domain (Domain)
-      '2e3ab970-8545-46bb-836c-1c11e5610bce', // Integer (Int)
+      // 'cb95db89-6165-43b6-9c41-5702bc5bf137', // Boolean (Bool)
+      // '15b7afe5-d0d0-43e1-b894-34fcfe3be384', // Domain (Domain)
+      // '2e3ab970-8545-46bb-836c-1c11e5610bce', // Integer (Int)
       '3e8ca6be-fda8-4aaf-b5c0-3c54c8bb7312', // Number (Num)
-      '3ede854e-c753-40eb-84cb-b48008f14fd4', // Text (Txt)
+      // '3ede854e-c753-40eb-84cb-b48008f14fd4', // Text (Txt)
     ],
   },
   maths: {
@@ -81,7 +81,7 @@ export const allowedComponents = {
       '6f93d366-919f-4dda-a35e-ba03dd62799b', // Sort List (Sort)
     ],
     sequence: [
-      '01640871-69ea-40ac-9380-4660d6d28bd2', // Char Sequence (CharSeq)
+      // '01640871-69ea-40ac-9380-4660d6d28bd2', // Char Sequence (CharSeq)
       'fe99f302-3d0d-4389-8494-bd53f7935a02', // Fibonacci (Fib)
       '2ab17f9a-d852-4405-80e1-938c5e57e78d', // Random (Random)
       'e64c5fb1-845c-4ab1-8911-5f338516ba67', // Series (Series)
