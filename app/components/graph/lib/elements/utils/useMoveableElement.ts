@@ -8,14 +8,11 @@ export const useMoveableElement = (
 
   const target = ref ?? hookRef
 
-  const motionStart = useRef(0)
   const motionAnchor = useRef<[number, number]>([0, 0])
   const motionActive = useRef(false)
 
   const handlePointerDown = (e: PointerEvent): void => {
     e.stopPropagation()
-
-    motionStart.current = Date.now()
 
     const { pageX: ex, pageY: ey } = e
 

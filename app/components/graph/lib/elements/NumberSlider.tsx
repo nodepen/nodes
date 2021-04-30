@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree, Loading } from './common'
-import { useElementStatus } from './utils'
+import { useElementStatus, useSelectableElement } from './utils'
 import { Input } from '@/components'
 import { useMoveableElement } from './utils'
 
@@ -35,6 +35,13 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   }
 
   useMoveableElement(onMove, sliderRef)
+
+  const onSelect = (): void => {
+    dispatch({ type: 'graph/selection-clear' })
+    dispatch({ type: 'graph/selection-add', id })
+  }
+
+  useSelectableElement(onSelect, sliderRef)
 
   const [status, color] = useElementStatus(id)
 
