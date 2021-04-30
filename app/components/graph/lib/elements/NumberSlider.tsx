@@ -22,6 +22,8 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
 
   const sliderRef = useRef<HTMLDivElement>(null)
 
+  const [isOverHandle, setIsOverHandle] = useState(false)
+
   useEffect(() => {
     if (!sliderRef) {
       return
@@ -31,6 +33,9 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   }, [])
 
   const onMove = (motion: [number, number]): void => {
+    if (isOverHandle) {
+      return
+    }
     dispatch({ type: 'graph/mutation/move-component', id, motion })
   }
 
@@ -54,7 +59,9 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   const [[x, y], setAnchor] = useState<[number, number]>([0, 0])
   const [currentValue, setCurrentValue] = useState(value)
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+  const handleRef = useRef<HTMLButtonElement>(null)
+
+  const handlePointerDown = (e: PointerEvent): void => {
     e.stopPropagation()
 
     if (mode !== 'input') {
@@ -116,12 +123,22 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   }, [isSliding])
 
   useEffect(() => {
+    const handle = handleRef.current
+
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
 
+    if (handle) {
+      handle.addEventListener('pointerdown', handlePointerDown)
+    }
+
     return () => {
       window.removeEventListener('pointermove', handlePointerMove)
-      window.addEventListener('pointerup', handlePointerUp)
+      window.removeEventListener('pointerup', handlePointerUp)
+
+      if (handle) {
+        handle.removeEventListener('pointerdown', handlePointerDown)
+      }
     }
   })
 
@@ -209,7 +226,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
                 isSliding ? 'bg-green' : 'bg-white'
               } w-4 h-4 absolute rounded-sm border-2 border-dark hover:bg-green transition-colors duration-150`}
               style={{ top: -7, left: sliderPosition - 10, transform: 'rotate(45deg)' }}
-              onPointerDown={handlePointerDown}
+              ref={handleRef}
               onMouseDown={(e) => e.stopPropagation()}
             ></button>
           </div>
