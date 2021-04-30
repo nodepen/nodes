@@ -6,9 +6,10 @@ type LibraryCategory = 'params' | 'maths' | 'sets' | 'vector' | 'curve' | 'trans
 export type GraphStore = {
   elements: { [key: string]: Glasshopper.Element.Base }
   registry: {
-    wires: {
-      from: { [elementId: string]: { [parameterId: string]: string[] } }
-      to: { [elementId: string]: { [parameterId: string]: string[] } }
+    move: {
+      elements: string[]
+      fromWires: string[]
+      toWires: string[]
     }
   }
   camera: {

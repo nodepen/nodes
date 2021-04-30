@@ -3,9 +3,10 @@ import { GraphStore } from '../types'
 export const initial: GraphStore = {
   elements: {},
   registry: {
-    wires: {
-      to: {},
-      from: {},
+    move: {
+      elements: [],
+      fromWires: [],
+      toWires: [],
     },
   },
   camera: {

@@ -828,9 +828,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/clear': {
       state.elements = {}
       state.registry = {
-        wires: {
-          from: {},
-          to: {},
+        move: {
+          elements: [],
+          fromWires: [],
+          toWires: [],
         },
       }
 
@@ -1020,43 +1021,4 @@ const updateAnchors = (
     const [x, y] = element.current.anchors[anchor]
     element.current.anchors[anchor] = [x + dx, y + dy]
   })
-}
-
-const eraseElementFromRegistry = (elementId: string, state: GraphStore): void => {
-  if (elementId in state.registry.wires.from) {
-    delete state.registry.wires.from[elementId]
-  }
-
-  if (elementId in state.registry.wires.to) {
-    delete state.registry.wires.to[elementId]
-  }
-}
-
-const eraseWireFromRegistry = (wire: Glasshopper.Element.Wire, state: GraphStore): void => {
-  const { element: fromElement, parameter: fromParameter } = wire.current.sources.from
-  const { element: toElement, parameter: toParameter } = wire.current.sources.to
-
-  if (state.registry.wires.from?.[fromElement]?.[fromParameter]) {
-    state.registry.wires.from[fromElement][fromParameter] = state.registry.wires.from[fromElement][
-      fromParameter
-    ].filter((id) => id !== wire.id)
-  }
-
-  if (state.registry.wires.from?.[toElement]?.[toParameter]) {
-    state.registry.wires.from[toElement][toParameter] = state.registry.wires.from[toElement][toParameter].filter(
-      (id) => id !== wire.id
-    )
-  }
-
-  if (state.registry.wires.to?.[toElement]?.[toParameter]) {
-    state.registry.wires.to[toElement][toParameter] = state.registry.wires.to[toElement][toParameter].filter(
-      (id) => id !== wire.id
-    )
-  }
-
-  if (state.registry.wires.to?.[fromElement]?.[fromParameter]) {
-    state.registry.wires.to[fromElement][fromParameter] = state.registry.wires.to[fromElement][fromParameter].filter(
-      (id) => id !== wire.id
-    )
-  }
 }
