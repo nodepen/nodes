@@ -9,6 +9,7 @@ export const initial: GraphStore = {
       toWires: [],
     },
   },
+  activeKeys: [],
   camera: {
     position: [0, 0],
   },

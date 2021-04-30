@@ -12,6 +12,7 @@ export type GraphStore = {
       toWires: string[]
     }
   }
+  activeKeys: string[]
   camera: {
     position: [number, number]
     ref: React.MutableRefObject<HTMLDivElement>

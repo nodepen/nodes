@@ -95,6 +95,20 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/hotkey/add-active-key': {
+      const { code } = action
+
+      state.activeKeys = state.activeKeys.includes(code) ? state.activeKeys : [...state.activeKeys, code]
+
+      return { ...state }
+    }
+    case 'graph/hotkey/remove-active-key': {
+      const { code } = action
+
+      state.activeKeys = state.activeKeys.filter((key) => key !== code)
+
+      return { ...state }
+    }
     case 'graph/add-component': {
       const { position, component: template } = action
 

@@ -8,7 +8,7 @@ type ControlMode = 'idle' | 'panning' | 'selecting'
 
 export const GraphCanvas = (): React.ReactElement => {
   const {
-    store: { elements, camera, overlay, solution },
+    store: { elements, camera, overlay, solution, activeKeys },
     dispatch,
   } = useGraphManager()
 
@@ -32,13 +32,29 @@ export const GraphCanvas = (): React.ReactElement => {
           dispatch({ type: 'graph/mutation/delete-selection' })
           break
         }
+        case 'ControlLeft':
+        case 'ShiftLeft': {
+          dispatch({ type: 'graph/hotkey/add-active-key', code: e.code })
+        }
+      }
+    }
+
+    const handleKeyUp = (e: KeyboardEvent): void => {
+      console.log('UP!')
+      switch (e.code) {
+        case 'ControlLeft':
+        case 'ShiftLeft': {
+          dispatch({ type: 'graph/hotkey/remove-active-key', code: e.code })
+        }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
     }
   })
 
