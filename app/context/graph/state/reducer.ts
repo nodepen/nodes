@@ -98,12 +98,20 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
     case 'graph/hotkey/add-active-key': {
       const { code } = action
 
-      state.activeKeys = state.activeKeys.includes(code) ? state.activeKeys : [...state.activeKeys, code]
+      if (state.activeKeys.includes(code)) {
+        return state
+      }
+
+      state.activeKeys = [...state.activeKeys, code]
 
       return { ...state }
     }
     case 'graph/hotkey/remove-active-key': {
       const { code } = action
+
+      if (!state.activeKeys.includes(code)) {
+        return state
+      }
 
       state.activeKeys = state.activeKeys.filter((key) => key !== code)
 
