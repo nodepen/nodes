@@ -34,7 +34,7 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
     dispatch({ type: 'graph/mutation/move-component', id, motion })
   }
 
-  useMoveableElement(onMove, sliderRef)
+  useMoveableElement(onMove, undefined, undefined, sliderRef)
 
   const onSelect = (): void => {
     dispatch({ type: 'graph/selection-clear' })

@@ -2,6 +2,8 @@ import React, { useEffect, useRef } from 'react'
 
 export const useMoveableElement = (
   onMove: (motion: [number, number]) => void,
+  onMoveStart?: () => void,
+  onMoveEnd?: () => void,
   ref?: React.MutableRefObject<HTMLDivElement>
 ): React.MutableRefObject<HTMLDivElement> => {
   const hookRef = useRef<HTMLDivElement>(null)
@@ -18,6 +20,8 @@ export const useMoveableElement = (
 
     motionAnchor.current = [ex, ey]
     motionActive.current = true
+
+    onMoveStart()
   }
 
   const handlePointerMove = (e: PointerEvent): void => {
@@ -41,6 +45,8 @@ export const useMoveableElement = (
     }
 
     motionActive.current = false
+
+    onMoveEnd()
   }
 
   useEffect(() => {

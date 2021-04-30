@@ -4,7 +4,7 @@ import { Grip, Loading } from './common'
 import { Tooltip } from '../annotation'
 import { ComponentParameter } from './parameters'
 import { useGraphManager } from '@/context/graph'
-import { useElementStatus } from './utils'
+import { useElementStatus, useMoveableElement, useSelectableElement } from './utils'
 import { useLongHover } from '@/hooks'
 
 type StaticComponentProps = {
@@ -44,7 +44,6 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     dispatch({ type: 'graph/register-element', ref: selectionRef, id })
   }, [ready])
 
-  const moveAnchor = useRef<[number, number]>([0, 0])
   const moveActive = useRef<boolean>(false)
 
   const handleLongHover = (e: PointerEvent): void => {
@@ -68,6 +67,27 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
 
   const longHoverTarget = useLongHover(handleLongHover)
 
+  const onMoveStart = (): void => {
+    moveActive.current = true
+  }
+
+  const onMove = (motion: [number, number]): void => {
+    dispatch({ type: 'graph/mutation/move-component', motion, id })
+  }
+
+  const onMoveEnd = (): void => {
+    moveActive.current = false
+  }
+
+  useMoveableElement(onMove, onMoveStart, onMoveEnd, componentRef)
+
+  const onSelect = (): void => {
+    dispatch({ type: 'graph/selection-clear' })
+    dispatch({ type: 'graph/selection-add', id })
+  }
+
+  useSelectableElement(onSelect, componentRef)
+
   const component = elements[id] as Glasshopper.Element.StaticComponent
 
   const { template, current } = component
@@ -77,66 +97,6 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
   const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation()
   }
-
-  const pointerDownStart = useRef(0)
-
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
-    e.stopPropagation()
-
-    pointerDownStart.current = Date.now()
-
-    const { pageX: ex, pageY: ey } = e
-
-    moveAnchor.current = [ex, ey]
-    moveActive.current = true
-  }
-
-  const handlePointerMove = (e: PointerEvent): void => {
-    if (!moveActive.current) {
-      return
-    }
-
-    const { pageX: ex, pageY: ey } = e
-    const [ax, ay] = moveAnchor.current
-
-    const [dx, dy] = [ex - ax, ey - ay]
-
-    // Dispatch move
-    dispatch({ type: 'graph/mutation/move-component', id, motion: [dx, -dy] })
-
-    moveAnchor.current = [ex, ey]
-  }
-
-  const handlePointerUp = (): void => {
-    if (!moveActive.current) {
-      return
-    }
-
-    moveActive.current = false
-  }
-
-  const handleLocalPointerUp = (): void => {
-    const now = Date.now()
-
-    const pointerDuration = now - pointerDownStart.current
-
-    moveActive.current = false
-
-    if (pointerDuration < 250) {
-      dispatch({ type: 'graph/selection-clear' })
-      dispatch({ type: 'graph/selection-add', id: id })
-    }
-  }
-
-  useEffect(() => {
-    window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', handlePointerUp)
-
-    return () => {
-      window.removeEventListener('pointermove', handlePointerMove)
-      window.removeEventListener('pointerup', handlePointerUp)
-    }
-  })
 
   if (!elements[id] || elements[id].template.type !== 'static-component') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-component'`)
@@ -149,8 +109,6 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
       style={{ left: dx - tx, top: -dy - ty, opacity: ready ? 1 : 0 }}
       ref={componentRef}
       onMouseDown={captureMouseDown}
-      onPointerDown={handlePointerDown}
-      onPointerUp={handleLocalPointerUp}
       role="presentation"
     >
       <div className="relative flex flex-row items-stretch">
