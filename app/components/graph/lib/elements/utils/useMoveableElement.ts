@@ -16,7 +16,7 @@ export const useMoveableElement = (
   const handlePointerDown = (e: PointerEvent): void => {
     e.stopPropagation()
 
-    switch (e.pointerType == 'mouse' ? e.button : 2) {
+    switch (e.pointerType == 'mouse' ? e.button : 0) {
       case 0: {
         const { pageX: ex, pageY: ey } = e
 
@@ -33,9 +33,6 @@ export const useMoveableElement = (
     if (!motionActive.current) {
       return
     }
-
-    e.stopImmediatePropagation()
-    //e.stopPropagation()
 
     const { pageX: ex, pageY: ey } = e
     const [ax, ay] = motionAnchor.current

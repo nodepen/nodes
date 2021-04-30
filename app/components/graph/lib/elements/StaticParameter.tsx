@@ -32,7 +32,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'graph/mutation/move-component', motion, id })
   }
 
-  useMoveableElement(onMove, undefined, undefined, parameterRef)
+  const moveRef = useMoveableElement(onMove)
 
   const onSelect = (): void => {
     dispatch({ type: 'graph/selection-clear' })
@@ -58,6 +58,10 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     return null
   }
 
+  const captureMouseDown = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    e.stopPropagation()
+  }
+
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy - 18 }}>
       <div className="flex flex-col items-center" ref={parameterRef}>
@@ -65,6 +69,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           className="flex flex-row justify-center items-center relative z-20"
           onPointerEnter={() => setHovers(([, details]) => [true, details])}
           onPointerLeave={() => setHovers(([, details]) => [false, details])}
+          onMouseDown={captureMouseDown}
         >
           <div
             className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
@@ -78,6 +83,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           <div
             className="h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative transition-colors duration-150 z-20"
             style={{ background: color }}
+            ref={moveRef}
           >
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
               <ParameterIcon parent={parameter.id} />
@@ -93,7 +99,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
         </button>
-        {detailsPinned || detailsVisible ? (
+        {/* {detailsPinned || detailsVisible ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10"
             style={{ transform: 'translate(0, -18px)' }}
@@ -134,7 +140,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
               </>
             </Details>
           </div>
-        ) : null}
+        ) : null} */}
       </div>
     </div>
   )

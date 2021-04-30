@@ -79,7 +79,7 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     moveActive.current = false
   }
 
-  useMoveableElement(onMove, onMoveStart, onMoveEnd, componentRef)
+  useMoveableElement(onMove, onMoveStart, onMoveEnd, selectionRef)
 
   const onSelect = (): void => {
     dispatch({ type: 'graph/selection-clear' })
