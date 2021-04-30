@@ -71,13 +71,12 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     e.stopPropagation()
   }
 
-  const handleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
-    console.log('component click')
-    dispatch({ type: 'graph/selection-add', id: id })
-  }
+  const pointerDownStart = useRef(0)
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
+
+    pointerDownStart.current = Date.now()
 
     const { pageX: ex, pageY: ey } = e
 
@@ -109,6 +108,19 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     moveActive.current = false
   }
 
+  const handleLocalPointerUp = (): void => {
+    const now = Date.now()
+
+    const pointerDuration = now - pointerDownStart.current
+
+    moveActive.current = false
+
+    if (pointerDuration < 250) {
+      dispatch({ type: 'graph/selection-clear' })
+      dispatch({ type: 'graph/selection-add', id: id })
+    }
+  }
+
   useEffect(() => {
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
@@ -131,7 +143,7 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
       ref={componentRef}
       onMouseDown={captureMouseDown}
       onPointerDown={handlePointerDown}
-      onClick={handleClick}
+      onPointerUp={handleLocalPointerUp}
       role="presentation"
     >
       <div className="relative flex flex-row items-stretch">
