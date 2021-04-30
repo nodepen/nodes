@@ -291,7 +291,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }
 
-      const selectable = ['static-component', 'static-parameter', 'number-slider']
+      const selectable = ['static-component', 'static-parameter', 'number-slider', 'panel']
 
       const captured = Object.values(state.elements)
         .filter(
