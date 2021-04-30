@@ -304,6 +304,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
+      updateMoveRegistry(state)
+
       return { ...state }
     }
     case 'graph/selection-add': {
@@ -319,6 +321,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
+      updateMoveRegistry(state)
+
       return { ...state }
     }
     case 'graph/selection-remove': {
@@ -331,6 +335,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       state.selected = [...state.selected.filter((elementId) => elementId !== id)]
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
+      updateMoveRegistry(state)
 
       return { ...state }
     }
@@ -352,12 +358,16 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
+      updateMoveRegistry(state)
+
       return { ...state }
     }
     case 'graph/selection-clear': {
       state.selected = []
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
+      updateMoveRegistry(state)
 
       return { ...state }
     }
@@ -400,6 +410,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
           delete state.elements[id]
         }
       }
+
+      state.selected = []
+
+      updateMoveRegistry(state)
 
       // Request new solution
       expireSolution(state)
@@ -973,6 +987,13 @@ const findAttachedWires = (element: Glasshopper.Element.Base, state: GraphStore)
       }
       break
     }
+    case 'number-slider': {
+      const slider = element as Glasshopper.Element.NumberSlider
+
+      fromLookup.push([slider.id, 'output'])
+
+      break
+    }
     default: {
       console.warn(`Wire lookup not yet implemented for ${element.template.type}`)
     }
@@ -1021,4 +1042,42 @@ const updateAnchors = (
     const [x, y] = element.current.anchors[anchor]
     element.current.anchors[anchor] = [x + dx, y + dy]
   })
+}
+
+/** Given a selection of elements, update the movement registry. */
+const updateMoveRegistry = (state: GraphStore): void => {
+  const move = {
+    elements: [] as string[],
+    fromWires: [] as string[],
+    toWires: [] as string[],
+  }
+
+  const selection = state?.selected ?? []
+
+  selection.forEach((id) => {
+    const element = state.elements[id]
+
+    if (!element) {
+      return
+    }
+
+    // Store the element's id
+    move.elements.push(id)
+
+    switch (element.template.type) {
+      case 'number-slider':
+      case 'static-parameter':
+      case 'static-component': {
+        const [from, to] = findAttachedWires(element, state)
+
+        move.fromWires.push(...from)
+        move.toWires.push(...to)
+        break
+      }
+      default:
+        console.log(`Failed to register motion for ${element.template.type}`)
+    }
+  })
+
+  state.registry.move = move
 }
