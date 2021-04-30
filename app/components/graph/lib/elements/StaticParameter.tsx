@@ -51,7 +51,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
   }
 
   return (
-    <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
+    <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy - 18 }}>
       <div className="flex flex-col items-center">
         <button
           className="flex flex-row justify-center items-center relative z-20"

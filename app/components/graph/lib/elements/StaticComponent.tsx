@@ -18,6 +18,7 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
   } = useGraphManager()
 
   const componentRef = useRef<HTMLDivElement>(null)
+  const selectionRef = useRef<HTMLDivElement>(null)
 
   const [status, color] = useElementStatus(id)
 
@@ -31,11 +32,17 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     const { width, height } = componentRef.current.getBoundingClientRect()
 
     setOffset([width / 2, height / 2])
-
-    dispatch({ type: 'graph/register-element', ref: componentRef, id })
   }, [])
 
   const ready = useMemo(() => tx !== 0 && ty !== 0, [tx, ty])
+
+  useEffect(() => {
+    if (!selectionRef.current) {
+      return
+    }
+
+    dispatch({ type: 'graph/register-element', ref: selectionRef, id })
+  }, [ready])
 
   const moveAnchor = useRef<[number, number]>([0, 0])
   const moveActive = useRef<boolean>(false)
@@ -171,6 +178,7 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
         <div
           id="panel-container"
           className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-30"
+          ref={selectionRef}
         >
           <div id="inputs-column" className="flex flex-col">
             {Object.entries(current.inputs).map(([parameterId, i]) => (

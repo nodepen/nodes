@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree, Loading } from './common'
@@ -18,6 +18,16 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   } = useGraphManager()
 
   const slider = elements[id] as Glasshopper.Element.NumberSlider
+
+  const sliderRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (!sliderRef) {
+      return
+    }
+
+    dispatch({ type: 'graph/register-element', ref: sliderRef, id })
+  }, [])
 
   const [status, color] = useElementStatus(id)
 
@@ -172,9 +182,11 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
     <div className="absolute flex flex-row" style={{ left: dx - 128, top: -dy - 20 }}>
       <div className="relative w-64 h-10 ">
         <div
-          className="relative w-full h-full p-4 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible z-30"
+          className="relative w-full h-full p-4 rounded-md border-2 border-dark shadow-osm flex flex-row items-center overflow-visible transition-colors duration-150 z-30"
+          style={{ background: color }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
+          ref={sliderRef}
           role="presentation"
         >
           <div className="w-full relative bg-dark overflow-visible" style={{ height: '2px' }}>

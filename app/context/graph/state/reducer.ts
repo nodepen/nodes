@@ -250,11 +250,11 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         const { width, height } = element.current.dimensions
         const [cx, cy] = element.current.position
 
-        const [dx, dy] = [width / 2, height]
+        const [dx, dy] = [width / 2, height / 2]
 
         const extents: [[number, number], [number, number]] = [
           [cx - dx, cy - dy],
-          [cx + dx, cy],
+          [cx + dx, cy + dy],
         ]
 
         return extents
@@ -291,7 +291,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }
 
-      const selectable = ['static-component', 'static-parameter']
+      const selectable = ['static-component', 'static-parameter', 'number-slider']
 
       const captured = Object.values(state.elements)
         .filter(
