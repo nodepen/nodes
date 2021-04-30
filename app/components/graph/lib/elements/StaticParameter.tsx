@@ -4,7 +4,7 @@ import { useGraphManager } from '@/context/graph'
 import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
 import { Details, Grip, DataTree, RuntimeMessage, Loading } from './common'
-import { useElementStatus } from './utils'
+import { useElementStatus, useMoveableElement, useSelectableElement } from './utils'
 
 type StaticComponentProps = {
   instanceId: string
@@ -16,7 +16,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch,
   } = useGraphManager()
 
-  const parameterRef = useRef<HTMLButtonElement>(null)
+  const parameterRef = useRef<HTMLDivElement>(null)
 
   const [status, color] = useElementStatus(id)
 
@@ -28,10 +28,18 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'graph/register-element', ref: parameterRef, id })
   }, [])
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
-    e.stopPropagation()
+  const onMove = (motion: [number, number]): void => {
+    dispatch({ type: 'graph/mutation/move-component', motion, id })
+  }
+
+  useMoveableElement(onMove, undefined, undefined, parameterRef)
+
+  const onSelect = (): void => {
+    dispatch({ type: 'graph/selection-clear' })
     dispatch({ type: 'graph/selection-add', id })
   }
+
+  useSelectableElement(onSelect, parameterRef)
 
   const parameter = elements[id] as Glasshopper.Element.StaticParameter
 
@@ -52,13 +60,11 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
 
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy - 18 }}>
-      <div className="flex flex-col items-center">
+      <div className="flex flex-col items-center" ref={parameterRef}>
         <button
           className="flex flex-row justify-center items-center relative z-20"
-          ref={parameterRef}
           onPointerEnter={() => setHovers(([, details]) => [true, details])}
           onPointerLeave={() => setHovers(([, details]) => [false, details])}
-          onClick={handleClick}
         >
           <div
             className="absolute w-8 h-4 flex justify-center overflow-visible z-30"

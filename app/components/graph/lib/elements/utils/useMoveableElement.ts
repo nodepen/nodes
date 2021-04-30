@@ -16,18 +16,26 @@ export const useMoveableElement = (
   const handlePointerDown = (e: PointerEvent): void => {
     e.stopPropagation()
 
-    const { pageX: ex, pageY: ey } = e
+    switch (e.pointerType == 'mouse' ? e.button : 2) {
+      case 0: {
+        const { pageX: ex, pageY: ey } = e
 
-    motionAnchor.current = [ex, ey]
-    motionActive.current = true
+        motionAnchor.current = [ex, ey]
+        motionActive.current = true
 
-    onMoveStart()
+        onMoveStart?.()
+        break
+      }
+    }
   }
 
   const handlePointerMove = (e: PointerEvent): void => {
     if (!motionActive.current) {
       return
     }
+
+    e.stopImmediatePropagation()
+    //e.stopPropagation()
 
     const { pageX: ex, pageY: ey } = e
     const [ax, ay] = motionAnchor.current
@@ -46,7 +54,7 @@ export const useMoveableElement = (
 
     motionActive.current = false
 
-    onMoveEnd()
+    onMoveEnd?.()
   }
 
   useEffect(() => {
