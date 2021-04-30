@@ -34,7 +34,9 @@ export const ParameterSetValue = ({ element: id, keepOpen }: ParameterSetValuePr
       <input
         type="text"
         value={value}
-        onChange={(e) => setValue(e.target.value)}
+        onChange={(e) => {
+          setValue(e.target.value.replace(/[^0-9.]/g, '').replace(/(\..*?)\..*/g, '$1'))
+        }}
         className="w-32 h-6 bg-pale p-1 border-2 border-green rounded-sm text-darkgreen text-sm font-panel"
       />
       <button
