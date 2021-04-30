@@ -1008,6 +1008,13 @@ const findAttachedWires = (element: Glasshopper.Element.Base, state: GraphStore)
 
       break
     }
+    case 'panel': {
+      const panel = element as Glasshopper.Element.Panel
+
+      toLookup.push([panel.id, 'input'])
+
+      break
+    }
     default: {
       console.warn(`Wire lookup not yet implemented for ${element.template.type}`)
     }
@@ -1051,7 +1058,8 @@ const updateAnchors = (element: Glasshopper.Element.Base, dx: number, dy: number
   switch (element.template.type) {
     case 'static-component':
     case 'static-parameter':
-    case 'number-slider': {
+    case 'number-slider':
+    case 'panel': {
       Object.keys(element.current.anchors).forEach((anchor) => {
         const [x, y] = element.current.anchors[anchor]
         element.current.anchors[anchor] = [x + dx, y + dy]
@@ -1087,7 +1095,8 @@ const updateMoveRegistry = (state: GraphStore): void => {
     switch (element.template.type) {
       case 'number-slider':
       case 'static-parameter':
-      case 'static-component': {
+      case 'static-component':
+      case 'panel': {
         const [from, to] = findAttachedWires(element, state)
 
         move.fromWires.push(...from)
