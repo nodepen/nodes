@@ -4,6 +4,7 @@ import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree, Loading } from './common'
 import { useElementStatus } from './utils'
 import { Input } from '@/components'
+import { useMoveableElement } from './utils'
 
 type NumberSliderProps = {
   instanceId: string
@@ -28,6 +29,12 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
 
     dispatch({ type: 'graph/register-element', ref: sliderRef, id })
   }, [])
+
+  const onMove = (motion: [number, number]): void => {
+    dispatch({ type: 'graph/mutation/move-component', id, motion })
+  }
+
+  useMoveableElement(onMove, sliderRef)
 
   const [status, color] = useElementStatus(id)
 
