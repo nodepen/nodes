@@ -429,13 +429,30 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         return
       }
 
-      const [cx, cy] = component.current.position
       const [dx, dy] = motion
 
-      component.current.position = [cx + dx, cy + dy]
+      // Check is element is in the motion registry
+      // If it does, this means it is part of a selection and all must be moved
+      // If it doesn't, it's moving independently
 
-      // Move any attached wires
-      const [fromWires, toWires] = findAttachedWires(component, state)
+      const isCompoundMotion = state.registry.move.elements.includes(id)
+
+      const [currentFrom, currentTo] = isCompoundMotion ? [] : findAttachedWires(component, state)
+
+      const targets = isCompoundMotion
+        ? state.registry.move
+        : { elements: [id], fromWires: currentFrom, toWires: currentTo }
+
+      const { elements, fromWires, toWires } = targets
+
+      elements.forEach((id) => {
+        const element = state.elements[id]
+
+        const [cx, cy] = element.current.position
+        element.current.position = [cx + dx, cy + dy]
+
+        updateAnchors(element, dx, dy)
+      })
 
       fromWires.forEach((id) => {
         const wire = state.elements[id] as Wire
@@ -452,9 +469,6 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
         wire.current.to = [wx + dx, wy + dy]
       })
-
-      // Update all component anchors
-      updateAnchors(component, dx, dy)
 
       return { ...state }
     }
@@ -1033,15 +1047,21 @@ const findAttachedWires = (element: Glasshopper.Element.Base, state: GraphStore)
   return [fromWires, toWires]
 }
 
-const updateAnchors = (
-  element: Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter,
-  dx: number,
-  dy: number
-) => {
-  Object.keys(element.current.anchors).forEach((anchor) => {
-    const [x, y] = element.current.anchors[anchor]
-    element.current.anchors[anchor] = [x + dx, y + dy]
-  })
+const updateAnchors = (element: Glasshopper.Element.Base, dx: number, dy: number) => {
+  switch (element.template.type) {
+    case 'static-component':
+    case 'static-parameter':
+    case 'number-slider': {
+      Object.keys(element.current.anchors).forEach((anchor) => {
+        const [x, y] = element.current.anchors[anchor]
+        element.current.anchors[anchor] = [x + dx, y + dy]
+      })
+      break
+    }
+    default: {
+      console.log(`Cannot update anchors for ${element.template.type}`)
+    }
+  }
 }
 
 /** Given a selection of elements, update the movement registry. */
