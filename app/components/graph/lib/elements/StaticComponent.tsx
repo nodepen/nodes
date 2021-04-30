@@ -82,11 +82,12 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
   useMoveableElement(onMove, onMoveStart, onMoveEnd, selectionRef)
 
   const onSelect = (): void => {
+    console.log('sel')
     dispatch({ type: 'graph/selection-clear' })
     dispatch({ type: 'graph/selection-add', id })
   }
 
-  useSelectableElement(onSelect, componentRef)
+  useSelectableElement(onSelect, selectionRef)
 
   const component = elements[id] as Glasshopper.Element.StaticComponent
 

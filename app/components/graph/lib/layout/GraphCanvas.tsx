@@ -78,7 +78,6 @@ export const GraphCanvas = (): React.ReactElement => {
         console.log('selecting!')
         break
       case 2:
-        console.log({ wtf: (e as any).pointerType })
         setMode('panning')
         e.preventDefault()
     }

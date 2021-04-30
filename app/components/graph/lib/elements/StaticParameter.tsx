@@ -39,7 +39,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'graph/selection-add', id })
   }
 
-  useSelectableElement(onSelect, parameterRef)
+  useSelectableElement(onSelect, moveRef)
 
   const parameter = elements[id] as Glasshopper.Element.StaticParameter
 
@@ -58,18 +58,19 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     return null
   }
 
-  const captureMouseDown = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation()
   }
 
   return (
     <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy - 18 }}>
       <div className="flex flex-col items-center" ref={parameterRef}>
-        <button
+        <div
           className="flex flex-row justify-center items-center relative z-20"
           onPointerEnter={() => setHovers(([, details]) => [true, details])}
           onPointerLeave={() => setHovers(([, details]) => [false, details])}
           onMouseDown={captureMouseDown}
+          role="presentation"
         >
           <div
             className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
@@ -98,7 +99,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           <div className="absolute z-0 flex flex-col justify-center items-center" style={{ right: -8 }}>
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
-        </button>
+        </div>
         {/* {detailsPinned || detailsVisible ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10"
