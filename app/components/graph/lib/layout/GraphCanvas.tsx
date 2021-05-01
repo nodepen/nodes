@@ -8,7 +8,7 @@ type ControlMode = 'idle' | 'panning' | 'selecting'
 
 export const GraphCanvas = (): React.ReactElement => {
   const {
-    store: { elements, camera, overlay, solution, activeKeys },
+    store: { elements, camera, overlay, solution },
     dispatch,
   } = useGraphManager()
 
@@ -18,8 +18,6 @@ export const GraphCanvas = (): React.ReactElement => {
       if (libraryMenuPosition) {
         return
       }
-
-      console.log(e.code)
 
       switch (e.code) {
         case 'Space': {
@@ -40,7 +38,6 @@ export const GraphCanvas = (): React.ReactElement => {
     }
 
     const handleKeyUp = (e: KeyboardEvent): void => {
-      console.log('UP!')
       switch (e.code) {
         case 'ControlLeft':
         case 'ShiftLeft': {
