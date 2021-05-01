@@ -136,40 +136,52 @@ export const Tooltip = ({
 
   return (
     <div
-      className="bg-white border-2 border-dark rounded-md p-1 flex flex-col w-56"
+      className="w-56 flex flex-col"
       ref={tooltipRef}
       style={{ opacity: transform ? 1 : 0, transform: `translate(${tx}px, ${ty}px)` }}
     >
-      <div className="p-1 flex flex-col">
-        <div className="mb-1 flex-grow flex justify-start items-center whitespace-no-wrap overflow-hidden">
-          {icon}
-          <h4 className="font-sans font-medium text-lg">{title}</h4>
-          {subtitle ? <h4 className="ml-2 font-sans text-lg">{subtitle}</h4> : null}
+      <div className="bg-white border-2 border-dark rounded-md p-1 flex flex-col w-56">
+        <div className="p-1 flex flex-col">
+          <div className="mb-1 flex-grow flex justify-start items-center whitespace-no-wrap overflow-hidden">
+            {icon}
+            <h4 className="font-sans font-medium text-lg">{title}</h4>
+            {subtitle ? <h4 className="ml-2 font-sans text-lg">{subtitle}</h4> : null}
+          </div>
+          <p className="font-sans font-normal text-sm leading-tight">{description}</p>
         </div>
-        <p className="font-sans font-normal text-sm leading-tight">{description}</p>
-      </div>
-      {runtimeMessage ? <div>{runtimeMessage.message}</div> : null}
-      {parameter ? (
-        <div className="mt-1 p-2 flex flex-col bg-dark rounded-md">
-          <p className={`${values.length > 0 ? 'mb-1' : ''} font-panel text-xs font-medium text-light`}>
-            {data ? `${values.length} value${values.length === 1 ? '' : 's'}...` : 'No values'}
-          </p>
-          {values.slice(0, 5).map((value, i) => (
-            <p
-              key={`tooltip-value-${i}`}
-              className="font-panel text-xs font-medium text-light whitespace-no-wrap overflow-hidden"
-            >
-              {value}
+        {parameter ? (
+          <div className="mt-1 p-2 flex flex-col bg-dark rounded-md">
+            <p className={`${values.length > 0 ? 'mb-1' : ''} font-panel text-xs font-medium text-light`}>
+              {data ? `${values.length} value${values.length === 1 ? '' : 's'}...` : 'No values'}
             </p>
-          ))}
-          {values.length > 5 ? (
-            <>
-              <p className="font-panel text-xs font-medium text-light">...</p>
-              <p className="font-panel text-xs font-medium text-light whitespace-no-wrap overflow-hidden">
-                {values[values.length - 1]}
+            {values.slice(0, 5).map((value, i) => (
+              <p
+                key={`tooltip-value-${i}`}
+                className="font-panel text-xs font-medium text-light whitespace-no-wrap overflow-hidden"
+              >
+                {value}
               </p>
-            </>
-          ) : null}
+            ))}
+            {values.length > 5 ? (
+              <>
+                <p className="font-panel text-xs font-medium text-light">...</p>
+                <p className="font-panel text-xs font-medium text-light whitespace-no-wrap overflow-hidden">
+                  {values[values.length - 1]}
+                </p>
+              </>
+            ) : null}
+          </div>
+        ) : null}
+      </div>
+      {runtimeMessage ? (
+        <div className="bg-white border-2 border-dark rounded-md mt-2 flex flex-col w-56 overflow-hidden">
+          <div
+            className={`${
+              runtimeMessage.level.toLowerCase() == 'error' ? 'border-error' : 'border-warn'
+            } border-2 p-2 w-full h-full flex flex-col`}
+          >
+            <p className="font-sans font-normal text-sm leading-tight">{runtimeMessage.message}</p>
+          </div>
         </div>
       ) : null}
     </div>

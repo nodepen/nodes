@@ -36,7 +36,7 @@ module.exports = {
         swampgreen: '#7BBFA5',
         darkgreen: '#093824',
         warn: '#FFBE71',
-        error: 'FF7171'
+        error: '#FF7171'
       },
       height: {
         vw: '100vh',
