@@ -647,10 +647,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         const [key] = store.activeKeys
 
         switch (key) {
-          case 'LeftControl': {
+          case 'ControlLeft': {
             return 'remove'
           }
-          case 'LeftShift': {
+          case 'ShiftLeft': {
             return 'add'
           }
           default: {
@@ -661,14 +661,16 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const currentMode = getWireConnectionMode(state)
 
+      // Identify which node we're trying to interact with
+      const targetElementId =
+        sourceType === 'input' ? element.current.sources.from.element : element.current.sources.to.element
+      const targetElement = state.elements[targetElementId]
+      const targetElementParameter =
+        sourceType === 'input' ? element.current.sources.from.parameter : element.current.sources.to.parameter
+
       switch (currentMode) {
         case 'replace': {
           // Default behavior. Replace all existing connections with the incoming one.
-          const targetElementId =
-            sourceType === 'input' ? element.current.sources.from.element : element.current.sources.to.element
-          const targetElement = state.elements[targetElementId]
-          const targetElementParameter =
-            sourceType === 'input' ? element.current.sources.from.parameter : element.current.sources.to.parameter
 
           // Identify any existing sources
           const [from, to] = findAttachedWires(targetElement, [targetElementParameter], state)
@@ -691,30 +693,57 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
             delete state.elements[wireId]
           })
+
+          break
         }
       }
-
-      // TODO: Verify connection does not already exist
 
       const wireId = newGuid()
       const wireToCommit = Object.assign({}, JSON.parse(JSON.stringify(element)), {
         id: wireId,
       }) as Glasshopper.Element.Wire
 
-      // Add new wire
-      state.elements[wireId] = wireToCommit
-
-      // Clear live wire
-      element.current.mode = 'hidden'
-      element.current.sources = {}
-
       // Update sources in target
       const source = wireToCommit.current.sources.from
       const target = wireToCommit.current.sources.to
 
-      const sourceElement = state.elements[target.element] as Glasshopper.Element.StaticComponent
+      switch (currentMode) {
+        case 'replace':
+        case 'add': {
+          // Append source
+          const sourceElement = state.elements[target.element] as Glasshopper.Element.StaticComponent
+          sourceElement.current.sources[target.parameter].push({ element: source.element, parameter: source.parameter })
 
-      sourceElement.current.sources[target.parameter].push({ element: source.element, parameter: source.parameter })
+          // Add new wire
+          state.elements[wireId] = wireToCommit
+          break
+        }
+        case 'remove': {
+          // Remove source from element data
+          removeSource(target.element, target.parameter, source.element, source.parameter, state)
+
+          // Delete visual wire element that represents connection
+          const wireElementToDelete = Object.values(state.elements)
+            .filter((el) => el.template.type === 'wire' && el.id !== 'live-wire')
+            .find(
+              (wire: Glasshopper.Element.Wire) =>
+                wire.current.sources.from.element === element.current.sources.from.element &&
+                wire.current.sources.from.parameter === element.current.sources.from.parameter &&
+                wire.current.sources.to.element === element.current.sources.to.element &&
+                wire.current.sources.to.parameter === element.current.sources.to.parameter
+            )
+
+          if (wireElementToDelete) {
+            delete state.elements[wireElementToDelete.id]
+          } else {
+            console.log(`Could not locate wire to delete.`)
+          }
+        }
+      }
+
+      // Clear live wire
+      element.current.mode = 'hidden'
+      element.current.sources = {}
 
       // Commit new graph to db
       expireSolution(state)
