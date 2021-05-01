@@ -113,7 +113,7 @@ export const Tooltip = ({
       return {
         icon,
         title: template.name,
-        subtitle: template.nickname,
+        subtitle: template.type,
         description: template.description,
       }
     } else {
@@ -122,7 +122,7 @@ export const Tooltip = ({
       return {
         icon,
         title: template.name,
-        subtitle: template.nickname,
+        subtitle: undefined,
         description: template.description,
       }
     }
@@ -145,7 +145,11 @@ export const Tooltip = ({
           <div className="mb-1 flex-grow flex justify-start items-center whitespace-no-wrap overflow-hidden">
             {icon}
             <h4 className="font-sans font-medium text-lg">{title}</h4>
-            {subtitle ? <h4 className="ml-2 font-sans text-lg">{subtitle}</h4> : null}
+            {subtitle ? (
+              <div className="h-full flex-grow flex justify-end overflow-hidden items-center whitespace-no-wrap">
+                <h4 className="ml-2 font-sans text-lg">{subtitle}</h4>
+              </div>
+            ) : null}
           </div>
           <p className="font-sans font-normal text-sm leading-tight">{description}</p>
         </div>
