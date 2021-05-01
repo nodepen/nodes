@@ -17,6 +17,8 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     dispatch,
   } = useGraphManager()
 
+  const component = elements[id] as Glasshopper.Element.StaticComponent
+
   const componentRef = useRef<HTMLDivElement>(null)
   const selectionRef = useRef<HTMLDivElement>(null)
 
@@ -54,12 +56,15 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
     const { pageX, pageY } = e
 
     const tooltip = (
-      <Tooltip
-        component={library[template.category.toLowerCase()][template.subcategory.toLowerCase()].find(
-          (t) => t.guid === template.guid
-        )}
-        onDestroy={() => dispatch({ type: 'tooltip/clear-tooltip' })}
-      />
+      <>
+        <Tooltip
+          component={library[template.category.toLowerCase()][template.subcategory.toLowerCase()].find(
+            (t) => t.guid === template.guid
+          )}
+          runtimeMessage={component.current?.runtimeMessage}
+          onDestroy={() => dispatch({ type: 'tooltip/clear-tooltip' })}
+        />
+      </>
     )
 
     dispatch({ type: 'tooltip/set-tooltip', position: [pageX, pageY], content: tooltip })
@@ -88,8 +93,6 @@ const StaticComponentComponent = ({ instanceId: id }: StaticComponentProps): Rea
   }
 
   useSelectableElement(onSelect, selectionRef)
-
-  const component = elements[id] as Glasshopper.Element.StaticComponent
 
   const { template, current } = component
 

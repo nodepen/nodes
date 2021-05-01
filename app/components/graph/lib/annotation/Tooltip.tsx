@@ -6,6 +6,10 @@ type TooltipProps = {
   component?: Grasshopper.Component
   parameter?: Grasshopper.ComponentParameter
   data?: Glasshopper.Data.DataTree
+  runtimeMessage?: {
+    message: string
+    level: 'error' | 'warning' | 'info'
+  }
   onDestroy: () => void
 }
 
@@ -18,7 +22,13 @@ type TooltipInfo = {
 
 type CornerType = 'TL' | 'TR' | 'BL' | 'BR'
 
-export const Tooltip = ({ component, parameter, data, onDestroy }: TooltipProps): React.ReactElement => {
+export const Tooltip = ({
+  component,
+  parameter,
+  data,
+  runtimeMessage,
+  onDestroy,
+}: TooltipProps): React.ReactElement => {
   const tooltipRef = useRef<HTMLDivElement>(null)
 
   const [transform, setTransform] = useState<[number, number]>()
@@ -138,6 +148,7 @@ export const Tooltip = ({ component, parameter, data, onDestroy }: TooltipProps)
         </div>
         <p className="font-sans font-normal text-sm leading-tight">{description}</p>
       </div>
+      {runtimeMessage ? <div>{runtimeMessage.message}</div> : null}
       {parameter ? (
         <div className="mt-1 p-2 flex flex-col bg-dark rounded-md">
           <p className={`${values.length > 0 ? 'mb-1' : ''} font-panel text-xs font-medium text-light`}>
