@@ -1,6 +1,6 @@
 import { Glasshopper, Grasshopper } from 'glib'
 import { GraphAction, GraphStore } from './../types'
-import { newGuid } from '@/utils'
+import { newGuid, hotkey } from '@/utils'
 import { Wire } from '~/../lib/dist/glasshopper/element'
 
 export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
@@ -322,7 +322,23 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         )
         .map((element) => element.id)
 
-      state.selected = captured
+      const mode = hotkey.selectionMode(state.activeKeys)
+
+      switch (mode) {
+        case 'replace': {
+          state.selected = captured
+          break
+        }
+        case 'add': {
+          const uniqueAdditions = captured.filter((id) => !state.selected.includes(id))
+          state.selected = [...state.selected, ...uniqueAdditions]
+          break
+        }
+        case 'remove': {
+          state.selected = state.selected.filter((id) => !captured.includes(id))
+          break
+        }
+      }
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
