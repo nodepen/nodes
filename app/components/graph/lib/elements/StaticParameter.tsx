@@ -5,6 +5,8 @@ import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
 import { Details, Grip, DataTree, RuntimeMessage, Loading } from './common'
 import { useElementStatus, useMoveableElement, useSelectableElement } from './utils'
+import { Tooltip } from '../annotation'
+import { useLongHover } from '@/hooks'
 
 type StaticComponentProps = {
   instanceId: string
@@ -12,7 +14,7 @@ type StaticComponentProps = {
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements },
+    store: { elements, library },
     dispatch,
   } = useGraphManager()
 
@@ -28,11 +30,21 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'graph/register-element', ref: parameterRef, id })
   }, [])
 
+  const isMoving = useRef(false)
+
+  const onMoveStart = (): void => {
+    isMoving.current = true
+  }
+
   const onMove = (motion: [number, number]): void => {
     dispatch({ type: 'graph/mutation/move-component', motion, id })
   }
 
-  const moveRef = useMoveableElement(onMove)
+  const onMoveEnd = (): void => {
+    isMoving.current = false
+  }
+
+  const moveRef = useMoveableElement(onMove, onMoveStart, onMoveEnd)
 
   const onSelect = (): void => {
     dispatch({ type: 'graph/selection-clear' })
@@ -53,13 +65,37 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
 
   const detailsVisible = !wireIsBlocking && (overPanel || overDetails)
 
+  const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
+    e.stopPropagation()
+  }
+
+  const handleLongHover = (e: PointerEvent): void => {
+    if (isMoving.current) {
+      return
+    }
+
+    const { pageX, pageY } = e
+
+    const tooltip = (
+      <>
+        <Tooltip
+          component={library[template.category.toLowerCase()][template.subcategory.toLowerCase()].find(
+            (t) => t.guid === template.guid
+          )}
+          runtimeMessage={parameter.current?.runtimeMessage}
+          onDestroy={() => dispatch({ type: 'tooltip/clear-tooltip' })}
+        />
+      </>
+    )
+
+    dispatch({ type: 'tooltip/set-tooltip', position: [pageX, pageY], content: tooltip })
+  }
+
+  const longHoverTarget = useLongHover(handleLongHover)
+
   if (!elements[id] || elements[id].template.type !== 'static-parameter') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
     return null
-  }
-
-  const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
-    e.stopPropagation()
   }
 
   return (
@@ -70,6 +106,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           onPointerEnter={() => setHovers(([, details]) => [true, details])}
           onPointerLeave={() => setHovers(([, details]) => [false, details])}
           onMouseDown={captureMouseDown}
+          ref={longHoverTarget}
           role="presentation"
         >
           <div

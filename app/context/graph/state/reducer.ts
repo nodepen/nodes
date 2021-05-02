@@ -469,13 +469,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       const [dx, dy] = motion
 
-      // Check is element is in the motion registry
+      // Check if element exists in the motion registry
       // If it does, this means it is part of a selection and all must be moved
       // If it doesn't, it's moving independently
 
       const isCompoundMotion = state.registry.move.elements.includes(id)
 
-      const [currentFrom, currentTo] = isCompoundMotion ? [] : findAttachedWires(component, [], state)
+      const [currentFrom, currentTo] = isCompoundMotion ? [[], []] : findAttachedWires(component, [], state)
 
       const targets = isCompoundMotion
         ? state.registry.move
