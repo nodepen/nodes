@@ -193,7 +193,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
                         type: 'graph/values/set-one-value',
                         targetElement: id,
                         targetParameter: 'input',
-                        value: parameterValue.toString(),
+                        value: temporaryParameterValue.toString(),
                       })
                     }}
                     className="p-0 pt-1 flex-grow flex justify-center item-center border-2 border-green rounded-sm font-panel text-sm font-medium text-darkgreen hover:bg-green"
