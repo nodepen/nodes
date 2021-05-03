@@ -11,11 +11,11 @@ export const SceneGrid = (): React.ReactElement => {
         return (
           <>
             <Curve
-              curve={[[i - extents, -extents, 0, 0, 0, 0, 0, 0, 0, i - extents, extents, 0]]}
+              curve={{ degree: 1, segments: [[i - extents, -extents, 0, 0, 0, 0, 0, 0, 0, i - extents, extents, 0]] }}
               material={{ width: 0.04, color: '#98E2C6' }}
             />
             <Curve
-              curve={[[-extents, i - extents, 0, 0, 0, 0, 0, 0, 0, extents, i - extents, 0]]}
+              curve={{ degree: 1, segments: [[-extents, i - extents, 0, 0, 0, 0, 0, 0, 0, extents, i - extents, 0]] }}
               material={{ width: 0.04, color: '#98E2C6' }}
             />
           </>

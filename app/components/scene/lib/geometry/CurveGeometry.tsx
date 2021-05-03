@@ -11,10 +11,17 @@ type CurveProps = {
 }
 
 export const CurveGeometry = ({ curve, material }: CurveProps): React.ReactElement => {
-  const points = curve.reduce(
-    (pts, [x, y, z, ax, ay, az, ix, iy, iz, i, j, k]) => [...pts, new Vector3(x, z, -y), new Vector3(i, k, -j)],
-    [] as Vector3[]
-  )
+  const { degree, segments } = curve
+
+  const points = segments.reduce((pts, points) => {
+    const [x, y, z, ax, ay, az, ix, iy, iz, i, j, k] = points
+    switch (degree) {
+      case 1:
+      case 2:
+      case 3:
+        return [...pts, new Vector3(x, z, -y), new Vector3(i, k, -j)]
+    }
+  }, [] as Vector3[])
 
   const mat = useRef()
 
