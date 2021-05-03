@@ -116,7 +116,7 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
           style={{ background: color }}
         />
         <div
-          className={`w-40 h-64 p-2 pt-1 bg-pale border-2 border-green rounded-tr-md rounded-br-md overflow-hidden`}
+          className={`w-40 h-64 p-2 pt-1 pb-3 bg-pale border-2 border-green rounded-tr-md rounded-br-md overflow-auto data-container`}
           style={{ transform: 'translateY(2px)' }}
         >
           {values ? (
@@ -126,6 +126,16 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
           )}
         </div>
       </div>
+      <style jsx>{`
+        .data-container:::-webkit-scrollbar {
+          display: none;
+        }
+
+        .data-container {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   )
 }

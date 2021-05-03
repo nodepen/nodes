@@ -15,7 +15,7 @@ export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactEl
   }
 
   return (
-    <div className="w-full flex flex-col items-center">
+    <div className="w-full mb-2 flex flex-col items-center">
       <button
         onClick={() => setIsOpen((current) => !current)}
         className="w-full mt-1 p-1 pl-2 pr-2 h-5 flex items-center rounded-sm rounded-b-none bg-green"
@@ -29,18 +29,21 @@ export const DataTreeContainer = ({ data, label }: DataTreeProps): React.ReactEl
         <p className="text-sm text-pale">{isOpen ? <>&#9650;</> : <>&#9660;</>}</p>
       </button>
       {isOpen ? (
-        <div className="w-full pb-1 border-2 border-t-0 border-green rounded-sm rounded-t-none flex flex-col items-center font-panel">
+        <div className="w-full border-2 border-t-0 border-green rounded-sm rounded-t-none flex flex-col items-center font-panel">
           {Object.keys(data).map((key) => (
             <>
-              <div className="w-full h-6 pl-1 pr-1 text-right text-sm text-darkgreen border-b-2 border-green">
+              <div className="w-full h-6 pl-1 pr-1 text-right text-sm text-darkgreen border-t-2 border-b-2 border-green">
                 {key}
               </div>
               {data[key].map((value, i) => (
                 <div
                   key={`${key}-${i}-val`}
-                  className="w-full p-1 h-5 text-sm text-darkgreen hover:bg-green whitespace-no-wrap overflow-hidden"
+                  className="w-full pl-1 pr-1 text-sm text-darkgreen hover:bg-green whitespace-no-wrap overflow-hidden"
+                  style={{ paddingTop: '1px', paddingBottom: '1px' }}
                 >
-                  <div className="inline-block w-4 mr-2 text-left border-r-2 border-green">{i}</div>
+                  <div className="inline-block w-8 mr-2 text-left font-semibold font-panel border-r-2 border-green">
+                    {i}
+                  </div>
                   <div className="inline-block">
                     {value.type === 'string' || value.type === 'number' ? value.data : pointToString(value.data)}
                   </div>
