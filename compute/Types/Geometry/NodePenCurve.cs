@@ -9,7 +9,10 @@ namespace NodePen.Compute
 {
   class NodePenCurve
   {
+    [JsonProperty("degree")]
     public int Degree { get; set; }
+
+    [JsonProperty("segments")]
     public List<List<double>> Segments { get; set; } = new List<List<double>>();
   }
 }
