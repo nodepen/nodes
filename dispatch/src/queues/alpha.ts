@@ -214,6 +214,14 @@ const resultsToDataTree = (
           }
           return integer
         }
+        case 'curve': {
+          const curve: Glasshopper.Data.DataTreeValue<'curve'> = {
+            from: 'solution',
+            type: 'curve',
+            data: JSON.parse(value),
+          }
+          return curve
+        }
         default: {
           console.log(`Using default parse for type ${type}.`)
           const v = {

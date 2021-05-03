@@ -123,6 +123,78 @@ namespace NodePen.Compute.Routes
 
           switch (goo.TypeName)
           {
+            case "Curve":
+              {
+                var curveGoo = goo as GH_Curve;
+
+                var output = new NodePenCurve() {
+                  Degree = curveGoo.Value.Degree
+                };
+
+                if (output.Degree == 1)
+                {
+                  // If curve is made of straight segments, sample spans
+                  var segmentCount = curveGoo.Value.SpanCount;
+
+                  for (var k = 0; k < segmentCount; k++)
+                  {
+                    var currentSpan = curveGoo.Value.SpanDomain(k);
+                    var start = curveGoo.Value.PointAt(currentSpan.Min);
+                    var end = curveGoo.Value.PointAt(currentSpan.Max);
+
+                    var mid = start + end / 2;
+
+                    output.Segments.Add(new List<double>
+                    {
+                        start.X,
+                        start.Y,
+                        start.Z,
+                        mid.X,
+                        mid.Y,
+                        mid.Z,
+                        mid.X,
+                        mid.Y,
+                        mid.Z,
+                        end.X,
+                        end.Y,
+                        end.Z
+                    });
+                  }
+                } else
+                {
+                  // If curve has any curvature, create a bezier approximation
+                  var beziers = BezierCurve.CreateCubicBeziers(curveGoo.Value, 0.01, 0.01);
+
+                  beziers.ToList().ForEach((bezier) =>
+                  {
+                    var a = bezier.GetControlVertex3d(0);
+                    var b = bezier.GetControlVertex3d(1);
+                    var c = bezier.GetControlVertex3d(2);
+                    var d = bezier.GetControlVertex3d(3);
+
+                    output.Segments.Add(new List<double>
+                    {
+                      a.X,
+                      a.Y,
+                      a.Z,
+                      b.X,
+                      b.Y,
+                      b.Z,
+                      c.X,
+                      c.Y,
+                      c.Z,
+                      d.X,
+                      d.Y,
+                      d.Z
+                    });
+                  });
+                }
+
+                data.Value = JsonConvert.SerializeObject(output);
+                data.Type = "curve";
+
+                break;
+              }
             case "Number":
               {
                 var numberGoo = goo as GH_Number;
