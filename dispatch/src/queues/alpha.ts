@@ -222,6 +222,14 @@ const resultsToDataTree = (
           }
           return curve
         }
+        case 'line': {
+          const line: Glasshopper.Data.DataTreeValue<'line'> = {
+            from: 'solution',
+            type: 'line',
+            data: JSON.parse(value),
+          }
+          return line
+        }
         default: {
           console.log(`Using default parse for type ${type}.`)
           const v = {

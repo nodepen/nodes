@@ -123,6 +123,34 @@ namespace NodePen.Compute.Routes
 
           switch (goo.TypeName)
           {
+            case "Line":
+              {
+                var lineGoo = goo as GH_Line;
+
+                var start = lineGoo.Value.From;
+                var end = lineGoo.Value.To;
+
+                var output = new NodePenLine()
+                {
+                  Start = new NodePenPoint()
+                  {
+                    X = start.X,
+                    Y = start.Y,
+                    Z = start.Z
+                  },
+                  End = new NodePenPoint()
+                  {
+                    X = end.X,
+                    Y = end.Y,
+                    Z = end.Z
+                  }
+                };
+
+                data.Value = JsonConvert.SerializeObject(output);
+                data.Type = "line";
+
+                break;
+              }
             case "Curve":
               {
                 var curveGoo = goo as GH_Curve;
