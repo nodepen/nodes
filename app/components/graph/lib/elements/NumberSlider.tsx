@@ -2,9 +2,9 @@ import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree, Loading, ConfigureButton } from './common'
-import { useElementStatus, useSelectableElement } from './utils'
+import { useElementStatus, useSelectableElement, useMoveableElement } from './utils'
 import { Input } from '@/components'
-import { useMoveableElement } from './utils'
+import { hotkey } from '@/utils'
 
 type NumberSliderProps = {
   instanceId: string
@@ -14,7 +14,7 @@ type NumberSliderMode = 'input' | 'edit'
 
 export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.ReactElement => {
   const {
-    store: { elements, solution },
+    store: { elements, activeKeys },
     dispatch,
   } = useGraphManager()
 
@@ -42,8 +42,21 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   useMoveableElement(onMove, undefined, undefined, sliderRef)
 
   const onSelect = (): void => {
-    dispatch({ type: 'graph/selection-clear' })
-    dispatch({ type: 'graph/selection-add', id })
+    switch (hotkey.selectionMode(activeKeys)) {
+      case 'replace': {
+        dispatch({ type: 'graph/selection-clear' })
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+      case 'remove': {
+        dispatch({ type: 'graph/selection-remove', id })
+        break
+      }
+      case 'add': {
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+    }
   }
 
   useSelectableElement(onSelect, sliderRef)

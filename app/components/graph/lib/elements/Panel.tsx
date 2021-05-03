@@ -3,6 +3,7 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { Grip, DataTree } from './common'
 import { useMoveableElement, useSelectableElement } from './utils'
+import { hotkey } from '@/utils'
 
 type PanelProps = {
   instanceId: string
@@ -10,7 +11,7 @@ type PanelProps = {
 
 export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
   const {
-    store: { elements, solution, selected },
+    store: { elements, selected, activeKeys },
     dispatch,
   } = useGraphManager()
 
@@ -74,8 +75,21 @@ export const Panel = ({ instanceId: id }: PanelProps): React.ReactElement => {
   useMoveableElement(onMove, undefined, undefined, activeRef)
 
   const onSelect = (): void => {
-    dispatch({ type: 'graph/selection-clear' })
-    dispatch({ type: 'graph/selection-add', id })
+    switch (hotkey.selectionMode(activeKeys)) {
+      case 'replace': {
+        dispatch({ type: 'graph/selection-clear' })
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+      case 'remove': {
+        dispatch({ type: 'graph/selection-remove', id })
+        break
+      }
+      case 'add': {
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+    }
   }
 
   useSelectableElement(onSelect, activeRef)

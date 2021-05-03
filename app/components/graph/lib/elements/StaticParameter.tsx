@@ -8,6 +8,7 @@ import { useElementStatus, useMoveableElement, useSelectableElement } from './ut
 import { Tooltip } from '../annotation'
 import { useLongHover } from '@/hooks'
 import { NumberInput } from '~/components/input/NumberInput'
+import { hotkey } from '@/utils'
 
 type StaticComponentProps = {
   instanceId: string
@@ -15,7 +16,7 @@ type StaticComponentProps = {
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements, library },
+    store: { elements, library, activeKeys },
     dispatch,
   } = useGraphManager()
 
@@ -48,8 +49,21 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
   const moveRef = useMoveableElement(onMove, onMoveStart, onMoveEnd)
 
   const onSelect = (): void => {
-    dispatch({ type: 'graph/selection-clear' })
-    dispatch({ type: 'graph/selection-add', id })
+    switch (hotkey.selectionMode(activeKeys)) {
+      case 'replace': {
+        dispatch({ type: 'graph/selection-clear' })
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+      case 'remove': {
+        dispatch({ type: 'graph/selection-remove', id })
+        break
+      }
+      case 'add': {
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+    }
   }
 
   useSelectableElement(onSelect, moveRef)
