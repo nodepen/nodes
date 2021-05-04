@@ -151,75 +151,37 @@ namespace NodePen.Compute.Routes
 
                 break;
               }
+            case "Circle":
+              {
+                var circleGoo = goo as GH_Circle;
+
+                data.Type = "curve";
+
+                var beziers = BezierCurve.CreateCubicBeziers(circleGoo.Value.ToNurbsCurve(), 0.01, 0.01);
+                var curve = ToNodePenCurve(beziers);
+
+                data.Value = JsonConvert.SerializeObject(curve);
+
+                break;
+              }
             case "Curve":
               {
                 var curveGoo = goo as GH_Curve;
 
-                var output = new NodePenCurve() {
-                  Degree = curveGoo.Value.Degree
-                };
+                data.Type = "curve";
 
-                if (output.Degree == 1)
+                if (curveGoo.Value.Degree == 1)
                 {
-                  // If curve is made of straight segments, sample spans
-                  var segmentCount = curveGoo.Value.SpanCount;
+                  var curve = ToNodePenCurve(curveGoo.Value);
 
-                  for (var k = 0; k < segmentCount; k++)
-                  {
-                    var currentSpan = curveGoo.Value.SpanDomain(k);
-                    var start = curveGoo.Value.PointAt(currentSpan.Min);
-                    var end = curveGoo.Value.PointAt(currentSpan.Max);
-
-                    var mid = start + end / 2;
-
-                    output.Segments.Add(new List<double>
-                    {
-                        start.X,
-                        start.Y,
-                        start.Z,
-                        mid.X,
-                        mid.Y,
-                        mid.Z,
-                        mid.X,
-                        mid.Y,
-                        mid.Z,
-                        end.X,
-                        end.Y,
-                        end.Z
-                    });
-                  }
+                  data.Value = JsonConvert.SerializeObject(curve);
                 } else
                 {
-                  // If curve has any curvature, create a bezier approximation
                   var beziers = BezierCurve.CreateCubicBeziers(curveGoo.Value, 0.01, 0.01);
+                  var curve = ToNodePenCurve(beziers, curveGoo.Value.Degree);
 
-                  beziers.ToList().ForEach((bezier) =>
-                  {
-                    var a = bezier.GetControlVertex3d(0);
-                    var b = bezier.GetControlVertex3d(1);
-                    var c = bezier.GetControlVertex3d(2);
-                    var d = bezier.GetControlVertex3d(3);
-
-                    output.Segments.Add(new List<double>
-                    {
-                      a.X,
-                      a.Y,
-                      a.Z,
-                      b.X,
-                      b.Y,
-                      b.Z,
-                      c.X,
-                      c.Y,
-                      c.Z,
-                      d.X,
-                      d.Y,
-                      d.Z
-                    });
-                  });
+                  data.Value = JsonConvert.SerializeObject(curve);
                 }
-
-                data.Value = JsonConvert.SerializeObject(output);
-                data.Type = "curve";
 
                 break;
               }
@@ -285,6 +247,82 @@ namespace NodePen.Compute.Routes
       message.Message = component.RuntimeMessages(component.RuntimeMessageLevel)[0];
 
       return message;
+    }
+
+    public static NodePenCurve ToNodePenCurve(Curve curve)
+    {
+      var segmentCount = curve.SpanCount;
+
+      var segments = new List<List<double>>();
+
+      for (var i = 0; i < segmentCount; i++)
+      {
+        var currentSpan = curve.SpanDomain(i);
+
+        var start = curve.PointAt(currentSpan.Min);
+        var end = curve.PointAt(currentSpan.Max);
+
+        var mid = start + end / 2;
+
+        segments.Add(new List<double>
+        {
+          start.X,
+          start.Y,
+          start.Z,
+          mid.X,
+          mid.Y,
+          mid.Z,
+          mid.X,
+          mid.Y,
+          mid.Z,
+          end.X,
+          end.Y,
+          end.Z
+        });
+      }
+
+      var output = new NodePenCurve()
+      {
+        Degree = 1,
+        Segments = segments
+      };
+
+      return output;
+    }
+
+    public static NodePenCurve ToNodePenCurve(BezierCurve[] beziers, int degree = 3)
+    {
+      var segments = beziers.Select((bezier) =>
+      {
+        var a = bezier.GetControlVertex3d(0);
+        var b = bezier.GetControlVertex3d(1);
+        var c = bezier.GetControlVertex3d(2);
+        var d = bezier.GetControlVertex3d(3);
+
+        return new List<double>
+        {
+          a.X,
+          a.Y,
+          a.Z,
+          b.X,
+          b.Y,
+          b.Z,
+          c.X,
+          c.Y,
+          c.Z,
+          d.X,
+          d.Y,
+          d.Z
+        };
+      });
+
+      var curve = new NodePenCurve()
+      {
+        Degree = degree,
+        Segments = segments.ToList()
+      };
+
+      return curve;
     }
 
   }

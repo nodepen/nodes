@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace NodePen.Compute
 {
-  class NodePenLine
+  public class NodePenLine
   {
     [JsonProperty("start")]
     public NodePenPoint Start { get; set; }

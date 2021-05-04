@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace NodePen.Compute
 {
-  class NodePenCurve
+  public class NodePenCurve
   {
     [JsonProperty("degree")]
     public int Degree { get; set; }
