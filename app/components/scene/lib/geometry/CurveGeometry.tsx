@@ -34,8 +34,8 @@ export const CurveGeometry = ({ curve, material }: CurveProps): React.ReactEleme
         attach="material"
         ref={mat}
         depthTest={false}
-        lineWidth={material?.width ?? 0.03}
-        color={material?.color ?? '#98e2c6'}
+        lineWidth={material?.width ?? 0.1}
+        color={material?.color ?? 'darkred'}
       />
     </mesh>
   )
