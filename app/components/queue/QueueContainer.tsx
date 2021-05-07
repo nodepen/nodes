@@ -40,6 +40,25 @@ export const QueueContainer = (): React.ReactElement => {
   }
 
   return (
+    <main className="w-full h-full p-6 flex flex-row items-stretch">
+      <div className="flex flex-col" style={{ width: '30%' }}>
+        {jobs.map((job) => {
+          const [sessionId, solutionId] = job.split(';')
+          return (
+            <QueueJobEntry
+              key={`job-${sessionId}-${solutionId}`}
+              sessionId={sessionId}
+              solutionId={solutionId}
+              registerGraph={registerCounts}
+            />
+          )
+        })}
+      </div>
+      <div className="flex-grow flex flex-col bg-blue-200" />
+    </main>
+  )
+
+  return (
     <main className="w-full h-full p-4 flex flex-col">
       <div className="w-full h-76 mb-4 bg-green">
         {data?.getQueueStatus?.active_count}
