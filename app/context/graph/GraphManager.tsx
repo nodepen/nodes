@@ -120,6 +120,8 @@ export const GraphManager = ({ children, config }: GraphManagerProps): React.Rea
       }
     }
 
+    console.log({ status })
+
     if (status === 'SUCCEEDED') {
       fetchSolutionMessages(session.id, store.solution.id)
         .then((messages) => {
@@ -198,6 +200,10 @@ export const GraphManager = ({ children, config }: GraphManagerProps): React.Rea
 
     if (status === 'FAILED') {
       console.error('Compute failed to execute solution!')
+    }
+
+    if (status === 'TIMEOUT') {
+      console.error('Solution timed out!')
     }
   }, [status])
 

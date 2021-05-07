@@ -86,7 +86,7 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const end = Date.now()
 
       const duration = end - start
-      console.log(`${sessionId}:${solutionId} succeeded in ${duration}ms`)
+      console.log(`${sessionId}:${solutionId} completed in ${duration}ms`)
 
       db.hset(
         solutionKey,
@@ -97,7 +97,18 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       )
 
       // Store solution stats and messages
-      const { data: results, messages } = solution
+      const { data: results, messages, timeout } = solution
+
+      console.log(solution)
+
+      if (timeout) {
+        // Solution took longer than allowed time
+        await db.hset(solutionKey, 'status', 'TIMEOUT')
+
+        console.log(`[ JOB #${job.id} ]  [ TIMEOUT ]`)
+
+        throw new Error('Timeout')
+      }
 
       console.log(
         `[ JOB #${job.id} ]  [ SOLUTION ]  ${results.length} parameters in ${duration}ms`
@@ -158,14 +169,21 @@ const succeeded = (job: Job<AlphaJobArgs>, result: string): void => {
   }
 }
 
-const failed = (job: Job<AlphaJobArgs>): void => {
-  console.log(`[ JOB #${job.id} ]  [ FAILED ]`)
+const failed = async (job: Job<AlphaJobArgs>): Promise<void> => {
+  // Check for timeout
 
   switch (job.data.type) {
     case 'solution': {
       const { sessionId, solutionId, graph } = job.data
       const key = `session:${sessionId}:graph:${solutionId}`
 
+      const result = await db.hget(key, 'status')
+
+      if (result.toString() === 'TIMEOUT') {
+        return
+      }
+
+      console.log(`[ JOB #${job.id} ]  [ FAILED ]`)
       db.hset(key, 'status', 'FAILED')
 
       return

@@ -16,6 +16,7 @@ using System.Linq;
 using System.Drawing;
 using Nancy.Extensions;
 using NodePen.Compute.Routes;
+using System.Threading;
 
 namespace NodePen.Compute
 {
@@ -26,7 +27,7 @@ namespace NodePen.Compute
     {
       Get["/grasshopper"] = _ => NodePenRoutes.GetGrasshopperAssemblies(Context);
       Post["/grasshopper/graph"] = _ => TryCreateGrasshopperDefinition(Context);
-      Post["/grasshopper/solve"] = _ => TrySolveGrasshopperDefinition(Context);
+      Post["/grasshopper/solve", true] = async (_, token) => await TrySolveGrasshopperDefinition(Context, token);
     }
 
     static Response TryCreateGrasshopperDefinition(NancyContext ctx)
@@ -44,11 +45,30 @@ namespace NodePen.Compute
       }
     }
 
-    static Response TrySolveGrasshopperDefinition(NancyContext ctx)
+    static async Task<Response> TrySolveGrasshopperDefinition(NancyContext ctx, CancellationToken token)
     {
       try
       {
-        return NodePenRoutes.SolveGrasshopperDefinition(ctx);
+        var result = new SolutionResponse()
+        {
+          Timeout = true,
+        };
+
+        var response = (Response)JsonConvert.SerializeObject(result);
+
+        await Task.WhenAny(new Task[]
+        {
+          Task.Run(() =>
+          {
+            response = NodePenRoutes.SolveGrasshopperDefinition(ctx);
+            Console.WriteLine("Completed.");
+          }),
+          Task.Delay(0),
+        });
+
+        Console.WriteLine(response);
+
+        return response;
       }
       catch (Exception e)
       {

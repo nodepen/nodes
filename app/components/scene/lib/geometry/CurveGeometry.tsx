@@ -63,6 +63,8 @@ const sample = (
     samples.push([x, y, z])
   }
 
+  return [new Vector3(ax, az, -ay), new Vector3(ix, iz, -iy), new Vector3(jx, jz, -jy), new Vector3(bx, bz, -by)]
+
   return samples.map(([x, y, z]) => new Vector3(x, z, -y))
 }
 

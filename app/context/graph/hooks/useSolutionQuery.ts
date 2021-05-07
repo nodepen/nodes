@@ -4,7 +4,7 @@ import { NEW_SOLUTION, SOLUTION_STATUS } from '@/queries'
 import { GraphStore } from '../types'
 
 type SolutionInfo = {
-  status: 'WAITING' | 'SUCCEEDED' | 'FAILED'
+  status: 'WAITING' | 'SUCCEEDED' | 'FAILED' | 'TIMEOUT'
 }
 
 /**
