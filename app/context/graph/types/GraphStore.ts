@@ -28,6 +28,8 @@ export type GraphStore = {
   }
   solution: {
     id?: string
+    status: 'WAITING' | 'SUCCEEDED' | 'FAILED' | 'TIMEOUT'
+    duration: number
   }
   selected: string[]
   library: {

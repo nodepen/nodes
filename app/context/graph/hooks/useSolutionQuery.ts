@@ -5,6 +5,7 @@ import { GraphStore } from '../types'
 
 type SolutionInfo = {
   status: 'WAITING' | 'SUCCEEDED' | 'FAILED' | 'TIMEOUT'
+  duration: number
 }
 
 /**
@@ -69,5 +70,8 @@ export const useSolutionQuery = (session: string, target: string, store: GraphSt
     }
   }, [solutionStatus])
 
-  return { status: solutionStatus?.getSolutionStatus?.status.toUpperCase() ?? 'WAITING' }
+  return {
+    status: solutionStatus?.getSolutionStatus?.status.toUpperCase() ?? 'WAITING',
+    duration: solutionStatus?.getSolutionStatus?.duration ?? 0,
+  }
 }

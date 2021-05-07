@@ -61,12 +61,9 @@ namespace NodePen.Compute
           Task.Run(() =>
           {
             response = NodePenRoutes.SolveGrasshopperDefinition(ctx);
-            Console.WriteLine("Completed.");
           }),
-          Task.Delay(0),
+          Task.Delay(1000),
         });
-
-        Console.WriteLine(response);
 
         return response;
       }

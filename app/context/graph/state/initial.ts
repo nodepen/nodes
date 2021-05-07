@@ -17,7 +17,10 @@ export const initial: GraphStore = {
     executionMode: 'immediate',
   },
   overlay: {},
-  solution: {},
+  solution: {
+    status: 'SUCCEEDED',
+    duration: 0,
+  },
   selected: [],
   library: {
     params: {},

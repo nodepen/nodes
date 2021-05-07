@@ -49,6 +49,7 @@ export type GraphAction =
       targetParameter: string
       values: Glasshopper.Data.DataTree
     }
+  | { type: 'graph/solution/set-status'; status: 'WAITING' | 'SUCCEEDED' | 'FAILED' | 'TIMEOUT'; duration: number }
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan'; dx: number; dy: number }

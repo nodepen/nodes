@@ -978,6 +978,13 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/solution/set-status': {
+      const { status } = action
+
+      state.solution.status = status
+
+      return { ...state }
+    }
     case 'graph/clear': {
       state.elements = {}
       state.registry = {
@@ -1023,6 +1030,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
 const expireSolution = (state: GraphStore): void => {
   state.solution.id = newGuid()
+  state.solution.status = 'WAITING'
 
   window.localStorage.setItem('np:solutionId', state.solution.id)
 }

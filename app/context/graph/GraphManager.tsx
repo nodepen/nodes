@@ -30,7 +30,7 @@ export const GraphManager = ({ children, config }: GraphManagerProps): React.Rea
     }
   }, [data, config])
 
-  const { status } = useSolutionQuery(session.id, store.solution.id, store)
+  const { status, duration } = useSolutionQuery(session.id, store.solution.id, store)
 
   useEffect(() => {
     if (!session.id) {
@@ -120,13 +120,12 @@ export const GraphManager = ({ children, config }: GraphManagerProps): React.Rea
       }
     }
 
-    console.log({ status })
-
     if (status === 'SUCCEEDED') {
       fetchSolutionMessages(session.id, store.solution.id)
         .then((messages) => {
           // Store messages
           dispatch({ type: 'graph/values/consume-solution-messages', messages })
+          dispatch({ type: 'graph/solution/set-status', status: 'SUCCEEDED', duration })
 
           // Collect all value requests that need to happen
           const requests: { session: string; solution: string; element: string; parameter: string }[] = []
@@ -199,10 +198,12 @@ export const GraphManager = ({ children, config }: GraphManagerProps): React.Rea
     }
 
     if (status === 'FAILED') {
+      dispatch({ type: 'graph/solution/set-status', status: 'FAILED', duration })
       console.error('Compute failed to execute solution!')
     }
 
     if (status === 'TIMEOUT') {
+      dispatch({ type: 'graph/solution/set-status', status: 'TIMEOUT', duration })
       console.error('Solution timed out!')
     }
   }, [status])

@@ -99,8 +99,6 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       // Store solution stats and messages
       const { data: results, messages, timeout } = solution
 
-      console.log(solution)
-
       if (timeout) {
         // Solution took longer than allowed time
         await db.hset(solutionKey, 'status', 'TIMEOUT')
