@@ -6,7 +6,7 @@ export const GraphHeader = (): React.ReactElement => {
 
   const { status, duration } = store.solution
 
-  const handleRefresh = (): void => {
+  const handleRetry = (): void => {
     dispatch({ type: 'session/expire-solution' })
   }
 
@@ -100,7 +100,7 @@ export const GraphHeader = (): React.ReactElement => {
   return (
     <div className="w-full h-12 p-2 pl-8 pr-8 bg-green flex flex-row justify-start items-center z-10">
       <button
-        onClick={handleRefresh}
+        onClick={handleRetry}
         className="p-2 h-6 mr-2 rounded-full border-2 border-swampgreen flex flex-row items-center justify-center font-display text-sm"
       >
         <svg
@@ -117,7 +117,7 @@ export const GraphHeader = (): React.ReactElement => {
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
           />
         </svg>
-        <p className="ml-2 hidden md:block">Refresh</p>
+        <p className="ml-2 hidden md:block">Retry</p>
       </button>
       <button
         onClick={handleReset}
