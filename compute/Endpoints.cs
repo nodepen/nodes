@@ -62,7 +62,7 @@ namespace NodePen.Compute
           {
             response = NodePenRoutes.SolveGrasshopperDefinition(ctx);
           }),
-          Task.Delay(1000),
+          Task.Delay(750),
         });
 
         return response;
