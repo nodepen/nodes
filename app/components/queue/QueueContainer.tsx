@@ -6,7 +6,7 @@ import { ComponentCount } from './lib/types'
 import { Glasshopper } from 'glib'
 
 export const QueueContainer = (): React.ReactElement => {
-  const { data } = useQuery(QUEUE_STATUS, { variables: { depth: 40 }, pollInterval: 1500 })
+  const { data } = useQuery(QUEUE_STATUS, { variables: { depth: 50 }, pollInterval: 1500 })
 
   const jobs = data?.getQueueStatus?.jobs ?? []
 
@@ -45,6 +45,8 @@ export const QueueContainer = (): React.ReactElement => {
         {data?.getQueueStatus?.active_count}
         <br />
         {data?.getQueueStatus?.total_count}
+        <br />
+        {data?.getQueueStatus?.session_count}
       </div>
       <div className="w-full flex-grow flex flex-row items-stretch">
         <div className="w-1/2 mr-2 bg-blue-200 flex flex-col">

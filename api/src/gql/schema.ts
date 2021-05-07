@@ -27,6 +27,7 @@ export const schema = gql`
     jobs: [String]!
     active_count: Int!
     total_count: Int!
+    session_count: String!
     latest_created: String!
   }
 

@@ -51,6 +51,9 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       // Increment job number
       await db.hset('queue:meta', 'total_count', job.id)
 
+      // Increment session solution number
+      await db.hincrby('queue:sessions', sessionId, 1)
+
       // Store started_at at session:id:solution:id
       const start = Date.now()
       db.hset(solutionKey, 'started_at', new Date(start).toISOString())

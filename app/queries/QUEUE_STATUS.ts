@@ -6,6 +6,7 @@ export const QUEUE_STATUS = gql`
       jobs
       active_count
       total_count
+      session_count
       latest_created
     }
   }
