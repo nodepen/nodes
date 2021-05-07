@@ -979,9 +979,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       return { ...state }
     }
     case 'graph/solution/set-status': {
-      const { status } = action
+      const { status, duration } = action
 
       state.solution.status = status
+      state.solution.duration = duration
 
       return { ...state }
     }
