@@ -48,6 +48,9 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       // Remove job from waiting
       await db.hdel('queue:active', `${sessionId};${solutionId}`)
 
+      // Increment job number
+      await db.hset('queue:meta', 'total_count', job.id)
+
       // Store started_at at session:id:solution:id
       const start = Date.now()
       db.hset(solutionKey, 'started_at', new Date(start).toISOString())

@@ -5,11 +5,9 @@ import { GraphManager } from '@/context/graph'
 
 const AlphaQueuePage: NextPage = () => {
   return (
-    <Layout.Root>
-      <GraphManager>
-        <Queue.Container />
-      </GraphManager>
-    </Layout.Root>
+    <div className="w-full h-full p-4">
+      <Queue.Container />
+    </div>
   )
 }
 

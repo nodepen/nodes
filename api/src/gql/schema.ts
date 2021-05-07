@@ -26,6 +26,7 @@ export const schema = gql`
   type QueueManifest {
     jobs: [String]!
     active_count: Int!
+    total_count: Int!
     latest_created: String!
   }
 
