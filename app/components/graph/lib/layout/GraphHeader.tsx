@@ -104,7 +104,7 @@ export const GraphHeader = (): React.ReactElement => {
         className="p-2 h-6 mr-2 rounded-full border-2 border-swampgreen flex flex-row items-center justify-center font-display text-sm"
       >
         <svg
-          className="w-4 h-4 mr-2"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -117,14 +117,14 @@ export const GraphHeader = (): React.ReactElement => {
             d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
           />
         </svg>
-        Refresh
+        <p className="ml-2 hidden md:block">Refresh</p>
       </button>
       <button
         onClick={handleReset}
         className="p-2 h-6 mr-2 rounded-full border-2 border-swampgreen flex flex-row items-center justify-center font-display text-sm"
       >
         <svg
-          className="w-4 h-4 mr-2"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -137,14 +137,14 @@ export const GraphHeader = (): React.ReactElement => {
             d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
           />
         </svg>
-        Reset
+        <p className="ml-2 hidden md:block">Reset</p>
       </button>
       <button
         onClick={handleRecenter}
         className="p-2 h-6 mr-2 rounded-full border-2 border-swampgreen flex flex-row items-center justify-center font-display text-sm"
       >
         <svg
-          className="w-4 h-4 mr-2"
+          className="w-4 h-4"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"
@@ -157,10 +157,10 @@ export const GraphHeader = (): React.ReactElement => {
             d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
           />
         </svg>
-        Recenter
+        <p className="ml-2 hidden md:block">Recenter</p>
       </button>
       <div className="h-full flex-grow flex flex-row items-center justify-end">
-        {getMessage(status)}
+        <span className="hidden md:block">{getMessage(status)}</span>
         {getIcon(status)}
       </div>
     </div>
