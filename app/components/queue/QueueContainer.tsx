@@ -1,7 +1,7 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from '@apollo/client'
 import { QUEUE_STATUS } from '@/queries'
-import { QueueJobEntry, QueueComponentCount } from './lib/components'
+import { QueueJobEntry, QueueComponentCount, Statistics } from './lib/components'
 import { ComponentCount } from './lib/types'
 import { Glasshopper } from 'glib'
 
@@ -39,6 +39,15 @@ export const QueueContainer = (): React.ReactElement => {
     setCounts(updatedCounts)
   }
 
+  const [depths, setDepths] = useState<number[]>([])
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setDepths((curr) => [data?.getQueueStatus?.active_count, ...curr].slice(0, 144))
+    }, 1500)
+    return () => clearInterval(interval)
+  }, [data])
+
   return (
     <main className="w-full h-full p-6 flex flex-row items-stretch">
       <div className="flex flex-col" style={{ width: '30%' }}>
@@ -60,6 +69,9 @@ export const QueueContainer = (): React.ReactElement => {
         </div>
         <div className="flex flex-row justify-end font-display font-black leading-none" style={{ fontSize: '168px' }}>
           {data?.getQueueStatus?.session_count}
+        </div>
+        <div className="flex flex-row justify-end mt-6">
+          <Statistics title="depth" values={depths} />
         </div>
       </div>
     </main>
