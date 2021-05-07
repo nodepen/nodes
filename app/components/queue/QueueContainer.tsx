@@ -54,7 +54,14 @@ export const QueueContainer = (): React.ReactElement => {
           )
         })}
       </div>
-      <div className="flex-grow flex flex-col bg-blue-200" />
+      <div className="flex-grow flex flex-col items-stretch">
+        <div className="flex flex-row justify-end font-display font-black leading-none" style={{ fontSize: '256px' }}>
+          {data?.getQueueStatus?.total_count}
+        </div>
+        <div className="flex flex-row justify-end font-display font-black leading-none" style={{ fontSize: '168px' }}>
+          {data?.getQueueStatus?.session_count}
+        </div>
+      </div>
     </main>
   )
 
