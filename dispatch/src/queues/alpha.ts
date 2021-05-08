@@ -158,7 +158,7 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
 alpha.process(run)
 
-const succeeded = (job: Job<AlphaJobArgs>, result: string): void => {
+const succeeded = async (job: Job<AlphaJobArgs>, result: string): void => {
   console.log(`[ JOB #${job.id} ]  [ SUCCEEDED ]`)
   switch (job.data.type) {
     case 'solution': {
@@ -166,7 +166,10 @@ const succeeded = (job: Job<AlphaJobArgs>, result: string): void => {
       const { sessionId, solutionId, graph } = job.data
       const key = `session:${sessionId}:graph:${solutionId}`
 
-      db.hset(key, 'status', 'SUCCEEDED')
+      await db.hset(key, 'status', 'SUCCEEDED')
+
+      const staged = await scan()
+      await clear(staged)
 
       return
     }
@@ -188,7 +191,10 @@ const failed = async (job: Job<AlphaJobArgs>): Promise<void> => {
       }
 
       console.log(`[ JOB #${job.id} ]  [ FAILED ]`)
-      db.hset(key, 'status', 'FAILED')
+      await db.hset(key, 'status', 'FAILED')
+
+      const staged = await scan()
+      await clear(staged)
 
       return
     }
@@ -268,4 +274,77 @@ const resultsToDataTree = (
   })
 
   return tree
+}
+
+const scan = async (): Promise<string[]> => {
+  const keys: string[] = []
+
+  return new Promise<string[]>((resolve, reject) => {
+    db.scan(
+      '0',
+      'MATCH',
+      'session:*:graph:*:ghx',
+      'COUNT',
+      '1000',
+      (err, [_, k1]) => {
+        if (err) {
+          reject()
+        }
+
+        keys.push(...k1)
+
+        db.scan(
+          '0',
+          'MATCH',
+          'session:*:graph:*:json',
+          'COUNT',
+          '1000',
+          (err, [_, k2]) => {
+            if (err) {
+              reject()
+            }
+
+            keys.push(...k2)
+
+            db.scan(
+              '0',
+              'MATCH',
+              'session:*:graph:*:solution:*:*',
+              'COUNT',
+              '1000',
+              (err, [_, k3]) => {
+                if (err) {
+                  reject()
+                }
+
+                keys.push(...k3)
+
+                resolve(keys)
+              }
+            )
+          }
+        )
+      }
+    )
+  })
+}
+
+const clear = async (keys: string[]): Promise<void> => {
+  const now = Date.now()
+
+  keys.forEach((key) => {
+    const solutionKey = key.split(':').slice(0, 4).join(':')
+
+    db.hget(solutionKey, 'started_at', (err, res) => {
+      if (!!err) {
+        return
+      }
+
+      const then = new Date(res)
+
+      if (now - then.getMilliseconds() > 1000 * 60 * 10) {
+        db.del(key)
+      }
+    })
+  })
 }
