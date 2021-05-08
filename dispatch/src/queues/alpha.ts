@@ -49,7 +49,7 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       await db.hdel('queue:active', `${sessionId};${solutionId}`)
 
       // Increment job number
-      await db.hset('queue:meta', 'total_count', job.id)
+      await db.hincrby('queue:meta', 'total_count', 1)
 
       // Increment session solution number
       await db.hincrby('queue:sessions', sessionId, 1)
@@ -79,8 +79,8 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       )
 
       // Store ghx graph
-      const ghxkey = `${solutionKey}:ghx`
-      db.set(ghxkey, ghx)
+      // const ghxkey = `${solutionKey}:ghx`
+      // db.set(ghxkey, ghx)
 
       // Request a solution with the graph
       const { data: solution } = await axios.post(
@@ -158,7 +158,10 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
 alpha.process(run)
 
-const succeeded = async (job: Job<AlphaJobArgs>, result: string): void => {
+const succeeded = async (
+  job: Job<AlphaJobArgs>,
+  result: string
+): Promise<void> => {
   console.log(`[ JOB #${job.id} ]  [ SUCCEEDED ]`)
   switch (job.data.type) {
     case 'solution': {
@@ -167,9 +170,6 @@ const succeeded = async (job: Job<AlphaJobArgs>, result: string): void => {
       const key = `session:${sessionId}:graph:${solutionId}`
 
       await db.hset(key, 'status', 'SUCCEEDED')
-
-      const staged = await scan()
-      await clear(staged)
 
       return
     }
@@ -192,9 +192,6 @@ const failed = async (job: Job<AlphaJobArgs>): Promise<void> => {
 
       console.log(`[ JOB #${job.id} ]  [ FAILED ]`)
       await db.hset(key, 'status', 'FAILED')
-
-      const staged = await scan()
-      await clear(staged)
 
       return
     }
