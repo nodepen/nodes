@@ -28,6 +28,8 @@ namespace NodePen.Compute
       Get["/grasshopper"] = _ => NodePenRoutes.GetGrasshopperAssemblies(Context);
       Post["/grasshopper/graph"] = _ => TryCreateGrasshopperDefinition(Context);
       Post["/grasshopper/solve", true] = async (_, token) => await TrySolveGrasshopperDefinition(Context, token);
+
+      Get["/health"] = _ => (Response)"Feeling swell.";
     }
 
     static Response TryCreateGrasshopperDefinition(NancyContext ctx)
