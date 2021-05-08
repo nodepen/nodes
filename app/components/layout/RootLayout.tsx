@@ -74,7 +74,7 @@ export const RootLayout = ({ children }: RootLayoutProps): JSX.Element => {
             </p>
             <div className="w-full mb-3 flex flex-row items-center">
               <a
-                href="https://github.com/cdriesler/nodepen.io/issues"
+                href="https://github.com/cdriesler/nodepen/issues"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 mr-2 rounded-md border-2 border-dark text-center"
@@ -94,7 +94,7 @@ export const RootLayout = ({ children }: RootLayoutProps): JSX.Element => {
             <p className="text-lg mb-2">NodePen is free software and is licensed to you under AGPL 3.0:</p>
             <div className="w-full flex flex-row items-center">
               <a
-                href="https://github.com/cdriesler/nodepen.io"
+                href="https://github.com/cdriesler/nodepen"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="p-2 mr-2 rounded-md border-2 border-dark text-center"
