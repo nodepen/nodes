@@ -7,6 +7,8 @@ type GetQueueStatusArgs = {
 type QueueStatus = {
   jobs: string[]
   active_count: number
+  total_count: string
+  session_count: number
   latest_created: string
 }
 
@@ -40,7 +42,23 @@ export const getQueueStatus = async (
 
           result.latest_created = reply
 
-          resolve(result as QueueStatus)
+          db.hget('queue:meta', 'total_count', (err, reply) => {
+            if (err) {
+              reject(err)
+            }
+
+            result.total_count = reply
+
+            db.hlen('queue:sessions', (err, reply) => {
+              if (err) {
+                reject(err)
+              }
+
+              result.session_count = reply
+
+              resolve(result as QueueStatus)
+            })
+          })
         })
       })
     })

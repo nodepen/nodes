@@ -3,8 +3,12 @@ import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { graph } from '@/utils'
 import { ParameterIcon, ParameterIconShadow, ParameterSetValue } from './parameters'
-import { Details, Grip, DataTree, RuntimeMessage, Loading } from './common'
-import { useElementStatus } from './utils'
+import { Details, Grip, DataTree, RuntimeMessage, Loading, ConfigureButton } from './common'
+import { useElementStatus, useMoveableElement, useSelectableElement } from './utils'
+import { Tooltip } from '../annotation'
+import { useLongHover } from '@/hooks'
+import { NumberInput } from '~/components/input/NumberInput'
+import { hotkey } from '@/utils'
 
 type StaticComponentProps = {
   instanceId: string
@@ -12,11 +16,11 @@ type StaticComponentProps = {
 
 export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React.ReactElement | null => {
   const {
-    store: { elements },
+    store: { elements, library, activeKeys },
     dispatch,
   } = useGraphManager()
 
-  const parameterRef = useRef<HTMLButtonElement>(null)
+  const parameterRef = useRef<HTMLDivElement>(null)
 
   const [status, color] = useElementStatus(id)
 
@@ -28,10 +32,41 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
     dispatch({ type: 'graph/register-element', ref: parameterRef, id })
   }, [])
 
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>): void => {
-    e.stopPropagation()
-    dispatch({ type: 'graph/selection-add', id })
+  const isMoving = useRef(false)
+
+  const onMoveStart = (): void => {
+    isMoving.current = true
   }
+
+  const onMove = (motion: [number, number]): void => {
+    dispatch({ type: 'graph/mutation/move-component', motion, id })
+  }
+
+  const onMoveEnd = (): void => {
+    isMoving.current = false
+  }
+
+  const moveRef = useMoveableElement(onMove, onMoveStart, onMoveEnd)
+
+  const onSelect = (): void => {
+    switch (hotkey.selectionMode(activeKeys)) {
+      case 'replace': {
+        dispatch({ type: 'graph/selection-clear' })
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+      case 'remove': {
+        dispatch({ type: 'graph/selection-remove', id })
+        break
+      }
+      case 'add': {
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+    }
+  }
+
+  useSelectableElement(onSelect, moveRef)
 
   const parameter = elements[id] as Glasshopper.Element.StaticParameter
 
@@ -43,7 +78,52 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
 
   const wireIsBlocking = elements['live-wire'] ? (elements['live-wire']?.current as any)?.mode !== 'hidden' : false
 
-  const detailsVisible = !wireIsBlocking && (overPanel || overDetails)
+  const [isConfiguring, setIsConfiguring] = useState(false)
+
+  const captureMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
+    e.stopPropagation()
+  }
+
+  const handleLongHover = (e: PointerEvent): void => {
+    if (isMoving.current) {
+      return
+    }
+
+    const { pageX, pageY } = e
+
+    const tooltip = (
+      <>
+        <Tooltip
+          component={library[template.category.toLowerCase()][template.subcategory.toLowerCase()].find(
+            (t) => t.guid === template.guid
+          )}
+          data={current.values}
+          runtimeMessage={parameter.current?.runtimeMessage}
+          onDestroy={() => dispatch({ type: 'tooltip/clear-tooltip' })}
+        />
+      </>
+    )
+
+    dispatch({ type: 'tooltip/set-tooltip', position: [pageX, pageY], content: tooltip })
+  }
+
+  const longHoverTarget = useLongHover(handleLongHover)
+
+  const [parameterValue, setParameterValue] = useState(0)
+  const [temporaryParameterValue, setTemporaryParameterValue] = useState(0)
+
+  // useEffect(() => {
+  //   const value = Object.values(current.values)?.[0]?.[0] as Glasshopper.Data.DataTreeValue<'number'>
+
+  //   console.log(`Updating value to ${value.data}`)
+
+  //   if (!value) {
+  //     return
+  //   }
+
+  //   setParameterValue(value.data)
+  //   setTemporaryParameterValue(value.data)
+  // }, [current.values])
 
   if (!elements[id] || elements[id].template.type !== 'static-parameter') {
     console.error(`Mismatch with element '${id}' and attempted type 'static-parameter'`)
@@ -51,14 +131,22 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
   }
 
   return (
-    <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy }}>
-      <div className="flex flex-col items-center">
-        <button
+    <div className="absolute flex flex-row justify-center w-48" style={{ left: dx - 96, top: -dy - 18 }}>
+      <div className="flex flex-col items-center" ref={parameterRef}>
+        {isConfiguring ? null : (
+          <div className="relative w-0 h-0 overflow-visible">
+            <div className="absolute w-8 h-8" style={{ left: -90, top: 4 }}>
+              <ConfigureButton onClick={() => setIsConfiguring(true)} />
+            </div>
+          </div>
+        )}
+        <div
           className="flex flex-row justify-center items-center relative z-20"
-          ref={parameterRef}
           onPointerEnter={() => setHovers(([, details]) => [true, details])}
           onPointerLeave={() => setHovers(([, details]) => [false, details])}
-          onClick={handleClick}
+          onMouseDown={captureMouseDown}
+          ref={longHoverTarget}
+          role="presentation"
         >
           <div
             className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
@@ -72,6 +160,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           <div
             className="h-8 pt-4 pb-4 flex flex-row items-center border-2 border-dark rounded-md shadow-osm relative transition-colors duration-150 z-20"
             style={{ background: color }}
+            ref={moveRef}
           >
             <div className="absolute z-20" style={{ left: '-12.5px' }}>
               <ParameterIcon parent={parameter.id} />
@@ -86,8 +175,8 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           <div className="absolute z-0 flex flex-col justify-center items-center" style={{ right: -8 }}>
             <Grip source={{ element: parameter.id, parameter: 'output' }} />
           </div>
-        </button>
-        {detailsPinned || detailsVisible ? (
+        </div>
+        {isConfiguring ? (
           <div
             className="flex flex-col w-48 overflow-hidden z-10"
             style={{ transform: 'translate(0, -18px)' }}
@@ -96,10 +185,37 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
           >
             <Details pinned={detailsPinned} onPin={() => setDetailsPinned((current) => !current)}>
               <>
-                {current.runtimeMessage ? (
-                  <RuntimeMessage message={current.runtimeMessage.message} level={current.runtimeMessage.level} />
-                ) : null}
-                {(() => {
+                <NumberInput
+                  value={temporaryParameterValue}
+                  onChange={(value) => setTemporaryParameterValue(Number.parseFloat(value))}
+                />
+                <div className="w-full mt-2 flex flex-row items-center gap-2">
+                  <button
+                    onClick={() => {
+                      setIsConfiguring(false)
+                      setTemporaryParameterValue(parameterValue)
+                    }}
+                    className="p-0 pt-1 flex-grow flex justify-center item-center border-2 border-green rounded-sm font-panel text-sm font-medium text-darkgreen hover:bg-green"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      setIsConfiguring(false)
+                      setParameterValue(temporaryParameterValue)
+                      dispatch({
+                        type: 'graph/values/set-one-value',
+                        targetElement: id,
+                        targetParameter: 'input',
+                        value: temporaryParameterValue.toString(),
+                      })
+                    }}
+                    className="p-0 pt-1 flex-grow flex justify-center item-center border-2 border-green rounded-sm font-panel text-sm font-medium text-darkgreen hover:bg-green"
+                  >
+                    Submit
+                  </button>
+                </div>
+                {/* {(() => {
                   if (Object.keys(current.values).length > 0) {
                     const valueCount = graph.getValueCount(parameter, 'output')
                     return (
@@ -124,7 +240,7 @@ export const StaticParameter = ({ instanceId: id }: StaticComponentProps): React
                   }
 
                   return <ParameterSetValue element={id} keepOpen={() => setDetailsPinned(true)} />
-                })()}
+                })()} */}
               </>
             </Details>
           </div>

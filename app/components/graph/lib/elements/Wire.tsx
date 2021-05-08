@@ -2,7 +2,6 @@ import React from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { position } from '@/utils'
-import { SourceTooltip } from './common'
 
 type WireProps = {
   instanceId: string
@@ -10,7 +9,7 @@ type WireProps = {
 
 export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null => {
   const {
-    store: { elements },
+    store: { elements, activeKeys },
   } = useGraphManager()
 
   if (!elements[id]) {
@@ -131,6 +130,102 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
     // `L ${end.x} ${end.y}`
   ].join('')
 
+  const getTooltipGraphics = (): React.ReactNode => {
+    if (activeKeys.length !== 1) {
+      return null
+    }
+
+    const [key] = activeKeys
+
+    switch (key) {
+      case 'ControlLeft': {
+        return (
+          <div className="w-8 h-12 flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 -1 10 12">
+              <circle
+                cx="5"
+                cy="6"
+                r="4.5"
+                fill="#333333"
+                stroke="#333333"
+                strokeWidth="2px"
+                vectorEffect="non-scaling-stroke"
+              />
+              <circle
+                cx="5"
+                cy="5"
+                r="4.5"
+                fill="#FFFFFF"
+                stroke="#333333"
+                strokeWidth="2px"
+                vectorEffect="non-scaling-stroke"
+              />
+              <line
+                x1="3"
+                y1="5"
+                x2="7"
+                y2="5"
+                stroke="#333333"
+                strokeWidth="3px"
+                vectorEffect="non-scaling-stroke"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        )
+      }
+      case 'ShiftLeft': {
+        return (
+          <div className="w-8 h-12 flex items-center justify-center">
+            <svg width="32" height="32" viewBox="0 -1 10 12">
+              <circle
+                cx="5"
+                cy="6"
+                r="4.5"
+                fill="#333333"
+                stroke="#333333"
+                strokeWidth="2px"
+                vectorEffect="non-scaling-stroke"
+              />
+              <circle
+                cx="5"
+                cy="5"
+                r="4.5"
+                fill="#FFFFFF"
+                stroke="#333333"
+                strokeWidth="2px"
+                vectorEffect="non-scaling-stroke"
+              />
+              <line
+                x1="3"
+                y1="5"
+                x2="7"
+                y2="5"
+                stroke="#333333"
+                strokeWidth="3px"
+                vectorEffect="non-scaling-stroke"
+                strokeLinecap="round"
+              />
+              <line
+                x1="5"
+                y1="3"
+                x2="5"
+                y2="7"
+                stroke="#333333"
+                strokeWidth="3px"
+                vectorEffect="non-scaling-stroke"
+                strokeLinecap="round"
+              />
+            </svg>
+          </div>
+        )
+      }
+      default: {
+        return null
+      }
+    }
+  }
+
   return (
     <div
       className="absolute z-10 overflow-visible pointer-events-none"
@@ -145,9 +240,9 @@ export const Wire = ({ instanceId: id }: WireProps): React.ReactElement | null =
         >
           {getWireGraphics(d)}
         </svg>
-        {id === 'never' ? (
+        {id === 'live-wire' ? (
           <div className={`${goingRight ? 'right-0' : 'left-0'} absolute`} style={{ top: goingDown ? height : 0 }}>
-            <SourceTooltip wire={element} />
+            {getTooltipGraphics()}
           </div>
         ) : null}
       </div>

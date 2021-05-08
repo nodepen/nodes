@@ -10,6 +10,9 @@ namespace NodePen.Compute
 
     [JsonProperty("messages")]
     public List<SolutionMessage> Messages { get; set; }
+
+    [JsonProperty("timeout")]
+    public bool Timeout { get; set; } = false;
   }
 
   public class SolutionData

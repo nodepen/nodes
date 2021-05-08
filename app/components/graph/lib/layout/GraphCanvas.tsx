@@ -19,8 +19,6 @@ export const GraphCanvas = (): React.ReactElement => {
         return
       }
 
-      console.log(e.code)
-
       switch (e.code) {
         case 'Space': {
           const watching = ['static-component', 'static-parameter', 'number-slider']
@@ -32,13 +30,28 @@ export const GraphCanvas = (): React.ReactElement => {
           dispatch({ type: 'graph/mutation/delete-selection' })
           break
         }
+        case 'ControlLeft':
+        case 'ShiftLeft': {
+          dispatch({ type: 'graph/hotkey/add-active-key', code: e.code })
+        }
+      }
+    }
+
+    const handleKeyUp = (e: KeyboardEvent): void => {
+      switch (e.code) {
+        case 'ControlLeft':
+        case 'ShiftLeft': {
+          dispatch({ type: 'graph/hotkey/remove-active-key', code: e.code })
+        }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleKeyUp)
 
     return () => {
       window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleKeyUp)
     }
   })
 

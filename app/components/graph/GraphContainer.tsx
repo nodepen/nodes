@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { LoadingOverlay } from '../common'
-import { Controls, Canvas } from './lib/layout'
+import { Controls, Canvas, Header } from './lib/layout'
 
 export const GraphContainer = (): React.ReactElement => {
   const [minHeight, setMinHeight] = useState(0)
@@ -13,7 +13,7 @@ export const GraphContainer = (): React.ReactElement => {
     <main className="w-full flex-grow overflow-hidden" id="graph-container">
       <LoadingOverlay>
         <div className="w-full h-full bg-pale flex flex-col items-center" style={{ height: minHeight }}>
-          <div className="w-full h-12 bg-green z-10" />
+          <Header />
           <Canvas />
           <Controls />
         </div>

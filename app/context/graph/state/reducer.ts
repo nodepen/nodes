@@ -1,6 +1,6 @@
 import { Glasshopper, Grasshopper } from 'glib'
 import { GraphAction, GraphStore } from './../types'
-import { newGuid } from '@/utils'
+import { newGuid, hotkey } from '@/utils'
 import { Wire } from '~/../lib/dist/glasshopper/element'
 
 export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
@@ -92,6 +92,28 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       }
 
       element.current.anchors[anchorKey] = [x, y]
+
+      return { ...state }
+    }
+    case 'graph/hotkey/add-active-key': {
+      const { code } = action
+
+      if (state.activeKeys.includes(code)) {
+        return state
+      }
+
+      state.activeKeys = [...state.activeKeys, code]
+
+      return { ...state }
+    }
+    case 'graph/hotkey/remove-active-key': {
+      const { code } = action
+
+      if (!state.activeKeys.includes(code)) {
+        return state
+      }
+
+      state.activeKeys = state.activeKeys.filter((key) => key !== code)
 
       return { ...state }
     }
@@ -250,11 +272,11 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         const { width, height } = element.current.dimensions
         const [cx, cy] = element.current.position
 
-        const [dx, dy] = [width / 2, height]
+        const [dx, dy] = [width / 2, height / 2]
 
         const extents: [[number, number], [number, number]] = [
           [cx - dx, cy - dy],
-          [cx + dx, cy],
+          [cx + dx, cy + dy],
         ]
 
         return extents
@@ -291,7 +313,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }
 
-      const selectable = ['static-component', 'static-parameter']
+      const selectable = ['static-component', 'static-parameter', 'number-slider', 'panel']
 
       const captured = Object.values(state.elements)
         .filter(
@@ -300,9 +322,27 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         )
         .map((element) => element.id)
 
-      state.selected = captured
+      const mode = hotkey.selectionMode(state.activeKeys)
+
+      switch (mode) {
+        case 'replace': {
+          state.selected = captured
+          break
+        }
+        case 'add': {
+          const uniqueAdditions = captured.filter((id) => !state.selected.includes(id))
+          state.selected = [...state.selected, ...uniqueAdditions]
+          break
+        }
+        case 'remove': {
+          state.selected = state.selected.filter((id) => !captured.includes(id))
+          break
+        }
+      }
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
+      updateMoveRegistry(state)
 
       return { ...state }
     }
@@ -319,6 +359,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
+      updateMoveRegistry(state)
+
       return { ...state }
     }
     case 'graph/selection-remove': {
@@ -331,6 +373,8 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       state.selected = [...state.selected.filter((elementId) => elementId !== id)]
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
+      updateMoveRegistry(state)
 
       return { ...state }
     }
@@ -352,12 +396,16 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
 
+      updateMoveRegistry(state)
+
       return { ...state }
     }
     case 'graph/selection-clear': {
       state.selected = []
 
       localStorage.setItem('gh:selection', JSON.stringify(state.selected))
+
+      updateMoveRegistry(state)
 
       return { ...state }
     }
@@ -371,7 +419,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
       for (const id of state.selected) {
         const element = state.elements[id]
 
-        const [fromWires, toWires] = findAttachedWires(element, state)
+        const [fromWires, toWires] = findAttachedWires(element, [], state)
 
         fromWiresToDelete.push(...fromWires)
         toWiresToDelete.push(...toWires)
@@ -401,6 +449,10 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         }
       }
 
+      state.selected = []
+
+      updateMoveRegistry(state)
+
       // Request new solution
       expireSolution(state)
 
@@ -415,13 +467,30 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         return
       }
 
-      const [cx, cy] = component.current.position
       const [dx, dy] = motion
 
-      component.current.position = [cx + dx, cy + dy]
+      // Check if element exists in the motion registry
+      // If it does, this means it is part of a selection and all must be moved
+      // If it doesn't, it's moving independently
 
-      // Move any attached wires
-      const [fromWires, toWires] = findAttachedWires(component, state)
+      const isCompoundMotion = state.registry.move.elements.includes(id)
+
+      const [currentFrom, currentTo] = isCompoundMotion ? [[], []] : findAttachedWires(component, [], state)
+
+      const targets = isCompoundMotion
+        ? state.registry.move
+        : { elements: [id], fromWires: currentFrom, toWires: currentTo }
+
+      const { elements, fromWires, toWires } = targets
+
+      elements.forEach((id) => {
+        const element = state.elements[id]
+
+        const [cx, cy] = element.current.position
+        element.current.position = [cx + dx, cy + dy]
+
+        updateAnchors(element, dx, dy)
+      })
 
       fromWires.forEach((id) => {
         const wire = state.elements[id] as Wire
@@ -438,9 +507,6 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
         wire.current.to = [wx + dx, wy + dy]
       })
-
-      // Update all component anchors
-      updateAnchors(component, dx, dy)
 
       return { ...state }
     }
@@ -586,27 +652,114 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
         element.current.to = correctToPosition
       }
 
-      // TODO: Verify connection does not already exist
+      // Determine what kind of wire connection is being attempted
+      type WireConnectionMode = 'replace' | 'add' | 'remove'
+
+      const getWireConnectionMode = (store: GraphStore): WireConnectionMode => {
+        if (store.activeKeys.length !== 1) {
+          return 'replace'
+        }
+
+        const [key] = store.activeKeys
+
+        switch (key) {
+          case 'ControlLeft': {
+            return 'remove'
+          }
+          case 'ShiftLeft': {
+            return 'add'
+          }
+          default: {
+            return 'replace'
+          }
+        }
+      }
+
+      const currentMode = getWireConnectionMode(state)
+
+      // Identify which node we're trying to interact with
+      const targetElementId =
+        sourceType === 'input' ? element.current.sources.from.element : element.current.sources.to.element
+      const targetElement = state.elements[targetElementId]
+      const targetElementParameter =
+        sourceType === 'input' ? element.current.sources.from.parameter : element.current.sources.to.parameter
+
+      switch (currentMode) {
+        case 'replace': {
+          // Default behavior. Replace all existing connections with the incoming one.
+
+          // Identify any existing sources
+          const [from, to] = findAttachedWires(targetElement, [targetElementParameter], state)
+          const wiresToReplace = sourceType === 'input' ? from : to
+
+          // Delete existing wire and clear sources
+          wiresToReplace.forEach((wireId) => {
+            const wireToReplace = state.elements[wireId] as Glasshopper.Element.Wire
+
+            const sourceToClear = wireToReplace.current.sources.from
+            const targetToClear = wireToReplace.current.sources.to
+
+            removeSource(
+              targetToClear.element,
+              targetToClear.parameter,
+              sourceToClear.element,
+              sourceToClear.parameter,
+              state
+            )
+
+            delete state.elements[wireId]
+          })
+
+          break
+        }
+      }
 
       const wireId = newGuid()
       const wireToCommit = Object.assign({}, JSON.parse(JSON.stringify(element)), {
         id: wireId,
       }) as Glasshopper.Element.Wire
 
-      // Add new wire
-      state.elements[wireId] = wireToCommit
-
-      // Clear live wire
-      element.current.mode = 'hidden'
-      element.current.sources = {}
-
       // Update sources in target
       const source = wireToCommit.current.sources.from
       const target = wireToCommit.current.sources.to
 
-      const sourceElement = state.elements[target.element] as Glasshopper.Element.StaticComponent
+      switch (currentMode) {
+        case 'replace':
+        case 'add': {
+          // Append source
+          const sourceElement = state.elements[target.element] as Glasshopper.Element.StaticComponent
+          sourceElement.current.sources[target.parameter].push({ element: source.element, parameter: source.parameter })
 
-      sourceElement.current.sources[target.parameter].push({ element: source.element, parameter: source.parameter })
+          // Add new wire
+          state.elements[wireId] = wireToCommit
+          break
+        }
+        case 'remove': {
+          // Remove source from element data
+          removeSource(target.element, target.parameter, source.element, source.parameter, state)
+
+          // Delete visual wire element that represents connection
+          const wireElementToDelete = Object.values(state.elements)
+            .filter((el) => el.template.type === 'wire' && el.id !== 'live-wire')
+            .find(
+              (wire: Glasshopper.Element.Wire) =>
+                wire.current.sources.from.element === element.current.sources.from.element &&
+                wire.current.sources.from.parameter === element.current.sources.from.parameter &&
+                wire.current.sources.to.element === element.current.sources.to.element &&
+                wire.current.sources.to.parameter === element.current.sources.to.parameter
+            )
+
+          if (wireElementToDelete) {
+            delete state.elements[wireElementToDelete.id]
+          } else {
+            console.log(`Could not locate wire to delete.`)
+          }
+        }
+      }
+
+      // Clear live wire
+      element.current.mode = 'hidden'
+      element.current.sources = {}
 
       // Commit new graph to db
       expireSolution(state)
@@ -825,12 +978,21 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
       return { ...state }
     }
+    case 'graph/solution/set-status': {
+      const { status, duration } = action
+
+      state.solution.status = status
+      state.solution.duration = duration
+
+      return { ...state }
+    }
     case 'graph/clear': {
       state.elements = {}
       state.registry = {
-        wires: {
-          from: {},
-          to: {},
+        move: {
+          elements: [],
+          fromWires: [],
+          toWires: [],
         },
       }
 
@@ -869,6 +1031,7 @@ export const reducer = (state: GraphStore, action: GraphAction): GraphStore => {
 
 const expireSolution = (state: GraphStore): void => {
   state.solution.id = newGuid()
+  state.solution.status = 'WAITING'
 
   window.localStorage.setItem('np:solutionId', state.solution.id)
 }
@@ -945,31 +1108,67 @@ const isInputOrOutput = (elementId: string, parameterId: string, state: GraphSto
  * @param graph
  * @returns [from, to]
  */
-const findAttachedWires = (element: Glasshopper.Element.Base, state: GraphStore): [string[], string[]] => {
+const findAttachedWires = (
+  element: Glasshopper.Element.Base,
+  parameters: string[] = [],
+  state: GraphStore
+): [string[], string[]] => {
   const fromLookup: [string, string][] = []
   const toLookup: [string, string][] = []
+
+  const isIncluded = (id: string): boolean => {
+    if (parameters.length === 0) {
+      return true
+    }
+
+    return parameters.includes(id)
+  }
 
   switch (element.template.type) {
     case 'static-component': {
       const component = element as Glasshopper.Element.StaticComponent
 
-      Object.keys(component.current.outputs).forEach((id) => {
-        fromLookup.push([component.id, id])
-      })
+      Object.keys(component.current.outputs)
+        .filter((id) => isIncluded(id))
+        .forEach((id) => {
+          fromLookup.push([component.id, id])
+        })
 
-      Object.keys(component.current.inputs).forEach((id) => {
-        toLookup.push([component.id, id])
-      })
+      Object.keys(component.current.inputs)
+        .filter((id) => isIncluded(id))
+        .forEach((id) => {
+          toLookup.push([component.id, id])
+        })
       break
     }
     case 'static-parameter': {
       const parameter = element as Glasshopper.Element.StaticParameter
 
-      fromLookup.push([parameter.id, 'output'])
+      if (isIncluded('output')) {
+        fromLookup.push([parameter.id, 'output'])
+      }
 
-      if (parameter.current.sources['input']?.length > 0) {
+      if (isIncluded('input') && parameter.current.sources['input']?.length > 0) {
         toLookup.push([parameter.id, 'input'])
       }
+      break
+    }
+    case 'number-slider': {
+      const slider = element as Glasshopper.Element.NumberSlider
+
+      if (isIncluded('output')) {
+        fromLookup.push([slider.id, 'output'])
+      }
+
+      break
+    }
+    case 'panel': {
+      const panel = element as Glasshopper.Element.Panel
+
+      if (isIncluded('input')) {
+        toLookup.push([panel.id, 'input'])
+      }
+
       break
     }
     default: {
@@ -1011,52 +1210,91 @@ const findAttachedWires = (element: Glasshopper.Element.Base, state: GraphStore)
   return [fromWires, toWires]
 }
 
-const updateAnchors = (
-  element: Glasshopper.Element.StaticComponent | Glasshopper.Element.StaticParameter,
-  dx: number,
-  dy: number
-) => {
-  Object.keys(element.current.anchors).forEach((anchor) => {
-    const [x, y] = element.current.anchors[anchor]
-    element.current.anchors[anchor] = [x + dx, y + dy]
+const updateAnchors = (element: Glasshopper.Element.Base, dx: number, dy: number) => {
+  switch (element.template.type) {
+    case 'static-component':
+    case 'static-parameter':
+    case 'number-slider':
+    case 'panel': {
+      Object.keys(element.current.anchors).forEach((anchor) => {
+        const [x, y] = element.current.anchors[anchor]
+        element.current.anchors[anchor] = [x + dx, y + dy]
+      })
+      break
+    }
+    default: {
+      console.log(`Cannot update anchors for ${element.template.type}`)
+    }
+  }
+}
+
+/** Given a selection of elements, update the movement registry. */
+const updateMoveRegistry = (state: GraphStore): void => {
+  const move = {
+    elements: [] as string[],
+    fromWires: [] as string[],
+    toWires: [] as string[],
+  }
+
+  const selection = state?.selected ?? []
+
+  selection.forEach((id) => {
+    const element = state.elements[id]
+
+    if (!element) {
+      return
+    }
+
+    // Store the element's id
+    move.elements.push(id)
+
+    switch (element.template.type) {
+      case 'number-slider':
+      case 'static-parameter':
+      case 'static-component':
+      case 'panel': {
+        const [from, to] = findAttachedWires(element, [], state)
+
+        move.fromWires.push(...from)
+        move.toWires.push(...to)
+        break
+      }
+      default:
+        console.log(`Failed to register motion for ${element.template.type}`)
+    }
   })
+
+  state.registry.move = move
 }
 
-const eraseElementFromRegistry = (elementId: string, state: GraphStore): void => {
-  if (elementId in state.registry.wires.from) {
-    delete state.registry.wires.from[elementId]
-  }
+const removeSource = (
+  targetElementId: string,
+  targetParameterId: string,
+  sourceElementId: string,
+  sourceParameterId: string,
+  state: GraphStore
+): void => {
+  const target = state.elements[targetElementId]
 
-  if (elementId in state.registry.wires.to) {
-    delete state.registry.wires.to[elementId]
-  }
-}
+  switch (target.template.type) {
+    case 'static-parameter':
+    case 'static-component':
+    case 'panel':
+    case 'number-slider': {
+      const el = target as
+        | Glasshopper.Element.StaticParameter
+        | Glasshopper.Element.StaticComponent
+        | Glasshopper.Element.Panel
+        | Glasshopper.Element.NumberSlider
 
-const eraseWireFromRegistry = (wire: Glasshopper.Element.Wire, state: GraphStore): void => {
-  const { element: fromElement, parameter: fromParameter } = wire.current.sources.from
-  const { element: toElement, parameter: toParameter } = wire.current.sources.to
+      el.current.sources[targetParameterId] = el.current.sources[targetParameterId].filter(
+        ({ element, parameter }) => element !== sourceElementId && parameter !== sourceParameterId
+      )
 
-  if (state.registry.wires.from?.[fromElement]?.[fromParameter]) {
-    state.registry.wires.from[fromElement][fromParameter] = state.registry.wires.from[fromElement][
-      fromParameter
-    ].filter((id) => id !== wire.id)
-  }
-
-  if (state.registry.wires.from?.[toElement]?.[toParameter]) {
-    state.registry.wires.from[toElement][toParameter] = state.registry.wires.from[toElement][toParameter].filter(
-      (id) => id !== wire.id
-    )
-  }
-
-  if (state.registry.wires.to?.[toElement]?.[toParameter]) {
-    state.registry.wires.to[toElement][toParameter] = state.registry.wires.to[toElement][toParameter].filter(
-      (id) => id !== wire.id
-    )
-  }
-
-  if (state.registry.wires.to?.[fromElement]?.[fromParameter]) {
-    state.registry.wires.to[fromElement][fromParameter] = state.registry.wires.to[fromElement][fromParameter].filter(
-      (id) => id !== wire.id
-    )
+      break
+    }
+    default: {
+      console.log(`Cannot remove source for element type ${target.template.type}`)
+    }
   }
 }

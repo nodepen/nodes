@@ -56,6 +56,9 @@
     <Compile Include="Routes\CreateGrasshopperDefinition.cs" />
     <Compile Include="Routes\GetGrasshopperAssemblies.cs" />
     <Compile Include="Routes\SolveGrasshopperDefinition.cs" />
+    <Compile Include="Types\Geometry\NodePenLine.cs" />
+    <Compile Include="Types\Geometry\NodePenCurve.cs" />
+    <Compile Include="Types\Geometry\NodePenPoint.cs" />
     <Compile Include="Types\GrasshopperComponent.cs" />
     <Compile Include="Types\GrasshopperComponentParameter.cs" />
     <Compile Include="Types\Solution.cs" />
@@ -68,10 +71,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.664.37</Version>
+      <Version>1.0.705.50</Version>
     </PackageReference>
     <PackageReference Include="Nancy">
-      <Version>1.4.5</Version>
+      <Version>1.4.4</Version>
     </PackageReference>
     <PackageReference Include="Nancy.Gzip">
       <Version>0.1.0</Version>

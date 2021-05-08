@@ -14,6 +14,7 @@ export const QueueJobEntry = ({ sessionId, solutionId, registerGraph }: QueueJob
   const { data, stopPolling } = useQuery(SOLUTION_STATUS, { variables: { sessionId, solutionId }, pollInterval: 500 })
 
   const status = data?.getSolutionStatus?.status?.toLowerCase() ?? 'waiting'
+  const end = data?.getSolutionStatus?.finished_at ?? data?.getSolutionStatus?.started_at
   const userColor = stringToColour(sessionId)
 
   const [duration, setDuration] = useState<string>()
@@ -33,6 +34,19 @@ export const QueueJobEntry = ({ sessionId, solutionId, registerGraph }: QueueJob
     }
   }
 
+  const getDateString = (iso: string | undefined): string => {
+    if (!iso) {
+      return ''
+    }
+
+    const date = new Date(iso)
+
+    return `${date.getMonth().toString().padStart(2, '0')}${date
+      .getDate()
+      .toString()
+      .padStart(2, '0')}:${date.getHours().toString().padStart(2, '0')}${date.getMinutes().toString().padStart(2, '0')}`
+  }
+
   const statusColor = getStatusColor(status)
 
   useEffect(() => {
@@ -45,10 +59,34 @@ export const QueueJobEntry = ({ sessionId, solutionId, registerGraph }: QueueJob
 
         const graph: Glasshopper.Element.Base[] = Object.values(JSON.parse(json))
         setGraph(graph)
-        registerGraph(sessionId, graph)
       })
     }
   }, [status])
+
+  return (
+    <div
+      className={`${
+        status === 'failed' ? 'bg-dark text-white' : 'bg-white text-dark'
+      } p-2 pl-4 pr-4 mb-2 flex flex-row items-center`}
+    >
+      <div
+        className={`w-16 h-16 mr-2 ${status === 'succeeded' ? 'bg-dark' : 'bg-white'} border-dark`}
+        style={{ borderWidth: status !== 'failed' ? '8px' : '0' }}
+      />
+      <div className="font-panel text-5xl font-bold" style={{ transform: 'translateY(4px)' }}>
+        {sessionId.split('-')[1]}
+      </div>
+      <div
+        className="flex-grow h-full flex flex-col justify-center items-stretch"
+        style={{ transform: 'translateY(4px)' }}
+      >
+        <div className="leading-4 flex flex-row justify-end font-panel text-xl font-bold">
+          {duration}/{graph?.length ?? ''}
+        </div>
+        <div className="flex flex-row justify-end font-panel text-md">{getDateString(end)}</div>
+      </div>
+    </div>
+  )
 
   return (
     <div className={`${status === 'failed' ? 'bg-red-200' : ''} w-full h-10 p-2 mb-2 rounded-md flex items-center`}>

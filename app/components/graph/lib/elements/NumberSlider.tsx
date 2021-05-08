@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
-import { Grip, DataTree, Loading } from './common'
-import { useElementStatus } from './utils'
+import { Grip, DataTree, Loading, ConfigureButton } from './common'
+import { useElementStatus, useSelectableElement, useMoveableElement } from './utils'
 import { Input } from '@/components'
+import { hotkey } from '@/utils'
 
 type NumberSliderProps = {
   instanceId: string
@@ -13,11 +14,52 @@ type NumberSliderMode = 'input' | 'edit'
 
 export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.ReactElement => {
   const {
-    store: { elements, solution },
+    store: { elements, activeKeys },
     dispatch,
   } = useGraphManager()
 
   const slider = elements[id] as Glasshopper.Element.NumberSlider
+
+  const sliderRef = useRef<HTMLDivElement>(null)
+
+  const [isOverHandle, setIsOverHandle] = useState(false)
+
+  useEffect(() => {
+    if (!sliderRef) {
+      return
+    }
+
+    dispatch({ type: 'graph/register-element', ref: sliderRef, id })
+  }, [])
+
+  const onMove = (motion: [number, number]): void => {
+    if (isOverHandle) {
+      return
+    }
+    dispatch({ type: 'graph/mutation/move-component', id, motion })
+  }
+
+  useMoveableElement(onMove, undefined, undefined, sliderRef)
+
+  const onSelect = (): void => {
+    switch (hotkey.selectionMode(activeKeys)) {
+      case 'replace': {
+        dispatch({ type: 'graph/selection-clear' })
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+      case 'remove': {
+        dispatch({ type: 'graph/selection-remove', id })
+        break
+      }
+      case 'add': {
+        dispatch({ type: 'graph/selection-add', id })
+        break
+      }
+    }
+  }
+
+  useSelectableElement(onSelect, sliderRef)
 
   const [status, color] = useElementStatus(id)
 
@@ -30,7 +72,9 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   const [[x, y], setAnchor] = useState<[number, number]>([0, 0])
   const [currentValue, setCurrentValue] = useState(value)
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+  const handleRef = useRef<HTMLButtonElement>(null)
+
+  const handlePointerDown = (e: PointerEvent): void => {
     e.stopPropagation()
 
     if (mode !== 'input') {
@@ -92,12 +136,22 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
   }, [isSliding])
 
   useEffect(() => {
+    const handle = handleRef.current
+
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
 
+    if (handle) {
+      handle.addEventListener('pointerdown', handlePointerDown)
+    }
+
     return () => {
       window.removeEventListener('pointermove', handlePointerMove)
-      window.addEventListener('pointerup', handlePointerUp)
+      window.removeEventListener('pointerup', handlePointerUp)
+
+      if (handle) {
+        handle.removeEventListener('pointerdown', handlePointerDown)
+      }
     }
   })
 
@@ -172,9 +226,11 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
     <div className="absolute flex flex-row" style={{ left: dx - 128, top: -dy - 20 }}>
       <div className="relative w-64 h-10 ">
         <div
-          className="relative w-full h-full p-4 rounded-md border-2 border-dark shadow-osm bg-white flex flex-row items-center overflow-visible z-30"
+          className="relative w-full h-full p-4 rounded-md border-2 border-dark shadow-osm flex flex-row items-center overflow-visible transition-colors duration-150 z-30"
+          style={{ background: color }}
           onPointerDown={(e) => e.stopPropagation()}
           onMouseDown={(e) => e.stopPropagation()}
+          ref={sliderRef}
           role="presentation"
         >
           <div className="w-full relative bg-dark overflow-visible" style={{ height: '2px' }}>
@@ -183,34 +239,15 @@ export const NumberSlider = ({ instanceId: id }: NumberSliderProps): React.React
                 isSliding ? 'bg-green' : 'bg-white'
               } w-4 h-4 absolute rounded-sm border-2 border-dark hover:bg-green transition-colors duration-150`}
               style={{ top: -7, left: sliderPosition - 10, transform: 'rotate(45deg)' }}
-              onPointerDown={handlePointerDown}
+              ref={handleRef}
               onMouseDown={(e) => e.stopPropagation()}
             ></button>
           </div>
         </div>
         {mode === 'input' ? (
-          <button
-            className="absolute w-8 h-8 rounded-full border-2 border-green bg-pale flex justify-center items-center"
-            style={{ left: -38, top: 6 }}
-            onClick={handleStartEdit}
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="22"
-              height="22"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="#98E2C6"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
-              />
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-            </svg>
-          </button>
+          <div className="absolute w-8 h-8 justify-center items-center" style={{ left: -38, top: 6 }}>
+            <ConfigureButton onClick={handleStartEdit} />
+          </div>
         ) : null}
         {mode === 'input' ? (
           <div

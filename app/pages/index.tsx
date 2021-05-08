@@ -52,22 +52,29 @@ const Teaser = () => {
     setCircleDimensions([clientWidth, clientHeight])
   }, [])
 
-  useEffect(() => {
-    const speed = 0.25 / 45
-    const march = setInterval(() => {
-      setOffset((offset + speed) % 0.25)
-    }, 40)
-    return () => clearInterval(march)
-  }, [offset])
+  // useEffect(() => {
+  //   const speed = 0.25 / 45
+  //   const march = setInterval(() => {
+  //     setOffset((offset + speed) % 0.25)
+  //   }, 40)
+  //   return () => clearInterval(march)
+  // }, [offset])
 
   return (
     <div className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row">
-      <div className="w-48 h-8 arrow">
-        <svg width="192px" height="32" viewBox="0 0 192 32">
-          <line x1="4" y1="16" x2="188" y2="16" stroke="#333333" strokeWidth="0.8mm" strokeLinecap="round" />
-          <line x1="188" y1="16" x2="174" y2="2" stroke="#333333" strokeWidth="0.8mm" strokeLinecap="round" />
-          <line x1="188" y1="16" x2="174" y2="30" stroke="#333333" strokeWidth="0.8mm" strokeLinecap="round" />
-        </svg>
+      <div className="w-48 h-48 md:w-76 md:h-76 relative">
+        <div className="absolute left-0 top-0 w-48 h-48 md:w-76 md:h-76 rounded-full bg-pale animate-swell z-10" />
+        <div className="absolute left-0 top-0 w-48 h-48 md:w-76 md:h-76 z-20">
+          <div className="flex flex-col items-center justify-center w-full h-full">
+            <a href="/alpha/graph" className="font-sans font-semibold text-sm">
+              <div className="w-48 h-10 card-mono rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
+                <div className="flex-grow flex flex-row justify-center items-center">
+                  <div className="font-sans font-semibold text-sm">LAUNCH NODEPEN</div>
+                </div>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
       <div
         ref={circleRef}
@@ -88,21 +95,39 @@ const Teaser = () => {
           <p className="font-sans font-semibold text-sm mb-2">PUBLIC TEST MAY 7-9</p>
         </div>
       </div>
-      <a
-        href="https://github.com/cdriesler/nodepen"
-        target="_blank"
-        rel="noreferrer"
-        className="font-sans font-semibold text-sm"
-      >
-        <div className="w-48 h-10 card-mono rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
-          <div className="w-10 border-r-2 border-dark flex justify-center items-center">
-            <img alt="The official GitHub logo." src="/github.svg" width="24px" height="24px" />
+      <div className="flex flex-col">
+        <a
+          href="https://github.com/cdriesler/nodepen"
+          target="_blank"
+          rel="noreferrer"
+          className="font-sans font-semibold text-sm mb-2"
+        >
+          <div className="w-48 h-10 card-mono rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
+            <div className="w-10 border-r-2 border-dark flex justify-center items-center">
+              <img alt="The official GitHub logo." src="/github.svg" width="24px" height="24px" />
+            </div>
+            <div className="flex-grow flex flex-row justify-center items-center">
+              <div className="font-sans font-semibold text-sm">VIEW SOURCE</div>
+            </div>
           </div>
-          <div className="flex-grow flex flex-row justify-center items-center">
-            <div className="font-sans font-semibold text-sm">VIEW UPDATES</div>
+        </a>
+        <a
+          href="https://twitter.com/cdriesler"
+          target="_blank"
+          rel="noreferrer"
+          className="font-sans font-semibold text-sm"
+        >
+          <div className="w-48 h-10 card-mono rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
+            <div className="w-10 border-r-2 border-dark flex justify-center items-center">
+              <img alt="The official GitHub logo." src="/twitter.svg" width="24px" height="24px" />
+            </div>
+            <div className="flex-grow flex flex-row justify-center items-center">
+              <div className="font-sans font-semibold text-sm">VIEW UPDATES</div>
+            </div>
           </div>
-        </div>
-      </a>
+        </a>
+      </div>
+
       <style jsx>{`
         @keyframes arrowloop {
           from {

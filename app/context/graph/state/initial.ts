@@ -3,11 +3,13 @@ import { GraphStore } from '../types'
 export const initial: GraphStore = {
   elements: {},
   registry: {
-    wires: {
-      to: {},
-      from: {},
+    move: {
+      elements: [],
+      fromWires: [],
+      toWires: [],
     },
   },
+  activeKeys: [],
   camera: {
     position: [0, 0],
   },
@@ -15,7 +17,10 @@ export const initial: GraphStore = {
     executionMode: 'immediate',
   },
   overlay: {},
-  solution: {},
+  solution: {
+    status: 'SUCCEEDED',
+    duration: 0,
+  },
   selected: [],
   library: {
     params: {},

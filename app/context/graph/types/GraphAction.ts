@@ -8,6 +8,8 @@ export type GraphAction =
   | { type: 'session/expire-solution' }
   | { type: 'session/declare-solution'; id: string }
   | { type: 'session/set-ready' }
+  | { type: 'graph/hotkey/add-active-key'; code: string }
+  | { type: 'graph/hotkey/remove-active-key'; code: string }
   | { type: 'graph/register-camera'; ref: React.MutableRefObject<HTMLDivElement> }
   | { type: 'graph/register-element'; ref: React.MutableRefObject<HTMLDivElement | HTMLButtonElement>; id: string }
   | { type: 'graph/register-element-anchor'; elementId: string; anchorKey: string; position: [number, number] }
@@ -47,6 +49,7 @@ export type GraphAction =
       targetParameter: string
       values: Glasshopper.Data.DataTree
     }
+  | { type: 'graph/solution/set-status'; status: 'WAITING' | 'SUCCEEDED' | 'FAILED' | 'TIMEOUT'; duration: number }
   | { type: 'graph/clear' }
   | { type: 'camera/reset' }
   | { type: 'camera/pan'; dx: number; dy: number }
