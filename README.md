@@ -2,9 +2,9 @@
 
 ![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cdriesler/glasshopper.io/cd?style=flat-square)
 
-NodePen is a web client for grasshopper, a visual programming language for [Rhino](https://www.rhino3d.com/). [Rhino compute](https://www.rhino3d.com/compute) powers this 'shallow' wrapper for the same grasshopper you know and love.
+NodePen is a web client for [grasshopper](https://www.rhino3d.com/6/new/grasshopper/), a visual programming language for [Rhino 3D](https://www.rhino3d.com/). Rhino 7 shipped with [Rhino compute](https://www.rhino3d.com/compute), and that powers this 'shallow' wrapper for the same grasshopper you know and love.
 
-The name absolutely channels the goals of this project: a place for tinkering and sharing grasshopper snippets online. But that's a ways off! This is personal project that has been in development since Winter 2019. You should check out what I'm doing with some other cool people at [Hypar](https://hypar.io) in the meantime.
+The name absolutely channels the goals of this project: a place for tinkering with and sharing grasshopper snippets online. But that's a ways off! This is a personal project that has been in development since Winter 2019. You should check out what I'm doing with some other cool people at [Hypar](https://hypar.io) in the meantime.
 
 The project is under active development, but you can tinker with the latest build by visiting [nodepen.io](http://nodepen.io).
 
