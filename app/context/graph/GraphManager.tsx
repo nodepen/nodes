@@ -61,6 +61,7 @@ export const GraphManager = ({ children, config }: GraphManagerProps): React.Rea
     console.log(`Restoring session for session:${session.id}`)
     getCurrentGraph(session.id).then((elements) => {
       dispatch({ type: 'session/restore-session', elements })
+      dispatch({ type: 'graph/clear' })
     })
   }, [session.id])
 
