@@ -3,10 +3,11 @@ import React from 'react'
 type StatisticsProps = {
   values: number[]
   title: string
+  floor?: number
 }
 
-export const Statistics = ({ values, title }: StatisticsProps): React.ReactElement => {
-  const actualAverage = values.reduce((t, x) => t + x, 0) / values.length
+export const Statistics = ({ values, title, floor = 0 }: StatisticsProps): React.ReactElement => {
+  const actualAverage = values.map((t) => t - floor).reduce((t, x) => t + x, 0) / values.length
   const avg = Math.round(actualAverage)
   const max = Math.max(...values)
   const now = values[0]
@@ -23,9 +24,10 @@ export const Statistics = ({ values, title }: StatisticsProps): React.ReactEleme
       <div className="inline-block w-full pr-2 h-8">
         <div className="w-full h-full flex flex-row items-center">
           <p className="font-panel text-xl text-dark font-black flex-grow">{title.toUpperCase()}</p>
+          {floor > 0 ? <p className="font-panel text-xl text-dark font-black mr-2">({floor})</p> : null}
           <p className="font-panel text-xl text-dark font-black mr-2">+{max}</p>
-          <p className="font-panel text-xl text-dark font-black mr-2">/{avg}</p>
-          <p className="font-panel text-xl text-dark font-black mr-2">&gt;{now}</p>
+          <p className="font-panel text-xl text-dark font-black mr-2">/{avg - floor}</p>
+          <p className="font-panel text-xl text-dark font-black mr-2">&gt;{now - floor}</p>
         </div>
       </div>
     </div>
