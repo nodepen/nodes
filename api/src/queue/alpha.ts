@@ -10,3 +10,7 @@ export const alpha = process.env.NP_DB_HOST
   : new Queue('alpha', {
       isWorker: false,
     })
+
+alpha.checkStalledJobs(5000, (err, num) => {
+  console.log(`re-queued ${num} jobs`)
+})

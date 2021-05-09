@@ -48,8 +48,6 @@ export const QueueContainer = (): React.ReactElement => {
     return () => clearInterval(interval)
   }, [data])
 
-  const floor = new Set(depths).size == 1 ? depths?.[0] : 0
-
   return (
     <main className="w-full h-full p-6 flex flex-row items-stretch">
       <div className="flex flex-col" style={{ width: '30%' }}>
@@ -73,7 +71,7 @@ export const QueueContainer = (): React.ReactElement => {
           {data?.getQueueStatus?.session_count}
         </div>
         <div className="flex flex-row justify-end mt-6">
-          <Statistics title="depth" values={depths} floor={floor} />
+          <Statistics title="depth" values={depths} />
         </div>
       </div>
     </main>
