@@ -10,6 +10,7 @@ type SolutionStatus = {
   started_at?: string
   finished_at?: string
   duration?: string
+  parameter_count?: string
 }
 
 export const getSolutionStatus = (
