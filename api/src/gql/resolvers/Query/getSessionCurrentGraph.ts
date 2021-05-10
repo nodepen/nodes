@@ -13,12 +13,12 @@ export const getSessionCurrentGraph = async (
   const solutionId = await getSessionCurrentGraphId(sessionId)
 
   if (!solutionId) {
-    return '[]'
+    return '{}'
   }
 
   const graph = await getSessionGraphElements(sessionId, solutionId)
 
-  return graph ?? '[]'
+  return graph ?? '{}'
 }
 
 const getSessionCurrentGraphId = async (id: string): Promise<string | null> => {
