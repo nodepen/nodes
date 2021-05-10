@@ -17,7 +17,7 @@ export const Statistics = ({ values, title }: StatisticsProps): React.ReactEleme
         <div
           key={`${val}-${i}`}
           className="inline-block w-8 h-8 bg-dark mr-2"
-          style={{ background: val == 0 ? '#F7F7F7' : `rgba(0, 0, 0, ${val / max})` }}
+          style={{ background: val === 0 ? '#F7F7F7' : `rgba(0, 0, 0, ${val / max})` }}
         />
       ))}
       <div className="inline-block w-full pr-2 h-8">
