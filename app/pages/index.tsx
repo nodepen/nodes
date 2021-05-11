@@ -71,22 +71,30 @@ const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
   return (
     <div className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row">
       <div className="w-76 flex flex-col items-center">
-        <p className="flex flex-row text-darkgreen text-4xl font-semibold font-panel leading-5">
-          {`${solutionCount.toString()}`.split('').map((x, i) => (
-            <p className="animate-pulse" key={`sc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
-              {x}
-            </p>
-          ))}
-        </p>
-        <p className="text-swampgreen text-xl font-black font-panel mb-3">GRAPHS SOLVED</p>
-        <p className="flex flex-row text-darkgreen text-3xl font-semibold font-panel leading-5">
-          {`${userCount.toString()}`.split('').map((x, i) => (
-            <p className="animate-pulse" key={`sc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
-              {x}
-            </p>
-          ))}
-        </p>
-        <p className="text-swampgreen text-xl font-black font-panel mb-3">USERS</p>
+        {solutionCount ? (
+          <>
+            <h2 className="flex flex-row text-darkgreen text-4xl font-semibold font-panel leading-5">
+              {`${solutionCount.toString()}`.split('').map((x, i) => (
+                <p className="animate-pulse" key={`sc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
+                  {x}
+                </p>
+              ))}
+            </h2>
+            <h3 className="text-swampgreen text-xl font-black font-panel mb-3">GRAPHS SOLVED</h3>
+          </>
+        ) : null}
+        {userCount ? (
+          <>
+            <h2 className="flex flex-row text-darkgreen text-4xl font-semibold font-panel leading-5">
+              {`${userCount.toString()}`.split('').map((x, i) => (
+                <p className="animate-pulse" key={`uc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
+                  {x}
+                </p>
+              ))}
+            </h2>
+            <h3 className="text-swampgreen text-xl font-black font-panel mb-3">USERS</h3>
+          </>
+        ) : null}
       </div>
       <div
         ref={circleRef}
