@@ -1,6 +1,14 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
+import { GetServerSideProps, NextPage } from 'next'
+import { ApolloClient, InMemoryCache } from '@apollo/client'
+import { QUEUE_STATUS } from '@/queries'
 
-const Teaser = () => {
+type HomeProps = {
+  solutionCount: number
+  userCount: number
+}
+
+const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
   const [[w, h], setCircleDimensions] = useState<[number, number]>([0, 0])
   const [offset, setOffset] = useState(0)
 
@@ -63,8 +71,22 @@ const Teaser = () => {
   return (
     <div className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row">
       <div className="w-76 flex flex-col items-center">
-        <p>1212</p>
-        <p>245</p>
+        <p className="flex flex-row text-darkgreen text-4xl font-semibold font-panel leading-5">
+          {`${solutionCount.toString()}`.split('').map((x, i) => (
+            <p className="animate-pulse" key={`sc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
+              {x}
+            </p>
+          ))}
+        </p>
+        <p className="text-swampgreen text-xl font-black font-panel mb-3">GRAPHS SOLVED</p>
+        <p className="flex flex-row text-darkgreen text-3xl font-semibold font-panel leading-5">
+          {`${userCount.toString()}`.split('').map((x, i) => (
+            <p className="animate-pulse" key={`sc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
+              {x}
+            </p>
+          ))}
+        </p>
+        <p className="text-swampgreen text-xl font-black font-panel mb-3">USERS</p>
       </div>
       <div
         ref={circleRef}
@@ -117,4 +139,23 @@ const Teaser = () => {
   )
 }
 
-export default Teaser
+export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
+  const client = new ApolloClient({
+    ssrMode: true,
+    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'https://api.dev.nodepen.io/graphql',
+    cache: new InMemoryCache(),
+  })
+
+  const { data } = await client.query({ query: QUEUE_STATUS, variables: { depth: 10 } })
+
+  const status = data.getQueueStatus
+
+  return {
+    props: {
+      solutionCount: status?.total_count,
+      userCount: status?.session_count,
+    },
+  }
+}
+
+export default Home
