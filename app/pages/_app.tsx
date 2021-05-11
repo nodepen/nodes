@@ -1,5 +1,6 @@
 import React from 'react'
 import type { AppProps } from 'next/app'
+import Head from 'next/head'
 import { SessionManager } from '~/context/session'
 
 import { ApolloProvider, ApolloClient, InMemoryCache } from '@apollo/client'
@@ -19,6 +20,15 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
 
   return (
     <ApolloProvider client={client}>
+      <Head>
+        <title>NodePen</title>
+        <meta
+          name="description"
+          content="NodePen is a web client for Grasshopper, the visual programming language for Rhino 3D. Same Grasshopper, new digs. Powered by Rhino
+          Compute."
+        />
+        <meta name="keywords" content="grasshopper, online grasshopper, rhino, rhino.compute, rhino compute" />
+      </Head>
       <SessionManager>
         <Component {...pageProps} />
       </SessionManager>
