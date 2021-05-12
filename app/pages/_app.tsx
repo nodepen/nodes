@@ -21,7 +21,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
   return (
     <ApolloProvider client={client}>
       <Head>
-        <title>NodePen</title>
+        <title>nodepen</title>
         <meta
           name="description"
           content="NodePen is a web client for Grasshopper, the visual programming language for Rhino 3D. Same Grasshopper, new digs. Powered by Rhino
