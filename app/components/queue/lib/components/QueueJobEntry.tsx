@@ -10,15 +10,14 @@ type QueueJobEntryProps = {
 }
 
 export const QueueJobEntry = ({ sessionId, solutionId, registerGraph }: QueueJobEntryProps): React.ReactElement => {
-  const client = useApolloClient()
   const { data, stopPolling } = useQuery(SOLUTION_STATUS, { variables: { sessionId, solutionId }, pollInterval: 500 })
 
   const status = data?.getSolutionStatus?.status?.toLowerCase() ?? 'waiting'
   const end = data?.getSolutionStatus?.finished_at ?? data?.getSolutionStatus?.started_at
-  const userColor = stringToColour(sessionId)
+  const parameterCount = data?.getSolutionStatus?.parameter_count ?? '-'
 
   const [duration, setDuration] = useState<string>()
-  const [graph, setGraph] = useState<Glasshopper.Element.Base[]>()
+  // const [graph, setGraph] = useState<Glasshopper.Element.Base[]>()
 
   const getStatusColor = (status: string): string => {
     switch (status) {
@@ -54,12 +53,12 @@ export const QueueJobEntry = ({ sessionId, solutionId, registerGraph }: QueueJob
       stopPolling()
       setDuration(data.getSolutionStatus.duration)
 
-      client.query({ query: GRAPH_JSON, variables: { sessionId, solutionId } }).then(({ data }) => {
-        const json = data.getGraphJson
+      // client.query({ query: GRAPH_JSON, variables: { sessionId, solutionId } }).then(({ data }) => {
+      //   const json = data.getGraphJson
 
-        const graph: Glasshopper.Element.Base[] = Object.values(JSON.parse(json))
-        setGraph(graph)
-      })
+      //   const graph: Glasshopper.Element.Base[] = Object.values(JSON.parse(json))
+      //   setGraph(graph)
+      // })
     }
   }, [status])
 
@@ -81,35 +80,35 @@ export const QueueJobEntry = ({ sessionId, solutionId, registerGraph }: QueueJob
         style={{ transform: 'translateY(4px)' }}
       >
         <div className="leading-4 flex flex-row justify-end font-panel text-xl font-bold">
-          {duration}/{graph?.length ?? ''}
+          {duration}/{parameterCount}
         </div>
         <div className="flex flex-row justify-end font-panel text-md">{getDateString(end)}</div>
       </div>
     </div>
   )
 
-  return (
-    <div className={`${status === 'failed' ? 'bg-red-200' : ''} w-full h-10 p-2 mb-2 rounded-md flex items-center`}>
-      <div className="w-6 h-6 mr-2 rounded-full" style={{ background: statusColor }} />
-      <div className="w-6 h-6 mr-2 rounded-full" style={{ background: userColor }} />
-      {status === 'failed' ? (
-        <div className="flex-grow flex flex-col items-end">
-          <p className="text-xs">{sessionId}</p>
-          <p className="text-xs">{solutionId}</p>
-        </div>
-      ) : (
-        <>
-          <p>{sessionId.split('-')[1]}</p>
-          <p> : </p>
-          <p>{solutionId.split('-')[1]}</p>
-          <div className="flex-grow flex justify-end items-center">
-            {graph ? <p>({graph.length})</p> : null}
-            {duration ? <p className="ml-2">{duration}ms</p> : null}
-          </div>
-        </>
-      )}
-    </div>
-  )
+  // return (
+  //   <div className={`${status === 'failed' ? 'bg-red-200' : ''} w-full h-10 p-2 mb-2 rounded-md flex items-center`}>
+  //     <div className="w-6 h-6 mr-2 rounded-full" style={{ background: statusColor }} />
+  //     <div className="w-6 h-6 mr-2 rounded-full" style={{ background: userColor }} />
+  //     {status === 'failed' ? (
+  //       <div className="flex-grow flex flex-col items-end">
+  //         <p className="text-xs">{sessionId}</p>
+  //         <p className="text-xs">{solutionId}</p>
+  //       </div>
+  //     ) : (
+  //       <>
+  //         <p>{sessionId.split('-')[1]}</p>
+  //         <p> : </p>
+  //         <p>{solutionId.split('-')[1]}</p>
+  //         <div className="flex-grow flex justify-end items-center">
+  //           {graph ? <p>({graph.length})</p> : null}
+  //           {duration ? <p className="ml-2">{duration}ms</p> : null}
+  //         </div>
+  //       </>
+  //     )}
+  //   </div>
+  // )
 }
 
 const stringToColour = (str: string): string => {

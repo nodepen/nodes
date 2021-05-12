@@ -46,6 +46,7 @@ export const schema = gql`
     started_at: String
     finished_at: String
     duration: Int
+    parameter_count: String
   }
 
   type SolutionValue {

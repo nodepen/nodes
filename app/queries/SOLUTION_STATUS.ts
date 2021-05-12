@@ -7,6 +7,7 @@ export const SOLUTION_STATUS = gql`
       started_at
       finished_at
       duration
+      parameter_count
     }
   }
 `

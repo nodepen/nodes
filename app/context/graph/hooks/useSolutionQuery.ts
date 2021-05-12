@@ -17,12 +17,16 @@ export const useSolutionQuery = (session: string, target: string, store: GraphSt
 
   const client = useApolloClient()
 
-  const { data: solutionStatus, startPolling, stopPolling } = useQuery(SOLUTION_STATUS, {
+  const { data: solutionStatus, startPolling, stopPolling, error } = useQuery(SOLUTION_STATUS, {
     variables: {
       sessionId: session,
       solutionId: waitingFor,
     },
   })
+
+  if (error) {
+    console.log(error)
+  }
 
   useEffect(() => {
     if (target === waitingFor) {
