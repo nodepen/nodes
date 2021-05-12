@@ -1,5 +1,6 @@
 import React from 'react'
 import { NextPage, GetStaticProps } from 'next'
+import Head from 'next/head'
 import { Grasshopper } from 'glib'
 import { Layout, Graph } from '@/components'
 import { GraphManager } from '~/context/graph'
@@ -13,6 +14,10 @@ type GraphPageProps = {
 const AlphaGraphPage: NextPage<GraphPageProps> = ({ config }) => {
   return (
     <Layout.Root>
+      <Head>
+        <title>nodepen: graph editor</title>
+        <meta name="description" content="The graph editor for NodePen. Create a grasshopper script on the web." />
+      </Head>
       <GraphManager config={config}>
         <Graph.Container />
       </GraphManager>

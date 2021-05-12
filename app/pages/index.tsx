@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { GetServerSideProps, NextPage } from 'next'
+import Head from 'next/head'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { QUEUE_STATUS } from '@/queries'
 
@@ -70,6 +71,15 @@ const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
 
   return (
     <div className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row">
+      <Head>
+        <title>nodepen: grasshopper online</title>
+        <meta
+          name="description"
+          content="NodePen is a web client for Grasshopper, the visual programming language for Rhino 3D. Same Grasshopper, new digs. Powered by Rhino
+          Compute."
+        />
+        <meta name="keywords" content="grasshopper, online grasshopper, web grasshopper, rhino.compute" />
+      </Head>
       <div className="w-76 flex flex-col items-center">
         {solutionCount ? (
           <>
