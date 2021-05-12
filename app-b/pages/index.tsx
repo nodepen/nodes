@@ -35,6 +35,8 @@ const Home = (): React.ReactElement => {
             setScale(zoom.scale)
             setPosition([zoom.positionX, zoom.positionY])
           }}
+          pinch={{ disabled: true }}
+          wheel={{ step: 100 }}
         >
           <></>
           <TransformComponent>
@@ -69,6 +71,15 @@ const Home = (): React.ReactElement => {
           onContextMenu={(e) => {
             e.preventDefault()
           }}
+          onMouseDown={(e) => {
+            switch (e.button) {
+              case 2:
+                return
+              default:
+                e.stopPropagation()
+            }
+          }}
+          role="presentation"
         >
           {c}
         </div>
