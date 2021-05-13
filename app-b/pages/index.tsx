@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef, useMemo } from 'react'
+import React, { useState, useEffect, useRef, useMemo } from 'react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+import Draggable from 'react-draggable'
 
 const Home = (): React.ReactElement => {
   const [[dx, dy], setPosition] = useState<[number, number]>([0, 0])
@@ -39,13 +40,15 @@ const Home = (): React.ReactElement => {
           <></>
           <TransformComponent>
             <div style={{ width: w, height: h }}>
+              <Draggable scale={scale} onStart={(e) => {e.stopPropagation()}} >
               <div className="w-16 h-16 bg-red-500" />
+              </Draggable>
             </div>
           </TransformComponent>
         </TransformWrapper>
       </div>
     ),
-    [w, h]
+    [w, h, scale]
   )
 
   return (
