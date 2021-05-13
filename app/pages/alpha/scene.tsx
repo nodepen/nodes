@@ -1,5 +1,6 @@
 import React from 'react'
 import { NextPage, GetStaticProps } from 'next'
+import Head from 'next/head'
 import { Grasshopper } from 'glib'
 import { Layout, Scene } from '@/components'
 import { GraphManager } from '~/context/graph'
@@ -13,6 +14,10 @@ type ScenePageProps = {
 const AlphaScenePage: NextPage<ScenePageProps> = ({ config }) => {
   return (
     <Layout.Root>
+      <Head>
+        <title>nodepen: scene viewer</title>
+        <meta name="description" content="The scene viewer for NodePen. View the 3D results of the current graph." />
+      </Head>
       <GraphManager config={config}>
         <Scene.Container />
       </GraphManager>

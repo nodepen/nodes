@@ -54,10 +54,6 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       // Increment session solution number
       await db.hincrby('queue:sessions', sessionId, 1)
 
-      // Store started_at at session:id:solution:id
-      const start = Date.now()
-      db.hset(solutionKey, 'started_at', new Date(start).toISOString())
-
       // Store json in redis
       const jsonkey = `${solutionKey}:json`
       await db.set(jsonkey, JSON.stringify(graph))
@@ -71,6 +67,10 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const elements = Object.values(graph).filter((el) =>
         validTypes.includes(el.template.type)
       )
+
+      // Store started_at at session:id:solution:id
+      const start = Date.now()
+      db.hset(solutionKey, 'started_at', new Date(start).toISOString())
 
       const { data: ghx } = await axios.post(
         `${COMPUTE}/grasshopper/graph`,
@@ -94,14 +94,6 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const duration = end - start
       console.log(`${sessionId}:${solutionId} completed in ${duration}ms`)
 
-      db.hset(
-        solutionKey,
-        'finished_at',
-        new Date(end).toISOString(),
-        'duration',
-        duration.toString()
-      )
-
       // Store solution stats and messages
       const { data: results, messages, timeout } = solution
 
@@ -113,6 +105,16 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
 
         throw new Error('Timeout')
       }
+
+      db.hset(
+        solutionKey,
+        'finished_at',
+        new Date(end).toISOString(),
+        'duration',
+        duration.toString(),
+        'parameter_count',
+        results.length.toString()
+      )
 
       console.log(
         `[ JOB #${job.id} ]  [ SOLUTION ]  ${results.length} parameters in ${duration}ms`
