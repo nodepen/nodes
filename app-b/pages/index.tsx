@@ -26,6 +26,8 @@ const Home = (): React.ReactElement => {
       <div className="w-full h-full relative overflow-visible">
         <TransformWrapper
           defaultScale={1}
+          defaultPositionX={27}
+          defaultPositionY={27}
           options={{ limitToWrapper: false, limitToBounds: false, centerContent: false, minScale: 0.25, maxScale: 2.5 }}
           onPanning={(x: any) => {
             setPosition([x.positionX, x.positionY])
@@ -36,6 +38,8 @@ const Home = (): React.ReactElement => {
           }}
           pinch={{ step: 100 }}
           wheel={{ step: 100 }}
+          scalePadding={{ disabled: true }}
+          pan={{ velocity: false }}
         >
           <></>
           <TransformComponent>
@@ -48,7 +52,7 @@ const Home = (): React.ReactElement => {
         </TransformWrapper>
       </div>
     ),
-    [w, h, scale]
+    [w, h]
   )
 
   const meta = scale < 0.5 ? 5 : 1
