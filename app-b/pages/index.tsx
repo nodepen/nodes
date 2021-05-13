@@ -1,4 +1,4 @@
-import { useState, useLayoutEffect, useEffect, useRef, useMemo } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 
 const Home = (): React.ReactElement => {
@@ -11,8 +11,6 @@ const Home = (): React.ReactElement => {
     if (!canvasRef.current) {
       return
     }
-
-    const canvas = canvasRef.current
 
     setReady(true)
   }, [])
@@ -27,7 +25,7 @@ const Home = (): React.ReactElement => {
       <div className="w-full h-full relative overflow-visible">
         <TransformWrapper
           defaultScale={1}
-          options={{ limitToWrapper: false, limitToBounds: false, centerContent: false }}
+          options={{ limitToWrapper: false, limitToBounds: false, centerContent: false, minScale: 0.25, maxScale: 2.5 }}
           onPanning={(x: any) => {
             setPosition([x.positionX, x.positionY])
           }}
@@ -35,7 +33,7 @@ const Home = (): React.ReactElement => {
             setScale(zoom.scale)
             setPosition([zoom.positionX, zoom.positionY])
           }}
-          pinch={{ disabled: true }}
+          pinch={{ step: 100 }}
           wheel={{ step: 100 }}
         >
           <></>
