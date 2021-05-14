@@ -62,7 +62,7 @@ export const RootLayout = ({ children }: RootLayoutProps): JSX.Element => {
                 A limited (but growing!) list of standard Grasshopper components are available.
               </li>
               <li className="leading-5 mb-1">
-                You may randomly experience breakages, performance issues, or other inexplicable behavior.
+                This was meant for a weekend infrastructure test. You will experience performance issues.
               </li>
               <li className="leading-5 mb-1">
                 The database can be wiped at any time, clearing anything that might persist today.

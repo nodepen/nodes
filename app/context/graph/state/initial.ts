@@ -28,6 +28,8 @@ export const initial: GraphStore = {
     sets: {},
     vector: {},
     curve: {},
+    mesh: {},
+    intersect: {},
     transform: {},
   },
   ready: false,

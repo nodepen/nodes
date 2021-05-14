@@ -1,7 +1,7 @@
 import { Grasshopper, Glasshopper } from 'glib'
 import { GraphExecutionMode } from './GraphExecutionMode'
 
-type LibraryCategory = 'params' | 'maths' | 'sets' | 'vector' | 'curve' | 'transform'
+type LibraryCategory = 'params' | 'maths' | 'sets' | 'vector' | 'curve' | 'mesh' | 'intersect' | 'transform'
 
 export type GraphStore = {
   elements: { [key: string]: Glasshopper.Element.Base }
