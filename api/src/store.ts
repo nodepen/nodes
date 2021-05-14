@@ -58,6 +58,12 @@ export const allowedComponents = {
     ],
   },
   maths: {
+    domain: [
+      'f44b92b0-3b5b-493a-86f4-fd7408c3daf3', // Bounds (Bnd)
+      'd1a28e95-cf96-4936-bf34-8bf142d731bf', // Construct Domain (Dom)
+      '825ea536-aebb-41e9-af32-8baeb2ecb590', // Deconstruct Domain (DeDomain)
+      '2fcc2743-8339-4cdf-a046-a1f17439191d', // Remap Numbers (ReMap)
+    ],
     operators: [
       'a0d62394-a118-422d-abb3-6af115c75b25', // Addition (A+B)
       '9c85271f-89fa-4e9f-9f4a-d75802120ccc', // Division (A/B)
@@ -77,8 +83,10 @@ export const allowedComponents = {
   sets: {
     list: [
       '59daf374-bc21-4a5e-8282-5504fb7ae9ae', // List Item (Item)
+      '1817fd29-20ae-4503-b542-f0fb651e67d7', // List Length (Lng)
       '6ec97ea8-c559-47a2-8d0f-ce80c794d1f4', // Reverse List (Rev)
       '6f93d366-919f-4dda-a35e-ba03dd62799b', // Sort List (Sort)
+      '9ab93e1a-ebdf-4090-9296-b000cff7b202', // Split List (Split)
     ],
     sequence: [
       // '01640871-69ea-40ac-9380-4660d6d28bd2', // Char Sequence (CharSeq)
@@ -94,6 +102,7 @@ export const allowedComponents = {
   vector: {
     grid: [
       '125dc122-8544-4617-945e-bb9a0c101c50', // Hexagonal (HexGrid)
+      'e2d958e8-9f08-44f7-bf47-a684882d0b2a', // Populate 2D (Pop2D)
       '66eedc35-187d-4dab-b49b-408491b1255f', // Radial (RadGrid)
       '1a25aae0-0b56-497a-85b2-cc5bf7e4b96b', // Rectangular (RecGrid)
       '717a1e25-a075-4530-bc80-d43ecc2500d9', // Square (SqGrid)
@@ -156,6 +165,22 @@ export const allowedComponents = {
     spline: [
       '2b2a4145-3dff-41d4-a8de-1ea9d29eef33', // Interpolate (IntCrv)
       '71b5b089-500a-4ea6-81c5-2f960441a0e8', // PolyLine (PLine)
+    ],
+  },
+  mesh: {
+    triangulation: [
+      'a4011be0-1c91-45bd-8280-17dd3a9f46f1', // Voronoi (Voronoi)
+    ],
+  },
+  intersect: {
+    physical: [
+      '84627490-0fb2-4498-8138-ad134ee4cb36', // Curve | Curve (CCX)
+      '0991ac99-6a0b-47a9-b07d-dd510ca57f0f', // Curve | Self (CX)
+    ],
+    shape: [
+      'f72c480b-7ee6-42ef-9821-c371e9203b44', // Region Difference (RDiff)
+      '477c2e7b-c5e5-421e-b8b2-ba60cdf5398b', // Region Intersection (RInt)
+      '1222394f-0d33-4f31-9101-7281bde89fe5', // Region Union (RUnion)
     ],
   },
   transform: {

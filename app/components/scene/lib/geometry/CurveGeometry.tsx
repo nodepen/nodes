@@ -1,13 +1,11 @@
 import React, { useRef } from 'react'
 import { Glasshopper } from 'glib'
 import { Vector3 } from 'three'
+import { DrawMaterial } from '../types'
 
 type CurveProps = {
   curve: Glasshopper.Geometry.Curve
-  material?: {
-    color?: string
-    width?: number
-  }
+  material: DrawMaterial
 }
 
 export const CurveGeometry = ({ curve, material }: CurveProps): React.ReactElement => {
@@ -34,8 +32,10 @@ export const CurveGeometry = ({ curve, material }: CurveProps): React.ReactEleme
         attach="material"
         ref={mat}
         depthTest={false}
-        lineWidth={material?.width ?? 0.1}
-        color={material?.color ?? 'darkred'}
+        opacity={material.opacity}
+        transparent={material.opacity < 1}
+        lineWidth={material.size ?? 0.1}
+        color={material.color ?? 'darkred'}
       />
     </mesh>
   )

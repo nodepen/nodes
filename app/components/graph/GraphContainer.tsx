@@ -11,13 +11,11 @@ export const GraphContainer = (): React.ReactElement => {
 
   return (
     <main className="w-full flex-grow overflow-hidden" id="graph-container">
-      <LoadingOverlay>
-        <div className="w-full h-full bg-pale flex flex-col items-center" style={{ height: minHeight }}>
-          <Header />
-          <Canvas />
-          <Controls />
-        </div>
-      </LoadingOverlay>
+      <div className="w-full h-full bg-pale flex flex-col items-center" style={{ height: minHeight }}>
+        <Header />
+        <Canvas />
+        <Controls />
+      </div>
     </main>
   )
 }
