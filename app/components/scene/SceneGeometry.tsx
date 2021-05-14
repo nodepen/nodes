@@ -1,29 +1,22 @@
-import React, { useMemo, useCallback } from 'react'
-import { Canvas, extend } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei'
+import React, { useCallback } from 'react'
+import { extend } from '@react-three/fiber'
 import * as MeshLine from 'threejs-meshline'
 import { Glasshopper } from 'glib'
-import { useGraphManager } from '@/context/graph'
-import { useSceneManager } from './lib/context'
 import { DrawMode, SceneElementId as Id } from './lib/types'
-import { SceneGrid as Grid } from './SceneGrid'
 import * as Geometry from './lib/geometry'
 
 type SceneProps = {
+  config: {
+    draw: DrawMode
+  }
+  elements: { [key: string]: Glasshopper.Element.Base }
+  selection: string[]
   children?: JSX.Element
 }
 
 extend(MeshLine)
 
-const Scene = ({ children }: SceneProps): React.ReactElement => {
-  const {
-    store: { elements },
-  } = useGraphManager()
-
-  const {
-    store: { selection },
-  } = useSceneManager()
-
+const SceneGeometry = ({ config, elements, selection }: SceneProps): React.ReactElement => {
   const getElementTrees = useCallback((element: Glasshopper.Element.Base): [string, Glasshopper.Data.DataTree][] => {
     switch (element.template.type) {
       case 'static-component': {
@@ -77,12 +70,51 @@ const Scene = ({ children }: SceneProps): React.ReactElement => {
   }, [])
 
   return (
-    <Canvas orthographic camera={{ zoom: 50, position: [0, 20, 0], near: -5 }} style={{ height: '100%' }}>
-      <OrbitControls />
-      <Grid />
-      {children}
-    </Canvas>
+    <>
+      {elementsToValues(Object.values(elements)).map(([id, value]) => {
+        const selected = selection.includes(id.element)
+
+        switch (value.type) {
+          case 'point': {
+            const { data } = value as Glasshopper.Data.DataTreeValue<'point'>
+
+            const material = {
+              size: 0.5,
+              color: selected ? 'green' : 'darkred',
+              opacity: config.draw === 'selection' ? (selected ? 0.6 : 0) : 0.6,
+            }
+
+            return <Geometry.Point key={idToKey(id)} point={data} material={material} />
+          }
+          case 'curve': {
+            const { data } = value as Glasshopper.Data.DataTreeValue<'curve'>
+
+            const material = {
+              size: 0.1,
+              color: selected ? 'green' : 'darkred',
+              opacity: config.draw === 'selection' ? (selected ? 0.9 : 0) : 0.9,
+            }
+
+            return <Geometry.Curve key={idToKey(id)} curve={data} material={material} />
+          }
+          case 'line': {
+            const { data } = value as Glasshopper.Data.DataTreeValue<'line'>
+
+            const material = {
+              size: 0.1,
+              color: selected ? 'green' : 'darkred',
+              opacity: config.draw === 'selection' ? (selected ? 0.9 : 0) : 0.9,
+            }
+
+            return <Geometry.Line key={idToKey(id)} line={data} material={material} />
+          }
+          default: {
+            return null
+          }
+        }
+      })}
+    </>
   )
 }
 
-export default Scene
+export default SceneGeometry

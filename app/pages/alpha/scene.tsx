@@ -4,6 +4,7 @@ import Head from 'next/head'
 import { Grasshopper } from 'glib'
 import { Layout, Scene } from '@/components'
 import { GraphManager } from '~/context/graph'
+import { SceneManager } from '@/components/scene/lib/context'
 import { ApolloClient, InMemoryCache } from '@apollo/client'
 import { COMPUTE_CONFIGURATION } from '@/queries'
 
@@ -19,7 +20,9 @@ const AlphaScenePage: NextPage<ScenePageProps> = ({ config }) => {
         <meta name="description" content="The scene viewer for NodePen. View the 3D results of the current graph." />
       </Head>
       <GraphManager config={config}>
-        <Scene.Container />
+        <SceneManager>
+          <Scene.Container />
+        </SceneManager>
       </GraphManager>
     </Layout.Root>
   )
