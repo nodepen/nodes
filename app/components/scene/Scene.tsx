@@ -78,7 +78,7 @@ const Scene = ({ config }: SceneProps): React.ReactElement => {
   }
 
   return (
-    <Canvas orthographic camera={{ zoom: 50, position: [0, 20, 0], near: -5 }}>
+    <Canvas orthographic camera={{ zoom: 50, position: [0, 20, 0], near: -5 }} style={{ height: '100%' }}>
       <OrbitControls />
       <Grid />
       <>
@@ -103,7 +103,7 @@ const Scene = ({ config }: SceneProps): React.ReactElement => {
               const material = {
                 size: 0.1,
                 color: selected ? 'green' : 'darkred',
-                opacity: 0.6,
+                opacity: 0.9,
               }
 
               return <Geometry.Curve key={idToKey(id)} curve={data} material={material} />
@@ -114,7 +114,7 @@ const Scene = ({ config }: SceneProps): React.ReactElement => {
               const material = {
                 size: 0.1,
                 color: selected ? 'green' : 'darkred',
-                opacity: 0.6,
+                opacity: 0.9,
               }
 
               return <Geometry.Line key={idToKey(id)} line={data} material={material} />
