@@ -33,6 +33,7 @@ const MyApp = ({ Component, pageProps }: AppProps) => {
           padding: 0;
           margin: 0;
           overflow: hidden;
+          color: #333333;
         }
 
         * {
