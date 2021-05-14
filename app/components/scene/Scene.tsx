@@ -27,7 +27,9 @@ const Scene = (): React.ReactElement => {
       case 'static-component': {
         const component = element as Glasshopper.Element.StaticComponent
 
-        return Object.entries(component.current.values)
+        return Object.entries(component.current.values).filter(([id, _]) =>
+          Object.keys(component.current.outputs).includes(id)
+        )
       }
       case 'static-parameter': {
         const parameter = element as Glasshopper.Element.StaticParameter
