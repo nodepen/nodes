@@ -12,7 +12,7 @@ export const SceneContainer = (): React.ReactElement => {
         <LoadingOverlay>
           <div className="w-full h-full bg-pale flex flex-col items-center">
             <div className="w-full h-12 bg-green z-10" />
-            <Scene />
+            <Scene config={{ draw: 'default' }} />
           </div>
         </LoadingOverlay>
       </main>

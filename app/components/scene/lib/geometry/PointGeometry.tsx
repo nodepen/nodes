@@ -1,18 +1,24 @@
 import React from 'react'
 import { Sphere } from '@react-three/drei'
 import { Glasshopper } from 'glib'
+import { DrawMaterial } from '../types'
 
 type PointProps = {
   point: Glasshopper.Geometry.Point
-  selected: boolean
+  material: DrawMaterial
 }
 
-export const PointGeometry = ({ point, selected }: PointProps): React.ReactElement => {
+export const PointGeometry = ({ point, material }: PointProps): React.ReactElement => {
   const { x, y, z } = point
 
   return (
     <Sphere visible args={[0.1, 10, 10]} position={[x, z, -y]}>
-      <meshBasicMaterial attach="material" color={selected ? 'green' : 'darkred'} opacity={0.6} transparent={true} />
+      <meshBasicMaterial
+        attach="material"
+        color={material.color}
+        opacity={material.opacity}
+        transparent={material.opacity < 1}
+      />
     </Sphere>
   )
 }

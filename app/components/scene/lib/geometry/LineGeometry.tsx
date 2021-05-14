@@ -1,13 +1,11 @@
 import { React } from '@ungap/global-this'
 import { Glasshopper } from 'glib'
 import { Vector3 } from 'three'
+import { DrawMaterial } from '../types'
 
 type LineProps = {
   line: Glasshopper.Geometry.Line
-  material?: {
-    color?: string
-    width?: number
-  }
+  material: DrawMaterial
 }
 
 export const LineGeometry = ({ line, material }: LineProps): React.ReactElement => {
@@ -23,8 +21,10 @@ export const LineGeometry = ({ line, material }: LineProps): React.ReactElement 
       <meshLineMaterial
         attach="material"
         depthTest={false}
-        lineWidth={material?.width ?? 0.06}
+        lineWidth={material?.size ?? 0.06}
         color={material?.color ?? 'darkred'}
+        opacity={material.opacity}
+        transparent={material.opacity < 1}
       />
     </mesh>
   )

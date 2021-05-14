@@ -5,13 +5,19 @@ import * as MeshLine from 'threejs-meshline'
 import { Glasshopper } from 'glib'
 import { useGraphManager } from '@/context/graph'
 import { useSceneManager } from './lib/context'
-import { SceneElementId as Id } from './lib/types'
+import { DrawMode, SceneElementId as Id } from './lib/types'
 import { SceneGrid as Grid } from './SceneGrid'
 import * as Geometry from './lib/geometry'
 
 extend(MeshLine)
 
-const Scene = (): React.ReactElement => {
+type SceneProps = {
+  config: {
+    draw: DrawMode
+  }
+}
+
+const Scene = ({ config }: SceneProps): React.ReactElement => {
   const {
     store: { elements },
   } = useGraphManager()
@@ -83,14 +89,21 @@ const Scene = (): React.ReactElement => {
             case 'point': {
               const { data } = value as Glasshopper.Data.DataTreeValue<'point'>
 
-              return <Geometry.Point key={idToKey(id)} point={data} selected={selected} />
+              const material = {
+                size: 0.5,
+                color: selected ? 'green' : 'darkred',
+                opacity: 0.6,
+              }
+
+              return <Geometry.Point key={idToKey(id)} point={data} material={material} />
             }
             case 'curve': {
               const { data } = value as Glasshopper.Data.DataTreeValue<'curve'>
 
               const material = {
-                width: 0.1,
+                size: 0.1,
                 color: selected ? 'green' : 'darkred',
+                opacity: 0.6,
               }
 
               return <Geometry.Curve key={idToKey(id)} curve={data} material={material} />
@@ -99,8 +112,9 @@ const Scene = (): React.ReactElement => {
               const { data } = value as Glasshopper.Data.DataTreeValue<'line'>
 
               const material = {
-                width: 0.1,
+                size: 0.1,
                 color: selected ? 'green' : 'darkred',
+                opacity: 0.6,
               }
 
               return <Geometry.Line key={idToKey(id)} line={data} material={material} />
