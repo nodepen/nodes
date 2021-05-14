@@ -88,12 +88,22 @@ const Scene = (): React.ReactElement => {
             case 'curve': {
               const { data } = value as Glasshopper.Data.DataTreeValue<'curve'>
 
-              return <Geometry.Curve key={idToKey(id)} curve={data} />
+              const material = {
+                width: 0.1,
+                color: selected ? 'green' : 'darkred',
+              }
+
+              return <Geometry.Curve key={idToKey(id)} curve={data} material={material} />
             }
             case 'line': {
               const { data } = value as Glasshopper.Data.DataTreeValue<'line'>
 
-              return <Geometry.Line key={idToKey(id)} line={data} />
+              const material = {
+                width: 0.1,
+                color: selected ? 'green' : 'darkred',
+              }
+
+              return <Geometry.Line key={idToKey(id)} line={data} material={material} />
             }
             default: {
               return null
