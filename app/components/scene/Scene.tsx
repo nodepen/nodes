@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react'
+import React from 'react'
 import { Canvas, extend } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as MeshLine from 'threejs-meshline'
@@ -9,13 +9,15 @@ import { DrawMode, SceneElementId as Id } from './lib/types'
 import { SceneGrid as Grid } from './SceneGrid'
 import * as Geometry from './lib/geometry'
 
-type SceneProps = {
-  children?: JSX.Element
-}
-
 extend(MeshLine)
 
-const Scene = ({ children }: SceneProps): React.ReactElement => {
+type SceneProps = {
+  config: {
+    draw: DrawMode
+  }
+}
+
+const Scene = ({ config }: SceneProps): React.ReactElement => {
   const {
     store: { elements },
   } = useGraphManager()
@@ -24,7 +26,7 @@ const Scene = ({ children }: SceneProps): React.ReactElement => {
     store: { selection },
   } = useSceneManager()
 
-  const getElementTrees = useCallback((element: Glasshopper.Element.Base): [string, Glasshopper.Data.DataTree][] => {
+  const getElementTrees = (element: Glasshopper.Element.Base): [string, Glasshopper.Data.DataTree][] => {
     switch (element.template.type) {
       case 'static-component': {
         const component = element as Glasshopper.Element.StaticComponent
@@ -40,12 +42,11 @@ const Scene = ({ children }: SceneProps): React.ReactElement => {
         return []
       }
     }
-  }, [])
+  }
 
-  const elementsToValues = useCallback((elements: Glasshopper.Element.Base[]): [
-    Id,
-    Glasshopper.Data.DataTreeValue<Glasshopper.Data.ValueType>
-  ][] => {
+  const elementsToValues = (
+    elements: Glasshopper.Element.Base[]
+  ): [Id, Glasshopper.Data.DataTreeValue<Glasshopper.Data.ValueType>][] => {
     const results: [Id, Glasshopper.Data.DataTreeValue<Glasshopper.Data.ValueType>][] = []
 
     elements.forEach((el) => {
@@ -69,18 +70,62 @@ const Scene = ({ children }: SceneProps): React.ReactElement => {
     console.log(`Scene has ${results.length} items.`)
 
     return results
-  }, [])
+  }
 
-  const idToKey = useCallback((id: Id): string => {
+  const idToKey = (id: Id): string => {
     const { element, parameter, branch, index } = id
     return `scene-${element}-${parameter}-${branch}-${index}`
-  }, [])
+  }
 
   return (
     <Canvas orthographic camera={{ zoom: 50, position: [0, 20, 0], near: -5 }} style={{ height: '100%' }}>
       <OrbitControls />
       <Grid />
-      {children}
+      <>
+        {elementsToValues(Object.values(elements)).map(([id, value]) => {
+          const selected = selection.includes(id.element)
+
+          switch (value.type) {
+            case 'point': {
+              const { data } = value as Glasshopper.Data.DataTreeValue<'point'>
+
+              const material = {
+                size: 0.5,
+                color: selected ? 'green' : 'darkred',
+                opacity: 0.6,
+              }
+
+              return <Geometry.Point key={idToKey(id)} point={data} material={material} />
+            }
+            case 'curve': {
+              const { data } = value as Glasshopper.Data.DataTreeValue<'curve'>
+
+              const material = {
+                size: 0.1,
+                color: selected ? 'green' : 'darkred',
+                opacity: 0.9,
+              }
+
+              return <Geometry.Curve key={idToKey(id)} curve={data} material={material} />
+            }
+            case 'line': {
+              const { data } = value as Glasshopper.Data.DataTreeValue<'line'>
+
+              const material = {
+                size: 0.1,
+                color: selected ? 'green' : 'darkred',
+                opacity: 0.9,
+              }
+
+              return <Geometry.Line key={idToKey(id)} line={data} material={material} />
+            }
+            default: {
+              return null
+            }
+          }
+        })}
+      </>
+      {/* </OrthographicCamera> */}
     </Canvas>
   )
 }
