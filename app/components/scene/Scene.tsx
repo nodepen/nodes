@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Canvas, extend } from '@react-three/fiber'
 import { OrbitControls } from '@react-three/drei'
 import * as MeshLine from 'threejs-meshline'
@@ -11,13 +11,7 @@ import * as Geometry from './lib/geometry'
 
 extend(MeshLine)
 
-type SceneProps = {
-  config: {
-    draw: DrawMode
-  }
-}
-
-const Scene = ({ config }: SceneProps): React.ReactElement => {
+const Scene = (): React.ReactElement => {
   const {
     store: { elements },
   } = useGraphManager()
@@ -25,6 +19,8 @@ const Scene = ({ config }: SceneProps): React.ReactElement => {
   const {
     store: { selection },
   } = useSceneManager()
+
+  const [mode, setMode] = useState<DrawMode>('default')
 
   const getElementTrees = (element: Glasshopper.Element.Base): [string, Glasshopper.Data.DataTree][] => {
     switch (element.template.type) {
@@ -78,55 +74,60 @@ const Scene = ({ config }: SceneProps): React.ReactElement => {
   }
 
   return (
-    <Canvas orthographic camera={{ zoom: 50, position: [0, 20, 0], near: -5 }} style={{ height: '100%' }}>
-      <OrbitControls />
-      <Grid />
-      <>
-        {elementsToValues(Object.values(elements)).map(([id, value]) => {
-          const selected = selection.includes(id.element)
+    <>
+      <div className="w-full h-12 p-2 pl-8 pr-8 flex flex-row justify-start items-center bg-green z-10">
+        <button onClick={() => setMode((current) => (current === 'default' ? 'selection' : 'selection'))}>TRY</button>
+      </div>
+      <Canvas orthographic camera={{ zoom: 50, position: [0, 20, 0], near: -5 }} style={{ height: '100%' }}>
+        <OrbitControls />
+        <Grid />
+        <>
+          {elementsToValues(Object.values(elements)).map(([id, value]) => {
+            const selected = selection.includes(id.element)
 
-          switch (value.type) {
-            case 'point': {
-              const { data } = value as Glasshopper.Data.DataTreeValue<'point'>
+            switch (value.type) {
+              case 'point': {
+                const { data } = value as Glasshopper.Data.DataTreeValue<'point'>
 
-              const material = {
-                size: 0.5,
-                color: selected ? 'green' : 'darkred',
-                opacity: 0.6,
+                const material = {
+                  size: 0.5,
+                  color: selected ? 'green' : 'darkred',
+                  opacity: mode === 'selection' ? (selected ? 0.6 : 0) : 0.6,
+                }
+
+                return <Geometry.Point key={idToKey(id)} point={data} material={material} />
               }
+              case 'curve': {
+                const { data } = value as Glasshopper.Data.DataTreeValue<'curve'>
 
-              return <Geometry.Point key={idToKey(id)} point={data} material={material} />
-            }
-            case 'curve': {
-              const { data } = value as Glasshopper.Data.DataTreeValue<'curve'>
+                const material = {
+                  size: 0.1,
+                  color: selected ? 'green' : 'darkred',
+                  opacity: mode === 'selection' ? (selected ? 0.9 : 0) : 0.9,
+                }
 
-              const material = {
-                size: 0.1,
-                color: selected ? 'green' : 'darkred',
-                opacity: 0.9,
+                return <Geometry.Curve key={idToKey(id)} curve={data} material={material} />
               }
+              case 'line': {
+                const { data } = value as Glasshopper.Data.DataTreeValue<'line'>
 
-              return <Geometry.Curve key={idToKey(id)} curve={data} material={material} />
-            }
-            case 'line': {
-              const { data } = value as Glasshopper.Data.DataTreeValue<'line'>
+                const material = {
+                  size: 0.1,
+                  color: selected ? 'green' : 'darkred',
+                  opacity: mode === 'selection' ? (selected ? 0.9 : 0) : 0.9,
+                }
 
-              const material = {
-                size: 0.1,
-                color: selected ? 'green' : 'darkred',
-                opacity: 0.9,
+                return <Geometry.Line key={idToKey(id)} line={data} material={material} />
               }
-
-              return <Geometry.Line key={idToKey(id)} line={data} material={material} />
+              default: {
+                return null
+              }
             }
-            default: {
-              return null
-            }
-          }
-        })}
-      </>
-      {/* </OrthographicCamera> */}
-    </Canvas>
+          })}
+        </>
+        {/* </OrthographicCamera> */}
+      </Canvas>
+    </>
   )
 }
 

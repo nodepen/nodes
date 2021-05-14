@@ -12,8 +12,7 @@ export const SceneContainer = (): React.ReactElement => {
     <SceneManager>
       <main className="w-full overflow-hidden" style={{ height: '100vh' }}>
         <div className="w-full h-full bg-pale flex flex-col items-center">
-          <div className="w-full h-12 bg-green z-10" />
-          <Scene config={config} />
+          <Scene />
         </div>
       </main>
     </SceneManager>
