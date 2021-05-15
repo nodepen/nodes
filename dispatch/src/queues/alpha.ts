@@ -140,7 +140,7 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
           const key = `${solutionKey}:solution:${elementId}:${parameterId}`
           const tree = resultsToDataTree(values)
 
-          writeSolution.set(key, JSON.stringify(tree))
+          writeSolution.setex(key, 60 * 10, JSON.stringify(tree))
         }
       )
 
@@ -148,25 +148,6 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
         writeSolution.exec((error, reply) => {
           if (error) {
             reject(error)
-          }
-          resolve()
-        })
-      })
-
-      // Set solution items to expire
-      const expireSolution = db.batch()
-
-      results.forEach(
-        ({ elementId, parameterId, values }: GrasshopperResult) => {
-          const key = `${solutionKey}:solution:${elementId}:${parameterId}`
-          expireSolution.expire(key, 600)
-        }
-      )
-
-      await new Promise<void>((resolve, reject) => {
-        expireSolution.exec((err, reply) => {
-          if (err) {
-            reject(err)
           }
           resolve()
         })
@@ -196,7 +177,7 @@ const succeeded = async (
 
       await db.hset(key, 'status', 'SUCCEEDED')
 
-      await db.expire(key, 600)
+      await db.expire(key, 60 * 60 * 12)
 
       return
     }
@@ -213,14 +194,14 @@ const failed = async (job: Job<AlphaJobArgs>): Promise<void> => {
 
       const result = await db.hget(key, 'status')
 
+      await db.expire(key, 60 * 60 * 12)
+
       if (result.toString() === 'TIMEOUT') {
         return
       }
 
       console.log(`[ JOB #${job.id} ]  [ FAILED ]`)
       await db.hset(key, 'status', 'FAILED')
-
-      await db.expire(key, 600)
 
       return
     }
