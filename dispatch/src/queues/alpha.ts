@@ -43,8 +43,6 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const { sessionId, solutionId, graph } = job.data
       const solutionKey = `session:${sessionId}:graph:${solutionId}`
 
-      await db.expire(solutionKey, 600)
-
       console.log(`[ JOB #${job.id} ]  [ START ]  ${sessionId}:${solutionId}`)
 
       // Remove job from waiting
@@ -143,7 +141,6 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
           const tree = resultsToDataTree(values)
 
           writeSolution.set(key, JSON.stringify(tree))
-          writeSolution.expire(key, 600)
         }
       )
 
@@ -151,6 +148,25 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
         writeSolution.exec((error, reply) => {
           if (error) {
             reject(error)
+          }
+          resolve()
+        })
+      })
+
+      // Set solution items to expire
+      const expireSolution = db.batch()
+
+      results.forEach(
+        ({ elementId, parameterId, values }: GrasshopperResult) => {
+          const key = `${solutionKey}:solution:${elementId}:${parameterId}`
+          expireSolution.expire(key, 600)
+        }
+      )
+
+      await new Promise<void>((resolve, reject) => {
+        expireSolution.exec((err, reply) => {
+          if (err) {
+            reject(err)
           }
           resolve()
         })
@@ -180,6 +196,8 @@ const succeeded = async (
 
       await db.hset(key, 'status', 'SUCCEEDED')
 
+      await db.expire(key, 600)
+
       return
     }
   }
@@ -201,6 +219,8 @@ const failed = async (job: Job<AlphaJobArgs>): Promise<void> => {
 
       console.log(`[ JOB #${job.id} ]  [ FAILED ]`)
       await db.hset(key, 'status', 'FAILED')
+
+      await db.expire(key, 600)
 
       return
     }
