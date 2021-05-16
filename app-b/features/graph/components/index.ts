@@ -1,4 +1,3 @@
-import Canvas from './GraphCanvas'
-import Grid from './GraphGrid'
+import * as Layout from './layout'
 
-export { Canvas, Grid }
+export { Layout }

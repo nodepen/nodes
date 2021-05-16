@@ -1,5 +1,5 @@
 import React from 'react'
-import { Canvas, Grid } from './components'
+import { Layout } from './components'
 
 export const GraphContainer = (): React.ReactElement => {
   return (
@@ -7,10 +7,10 @@ export const GraphContainer = (): React.ReactElement => {
       <div className="w-full h-8 bg-green" />
       <div className="w-full flex-grow relative">
         <div className="w-full h-full absolute z-0">
-          <Grid />
+          <Layout.Grid />
         </div>
         <div className="w-full h-full absolute z-10">
-          <Canvas />
+          <Layout.Canvas />
         </div>
       </div>
     </div>

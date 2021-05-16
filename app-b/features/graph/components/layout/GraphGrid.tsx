@@ -1,5 +1,5 @@
 import React from 'react'
-import { useGridDimensions } from '../store/hooks'
+import { useGridDimensions } from '../../store/hooks'
 
 const GraphGrid = (): React.ReactElement => {
   const {

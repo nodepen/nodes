@@ -1,6 +1,7 @@
 import React from 'react'
-import { useCameraDispatch } from './../store/hooks'
+import { useCameraDispatch } from '../../store/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+import { Container } from '../elements'
 
 const GraphCanvas = (): React.ReactElement => {
   const { setZoom, setPosition } = useCameraDispatch()
@@ -40,7 +41,7 @@ const GraphCanvas = (): React.ReactElement => {
       >
         <TransformComponent>
           <div className="w-vw h-vh">
-            <div className="w-16 h-16 bg-red-500">OK</div>
+            <Container />
           </div>
         </TransformComponent>
       </TransformWrapper>
