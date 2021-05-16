@@ -1,10 +1,11 @@
 import { NextPage } from 'next'
 import { Layout } from 'features/common'
+import { Graph } from 'features'
 
 const GrasshopperEditor: NextPage = () => {
   return (
     <Layout.Editor>
-      <div className="w-full h-full bg-pale" />
+      <Graph.Container />
     </Layout.Editor>
   )
 }

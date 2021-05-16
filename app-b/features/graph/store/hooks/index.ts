@@ -3,3 +3,5 @@ export { useCameraDispatch } from './useCameraDispatch'
 
 export { useCameraPosition } from './useCameraPosition'
 export { useCameraZoom } from './useCameraZoom'
+
+export { useGridScale } from './useGridScale'
