@@ -20,10 +20,11 @@ export const cameraSlice = createSlice({
   },
 })
 
+const selectCamera = (state: RootState): CameraState => state.camera
 const selectZoom = (state: RootState): number => state.camera.zoom
 const selectPosition = (state: RootState): [number, number] => state.camera.position
 
-export const cameraSelectors = { selectZoom, selectPosition }
+export const cameraSelectors = { selectCamera, selectZoom, selectPosition }
 
 const { actions, reducer } = cameraSlice
 
