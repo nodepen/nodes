@@ -1,4 +1,5 @@
-import { Grid } from './components'
+import React from 'react'
+import { Canvas, Grid } from './components'
 
 export const GraphContainer = (): React.ReactElement => {
   return (
@@ -8,7 +9,9 @@ export const GraphContainer = (): React.ReactElement => {
         <div className="w-full h-full absolute z-0">
           <Grid />
         </div>
-        <div className="w-full h-full absolute z-10">OK</div>
+        <div className="w-full h-full absolute z-10">
+          <Canvas />
+        </div>
       </div>
     </div>
   )
