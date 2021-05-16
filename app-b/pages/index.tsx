@@ -44,8 +44,14 @@ const Home = (): React.ReactElement => {
           <></>
           <TransformComponent>
             <div style={{ width: w, height: h }}>
-              <Draggable scale={scale} onStart={(e) => {e.stopPropagation()}} disabled={scale < 0.5}>
-              <div className="w-16 h-16 bg-red-500" />
+              <Draggable
+                scale={scale}
+                onStart={(e) => {
+                  e.stopPropagation()
+                }}
+                disabled={scale < 0.5}
+              >
+                <div className="w-16 h-16 bg-red-500" />
               </Draggable>
             </div>
           </TransformComponent>
