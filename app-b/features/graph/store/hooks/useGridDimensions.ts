@@ -13,9 +13,11 @@ export const useGridDimensions = (): GridDimensions => {
 
   const scale = zoom < 0.5 ? 5 : 1
 
+  const pxtomm = 0.26458
+
   return {
-    size: 25 * zoom * scale,
+    size: 25 * pxtomm * zoom * scale,
     thickness: 0.3 * zoom,
-    position: [cx % (25 * zoom * scale), cy % (25 * zoom * scale)],
+    position: [(cx * pxtomm) % (25 * pxtomm * zoom * scale), (cy * pxtomm) % (25 * pxtomm * zoom * scale)],
   }
 }

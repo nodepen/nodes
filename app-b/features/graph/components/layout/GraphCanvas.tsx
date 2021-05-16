@@ -34,7 +34,7 @@ const GraphCanvas = (): React.ReactElement => {
           setZoom(zoom.scale)
           setPosition([zoom.positionX, zoom.positionY])
         }}
-        pinch={{ step: 100 }}
+        pinch={{ step: 20 }}
         wheel={{ step: 100 }}
         scalePadding={{ disabled: true }}
         pan={{ velocity: false }}
