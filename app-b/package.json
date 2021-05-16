@@ -8,10 +8,12 @@
     "start": "next start"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.5.1",
     "next": "10.2.0",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-draggable": "^4.4.3",
+    "react-redux": "^7.2.4",
     "react-zoom-pan-pinch": "^1.6.1"
   },
   "devDependencies": {
@@ -22,8 +24,8 @@
     "@typescript-eslint/parser": "^4.23.0",
     "autoprefixer": "^10.2.5",
     "eslint": "^7.26.0",
-    "eslint-plugin-import": "^2.22.1",
     "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.22.1",
     "eslint-plugin-jsx-a11y": "^6.4.1",
     "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.23.2",
