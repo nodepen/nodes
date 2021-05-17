@@ -1,0 +1,40 @@
+{
+  "name": "nodepen-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/server.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdriesler/nodepen.git"
+  },
+  "author": "Chuck Driesler",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cdriesler/nodepen/issues"
+  },
+  "homepage": "https://github.com/cdriesler/nodepen#readme",
+  "dependencies": {
+    "apollo-server": "^2.24.0",
+    "bee-queue": "^1.3.1",
+    "dotenv": "^9.0.2",
+    "graphql": "^15.5.0",
+    "redis": "^3.1.2"
+  },
+  "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/redis": "^2.8.28",
+    "@typescript-eslint/eslint-plugin": "^3.0.2",
+    "@typescript-eslint/parser": "^3.0.2",
+    "eslint": "^7.1.0",
+    "eslint-config-prettier": "^6.11.0",
+    "eslint-plugin-prettier": "^3.1.3",
+    "glib": "file:../lib",
+    "prettier": "^2.0.5",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^4.2.4"
+  }
+}
