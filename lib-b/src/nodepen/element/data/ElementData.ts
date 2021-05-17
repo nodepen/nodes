@@ -1,10 +1,10 @@
-import { GraphElement, VisibleElement } from './types'
+import { GraphElement, GripElement, VisibleElement } from './types'
 import { ElementDataEntry } from './ElementDataEntry'
 
 export type ElementData = {
-    'static-component': GraphElement & VisibleElement
-    'static-parameter': GraphElement & VisibleElement
-    'number-slider': GraphElement & VisibleElement
-    'panel': VisibleElement
+    'static-component': GraphElement & GripElement & VisibleElement
+    'static-parameter': GraphElement & GripElement & VisibleElement
+    'number-slider': GraphElement & GripElement & VisibleElement
+    'panel': VisibleElement &  GripElement
     'wire': VisibleElement
 } & ElementDataEntry
