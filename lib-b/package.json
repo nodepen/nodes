@@ -1,0 +1,22 @@
+{
+  "name": "nodepen-lib",
+  "version": "1.0.0",
+  "description": "shared nodepen types and utilities",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cdriesler/nodepen.git"
+  },
+  "author": "Chuck Driesler",
+  "license": "AGPL-3.0",
+  "bugs": {
+    "url": "https://github.com/cdriesler/nodepen/issues"
+  },
+  "homepage": "https://github.com/cdriesler/nodepen#readme",
+  "devDependencies": {
+    "typescript": "^4.2.4"
+  }
+}
