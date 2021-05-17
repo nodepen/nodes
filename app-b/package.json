@@ -9,8 +9,10 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.5.1",
+    "firebase": "^8.6.1",
     "glib": "file:../lib-b",
     "next": "10.2.0",
+    "nookies": "^2.5.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
     "react-draggable": "^4.4.3",
