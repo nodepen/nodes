@@ -11,14 +11,17 @@ type GraphManagerProps = {
 }
 
 export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
-  const { user } = useSessionManager()
+  const { token } = useSessionManager()
+
+  console.log({ tokenInManager: token })
 
   const client = useApolloClient()
 
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
   useEffect(() => {
-    if (!user || !!library) {
+    console.log('smt')
+    if (!token || !!library) {
       return
     }
 
@@ -65,10 +68,16 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       return data?.getInstalledComponents
     }
 
-    fetchLibrary().then((lib) => {
-      setLibrary(lib)
-    })
-  }, [user, library, client])
+    fetchLibrary()
+      .then((lib) => {
+        console.log({ lib })
+        setLibrary(lib)
+      })
+      .catch((err) => {
+        console.log(document.cookie)
+        console.error(err)
+      })
+  }, [token, library, client])
 
   const store: GraphStore = {
     library,

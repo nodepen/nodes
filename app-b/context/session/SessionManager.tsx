@@ -2,7 +2,6 @@ import React, { useState, useEffect, createContext } from 'react'
 import { firebase } from './auth/firebase'
 import nookies from 'nookies'
 import { SessionStore } from './types'
-import { gql, useApolloClient } from '@apollo/client'
 
 export const SessionContext = createContext<SessionStore>({})
 
@@ -14,32 +13,33 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
   const [user, setUser] = useState<SessionStore['user']>(undefined)
   const [token, setToken] = useState<string>()
 
-  const client = useApolloClient()
-
   useEffect(() => {
     return firebase.auth().onIdTokenChanged(async (u) => {
+      nookies.destroy(undefined, 'token')
+
       if (!u) {
         const anon = await firebase.auth().signInAnonymously()
 
         if (!anon.user) {
           // Handle this failure gracefully
-          setToken(undefined)
           nookies.set(undefined, 'token', '', { path: '/' })
+          setToken(undefined)
           return
         }
 
-        setUser(anon.user)
-
         const token = await anon.user.getIdToken()
 
-        setToken(token)
         nookies.set(undefined, 'token', token, { path: '/' })
+
+        setUser(anon.user)
+        setToken(token)
       } else {
         const token = await u.getIdToken()
-        setUser(u)
 
-        setToken(token)
         nookies.set(undefined, 'token', token, { path: '/' })
+
+        setUser(u)
+        setToken(token)
       }
     })
   }, [])
@@ -53,27 +53,5 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     return () => clearInterval(handleRefresh)
   }, [])
 
-  useEffect(() => {
-    client
-      .query({
-        query: gql`
-          query {
-            getInstalledComponents {
-              guid
-            }
-          }
-        `,
-      })
-      .then((res) => {
-        console.log({ result: res })
-      })
-      .catch((err) => {
-        console.error(err)
-      })
-  }, [client, token])
-
-  // console.log(token)
-  // console.log(user?.uid)
-
-  return <SessionContext.Provider value={{ user, session: '...' }}>{children}</SessionContext.Provider>
+  return <SessionContext.Provider value={{ user, token, session: '...' }}>{children}</SessionContext.Provider>
 }

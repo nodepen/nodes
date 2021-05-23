@@ -10,19 +10,10 @@ export const api = new ApolloServer({
   cors: {
     origin: origins,
     credentials: true,
+    allowedHeaders: '*',
   },
   context: async ({ req, res }) => {
-    const crumbs = (req.headers?.cookie ?? '')
-      .split('; ')
-      .reduce((all, current) => {
-        const [key, value] = current.split('=')
-
-        all[key] = value
-
-        return all
-      }, {} as { [key: string]: string })
-
-    const token = crumbs?.token
+    const token = req.headers?.authorization
 
     const user: { id: string; name: string } = {
       id: undefined,
