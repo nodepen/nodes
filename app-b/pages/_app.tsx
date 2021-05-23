@@ -11,7 +11,7 @@ import 'tailwindcss/tailwind.css'
 const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   const client = new ApolloClient({
     link: new BatchHttpLink({
-      uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql',
+      uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://192.168.0.211:4000/graphql',
       credentials: 'include',
       batchInterval: 25,
       batchMax: 50,

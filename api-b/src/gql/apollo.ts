@@ -2,16 +2,13 @@ import { ApolloServer, AuthenticationError } from 'apollo-server'
 import { schema as typeDefs } from './schema'
 import { resolvers } from './resolvers'
 import admin from 'firebase-admin'
+import { origins } from './origins'
 
 export const api = new ApolloServer({
   typeDefs,
   resolvers,
   cors: {
-    origin: [
-      'https://nodepen.io',
-      'https://dev.nodepen.io',
-      'http://localhost:3000',
-    ],
+    origin: origins,
     credentials: true,
   },
   context: async ({ req, res }) => {
