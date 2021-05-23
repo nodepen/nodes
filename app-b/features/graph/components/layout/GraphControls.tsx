@@ -30,11 +30,12 @@ export const GraphControls = (): React.ReactElement => {
         className="pl-4 pr-4 bg-green absolute transition-all duration-150 ease-out"
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
       >
-        <div className="w-full h-full flex flex-col overflow-auto no-scrollbar">
-          <div
+        <div className="w-full h-full overflow-auto no-scrollbar">
+          {/* <div
             className="mt-4 mb-4 bg-swampgreen"
             style={{ width: sidebarWidth - 32, height: (sidebarWidth - 32) * 0.75 }}
-          ></div>
+          ></div> */}
+          <div className="w-full h-12 mt-4 mb-4 sticky bg-swampgreen top-0" />
           {library?.map((el) => (
             <div>{el.nickname}</div>
           ))}
