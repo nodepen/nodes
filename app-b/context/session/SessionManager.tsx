@@ -4,7 +4,7 @@ import nookies from 'nookies'
 import { SessionStore } from './types'
 import { gql, useApolloClient } from '@apollo/client'
 
-const SessionContext = createContext<SessionStore>({})
+export const SessionContext = createContext<SessionStore>({})
 
 type SessionManagerProps = {
   children?: JSX.Element
