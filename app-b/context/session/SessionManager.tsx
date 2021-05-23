@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext } from 'react'
 import { firebase } from './auth/firebase'
 import nookies from 'nookies'
 import { SessionStore } from './types'
+import { gql, useApolloClient } from '@apollo/client'
 
 const SessionContext = createContext<SessionStore>({})
 
@@ -12,6 +13,8 @@ type SessionManagerProps = {
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
   const [user, setUser] = useState<SessionStore['user']>(undefined)
   const [token, setToken] = useState<string>()
+
+  const client = useApolloClient()
 
   useEffect(() => {
     return firebase.auth().onIdTokenChanged(async (u) => {
@@ -50,8 +53,27 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     return () => clearInterval(handleRefresh)
   }, [])
 
-  console.log(token)
-  console.log(user?.uid)
+  useEffect(() => {
+    client
+      .query({
+        query: gql`
+          query {
+            getInstalledComponents {
+              guid
+            }
+          }
+        `,
+      })
+      .then((res) => {
+        console.log({ result: res })
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+  }, [client, token])
+
+  // console.log(token)
+  // console.log(user?.uid)
 
   return <SessionContext.Provider value={{ user, session: '...' }}>{children}</SessionContext.Provider>
 }
