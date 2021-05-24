@@ -13,8 +13,6 @@ type GraphManagerProps = {
 export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
   const { token } = useSessionManager()
 
-  console.log({ tokenInManager: token })
-
   const client = useApolloClient()
 
   const [library, setLibrary] = useState<Grasshopper.Component[]>()

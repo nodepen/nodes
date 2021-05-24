@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useGraphManager } from 'context/graph'
-import { categorize } from '../../utils'
+import { categorize, flattenCategory } from '../../utils'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
@@ -11,6 +11,11 @@ export const GraphControls = (): React.ReactElement => {
   const libraryByCategory = useMemo(() => categorize(library ?? []), [library])
 
   const [selectedCategory, setSelectedCategory] = useState('params')
+
+  const selectedCategoryComponents = useMemo(
+    () => flattenCategory(libraryByCategory, selectedCategory),
+    [libraryByCategory, selectedCategory]
+  )
 
   useEffect(() => {
     const handleResize = (): void => {
@@ -57,9 +62,9 @@ export const GraphControls = (): React.ReactElement => {
           <div className="w-full h-12" />
         </div>
       </div>
-      {sidebarWidth < 400 && sidebarIsOpen ? (
+      {sidebarIsOpen ? (
         <button
-          className="absolute w-12 h-vh z-50 opacity-0"
+          className="absolute w-vw h-vh z-50 opacity-0"
           style={{ left: sidebarWidth, top: 48 }}
           onClick={() => setSidebarIsOpen(false)}
         />
@@ -115,14 +120,26 @@ export const GraphControls = (): React.ReactElement => {
             ref={componentToolbarRef}
           >
             {library
-              ? null
+              ? selectedCategoryComponents.map((component) => (
+                  <div
+                    key={`library-${component.guid}`}
+                    className="w-12 h-12 inline-block transition-colors duration-75 md:hover:bg-swampgreen"
+                  >
+                    <div className="w-full h-full flex justify-center items-center">
+                      <img
+                        src={`data:image/png;base64,${component.icon}`}
+                        alt={`The icon for the ${component.name} component in ${component.category}.`}
+                      />
+                    </div>
+                  </div>
+                ))
               : Array.from(Array(6)).map((_, i) => (
                   <div
                     key={`library-skeleton-${i}`}
                     className="w-12 h-12 inline-block transition-colors duration-75 md:hover:bg-swampgreen"
                   >
                     <div className="w-full h-full flex justify-center items-center">
-                      <div className="w-8 h-8 rounded-sm animate-pulse bg-swampgreen" />
+                      <div className="w-6 h-6 rounded-sm animate-pulse bg-swampgreen" />
                     </div>
                   </div>
                 ))}

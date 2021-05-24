@@ -1,14 +1,10 @@
 import { Grasshopper } from 'glib'
-
-type ComponentLibrary = {
-  [category: string]: {
-    [subcategory: string]: Grasshopper.Component[]
-  }
-}
+import { ComponentLibrary } from '../types'
 
 export const categorize = (library: Grasshopper.Component[]): ComponentLibrary => {
   const categorized = library.reduce((all, current) => {
-    const { category, subcategory } = current
+    const category = current.category.toLowerCase()
+    const subcategory = current.subcategory.toLowerCase()
 
     // If category does not exist yet, short-circuit
     if (!all[category]) {
