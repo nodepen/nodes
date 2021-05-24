@@ -1,11 +1,16 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useGraphManager } from 'context/graph'
+import { categorize } from '../../utils'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
 
   const [sidebarWidth, setSidebarWidth] = useState(0)
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false)
+
+  const libraryByCategory = useMemo(() => categorize(library ?? []), [library])
+
+  const [selectedCategory, setSelectedCategory] = useState('params')
 
   useEffect(() => {
     const handleResize = (): void => {
@@ -24,6 +29,16 @@ export const GraphControls = (): React.ReactElement => {
     }
   })
 
+  const componentToolbarRef = useRef<HTMLDivElement>(null)
+
+  const handleScroll = (delta: number): void => {
+    if (!componentToolbarRef.current) {
+      return
+    }
+
+    componentToolbarRef.current.scroll({ left: componentToolbarRef.current.scrollLeft + delta })
+  }
+
   return (
     <div className="w-full h-12 relative bg-green overflow-visible z-50">
       <div
@@ -39,6 +54,7 @@ export const GraphControls = (): React.ReactElement => {
           {library?.map((el) => (
             <div>{el.nickname}</div>
           ))}
+          <div className="w-full h-12" />
         </div>
       </div>
       {sidebarWidth < 400 && sidebarIsOpen ? (
@@ -78,6 +94,52 @@ export const GraphControls = (): React.ReactElement => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               </svg>
             )}
+          </button>
+          <button
+            className="w-12 h-12 flex justify-center items-center transition-colors duration-75 md:hover:bg-swampgreen"
+            onClick={() => handleScroll((sidebarWidth - 96) / -2)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="#093824"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+          <div
+            className="h-full w-full whitespace-nowrap overflow-x-auto no-scrollbar"
+            style={{ width: sidebarWidth - 96 }}
+            ref={componentToolbarRef}
+          >
+            {library
+              ? null
+              : Array.from(Array(6)).map((_, i) => (
+                  <div
+                    key={`library-skeleton-${i}`}
+                    className="w-12 h-12 inline-block transition-colors duration-75 md:hover:bg-swampgreen"
+                  >
+                    <div className="w-full h-full flex justify-center items-center">
+                      <div className="w-8 h-8 rounded-sm animate-pulse bg-swampgreen" />
+                    </div>
+                  </div>
+                ))}
+          </div>
+          <button
+            className="w-12 h-12 flex justify-center items-center transition-colors duration-75 md:hover:bg-swampgreen"
+            onClick={() => handleScroll((sidebarWidth - 96) / 2)}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="#093824"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
           </button>
         </div>
       </div>
