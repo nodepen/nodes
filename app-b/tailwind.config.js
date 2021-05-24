@@ -93,6 +93,7 @@ module.exports = {
   },
   variants: {
     cursor: ['responsive, hover'],
+    font: ['hover']
   },
   plugins: [],
 }

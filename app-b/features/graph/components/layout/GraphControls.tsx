@@ -41,24 +41,95 @@ export const GraphControls = (): React.ReactElement => {
       return
     }
 
-    componentToolbarRef.current.scroll({ left: componentToolbarRef.current.scrollLeft + delta })
+    componentToolbarRef.current.scroll({ left: componentToolbarRef.current.scrollLeft + delta, behavior: 'smooth' })
+  }
+
+  const handleSelectCategory = (category: string): void => {
+    setSelectedCategory(category.toLowerCase())
+    setSidebarIsOpen(false)
+
+    if (!componentToolbarRef.current) {
+      return
+    }
+
+    componentToolbarRef.current.scroll({ left: 0 })
   }
 
   return (
     <div className="w-full h-12 relative bg-green overflow-visible z-50">
       <div
-        className="pl-4 pr-4 bg-green absolute transition-all duration-150 ease-out"
+        className=" bg-green absolute transition-all duration-150 ease-out"
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
       >
         <div className="w-full h-full overflow-auto no-scrollbar">
-          {/* <div
-            className="mt-4 mb-4 bg-swampgreen"
-            style={{ width: sidebarWidth - 32, height: (sidebarWidth - 32) * 0.75 }}
-          ></div> */}
-          <div className="w-full h-12 mt-4 mb-4 sticky bg-swampgreen top-0" />
-          {library?.map((el) => (
-            <div>{el.nickname}</div>
-          ))}
+          <div className="w-full h-12 sticky bg-swampgreen top-0" />
+          <div className="w-full p-2">
+            <hr className="w-full border-t-2 border-swampgreen rounded-full" />
+          </div>
+          <button className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen">
+            <div className="w-12 h-12 flex justify-center items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#093824"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
+              </svg>
+            </div>
+            <div className="flex-grow h-full flex justify-start items-center">
+              <p className="font-sans font-bold text-sm select-none">VIEW MODEL</p>
+            </div>
+          </button>
+          <div className="w-full h-12 flex justify-start items-center">
+            <div className="w-12 h-12 flex justify-center items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#093824"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
+                />
+              </svg>
+            </div>
+            <div className="flex-grow h-full flex justify-start items-center">
+              <p className="font-sans font-bold text-sm select-none">COMPONENTS</p>
+            </div>
+          </div>
+          {['Params', 'Maths', 'Sets', 'Vector', 'Curve', 'Mesh', 'Intersect', 'Transform'].map((category) => {
+            const isSelected = selectedCategory === category.toLowerCase()
+            return (
+              <button
+                key={`category-selector-${category}`}
+                className="w-full h-8 flex justify-start items-center hover:font-bold"
+                onClick={() => handleSelectCategory(category)}
+              >
+                <div className="w-12 h-full flex justify-center items-center">
+                  {isSelected ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 10 10">
+                      <circle cx={5} cy={5} r={1} stroke="none" fill="#093824" />
+                    </svg>
+                  ) : null}
+                </div>
+                <div className="flex-grow h-full flex justify-start items-center">
+                  <p className={`${isSelected ? 'font-bold' : ''} font-sans text-sm select-none`}>{category}</p>
+                </div>
+              </button>
+            )
+          })}
+
           <div className="w-full h-12" />
         </div>
       </div>
