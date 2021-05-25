@@ -4,4 +4,6 @@ export { useCameraDispatch } from './useCameraDispatch'
 export { useCameraPosition } from './useCameraPosition'
 export { useCameraZoom } from './useCameraZoom'
 
+export { useGraphElements } from './useGraphElements'
+
 export { useGridDimensions } from './useGridDimensions'

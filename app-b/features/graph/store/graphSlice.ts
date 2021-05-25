@@ -4,7 +4,88 @@ import { RootState } from '$'
 import { GraphState } from './types'
 
 const initialState: GraphState = {
-  elements: {},
+  elements: {
+    '001': {
+      id: '001',
+      template: {
+        type: 'static-component',
+      },
+      current: {
+        solution: {
+          id: '',
+          mode: 'deferred',
+        },
+        values: {},
+        sources: {},
+        anchors: {},
+        position: [10, 10],
+        dimensions: {
+          width: 50,
+          height: 50,
+        },
+      },
+    },
+    '002': {
+      id: '002',
+      template: {
+        type: 'static-component',
+      },
+      current: {
+        solution: {
+          id: '',
+          mode: 'deferred',
+        },
+        values: {},
+        sources: {},
+        anchors: {},
+        position: [20, 20],
+        dimensions: {
+          width: 50,
+          height: 50,
+        },
+      },
+    },
+    '003': {
+      id: '003',
+      template: {
+        type: 'static-component',
+      },
+      current: {
+        solution: {
+          id: '',
+          mode: 'deferred',
+        },
+        values: {},
+        sources: {},
+        anchors: {},
+        position: [30, 30],
+        dimensions: {
+          width: 50,
+          height: 50,
+        },
+      },
+    },
+    '004': {
+      id: '004',
+      template: {
+        type: 'static-component',
+      },
+      current: {
+        solution: {
+          id: '',
+          mode: 'deferred',
+        },
+        values: {},
+        sources: {},
+        anchors: {},
+        position: [40, 40],
+        dimensions: {
+          width: 50,
+          height: 50,
+        },
+      },
+    },
+  },
   selection: [],
 }
 
