@@ -18,7 +18,6 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
   useEffect(() => {
-    console.log('smt')
     if (!token || !!library) {
       return
     }
@@ -61,14 +60,11 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
         console.error(error)
       }
 
-      console.log(data)
-
       return data?.getInstalledComponents
     }
 
     fetchLibrary()
       .then((lib) => {
-        console.log({ lib })
         setLibrary(lib)
       })
       .catch((err) => {

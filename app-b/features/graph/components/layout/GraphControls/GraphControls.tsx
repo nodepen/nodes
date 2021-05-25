@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useGraphManager } from 'context/graph'
-import { categorize, flattenCategory } from '../../utils'
+import { categorize, flattenCategory } from '../../../utils'
+import { ComponentLibraryIcon } from './lib'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
@@ -192,17 +193,7 @@ export const GraphControls = (): React.ReactElement => {
           >
             {library
               ? selectedCategoryComponents.map((component) => (
-                  <div
-                    key={`library-${component.guid}`}
-                    className="w-12 h-12 inline-block transition-colors duration-75 md:hover:bg-swampgreen"
-                  >
-                    <div className="w-full h-full flex justify-center items-center">
-                      <img
-                        src={`data:image/png;base64,${component.icon}`}
-                        alt={`The icon for the ${component.name} component in ${component.category}.`}
-                      />
-                    </div>
-                  </div>
+                  <ComponentLibraryIcon key={`library-${component.guid}`} template={component} />
                 ))
               : Array.from(Array(6)).map((_, i) => (
                   <div
