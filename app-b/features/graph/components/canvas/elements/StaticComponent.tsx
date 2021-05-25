@@ -1,5 +1,5 @@
-import { NodePen, assert } from 'glib'
-import { useCameraZoom } from '../../../store/hooks'
+import { NodePen } from 'glib'
+import { useCameraZoom, useGraphDispatch } from '../../../store/hooks'
 import React from 'react'
 import Draggable from 'react-draggable'
 
@@ -10,7 +10,11 @@ type StaticComponentProps = {
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const scale = useCameraZoom()
 
+  const { moveElement } = useGraphDispatch()
+
   const [x, y] = element.current.position
+
+  console.log(`Render in ${element.id} !`)
 
   return (
     <Draggable
@@ -18,6 +22,10 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
       position={{ x, y }}
       onStart={(e) => {
         e.stopPropagation()
+      }}
+      onStop={(_, e) => {
+        const { x, y } = e
+        moveElement(element.id, [x, y])
       }}
       disabled={scale < 0.5}
     >

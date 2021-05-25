@@ -95,10 +95,10 @@ type AddElementPayload<T extends NodePen.ElementType> = {
   position: [number, number]
 }
 
-// type MoveElementPayload = {
-//   id: string
-//   position: [number, number]
-// }
+type MoveElementPayload = {
+  id: string
+  position: [number, number]
+}
 
 export const graphSlice = createSlice({
   name: 'graph',
@@ -138,6 +138,15 @@ export const graphSlice = createSlice({
           break
         }
       }
+    },
+    moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
+      const { id, position } = action.payload
+
+      if (!state.elements[id]) {
+        return
+      }
+
+      state.elements[id].current.position = position
     },
   },
 })
