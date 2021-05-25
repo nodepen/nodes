@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Grasshopper } from 'glib'
 import { ComponentLibraryDetails } from './ComponentLibraryDetails'
 
@@ -14,16 +14,6 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
   const [[x, y], setAnchor] = useState<[number, number]>([0, 0])
   const [showDetails, setShowDetails] = useState(false)
 
-  useEffect(() => {
-    if (!entryRef.current) {
-      return
-    }
-
-    const { left, top } = entryRef.current.getBoundingClientRect()
-
-    setAnchor([left + 24, top + 48 + 12])
-  }, [])
-
   const handleShowDetails = (): void => {
     setShowDetails(true)
 
@@ -32,7 +22,7 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
     }
 
     const { left, top } = entryRef.current.getBoundingClientRect()
-    setAnchor([left + 24, top + 48 + 12])
+    setAnchor([left + 24, top + 48 + 6])
   }
 
   return (
