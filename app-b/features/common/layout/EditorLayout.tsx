@@ -1,4 +1,6 @@
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useSessionManager } from 'context/session'
+import { useOutsideClick } from '@/hooks'
 
 type EditorLayoutProps = {
   children?: JSX.Element
@@ -9,8 +11,28 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
 
   const isAnonymous = user?.isAnonymous ?? false
 
+  const menuRef = useRef<HTMLDivElement>(null)
+
+  const [menuVisible, setMenuVisible] = useState(false)
+  const [menuContent, setMenuContent] = useState<JSX.Element>()
+
+  const handleOutsideClick = useCallback(() => {
+    setMenuVisible(false)
+  }, [])
+
+  useOutsideClick(menuRef, handleOutsideClick)
+
   return (
-    <div className="w-vw h-vh flex flex-col justify-start">
+    <div className="w-vw h-vh flex flex-col justify-start overflow-visible">
+      <div
+        className={`${
+          menuVisible ? 'border-b-2 border-dark' : 'border-b-0'
+        } fixed w-vw pl-2 pr-2 max-h-0 bg-white z-50 overflow-hidden`}
+        style={{ maxHeight: menuVisible ? '25vh' : 0, top: 35, transition: 'max-height border-bottom-width 150ms' }}
+        ref={menuRef}
+      >
+        {menuContent}
+      </div>
       <div className="w-full h-10 flex justify-start items-center bg-white border-b-2 border-dark">
         <button className="p-0 mr-4 w-12 h-full flex justify-center items-center">
           <img
@@ -44,7 +66,13 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
               <button className="h-full mr-1 pl-2 pr-2 white border-2 border-dark rounded-md text-sm text-dark font-semibold font-sans">
                 <p style={{ transform: 'translateY(-1px)' }}>Log In</p>
               </button>
-              <button className="h-full pl-2 pr-2 bg-dark rounded-md text-sm text-white font-semibold font-sans">
+              <button
+                className="h-full pl-2 pr-2 bg-dark rounded-md text-sm text-white font-semibold font-sans"
+                onClick={() => {
+                  setMenuContent(<div className="w-full h-20" />)
+                  setMenuVisible(true)
+                }}
+              >
                 <p style={{ transform: 'translateY(-1px)' }}>Sign Up</p>
               </button>
             </>

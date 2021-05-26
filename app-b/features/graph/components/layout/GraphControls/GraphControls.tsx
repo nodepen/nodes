@@ -57,7 +57,7 @@ export const GraphControls = (): React.ReactElement => {
   }
 
   return (
-    <div className="w-full h-12 relative bg-green overflow-visible z-50">
+    <div className="w-full h-12 relative bg-green overflow-visible z-40">
       <div
         className=" bg-green absolute transition-all duration-150 ease-out"
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
