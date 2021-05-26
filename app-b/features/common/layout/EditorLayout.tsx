@@ -95,7 +95,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
                     vectorEffect="non-scaling-stroke"
                   />
                 </svg>
-                <p style={{ transform: 'translateY(1px)' }}>Share</p>
+                <p style={{ transform: 'translateY(-1px)' }}>Share</p>
               </button>
               <button className="h-full mr-1 pl-2 pr-2 flex justify-center items-center border-dark border-2 rounded-md text-sm text-dark font-semibold font-sans">
                 <svg
@@ -113,7 +113,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
                     vectorEffect="non-scaling-stroke"
                   />
                 </svg>
-                <p style={{ transform: 'translateY(1px)' }}>Save</p>
+                <p style={{ transform: 'translateY(-1px)' }}>Save</p>
               </button>
               <button
                 className="h-full bg-dark rounded-md overflow-hidden"
