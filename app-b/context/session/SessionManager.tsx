@@ -53,5 +53,25 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     return () => clearInterval(handleRefresh)
   }, [])
 
+  useEffect(() => {
+    firebase
+      .auth()
+      .getRedirectResult()
+      .then((res) => {
+        if (res.user) {
+          setUser(res.user)
+          return res.user.getIdToken()
+        }
+      })
+      .then((token) => {
+        if (token) {
+          setToken(token)
+        }
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
+
   return <SessionContext.Provider value={{ user, token, session: '...' }}>{children}</SessionContext.Provider>
 }

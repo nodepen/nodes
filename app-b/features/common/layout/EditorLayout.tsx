@@ -1,6 +1,7 @@
-import { useState, useRef, useEffect, useCallback } from 'react'
+import { useState, useRef, useCallback } from 'react'
 import { useSessionManager } from 'context/session'
 import { useOutsideClick } from '@/hooks'
+import { SignUpMenu, UserImage, UserMenu } from './header'
 
 type EditorLayoutProps = {
   children?: JSX.Element
@@ -9,7 +10,7 @@ type EditorLayoutProps = {
 export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElement => {
   const { user } = useSessionManager()
 
-  const isAnonymous = user?.isAnonymous ?? false
+  const isAnonymous = user?.isAnonymous ?? true
 
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -28,10 +29,10 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
         className={`${
           menuVisible ? 'border-b-2 border-dark' : 'border-b-0'
         } fixed w-vw pl-2 pr-2 max-h-0 bg-white z-50 overflow-hidden`}
-        style={{ maxHeight: menuVisible ? '25vh' : 0, top: 35, transition: 'max-height border-bottom-width 150ms' }}
+        style={{ maxHeight: menuVisible ? '25vh' : 0, top: 35, transition: 'max-height 150ms' }}
         ref={menuRef}
       >
-        {menuContent}
+        <div className="w-full pt-2 pb-4 flex flex-col items-end">{menuContent}</div>
       </div>
       <div className="w-full h-10 flex justify-start items-center bg-white border-b-2 border-dark">
         <button className="p-0 mr-4 w-12 h-full flex justify-center items-center">
@@ -69,7 +70,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
               <button
                 className="h-full pl-2 pr-2 bg-dark rounded-md text-sm text-white font-semibold font-sans"
                 onClick={() => {
-                  setMenuContent(<div className="w-full h-20" />)
+                  setMenuContent(<SignUpMenu />)
                   setMenuVisible(true)
                 }}
               >
@@ -114,7 +115,16 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
                 </svg>
                 <p style={{ transform: 'translateY(1px)' }}>Save</p>
               </button>
-              <button className="h-full bg-dark rounded-md border-2 border-dark" style={{ width: 28 }} />
+              <button
+                className="h-full bg-dark rounded-md overflow-hidden"
+                style={{ width: 28 }}
+                onClick={() => {
+                  setMenuContent(<UserMenu />)
+                  setMenuVisible(true)
+                }}
+              >
+                <UserImage />
+              </button>
             </>
           )}
         </div>
