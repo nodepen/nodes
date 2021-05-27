@@ -38,7 +38,12 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
         </div>
       </button>
       {showDetails ? (
-        <ComponentLibraryDetails template={template} position={[x, y]} onDestroy={() => setShowDetails(false)} />
+        <ComponentLibraryDetails
+          key={`lib-details-${template.guid}`}
+          template={template}
+          position={[x, y]}
+          onDestroy={() => setShowDetails(false)}
+        />
       ) : null}
     </>
   )

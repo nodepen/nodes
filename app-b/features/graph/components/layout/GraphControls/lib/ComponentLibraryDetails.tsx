@@ -1,7 +1,8 @@
 import { Grasshopper } from 'glib'
 import React, { useEffect, useRef } from 'react'
 import Draggable from 'react-draggable'
-import { useGraphDispatch } from 'features/graph/store/hooks'
+import { useGraphDispatch, useCamera } from 'features/graph/store/hooks'
+import { screenSpaceToCameraSpace } from '@/features/graph/utils'
 
 type ComponentLibraryDetailsProps = {
   template: Grasshopper.Component
@@ -17,6 +18,10 @@ export const ComponentLibraryDetails = ({
   const { name, nickname, description } = template
 
   const { addElement } = useGraphDispatch()
+  const {
+    zoom,
+    position: [cx, cy],
+  } = useCamera()
 
   const [x, y] = position
 
@@ -75,13 +80,20 @@ export const ComponentLibraryDetails = ({
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
               <Draggable
-                onStop={() => {
+                onStop={(e) => {
+                  const { pageX: ex, pageY: ey } = e as any
+                  const [x, y] = screenSpaceToCameraSpace(
+                    { offset: [0, 48 + 36], position: [ex, ey] },
+                    { zoom, position: [cx, cy] }
+                  )
+
                   addElement({
                     type: 'static-component',
                     template: { type: 'static-component', ...template },
-                    position: [100, 100],
+                    position: [x, y],
                   })
                   onDestroy()
+                  return false
                 }}
               >
                 <button className="w-24 h-8 bg-white border-2 border-dark rounded-md shadow-osm z-20" />

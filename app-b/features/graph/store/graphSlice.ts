@@ -20,7 +20,7 @@ const initialState: GraphState = {
         values: {},
         sources: {},
         anchors: {},
-        position: [10, 10],
+        position: [0, 0],
         dimensions: {
           width: 50,
           height: 50,
@@ -40,7 +40,7 @@ const initialState: GraphState = {
         values: {},
         sources: {},
         anchors: {},
-        position: [20, 20],
+        position: [50, 50],
         dimensions: {
           width: 50,
           height: 50,
@@ -60,7 +60,7 @@ const initialState: GraphState = {
         values: {},
         sources: {},
         anchors: {},
-        position: [30, 30],
+        position: [25, 50],
         dimensions: {
           width: 50,
           height: 50,
@@ -80,7 +80,7 @@ const initialState: GraphState = {
         values: {},
         sources: {},
         anchors: {},
-        position: [40, 40],
+        position: [-50, -50],
         dimensions: {
           width: 50,
           height: 50,

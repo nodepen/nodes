@@ -40,7 +40,7 @@ const GraphCanvas = (): React.ReactElement => {
         pan={{ velocity: false }}
       >
         <TransformComponent>
-          <div className="w-vw h-vh">
+          <div className="w-vw h-vh relative">
             <Container />
           </div>
         </TransformComponent>

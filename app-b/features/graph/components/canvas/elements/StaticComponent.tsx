@@ -19,20 +19,23 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   console.log(`Render in ${element.id} !`)
 
   return (
-    <Draggable
-      scale={scale}
-      position={{ x, y }}
-      onStart={(e) => {
-        e.stopPropagation()
-      }}
-      onStop={(_, e) => {
-        const { x, y } = e
-        moveElement(element.id, [x, y])
-      }}
-      disabled={scale < 0.5}
-    >
-      <div className="w-6 h-6 bg-red-500">{template?.name ?? id}</div>
-    </Draggable>
+    <div className="w-full h-full pointer-events-none absolute left-0 top-0">
+      <Draggable
+        scale={scale}
+        position={{ x, y }}
+        onStart={(e) => {
+          e.stopPropagation()
+        }}
+        onStop={(_, e) => {
+          const { x, y } = e
+          moveElement(element.id, [x, y])
+          console.log({ x, y })
+        }}
+        disabled={scale < 0.5}
+      >
+        <div className="w-6 h-6 bg-red-500 pointer-events-auto">{template?.name ?? id}</div>
+      </Draggable>
+    </div>
   )
 }
 
