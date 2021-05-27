@@ -1,6 +1,6 @@
 import { Grasshopper } from 'glib'
 import React, { useEffect, useRef } from 'react'
-import Draggable from 'react-draggable'
+import Draggable, { DraggableEvent } from 'react-draggable'
 import { useGraphDispatch, useCamera } from 'features/graph/store/hooks'
 import { screenSpaceToCameraSpace } from '@/features/graph/utils'
 
@@ -81,7 +81,30 @@ export const ComponentLibraryDetails = ({
               </svg>
               <Draggable
                 onStop={(e) => {
-                  const { pageX: ex, pageY: ey } = e as any
+                  const getScreenPosition = (e: DraggableEvent): [number, number] => {
+                    switch (e.type) {
+                      case 'mouseup':
+                      case 'mouseend': {
+                        const { pageX, pageY } = e as MouseEvent
+                        return [pageX, pageY]
+                      }
+                      case 'touchend': {
+                        const { pageX, pageY } = (e as TouchEvent).changedTouches[0]
+                        return [pageX, pageY]
+                      }
+                      case 'pointerup': {
+                        const { pageX, pageY } = e as PointerEvent
+                        return [pageX, pageY]
+                      }
+                      default: {
+                        console.error('Failed to translate draggable event to page coordinates!')
+                        console.log(e)
+                        return [0, 0]
+                      }
+                    }
+                  }
+
+                  const [ex, ey] = getScreenPosition(e)
                   const [x, y] = screenSpaceToCameraSpace(
                     { offset: [0, 48 + 36], position: [ex, ey] },
                     { zoom, position: [cx, cy] }
