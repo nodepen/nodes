@@ -1,6 +1,7 @@
 import { Grasshopper } from 'glib'
 import React, { useEffect, useRef } from 'react'
 import Draggable from 'react-draggable'
+import { useGraphDispatch } from 'features/graph/store/hooks'
 
 type ComponentLibraryDetailsProps = {
   template: Grasshopper.Component
@@ -14,6 +15,8 @@ export const ComponentLibraryDetails = ({
   onDestroy,
 }: ComponentLibraryDetailsProps): React.ReactElement => {
   const { name, nickname, description } = template
+
+  const { addElement } = useGraphDispatch()
 
   const [x, y] = position
 
@@ -71,7 +74,16 @@ export const ComponentLibraryDetails = ({
               >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
               </svg>
-              <Draggable>
+              <Draggable
+                onStop={() => {
+                  addElement({
+                    type: 'static-component',
+                    template: { type: 'static-component', ...template },
+                    position: [100, 100],
+                  })
+                  onDestroy()
+                }}
+              >
                 <button className="w-24 h-8 bg-white border-2 border-dark rounded-md shadow-osm z-20" />
               </Draggable>
               <svg

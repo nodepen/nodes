@@ -2,6 +2,8 @@ import { NodePen } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
 import { GraphState } from './types'
+import { newGuid } from '../utils'
+import { AddElementPayload, MoveElementPayload } from './types/Payload'
 
 const initialState: GraphState = {
   elements: {
@@ -9,7 +11,7 @@ const initialState: GraphState = {
       id: '001',
       template: {
         type: 'static-component',
-      },
+      } as any,
       current: {
         solution: {
           id: '',
@@ -29,7 +31,7 @@ const initialState: GraphState = {
       id: '002',
       template: {
         type: 'static-component',
-      },
+      } as any,
       current: {
         solution: {
           id: '',
@@ -49,7 +51,7 @@ const initialState: GraphState = {
       id: '003',
       template: {
         type: 'static-component',
-      },
+      } as any,
       current: {
         solution: {
           id: '',
@@ -69,7 +71,7 @@ const initialState: GraphState = {
       id: '004',
       template: {
         type: 'static-component',
-      },
+      } as any,
       current: {
         solution: {
           id: '',
@@ -89,24 +91,13 @@ const initialState: GraphState = {
   selection: [],
 }
 
-type AddElementPayload<T extends NodePen.ElementType> = {
-  type: T
-  template: NodePen.Element<T>['template']
-  position: [number, number]
-}
-
-type MoveElementPayload = {
-  id: string
-  position: [number, number]
-}
-
 export const graphSlice = createSlice({
   name: 'graph',
   initialState,
   reducers: {
     addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
       // TODO: Actual id generation
-      const id = Math.round(Math.random() * 100).toString()
+      const id = newGuid()
 
       switch (action.payload.type) {
         case 'static-component': {
