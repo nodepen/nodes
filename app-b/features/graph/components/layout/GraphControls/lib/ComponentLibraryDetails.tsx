@@ -1,8 +1,9 @@
 import { Grasshopper } from 'glib'
-import React, { useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import Draggable, { DraggableEvent } from 'react-draggable'
 import { useGraphDispatch, useCamera } from 'features/graph/store/hooks'
 import { screenSpaceToCameraSpace } from '@/features/graph/utils'
+import { useOutsideClick } from 'hooks'
 
 type ComponentLibraryDetailsProps = {
   template: Grasshopper.Component
@@ -27,23 +28,11 @@ export const ComponentLibraryDetails = ({
 
   const detailsRef = useRef<HTMLDivElement>(null)
 
-  useEffect(() => {
-    if (!detailsRef.current) {
-      return
-    }
+  const handlePointerDown = useCallback((): void => {
+    onDestroy()
+  }, [onDestroy])
 
-    const handlePointerDown = (e: MouseEvent): void => {
-      if (detailsRef?.current && e.target && !detailsRef.current.contains(e.target as any)) {
-        onDestroy()
-      }
-    }
-
-    window.addEventListener('pointerdown', handlePointerDown)
-
-    return () => {
-      window.removeEventListener('pointerdown', handlePointerDown)
-    }
-  })
+  useOutsideClick(detailsRef, handlePointerDown)
 
   return (
     <>
