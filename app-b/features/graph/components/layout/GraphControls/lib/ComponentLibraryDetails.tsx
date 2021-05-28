@@ -1,5 +1,5 @@
 import { Grasshopper } from 'glib'
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useRef } from 'react'
 import Draggable, { DraggableEvent } from 'react-draggable'
 import { useGraphDispatch, useCamera } from 'features/graph/store/hooks'
 import { screenSpaceToCameraSpace } from '@/features/graph/utils'
