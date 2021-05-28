@@ -3,7 +3,11 @@ import { RootState } from '$'
 import { CameraState } from './types'
 
 const initialState: CameraState = {
-  zoom: 1,
+  mode: 'idle',
+  zoom: {
+    live: 1,
+    static: 1,
+  },
   position: [0, 0],
 }
 
@@ -11,8 +15,14 @@ export const cameraSlice = createSlice({
   name: 'camera',
   initialState,
   reducers: {
-    setZoom: (state, action: PayloadAction<number>) => {
-      state.zoom = action.payload
+    setCameraMode: (state, action: PayloadAction<'idle' | 'zooming'>) => {
+      state.mode = action.payload
+    },
+    setLiveZoom: (state, action: PayloadAction<number>) => {
+      state.zoom.live = action.payload
+    },
+    setStaticZoom: (state, action: PayloadAction<number>) => {
+      state.zoom.static = action.payload
     },
     setPosition: (state, action: PayloadAction<[number, number]>) => {
       state.position = action.payload
@@ -21,10 +31,12 @@ export const cameraSlice = createSlice({
 })
 
 const selectCamera = (state: RootState): CameraState => state.camera
-const selectZoom = (state: RootState): number => state.camera.zoom
+const selectCameraMode = (state: RootState): 'idle' | 'zooming' => state.camera.mode
+const selectLiveZoom = (state: RootState): number => state.camera.zoom.live
+const selectStaticZoom = (state: RootState): number => state.camera.zoom.static
 const selectPosition = (state: RootState): [number, number] => state.camera.position
 
-export const cameraSelectors = { selectCamera, selectZoom, selectPosition }
+export const cameraSelectors = { selectCamera, selectCameraMode, selectLiveZoom, selectStaticZoom, selectPosition }
 
 const { actions, reducer } = cameraSlice
 

@@ -6,7 +6,9 @@ export const useCameraDispatch = () => {
   const dispatch = useAppDispatch()
 
   return {
-    setZoom: (zoom: CameraState['zoom']) => dispatch(cameraActions.setZoom(zoom)),
+    setMode: (mode: 'idle' | 'zooming') => dispatch(cameraActions.setCameraMode(mode)),
+    setLiveZoom: (zoom: number) => dispatch(cameraActions.setLiveZoom(zoom)),
+    setStaticZoom: (zoom: number) => dispatch(cameraActions.setStaticZoom(zoom)),
     setPosition: (position: CameraState['position']) => dispatch(cameraActions.setPosition(position)),
   }
 }

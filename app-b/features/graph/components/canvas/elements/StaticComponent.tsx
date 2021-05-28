@@ -1,5 +1,5 @@
 import { NodePen } from 'glib'
-import { useCameraZoom, useGraphDispatch } from '../../../store/hooks'
+import { useCameraStaticZoom, useCameraMode, useGraphDispatch } from '../../../store/hooks'
 import React from 'react'
 import Draggable from 'react-draggable'
 
@@ -10,7 +10,8 @@ type StaticComponentProps = {
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const { template, current, id } = element
 
-  const scale = useCameraZoom()
+  const scale = useCameraStaticZoom()
+  const mode = useCameraMode()
 
   const { moveElement } = useGraphDispatch()
 
@@ -31,7 +32,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           moveElement(element.id, [x, y])
           console.log({ x, y })
         }}
-        disabled={scale < 0.5}
+        disabled={scale < 0.5 || mode !== 'idle'}
       >
         <div className="w-6 h-6 bg-red-500 pointer-events-auto">{template?.name ?? id}</div>
       </Draggable>

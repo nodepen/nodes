@@ -4,7 +4,7 @@ import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
 
 const GraphCanvas = (): React.ReactElement => {
-  const { setZoom, setPosition } = useCameraDispatch()
+  const { setMode, setLiveZoom, setStaticZoom, setPosition } = useCameraDispatch()
 
   return (
     <div
@@ -31,8 +31,22 @@ const GraphCanvas = (): React.ReactElement => {
           setPosition([x.positionX, x.positionY])
         }}
         onZoomChange={(zoom: any) => {
-          setZoom(zoom.scale)
+          setLiveZoom(zoom.scale)
           setPosition([zoom.positionX, zoom.positionY])
+        }}
+        onWheelStart={() => {
+          setMode('zooming')
+        }}
+        onWheelStop={(e: any) => {
+          setMode('idle')
+          setStaticZoom(e.scale)
+        }}
+        onPinchingStart={() => {
+          setMode('zooming')
+        }}
+        onPinchingStop={(e: any) => {
+          setMode('idle')
+          setStaticZoom(e.scale)
         }}
         pinch={{ step: 20 }}
         wheel={{ step: 100 }}
