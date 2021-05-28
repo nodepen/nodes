@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
-import { CameraState } from './types'
+import { CameraState, CameraMode } from './types'
 
 const initialState: CameraState = {
   mode: 'idle',
@@ -15,7 +15,7 @@ export const cameraSlice = createSlice({
   name: 'camera',
   initialState,
   reducers: {
-    setCameraMode: (state, action: PayloadAction<'idle' | 'zooming'>) => {
+    setCameraMode: (state, action: PayloadAction<CameraMode>) => {
       state.mode = action.payload
     },
     setLiveZoom: (state, action: PayloadAction<number>) => {
@@ -31,7 +31,7 @@ export const cameraSlice = createSlice({
 })
 
 const selectCamera = (state: RootState): CameraState => state.camera
-const selectCameraMode = (state: RootState): 'idle' | 'zooming' => state.camera.mode
+const selectCameraMode = (state: RootState): CameraMode => state.camera.mode
 const selectLiveZoom = (state: RootState): number => state.camera.zoom.live
 const selectStaticZoom = (state: RootState): number => state.camera.zoom.static
 const selectPosition = (state: RootState): [number, number] => state.camera.position

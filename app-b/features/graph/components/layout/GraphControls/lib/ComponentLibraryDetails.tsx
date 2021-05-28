@@ -19,7 +19,7 @@ export const ComponentLibraryDetails = ({
 
   const { addElement } = useGraphDispatch()
   const {
-    zoom,
+    zoom: { static: zoom },
     position: [cx, cy],
   } = useCamera()
 

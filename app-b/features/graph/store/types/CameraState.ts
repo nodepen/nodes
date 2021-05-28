@@ -1,5 +1,7 @@
+import { CameraMode } from './CameraMode'
+
 export type CameraState = {
-  mode: 'idle' | 'zooming'
+  mode: CameraMode
   zoom: {
     live: number
     static: number
