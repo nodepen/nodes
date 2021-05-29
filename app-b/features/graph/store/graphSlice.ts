@@ -7,86 +7,86 @@ import { AddElementPayload, MoveElementPayload } from './types/Payload'
 
 const initialState: GraphState = {
   elements: {
-    '001': {
-      id: '001',
-      template: {
-        type: 'static-component',
-      } as any,
-      current: {
-        solution: {
-          id: '',
-          mode: 'deferred',
-        },
-        values: {},
-        sources: {},
-        anchors: {},
-        position: [0, 0],
-        dimensions: {
-          width: 50,
-          height: 50,
-        },
-      },
-    },
-    '002': {
-      id: '002',
-      template: {
-        type: 'static-component',
-      } as any,
-      current: {
-        solution: {
-          id: '',
-          mode: 'deferred',
-        },
-        values: {},
-        sources: {},
-        anchors: {},
-        position: [50, 50],
-        dimensions: {
-          width: 50,
-          height: 50,
-        },
-      },
-    },
-    '003': {
-      id: '003',
-      template: {
-        type: 'static-component',
-      } as any,
-      current: {
-        solution: {
-          id: '',
-          mode: 'deferred',
-        },
-        values: {},
-        sources: {},
-        anchors: {},
-        position: [25, 50],
-        dimensions: {
-          width: 50,
-          height: 50,
-        },
-      },
-    },
-    '004': {
-      id: '004',
-      template: {
-        type: 'static-component',
-      } as any,
-      current: {
-        solution: {
-          id: '',
-          mode: 'deferred',
-        },
-        values: {},
-        sources: {},
-        anchors: {},
-        position: [-50, -50],
-        dimensions: {
-          width: 50,
-          height: 50,
-        },
-      },
-    },
+    // '001': {
+    //   id: '001',
+    //   template: {
+    //     type: 'static-component',
+    //   } as any,
+    //   current: {
+    //     solution: {
+    //       id: '',
+    //       mode: 'deferred',
+    //     },
+    //     values: {},
+    //     sources: {},
+    //     anchors: {},
+    //     position: [0, 0],
+    //     dimensions: {
+    //       width: 50,
+    //       height: 50,
+    //     },
+    //   },
+    // },
+    // '002': {
+    //   id: '002',
+    //   template: {
+    //     type: 'static-component',
+    //   } as any,
+    //   current: {
+    //     solution: {
+    //       id: '',
+    //       mode: 'deferred',
+    //     },
+    //     values: {},
+    //     sources: {},
+    //     anchors: {},
+    //     position: [50, 50],
+    //     dimensions: {
+    //       width: 50,
+    //       height: 50,
+    //     },
+    //   },
+    // },
+    // '003': {
+    //   id: '003',
+    //   template: {
+    //     type: 'static-component',
+    //   } as any,
+    //   current: {
+    //     solution: {
+    //       id: '',
+    //       mode: 'deferred',
+    //     },
+    //     values: {},
+    //     sources: {},
+    //     anchors: {},
+    //     position: [25, 50],
+    //     dimensions: {
+    //       width: 50,
+    //       height: 50,
+    //     },
+    //   },
+    // },
+    // '004': {
+    //   id: '004',
+    //   template: {
+    //     type: 'static-component',
+    //   } as any,
+    //   current: {
+    //     solution: {
+    //       id: '',
+    //       mode: 'deferred',
+    //     },
+    //     values: {},
+    //     sources: {},
+    //     anchors: {},
+    //     position: [-50, -50],
+    //     dimensions: {
+    //       width: 50,
+    //       height: 50,
+    //     },
+    //   },
+    // },
   },
   selection: [],
 }
