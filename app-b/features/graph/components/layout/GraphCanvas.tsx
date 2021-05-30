@@ -61,7 +61,7 @@ const GraphCanvas = (): React.ReactElement => {
             <CameraControls setTransform={setTransform} />
             <TransformComponent>
               <div className="w-vw h-vh relative">
-                <Container />
+                <Container key="elements-container" />
               </div>
             </TransformComponent>
           </>

@@ -12,15 +12,6 @@ type CameraControlsProps = {
 export const CameraControls = ({ setTransform }: CameraControlsProps): React.ReactElement => {
   const { registerSetTransform } = useCameraDispatch()
 
-  // useEffect(() => {
-  //   setTimeout(() => {
-  //     console.log('moving!')
-  //     console.log(setTransform)
-  //     setTransform(x + 35, y + 35, 1, 150, 'easeInOutQuad')
-  //     setPosition([x + 35, y + 35])
-  //   }, 5000)
-  // }, [])
-
   useEffect(() => {
     registerSetTransform(setTransform)
   }, [])

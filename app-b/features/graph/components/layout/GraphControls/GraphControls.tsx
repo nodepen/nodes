@@ -187,8 +187,8 @@ export const GraphControls = (): React.ReactElement => {
             </svg>
           </button>
           <div
-            className="h-full w-full whitespace-nowrap overflow-x-auto no-scrollbar overflow-visible"
-            style={{ width: sidebarWidth - 96 }}
+            className="h-full w-full whitespace-nowrap overflow-x-auto no-scrollbar"
+            style={{ width: sidebarWidth - 96, touchAction: 'none' }}
             ref={componentToolbarRef}
           >
             {library

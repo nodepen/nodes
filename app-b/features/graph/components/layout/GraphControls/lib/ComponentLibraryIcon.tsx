@@ -82,28 +82,29 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
         onClick={handleShowDetails}
         className={`${
           showDraggable ? 'bg-swampgreen animate-pulse' : ''
-        } w-12 h-12 inline-block transition-colors duration-75 md:hover:bg-swampgreen overflow-visible z-30`}
+        } w-12 h-12 inline-block transition-colors duration-75 md:hover:bg-swampgreen z-30`}
       >
-        <Draggable
-          disabled={false}
-          position={{ x: dx, y: dy }}
-          onStart={handleDragStart}
-          onDrag={(e, d) => {
-            setDragPosition([d.x, d.y])
-          }}
-          onStop={(e) => {
-            handleDragStop(e)
-          }}
-        >
-          <div className="w-full h-full flex justify-center items-center">
+        <div className="w-full h-full flex justify-center items-center pointer-events-none">
+          <Draggable
+            disabled={false}
+            position={{ x: dx, y: dy }}
+            onStart={handleDragStart}
+            onDrag={(e, d) => {
+              setDragPosition([d.x, d.y])
+            }}
+            onStop={(e) => {
+              handleDragStop(e)
+            }}
+          >
             <img
               ref={imageRef}
               src={`data:image/png;base64,${icon}`}
               alt={`The icon for the ${name} component in ${category}.`}
               draggable="false"
+              className="pointer-events-auto"
             />
-          </div>
-        </Draggable>
+          </Draggable>
+        </div>
       </button>
 
       {showDetails ? (

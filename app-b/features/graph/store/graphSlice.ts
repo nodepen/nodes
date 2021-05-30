@@ -142,7 +142,8 @@ export const graphSlice = createSlice({
   },
 })
 
-const selectElements = (state: RootState): NodePen.Element<NodePen.ElementType>[] => Object.values(state.graph.elements)
+const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
+  state.graph.elements
 
 export const graphSelectors = { selectElements }
 

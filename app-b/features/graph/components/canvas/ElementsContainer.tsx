@@ -4,7 +4,10 @@ import { useGraphElements } from '../../store/hooks'
 import { StaticComponent } from './elements'
 
 const ElementsContainer = (): React.ReactElement => {
-  const elements = useGraphElements()
+  const graph = useGraphElements()
+  const elements = Object.values(graph)
+
+  console.log('render in container!')
 
   return (
     <>
