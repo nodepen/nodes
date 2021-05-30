@@ -1,5 +1,6 @@
 export { categorize } from './categorize'
 export { flattenCategory } from './flattenCategory'
 export { getScreenPosition } from './getScreenPosition'
+export { initializeParameters } from './initializeParameters'
 export { newGuid } from './newGuid'
 export { screenSpaceToCameraSpace } from './screenSpaceToCameraSpace'

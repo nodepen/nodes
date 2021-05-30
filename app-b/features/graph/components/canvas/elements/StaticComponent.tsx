@@ -1,6 +1,6 @@
 import { NodePen } from 'glib'
 import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch } from '../../../store/hooks'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { useSetCameraPosition } from '@/features/graph/hooks/useSetCameraPosition'
@@ -37,38 +37,45 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
     moveElement(id, [x - width / 2, y - height / 2])
   }, [width, height])
 
+  const [isMoving, setIsMoving] = useState(false)
+
+  const showButtons = useCriteria(!isMoving, scale > 1.5)
+
   const setCameraPosition = useSetCameraPosition()
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0">
       <div className="w-full h-full relative">
-        <button
-          className="w-6 h-6 bg-red-500 absolute top-0 pointer-events-auto"
-          style={{ left: x - 36, top: y }}
-          onPointerDown={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-          }}
-          onPointerUp={(e) => {
-            e.preventDefault()
-            e.stopPropagation()
-          }}
-          onClick={() => {
-            setCameraPosition(-x, -y)
-          }}
-        />
+        {showButtons ? (
+          <button
+            className="w-6 h-6 bg-red-500 absolute top-0 pointer-events-auto"
+            style={{ left: x - 36, top: y }}
+            onPointerDown={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            onPointerUp={(e) => {
+              e.preventDefault()
+              e.stopPropagation()
+            }}
+            onClick={() => {
+              setCameraPosition(-x, -y)
+            }}
+          />
+        ) : null}
         <Draggable
           scale={scale}
           position={{ x, y }}
           onStart={(e) => {
             e.stopPropagation()
             setZoomLock(true)
+            setIsMoving(true)
           }}
           onStop={(_, e) => {
             const { x, y } = e
             moveElement(element.id, [x, y])
             setZoomLock(false)
-            console.log({ x, y })
+            setIsMoving(false)
           }}
           disabled={scale < 0.5 || mode !== 'idle'}
         >

@@ -10,6 +10,17 @@ export type GraphElement = {
     sources: {
         [parameterId: string]: ParameterReference[]
     }
+    /**
+     * Map a specific parameter to its template information.
+     * @remarks - Naked parameters are treated as components with only
+     *      an 'input' and an 'output' parameter.
+     */
+    inputs: {
+        [parameterInstanceId: string]: number
+    }
+    outputs: {
+        [parameterInstanceId: string]: number
+    }
     values: {
         [parameterId: string]: DataTree
     }
