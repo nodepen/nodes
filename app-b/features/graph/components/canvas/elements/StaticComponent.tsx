@@ -1,5 +1,5 @@
 import { NodePen } from 'glib'
-import { useCameraStaticZoom, useCameraMode, useGraphDispatch } from '../../../store/hooks'
+import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch } from '../../../store/hooks'
 import React, { useEffect, useRef } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria } from 'hooks'
@@ -18,6 +18,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const mode = useCameraMode()
 
   const { moveElement } = useGraphDispatch()
+  const { setZoomLock } = useCameraDispatch()
 
   const componentRef = useRef<HTMLDivElement>(null)
 
@@ -42,11 +43,13 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         position={{ x, y }}
         onStart={(e) => {
           e.stopPropagation()
+          setZoomLock(true)
         }}
         onStop={(_, e) => {
           const { x, y } = e
           moveElement(element.id, [x, y])
-          console.log({ x, y })
+          setZoomLock(false)
+          // console.log({ x, y })
         }}
         disabled={scale < 0.5 || mode !== 'idle'}
       >

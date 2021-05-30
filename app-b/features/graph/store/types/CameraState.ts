@@ -7,4 +7,8 @@ export type CameraState = {
     static: number
   }
   position: [number, number]
+  lock: {
+    pan: boolean
+    zoom: boolean
+  }
 }

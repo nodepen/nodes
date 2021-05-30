@@ -1,10 +1,11 @@
 import React from 'react'
-import { useCameraDispatch } from '../../store/hooks'
+import { useCameraDispatch, useCameraZoomLock } from '../../store/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
 
 const GraphCanvas = (): React.ReactElement => {
   const { setMode, setLiveZoom, setStaticZoom, setPosition } = useCameraDispatch()
+  const zoomDisabled = useCameraZoomLock()
 
   return (
     <div
@@ -48,7 +49,7 @@ const GraphCanvas = (): React.ReactElement => {
           setMode('idle')
           setStaticZoom(e.scale)
         }}
-        pinch={{ step: 20 }}
+        pinch={{ step: 20, disabled: zoomDisabled }}
         wheel={{ step: 100 }}
         scalePadding={{ disabled: true }}
         pan={{ velocity: false }}

@@ -8,6 +8,10 @@ const initialState: CameraState = {
     live: 1,
     static: 1,
   },
+  lock: {
+    pan: false,
+    zoom: false,
+  },
   position: [0, 0],
 }
 
@@ -17,6 +21,9 @@ export const cameraSlice = createSlice({
   reducers: {
     setCameraMode: (state, action: PayloadAction<CameraMode>) => {
       state.mode = action.payload
+    },
+    setCameraZoomLock: (state, action: PayloadAction<boolean>) => {
+      state.lock.zoom = action.payload
     },
     setLiveZoom: (state, action: PayloadAction<number>) => {
       state.zoom.live = action.payload
@@ -32,11 +39,19 @@ export const cameraSlice = createSlice({
 
 const selectCamera = (state: RootState): CameraState => state.camera
 const selectCameraMode = (state: RootState): CameraMode => state.camera.mode
+const selectCameraZoomLock = (state: RootState): boolean => state.camera.lock.zoom
 const selectLiveZoom = (state: RootState): number => state.camera.zoom.live
 const selectStaticZoom = (state: RootState): number => state.camera.zoom.static
 const selectPosition = (state: RootState): [number, number] => state.camera.position
 
-export const cameraSelectors = { selectCamera, selectCameraMode, selectLiveZoom, selectStaticZoom, selectPosition }
+export const cameraSelectors = {
+  selectCamera,
+  selectCameraMode,
+  selectCameraZoomLock,
+  selectLiveZoom,
+  selectStaticZoom,
+  selectPosition,
+}
 
 const { actions, reducer } = cameraSlice
 
