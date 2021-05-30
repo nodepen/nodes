@@ -1,7 +1,9 @@
 import React, { useRef, useState } from 'react'
+import Draggable, { DraggableEvent } from 'react-draggable'
 import { Grasshopper } from 'glib'
+import { useGraphDispatch, useCamera } from '../../../../store/hooks'
 import { ComponentLibraryDetails } from './ComponentLibraryDetails'
-import Draggable from 'react-draggable'
+import { getScreenPosition, screenSpaceToCameraSpace } from '../../../../utils'
 
 type ComponentLibraryEntryProps = {
   template: Grasshopper.Component
@@ -9,6 +11,12 @@ type ComponentLibraryEntryProps = {
 
 export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): React.ReactElement => {
   const { guid, name, category, icon } = template
+
+  const { addElement } = useGraphDispatch()
+  const {
+    zoom: { static: zoom },
+    position: [cx, cy],
+  } = useCamera()
 
   const entryRef = useRef<HTMLButtonElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
@@ -31,7 +39,7 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
   const [showDraggable, setShowDraggable] = useState(false)
   const dragStart = useRef(0)
 
-  const handleShowDraggable = (): void => {
+  const handleDragStart = (): void => {
     dragStart.current = Date.now()
     setShowDraggable(true)
 
@@ -41,6 +49,29 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
 
     const { left, top } = imageRef.current.getBoundingClientRect()
     setAnchor([left, top])
+  }
+
+  const handleDragStop = (e: DraggableEvent): void => {
+    setShowDraggable(false)
+    setDragPosition([0, 0])
+
+    const delta = Date.now() - dragStart.current
+
+    if (delta < 150) {
+      // Interpret action as a click
+      handleShowDetails()
+      return
+    }
+
+    // Add element
+    const [ex, ey] = getScreenPosition(e)
+    const [x, y] = screenSpaceToCameraSpace({ offset: [0, 48 + 36], position: [ex, ey] }, { zoom, position: [cx, cy] })
+
+    addElement({
+      type: 'static-component',
+      template: { type: 'static-component', ...template },
+      position: [x, y],
+    })
   }
 
   return (
@@ -56,19 +87,12 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
         <Draggable
           disabled={false}
           position={{ x: dx, y: dy }}
-          onStart={handleShowDraggable}
+          onStart={handleDragStart}
           onDrag={(e, d) => {
             setDragPosition([d.x, d.y])
           }}
-          onStop={() => {
-            setShowDraggable(false)
-            setDragPosition([0, 0])
-
-            const delta = Date.now() - dragStart.current
-
-            if (delta < 150) {
-              handleShowDetails()
-            }
+          onStop={(e) => {
+            handleDragStop(e)
           }}
         >
           <div className="w-full h-full flex justify-center items-center">
