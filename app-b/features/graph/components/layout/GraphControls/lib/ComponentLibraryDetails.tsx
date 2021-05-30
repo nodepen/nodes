@@ -5,6 +5,7 @@ import { useGraphDispatch, useCamera } from 'features/graph/store/hooks'
 import { screenSpaceToCameraSpace } from '@/features/graph/utils'
 import { useOutsideClick } from 'hooks'
 import { getScreenPosition } from '../../../../utils'
+import { StaticComponent } from '../../../canvas/elements'
 
 type ComponentLibraryDetailsProps = {
   template: Grasshopper.Component
@@ -54,50 +55,11 @@ export const ComponentLibraryDetails = ({
       <div className="w-vw pl-2 pr-2 fixed" style={{ left: 0, top: y + 12 }} ref={detailsRef}>
         <div className="w-full flex justify-center">
           <div
-            className="w-full p-4 pb-0 flex flex-col bg-white border-2 border-dark rounded-md overflow-visible z-0"
+            className="w-full p-4 flex flex-col bg-white border-2 border-dark rounded-md overflow-visible z-0"
             style={{ maxWidth: 400 }}
           >
-            <h2>{`${name} (${nickname})`}</h2>
+            <h2 className="">{`${name} (${nickname})`}</h2>
             <p>{description}</p>
-            <div className="w-full p-4 mb-4 mt-4 bg-gray-100 rounded-md flex justify-around items-start">
-              <svg
-                className="w-6 h-6 animate-bounce"
-                fill="none"
-                stroke="#333"
-                viewBox="0 -6 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-              <Draggable
-                onStop={(e) => {
-                  const [ex, ey] = getScreenPosition(e)
-                  const [x, y] = screenSpaceToCameraSpace(
-                    { offset: [0, 48 + 36], position: [ex, ey] },
-                    { zoom, position: [cx, cy] }
-                  )
-
-                  addElement({
-                    type: 'static-component',
-                    template: { type: 'static-component', ...template },
-                    position: [x, y],
-                  })
-                  onDestroy()
-                  return false
-                }}
-              >
-                <button className="w-24 h-8 bg-white border-2 border-dark rounded-md shadow-osm z-20" />
-              </Draggable>
-              <svg
-                className="w-6 h-6 animate-bounce"
-                fill="none"
-                stroke="#333"
-                viewBox="0 -6 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </div>
           </div>
         </div>
       </div>
