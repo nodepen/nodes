@@ -1,19 +1,14 @@
 import { useCallback, useRef } from 'react'
 import { useCameraRegistry, useCamera, useCameraDispatch } from '../store/hooks'
 
-type SetCameraPositionContext = {
-  setCameraPosition: (x: number, y: number) => Promise<void>
-  isMoving: boolean
-}
-
-export const useSetCameraPosition = (): SetCameraPositionContext => {
+export const useSetCameraPosition = (): ((x: number, y: number) => Promise<void>) => {
   const { setTransform } = useCameraRegistry()
   const { setPosition } = useCameraDispatch()
-  const { position, zoom } = useCamera()
+  // const { position, zoom } = useCamera()
 
   const startPosition = useRef<[number, number]>([0, 0])
   const startTime = useRef<number>(0)
-  const duration = useRef<number>(150)
+  const duration = useRef<number>(350)
 
   const setCameraPosition = useCallback((x: number, y: number) => {
     return new Promise<void>((resolve, reject) => {
@@ -22,14 +17,17 @@ export const useSetCameraPosition = (): SetCameraPositionContext => {
         return
       }
 
-      const moveStartPosition = position
+      const moveStartPosition: [number, number] = [0, 0]
       const moveStartTime = Date.now()
+
+      console.log({ start: moveStartPosition })
+      console.log({ to: [x, y] })
 
       startPosition.current = moveStartPosition
       startTime.current = moveStartTime
 
       // Trigger library move
-      setTransform(x, y, zoom.static, duration.current, 'easeInOutQuint')
+      setTransform(x, y, 1, duration.current, 'easeInOutQuint')
 
       // Begin parallel camera position move
       const xDelta = x - startPosition.current[0]
@@ -65,9 +63,9 @@ export const useSetCameraPosition = (): SetCameraPositionContext => {
         const t = (f - startTime.current) / duration.current
 
         animate(t)
-      }, 50)
+      }, 5)
     })
   }, [])
 
-  return { isMoving: false, setCameraPosition }
+  return setCameraPosition
 }

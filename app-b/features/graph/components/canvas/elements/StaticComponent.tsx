@@ -3,6 +3,7 @@ import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch
 import React, { useEffect, useRef } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria } from 'hooks'
+import { useSetCameraPosition } from '@/features/graph/hooks/useSetCameraPosition'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -36,6 +37,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
     moveElement(id, [x - width / 2, y - height / 2])
   }, [width, height])
 
+  const setCameraPosition = useSetCameraPosition()
+
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0">
       <Draggable
@@ -49,7 +52,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           const { x, y } = e
           moveElement(element.id, [x, y])
           setZoomLock(false)
-          // console.log({ x, y })
+          console.log({ x, y })
         }}
         disabled={scale < 0.5 || mode !== 'idle'}
       >
@@ -97,6 +100,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               id="label-column"
               className="w-10 m-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
               style={{ background: '#FFF' }}
+              onClick={() => setCameraPosition(-x, -y)}
             >
               <div
                 className="font-panel text-v font-bold text-sm select-none"
