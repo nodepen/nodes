@@ -2,12 +2,13 @@ import React from 'react'
 import { assert } from 'glib'
 import { useGraphElements } from '../../store/hooks'
 import { StaticComponent } from './elements'
+import { useDebugRender } from 'hooks'
 
 const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
   const elements = Object.values(graph)
 
-  console.log(`⚙ ElementsContainer`)
+  useDebugRender('ElementsContainer')
 
   return (
     <>

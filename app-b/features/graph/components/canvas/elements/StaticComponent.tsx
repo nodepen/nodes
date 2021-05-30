@@ -2,7 +2,7 @@ import { NodePen } from 'glib'
 import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch } from '../../../store/hooks'
 import React, { useEffect, useRef } from 'react'
 import Draggable from 'react-draggable'
-import { useElementDimensions, useCriteria } from 'hooks'
+import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { useSetCameraPosition } from '@/features/graph/hooks/useSetCameraPosition'
 
 type StaticComponentProps = {
@@ -11,7 +11,8 @@ type StaticComponentProps = {
 
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const { template, current, id } = element
-  console.log(`⚙ StaticComponent ${template.name} ${element.id}`)
+
+  useDebugRender(`StaticComponent ${template.name} ${id}`)
 
   const [x, y] = current.position
 
@@ -32,7 +33,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
     if (isMoved.current || !width || !height) {
       return
     }
-    console.log('OK')
     isMoved.current = true
     moveElement(id, [x - width / 2, y - height / 2])
   }, [width, height])
