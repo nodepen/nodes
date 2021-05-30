@@ -64,7 +64,7 @@ export const graphSlice = createSlice({
 })
 
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
-  state.graph.elements
+  state.graph.present.elements
 
 export const graphSelectors = { selectElements }
 

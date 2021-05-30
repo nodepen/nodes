@@ -1,11 +1,6 @@
 import { Grasshopper } from 'glib'
 import React, { useCallback, useRef } from 'react'
-import Draggable from 'react-draggable'
-import { useGraphDispatch, useCamera } from 'features/graph/store/hooks'
-import { screenSpaceToCameraSpace } from '@/features/graph/utils'
 import { useOutsideClick } from 'hooks'
-import { getScreenPosition } from '../../../../utils'
-import { StaticComponent } from '../../../canvas/elements'
 
 type ComponentLibraryDetailsProps = {
   template: Grasshopper.Component
@@ -19,12 +14,6 @@ export const ComponentLibraryDetails = ({
   onDestroy,
 }: ComponentLibraryDetailsProps): React.ReactElement => {
   const { name, nickname, description } = template
-
-  const { addElement } = useGraphDispatch()
-  const {
-    zoom: { static: zoom },
-    position: [cx, cy],
-  } = useCamera()
 
   const [x, y] = position
 

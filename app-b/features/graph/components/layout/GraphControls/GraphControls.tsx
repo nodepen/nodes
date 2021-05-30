@@ -2,9 +2,11 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useGraphManager } from 'context/graph'
 import { categorize, flattenCategory } from '../../../utils'
 import { ComponentLibraryIcon } from './lib'
+import { useGraphDispatch } from 'features/graph/store/hooks'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
+  const { undo, redo } = useGraphDispatch()
 
   const [sidebarWidth, setSidebarWidth] = useState(0)
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false)
@@ -130,6 +132,57 @@ export const GraphControls = (): React.ReactElement => {
               </button>
             )
           })}
+          <div className="w-full p-2">
+            <hr className="w-full border-t-2 border-swampgreen rounded-full" />
+          </div>
+          <button
+            className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen"
+            onClick={undo}
+          >
+            <div className="w-12 h-12 flex justify-center items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#093824"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
+              </svg>
+            </div>
+            <div className="flex-grow h-full flex justify-start items-center">
+              <p className="font-sans font-bold text-sm select-none">UNDO</p>
+            </div>
+          </button>
+          <button
+            className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen"
+            onClick={redo}
+          >
+            <div className="w-12 h-12 flex justify-center items-center">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="#093824"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
+              </svg>
+            </div>
+            <div className="flex-grow h-full flex justify-start items-center">
+              <p className="font-sans font-bold text-sm select-none">REDO</p>
+            </div>
+          </button>
 
           <div className="w-full h-12" />
         </div>
