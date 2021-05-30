@@ -187,7 +187,7 @@ export const GraphControls = (): React.ReactElement => {
             </svg>
           </button>
           <div
-            className="h-full w-full whitespace-nowrap overflow-x-auto no-scrollbar"
+            className="h-full w-full whitespace-nowrap overflow-x-auto no-scrollbar overflow-visible"
             style={{ width: sidebarWidth - 96 }}
             ref={componentToolbarRef}
           >
@@ -207,7 +207,7 @@ export const GraphControls = (): React.ReactElement => {
                 ))}
           </div>
           <button
-            className="w-12 h-12 flex justify-center items-center transition-colors duration-75 md:hover:bg-swampgreen"
+            className="w-12 h-12 flex justify-center items-center transition-colors duration-75 bg-green md:hover:bg-swampgreen z-20"
             onClick={() => handleScroll((sidebarWidth - 96) / 2)}
           >
             <svg
