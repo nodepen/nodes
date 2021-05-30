@@ -2,10 +2,11 @@ import React, { useEffect, useRef } from 'react'
 import { useCameraDispatch, useCameraZoomLock } from '../../store/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
-import { CameraControls } from '../utils'
-import { SetTransform } from '../../types'
+import { useGraphManager } from '@/context/graph'
 
 const GraphCanvas = (): React.ReactElement => {
+  const { register } = useGraphManager()
+
   const { setMode, setLiveZoom, setStaticZoom, setPosition } = useCameraDispatch()
   const zoomDisabled = useCameraZoomLock()
 
@@ -15,10 +16,8 @@ const GraphCanvas = (): React.ReactElement => {
     if (!canvasRef.current) {
       return
     }
-    setTimeout(() => {
-      console.log('ok')
-      ;(canvasRef.current as any).context.dispatch.setTransform(35, 35, 1, 300, 'linear')
-    }, 5000)
+
+    register.setTransform((canvasRef.current as any).context.dispatch.setTransform)
   }, [])
 
   return (
@@ -68,16 +67,11 @@ const GraphCanvas = (): React.ReactElement => {
         scalePadding={{ disabled: true }}
         pan={{ velocity: false }}
       >
-        {({ setTransform }: { setTransform: SetTransform }) => (
-          <>
-            <CameraControls setTransform={setTransform} />
-            <TransformComponent ref={canvasRef}>
-              <div className="w-vw h-vh relative">
-                <Container key="elements-container" />
-              </div>
-            </TransformComponent>
-          </>
-        )}
+        <TransformComponent ref={canvasRef}>
+          <div className="w-vw h-vh relative">
+            <Container key="elements-container" />
+          </div>
+        </TransformComponent>
       </TransformWrapper>
     </div>
   )

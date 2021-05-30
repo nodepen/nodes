@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Grasshopper } from 'glib'
 import { GraphStore } from './types'
 import { useSessionManager } from '../session'
 import { useApolloClient, gql } from '@apollo/client'
+import { SetTransform } from '@/features/graph/types'
 
-export const GraphContext = React.createContext<GraphStore>({})
+export const GraphContext = React.createContext<GraphStore>({ register: { setTransform: () => '' }, registry: {} })
 
 type GraphManagerProps = {
   children?: JSX.Element
@@ -73,8 +74,20 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       })
   }, [token, library, client])
 
+  const [setTransform, setSetTransform] = useState<SetTransform>()
+
+  const handleSetTransform = useCallback((setTransform: SetTransform) => {
+    setSetTransform(() => setTransform)
+  }, [])
+
   const store: GraphStore = {
     library,
+    registry: {
+      setTransform,
+    },
+    register: {
+      setTransform: handleSetTransform,
+    },
   }
 
   return <GraphContext.Provider value={store}>{children}</GraphContext.Provider>

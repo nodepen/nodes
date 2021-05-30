@@ -1,8 +1,11 @@
+import { useGraphManager } from '@/context/graph'
 import { useCallback, useRef } from 'react'
-import { useCameraRegistry, useCamera, useCameraDispatch } from '../store/hooks'
+import { useCameraDispatch } from '../store/hooks'
 
 export const useSetCameraPosition = (): ((x: number, y: number) => Promise<void>) => {
-  const { setTransform } = useCameraRegistry()
+  const {
+    registry: { setTransform },
+  } = useGraphManager()
   const { setPosition } = useCameraDispatch()
   // const { position, zoom } = useCamera()
 

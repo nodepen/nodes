@@ -11,7 +11,7 @@ type StaticComponentProps = {
 
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const { template, current, id } = element
-  console.log(`Render in ${element.id} !`)
+  console.log(`⚙ StaticComponent ${template.name} ${element.id}`)
 
   const [x, y] = current.position
 

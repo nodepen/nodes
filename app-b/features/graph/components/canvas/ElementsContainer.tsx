@@ -7,7 +7,7 @@ const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
   const elements = Object.values(graph)
 
-  console.log('render in container!')
+  console.log(`⚙ ElementsContainer`)
 
   return (
     <>
