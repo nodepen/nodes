@@ -54,11 +54,13 @@ const GraphCanvas = (): React.ReactElement => {
         scalePadding={{ disabled: true }}
         pan={{ velocity: false }}
       >
-        <TransformComponent>
-          <div className="w-vw h-vh relative">
-            <Container />
-          </div>
-        </TransformComponent>
+        {({ setTransform }) => (
+          <TransformComponent>
+            <div className="w-vw h-vh relative">
+              <Container setTransform={setTransform} />
+            </div>
+          </TransformComponent>
+        )}
       </TransformWrapper>
     </div>
   )

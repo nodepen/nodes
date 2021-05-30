@@ -11,4 +11,7 @@ export type CameraState = {
     pan: boolean
     zoom: boolean
   }
+  registry: {
+    moveTo?: (x: number, y: number) => void
+  }
 }
