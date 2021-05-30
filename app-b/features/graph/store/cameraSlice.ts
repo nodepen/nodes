@@ -13,7 +13,6 @@ const initialState: CameraState = {
     zoom: false,
   },
   position: [0, 0],
-  registry: {},
 }
 
 export const cameraSlice = createSlice({
@@ -35,9 +34,6 @@ export const cameraSlice = createSlice({
     setPosition: (state, action: PayloadAction<[number, number]>) => {
       state.position = action.payload
     },
-    registerSetTransform: (state, action: PayloadAction<CameraState['registry']['setTransform']>) => {
-      state.registry.setTransform = action.payload
-    },
   },
 })
 
@@ -48,8 +44,6 @@ const selectLiveZoom = (state: RootState): number => state.camera.zoom.live
 const selectStaticZoom = (state: RootState): number => state.camera.zoom.static
 const selectPosition = (state: RootState): [number, number] => state.camera.position
 
-const selectRegistry = (state: RootState): CameraState['registry'] => state.camera.registry
-
 export const cameraSelectors = {
   selectCamera,
   selectCameraMode,
@@ -57,7 +51,6 @@ export const cameraSelectors = {
   selectLiveZoom,
   selectStaticZoom,
   selectPosition,
-  selectRegistry,
 }
 
 const { actions, reducer } = cameraSlice
