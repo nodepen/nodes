@@ -35,8 +35,8 @@ export const cameraSlice = createSlice({
     setPosition: (state, action: PayloadAction<[number, number]>) => {
       state.position = action.payload
     },
-    registerMoveTo: (state, action: PayloadAction<CameraState['registry']['moveTo']>) => {
-      state.registry.moveTo = action.payload
+    registerSetTransform: (state, action: PayloadAction<CameraState['registry']['setTransform']>) => {
+      state.registry.setTransform = action.payload
     },
   },
 })

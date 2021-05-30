@@ -1,6 +1,7 @@
 import { useAppDispatch } from '$'
 import { cameraActions } from '../cameraSlice'
 import { CameraState, CameraMode } from '../types'
+import { SetTransform } from '../../types'
 
 export const useCameraDispatch = () => {
   const dispatch = useAppDispatch()
@@ -11,5 +12,6 @@ export const useCameraDispatch = () => {
     setStaticZoom: (zoom: number) => dispatch(cameraActions.setStaticZoom(zoom)),
     setPosition: (position: CameraState['position']) => dispatch(cameraActions.setPosition(position)),
     setZoomLock: (lock: boolean) => dispatch(cameraActions.setCameraZoomLock(lock)),
+    registerSetTransform: (setTransform: SetTransform) => dispatch(cameraActions.registerSetTransform(setTransform)),
   }
 }

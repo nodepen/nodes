@@ -2,6 +2,8 @@ import React from 'react'
 import { useCameraDispatch, useCameraZoomLock } from '../../store/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
+import { CameraControls } from '../utils'
+import { SetTransform } from '../../types'
 
 const GraphCanvas = (): React.ReactElement => {
   const { setMode, setLiveZoom, setStaticZoom, setPosition } = useCameraDispatch()
@@ -54,12 +56,15 @@ const GraphCanvas = (): React.ReactElement => {
         scalePadding={{ disabled: true }}
         pan={{ velocity: false }}
       >
-        {({ setTransform }) => (
-          <TransformComponent>
-            <div className="w-vw h-vh relative">
-              <Container setTransform={setTransform} />
-            </div>
-          </TransformComponent>
+        {({ setTransform }: { setTransform: SetTransform }) => (
+          <>
+            <CameraControls setTransform={setTransform} />
+            <TransformComponent>
+              <div className="w-vw h-vh relative">
+                <Container />
+              </div>
+            </TransformComponent>
+          </>
         )}
       </TransformWrapper>
     </div>

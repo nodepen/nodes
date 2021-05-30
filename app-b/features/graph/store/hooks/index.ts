@@ -1,5 +1,6 @@
 export { useCamera } from './useCamera'
 export { useCameraDispatch } from './useCameraDispatch'
+export { useCameraRegistry } from './useCameraRegistry'
 
 export { useCameraPosition } from './useCameraPosition'
 export { useCameraLiveZoom } from './useCameraLiveZoom'

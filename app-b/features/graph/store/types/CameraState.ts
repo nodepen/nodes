@@ -1,4 +1,5 @@
 import { CameraMode } from './CameraMode'
+import { SetTransform } from '../../types'
 
 export type CameraState = {
   mode: CameraMode
@@ -12,6 +13,6 @@ export type CameraState = {
     zoom: boolean
   }
   registry: {
-    moveTo?: (x: number, y: number) => void
+    setTransform?: SetTransform
   }
 }
