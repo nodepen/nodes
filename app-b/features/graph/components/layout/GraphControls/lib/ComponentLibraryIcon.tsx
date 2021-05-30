@@ -76,6 +76,7 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
               ref={imageRef}
               src={`data:image/png;base64,${icon}`}
               alt={`The icon for the ${name} component in ${category}.`}
+              draggable="false"
             />
           </div>
         </Draggable>
@@ -91,12 +92,22 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
       ) : null}
 
       {showDraggable ? (
-        <img
-          className="fixed z-50"
-          style={{ left: dx + x, top: dy + y }}
-          src={`data:image/png;base64,${icon}`}
-          alt={`The icon for the ${name} component in ${category}.`}
-        />
+        <>
+          <img
+            className="fixed z-50"
+            style={{ left: dx + x, top: dy + y }}
+            src={`data:image/png;base64,${icon}`}
+            alt={`The icon for the ${name} component in ${category}.`}
+            draggable="false"
+          />
+          <img
+            className="fixed opacity-30 z-50"
+            style={{ left: x, top: y }}
+            src={`data:image/png;base64,${icon}`}
+            alt={`The icon for the ${name} component in ${category}.`}
+            draggable="false"
+          />
+        </>
       ) : null}
     </>
   )
