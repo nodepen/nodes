@@ -66,7 +66,14 @@ export const graphSlice = createSlice({
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
   state.graph.present.elements
 
-export const graphSelectors = { selectElements }
+const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
+  return {
+    canUndo: state.graph.past.length > 0,
+    canRedo: state.graph.future.length > 0,
+  }
+}
+
+export const graphSelectors = { selectElements, selectGraphHistory }
 
 const { actions, reducer } = graphSlice
 
