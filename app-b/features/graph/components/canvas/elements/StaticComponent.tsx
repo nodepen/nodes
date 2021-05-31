@@ -45,8 +45,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0">
-      <div className="w-full h-full relative">
-        {showButtons ? (
+      <div className="w-min h-full relative">
+        {/* {showButtons ? (
           <button
             className="w-6 h-6 bg-red-500 absolute top-0 pointer-events-auto"
             style={{ left: x - 36, top: y }}
@@ -62,7 +62,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               setCameraPosition(-x, -y)
             }}
           />
-        ) : null}
+        ) : null} */}
         <Draggable
           scale={scale}
           position={{ x, y }}
@@ -80,82 +80,89 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           disabled={scale < 0.5 || mode !== 'idle'}
         >
           <div
-            className={`${
-              isVisible ? 'opacity-100' : 'opacity-0'
-            } relative flex flex-row items-stretch pointer-events-auto`}
+            className={`${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col items-stretch pointer-events-auto`}
+            ref={componentRef}
           >
-            <div
-              className="absolute w-8 h-4 flex justify-center overflow-visible z-30"
-              style={{ top: '-1.2rem', right: '1rem' }}
-            >
-              {/* <Loading visible={status === 'waiting'} /> */}
-            </div>
-            <div
-              id="input-grips-container"
-              className="flex flex-col z-20"
-              style={{ paddingTop: '2px', paddingBottom: '2px' }}
-            >
-              {/* {Object.keys(current.inputs).map((parameterId) => (
-                <div
-                  key={`input-grip-${parameterId}`}
-                  className="w-4 flex-grow flex flex-col justify-center"
-                  style={{ transform: 'translateX(50%)' }}
-                >
-                  {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
-                </div>
-              ))} */}
-            </div>
-            <div
-              id="panel-container"
-              ref={componentRef}
-              className="flex flex-row items-stretch rounded-md border-2 border-dark bg-light shadow-osm z-30"
-            >
-              <div id="inputs-column" className="flex flex-col">
-                {/* {Object.entries(current.inputs).map(([parameterId, i]) => (
-                  <ComponentParameter
-                    key={`input-${parameterId}-${i}`}
-                    source={{ element: id, parameter: parameterId }}
-                    mode="input"
-                  />
-                ))} */}
+            <div className="h-2 bg-white border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none" />
+            <div className="bg-white flex flex-row justify-center items-stretch">
+              <div className="flex-grow flex flex-col items-stretch">
+                {Object.entries(element.current.inputs).map(([id, i]) => {
+                  const parameter = element.template.inputs[i]
+
+                  return (
+                    <div
+                      key={`input-param-${id}`}
+                      className={`flex-grow pt-2 pb-2 pr-4 flex flex-row justify-start items-center border-dark border-l-2 rounded-tr-md rounded-br-md transition-colors duration-75 hover:bg-dark`}
+                    >
+                      <svg
+                        className="w-4 h-4 overflow-visible"
+                        viewBox="0 0 10 10"
+                        style={{ transform: 'translateX(-9px)' }}
+                      >
+                        <path
+                          d="M5,2 a1,1 0 0,0 0,8"
+                          fill="#333"
+                          stroke="#333"
+                          strokeWidth="2px"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                        <circle
+                          cx="5"
+                          cy="5"
+                          r="4"
+                          stroke="#333"
+                          strokeWidth="2px"
+                          vectorEffect="non-scaling-stroke"
+                          fill="#FFF"
+                        />
+                      </svg>
+
+                      <p>{parameter.nickname}</p>
+                    </div>
+                  )
+                })}
               </div>
-              <div
-                id="label-column"
-                className="w-10 m-1 p-2 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
-                style={{ background: '#FFF' }}
-              >
-                <div
-                  className="font-panel text-v font-bold text-sm select-none"
-                  style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
-                >
-                  {template?.nickname.toUpperCase()}
-                </div>
+              <div className="ml-2 mr-2 flex flex-col justify-center items-center rounded-md border-2 border-dark">
+                <p>OK</p>
               </div>
-              <div id="outputs-column" className="flex flex-col">
-                {/* {Object.entries(current.outputs).map(([parameterId, i]) => (
-                  <ComponentParameter
-                    key={`output-${parameterId}-${i}`}
-                    source={{ element: id, parameter: parameterId }}
-                    mode="output"
-                  />
-                ))} */}
+              <div className="flex-grow flex flex-col items-stretch">
+                {Object.entries(element.current.outputs).map(([id, i]) => {
+                  const parameter = element.template.outputs[i]
+
+                  return (
+                    <div
+                      key={`output-param-${id}`}
+                      className={`flex-grow pt-2 pb-2 pl-4 flex flex-row justify-start items-center border-dark border-r-2 rounded-tl-md rounded-bl-md transition-colors duration-75 hover:bg-gray-300`}
+                    >
+                      <p>{parameter.nickname}</p>
+                      <svg
+                        className="w-4 h-4 overflow-visible"
+                        viewBox="0 0 10 10"
+                        style={{ transform: 'translateX(9px)' }}
+                      >
+                        <path
+                          d="M5,10 a1,1 0 0,0 0,-8"
+                          fill="#333"
+                          stroke="#333"
+                          strokeWidth="2px"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                        <circle
+                          cx="5"
+                          cy="5"
+                          r="4"
+                          stroke="#333"
+                          strokeWidth="2px"
+                          vectorEffect="non-scaling-stroke"
+                          fill="#FFF"
+                        />
+                      </svg>
+                    </div>
+                  )
+                })}
               </div>
             </div>
-            <div
-              id="output-grips-container"
-              className="flex flex-col z-20"
-              style={{ paddingTop: '2px', paddingBottom: '2px' }}
-            >
-              {/* {Object.keys(current.outputs).map((parameterId) => (
-                <div
-                  key={`output-grip-${parameterId}`}
-                  className="w-4 flex-grow flex flex-col justify-center"
-                  style={{ transform: 'translateX(-50%)' }}
-                >
-                  {ready ? <Grip source={{ element: id, parameter: parameterId }} /> : null}
-                </div>
-              ))} */}
-            </div>
+            <div className="h-2 bg-white border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none shadow-osm" />
           </div>
         </Draggable>
       </div>
