@@ -52,7 +52,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     const [x, y] = current.position
 
-    setCameraPosition(-(x - dx), -(y - dy))
+    setCameraPosition(x, y, 'C', 20)
   }
 
   return (

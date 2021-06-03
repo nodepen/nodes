@@ -2,7 +2,14 @@ import { useGraphManager } from '@/context/graph'
 import { useCallback, useRef } from 'react'
 import { useCameraDispatch, useCameraPosition } from '../store/hooks'
 
-export const useSetCameraPosition = (): ((x: number, y: number) => Promise<void>) => {
+type CameraAnchor = 'TL' | 'TR' | 'C'
+
+export const useSetCameraPosition = (): ((
+  x: number,
+  y: number,
+  anchor?: CameraAnchor,
+  offset?: number
+) => Promise<void>) => {
   const {
     registry: { setTransform },
   } = useGraphManager()
@@ -12,13 +19,35 @@ export const useSetCameraPosition = (): ((x: number, y: number) => Promise<void>
   const startTime = useRef<number>(0)
   const duration = useRef<number>(350)
 
+  /**
+   * Have camera 'look at' position on graph relative to a screen anchor position.
+   * @remarks `offset` has no effect on `C` anchor
+   */
   const setCameraPosition = useCallback(
-    (x: number, y: number) => {
+    (x: number, y: number, anchor: CameraAnchor = 'C', offset = 0) => {
       return new Promise<void>((resolve, reject) => {
         if (!setTransform) {
           reject()
           return
         }
+
+        const [w, h] = [window.innerWidth, window.innerHeight - 48 - 36]
+
+        const [dx, dy] = (() => {
+          switch (anchor) {
+            case 'C': {
+              return [w / 2, h / 2]
+            }
+            case 'TL': {
+              return [0 + offset, 0 + offset]
+            }
+            case 'TR': {
+              return [w - offset, 0 + offset]
+            }
+          }
+        })()
+
+        const [tx, ty] = [-x + dx, -y + dy]
 
         // console.log({ start: startPosition })
         // console.log({ to: [x, y] })
@@ -26,11 +55,11 @@ export const useSetCameraPosition = (): ((x: number, y: number) => Promise<void>
         startTime.current = Date.now()
 
         // Trigger library move
-        setTransform(x, y, 1, duration.current, 'easeInOutQuint')
+        setTransform(tx, ty, 1, duration.current, 'easeInOutQuint')
 
         // Begin parallel camera position move
-        const xDelta = x - startPosition[0]
-        const yDelta = y - startPosition[1]
+        const xDelta = tx - startPosition[0]
+        const yDelta = ty - startPosition[1]
 
         const animate = (t: number): void => {
           const easeInOutQuint = (t: number): number => {
