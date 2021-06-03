@@ -44,8 +44,15 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const p = mode === 'input' ? 'pr-4' : 'pl-4'
 
   const handleClick = (): void => {
+    const windowWidth = window.innerWidth
+    const componentWidth = 120
+
+    const dx = mode === 'input' ? windowWidth - 45 : -componentWidth + 45
+    const dy = 20
+
     const [x, y] = current.position
-    setCameraPosition(-x, -y)
+
+    setCameraPosition(-(x - dx), -(y - dy))
   }
 
   return (
