@@ -15,7 +15,9 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
   const { addElement } = useGraphDispatch()
   const {
     zoom: { static: zoom },
-    position: [cx, cy],
+    position: {
+      static: [cx, cy],
+    },
   } = useCamera()
 
   const entryRef = useRef<HTMLButtonElement>(null)

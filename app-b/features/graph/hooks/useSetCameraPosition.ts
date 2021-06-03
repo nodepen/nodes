@@ -1,6 +1,6 @@
 import { useGraphManager } from '@/context/graph'
-import { useCallback, useEffect, useRef } from 'react'
-import { useCameraDispatch, useCameraPosition } from '../store/hooks'
+import { useCallback, useRef } from 'react'
+import { useCameraDispatch, useCameraStaticPosition } from '../store/hooks'
 
 type CameraAnchor = 'TL' | 'TR' | 'C'
 
@@ -13,14 +13,8 @@ export const useSetCameraPosition = (): ((
   const {
     registry: { setTransform },
   } = useGraphManager()
-  const { setPosition } = useCameraDispatch()
-  // const cameraPosition = useCameraPosition()
-
-  const startPosition = useRef<[number, number]>([0, 0])
-
-  // useEffect(() => {
-  //   startPosition.current = cameraPosition
-  // }, [cameraPosition])
+  const { setLivePosition, setStaticPosition } = useCameraDispatch()
+  const startPosition = useCameraStaticPosition()
 
   const startTime = useRef<number>(0)
   const duration = useRef<number>(350)
@@ -39,7 +33,7 @@ export const useSetCameraPosition = (): ((
 
         const [w, h] = [window.innerWidth, window.innerHeight - 48 - 36]
 
-        const [dx, dy] = (() => {
+        const [dx, dy] = ((): [number, number] => {
           switch (anchor) {
             case 'C': {
               return [w / 2, h / 2]
@@ -64,8 +58,8 @@ export const useSetCameraPosition = (): ((
         setTransform(tx, ty, 1, duration.current, 'easeInOutQuint')
 
         // Begin parallel camera position move
-        const xDelta = tx - startPosition.current[0]
-        const yDelta = ty - startPosition.current[1]
+        const xDelta = tx - startPosition[0]
+        const yDelta = ty - startPosition[1]
 
         const animate = (t: number): void => {
           const easeInOutQuint = (t: number): number => {
@@ -78,10 +72,10 @@ export const useSetCameraPosition = (): ((
 
           const f = remap(t)
 
-          const xPosition = startPosition.current[0] + xDelta * f
-          const yPosition = startPosition.current[1] + yDelta * f
+          const xPosition = startPosition[0] + xDelta * f
+          const yPosition = startPosition[1] + yDelta * f
 
-          setPosition([xPosition, yPosition])
+          setLivePosition([xPosition, yPosition])
         }
 
         const i = setInterval(() => {
@@ -90,6 +84,7 @@ export const useSetCameraPosition = (): ((
           if (f >= startTime.current + duration.current) {
             clearInterval(i)
             animate(1)
+            setStaticPosition([tx, ty])
             resolve()
             return
           }

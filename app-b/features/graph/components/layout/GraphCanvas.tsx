@@ -7,7 +7,7 @@ import { useGraphManager } from '@/context/graph'
 const GraphCanvas = (): React.ReactElement => {
   const { register } = useGraphManager()
 
-  const { setMode, setLiveZoom, setStaticZoom, setPosition } = useCameraDispatch()
+  const { setMode, setLiveZoom, setStaticZoom, setLivePosition, setStaticPosition } = useCameraDispatch()
   const zoomDisabled = useCameraZoomLock()
 
   const canvasRef = useRef(null)
@@ -41,12 +41,15 @@ const GraphCanvas = (): React.ReactElement => {
         defaultPositionX={0}
         defaultPositionY={0}
         options={{ limitToWrapper: false, limitToBounds: false, centerContent: false, minScale: 0.25, maxScale: 2.5 }}
-        onPanning={(x: any) => {
-          setPosition([x.positionX, x.positionY])
+        onPanning={(e: any) => {
+          setLivePosition([e.positionX, e.positionY])
+        }}
+        onPanningStop={(e: any) => {
+          setStaticPosition([e.positionX, e.positionY])
         }}
         onZoomChange={(zoom: any) => {
           setLiveZoom(zoom.scale)
-          setPosition([zoom.positionX, zoom.positionY])
+          setLivePosition([zoom.positionX, zoom.positionY])
         }}
         onWheelStart={() => {
           setMode('zooming')
@@ -54,6 +57,8 @@ const GraphCanvas = (): React.ReactElement => {
         onWheelStop={(e: any) => {
           setMode('idle')
           setStaticZoom(e.scale)
+          setStaticPosition([e.positionX, e.positionY])
+          console.log({ e })
         }}
         onPinchingStart={() => {
           setMode('zooming')
@@ -61,6 +66,7 @@ const GraphCanvas = (): React.ReactElement => {
         onPinchingStop={(e: any) => {
           setMode('idle')
           setStaticZoom(e.scale)
+          setStaticPosition([e.positionX, e.positionY])
         }}
         doubleClick={{ disabled: true }}
         pinch={{ step: 20, disabled: zoomDisabled }}

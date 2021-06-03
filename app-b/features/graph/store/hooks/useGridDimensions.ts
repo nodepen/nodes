@@ -1,4 +1,4 @@
-import { useCameraPosition } from './useCameraPosition'
+import { useCameraLivePosition } from './useCameraLivePosition'
 import { useCameraLiveZoom } from './useCameraLiveZoom'
 
 type GridDimensions = {
@@ -8,7 +8,7 @@ type GridDimensions = {
 }
 
 export const useGridDimensions = (): GridDimensions => {
-  const [cx, cy] = useCameraPosition()
+  const [cx, cy] = useCameraLivePosition()
   const zoom = useCameraLiveZoom()
 
   const scale = zoom < 0.5 ? 5 : 1

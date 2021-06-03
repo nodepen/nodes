@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useCameraMode, useGridDimensions } from '../../store/hooks'
 
 const GraphGrid = (): React.ReactElement => {

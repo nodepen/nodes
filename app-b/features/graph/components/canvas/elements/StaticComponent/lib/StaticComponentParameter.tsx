@@ -13,7 +13,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const { current, id: elementId } = parent
   const { name, nickname, type, id: parameterId } = template
 
-  useDebugRender(`StatiComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
+  useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
   const setCameraPosition = useSetCameraPosition()
 

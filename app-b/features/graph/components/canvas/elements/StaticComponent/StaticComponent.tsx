@@ -3,7 +3,6 @@ import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch
 import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
-import { useSetCameraPosition } from 'features/graph/hooks/useSetCameraPosition'
 import { StaticComponentParameter } from './lib'
 
 type StaticComponentProps = {
@@ -113,7 +112,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                     <StaticComponentParameter
                       key={`output-param-${id}`}
                       mode={'output'}
-                      template={parameter}
+                      template={{ id, ...parameter }}
                       parent={element}
                     />
                   )
