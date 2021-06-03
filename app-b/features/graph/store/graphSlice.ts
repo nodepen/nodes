@@ -1,9 +1,14 @@
-import { NodePen } from 'glib'
+import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
 import { GraphState } from './types'
 import { newGuid, initializeParameters } from '../utils'
-import { AddElementPayload, MoveElementPayload } from './types/Payload'
+import {
+  AddElementPayload,
+  MoveElementPayload,
+  RegisterElementAnchorPayload,
+  RegisterElementPayload,
+} from './types/Payload'
 
 const initialState: GraphState = {
   elements: {},
@@ -59,6 +64,32 @@ export const graphSlice = createSlice({
       }
 
       state.elements[id].current.position = position
+    },
+    registerElement: (state: GraphState, action: PayloadAction<RegisterElementPayload>) => {
+      const { id, dimensions } = action.payload
+
+      if (!state.elements[id]) {
+        return
+      }
+
+      const [width, height] = dimensions
+
+      state.elements[id].current.dimensions = { width, height }
+    },
+    registerElementAnchor: (state: GraphState, action: PayloadAction<RegisterElementAnchorPayload>) => {
+      const { elementId, anchorId, position } = action.payload
+
+      if (!state.elements[elementId]) {
+        return
+      }
+
+      const { current } = state.elements[elementId]
+
+      if (!assert.element.isGripElement(current)) {
+        return
+      }
+
+      current.anchors[anchorId] = position
     },
   },
 })

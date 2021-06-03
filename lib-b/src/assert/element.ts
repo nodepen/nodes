@@ -1,3 +1,4 @@
+import { GraphElement, GripElement, VisibleElement } from '../nodepen/element/data/types'
 import { Element } from '../nodepen'
 import { ElementTemplateType } from '../nodepen/element/templates'
 
@@ -19,4 +20,8 @@ export const isNumberSlider = (element: Element<ElementTemplateType>): element i
 
 export const isWire = (element: Element<ElementTemplateType>): element is Element<'wire'> => {
     return element.template.type === 'wire'
+}
+
+export const isGripElement = (state: GraphElement | GripElement | VisibleElement): state is GripElement => {
+    return 'anchors' in state
 }

@@ -1,16 +1,19 @@
 import { NodePen, Grasshopper } from 'glib'
 import React, { useMemo } from 'react'
 import { useSetCameraPosition } from 'features/graph/hooks'
+import { useDebugRender } from '@/hooks'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
-  template: Grasshopper.Parameter
+  template: Grasshopper.Parameter & { id: string }
   mode: 'input' | 'output'
 }
 
 const StaticComponentParameter = ({ parent, template, mode }: StaticComponentParameterProps): React.ReactElement => {
-  const { current, id } = parent
-  const { name, nickname, type } = template
+  const { current, id: elementId } = parent
+  const { name, nickname, type, id: parameterId } = template
+
+  useDebugRender(`StatiComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
   const setCameraPosition = useSetCameraPosition()
 
@@ -51,6 +54,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     const dy = 20
 
     const [x, y] = current.position
+    console.log(current)
 
     setCameraPosition(x, y, 'C', 20)
   }

@@ -20,7 +20,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const scale = useCameraStaticZoom()
   const mode = useCameraMode()
 
-  const { moveElement } = useGraphDispatch()
+  const { moveElement, registerElement } = useGraphDispatch()
   const { setZoomLock } = useCameraDispatch()
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -35,7 +35,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
       return
     }
     isMoved.current = true
+
     moveElement(id, [x - width / 2, y - height / 2])
+    registerElement({ id, dimensions: [width, height] })
   }, [width, height])
 
   const [isMoving, setIsMoving] = useState(false)
@@ -94,7 +96,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                     <StaticComponentParameter
                       key={`input-param-${id}`}
                       mode={'input'}
-                      template={parameter}
+                      template={{ id, ...parameter }}
                       parent={element}
                     />
                   )
