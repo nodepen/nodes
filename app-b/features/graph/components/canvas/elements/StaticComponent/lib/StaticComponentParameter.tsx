@@ -1,5 +1,6 @@
 import { NodePen, Grasshopper } from 'glib'
 import React, { useMemo } from 'react'
+import { useSetCameraPosition } from 'features/graph/hooks'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -10,6 +11,8 @@ type StaticComponentParameterProps = {
 const StaticComponentParameter = ({ parent, template, mode }: StaticComponentParameterProps): React.ReactElement => {
   const { current, id } = parent
   const { name, nickname, type } = template
+
+  const setCameraPosition = useSetCameraPosition()
 
   const grip = useMemo(() => {
     const tx = mode === 'input' ? 'translateX(-9px)' : 'translateX(9px)'
@@ -40,12 +43,18 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const border = mode === 'input' ? 'border-l-2 rounded-tr-md rounded-br-md' : 'border-r-2 rounded-tl-md rounded-bl-md'
   const p = mode === 'input' ? 'pr-4' : 'pl-4'
 
+  const handleClick = (): void => {
+    const [x, y] = current.position
+    setCameraPosition(-x, -y)
+  }
+
   return (
-    <div
+    <button
       className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300`}
+      onClick={handleClick}
     >
       {body}
-    </div>
+    </button>
   )
 }
 
