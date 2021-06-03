@@ -62,6 +62,7 @@ const GraphCanvas = (): React.ReactElement => {
           setMode('idle')
           setStaticZoom(e.scale)
         }}
+        doubleClick={{ disabled: true }}
         pinch={{ step: 20, disabled: zoomDisabled }}
         wheel={{ step: 100 }}
         scalePadding={{ disabled: true }}

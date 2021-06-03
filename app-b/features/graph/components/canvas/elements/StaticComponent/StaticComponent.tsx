@@ -1,9 +1,10 @@
 import { NodePen } from 'glib'
-import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch } from '../../../store/hooks'
+import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch } from '../../../../store/hooks'
 import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
-import { useSetCameraPosition } from '@/features/graph/hooks/useSetCameraPosition'
+import { useSetCameraPosition } from 'features/graph/hooks/useSetCameraPosition'
+import { StaticComponentParameter } from './lib'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -39,9 +40,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   const [isMoving, setIsMoving] = useState(false)
 
-  const showButtons = useCriteria(!isMoving, scale > 1.5)
+  // const showButtons = useCriteria(!isMoving, scale > 1.5)
 
-  const setCameraPosition = useSetCameraPosition()
+  // const setCameraPosition = useSetCameraPosition()
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0">
@@ -90,35 +91,12 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   const parameter = element.template.inputs[i]
 
                   return (
-                    <div
+                    <StaticComponentParameter
                       key={`input-param-${id}`}
-                      className={`flex-grow pt-2 pb-2 pr-4 flex flex-row justify-start items-center border-dark border-l-2 rounded-tr-md rounded-br-md transition-colors duration-75 hover:bg-dark`}
-                    >
-                      <svg
-                        className="w-4 h-4 overflow-visible"
-                        viewBox="0 0 10 10"
-                        style={{ transform: 'translateX(-9px)' }}
-                      >
-                        <path
-                          d="M5,2 a1,1 0 0,0 0,8"
-                          fill="#333"
-                          stroke="#333"
-                          strokeWidth="2px"
-                          vectorEffect="non-scaling-stroke"
-                        />
-                        <circle
-                          cx="5"
-                          cy="5"
-                          r="4"
-                          stroke="#333"
-                          strokeWidth="2px"
-                          vectorEffect="non-scaling-stroke"
-                          fill="#FFF"
-                        />
-                      </svg>
-
-                      <p>{parameter.nickname}</p>
-                    </div>
+                      mode={'input'}
+                      template={parameter}
+                      parent={element}
+                    />
                   )
                 })}
               </div>
@@ -130,34 +108,12 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   const parameter = element.template.outputs[i]
 
                   return (
-                    <div
+                    <StaticComponentParameter
                       key={`output-param-${id}`}
-                      className={`flex-grow pt-2 pb-2 pl-4 flex flex-row justify-start items-center border-dark border-r-2 rounded-tl-md rounded-bl-md transition-colors duration-75 hover:bg-gray-300`}
-                    >
-                      <p>{parameter.nickname}</p>
-                      <svg
-                        className="w-4 h-4 overflow-visible"
-                        viewBox="0 0 10 10"
-                        style={{ transform: 'translateX(9px)' }}
-                      >
-                        <path
-                          d="M5,10 a1,1 0 0,0 0,-8"
-                          fill="#333"
-                          stroke="#333"
-                          strokeWidth="2px"
-                          vectorEffect="non-scaling-stroke"
-                        />
-                        <circle
-                          cx="5"
-                          cy="5"
-                          r="4"
-                          stroke="#333"
-                          strokeWidth="2px"
-                          vectorEffect="non-scaling-stroke"
-                          fill="#FFF"
-                        />
-                      </svg>
-                    </div>
+                      mode={'output'}
+                      template={parameter}
+                      parent={element}
+                    />
                   )
                 })}
               </div>

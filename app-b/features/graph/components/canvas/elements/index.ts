@@ -1,3 +1,1 @@
-import StaticComponent from './StaticComponent'
-
-export { StaticComponent }
+export { StaticComponent } from './StaticComponent'
