@@ -39,12 +39,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
     registerElement({ id, dimensions: [width, height] })
   }, [width, height])
 
-  const [isLocked, setIsLocked] = useState(false)
-
-  const setLock = useCallback((lock: boolean): void => {
-    setIsLocked(lock)
-  }, [])
-
   // const [isMoving, setIsMoving] = useState(false)
 
   // const showButtons = useCriteria(!isMoving, scale > 1.5)
@@ -74,11 +68,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         <Draggable
           scale={scale}
           position={{ x, y }}
-          // onMouseDown={(e) => {
-          //   console.log('draggable!')
-          //   console.log({ mode })
-          //   e.stopPropagation()
-          // }}
           onStart={(e) => {
             console.log('draggable start!')
             e.stopPropagation()
@@ -109,7 +98,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                       mode={'input'}
                       template={{ id, ...parameter }}
                       parent={element}
-                      onLockParent={setLock}
                     />
                   )
                 })}
@@ -127,7 +115,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                       mode={'output'}
                       template={{ id, ...parameter }}
                       parent={element}
-                      onLockParent={setLock}
                     />
                   )
                 })}

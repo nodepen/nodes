@@ -14,15 +14,9 @@ type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
   template: Grasshopper.Parameter & { id: string }
   mode: 'input' | 'output'
-  onLockParent: (lock: boolean) => void
 }
 
-const StaticComponentParameter = ({
-  parent,
-  template,
-  mode,
-  onLockParent,
-}: StaticComponentParameterProps): React.ReactElement => {
+const StaticComponentParameter = ({ parent, template, mode }: StaticComponentParameterProps): React.ReactElement => {
   const { current, id: elementId } = parent
   const { name, nickname, type, id: parameterId } = template
 
@@ -35,7 +29,7 @@ const StaticComponentParameter = ({
   const { setMode } = useCameraDispatch()
   const setCameraPosition = useSetCameraPosition()
 
-  const gripRef = useRef<SVGSVGElement>(null)
+  const gripRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     if (!gripRef.current) {
@@ -62,10 +56,12 @@ const StaticComponentParameter = ({
     const d = mode === 'input' ? 'M5,2 a1,1 0 0,0 0,8' : 'M5,10 a1,1 0 0,0 0,-8'
 
     return (
-      <svg ref={gripRef} className="w-4 h-4 overflow-visible" viewBox="0 0 10 10" style={{ transform: tx }}>
-        <path d={d} fill="#333" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" />
-        <circle cx="5" cy="5" r="4" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" fill="#FFF" />
-      </svg>
+      <div ref={gripRef} className="w-4 h-4 overflow-visible" style={{ transform: tx }}>
+        <svg className="w-4 h-4 overflow-visible" viewBox="0 0 10 10">
+          <path d={d} fill="#333" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" />
+          <circle cx="5" cy="5" r="4" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" fill="#FFF" />
+        </svg>
+      </div>
     )
   }, [mode])
 
@@ -98,9 +94,6 @@ const StaticComponentParameter = ({
   const pointerIsMoving = useRef(false)
   const pointerIsWire = useRef(false)
 
-  const [iOS, setIOS] = useState(false)
-  const iosRef = useRef<HTMLButtonElement>(null)
-
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
     console.log('param!')
     e.stopPropagation()
@@ -115,17 +108,6 @@ const StaticComponentParameter = ({
 
     pointerStartPosition.current = [pageX, pageY]
 
-    if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
-      // Do annoying safari workaround
-      setIOS(true)
-
-      if (iosRef.current) {
-        iosRef.current.setPointerCapture(e.pointerId)
-      }
-
-      return
-    }
-
     if (!gripRef.current) {
       return
     }
@@ -136,6 +118,10 @@ const StaticComponentParameter = ({
   const [debug, setDebug] = useState('')
 
   const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
+      return
+    }
+
     e.preventDefault()
 
     if (!pointerIsMoving.current) {
@@ -156,31 +142,34 @@ const StaticComponentParameter = ({
     }
   }
 
-  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>): void => {
-    const now = Date.now()
+  const handleTouchMove = (e: React.TouchEvent<HTMLButtonElement>): void => {
+    if (!['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
+      return
+    }
 
+    e.preventDefault()
+
+    if (e.touches.length < 1) {
+      return
+    }
+
+    const { screenX: ex, screenY: ey } = e.touches[0]
+    const [sx, sy] = pointerStartPosition.current
+
+    setDebug(ex.toString())
+
+    const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
+
+    if (dx > 20 || dy > 20) {
+      pointerIsWire.current = true
+      setMode('idle')
+      console.log('Creating wire!')
+    }
+  }
+
+  const handlePointerUp = (): void => {
     pointerIsMoving.current = false
     setMode('idle')
-
-    console.log('end')
-
-    // window.alert('up')
-
-    // if (pointerIsWire.current) {
-    //   // Do nothing. This should not happen because we should pass the pointer capture.
-    //   return
-    // }
-
-    if (iOS && now - pointerStartTime.current < 150) {
-      // Consider this a click
-      setTimeout(() => {
-        handleClick()
-      }, 50)
-    }
-
-    if (iOS) {
-      setIOS(false)
-    }
   }
 
   return (
@@ -191,28 +180,13 @@ const StaticComponentParameter = ({
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handlePointerUp}
         style={{ touchAction: 'none' }}
       >
         {debug}
         {body}
       </button>
-      {/** HATE. THIS. */}
-      <button
-        ref={iosRef}
-        className={`${
-          iOS ? 'pointer-events-auto opacity-10 bg-red-600' : 'pointer-events-none opacity-0'
-        } fixed h-vh opacity-0 top-0`}
-        style={{
-          touchAction: 'none',
-          left: process.browser ? window.innerWidth * -5 : 0,
-          width: process.browser ? window.innerWidth * 10 : 0,
-          top: process.browser ? window.innerHeight * -5 : 0,
-          height: process.browser ? window.innerHeight * 10 : 0,
-        }}
-        onClick={handleClick}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-      />
     </>
   )
 }
