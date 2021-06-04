@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { useCameraDispatch, useCameraZoomLock } from '../../store/hooks'
+import { useCameraDispatch, useCameraMode, useCameraZoomLock } from '../../store/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
 import { useGraphManager } from '@/context/graph'
@@ -9,6 +9,7 @@ const GraphCanvas = (): React.ReactElement => {
 
   const { setMode, setLiveZoom, setStaticZoom, setLivePosition, setStaticPosition } = useCameraDispatch()
   const zoomDisabled = useCameraZoomLock()
+  const cameraMode = useCameraMode()
 
   const canvasRef = useRef(null)
 
@@ -40,7 +41,14 @@ const GraphCanvas = (): React.ReactElement => {
         defaultScale={1}
         defaultPositionX={0}
         defaultPositionY={0}
-        options={{ limitToWrapper: false, limitToBounds: false, centerContent: false, minScale: 0.25, maxScale: 2.5 }}
+        options={{
+          disabled: cameraMode === 'locked',
+          limitToWrapper: false,
+          limitToBounds: false,
+          centerContent: false,
+          minScale: 0.25,
+          maxScale: 2.5,
+        }}
         onPanning={(e: any) => {
           setLivePosition([e.positionX, e.positionY])
         }}

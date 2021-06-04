@@ -1,1 +1,1 @@
-export type CameraMode = 'idle' | 'zooming' | 'panning'
+export type CameraMode = 'idle' | 'locked' | 'zooming' | 'panning'

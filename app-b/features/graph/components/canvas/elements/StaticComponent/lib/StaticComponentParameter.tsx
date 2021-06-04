@@ -1,17 +1,28 @@
 import { NodePen, Grasshopper } from 'glib'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { useDebugRender } from '@/hooks'
-import { useCameraStaticPosition, useCameraStaticZoom, useGraphDispatch } from 'features/graph/store/hooks'
+import {
+  useCameraDispatch,
+  useCameraStaticPosition,
+  useCameraStaticZoom,
+  useGraphDispatch,
+} from 'features/graph/store/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
   template: Grasshopper.Parameter & { id: string }
   mode: 'input' | 'output'
+  onLockParent: (lock: boolean) => void
 }
 
-const StaticComponentParameter = ({ parent, template, mode }: StaticComponentParameterProps): React.ReactElement => {
+const StaticComponentParameter = ({
+  parent,
+  template,
+  mode,
+  onLockParent,
+}: StaticComponentParameterProps): React.ReactElement => {
   const { current, id: elementId } = parent
   const { name, nickname, type, id: parameterId } = template
 
@@ -20,6 +31,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const { registerElementAnchor } = useGraphDispatch()
   const cameraZoom = useCameraStaticZoom()
   const cameraPosition = useCameraStaticPosition()
+
+  const { setMode } = useCameraDispatch()
   const setCameraPosition = useSetCameraPosition()
 
   const gripRef = useRef<SVGSVGElement>(null)
@@ -80,11 +93,92 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     setCameraPosition(x + dx, y + dy, mode === 'input' ? 'TR' : 'TL', 45)
   }
 
+  const pointerStartTime = useRef(0)
+  const pointerStartPosition = useRef<[number, number]>([0, 0])
+  const pointerIsMoving = useRef(false)
+  const pointerIsWire = useRef(false)
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    console.log('param!')
+    e.stopPropagation()
+    e.preventDefault()
+    setMode('locked')
+
+    pointerStartTime.current = Date.now()
+    pointerIsMoving.current = true
+    pointerIsWire.current = false
+
+    const { pageX, pageY } = e
+
+    pointerStartPosition.current = [pageX, pageY]
+
+    if (!gripRef.current) {
+      return
+    }
+
+    gripRef.current.setPointerCapture(e.pointerId)
+  }
+
+  const [debug, setDebug] = useState('')
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    e.preventDefault()
+
+    if (!pointerIsMoving.current) {
+      return
+    }
+
+    const { pageX: ex, pageY: ey } = e
+    const [sx, sy] = pointerStartPosition.current
+
+    setDebug(ex.toString())
+
+    const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
+
+    if (dx > 20 || dy > 20) {
+      pointerIsWire.current = true
+      setMode('idle')
+      console.log('Creating wire!')
+    }
+  }
+
+  const handlePointerUp = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    const now = Date.now()
+
+    pointerIsMoving.current = false
+    setMode('idle')
+
+    console.log('end')
+
+    // window.alert('up')
+
+    if (pointerIsWire.current) {
+      // Do nothing. This should not happen because we should pass the pointer capture.
+      return
+    }
+
+    if (now - pointerStartTime.current < 150) {
+      // Consider this a click
+      // setTimeout(() => {
+      //   handleClick()
+      // }, 50)
+      return
+    }
+  }
+
   return (
     <button
-      className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300`}
+      className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible`}
       onClick={handleClick}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerOver={() => console.log(nickname)}
+      onPointerCancelCapture={(e) => window.alert('canceled')}
+      onLostPointerCapture={(e) => window.alert('lost')}
+      style={{ touchAction: 'none' }}
     >
+      {debug}
       {body}
     </button>
   )
