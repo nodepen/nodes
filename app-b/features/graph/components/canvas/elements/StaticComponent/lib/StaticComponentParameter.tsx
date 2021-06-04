@@ -9,6 +9,7 @@ import {
   useGraphDispatch,
 } from 'features/graph/store/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
+import { useSessionManager } from 'context/session'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -20,13 +21,16 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const { current, id: elementId } = parent
   const { name, nickname, type, id: parameterId } = template
 
+  const { device } = useSessionManager()
+
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
   const { registerElementAnchor } = useGraphDispatch()
+
+  const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
   const cameraPosition = useCameraStaticPosition()
 
-  const { setMode } = useCameraDispatch()
   const setCameraPosition = useSetCameraPosition()
 
   const gripRef = useRef<HTMLDivElement>(null)
@@ -120,7 +124,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   }
 
   const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>): void => {
-    if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
+    if (device.iOS) {
       return
     }
 
@@ -145,7 +149,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   }
 
   const handleTouchMove = (e: React.TouchEvent<HTMLButtonElement>): void => {
-    if (!['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
+    if (!device.iOS) {
       return
     }
 

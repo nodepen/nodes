@@ -4,4 +4,7 @@ export type SessionStore = {
   user?: firebase.User
   token?: string
   session?: string
+  device: {
+    iOS: boolean
+  }
 }

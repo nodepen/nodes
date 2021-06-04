@@ -3,7 +3,7 @@ import { firebase } from './auth/firebase'
 import nookies from 'nookies'
 import { SessionStore } from './types'
 
-export const SessionContext = createContext<SessionStore>({})
+export const SessionContext = createContext<SessionStore>({ device: { iOS: false } })
 
 type SessionManagerProps = {
   children?: JSX.Element
@@ -12,6 +12,7 @@ type SessionManagerProps = {
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
   const [user, setUser] = useState<SessionStore['user']>(undefined)
   const [token, setToken] = useState<string>()
+  const [iOS, setIOS] = useState(false)
 
   useEffect(() => {
     return firebase.auth().onIdTokenChanged(async (u) => {
@@ -73,5 +74,20 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
       })
   }, [])
 
-  return <SessionContext.Provider value={{ user, token, session: '...' }}>{children}</SessionContext.Provider>
+  useEffect(() => {
+    if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
+      setIOS(true)
+    }
+  }, [])
+
+  const session: SessionStore = {
+    user,
+    token,
+    session: 'unset',
+    device: {
+      iOS,
+    },
+  }
+
+  return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>
 }
