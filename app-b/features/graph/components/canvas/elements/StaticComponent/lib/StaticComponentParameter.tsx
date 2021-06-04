@@ -98,6 +98,9 @@ const StaticComponentParameter = ({
   const pointerIsMoving = useRef(false)
   const pointerIsWire = useRef(false)
 
+  const [iOS, setIOS] = useState(false)
+  const iosRef = useRef<HTMLButtonElement>(null)
+
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
     console.log('param!')
     e.stopPropagation()
@@ -111,6 +114,17 @@ const StaticComponentParameter = ({
     const { pageX, pageY } = e
 
     pointerStartPosition.current = [pageX, pageY]
+
+    if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
+      // Do annoying safari workaround
+      setIOS(true)
+
+      if (iosRef.current) {
+        iosRef.current.setPointerCapture(e.pointerId)
+      }
+
+      return
+    }
 
     if (!gripRef.current) {
       return
@@ -152,35 +166,54 @@ const StaticComponentParameter = ({
 
     // window.alert('up')
 
-    if (pointerIsWire.current) {
-      // Do nothing. This should not happen because we should pass the pointer capture.
-      return
+    // if (pointerIsWire.current) {
+    //   // Do nothing. This should not happen because we should pass the pointer capture.
+    //   return
+    // }
+
+    if (iOS && now - pointerStartTime.current < 150) {
+      // Consider this a click
+      setTimeout(() => {
+        handleClick()
+      }, 50)
     }
 
-    if (now - pointerStartTime.current < 150) {
-      // Consider this a click
-      // setTimeout(() => {
-      //   handleClick()
-      // }, 50)
-      return
+    if (iOS) {
+      setIOS(false)
     }
   }
 
   return (
-    <button
-      className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible`}
-      onClick={handleClick}
-      onPointerDown={handlePointerDown}
-      onPointerMove={handlePointerMove}
-      onPointerUp={handlePointerUp}
-      onPointerOver={() => console.log(nickname)}
-      onPointerCancelCapture={(e) => window.alert('canceled')}
-      onLostPointerCapture={(e) => window.alert('lost')}
-      style={{ touchAction: 'none' }}
-    >
-      {debug}
-      {body}
-    </button>
+    <>
+      <button
+        className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible`}
+        onClick={handleClick}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        style={{ touchAction: 'none' }}
+      >
+        {debug}
+        {body}
+      </button>
+      {/** HATE. THIS. */}
+      <button
+        ref={iosRef}
+        className={`${
+          iOS ? 'pointer-events-auto opacity-10 bg-red-600' : 'pointer-events-none opacity-0'
+        } fixed h-vh opacity-0 top-0`}
+        style={{
+          touchAction: 'none',
+          left: process.browser ? window.innerWidth * -5 : 0,
+          width: process.browser ? window.innerWidth * 10 : 0,
+          top: process.browser ? window.innerHeight * -5 : 0,
+          height: process.browser ? window.innerHeight * 10 : 0,
+        }}
+        onClick={handleClick}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+      />
+    </>
   )
 }
 
