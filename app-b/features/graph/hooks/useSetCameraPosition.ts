@@ -13,7 +13,7 @@ export const useSetCameraPosition = (): ((
   const {
     registry: { setTransform },
   } = useGraphManager()
-  const { setLivePosition, setStaticPosition } = useCameraDispatch()
+  const { setLivePosition, setStaticPosition, setLiveZoom, setStaticZoom } = useCameraDispatch()
   const startPosition = useCameraStaticPosition()
 
   const startTime = useRef<number>(0)
@@ -85,6 +85,8 @@ export const useSetCameraPosition = (): ((
             clearInterval(i)
             animate(1)
             setStaticPosition([tx, ty])
+            setStaticZoom(1)
+            setLiveZoom(1)
             resolve()
             return
           }
