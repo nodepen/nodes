@@ -94,6 +94,10 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const pointerIsMoving = useRef(false)
   const pointerIsWire = useRef(false)
 
+  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>): void => {
+    e.stopPropagation()
+  }
+
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
     console.log('param!')
     e.stopPropagation()
@@ -175,6 +179,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       <button
         className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible`}
         onClick={handleClick}
+        onMouseDown={handleMouseDown}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}

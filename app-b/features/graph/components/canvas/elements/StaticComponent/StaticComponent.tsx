@@ -68,6 +68,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         <Draggable
           scale={scale}
           position={{ x, y }}
+          onMouseDown={(e) => {
+            console.log({ mode })
+          }}
           onStart={(e) => {
             console.log('draggable start!')
             e.stopPropagation()
