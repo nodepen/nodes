@@ -4,6 +4,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
+import { useSessionManager } from '@/context/session'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -11,6 +12,8 @@ type StaticComponentProps = {
 
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const { template, current, id } = element
+
+  const { device } = useSessionManager()
 
   useDebugRender(`StaticComponent ${template.name} ${id}`)
 
@@ -105,8 +108,16 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   )
                 })}
               </div>
-              <div className="ml-2 mr-2 flex flex-col justify-center items-center rounded-md border-2 border-dark">
-                <p>OK</p>
+              <div
+                id="label-column"
+                className="w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
+              >
+                <div
+                  className="font-panel text-v font-bold text-sm select-none"
+                  style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
+                >
+                  {template.nickname.toUpperCase()}
+                </div>
               </div>
               <div className="flex-grow flex flex-col items-stretch">
                 {Object.entries(element.current.outputs).map(([id, i]) => {

@@ -73,11 +73,15 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     return mode === 'input' ? (
       <>
         {grip}
-        <p>{nickname}</p>
+        <p className="font-panel font-semibold select-none" style={{ transform: 'translateY(1px)' }}>
+          {nickname}
+        </p>
       </>
     ) : (
       <>
-        <p>{nickname}</p>
+        <p className="font-panel font-semibold select-none" style={{ transform: 'translateY(1px)' }}>
+          {nickname}
+        </p>
         {grip}
       </>
     )
