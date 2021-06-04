@@ -57,13 +57,25 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   const grip = useMemo(() => {
     const tx = mode === 'input' ? 'translateX(-9px)' : 'translateX(9px)'
+
     const d = mode === 'input' ? 'M5,2 a1,1 0 0,0 0,8' : 'M5,10 a1,1 0 0,0 0,-8'
+
+    const capture = mode === 'input' ? 'M5,-10 a1,1 0 0,0 0,30' : 'M5,20 a1,1 0 0,0 0,-30'
 
     return (
       <div ref={gripRef} className="w-4 h-4 overflow-visible" style={{ transform: tx }}>
         <svg className="w-4 h-4 overflow-visible" viewBox="0 0 10 10">
           <path d={d} fill="#333" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" />
           <circle cx="5" cy="5" r="4" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" fill="#FFF" />
+          <path
+            d={capture}
+            fill="#FFF"
+            opacity="0"
+            stroke="none"
+            onPointerOver={() => console.log('over')}
+            onPointerUp={() => console.log('up')}
+            onTouchMove={() => console.log('touch')}
+          />
         </svg>
       </div>
     )
