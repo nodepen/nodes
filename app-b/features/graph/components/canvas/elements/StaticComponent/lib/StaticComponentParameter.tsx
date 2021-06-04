@@ -115,8 +115,6 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     gripRef.current.setPointerCapture(e.pointerId)
   }
 
-  const [debug, setDebug] = useState('')
-
   const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>): void => {
     if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
       return
@@ -131,11 +129,11 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     const { pageX: ex, pageY: ey } = e
     const [sx, sy] = pointerStartPosition.current
 
-    setDebug(ex.toString())
+    console.log(ex.toString())
 
     const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
-    if (dx > 20 || dy > 20) {
+    if (!pointerIsWire.current && (dx > 20 || dy > 20)) {
       pointerIsWire.current = true
       setMode('idle')
       console.log('Creating wire!')
@@ -156,11 +154,11 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     const { screenX: ex, screenY: ey } = e.touches[0]
     const [sx, sy] = pointerStartPosition.current
 
-    setDebug(ex.toString())
+    console.log(ex.toString())
 
     const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
-    if (dx > 20 || dy > 20) {
+    if (!pointerIsWire.current && (dx > 20 || dy > 20)) {
       pointerIsWire.current = true
       setMode('idle')
       console.log('Creating wire!')
@@ -184,7 +182,6 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         onTouchEnd={handlePointerUp}
         style={{ touchAction: 'none' }}
       >
-        {debug}
         {body}
       </button>
     </>
