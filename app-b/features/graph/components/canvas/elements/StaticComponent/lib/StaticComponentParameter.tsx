@@ -2,7 +2,7 @@ import { NodePen, Grasshopper } from 'glib'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { useDebugRender } from '@/hooks'
-import { useGraphDispatch } from 'features/graph/store/graph/hooks'
+import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { useOverlayDispatch } from 'features/graph/store/overlay/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
@@ -23,6 +23,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
   const { registerElementAnchor } = useGraphDispatch()
+  const graphMode = useGraphMode()
 
   const { show } = useOverlayDispatch()
 
@@ -102,6 +103,10 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const p = mode === 'input' ? 'pr-4' : 'pl-4'
 
   const handleClick = (): void => {
+    if (graphMode !== 'idle') {
+      return
+    }
+
     const [x, y] = current.position
     const [dx, dy] = current.anchors[parameterId]
 

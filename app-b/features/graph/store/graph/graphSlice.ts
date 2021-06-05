@@ -9,10 +9,12 @@ import {
   RegisterElementAnchorPayload,
   RegisterElementPayload,
 } from './types/Payload'
+import { GraphMode } from './types/GraphMode'
 
 const initialState: GraphState = {
   elements: {},
   selection: [],
+  mode: 'idle',
 }
 
 export const graphSlice = createSlice({
@@ -65,6 +67,11 @@ export const graphSlice = createSlice({
 
       state.elements[id].current.position = position
     },
+    setMode: (state: GraphState, action: PayloadAction<GraphMode>) => {
+      const mode = action.payload
+
+      state.mode = mode
+    },
     registerElement: (state: GraphState, action: PayloadAction<RegisterElementPayload>) => {
       const { id, dimensions } = action.payload
 
@@ -96,6 +103,7 @@ export const graphSlice = createSlice({
 
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
   state.graph.present.elements
+const selectMode = (state: RootState): GraphMode => state.graph.present.mode
 
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
   return {
@@ -104,7 +112,7 @@ const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: bool
   }
 }
 
-export const graphSelectors = { selectElements, selectGraphHistory }
+export const graphSelectors = { selectElements, selectMode, selectGraphHistory }
 
 const { actions, reducer } = graphSlice
 

@@ -1,24 +1,37 @@
-import React, { useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import { assert } from 'glib'
 
 import { useOutsideClick } from 'hooks'
-import { useGraphElements } from 'features/graph/store/graph/hooks'
+import { useGraphDispatch, useGraphElements } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { useParameterMenu, useOverlayDispatch } from 'features/graph/store/overlay/hooks'
 
 import { isInputOrOutput } from 'features/graph/utils'
 import { ParameterIcon } from '../../icons'
+import { useSetCameraPosition } from '@/features/graph/hooks'
 
 const ParameterMenu = (): React.ReactElement => {
+  const { setMode } = useGraphDispatch()
   const elements = useGraphElements()
   const { sourceElementId, sourceParameterId } = useParameterMenu()
   const { clear } = useOverlayDispatch()
 
   const menuRef = useRef<HTMLDivElement>(null)
 
-  useOutsideClick(menuRef, () => {
+  const [openMenu, setOpenMenu] = useState<'home' | 'data' | 'connection'>('home')
+
+  const handleOutsideClick = (): void => {
+    if (openMenu !== 'home') {
+      console.log('doing nothing!')
+      return
+    }
+    console.log('clear!')
     clear()
-  })
+  }
+
+  useOutsideClick(menuRef, handleOutsideClick)
+
+  const setCameraPosition = useSetCameraPosition()
 
   const element = elements[sourceElementId]
 
@@ -40,7 +53,30 @@ const ParameterMenu = (): React.ReactElement => {
 
   return (
     <div className="w-full h-full relative">
-      <div ref={menuRef} className={`${parameterMode === 'inputs' ? 'p-2 pr-14' : 'p-2 pl-14'} w-full flex flex-col`}>
+      <div
+        className="absolute w-vw left-0 top-0 z-10 transition-all duration-150 pointer-events-auto"
+        style={{ transform: openMenu === 'connection' ? 'translateX(0)' : 'translateX(100vw)' }}
+      >
+        <button
+          onClick={() => {
+            setOpenMenu('home')
+
+            const [x, y] = element.current.position
+            const [dx, dy] = element.current.anchors[sourceParameterId]
+
+            setMode('idle')
+            setCameraPosition(x + dx, y + dy, parameterMode === 'inputs' ? 'TR' : 'TL', 45)
+          }}
+          className="w-full p-4 bg-red-400"
+        />
+      </div>
+      <div
+        ref={menuRef}
+        className={`${
+          parameterMode === 'inputs' ? 'p-2 pr-14' : 'p-2 pl-14'
+        } w-full flex flex-col transition-all duration-150`}
+        style={{ transform: openMenu === 'home' ? 'translateX(0)' : 'translateX(-100vw)' }}
+      >
         <div className="w-full mb-2 p-2 border-2 border-dark rounded-md bg-white pointer-events-auto">
           <div className="w-full mb-1 flex justify-start items-center overflow-x-hidden">
             <div className="w-12 h-12 mr-2 flex flex-col justify-center items-center">
@@ -80,7 +116,13 @@ const ParameterMenu = (): React.ReactElement => {
             </svg>
           </div>
         </button>
-        <button className="w-full mb-2 p-2 flex justify-start items-center border-2 border-dark rounded-md bg-white pointer-events-auto">
+        <button
+          onClick={() => {
+            setMode('connecting')
+            setOpenMenu('connection')
+          }}
+          className="w-full mb-2 p-2 flex justify-start items-center border-2 border-dark rounded-md bg-white pointer-events-auto"
+        >
           <div className="w-12 h-8 mr-2 flex flex-col justify-center items-center">
             <svg className="w-6 h-6" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
               <line
