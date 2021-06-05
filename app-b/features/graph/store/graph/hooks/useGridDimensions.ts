@@ -1,5 +1,5 @@
-import { useCameraLivePosition } from './useCameraLivePosition'
-import { useCameraLiveZoom } from './useCameraLiveZoom'
+import { useCameraLivePosition } from '../../camera/hooks/useCameraLivePosition'
+import { useCameraLiveZoom } from '../../camera/hooks/useCameraLiveZoom'
 
 type GridDimensions = {
   size: number
