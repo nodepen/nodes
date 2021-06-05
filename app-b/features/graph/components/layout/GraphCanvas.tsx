@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react'
-import { useCameraDispatch, useCameraMode, useCameraZoomLock } from '../../store/hooks'
+import { useCameraDispatch, useCameraMode, useCameraZoomLock } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
 import { useGraphManager } from '@/context/graph'

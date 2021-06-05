@@ -2,7 +2,7 @@ import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useGraphManager } from 'context/graph'
 import { categorize, flattenCategory } from '../../../utils'
 import { ComponentLibraryIcon } from './lib'
-import { useGraphDispatch } from 'features/graph/store/hooks'
+import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()

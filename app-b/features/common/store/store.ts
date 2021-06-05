@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { overlayReducer } from 'features/graph/store/overlay'
-import { cameraReducer } from 'features/graph/store'
-import { graphReducer } from 'features/graph/store'
+import { cameraReducer } from 'features/graph/store/camera'
+import { graphReducer } from 'features/graph/store/graph'
 import undoable from 'redux-undo'
 
 export const store = configureStore({

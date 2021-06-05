@@ -2,12 +2,8 @@ import { NodePen, Grasshopper } from 'glib'
 import React, { useEffect, useMemo, useRef } from 'react'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { useDebugRender } from '@/hooks'
-import {
-  useCameraDispatch,
-  useCameraStaticPosition,
-  useCameraStaticZoom,
-  useGraphDispatch,
-} from 'features/graph/store/hooks'
+import { useGraphDispatch } from 'features/graph/store/graph/hooks'
+import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { useOverlayDispatch } from 'features/graph/store/overlay/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useSessionManager } from 'context/session'

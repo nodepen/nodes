@@ -2,7 +2,7 @@ import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
 import { GraphState } from './types'
-import { newGuid, initializeParameters } from '../utils'
+import { newGuid, initializeParameters } from '../../utils'
 import {
   AddElementPayload,
   MoveElementPayload,

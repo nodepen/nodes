@@ -1,10 +1,10 @@
 import { NodePen } from 'glib'
-import { useCameraStaticZoom, useCameraMode, useGraphDispatch, useCameraDispatch } from '../../../../store/hooks'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useGraphDispatch } from 'features/graph/store/graph/hooks'
+import { useCameraStaticZoom, useCameraMode, useCameraDispatch } from 'features/graph/store/camera/hooks'
+import React, { useEffect, useRef } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
-import { useSessionManager } from '@/context/session'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -12,8 +12,6 @@ type StaticComponentProps = {
 
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const { template, current, id } = element
-
-  const { device } = useSessionManager()
 
   useDebugRender(`StaticComponent ${template.name} ${id}`)
 
@@ -71,7 +69,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         <Draggable
           scale={scale}
           position={{ x, y }}
-          onMouseDown={(e) => {
+          onMouseDown={() => {
             console.log({ mode })
           }}
           onStart={(e) => {

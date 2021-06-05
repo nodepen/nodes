@@ -1,6 +1,6 @@
 import React from 'react'
 import { assert } from 'glib'
-import { useGraphElements } from '../../store/hooks'
+import { useGraphElements } from '../../store/graph/hooks'
 import { StaticComponent } from './elements'
 import { useDebugRender } from 'hooks'
 

@@ -1,6 +1,6 @@
 import { useGraphManager } from '@/context/graph'
 import { useCallback, useRef } from 'react'
-import { useCameraDispatch, useCameraStaticPosition } from '../store/hooks'
+import { useCameraDispatch, useCameraStaticPosition } from '../store/camera/hooks'
 
 type CameraAnchor = 'TL' | 'TR' | 'C'
 

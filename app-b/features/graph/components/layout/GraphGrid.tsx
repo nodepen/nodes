@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
-import { useCameraMode, useGridDimensions } from '../../store/hooks'
+import { useCameraMode } from 'features/graph/store/camera/hooks'
+import { useGridDimensions } from 'features/graph/store/graph/hooks'
 
 const GraphGrid = (): React.ReactElement => {
   const {
