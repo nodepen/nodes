@@ -90,7 +90,7 @@ const ParameterMenu = (): React.ReactElement => {
               </div>
               <div className="flex flew-row items-center whitespace-nowrap text-xs">
                 <p className="font-medium">{type}&nbsp;</p>
-                <p>in</p>
+                <p>{`${parameterMode === 'inputs' ? 'for' : 'from'}`}</p>
                 <img
                   width="18"
                   height="18"
