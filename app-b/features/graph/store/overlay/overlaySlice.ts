@@ -31,6 +31,7 @@ export const overlaySlice = createSlice({
       }
     },
     clear: (state: OverlayState) => {
+      console.log('clear!')
       state.show = { ...initialState.show }
     },
   },

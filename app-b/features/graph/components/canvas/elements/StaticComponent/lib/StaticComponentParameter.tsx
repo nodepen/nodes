@@ -16,7 +16,7 @@ type StaticComponentParameterProps = {
 
 const StaticComponentParameter = ({ parent, template, mode }: StaticComponentParameterProps): React.ReactElement => {
   const { current, id: elementId } = parent
-  const { name, nickname, type, id: parameterId } = template
+  const { name, nickname, id: parameterId } = template
 
   const { device } = useSessionManager()
 
@@ -107,7 +107,9 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     setCameraPosition(x + dx, y + dy, mode === 'input' ? 'TR' : 'TL', 45)
 
-    show({ type: 'parameterMenu', sourceElementId: elementId, sourceParameterId: parameterId })
+    setTimeout(() => {
+      show({ type: 'parameterMenu', sourceElementId: elementId, sourceParameterId: parameterId })
+    }, 350)
   }
 
   const pointerStartTime = useRef(0)
