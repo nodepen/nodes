@@ -8,6 +8,7 @@ import {
   useCameraStaticZoom,
   useGraphDispatch,
 } from 'features/graph/store/hooks'
+import { useOverlayDispatch } from 'features/graph/store/overlay/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useSessionManager } from 'context/session'
 
@@ -26,6 +27,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
   const { registerElementAnchor } = useGraphDispatch()
+
+  const { show } = useOverlayDispatch()
 
   const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
@@ -107,6 +110,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     const [dx, dy] = current.anchors[parameterId]
 
     setCameraPosition(x + dx, y + dy, mode === 'input' ? 'TR' : 'TL', 45)
+
+    show({ type: 'parameterMenu', sourceElementId: elementId, sourceParameterId: parameterId })
   }
 
   const pointerStartTime = useRef(0)

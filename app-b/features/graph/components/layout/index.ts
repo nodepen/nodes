@@ -1,5 +1,7 @@
 import Canvas from './GraphCanvas'
-import { GraphControls as Controls } from './GraphControls'
 import Grid from './GraphGrid'
+import Overlay from './GraphOverlay'
 
-export { Canvas, Controls, Grid }
+import { GraphControls as Controls } from './GraphControls'
+
+export { Canvas, Controls, Grid, Overlay }

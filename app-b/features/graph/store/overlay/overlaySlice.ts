@@ -4,7 +4,7 @@ import { OverlayState, Payload } from './types'
 
 const initialState: OverlayState = {
   show: {
-    parameterMenu: true,
+    parameterMenu: false,
     tooltip: false,
   },
   parameterMenu: {
@@ -18,7 +18,7 @@ export const overlaySlice = createSlice({
   initialState,
   reducers: {
     show: (state: OverlayState, action: PayloadAction<Payload.ShowPayload>) => {
-      state.show = initialState.show
+      state.show = { ...initialState.show }
 
       switch (action.payload.type) {
         case 'parameterMenu': {
@@ -31,7 +31,7 @@ export const overlaySlice = createSlice({
       }
     },
     clear: (state: OverlayState) => {
-      state.show = initialState.show
+      state.show = { ...initialState.show }
     },
   },
 })
