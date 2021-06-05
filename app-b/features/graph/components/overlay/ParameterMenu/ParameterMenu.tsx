@@ -10,6 +10,8 @@ import { isInputOrOutput } from 'features/graph/utils'
 import { ParameterIcon } from '../../icons'
 import { useSetCameraPosition } from '@/features/graph/hooks'
 
+import { ParameterConnectionMenu } from './submenus'
+
 const ParameterMenu = (): React.ReactElement => {
   const { setMode } = useGraphDispatch()
   const elements = useGraphElements()
@@ -51,24 +53,23 @@ const ParameterMenu = (): React.ReactElement => {
 
   const { name, nickname, type, description } = parameter
 
+  const handleClose = (): void => {
+    setOpenMenu('home')
+
+    const [x, y] = element.current.position
+    const [dx, dy] = element.current.anchors[sourceParameterId]
+
+    setMode('idle')
+    setCameraPosition(x + dx, y + dy, parameterMode === 'inputs' ? 'TR' : 'TL', 45)
+  }
+
   return (
     <div className="w-full h-full relative">
       <div
-        className="absolute w-vw left-0 top-0 z-10 transition-all duration-150 pointer-events-auto"
+        className="absolute w-vw left-0 top-0 z-10 transition-all duration-150"
         style={{ transform: openMenu === 'connection' ? 'translateX(0)' : 'translateX(100vw)' }}
       >
-        <button
-          onClick={() => {
-            setOpenMenu('home')
-
-            const [x, y] = element.current.position
-            const [dx, dy] = element.current.anchors[sourceParameterId]
-
-            setMode('idle')
-            setCameraPosition(x + dx, y + dy, parameterMode === 'inputs' ? 'TR' : 'TL', 45)
-          }}
-          className="w-full p-4 bg-red-400"
-        />
+        <ParameterConnectionMenu onClose={handleClose} />
       </div>
       <div
         ref={menuRef}
