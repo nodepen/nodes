@@ -4,7 +4,20 @@ export type OverlayState = {
     tooltip: boolean
   }
   parameterMenu: {
-    sourceElementId: string
-    sourceParameterId: string
+    source: {
+      elementId: string
+      parameterId: string
+    }
+    connection: {
+      sourceType: 'input' | 'output'
+      from?: {
+        elementId: string
+        parameterId: string
+      }
+      to?: {
+        elementId: string
+        parameterId: string
+      }
+    }
   }
 }

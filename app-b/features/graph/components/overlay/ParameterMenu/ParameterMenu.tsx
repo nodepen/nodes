@@ -4,7 +4,7 @@ import { assert } from 'glib'
 import { useOutsideClick } from 'hooks'
 import { useGraphDispatch, useGraphElements } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
-import { useParameterMenu, useOverlayDispatch } from 'features/graph/store/overlay/hooks'
+import { useParameterMenuSource, useOverlayDispatch } from 'features/graph/store/overlay/hooks'
 
 import { isInputOrOutput } from 'features/graph/utils'
 import { ParameterIcon } from '../../icons'
@@ -13,8 +13,8 @@ import { useSetCameraPosition } from '@/features/graph/hooks'
 const ParameterMenu = (): React.ReactElement => {
   const { setMode } = useGraphDispatch()
   const elements = useGraphElements()
-  const { sourceElementId, sourceParameterId } = useParameterMenu()
-  const { clear } = useOverlayDispatch()
+  const { elementId: sourceElementId, parameterId: sourceParameterId } = useParameterMenuSource()
+  const { clear, setParameterMenuConnection } = useOverlayDispatch()
 
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -120,6 +120,14 @@ const ParameterMenu = (): React.ReactElement => {
           onClick={() => {
             setMode('connecting')
             setOpenMenu('connection')
+
+            setParameterMenuConnection({
+              sourceType: parameterMode === 'inputs' ? 'input' : 'output',
+              from:
+                parameterMode === 'inputs' ? undefined : { elementId: sourceElementId, parameterId: sourceParameterId },
+              to:
+                parameterMode === 'inputs' ? { elementId: sourceElementId, parameterId: sourceParameterId } : undefined,
+            })
           }}
           className="w-full mb-2 p-2 flex justify-start items-center border-2 border-dark rounded-md bg-white pointer-events-auto"
         >

@@ -8,8 +8,13 @@ const initialState: OverlayState = {
     tooltip: false,
   },
   parameterMenu: {
-    sourceElementId: 'unset',
-    sourceParameterId: 'unset',
+    source: {
+      elementId: 'unset',
+      parameterId: 'unset',
+    },
+    connection: {
+      sourceType: 'input',
+    },
   },
 }
 
@@ -26,23 +31,41 @@ export const overlaySlice = createSlice({
 
           const { sourceElementId, sourceParameterId } = action.payload
 
-          state.parameterMenu = { sourceElementId, sourceParameterId }
+          state.parameterMenu = {
+            source: {
+              elementId: sourceElementId,
+              parameterId: sourceParameterId,
+            },
+            connection: {
+              sourceType: 'input',
+            },
+          }
         }
       }
     },
     clear: (state: OverlayState) => {
-      console.log('clear!')
       state.show = { ...initialState.show }
+      state.parameterMenu = { ...initialState.parameterMenu }
+    },
+    setParameterMenuConnection: (
+      state: OverlayState,
+      action: PayloadAction<OverlayState['parameterMenu']['connection']>
+    ) => {
+      state.parameterMenu.connection = action.payload
     },
   },
 })
 
 const selectOverlayVisibility = (state: RootState): OverlayState['show'] => state.overlay.show
-const selectParameterMenu = (state: RootState): OverlayState['parameterMenu'] => state.overlay.parameterMenu
+const selectParameterMenuSource = (state: RootState): OverlayState['parameterMenu']['source'] =>
+  state.overlay.parameterMenu.source
+const selectParameterMenuConnection = (state: RootState): OverlayState['parameterMenu']['connection'] =>
+  state.overlay.parameterMenu.connection
 
 export const overlaySelectors = {
   selectOverlayVisibility,
-  selectParameterMenu,
+  selectParameterMenuSource,
+  selectParameterMenuConnection,
 }
 
 const { actions, reducer } = overlaySlice
