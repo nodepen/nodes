@@ -54,7 +54,7 @@ const ParameterMenu = (): React.ReactElement => {
 
   const handleClose = (): void => {
     setOpenMenu('home')
-    clearParameterMenuConnection()
+    // clearParameterMenuConnection()
 
     const [x, y] = element.current.position
     const [dx, dy] = element.current.anchors[sourceParameterId]

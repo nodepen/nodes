@@ -63,7 +63,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
       .sort((candidate) => distance(candidate.current.position, sourceElement.current.position))
       .reverse()
 
-    return candidates.map((el) => {
+    return candidates.map((el, ei) => {
       if (!(assert.element.isStaticComponent(el) || assert.element.isStaticParameter(el))) {
         return null
       }
@@ -76,12 +76,28 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
           <button
             key={`params-for-${el.id}`}
             onClick={() => navigateTo(el.id)}
-            className="w-full mt-2 pt-2 pb-2 box-border flex justify-start items-center rounded-sm bg-pale top-0 z-20"
+            className={`${
+              ei === 0 ? '' : 'mt-2'
+            } w-full pt-2 pb-2 box-border flex justify-start items-center rounded-sm bg-pale top-0 z-20`}
           >
             <div className="w-12 flex flex-col justify-center items-center">
               <img width="24" height="24" src={`data:image/png;base64,${template.icon}`} />
             </div>
             <p className="text-lg text-darkgreen font-medium">{template.name}</p>
+            <svg
+              className="w-4 h-4 ml-2"
+              fill="none"
+              stroke="#7BBFA5"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 16l2.879-2.879m0 0a3 3 0 104.243-4.242 3 3 0 00-4.243 4.242zM21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
           </button>
           {params.map((p, i) => (
             <button
@@ -114,85 +130,31 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
     })
   }, [elements, sourceElement, sourceType, elementId, navigateTo, targetElement, targetParameter])
 
+  const ready = !!from && !!to
+
   return (
     <div className="w-full p-2 flex flex-col pointer-events-auto bg-green">
-      <div className="w-full pb-2 grid" style={{ gridTemplateColumns: '1fr 48px 1fr' }}>
-        {fromElement ? (
-          <div
-            className={`${
-              sourceType === 'output' ? '' : 'animate-pulse'
-            } w-full h-12 flex justify-center items-center rounded-md border-2 bg-white border-darkgreen`}
-          >
-            <img width="24" height="24" src={`data:image/png;base64,${fromElement.template.icon}`} />
-            <ParameterIcon size="sm" type={fromParameter.type} />
-            <p>{fromParameter.nickname}</p>
-          </div>
-        ) : (
-          <div className="w-full h-12 flex justify-center items-center rounded-md border-2 border-swampgreen border-dashed"></div>
-        )}
-        <div className="w-12 h-12 flex justify-center items-center overflow-visible z-20">
-          <svg className="w-12 h-12 overflow-visible" viewBox="0 0 10 10">
-            <line
-              x1="0"
-              y1="5"
-              x2="10"
-              y2="5"
-              fill="none"
-              stroke="#093824"
-              strokeWidth="2px"
-              vectorEffect="non-scaling-stroke"
-            />
-            <circle
-              cx="0"
-              cy="5"
-              r="1"
-              fill="#FFF"
-              stroke="#093824"
-              strokeWidth="2px"
-              vectorEffect="non-scaling-stroke"
-            />
-            <circle
-              cx="10"
-              cy="5"
-              r="1"
-              fill="#FFF"
-              stroke="#093824"
-              strokeWidth="2px"
-              vectorEffect="non-scaling-stroke"
-            />
-          </svg>
-        </div>
-        {toElement ? (
-          <div
-            className={`${
-              sourceType === 'input' ? '' : 'animate-pulse'
-            } w-full h-12 flex justify-center items-center rounded-md border-2 bg-white border-darkgreen`}
-          >
-            <div className="w-18 h-12 flex justify-center items-center">
-              <img width="24" height="24" src={`data:image/png;base64,${toElement.template.icon}`} />
-              <ParameterIcon size="sm" type={toParameter.type} />
-              <p>{toParameter.nickname}</p>
-            </div>
-          </div>
-        ) : (
-          <div className="w-full h-12 flex justify-center items-center rounded-md border-2 border-swampgreen border-dashed">
-            <div className="w-18 h-12 flex justify-center items-center"></div>
-          </div>
-        )}
-      </div>
-      <h3 className="mb-2 text-sm font-semibold pl-4 text-darkgreen">
+      {/* <h3 className="mb-2 text-sm font-semibold pl-2 text-darkgreen">
         SELECT {sourceType === 'input' ? 'SOURCE OUTPUT' : 'TARGET INPUT'}:
-      </h3>
+      </h3> */}
       <div className="w-full flex pb-2 items-stretch justify-start">
         <div className="flex-grow h-32 flex flex-col pt-2 pb-2 justify-start bg-pale rounded-sm overflow-y-auto no-scrollbar">
           {candidatesList}
         </div>
       </div>
       <div className="w-full flex justify-start items-center">
-        <button className="bg-none rounded-full p-1 pl-4 pr-4 text-sm font-semibold text-pale bg-darkgreen">
+        <button
+          disabled={!ready}
+          className={`${
+            ready ? 'text-darkgreen' : 'text-swampgreen'
+          } bg-none rounded-sm p-1 pl-2 pr-2 text-sm font-semibold hover:bg-swampgreen transition-colors duration-75`}
+        >
           CONNECT
         </button>
-        <button className="bg-none rounded-sm p-2 mr-2 text-sm font-semibold pl-2 text-darkgreen" onClick={onClose}>
+        <button
+          className="bg-none rounded-sm p-1 pl-2 pr-2 mr-2 text-sm font-semibold text-darkgreen hover:bg-swampgreen transition-colors duration-75"
+          onClick={onClose}
+        >
           CANCEL
         </button>
       </div>
