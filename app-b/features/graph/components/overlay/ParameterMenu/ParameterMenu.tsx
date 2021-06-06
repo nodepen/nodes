@@ -24,7 +24,6 @@ const ParameterMenu = (): React.ReactElement => {
 
   const handleOutsideClick = (): void => {
     if (openMenu !== 'home') {
-      console.log('doing nothing!')
       return
     }
     console.log('clear!')

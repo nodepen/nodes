@@ -1,7 +1,11 @@
 import React, { useCallback, useMemo } from 'react'
 import { NodePen, assert } from 'glib'
 import { useGraphDispatch, useGraphElements } from 'features/graph/store/graph/hooks'
-import { useParameterMenuConnection, useParameterMenuSource } from 'features/graph/store/overlay/hooks'
+import {
+  useOverlayDispatch,
+  useParameterMenuConnection,
+  useParameterMenuSource,
+} from 'features/graph/store/overlay/hooks'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { distance, listParameters } from 'features/graph/utils'
 import { ParameterIcon } from '../../../icons'
@@ -14,6 +18,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
   const elements = useGraphElements()
   const { type: sourceType } = useParameterMenuSource()
   const { from, to } = useParameterMenuConnection()
+  const { setParameterMenuConnection } = useOverlayDispatch()
 
   const fromElement = elements[from?.elementId ?? 'unset'] as NodePen.Element<'static-component'>
   const fromParameter = fromElement?.template.outputs[fromElement?.current.outputs[from?.parameterId ?? 'unset']]
@@ -24,6 +29,9 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
   const { elementId, parameterId } = (sourceType === 'input' ? to : from) ?? {}
 
   const sourceElement = elements[elementId ?? 'unset']
+
+  const targetElement = sourceType === 'input' ? fromElement : toElement
+  const targetParameter = sourceType === 'input' ? fromParameter : toParameter
 
   const setCameraPosition = useSetCameraPosition()
   const navigateTo = useCallback(
@@ -73,31 +81,48 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
             <div className="w-12 flex flex-col justify-center items-center">
               <img width="24" height="24" src={`data:image/png;base64,${template.icon}`} />
             </div>
-            <p>{template.name}</p>
+            <p className="text-lg text-darkgreen font-medium">{template.name}</p>
           </button>
           {params.map((p, i) => (
             <button
               key={`param-for-${el.id}=${i}`}
-              className="pr-1 flex justify-start items-center h-8 hover:bg-green rounded-sm"
+              className="ml-2 mr-2 flex justify-start items-center h-8 hover:bg-green rounded-sm"
+              onClick={() =>
+                setParameterMenuConnection({
+                  type: sourceType === 'input' ? 'output' : 'input',
+                  elementId: el.id,
+                  parameterId: Object.keys(el.current[sourceType === 'input' ? 'outputs' : 'inputs'])[i],
+                })
+              }
             >
-              <div className="w-12 h-8 flex flex-col justify-center items-center">
-                <ParameterIcon size="sm" type={p.type} />
+              <div className="w-8 h-8 flex flex-col justify-center items-center">
+                <div className="w-4 h-4 rounded-full flex justify-center items-center bg-pale border-2 border-darkgreen">
+                  {targetElement?.id === el.id &&
+                  targetParameter?.name === p.name &&
+                  targetParameter?.nickname === p.nickname ? (
+                    <div className="w-2 h-2 rounded-full bg-darkgreen" />
+                  ) : null}
+                </div>
               </div>
-
-              <p>{p.name}</p>
-              <p>({p.nickname})</p>
+              <p className="ml-2 text-sm font-medium font-panel text-darkgreen">
+                {p.name}&nbsp;({p.nickname})
+              </p>
             </button>
           ))}
         </>
       )
     })
-  }, [elements, sourceElement, sourceType, elementId, navigateTo])
+  }, [elements, sourceElement, sourceType, elementId, navigateTo, targetElement, targetParameter])
 
   return (
     <div className="w-full p-2 flex flex-col pointer-events-auto bg-green">
       <div className="w-full pb-2 grid" style={{ gridTemplateColumns: '1fr 48px 1fr' }}>
         {fromElement ? (
-          <div className="w-full h-12 flex justify-center items-center rounded-md border-2 bg-white border-darkgreen">
+          <div
+            className={`${
+              sourceType === 'output' ? '' : 'animate-pulse'
+            } w-full h-12 flex justify-center items-center rounded-md border-2 bg-white border-darkgreen`}
+          >
             <img width="24" height="24" src={`data:image/png;base64,${fromElement.template.icon}`} />
             <ParameterIcon size="sm" type={fromParameter.type} />
             <p>{fromParameter.nickname}</p>
@@ -138,7 +163,11 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
           </svg>
         </div>
         {toElement ? (
-          <div className="w-full h-12 flex justify-center items-center rounded-md border-2 bg-white border-darkgreen">
+          <div
+            className={`${
+              sourceType === 'input' ? '' : 'animate-pulse'
+            } w-full h-12 flex justify-center items-center rounded-md border-2 bg-white border-darkgreen`}
+          >
             <div className="w-18 h-12 flex justify-center items-center">
               <img width="24" height="24" src={`data:image/png;base64,${toElement.template.icon}`} />
               <ParameterIcon size="sm" type={toParameter.type} />
@@ -151,12 +180,22 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
           </div>
         )}
       </div>
+      <h3 className="mb-2 text-sm font-semibold pl-4 text-darkgreen">
+        SELECT {sourceType === 'input' ? 'SOURCE OUTPUT' : 'TARGET INPUT'}:
+      </h3>
       <div className="w-full flex pb-2 items-stretch justify-start">
-        <div className="flex-grow h-32 flex flex-col p-2 justify-start bg-pale rounded-sm overflow-y-auto no-scrollbar">
+        <div className="flex-grow h-32 flex flex-col pt-2 pb-2 justify-start bg-pale rounded-sm overflow-y-auto no-scrollbar">
           {candidatesList}
         </div>
       </div>
-      <button onClick={onClose} className="w-full p-4 bg-red-400" />
+      <div className="w-full flex justify-start items-center">
+        <button className="bg-none rounded-full p-1 pl-4 pr-4 text-sm font-semibold text-pale bg-darkgreen">
+          CONNECT
+        </button>
+        <button className="bg-none rounded-sm p-2 mr-2 text-sm font-semibold pl-2 text-darkgreen" onClick={onClose}>
+          CANCEL
+        </button>
+      </div>
     </div>
   )
 }
