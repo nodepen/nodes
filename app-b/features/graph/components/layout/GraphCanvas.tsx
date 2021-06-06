@@ -8,7 +8,7 @@ import { StaticGrid } from '../layout'
 const GraphCanvas = (): React.ReactElement => {
   const { register } = useGraphManager()
 
-  const { setMode, setLiveZoom, setStaticZoom, setLivePosition, setStaticPosition } = useCameraDispatch()
+  const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
   const zoomDisabled = useCameraZoomLock()
   const cameraMode = useCameraMode()
 

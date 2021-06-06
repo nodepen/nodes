@@ -15,5 +15,14 @@ export type ElementTemplate = {
     },
     'wire': {
         type: 'wire'
+        mode: 'provisional' | 'hidden' | 'item' | 'list' | 'tree'
+        from: {
+            elementId: string
+            parameterId: string
+        }
+        to: {
+            elementId: string
+            parameterId: string
+        }
     }
 }
