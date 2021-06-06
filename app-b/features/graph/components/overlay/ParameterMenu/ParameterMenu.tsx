@@ -69,7 +69,7 @@ const ParameterMenu = (): React.ReactElement => {
         className="absolute w-vw left-0 top-0 z-10 transition-all duration-150"
         style={{ transform: openMenu === 'connection' ? 'translateX(0)' : 'translateX(100vw)' }}
       >
-        {openMenu === 'connection' ? <ParameterConnectionMenu onClose={handleClose} /> : null}
+        <ParameterConnectionMenu onClose={handleClose} />
       </div>
       <div
         ref={menuRef}

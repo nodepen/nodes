@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { NodePen, assert } from 'glib'
 import { useGraphDispatch, useGraphElements } from 'features/graph/store/graph/hooks'
 import { useParameterMenuConnection } from 'features/graph/store/overlay/hooks'
@@ -17,6 +17,25 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
   const { elementId, parameterId } = (sourceType === 'input' ? to : from) ?? {}
 
   const sourceElement = elements[elementId ?? 'unset']
+
+  const setCameraPosition = useSetCameraPosition()
+  const navigateTo = useCallback(
+    (elementId: string, parameterId?: string) => {
+      const targetElement = elements[elementId]
+
+      if (!targetElement) {
+        return
+      }
+
+      const [x, y] = targetElement.current.position
+      const { width, height } = targetElement.current.dimensions
+
+      if (!parameterId) {
+        setCameraPosition(x + width / 2, y, 'C')
+      }
+    },
+    [elements, setCameraPosition]
+  )
 
   const sourceLabel = useMemo(() => {
     if (!sourceElement) {
@@ -39,7 +58,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
         <p>{sourceParameter.nickname}</p>
       </div>
     )
-  }, [sourceElement])
+  }, [sourceElement, parameterId, sourceType])
 
   const candidatesList = useMemo(() => {
     if (!sourceElement) {
@@ -60,33 +79,41 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
       const params = listParameters(el, sourceType === 'input' ? 'output' : 'input')
 
       return (
-        <div key={`params-for-${el.id}`} className="w-full flex items-stretch mb-4">
-          <div className="w-12 pt-1 flex flex-col justify-start items-center">
-            <img width="24" height="24" src={`data:image/png;base64,${template.icon}`} />
-          </div>
-          <div className="flex-grow flex flex-col justify-start">
-            {params.map((p, i) => (
-              <div
-                key={`param-for-${el.id}=${i}`}
-                className="pl-1 pr-1 flex justify-start items-center h-8 hover:bg-green rounded-sm"
-              >
+        <>
+          <button
+            key={`params-for-${el.id}`}
+            onClick={() => navigateTo(el.id)}
+            className="w-full mt-2 pt-2 pb-2 box-border flex justify-start items-center rounded-sm sticky bg-pale top-0"
+          >
+            <div className="w-12 flex flex-col justify-center items-center">
+              <img width="24" height="24" src={`data:image/png;base64,${template.icon}`} />
+            </div>
+            <p>{template.name}</p>
+          </button>
+          {params.map((p, i) => (
+            <button
+              key={`param-for-${el.id}=${i}`}
+              className="pr-1 flex justify-start items-center h-8 hover:bg-green rounded-sm"
+            >
+              <div className="w-12 h-8 flex flex-col justify-center items-center">
                 <ParameterIcon size="sm" type={p.type} />
-                <p>{p.name}</p>
-                <p>({p.nickname})</p>
               </div>
-            ))}
-          </div>
-        </div>
+
+              <p>{p.name}</p>
+              <p>({p.nickname})</p>
+            </button>
+          ))}
+        </>
       )
     })
-  }, [elements])
+  }, [elements, sourceElement, sourceType, elementId])
 
   return (
     <div className="w-full flex flex-col pointer-events-auto bg-green">
       <div className="w-full flex items-stretch justify-start">
         {sourceLabel}
         <div
-          className="p-2 flex-grow flex flex-col justify-start bg-pale rounded-sm overflow-y-auto no-scrollbar"
+          className="flex-grow flex flex-col pl-2 pr-2 justify-start bg-pale rounded-sm overflow-y-auto no-scrollbar"
           style={{ maxHeight: '150px' }}
         >
           {candidatesList}
