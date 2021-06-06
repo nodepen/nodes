@@ -42,12 +42,7 @@ const ElementsContainer = (): React.ReactElement => {
               return null
             }
 
-            const { from, to } = el.template
-
-            const fromElement = graph[from.elementId] as NodePen.Element<'static-component'>
-            const toElement = graph[to.elementId] as NodePen.Element<'static-component'>
-
-            return <Wire wire={el} from={fromElement} to={toElement} />
+            return <Wire wire={el} />
           }
           default: {
             return null

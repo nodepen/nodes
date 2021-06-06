@@ -3,15 +3,17 @@ import { NodePen } from 'glib'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
-  from: NodePen.Element<'static-component'>
-  to: NodePen.Element<'static-component'>
 }
 
-const Wire = ({ wire, from, to }: WireProps): React.ReactElement => {
+const Wire = ({ wire }: WireProps): React.ReactElement => {
   const { id, current, template } = wire
+  const {
+    from: [ax, ay],
+    to: [bx, by],
+  } = current
 
-  const [x, y] = current.position
-  const { width, height } = current.dimensions
+  const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
+  const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
 
   return <div className="absolute pointer-events-none bg-red-300 z-0" style={{ width, height, left: x, top: y }}></div>
 }

@@ -63,11 +63,13 @@ export const graphSlice = createSlice({
     moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
       const { id, position } = action.payload
 
-      if (!state.elements[id]) {
+      const element = state.elements[id]
+
+      if (!element) {
         return
       }
 
-      state.elements[id].current.position = position
+      element.current.position = position
     },
     connect: (state: GraphState, action: PayloadAction<ConnectElementsPayload>) => {
       const { from, to } = action.payload
@@ -104,20 +106,9 @@ export const graphSlice = createSlice({
 
       const [xFrom, yFrom] = fromElement.current.position
       const [dxFrom, dyFrom] = fromElement.current.anchors[from.parameterId]
-      const fromExtent = {
-        x: xFrom + dxFrom,
-        y: yFrom + dyFrom,
-      }
 
       const [xTo, yTo] = toElement.current.position
       const [dxTo, dyTo] = toElement.current.anchors[to.parameterId]
-      const toExtent = {
-        x: xTo + dxTo,
-        y: yTo + dyTo,
-      }
-
-      const [x, y] = [Math.min(fromExtent.x, toExtent.x), Math.min(fromExtent.y, toExtent.y)]
-      const [width, height] = [Math.abs(toExtent.x - fromExtent.x), Math.abs(toExtent.y - fromExtent.y)]
 
       const wireId = newGuid()
 
@@ -130,10 +121,12 @@ export const graphSlice = createSlice({
           to,
         },
         current: {
-          position: [x, y],
+          from: [xFrom + dxFrom, yFrom + dyFrom],
+          to: [xTo + dxTo, yTo + dyTo],
+          position: [0, 0],
           dimensions: {
-            width,
-            height,
+            width: 0,
+            height: 0,
           },
         },
       }
