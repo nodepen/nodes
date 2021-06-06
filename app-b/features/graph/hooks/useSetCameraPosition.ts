@@ -57,44 +57,46 @@ export const useSetCameraPosition = (): ((
         // Trigger library move
         setTransform(tx, ty, 1, duration.current, 'easeInOutQuint')
 
-        // Begin parallel camera position move
-        const xDelta = tx - startPosition[0]
-        const yDelta = ty - startPosition[1]
+        resolve()
 
-        const animate = (t: number): void => {
-          const easeInOutQuint = (t: number): number => {
-            return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t
-          }
+        // // Begin parallel camera position move
+        // const xDelta = tx - startPosition[0]
+        // const yDelta = ty - startPosition[1]
 
-          const remap = (t: number): number => {
-            return easeInOutQuint(t) / easeInOutQuint(1)
-          }
+        // const animate = (t: number): void => {
+        //   const easeInOutQuint = (t: number): number => {
+        //     return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t
+        //   }
 
-          const f = remap(t)
+        //   const remap = (t: number): number => {
+        //     return easeInOutQuint(t) / easeInOutQuint(1)
+        //   }
 
-          const xPosition = startPosition[0] + xDelta * f
-          const yPosition = startPosition[1] + yDelta * f
+        //   const f = remap(t)
 
-          setLivePosition([xPosition, yPosition])
-        }
+        //   const xPosition = startPosition[0] + xDelta * f
+        //   const yPosition = startPosition[1] + yDelta * f
 
-        const i = setInterval(() => {
-          const f = Date.now()
+        //   // setLivePosition([xPosition, yPosition])
+        // }
 
-          if (f >= startTime.current + duration.current) {
-            clearInterval(i)
-            animate(1)
-            setStaticPosition([tx, ty])
-            setStaticZoom(1)
-            setLiveZoom(1)
-            resolve()
-            return
-          }
+        // const i = setInterval(() => {
+        //   const f = Date.now()
 
-          const t = (f - startTime.current) / duration.current
+        //   if (f >= startTime.current + duration.current) {
+        //     clearInterval(i)
+        //     animate(1)
+        //     setStaticPosition([tx, ty])
+        //     setStaticZoom(1)
+        //     setLiveZoom(1)
+        //     resolve()
+        //     return
+        //   }
 
-          animate(t)
-        }, 5)
+        //   const t = (f - startTime.current) / duration.current
+
+        //   animate(t)
+        // }, 5)
       })
     },
     [startPosition]

@@ -3,6 +3,7 @@ import { useCameraDispatch, useCameraMode, useCameraZoomLock } from 'features/gr
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
 import { useGraphManager } from '@/context/graph'
+import { StaticGrid } from '../layout'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register } = useGraphManager()
@@ -50,14 +51,15 @@ const GraphCanvas = (): React.ReactElement => {
           maxScale: 2.5,
         }}
         onPanning={(e: any) => {
-          setLivePosition([e.positionX, e.positionY])
+          // setLivePosition([e.positionX, e.positionY])
         }}
         onPanningStop={(e: any) => {
           setStaticPosition([e.positionX, e.positionY])
         }}
         onZoomChange={(zoom: any) => {
-          setLiveZoom(zoom.scale)
-          setLivePosition([zoom.positionX, zoom.positionY])
+          // setLiveZoom(zoom.scale)
+          // setLivePosition([zoom.positionX, zoom.positionY])
+          // TODO: If we cross a 'zoom breakpoint' here, then update 'static' zoom
         }}
         onWheelStart={() => {
           setMode('zooming')
@@ -84,6 +86,7 @@ const GraphCanvas = (): React.ReactElement => {
       >
         <TransformComponent ref={canvasRef}>
           <div className="w-vw h-vh relative">
+            <StaticGrid />
             <Container key="elements-container" />
           </div>
         </TransformComponent>
