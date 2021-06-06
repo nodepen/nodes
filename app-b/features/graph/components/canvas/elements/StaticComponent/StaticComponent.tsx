@@ -47,7 +47,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   // const setCameraPosition = useSetCameraPosition()
 
   return (
-    <div className="w-full h-full pointer-events-none absolute left-0 top-0">
+    <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
       <div className="w-min h-full relative">
         {/* {showButtons ? (
           <button

@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { assert } from 'glib'
+import { assert, NodePen } from 'glib'
 import { useGraphElements } from '../../store/graph/hooks'
-import { StaticComponent } from './elements'
+import { StaticComponent, Wire } from './elements'
 import { useDebugRender } from 'hooks'
 
 const ElementsContainer = (): React.ReactElement => {
@@ -36,6 +36,18 @@ const ElementsContainer = (): React.ReactElement => {
             }
 
             return <StaticComponent key={`graph-element-${el.id}`} element={el} />
+          }
+          case 'wire': {
+            if (!assert.element.isWire(el)) {
+              return null
+            }
+
+            const { from, to } = el.template
+
+            const fromElement = graph[from.elementId] as NodePen.Element<'static-component'>
+            const toElement = graph[to.elementId] as NodePen.Element<'static-component'>
+
+            return <Wire wire={el} from={fromElement} to={toElement} />
           }
           default: {
             return null
