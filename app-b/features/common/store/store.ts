@@ -9,7 +9,11 @@ export const store = configureStore({
     camera: cameraReducer,
     graph: undoable(graphReducer, {
       // TODO: Add an 'internal move' so we can't undo the recenter move-on-place
-      filter: excludeAction([graphActions.registerElement.type, graphActions.registerElementAnchor.type]),
+      filter: excludeAction([
+        graphActions.registerElement.type,
+        graphActions.registerElementAnchor.type,
+        graphActions.setMode.type,
+      ]),
     }),
     overlay: overlayReducer,
   },

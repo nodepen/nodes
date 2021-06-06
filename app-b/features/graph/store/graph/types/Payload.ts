@@ -11,6 +11,18 @@ export type MoveElementPayload = {
   position: [number, number]
 }
 
+export type ConnectElementsPayload = {
+  mode: 'replace' | 'merge'
+  from: {
+    elementId: string
+    parameterId: string
+  }
+  to: {
+    elementId: string
+    parameterId: string
+  }
+}
+
 export type RegisterElementPayload = {
   id: string
   dimensions: [width: number, height: number]

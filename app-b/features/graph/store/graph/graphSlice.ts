@@ -5,6 +5,7 @@ import { GraphState } from './types'
 import { newGuid, initializeParameters } from '../../utils'
 import {
   AddElementPayload,
+  ConnectElementsPayload,
   MoveElementPayload,
   RegisterElementAnchorPayload,
   RegisterElementPayload,
@@ -22,12 +23,13 @@ export const graphSlice = createSlice({
   initialState,
   reducers: {
     addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
-      // TODO: Actual id generation
       const id = newGuid()
 
       switch (action.payload.type) {
         case 'static-component': {
           const template = action.payload.template as NodePen.Element<'static-component'>['template']
+
+          const [sources, values, inputs, outputs] = initializeParameters(template)
 
           const element: NodePen.Element<'static-component'> = {
             id,
@@ -37,16 +39,16 @@ export const graphSlice = createSlice({
                 id: '',
                 mode: 'deferred',
               },
-              values: {},
-              sources: {},
+              values,
+              sources,
               anchors: {},
               position: action.payload.position,
               dimensions: {
                 width: 50,
                 height: 50,
               },
-              inputs: initializeParameters(template.inputs),
-              outputs: initializeParameters(template.outputs),
+              inputs,
+              outputs,
             },
           }
 
@@ -66,6 +68,77 @@ export const graphSlice = createSlice({
       }
 
       state.elements[id].current.position = position
+    },
+    connect: (state: GraphState, action: PayloadAction<ConnectElementsPayload>) => {
+      const { from, to } = action.payload
+
+      const fromElement = state.elements[from.elementId] as NodePen.Element<'static-component'>
+      const toElement = state.elements[to.elementId] as NodePen.Element<'static-component'>
+
+      if (!fromElement) {
+        console.debug(`🐍 Element ${from.elementId} declared for connection does not exist!`)
+        return
+      }
+
+      if (!toElement) {
+        console.debug(`🐍 Element ${to.elementId} declared for connection does not exist!`)
+        return
+      }
+
+      // Check for existing connection
+      const currentSources = toElement.current.sources[to.parameterId]
+
+      if (
+        currentSources.some(
+          (source) => source.elementInstanceId === from.elementId && source.parameterInstanceId === from.parameterId
+        )
+      ) {
+        console.debug(`🐍 Attempted to create a connection that already exists!`)
+        return
+      }
+
+      currentSources.push({
+        elementInstanceId: from.elementId,
+        parameterInstanceId: from.parameterId,
+      })
+
+      const [xFrom, yFrom] = fromElement.current.position
+      const [dxFrom, dyFrom] = fromElement.current.anchors[from.parameterId]
+      const fromExtent = {
+        x: xFrom + dxFrom,
+        y: yFrom + dyFrom,
+      }
+
+      const [xTo, yTo] = toElement.current.position
+      const [dxTo, dyTo] = toElement.current.anchors[to.parameterId]
+      const toExtent = {
+        x: xTo + dxTo,
+        y: yTo + dyTo,
+      }
+
+      const [x, y] = [Math.min(fromExtent.x, toExtent.x), Math.min(fromExtent.y, toExtent.y)]
+      const [width, height] = [Math.abs(toExtent.x - fromExtent.x), Math.abs(toExtent.y - fromExtent.y)]
+
+      const wireId = newGuid()
+
+      const wire: NodePen.Element<'wire'> = {
+        id: wireId,
+        template: {
+          type: 'wire',
+          mode: 'item', // TODO: Check fromElement values
+          from,
+          to,
+        },
+        current: {
+          position: [x, y],
+          dimensions: {
+            width,
+            height,
+          },
+        },
+      }
+
+      state.elements[wireId] = wire
     },
     setMode: (state: GraphState, action: PayloadAction<GraphMode>) => {
       const mode = action.payload

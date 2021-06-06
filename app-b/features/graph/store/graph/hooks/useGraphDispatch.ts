@@ -13,6 +13,7 @@ export const useGraphDispatch = () => {
     redo: () => dispatch(ActionCreators.redo()),
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => dispatch(graphActions.addElement(data)),
     moveElement: (id: string, position: [number, number]) => dispatch(graphActions.moveElement({ id, position })),
+    connect: (data: Payload.ConnectElementsPayload) => dispatch(graphActions.connect(data)),
     setMode: (mode: GraphMode) => dispatch(graphActions.setMode(mode)),
     registerElement: (data: Payload.RegisterElementPayload) => dispatch(graphActions.registerElement(data)),
     registerElementAnchor: (data: Payload.RegisterElementAnchorPayload) =>

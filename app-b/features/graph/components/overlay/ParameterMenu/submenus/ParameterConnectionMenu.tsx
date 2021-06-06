@@ -16,6 +16,7 @@ type ConnectionMenuProps = {
 
 export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React.ReactElement => {
   const elements = useGraphElements()
+  const { connect } = useGraphDispatch()
   const { type: sourceType } = useParameterMenuSource()
   const { from, to } = useParameterMenuConnection()
   const { setParameterMenuConnection } = useOverlayDispatch()
@@ -132,6 +133,26 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
 
   const ready = !!from && !!to
 
+  const handleConnect = (): void => {
+    if (!from || !to) {
+      return
+    }
+
+    connect({
+      mode: 'replace',
+      from: {
+        elementId: from.elementId,
+        parameterId: from.parameterId,
+      },
+      to: {
+        elementId: to.elementId,
+        parameterId: to.parameterId,
+      },
+    })
+
+    onClose()
+  }
+
   return (
     <div className="w-full p-2 flex flex-col pointer-events-auto bg-green">
       {/* <h3 className="mb-2 text-sm font-semibold pl-2 text-darkgreen">
@@ -148,6 +169,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
           className={`${
             ready ? 'text-darkgreen' : 'text-swampgreen'
           } bg-none rounded-sm p-1 pl-2 pr-2 text-sm font-semibold hover:bg-swampgreen transition-colors duration-75`}
+          onClick={handleConnect}
         >
           CONNECT
         </button>

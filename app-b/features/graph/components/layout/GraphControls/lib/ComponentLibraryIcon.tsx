@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import Draggable, { DraggableEvent } from 'react-draggable'
 import { Grasshopper } from 'glib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
-import { useCamera } from 'features/graph/store/camera/hooks'
+import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
 import { ComponentLibraryDetails } from './ComponentLibraryDetails'
 import { getScreenPosition, screenSpaceToCameraSpace } from '../../../../utils'
 
@@ -14,12 +14,8 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
   const { guid, name, category, icon } = template
 
   const { addElement } = useGraphDispatch()
-  const {
-    zoom: { static: zoom },
-    position: {
-      static: [cx, cy],
-    },
-  } = useCamera()
+  const zoom = useCameraStaticZoom()
+  const [cx, cy] = useCameraStaticPosition()
 
   const entryRef = useRef<HTMLButtonElement>(null)
   const imageRef = useRef<HTMLImageElement>(null)
