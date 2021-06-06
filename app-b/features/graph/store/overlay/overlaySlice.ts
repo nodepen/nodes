@@ -11,10 +11,9 @@ const initialState: OverlayState = {
     source: {
       elementId: 'unset',
       parameterId: 'unset',
+      type: 'unset',
     },
-    connection: {
-      sourceType: 'input',
-    },
+    connection: {},
   },
 }
 
@@ -25,19 +24,33 @@ export const overlaySlice = createSlice({
     show: (state: OverlayState, action: PayloadAction<Payload.ShowPayload>) => {
       state.show = { ...initialState.show }
 
-      switch (action.payload.type) {
+      switch (action.payload.menu) {
         case 'parameterMenu': {
           state.show.parameterMenu = true
 
-          const { sourceElementId, sourceParameterId } = action.payload
+          const { sourceElementId, sourceParameterId, sourceType } = action.payload
 
           state.parameterMenu = {
             source: {
               elementId: sourceElementId,
               parameterId: sourceParameterId,
+              type: sourceType,
             },
             connection: {
-              sourceType: 'input',
+              from:
+                sourceType === 'output'
+                  ? {
+                      elementId: sourceElementId,
+                      parameterId: sourceParameterId,
+                    }
+                  : undefined,
+              to:
+                sourceType === 'input'
+                  ? {
+                      elementId: sourceElementId,
+                      parameterId: sourceParameterId,
+                    }
+                  : undefined,
             },
           }
         }
@@ -47,11 +60,25 @@ export const overlaySlice = createSlice({
       state.show = { ...initialState.show }
       state.parameterMenu = { ...initialState.parameterMenu }
     },
-    setParameterMenuConnection: (
-      state: OverlayState,
-      action: PayloadAction<OverlayState['parameterMenu']['connection']>
-    ) => {
-      state.parameterMenu.connection = action.payload
+    setParameterMenuConnection: (state: OverlayState, action: PayloadAction<Payload.ConnectionPayload>) => {
+      const { type, elementId, parameterId } = action.payload
+
+      if (state.parameterMenu.source.type === type) {
+        // Cannot set same type as source type
+        console.log('Incoming reference is of same type as source reference.')
+        return
+      }
+
+      if (elementId === state.parameterMenu.source.elementId) {
+        // Cannot set connection to same component
+        console.log('Incoming reference is for same element as source reference.')
+        return
+      }
+
+      state.parameterMenu.connection[type === 'input' ? 'to' : 'from'] = { elementId, parameterId }
+    },
+    clearParameterMenuConnection: (state: OverlayState) => {
+      state.parameterMenu.connection = {}
     },
   },
 })

@@ -1,6 +1,6 @@
 import { useAppDispatch } from '$'
 import { overlayActions } from '../overlaySlice'
-import { OverlayState, Payload } from '../types'
+import { Payload } from '../types'
 
 export const useOverlayDispatch = () => {
   const dispatch = useAppDispatch()
@@ -8,7 +8,8 @@ export const useOverlayDispatch = () => {
   return {
     show: (data: Payload.ShowPayload) => dispatch(overlayActions.show(data)),
     clear: () => dispatch(overlayActions.clear()),
-    setParameterMenuConnection: (data: OverlayState['parameterMenu']['connection']) =>
+    setParameterMenuConnection: (data: Payload.ConnectionPayload) =>
       dispatch(overlayActions.setParameterMenuConnection(data)),
+    clearParameterMenuConnection: () => dispatch(overlayActions.clearParameterMenuConnection()),
   }
 }

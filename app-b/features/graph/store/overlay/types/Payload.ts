@@ -1,9 +1,12 @@
-import { OverlayType } from './OverlayType'
-
 export type ShowPayload = {
-  type: OverlayType
-} & {
-  type: 'parameterMenu'
+  menu: 'parameterMenu'
+  sourceType: 'input' | 'output'
   sourceElementId: string
   sourceParameterId: string
+}
+
+export type ConnectionPayload = {
+  type: 'input' | 'output'
+  elementId: string
+  parameterId: string
 }

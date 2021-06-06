@@ -25,7 +25,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const { registerElementAnchor } = useGraphDispatch()
   const graphMode = useGraphMode()
 
-  const { show } = useOverlayDispatch()
+  const { show, setParameterMenuConnection } = useOverlayDispatch()
 
   const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
@@ -103,18 +103,24 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const p = mode === 'input' ? 'pr-4' : 'pl-4'
 
   const handleClick = (): void => {
-    if (graphMode !== 'idle') {
-      return
+    switch (graphMode) {
+      case 'idle': {
+        const [x, y] = current.position
+        const [dx, dy] = current.anchors[parameterId]
+
+        setCameraPosition(x + dx, y + dy, mode === 'input' ? 'TR' : 'TL', 45)
+
+        setTimeout(() => {
+          show({ menu: 'parameterMenu', sourceType: mode, sourceElementId: elementId, sourceParameterId: parameterId })
+        }, 350)
+        break
+      }
+      case 'connecting': {
+        // Validation handled by reducer
+        setParameterMenuConnection({ type: mode, elementId, parameterId })
+        break
+      }
     }
-
-    const [x, y] = current.position
-    const [dx, dy] = current.anchors[parameterId]
-
-    setCameraPosition(x + dx, y + dy, mode === 'input' ? 'TR' : 'TL', 45)
-
-    setTimeout(() => {
-      show({ type: 'parameterMenu', sourceElementId: elementId, sourceParameterId: parameterId })
-    }, 350)
   }
 
   const pointerStartTime = useRef(0)

@@ -16,7 +16,7 @@ const ParameterMenu = (): React.ReactElement => {
   const { setMode } = useGraphDispatch()
   const elements = useGraphElements()
   const { elementId: sourceElementId, parameterId: sourceParameterId } = useParameterMenuSource()
-  const { clear, setParameterMenuConnection } = useOverlayDispatch()
+  const { clear, setParameterMenuConnection, clearParameterMenuConnection } = useOverlayDispatch()
 
   const menuRef = useRef<HTMLDivElement>(null)
 
@@ -55,6 +55,7 @@ const ParameterMenu = (): React.ReactElement => {
 
   const handleClose = (): void => {
     setOpenMenu('home')
+    clearParameterMenuConnection()
 
     const [x, y] = element.current.position
     const [dx, dy] = element.current.anchors[sourceParameterId]
@@ -123,11 +124,9 @@ const ParameterMenu = (): React.ReactElement => {
             setOpenMenu('connection')
 
             setParameterMenuConnection({
-              sourceType: parameterMode === 'inputs' ? 'input' : 'output',
-              from:
-                parameterMode === 'inputs' ? undefined : { elementId: sourceElementId, parameterId: sourceParameterId },
-              to:
-                parameterMode === 'inputs' ? { elementId: sourceElementId, parameterId: sourceParameterId } : undefined,
+              type: parameterMode === 'inputs' ? 'input' : 'output',
+              elementId: sourceElementId,
+              parameterId: sourceParameterId,
             })
           }}
           className="w-full mb-2 p-2 flex justify-start items-center border-2 border-dark rounded-md bg-white pointer-events-auto"

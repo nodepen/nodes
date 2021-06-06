@@ -7,9 +7,9 @@ export type OverlayState = {
     source: {
       elementId: string
       parameterId: string
+      type: 'input' | 'output' | 'unset'
     }
     connection: {
-      sourceType: 'input' | 'output'
       from?: {
         elementId: string
         parameterId: string
