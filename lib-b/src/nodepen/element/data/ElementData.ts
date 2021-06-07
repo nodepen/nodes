@@ -6,5 +6,5 @@ export type ElementData = {
     'static-parameter': GraphElement & GripElement & VisibleElement
     'number-slider': GraphElement & GripElement & VisibleElement
     'panel': VisibleElement & GripElement
-    'wire': Partial<VisibleElement> & { from: [x: number, y: number], to: [x: number, y: number] }
+    'wire': VisibleElement & { from: [x: number, y: number], to: [x: number, y: number] }
 } & ElementDataEntry

@@ -1,5 +1,6 @@
 export { categorize } from './categorize'
 export { distance } from './distance'
+export { findAttachedWires } from './findAttachedWires'
 export { flattenCategory } from './flattenCategory'
 export { getScreenPosition } from './getScreenPosition'
 export { listParameters } from './listParameters'

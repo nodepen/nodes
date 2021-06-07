@@ -2,7 +2,7 @@ import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
 import { GraphState } from './types'
-import { newGuid, initializeParameters } from '../../utils'
+import { newGuid, initializeParameters, findAttachedWires } from '../../utils'
 import {
   AddElementPayload,
   ConnectElementsPayload,
@@ -69,6 +69,44 @@ export const graphSlice = createSlice({
         return
       }
 
+      // Determine motion delta
+      const [currentX, currentY] = element.current.position
+      const [nextX, nextY] = position
+
+      const [dx, dy] = [nextX - currentX, nextY - currentY]
+
+      // Apply motion to connected wires
+      const wires = Object.values(state.elements).filter((element) =>
+        assert.element.isWire(element)
+      ) as NodePen.Element<'wire'>[]
+
+      const [fromWires, toWires] = findAttachedWires(wires, id)
+
+      fromWires.forEach((wireId) => {
+        const wire = state.elements[wireId]
+
+        if (!assert.element.isWire(wire)) {
+          return
+        }
+
+        const [wx, wy] = wire.current.from
+
+        wire.current.from = [wx + dx, wy + dy]
+      })
+
+      toWires.forEach((wireId) => {
+        const wire = state.elements[wireId]
+
+        if (!assert.element.isWire(wire)) {
+          return
+        }
+
+        const [wx, wy] = wire.current.to
+
+        wire.current.to = [wx + dx, wy + dy]
+      })
+
+      // Apply motion to element
       element.current.position = position
     },
     connect: (state: GraphState, action: PayloadAction<ConnectElementsPayload>) => {
