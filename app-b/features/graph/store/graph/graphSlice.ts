@@ -69,12 +69,6 @@ export const graphSlice = createSlice({
         return
       }
 
-      // Determine motion delta
-      const [currentX, currentY] = element.current.position
-      const [nextX, nextY] = position
-
-      const [dx, dy] = [nextX - currentX, nextY - currentY]
-
       // Apply motion to connected wires
       const wires = Object.values(state.elements).filter((element) =>
         assert.element.isWire(element)
@@ -89,9 +83,18 @@ export const graphSlice = createSlice({
           return
         }
 
-        const [wx, wy] = wire.current.from
+        const parameter = wire.template.from.parameterId
 
-        wire.current.from = [wx + dx, wy + dy]
+        const data = element.current
+
+        if (!assert.element.isGripElement(data)) {
+          return
+        }
+
+        const [x, y] = position
+        const [dx, dy] = data.anchors[parameter]
+
+        wire.current.from = [x + dx, y + dy]
       })
 
       toWires.forEach((wireId) => {
@@ -101,9 +104,18 @@ export const graphSlice = createSlice({
           return
         }
 
-        const [wx, wy] = wire.current.to
+        const parameter = wire.template.to.parameterId
 
-        wire.current.to = [wx + dx, wy + dy]
+        const data = element.current
+
+        if (!assert.element.isGripElement(data)) {
+          return
+        }
+
+        const [x, y] = position
+        const [dx, dy] = data.anchors[parameter]
+
+        wire.current.to = [x + dx, y + dy]
       })
 
       // Apply motion to element
