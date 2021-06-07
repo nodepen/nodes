@@ -330,11 +330,100 @@ export const graphSlice = createSlice({
     },
     endLiveWire: (state: GraphState) => {
       // Make connection if capture exists, otherwise stop connection attempt
-      if (state.registry.wire.capture) {
-        console.log('Connection made!')
+      if (!state.registry.wire.capture) {
+        return
       }
       // TODO
       delete state.elements['live-wire']
+
+      const fromElementId =
+        state.registry.wire.source.type === 'input'
+          ? state.registry.wire.capture.elementId
+          : state.registry.wire.source.elementId
+      const fromParameterId =
+        state.registry.wire.source.type === 'input'
+          ? state.registry.wire.capture.parameterId
+          : state.registry.wire.source.parameterId
+
+      const toElementId =
+        state.registry.wire.source.type === 'input'
+          ? state.registry.wire.source.elementId
+          : state.registry.wire.capture.elementId
+      const toParameterId =
+        state.registry.wire.source.type === 'input'
+          ? state.registry.wire.source.parameterId
+          : state.registry.wire.capture.parameterId
+
+      const fromElement = state.elements[fromElementId] as NodePen.Element<'static-component'>
+      const toElement = state.elements[toElementId] as NodePen.Element<'static-component'>
+
+      if (!fromElement) {
+        console.debug(`🐍 Element ${fromElementId} declared for connection does not exist!`)
+        return
+      }
+
+      if (!toElement) {
+        console.debug(`🐍 Element ${toElementId} declared for connection does not exist!`)
+        return
+      }
+
+      const toElementData = toElement.current
+
+      if (!assert.element.isGraphElement(toElementData)) {
+        return
+      }
+
+      // Check for existing connection
+      const currentSources = toElementData.sources[toParameterId]
+
+      if (
+        currentSources.some(
+          (source) => source.elementInstanceId === fromElementId && source.parameterInstanceId === fromParameterId
+        )
+      ) {
+        console.debug(`🐍 Attempted to create a connection that already exists!`)
+        return
+      }
+
+      currentSources.push({
+        elementInstanceId: fromElementId,
+        parameterInstanceId: fromParameterId,
+      })
+
+      const [xFrom, yFrom] = fromElement.current.position
+      const [dxFrom, dyFrom] = fromElement.current.anchors[fromParameterId]
+
+      const [xTo, yTo] = toElement.current.position
+      const [dxTo, dyTo] = toElement.current.anchors[toParameterId]
+
+      const wireId = newGuid()
+
+      const wire: NodePen.Element<'wire'> = {
+        id: wireId,
+        template: {
+          type: 'wire',
+          mode: 'data',
+          from: {
+            elementId: fromElementId,
+            parameterId: fromParameterId,
+          },
+          to: {
+            elementId: toElementId,
+            parameterId: toParameterId,
+          },
+        },
+        current: {
+          from: [xFrom + dxFrom, yFrom + dyFrom],
+          to: [xTo + dxTo, yTo + dyTo],
+          position: [0, 0],
+          dimensions: {
+            width: 0,
+            height: 0,
+          },
+        },
+      }
+
+      state.elements[wireId] = wire
     },
     setProvisionalWire: (state: GraphState, action: PayloadAction<ProvisionalWirePayload>) => {
       const { from, to } = action.payload
