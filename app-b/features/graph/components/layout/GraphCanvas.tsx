@@ -68,7 +68,6 @@ const GraphCanvas = (): React.ReactElement => {
           setMode('idle')
           setStaticZoom(e.scale)
           setStaticPosition([e.positionX, e.positionY])
-          console.log({ e })
         }}
         onPinchingStart={() => {
           setMode('zooming')

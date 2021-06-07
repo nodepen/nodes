@@ -19,7 +19,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
   const { connect, setProvisionalWire, clearProvisionalWire } = useGraphDispatch()
   const { type: sourceType } = useParameterMenuSource()
   const { from, to } = useParameterMenuConnection()
-  const { setParameterMenuConnection } = useOverlayDispatch()
+  const { setParameterMenuConnection, clear } = useOverlayDispatch()
 
   const fromElement = elements[from?.elementId ?? 'unset'] as NodePen.Element<'static-component'>
   const fromParameter = fromElement?.template.outputs[fromElement?.current.outputs[from?.parameterId ?? 'unset']]
@@ -172,6 +172,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
 
     clearProvisionalWire()
     onClose()
+    clear()
   }
 
   const handleClose = (): void => {

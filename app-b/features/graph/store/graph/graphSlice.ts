@@ -329,12 +329,12 @@ export const graphSlice = createSlice({
       state.registry.wire.capture = undefined
     },
     endLiveWire: (state: GraphState) => {
+      delete state.elements['live-wire']
+
       // Make connection if capture exists, otherwise stop connection attempt
       if (!state.registry.wire.capture) {
         return
       }
-      // TODO
-      delete state.elements['live-wire']
 
       const fromElementId =
         state.registry.wire.source.type === 'input'
