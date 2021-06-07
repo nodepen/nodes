@@ -4,7 +4,7 @@ import { useSetCameraPosition } from 'features/graph/hooks'
 import { useDebugRender } from '@/hooks'
 import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
-import { useOverlayDispatch } from 'features/graph/store/overlay/hooks'
+import { useOverlayDispatch, useParameterMenuConnection } from 'features/graph/store/overlay/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useSessionManager } from 'context/session'
 
@@ -22,10 +22,11 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
-  const { registerElementAnchor } = useGraphDispatch()
+  const { registerElementAnchor, setProvisionalWire } = useGraphDispatch()
   const graphMode = useGraphMode()
 
   const { show, setParameterMenuConnection } = useOverlayDispatch()
+  const { from, to } = useParameterMenuConnection()
 
   const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
@@ -118,6 +119,16 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       case 'connecting': {
         // Validation handled by reducer
         setParameterMenuConnection({ type: mode, elementId, parameterId })
+
+        const provisionalFrom = mode === 'input' ? from : { elementId, parameterId }
+        const provisionalTo = mode === 'input' ? { elementId, parameterId } : to
+
+        if (!provisionalFrom || !provisionalTo) {
+          break
+        }
+
+        setProvisionalWire({ from: provisionalFrom, to: provisionalTo })
+
         break
       }
     }

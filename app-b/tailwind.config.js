@@ -83,10 +83,19 @@ module.exports = {
             transform: 'translateX(-100%)',
           },
         },
+        march: {
+          '0%': {
+            'stroke-dashoffset': 12,
+          },
+          '100%': {
+            'stroke-dashoffset': 0,
+          }
+        }
       },
       animation: {
         swell: 'swell 3200ms ease-in-out infinite',
         scroll: 'scroll 3200ms linear infinite',
+        march: 'march 500ms linear infinite',
       },
       transitionProperty: {
         height: 'height',

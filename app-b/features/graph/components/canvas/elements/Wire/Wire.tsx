@@ -18,11 +18,48 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
 
+  const start = {
+    x: ax < bx ? 0 : width,
+    y: ay < by ? 0 : height,
+  }
+  const end = {
+    x: start.x === 0 ? width : 0,
+    y: start.y === 0 ? height : 0,
+  }
+  const mid = {
+    x: (start.x + end.x) / 2,
+    y: (start.y + end.y) / 2,
+  }
+
+  const ymod = by > ay ? -1 : 1
+  const xmod = bx > ax ? -1 : 1
+
+  const d = [
+    `M ${start.x} ${start.y} `,
+    `C ${start.x} ${start.y} ${mid.x + (width * xmod) / 10} ${mid.y + (height * ymod) / 2} ${mid.x} ${mid.y} `,
+    `S ${end.x} ${end.y} ${end.x} ${end.y} `,
+  ].join('')
+
   return (
-    <div
-      className={`${template.mode === 'provisional' ? 'bg-blue-300' : 'bg-red-300'} absolute pointer-events-none z-0`}
-      style={{ width, height, left: x, top: y }}
-    ></div>
+    <div className={`absolute pointer-events-none z-0 overflow-visible`} style={{ width, height, left: x, top: y }}>
+      <svg
+        className="absolute left-0 top-0 overflow-visible z-10"
+        width={width}
+        height={height}
+        viewBox={`0 0 ${width} ${height}`}
+      >
+        <path
+          d={d}
+          strokeWidth="3px"
+          stroke="#333333"
+          strokeDasharray={template.mode === 'provisional' ? '4 8' : ''}
+          strokeLinecap="round"
+          fill="none"
+          vectorEffect="non-scaling-stroke"
+          className={`${template.mode === 'provisional' ? 'animate-march' : 'none'}`}
+        />
+      </svg>
+    </div>
   )
 }
 

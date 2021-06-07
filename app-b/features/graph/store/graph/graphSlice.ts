@@ -12,6 +12,7 @@ import {
   RegisterElementPayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
+import { Payload } from '../overlay/types'
 
 const initialState: GraphState = {
   elements: {},
@@ -174,7 +175,7 @@ export const graphSlice = createSlice({
         id: wireId,
         template: {
           type: 'wire',
-          mode: 'item', // TODO: Check fromElement values
+          mode: 'data',
           from,
           to,
         },
