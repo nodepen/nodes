@@ -16,7 +16,7 @@ type ConnectionMenuProps = {
 
 export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React.ReactElement => {
   const elements = useGraphElements()
-  const { connect } = useGraphDispatch()
+  const { connect, setProvisionalWire, clearProvisionalWire } = useGraphDispatch()
   const { type: sourceType } = useParameterMenuSource()
   const { from, to } = useParameterMenuConnection()
   const { setParameterMenuConnection } = useOverlayDispatch()
@@ -27,7 +27,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
   const toElement = elements[to?.elementId ?? 'unset'] as NodePen.Element<'static-component'>
   const toParameter = toElement?.template.inputs[toElement?.current.inputs[to?.parameterId ?? 'unset']]
 
-  const { elementId, parameterId } = (sourceType === 'input' ? to : from) ?? {}
+  const { elementId, parameterId: sourceParameterId } = (sourceType === 'input' ? to : from) ?? {}
 
   const sourceElement = elements[elementId ?? 'unset']
 
@@ -117,6 +117,19 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
                   elementId: el.id,
                   parameterId,
                 })
+
+                if (!elementId || !sourceParameterId) {
+                  return
+                  console.log('Not setting provisional wire!')
+                }
+
+                const sourceReference = { elementId, parameterId: sourceParameterId }
+                const targetReference = { elementId: el.id, parameterId }
+
+                setProvisionalWire({
+                  from: sourceType === 'output' ? sourceReference : targetReference,
+                  to: sourceType === 'output' ? targetReference : sourceReference,
+                })
               }}
             >
               <div className="w-8 h-8 flex flex-col justify-center items-center">
@@ -136,7 +149,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
         </>
       )
     })
-  }, [elements, sourceElement, sourceType, elementId, navigateTo, targetElement, targetParameter])
+  }, [elements, sourceElement, sourceType, elementId, navigateTo, targetElement, targetParameter, sourceParameterId])
 
   const ready = !!from && !!to
 
@@ -157,6 +170,12 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
       },
     })
 
+    clearProvisionalWire()
+    onClose()
+  }
+
+  const handleClose = (): void => {
+    clearProvisionalWire()
     onClose()
   }
 
@@ -182,7 +201,7 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
         </button>
         <button
           className="bg-none rounded-sm p-1 pl-2 pr-2 mr-2 text-sm font-semibold text-darkgreen hover:bg-swampgreen transition-colors duration-75"
-          onClick={onClose}
+          onClick={handleClose}
         >
           CANCEL
         </button>

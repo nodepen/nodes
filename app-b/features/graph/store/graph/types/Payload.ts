@@ -23,6 +23,17 @@ export type ConnectElementsPayload = {
   }
 }
 
+export type ProvisionalWirePayload = {
+  from: {
+    elementId: string
+    parameterId: string
+  }
+  to: {
+    elementId: string
+    parameterId: string
+  }
+}
+
 export type RegisterElementPayload = {
   id: string
   dimensions: [width: number, height: number]

@@ -7,11 +7,11 @@ import {
   AddElementPayload,
   ConnectElementsPayload,
   MoveElementPayload,
+  ProvisionalWirePayload,
   RegisterElementAnchorPayload,
   RegisterElementPayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
-import { dirxml } from 'console'
 
 const initialState: GraphState = {
   elements: {},
@@ -190,6 +190,53 @@ export const graphSlice = createSlice({
       }
 
       state.elements[wireId] = wire
+    },
+    setProvisionalWire: (state: GraphState, action: PayloadAction<ProvisionalWirePayload>) => {
+      const { from, to } = action.payload
+
+      const fromElement = state.elements[from.elementId]
+      const toElement = state.elements[to.elementId]
+
+      if (!fromElement || !toElement) {
+        return
+      }
+
+      const fromElementData = fromElement.current
+      const toElementData = toElement.current
+
+      if (!assert.element.isGripElement(fromElementData) || !assert.element.isGripElement(toElementData)) {
+        return
+      }
+
+      const [ax, ay] = fromElement.current.position
+      const [adx, ady] = fromElementData.anchors[from.parameterId]
+
+      const [bx, by] = toElement.current.position
+      const [bdx, bdy] = toElementData.anchors[to.parameterId]
+
+      const wire: NodePen.Element<'wire'> = {
+        id: 'provisional-wire',
+        template: {
+          type: 'wire',
+          mode: 'provisional',
+          from,
+          to,
+        },
+        current: {
+          from: [ax + adx, ay + ady],
+          to: [bx + bdx, by + bdy],
+          position: [0, 0],
+          dimensions: {
+            width: 0,
+            height: 0,
+          },
+        },
+      }
+
+      state.elements['provisional-wire'] = wire
+    },
+    clearProvisionalWire: (state: GraphState) => {
+      delete state.elements['provisional-wire']
     },
     prepareLiveMotion: (state: GraphState, action: PayloadAction<string>) => {
       const targetId = action.payload

@@ -16,6 +16,8 @@ export const useGraphDispatch = () => {
     connect: (data: Payload.ConnectElementsPayload) => dispatch(graphActions.connect(data)),
     prepareLiveMotion: (elementId: string) => dispatch(graphActions.prepareLiveMotion(elementId)),
     dispatchLiveMotion: (dx: number, dy: number) => dispatch(graphActions.dispatchLiveMotion([dx, dy])),
+    setProvisionalWire: (data: Payload.ProvisionalWirePayload) => dispatch(graphActions.setProvisionalWire(data)),
+    clearProvisionalWire: () => dispatch(graphActions.clearProvisionalWire()),
     setMode: (mode: GraphMode) => dispatch(graphActions.setMode(mode)),
     registerElement: (data: Payload.RegisterElementPayload) => dispatch(graphActions.registerElement(data)),
     registerElementAnchor: (data: Payload.RegisterElementAnchorPayload) =>
