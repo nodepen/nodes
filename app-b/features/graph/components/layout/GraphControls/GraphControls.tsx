@@ -3,9 +3,12 @@ import { useGraphManager } from 'context/graph'
 import { categorize, flattenCategory } from '../../../utils'
 import { ComponentLibraryIcon } from './lib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
+import { useSessionManager } from '@/context/session'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
+  const { user } = useSessionManager()
+
   const { undo, redo } = useGraphDispatch()
 
   const [sidebarWidth, setSidebarWidth] = useState(0)
@@ -65,7 +68,22 @@ export const GraphControls = (): React.ReactElement => {
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
       >
         <div className="w-full h-full overflow-auto no-scrollbar">
-          <div className="w-full h-12 sticky bg-swampgreen top-0" />
+          <div className="w-full p-2 sticky bg-green top-0">
+            <div className="w-full p-1 flex items-stretch rounded-md border-2 border-swampgreen">
+              <div className="h-14 mr-2 rounded-sm bg-swampgreen" style={{ width: 74 }} />
+              <div className="flex flex-col justify-start">
+                <h3 className="text-xl text-darkgreen font-semibold">Twisty Tower</h3>
+                <div className="pb-1 text-darkgreen flex-grow flex flex-col justify-end">
+                  <p className="w-full flex flew-row items-center text-sm whitespace-nowrap">
+                    by&nbsp;{' '}
+                    <p className="font-semibold">
+                      {user && user.isAnonymous ? 'Anonymous' : user?.displayName ?? 'You'}
+                    </p>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
           <div className="w-full p-2">
             <hr className="w-full border-t-2 border-swampgreen rounded-full" />
           </div>

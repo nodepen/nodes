@@ -47,8 +47,8 @@ export const ComponentLibraryDetails = ({
             className="w-full p-4 flex flex-col bg-white border-2 border-dark rounded-md overflow-visible z-0"
             style={{ maxWidth: 400 }}
           >
-            <h2 className="">{`${name} (${nickname})`}</h2>
-            <p>{description}</p>
+            <h2 className="font-medium text-lg mb-1">{`${name} (${nickname})`}</h2>
+            <p className="whitespace-normal">{description}</p>
           </div>
         </div>
       </div>
