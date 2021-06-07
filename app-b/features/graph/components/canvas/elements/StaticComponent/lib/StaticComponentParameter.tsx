@@ -22,7 +22,15 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
-  const { registerElementAnchor, setProvisionalWire, startLiveWire, updateLiveWire, endLiveWire } = useGraphDispatch()
+  const {
+    registerElementAnchor,
+    setProvisionalWire,
+    startLiveWire,
+    updateLiveWire,
+    endLiveWire,
+    captureLiveWire,
+    releaseLiveWire,
+  } = useGraphDispatch()
   const graphMode = useGraphMode()
 
   const { show, setParameterMenuConnection } = useOverlayDispatch()
@@ -73,7 +81,6 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
             fill="#FFF"
             opacity="0"
             stroke="none"
-            onPointerOver={() => console.log('over')}
             onPointerUp={() => console.log('up')}
             onTouchMove={() => console.log('touch')}
           />
@@ -184,6 +191,10 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     e.preventDefault()
     setMode('locked')
 
+    if (graphMode !== 'idle') {
+      return
+    }
+
     pointerStartTime.current = Date.now()
     pointerIsMoving.current = true
 
@@ -265,6 +276,22 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     setMode('idle')
   }
 
+  const handlePointerEnter = (): void => {
+    if (pointerIsMoving.current) {
+      return
+    }
+
+    captureLiveWire({ type: mode, elementId, parameterId })
+  }
+
+  const handlePointerLeave = (): void => {
+    if (pointerIsMoving.current) {
+      return
+    }
+
+    releaseLiveWire()
+  }
+
   return (
     <>
       <button
@@ -276,6 +303,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         onPointerUp={handlePointerUp}
         onTouchMove={handleTouchMove}
         onTouchEnd={handlePointerUp}
+        onPointerEnter={handlePointerEnter}
+        onPointerLeave={handlePointerLeave}
         style={{ touchAction: 'none' }}
       >
         {body}

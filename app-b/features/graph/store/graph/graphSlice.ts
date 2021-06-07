@@ -301,6 +301,11 @@ export const graphSlice = createSlice({
         return
       }
 
+      if (elementId === state.registry.wire.capture?.elementId) {
+        // No need to duplicate claim
+        return
+      }
+
       const element = state.elements[elementId]
 
       if (!element) {
@@ -313,17 +318,21 @@ export const graphSlice = createSlice({
         return
       }
 
+      state.registry.wire.capture = { elementId, parameterId }
+
       const [x, y] = elementData.position
       const [dx, dy] = elementData.anchors[parameterId]
 
-      wire.current[type === 'input' ? 'to' : 'from'] = [x + dx, y + dy]
+      wire.current[type === 'input' ? 'from' : 'to'] = [x + dx, y + dy]
     },
     releaseLiveWire: (state: GraphState) => {
       state.registry.wire.capture = undefined
     },
     endLiveWire: (state: GraphState) => {
       // Make connection if capture exists, otherwise stop connection attempt
-
+      if (state.registry.wire.capture) {
+        console.log('Connection made!')
+      }
       // TODO
       delete state.elements['live-wire']
     },
