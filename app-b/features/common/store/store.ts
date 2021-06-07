@@ -10,11 +10,18 @@ export const store = configureStore({
     graph: undoable(graphReducer, {
       // TODO: Add an 'internal move' so we can't undo the recenter move-on-place
       filter: excludeAction([
-        graphActions.registerElement.type,
-        graphActions.registerElementAnchor.type,
-        graphActions.setMode.type,
+        graphActions.startLiveWire.type,
+        graphActions.updateLiveWire.type,
+        graphActions.captureLiveWire.type,
+        graphActions.releaseLiveWire.type,
+        graphActions.endLiveWire.type,
+        graphActions.setProvisionalWire.type,
+        graphActions.clearProvisionalWire.type,
         graphActions.prepareLiveMotion.type,
         graphActions.dispatchLiveMotion.type,
+        graphActions.setMode.type,
+        graphActions.registerElement.type,
+        graphActions.registerElementAnchor.type,
       ]),
     }),
     overlay: overlayReducer,

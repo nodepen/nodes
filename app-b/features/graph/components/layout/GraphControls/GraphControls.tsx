@@ -13,7 +13,7 @@ export const GraphControls = (): React.ReactElement => {
 
   const libraryByCategory = useMemo(() => categorize(library ?? []), [library])
 
-  const [selectedCategory, setSelectedCategory] = useState('sets')
+  const [selectedCategory, setSelectedCategory] = useState('intersect')
 
   const selectedCategoryComponents = useMemo(
     () => flattenCategory(libraryByCategory, selectedCategory),

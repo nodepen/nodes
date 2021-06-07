@@ -15,7 +15,6 @@ import {
   UpdateLiveWirePayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
-import { Payload } from '../overlay/types'
 
 const initialState: GraphState = {
   elements: {},

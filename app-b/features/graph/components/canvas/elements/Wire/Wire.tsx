@@ -41,7 +41,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   ].join('')
 
   return (
-    <div className={`absolute pointer-events-none z-0 overflow-visible`} style={{ width, height, left: x, top: y }}>
+    <div className={`absolute pointer-events-none z-0 overflow-visible`} style={{ width, height, left: x, top: y - 2 }}>
       <svg
         className="absolute left-0 top-0 overflow-visible z-10"
         width={width}
