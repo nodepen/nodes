@@ -1,5 +1,6 @@
 import React from 'react'
 import { NodePen } from 'glib'
+import { useDebugRender } from '@/hooks'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
@@ -11,6 +12,8 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     from: [ax, ay],
     to: [bx, by],
   } = current
+
+  useDebugRender(`Wire | ${id}`)
 
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]

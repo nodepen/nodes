@@ -56,6 +56,8 @@ export const useSetCameraPosition = (): ((
 
         // Trigger library move
         setTransform(tx, ty, 1, duration.current, 'easeInOutQuint')
+        setStaticPosition([tx, ty])
+        setStaticZoom(1)
 
         resolve()
 

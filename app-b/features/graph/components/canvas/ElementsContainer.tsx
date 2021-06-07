@@ -8,7 +8,7 @@ const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
   const elements = Object.values(graph)
 
-  useDebugRender('ElementsContainer')
+  // useDebugRender('ElementsContainer')
 
   useEffect(() => {
     const printElements = (e: KeyboardEvent): void => {

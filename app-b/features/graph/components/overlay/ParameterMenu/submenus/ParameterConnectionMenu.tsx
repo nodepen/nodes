@@ -104,13 +104,20 @@ export const ParameterConnectionMenu = ({ onClose }: ConnectionMenuProps): React
             <button
               key={`param-for-${el.id}=${i}`}
               className="ml-2 mr-2 flex justify-start items-center h-8 hover:bg-green rounded-sm"
-              onClick={() =>
+              onClick={() => {
+                const parameterId = Object.keys(el.current[sourceType === 'input' ? 'outputs' : 'inputs'])[i]
+
+                const [x, y] = el.current.position
+                const [dx, dy] = el.current.anchors[parameterId]
+
+                setCameraPosition(x + dx, y + dy - 45, 'C')
+
                 setParameterMenuConnection({
                   type: sourceType === 'input' ? 'output' : 'input',
                   elementId: el.id,
-                  parameterId: Object.keys(el.current[sourceType === 'input' ? 'outputs' : 'inputs'])[i],
+                  parameterId,
                 })
-              }
+              }}
             >
               <div className="w-8 h-8 flex flex-col justify-center items-center">
                 <div className="w-4 h-4 rounded-full flex justify-center items-center bg-pale border-2 border-darkgreen">

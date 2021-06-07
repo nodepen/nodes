@@ -13,7 +13,7 @@ type StaticComponentProps = {
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const { template, current, id } = element
 
-  useDebugRender(`StaticComponent ${template.name} ${id}`)
+  useDebugRender(`StaticComponent | ${template.name} | ${id}`)
 
   const [x, y] = current.position
 
@@ -89,7 +89,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             setZoomLock(false)
             // setIsMoving(false)
           }}
-          disabled={scale < 0.5 || mode !== 'idle'}
+          disabled={mode !== 'idle'}
         >
           <div
             className={`${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col items-stretch pointer-events-auto`}
