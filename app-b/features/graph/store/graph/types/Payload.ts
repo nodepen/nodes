@@ -45,3 +45,21 @@ export type RegisterElementAnchorPayload = {
   /** Anchors are offsets from parent element's position. */
   position: [dx: number, dy: number]
 }
+
+export type StartLiveWirePayload = {
+  type: 'input' | 'output'
+  elementId: string
+  parameterId: string
+}
+
+export type UpdateLiveWirePayload = {
+  type: 'from' | 'to'
+  position: [x: number, y: number]
+}
+
+export type CaptureLiveWirePayload = {
+  /** Type of parameter attempting capture */
+  type: 'input' | 'output'
+  elementId: string
+  parameterId: string
+}

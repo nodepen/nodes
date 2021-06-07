@@ -9,8 +9,8 @@ const GraphStaticGrid = (): React.ReactElement => {
       <div
         className="absolute bg-pale"
         style={{
-          left: -45,
-          top: -45,
+          left: -125,
+          top: -125,
           width: 5000,
           height: 5000,
           backgroundSize: `${size}mm ${size}mm`,

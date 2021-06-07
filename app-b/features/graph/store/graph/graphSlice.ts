@@ -5,11 +5,14 @@ import { GraphState } from './types'
 import { newGuid, initializeParameters, findAttachedWires } from '../../utils'
 import {
   AddElementPayload,
+  CaptureLiveWirePayload,
   ConnectElementsPayload,
   MoveElementPayload,
   ProvisionalWirePayload,
   RegisterElementAnchorPayload,
   RegisterElementPayload,
+  StartLiveWirePayload,
+  UpdateLiveWirePayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
 import { Payload } from '../overlay/types'
@@ -23,6 +26,13 @@ const initialState: GraphState = {
       elements: [],
       fromWires: [],
       toWires: [],
+    },
+    wire: {
+      source: {
+        type: 'input',
+        elementId: 'unset',
+        parameterId: 'unset',
+      },
     },
   },
 }
@@ -191,6 +201,131 @@ export const graphSlice = createSlice({
       }
 
       state.elements[wireId] = wire
+    },
+    startLiveWire: (state: GraphState, action: PayloadAction<StartLiveWirePayload>) => {
+      const { type, elementId, parameterId } = action.payload
+
+      state.registry.wire.capture = undefined
+
+      state.registry.wire.source = {
+        type,
+        elementId,
+        parameterId,
+      }
+
+      const sourceElement = state.elements[elementId]
+
+      if (!sourceElement) {
+        return
+      }
+
+      const sourceElementData = sourceElement.current
+
+      if (!assert.element.isGripElement(sourceElementData)) {
+        return
+      }
+
+      const [x, y] = sourceElementData.position
+      const [dx, dy] = sourceElementData.anchors[parameterId]
+
+      const [wx, wy] = [x + dx, y + dy]
+
+      const wire: NodePen.Element<'wire'> = {
+        id: 'live-wire',
+        template: {
+          type: 'wire',
+          mode: 'live',
+          from: {
+            elementId: 'unset',
+            parameterId: 'unset',
+          },
+          to: {
+            elementId: 'unset',
+            parameterId: 'unset',
+          },
+        },
+        current: {
+          from: [wx, wy],
+          to: [wx, wy],
+          position: [0, 0],
+          dimensions: {
+            width: 0,
+            height: 0,
+          },
+        },
+      }
+
+      state.elements['live-wire'] = wire
+    },
+    updateLiveWire: (state: GraphState, action: PayloadAction<UpdateLiveWirePayload>) => {
+      const { type, position } = action.payload
+
+      const wire = state.elements['live-wire']
+
+      if (!wire) {
+        return
+      }
+
+      if (!assert.element.isWire(wire)) {
+        return
+      }
+
+      if (state.registry.wire.capture) {
+        // Wire is currently captured, don't move it
+        return
+      }
+
+      wire.current[type] = position
+    },
+    captureLiveWire: (state: GraphState, action: PayloadAction<CaptureLiveWirePayload>) => {
+      const { type, elementId, parameterId } = action.payload
+
+      const wire = state.elements['live-wire']
+
+      if (!wire) {
+        // Cannot capture a wire that does not exist
+        return
+      }
+
+      if (!assert.element.isWire(wire)) {
+        return
+      }
+
+      if (type === state.registry.wire.source.type) {
+        // Cannot attempt a connection between two inputs or two outputs
+        return
+      }
+
+      if (elementId === state.registry.wire.source.elementId) {
+        // Cannot attempt a connection to self
+        return
+      }
+
+      const element = state.elements[elementId]
+
+      if (!element) {
+        return
+      }
+
+      const elementData = element.current
+
+      if (!assert.element.isGripElement(elementData)) {
+        return
+      }
+
+      const [x, y] = elementData.position
+      const [dx, dy] = elementData.anchors[parameterId]
+
+      wire.current[type === 'input' ? 'to' : 'from'] = [x + dx, y + dy]
+    },
+    releaseLiveWire: (state: GraphState) => {
+      state.registry.wire.capture = undefined
+    },
+    endLiveWire: (state: GraphState) => {
+      // Make connection if capture exists, otherwise stop connection attempt
+
+      // TODO
+      delete state.elements['live-wire']
     },
     setProvisionalWire: (state: GraphState, action: PayloadAction<ProvisionalWirePayload>) => {
       const { from, to } = action.payload

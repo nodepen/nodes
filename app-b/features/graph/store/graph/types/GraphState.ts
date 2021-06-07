@@ -11,5 +11,16 @@ export type GraphState = {
       fromWires: string[]
       toWires: string[]
     }
+    wire: {
+      source: {
+        type: 'input' | 'output'
+        elementId: string
+        parameterId: string
+      }
+      capture?: {
+        elementId: string
+        parameterId: string
+      }
+    }
   }
 }
