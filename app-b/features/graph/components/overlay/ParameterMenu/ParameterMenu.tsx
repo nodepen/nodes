@@ -4,7 +4,11 @@ import { assert } from 'glib'
 import { useOutsideClick } from 'hooks'
 import { useGraphDispatch, useGraphElements } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
-import { useParameterMenuSource, useOverlayDispatch } from 'features/graph/store/overlay/hooks'
+import {
+  useParameterMenuSource,
+  useOverlayDispatch,
+  useParameterMenuConnection,
+} from 'features/graph/store/overlay/hooks'
 
 import { isInputOrOutput } from 'features/graph/utils'
 import { ParameterIcon } from '../../icons'
@@ -13,9 +17,10 @@ import { useSetCameraPosition } from '@/features/graph/hooks'
 import { ParameterConnectionMenu } from './submenus'
 
 const ParameterMenu = (): React.ReactElement => {
-  const { setMode } = useGraphDispatch()
+  const { setMode, setProvisionalWire } = useGraphDispatch()
   const elements = useGraphElements()
   const { elementId: sourceElementId, parameterId: sourceParameterId } = useParameterMenuSource()
+  const { from, to } = useParameterMenuConnection()
   const { clear, setParameterMenuConnection, clearParameterMenuConnection } = useOverlayDispatch()
 
   const menuRef = useRef<HTMLDivElement>(null)
@@ -127,6 +132,10 @@ const ParameterMenu = (): React.ReactElement => {
               elementId: sourceElementId,
               parameterId: sourceParameterId,
             })
+
+            if (!!from && !!to) {
+              setProvisionalWire({ from, to })
+            }
           }}
           className="w-full mb-2 p-2 flex justify-start items-center border-2 border-dark rounded-md bg-white pointer-events-auto"
         >
