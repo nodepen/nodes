@@ -1,5 +1,5 @@
 import { NodePen, Grasshopper } from 'glib'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { useDebugRender } from '@/hooks'
 import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
@@ -22,7 +22,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
-  const { registerElementAnchor, setProvisionalWire } = useGraphDispatch()
+  const { registerElementAnchor, setProvisionalWire, startLiveWire, updateLiveWire, endLiveWire } = useGraphDispatch()
   const graphMode = useGraphMode()
 
   const { show, setParameterMenuConnection } = useOverlayDispatch()
@@ -137,7 +137,42 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const pointerStartTime = useRef(0)
   const pointerStartPosition = useRef<[number, number]>([0, 0])
   const pointerIsMoving = useRef(false)
-  const pointerIsWire = useRef(false)
+
+  const [pointerIsWire, setPointerIsWire] = useState(false)
+
+  const handleWirePointerMove = (e: PointerEvent): void => {
+    if (!pointerIsWire) {
+      return
+    }
+
+    const { pageX, pageY } = e
+
+    const [x, y] = screenSpaceToCameraSpace(
+      { offset: [0, 48 + 36], position: [pageX, pageY] },
+      { zoom: cameraZoom, position: cameraPosition }
+    )
+
+    updateLiveWire({ type: mode === 'input' ? 'to' : 'from', position: [x, y] })
+  }
+
+  const handleWirePointerUp = (): void => {
+    endLiveWire()
+    setPointerIsWire(false)
+  }
+
+  useEffect(() => {
+    if (!pointerIsWire) {
+      return
+    }
+
+    window.addEventListener('pointermove', handleWirePointerMove)
+    window.addEventListener('pointerup', handleWirePointerUp)
+
+    return () => {
+      window.removeEventListener('pointermove', handleWirePointerMove)
+      window.removeEventListener('pointerup', handleWirePointerUp)
+    }
+  })
 
   const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation()
@@ -151,7 +186,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     pointerStartTime.current = Date.now()
     pointerIsMoving.current = true
-    pointerIsWire.current = false
+
+    setPointerIsWire(false)
 
     const { pageX, pageY } = e
 
@@ -182,10 +218,18 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
-    if (!pointerIsWire.current && (dx > 20 || dy > 20)) {
-      pointerIsWire.current = true
+    if (!pointerIsWire && (dx > 20 || dy > 20)) {
+      setPointerIsWire(true)
       setMode('idle')
-      console.log('Creating wire!')
+      pointerIsMoving.current = false
+
+      startLiveWire({ type: mode, elementId, parameterId })
+
+      if (!gripRef.current) {
+        return
+      }
+
+      gripRef.current.releasePointerCapture(e.pointerId)
     }
   }
 
@@ -207,10 +251,12 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
-    if (!pointerIsWire.current && (dx > 20 || dy > 20)) {
-      pointerIsWire.current = true
+    if (!pointerIsWire && (dx > 20 || dy > 20)) {
+      setPointerIsWire(true)
       setMode('idle')
-      console.log('Creating wire!')
+      pointerIsMoving.current = false
+
+      startLiveWire({ type: mode, elementId, parameterId })
     }
   }
 
