@@ -13,6 +13,8 @@ export const store = configureStore({
         graphActions.registerElement.type,
         graphActions.registerElementAnchor.type,
         graphActions.setMode.type,
+        graphActions.prepareLiveMotion.type,
+        graphActions.dispatchLiveMotion.type,
       ]),
     }),
     overlay: overlayReducer,

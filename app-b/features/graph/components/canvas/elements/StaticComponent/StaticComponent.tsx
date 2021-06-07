@@ -20,7 +20,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const scale = useCameraStaticZoom()
   const mode = useCameraMode()
 
-  const { moveElement, registerElement } = useGraphDispatch()
+  const { moveElement, registerElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
   const { setZoomLock } = useCameraDispatch()
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -76,7 +76,12 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             console.log('draggable start!')
             e.stopPropagation()
             setZoomLock(true)
+            prepareLiveMotion(id)
             // setIsMoving(true)
+          }}
+          onDrag={(_, d) => {
+            const { deltaX, deltaY } = d
+            dispatchLiveMotion(deltaX, deltaY)
           }}
           onStop={(_, e) => {
             const { x, y } = e

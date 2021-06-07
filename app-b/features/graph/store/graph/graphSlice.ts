@@ -11,11 +11,19 @@ import {
   RegisterElementPayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
+import { dirxml } from 'console'
 
 const initialState: GraphState = {
   elements: {},
   selection: [],
   mode: 'idle',
+  registry: {
+    move: {
+      elements: [],
+      fromWires: [],
+      toWires: [],
+    },
+  },
 }
 
 export const graphSlice = createSlice({
@@ -182,6 +190,57 @@ export const graphSlice = createSlice({
       }
 
       state.elements[wireId] = wire
+    },
+    prepareLiveMotion: (state: GraphState, action: PayloadAction<string>) => {
+      const targetId = action.payload
+
+      // Given a target element that is about to move, cache information about
+      // other live motion that must follow it.
+
+      // TODO: Identify all selected elements
+
+      // Identify all connected wires
+      const wires = Object.values(state.elements).filter((element) =>
+        assert.element.isWire(element)
+      ) as NodePen.Element<'wire'>[]
+      const [fromWires, toWires] = findAttachedWires(wires, targetId)
+
+      state.registry.move.fromWires = fromWires
+      state.registry.move.toWires = toWires
+
+      // Note: we do not have to clean up the registry because it is always refreshed before it's needed
+    },
+    dispatchLiveMotion: (state: GraphState, action: PayloadAction<[dx: number, dy: number]>) => {
+      // Apply live motion to all elements cached by `prepareLiveMotion`
+      // All static actions at the end of the motion should succeed regardless of action here
+      // (i.e. we should be able to 'skip' live frames)
+      const [dx, dy] = action.payload
+
+      const { fromWires, toWires } = state.registry.move
+
+      fromWires.forEach((id) => {
+        const wire = state.elements[id]
+
+        if (!assert.element.isWire(wire)) {
+          return
+        }
+
+        const [x, y] = wire.current.from
+
+        wire.current.from = [x + dx, y + dy]
+      })
+
+      toWires.forEach((id) => {
+        const wire = state.elements[id]
+
+        if (!assert.element.isWire(wire)) {
+          return
+        }
+
+        const [x, y] = wire.current.to
+
+        wire.current.to = [x + dx, y + dy]
+      })
     },
     setMode: (state: GraphState, action: PayloadAction<GraphMode>) => {
       const mode = action.payload
