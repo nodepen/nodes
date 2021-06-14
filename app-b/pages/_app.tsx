@@ -11,7 +11,7 @@ import 'tailwindcss/tailwind.css'
 
 const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   const batchHttpLink = new BatchHttpLink({
-    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://192.168.0.211:4000/graphql',
+    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://192.168.0.172:4000/graphql',
     batchInterval: 25,
     batchMax: 50,
   })
