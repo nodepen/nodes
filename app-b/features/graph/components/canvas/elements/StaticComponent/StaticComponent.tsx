@@ -1,10 +1,11 @@
 import { NodePen } from 'glib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraMode, useCameraDispatch } from 'features/graph/store/camera/hooks'
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
+import { OverlayPortal } from 'features/graph/components/overlay'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -45,6 +46,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   // const showButtons = useCriteria(!isMoving, scale > 1.5)
 
   // const setCameraPosition = useSetCameraPosition()
+
+  const [showOverlay, setShowOverlay] = useState(false)
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
@@ -114,6 +117,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               <div
                 id="label-column"
                 className="w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
+                onClick={() => setShowOverlay((current) => !current)}
               >
                 <div
                   className="font-panel text-v font-bold text-sm select-none"
@@ -141,6 +145,11 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           </div>
         </Draggable>
       </div>
+      {showOverlay ? (
+        <OverlayPortal>
+          <div className="w-6 h-6 bg-red-400" />
+        </OverlayPortal>
+      ) : null}
     </div>
   )
 }
