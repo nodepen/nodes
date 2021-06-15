@@ -1,0 +1,1 @@
+export { GenericMenu } from './GenericMenu'
