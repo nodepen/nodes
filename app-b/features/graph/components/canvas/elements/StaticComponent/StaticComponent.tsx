@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
-import { OverlayPortal } from 'features/graph/components/overlay'
+import { OverlayPortal, OverlayContainer } from 'features/graph/components/overlay'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -147,7 +147,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
       </div>
       {showOverlay ? (
         <OverlayPortal>
-          <div className="w-6 h-6 bg-red-400" />
+          <OverlayContainer position={[0, 0]} anchor="left">
+            <div className="w-6 h-6 bg-red-400" />
+          </OverlayContainer>
         </OverlayPortal>
       ) : null}
     </div>
