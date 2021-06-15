@@ -48,6 +48,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   // const setCameraPosition = useSetCameraPosition()
 
   const [showOverlay, setShowOverlay] = useState(false)
+  const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
@@ -117,7 +118,12 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               <div
                 id="label-column"
                 className="w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
-                onClick={() => setShowOverlay((current) => !current)}
+                onClick={(e) => {
+                  const { pageX, pageY } = e
+
+                  setShowOverlay((current) => !current)
+                  setOverlayPosition([pageX, pageY])
+                }}
               >
                 <div
                   className="font-panel text-v font-bold text-sm select-none"
@@ -147,8 +153,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
       </div>
       {showOverlay ? (
         <OverlayPortal>
-          <OverlayContainer position={[0, 0]} anchor="left">
-            <div className="w-6 h-6 bg-red-400" />
+          <OverlayContainer position={overlayPosition}>
+            <div className="w-6 h-6 bg-red-400 absolute" style={{ left: 0, top: 0 }} />
           </OverlayContainer>
         </OverlayPortal>
       ) : null}

@@ -3,13 +3,16 @@ import React from 'react'
 type OverlayContainerProps = {
   children: JSX.Element
   position: [left: number, top: number]
-  anchor: 'left' | 'right'
 }
 
-export const OverlayContainer = ({ children, position, anchor }: OverlayContainerProps): React.ReactElement => {
+export const OverlayContainer = ({ children, position }: OverlayContainerProps): React.ReactElement => {
+  const [left, top] = position
+
   return (
-    <div className="w-full h-full pointer-events-none" style={{ paddingTop: 36 + 2 + 48 }}>
-      <div className="w-full h-full relative">{children}</div>
+    <div className="w-full h-full pointer-events-none relative">
+      <div className="w-full h-full absolute" style={{ left, top }}>
+        <div className="w-full h-full relative">{children}</div>
+      </div>
     </div>
   )
 }
