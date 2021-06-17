@@ -29,12 +29,15 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
         className={`${
           menuVisible ? 'border-b-2 border-dark' : 'border-b-0'
         } fixed w-vw pl-2 pr-2 max-h-0 bg-white z-50 overflow-hidden`}
-        style={{ maxHeight: menuVisible ? '25vh' : 0, top: 35, transition: 'max-height 150ms' }}
+        style={{ maxHeight: menuVisible ? '25vh' : 0, top: 35, transition: 'max-height 150ms', zIndex: 99999 }}
         ref={menuRef}
       >
         <div className="w-full pt-2 pb-4 flex flex-col items-end">{menuContent}</div>
       </div>
-      <div className="w-full h-10 flex justify-start items-center bg-white border-b-2 border-dark">
+      <div
+        className="w-full h-10 flex justify-start items-center bg-white border-b-2 border-dark"
+        style={{ zIndex: 99998 }}
+      >
         <button className="p-0 mr-4 w-12 h-full flex justify-center items-center">
           <img
             src="nodepen.svg"
