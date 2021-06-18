@@ -47,6 +47,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   // const setCameraPosition = useSetCameraPosition()
 
+  const pointerDownStartTime = useRef<number>(Date.now())
+  const pointerDownStartPosition = useRef<[number, number]>([0, 0])
+
   const [showOverlay, setShowOverlay] = useState(false)
   const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
 
@@ -118,11 +121,31 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               <div
                 id="label-column"
                 className="w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
-                onClick={(e) => {
+                // onClick={(e) => {
+                //   const { pageX, pageY } = e
+
+                //   setShowOverlay((current) => !current)
+                //   setOverlayPosition([pageX, pageY])
+                // }}
+                onPointerDown={(e) => {
+                  pointerDownStartTime.current = Date.now()
+
+                  const { pageX, pageY } = e
+                  pointerDownStartPosition.current = [pageX, pageY]
+                }}
+                onPointerUp={(e) => {
+                  if (e.pointerType === 'mouse' && e.button !== 2) {
+                    return
+                  }
+
+                  const now = Date.now()
+
                   const { pageX, pageY } = e
 
-                  setShowOverlay((current) => !current)
-                  setOverlayPosition([pageX, pageY])
+                  if (now - pointerDownStartTime.current < 150) {
+                    setShowOverlay((current) => !current)
+                    setOverlayPosition([pageX, pageY])
+                  }
                 }}
               >
                 <div

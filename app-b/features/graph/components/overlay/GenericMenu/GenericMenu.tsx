@@ -51,14 +51,14 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
 
         .donut-inner {
           animation-name: grow;
-          animation-duration: 300ms;
+          animation-duration: 200ms;
           animation-fill-mode: forwards;
           animation-timing-function: ease-in-out;
         }
 
         .donut-outer {
           animation-name: growr;
-          animation-duration: 600ms;
+          animation-duration: 450ms;
           animation-fill-mode: forwards;
           animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
         }
