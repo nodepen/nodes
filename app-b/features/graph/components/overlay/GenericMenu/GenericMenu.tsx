@@ -20,7 +20,7 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
           const radians = position * (Math.PI / 180)
           const [x, y] = [Math.cos(radians), Math.sin(radians)]
 
-          return { ...all, [position]: { dx: x * (r + 12), dy: y * (r + 12) } }
+          return { ...all, [position]: { dx: x * (r + 24), dy: y * (r + 24) } }
         }, {})
       )
     }, 0)
@@ -60,7 +60,7 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
             animation-name: grow;
             animation-duration: 200ms;
             animation-fill-mode: forwards;
-            animation-timing-function: ease-in-out;
+            animation-timing-function: ease-in;
           }
 
           .donut-outer {
