@@ -1,11 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
 import { Grasshopper } from 'glib'
 import { GraphStore } from './types'
 import { useSessionManager } from '../session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
 
-export const GraphContext = React.createContext<GraphStore>({ register: { setTransform: () => '' }, registry: {} })
+export const GraphContext = React.createContext<GraphStore>({
+  register: {
+    canvasContainerRef: createRef(),
+    setTransform: () => '',
+  },
+  registry: {},
+})
 
 type GraphManagerProps = {
   children?: JSX.Element
@@ -15,6 +21,8 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
   const { token } = useSessionManager()
 
   const client = useApolloClient()
+
+  const canvasContainerRef = useRef<HTMLDivElement>(null)
 
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
@@ -86,6 +94,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       setTransform,
     },
     register: {
+      canvasContainerRef,
       setTransform: handleSetTransform,
     },
   }

@@ -37,6 +37,7 @@ const GraphCanvas = (): React.ReactElement => {
         }
       }}
       role="presentation"
+      ref={register.canvasContainerRef}
     >
       <TransformWrapper
         defaultScale={1}
