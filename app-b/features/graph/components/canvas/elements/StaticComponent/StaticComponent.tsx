@@ -5,6 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
+import { useComponentMenuActions } from './lib/hooks'
 import { OverlayPortal, OverlayContainer, GenericMenu } from 'features/graph/components/overlay'
 
 type StaticComponentProps = {
@@ -50,29 +51,13 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const pointerDownStartTime = useRef<number>(Date.now())
   const pointerDownStartPosition = useRef<[number, number]>([0, 0])
 
+  const componentMenuActions = useComponentMenuActions(element)
   const [showOverlay, setShowOverlay] = useState(false)
   const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
       <div className="w-min h-full relative">
-        {/* {showButtons ? (
-          <button
-            className="w-6 h-6 bg-red-500 absolute top-0 pointer-events-auto"
-            style={{ left: x - 36, top: y }}
-            onPointerDown={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-            onPointerUp={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-            onClick={() => {
-              setCameraPosition(-x, -y)
-            }}
-          />
-        ) : null} */}
         <Draggable
           scale={scale}
           position={{ x, y }}
@@ -84,7 +69,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             e.stopPropagation()
             setZoomLock(true)
             prepareLiveMotion(id)
-            // setIsMoving(true)
           }}
           onDrag={(_, d) => {
             const { deltaX, deltaY } = d
@@ -94,7 +78,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             const { x, y } = e
             moveElement(element.id, [x, y])
             setZoomLock(false)
-            // setIsMoving(false)
           }}
           disabled={mode !== 'idle'}
         >
@@ -177,7 +160,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
       {showOverlay ? (
         <OverlayPortal>
           <OverlayContainer position={overlayPosition}>
-            <GenericMenu context={{}} actions={[]} />
+            <GenericMenu context={element} actions={componentMenuActions} />
           </OverlayContainer>
         </OverlayPortal>
       ) : null}

@@ -51,15 +51,10 @@ const GraphCanvas = (): React.ReactElement => {
           minScale: 0.25,
           maxScale: 2.5,
         }}
-        onPanning={(e: any) => {
-          // setLivePosition([e.positionX, e.positionY])
-        }}
         onPanningStop={(e: any) => {
           setStaticPosition([e.positionX, e.positionY])
         }}
-        onZoomChange={(zoom: any) => {
-          // setLiveZoom(zoom.scale)
-          // setLivePosition([zoom.positionX, zoom.positionY])
+        onZoomChange={() => {
           // TODO: If we cross a 'zoom breakpoint' here, then update 'static' zoom
         }}
         onWheelStart={() => {
