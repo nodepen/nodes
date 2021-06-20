@@ -79,15 +79,18 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
     <>
       {mask}
       {actions.map((action, i) => {
-        const { position, label, icon } = action
+        const { position, label, icon, onClick } = action
         const { dx, dy } = positions?.[position] ?? { dx: 0, dy: 0 }
 
         return (
           <button
             key={`transient-action-${i}-${position}`}
-            className="absolute action left-0 top-0 w-12 h-12 rounded-full bg-pale border-2 border-green z-10 transition-transform duration-200 ease-in-out"
+            className="absolute action left-0 top-0 w-12 h-12 flex items-center justify-center rounded-full bg-pale border-2 border-green z-10 transition-transform duration-200 ease-in-out"
             style={{ transform: `translate(${-24 + dx}px, ${-24 + dy}px)` }}
-          ></button>
+            onClick={() => onClick(context)}
+          >
+            {icon}
+          </button>
         )
       })}
       <style jsx>{`
