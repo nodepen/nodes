@@ -82,6 +82,8 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
         const { position, label, icon, onClick } = action
         const { dx, dy } = positions?.[position] ?? { dx: 0, dy: 0 }
 
+        const align: 'left' | 'right' = position < 90 || position > 270 ? 'right' : 'left'
+
         return (
           <button
             key={`transient-action-${i}-${position}`}
@@ -89,7 +91,9 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
             style={{ transform: `translate(${-24 + dx}px, ${-24 + dy}px)` }}
             onClick={() => onClick(context)}
           >
+            {align === 'left' ? label : null}
             {icon}
+            {align === 'right' ? label : null}
           </button>
         )
       })}
