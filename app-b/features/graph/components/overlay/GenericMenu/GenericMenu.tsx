@@ -20,7 +20,7 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
           const radians = position * (Math.PI / 180)
           const [x, y] = [Math.cos(radians), Math.sin(radians)]
 
-          return { ...all, [position]: { dx: x * (r + 24), dy: y * (r + 24) } }
+          return { ...all, [position]: { dx: x * (r + 12), dy: y * (r + 12) } }
         }, {})
       )
     }, 0)
@@ -82,18 +82,28 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
         const { position, label, icon, onClick } = action
         const { dx, dy } = positions?.[position] ?? { dx: 0, dy: 0 }
 
-        const align: 'left' | 'right' = position < 90 || position > 270 ? 'right' : 'left'
+        const side: 'left' | 'right' = position < 90 || position > 270 ? 'right' : 'left'
 
         return (
           <button
             key={`transient-action-${i}-${position}`}
-            className="absolute action left-0 top-0 w-12 h-12 flex items-center justify-center rounded-full bg-pale border-2 border-green z-10 transition-transform duration-200 ease-in-out"
+            className="absolute action left-0 top-0 w-12 h-12 flex items-center justify-center rounded-full bg-pale border-2 border-green z-10 pointer-events-auto overflow-visible transition-transform duration-200 ease-in-out"
             style={{ transform: `translate(${-24 + dx}px, ${-24 + dy}px)` }}
             onClick={() => onClick(context)}
           >
-            {align === 'left' ? label : null}
-            {icon}
-            {align === 'right' ? label : null}
+            <div className="relative w-full h-full">
+              <div className="absolute left-0 top-0 w-12 h-12 flex items-center justify-center">{icon}</div>
+              <div
+                style={side === 'left' ? { left: '-56px' } : { left: '54px' }}
+                className={`${
+                  side === 'left' ? 'justify-end' : ''
+                } absolute top-0 w-12 h-12 flex items-center overflow-visible whitespace-nowrap`}
+              >
+                <p className="font-medium text-lg text-darkgreen" style={{ transform: 'translateY(-3px)' }}>
+                  {label}
+                </p>
+              </div>
+            </div>
           </button>
         )
       })}

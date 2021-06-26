@@ -11,7 +11,7 @@ export const useComponentMenuActions = (element: NodePen.Element<'static-compone
     () => [
       {
         position: 0,
-        label: <p>About {element.template.name}</p>,
+        label: <p>About</p>,
         icon: <p></p>,
         onClick: handleAction,
       },
