@@ -125,8 +125,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
                   const { pageX, pageY } = e
 
-                  if (now - pointerDownStartTime.current < 150) {
-                    setShowOverlay((current) => !current)
+                  if (now - pointerDownStartTime.current < 300) {
+                    setShowOverlay(true)
                     setOverlayPosition([pageX, pageY])
                   }
                 }}
@@ -160,7 +160,17 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
       {showOverlay ? (
         <OverlayPortal>
           <OverlayContainer position={overlayPosition}>
-            <GenericMenu context={element} actions={componentMenuActions} />
+            <GenericMenu
+              context={element}
+              actions={componentMenuActions}
+              title={
+                <div className="flex items-center justify-start pl-4 pr-4">
+                  <img width={18} height={18} src={`data:image/png;base64,${template.icon}`} />
+                  <p className="text-darkgreen text-md ml-2">{template.name}</p>
+                </div>
+              }
+              onClose={() => setShowOverlay(false)}
+            />
           </OverlayContainer>
         </OverlayPortal>
       ) : null}

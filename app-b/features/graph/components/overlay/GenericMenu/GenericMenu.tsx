@@ -2,11 +2,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { MenuAction } from 'features/graph/types'
 
 type GenericMenuProps<T> = {
+  title: JSX.Element | null
   context: T
   actions: MenuAction<T>[]
+  onClose: () => void
 }
 
-export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): React.ReactElement => {
+export const GenericMenu = <T,>({ title, context, actions, onClose }: GenericMenuProps<T>): React.ReactElement => {
   const r = 75
 
   const [positions, setPositions] = useState<{ [key: number]: { dx: number; dy: number } }>({})
@@ -107,6 +109,39 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
           </button>
         )
       })}
+      <div className="absolute w-48 h-8 overflow-visible appear-able" style={{ left: -96, top: -156 }}>
+        <div className="w-full h-full flex items-center justify-center overflow-visible">
+          <div className="h-full flex justify-center items-center rounded-full">{title}</div>
+        </div>
+      </div>
+      <button
+        className="absolute w-8 h-8 appear-able border-2 border-swampgreen rounded-full flex items-center justify-center pointer-events-auto"
+        style={{ left: -16, top: 125 }}
+        onClick={onClose}
+      >
+        <svg width={12} height={12} viewBox="0 0 10 10">
+          <line
+            x1={1}
+            y1={1}
+            x2={9}
+            y2={9}
+            fill="none"
+            stroke="#7BBFA5"
+            strokeWidth="2px"
+            vectorEffect="non-scaling-stroke"
+          />
+          <line
+            x1={1}
+            y1={9}
+            x2={9}
+            y2={1}
+            fill="none"
+            stroke="#7BBFA5"
+            strokeWidth="2px"
+            vectorEffect="non-scaling-stroke"
+          />
+        </svg>
+      </button>
       <style jsx>{`
         @keyframes appear {
           0% {
@@ -121,6 +156,13 @@ export const GenericMenu = <T,>({ context, actions }: GenericMenuProps<T>): Reac
         }
 
         button {
+          animation-name: appear;
+          animation-duration: 200ms;
+          animation-fill-mode: forwards;
+          animation-timing-function: ease-in-out;
+        }
+
+        .appear-able {
           animation-name: appear;
           animation-duration: 200ms;
           animation-fill-mode: forwards;

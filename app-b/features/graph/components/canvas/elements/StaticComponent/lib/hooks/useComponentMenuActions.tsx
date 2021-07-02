@@ -23,7 +23,7 @@ export const useComponentMenuActions = (element: NodePen.Element<'static-compone
       },
       {
         position: 120,
-        label: <p>Cut</p>,
+        label: <p>Select</p>,
         icon: <p></p>,
         onClick: handleAction,
       },
