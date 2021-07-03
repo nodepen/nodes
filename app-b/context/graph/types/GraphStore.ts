@@ -6,9 +6,9 @@ export type GraphStore = {
   library?: Grasshopper.Component[]
   registry: {
     setTransform?: SetTransform
+    canvasContainerRef: React.RefObject<HTMLDivElement>
   }
   register: {
-    canvasContainerRef: React.RefObject<HTMLDivElement>
     setTransform: (setTransform: SetTransform) => void
   }
 }

@@ -6,7 +6,7 @@ import { useGraphManager } from 'context/graph'
 import { StaticGrid } from '../layout'
 
 const GraphCanvas = (): React.ReactElement => {
-  const { register } = useGraphManager()
+  const { register, registry } = useGraphManager()
 
   const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
   const zoomDisabled = useCameraZoomLock()
@@ -27,7 +27,7 @@ const GraphCanvas = (): React.ReactElement => {
         }
       }}
       role="presentation"
-      ref={register.canvasContainerRef}
+      ref={registry.canvasContainerRef}
     >
       <TransformWrapper
         initialScale={1}

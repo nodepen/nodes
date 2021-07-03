@@ -7,10 +7,11 @@ import { SetTransform } from '@/features/graph/types'
 
 export const GraphContext = React.createContext<GraphStore>({
   register: {
-    canvasContainerRef: createRef(),
     setTransform: () => '',
   },
-  registry: {},
+  registry: {
+    canvasContainerRef: createRef(),
+  },
 })
 
 type GraphManagerProps = {
@@ -92,9 +93,9 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     library,
     registry: {
       setTransform,
+      canvasContainerRef,
     },
     register: {
-      canvasContainerRef,
       setTransform: handleSetTransform,
     },
   }
