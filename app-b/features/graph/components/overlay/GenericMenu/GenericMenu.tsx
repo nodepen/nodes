@@ -1,14 +1,16 @@
 import { useEffect, useMemo, useState } from 'react'
 import { MenuAction } from 'features/graph/types'
+import { OverlayPortal } from '../OverlayPortal'
+import { OverlayContainer } from '../OverlayContainer'
 
 type GenericMenuProps<T> = {
-  title: JSX.Element | null
   context: T
   actions: MenuAction<T>[]
+  position: [number, number]
   onClose: () => void
 }
 
-export const GenericMenu = <T,>({ title, context, actions, onClose }: GenericMenuProps<T>): React.ReactElement => {
+export const GenericMenu = <T,>({ context, actions, position, onClose }: GenericMenuProps<T>): React.ReactElement => {
   const r = 75
 
   const [positions, setPositions] = useState<{ [key: number]: { dx: number; dy: number } }>({})
@@ -79,69 +81,70 @@ export const GenericMenu = <T,>({ title, context, actions, onClose }: GenericMen
 
   return (
     <>
-      {mask}
-      {actions.map((action, i) => {
-        const { position, label, icon, onClick } = action
-        const { dx, dy } = positions?.[position] ?? { dx: 0, dy: 0 }
+      <OverlayPortal>
+        <OverlayContainer position={position}>
+          <>
+            {mask}
+            {actions.map((action, i) => {
+              const { position, label, icon, onClick } = action
+              const { dx, dy } = positions?.[position] ?? { dx: 0, dy: 0 }
 
-        const side: 'left' | 'right' = position < 90 || position > 270 ? 'right' : 'left'
+              const side: 'left' | 'right' = position < 90 || position > 270 ? 'right' : 'left'
 
-        return (
-          <button
-            key={`transient-action-${i}-${position}`}
-            className="absolute action left-0 top-0 w-12 h-12 flex items-center justify-center rounded-full bg-pale border-2 border-green z-10 pointer-events-auto overflow-visible transition-transform duration-200 ease-in-out"
-            style={{ transform: `translate(${-24 + dx}px, ${-24 + dy}px)` }}
-            onClick={() => onClick(context)}
-          >
-            <div className="relative w-full h-full">
-              <div className="absolute left-0 top-0 w-12 h-12 flex items-center justify-center">{icon}</div>
-              <div
-                style={side === 'left' ? { left: '-56px' } : { left: '54px' }}
-                className={`${
-                  side === 'left' ? 'justify-end' : ''
-                } absolute top-0 w-12 h-12 flex items-center overflow-visible whitespace-nowrap`}
-              >
-                <p className="font-medium text-lg text-darkgreen" style={{ transform: 'translateY(-3px)' }}>
-                  {label}
-                </p>
-              </div>
-            </div>
-          </button>
-        )
-      })}
-      <div className="absolute w-48 h-8 overflow-visible appear-able" style={{ left: -96, top: -156 }}>
-        <div className="w-full h-full flex items-center justify-center overflow-visible">
-          <div className="h-full flex justify-center items-center rounded-full">{title}</div>
-        </div>
-      </div>
-      <button
-        className="absolute w-8 h-8 appear-able border-2 border-swampgreen rounded-full flex items-center justify-center pointer-events-auto"
-        style={{ left: -16, top: 125 }}
-        onClick={onClose}
-      >
-        <svg width={12} height={12} viewBox="0 0 10 10">
-          <line
-            x1={1}
-            y1={1}
-            x2={9}
-            y2={9}
-            fill="none"
-            stroke="#7BBFA5"
-            strokeWidth="2px"
-            vectorEffect="non-scaling-stroke"
-          />
-          <line
-            x1={1}
-            y1={9}
-            x2={9}
-            y2={1}
-            fill="none"
-            stroke="#7BBFA5"
-            strokeWidth="2px"
-            vectorEffect="non-scaling-stroke"
-          />
-        </svg>
-      </button>
+              return (
+                <button
+                  key={`transient-action-${i}-${position}`}
+                  className="absolute action left-0 top-0 w-12 h-12 flex items-center justify-center rounded-full bg-pale border-2 border-green z-10 pointer-events-auto overflow-visible transition-transform duration-200 ease-in-out"
+                  style={{ transform: `translate(${-24 + dx}px, ${-24 + dy}px)` }}
+                  onClick={() => onClick(context)}
+                >
+                  <div className="relative w-full h-full">
+                    <div className="absolute left-0 top-0 w-12 h-12 flex items-center justify-center">{icon}</div>
+                    <div
+                      style={side === 'left' ? { left: '-56px' } : { left: '54px' }}
+                      className={`${
+                        side === 'left' ? 'justify-end' : ''
+                      } absolute top-0 w-12 h-12 flex items-center overflow-visible whitespace-nowrap`}
+                    >
+                      <p className="font-medium text-lg text-darkgreen" style={{ transform: 'translateY(-3px)' }}>
+                        {label}
+                      </p>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+            <button
+              className="absolute w-8 h-8 appear-able border-2 border-swampgreen rounded-full flex items-center justify-center pointer-events-auto"
+              style={{ left: -16, top: 125 }}
+              onClick={onClose}
+            >
+              <svg width={12} height={12} viewBox="0 0 10 10">
+                <line
+                  x1={1}
+                  y1={1}
+                  x2={9}
+                  y2={9}
+                  fill="none"
+                  stroke="#7BBFA5"
+                  strokeWidth="2px"
+                  vectorEffect="non-scaling-stroke"
+                />
+                <line
+                  x1={1}
+                  y1={9}
+                  x2={9}
+                  y2={1}
+                  fill="none"
+                  stroke="#7BBFA5"
+                  strokeWidth="2px"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+            </button>
+          </>
+        </OverlayContainer>
+      </OverlayPortal>
       <style jsx>{`
         @keyframes appear {
           0% {

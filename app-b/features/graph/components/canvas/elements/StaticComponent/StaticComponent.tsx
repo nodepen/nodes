@@ -6,7 +6,7 @@ import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
 import { useComponentMenuActions } from './lib/hooks'
-import { OverlayPortal, OverlayContainer, GenericMenu } from 'features/graph/components/overlay'
+import { GenericMenu } from 'features/graph/components/overlay'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -41,12 +41,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
     moveElement(id, [x - width / 2, y - height / 2])
     registerElement({ id, dimensions: [width, height] })
   }, [width, height])
-
-  // const [isMoving, setIsMoving] = useState(false)
-
-  // const showButtons = useCriteria(!isMoving, scale > 1.5)
-
-  // const setCameraPosition = useSetCameraPosition()
 
   const pointerDownStartTime = useRef<number>(Date.now())
   const pointerDownStartPosition = useRef<[number, number]>([0, 0])
@@ -125,7 +119,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
                   const { pageX, pageY } = e
 
-                  if (now - pointerDownStartTime.current < 300) {
+                  if (now - pointerDownStartTime.current < 300 && !showComponentMenuOverlay) {
                     setShowComponentMenuOverlay(true)
                     setOverlayPosition([pageX, pageY])
                   }
@@ -158,21 +152,12 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         </Draggable>
       </div>
       {showComponentMenuOverlay ? (
-        <OverlayPortal>
-          <OverlayContainer position={overlayPosition}>
-            <GenericMenu
-              context={element}
-              actions={componentMenuActions}
-              title={
-                <div className="flex items-center justify-start pl-4 pr-4">
-                  <img width={18} height={18} src={`data:image/png;base64,${template.icon}`} />
-                  <p className="text-darkgreen text-md ml-2">{template.name}</p>
-                </div>
-              }
-              onClose={() => setShowComponentMenuOverlay(false)}
-            />
-          </OverlayContainer>
-        </OverlayPortal>
+        <GenericMenu
+          context={element}
+          actions={componentMenuActions}
+          position={overlayPosition}
+          onClose={() => setShowComponentMenuOverlay(false)}
+        />
       ) : null}
     </div>
   )
