@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { useCameraDispatch, useCameraMode, useCameraZoomLock } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
@@ -11,16 +11,6 @@ const GraphCanvas = (): React.ReactElement => {
   const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
   const zoomDisabled = useCameraZoomLock()
   const cameraMode = useCameraMode()
-
-  const canvasRef = useRef(null)
-
-  useEffect(() => {
-    if (!canvasRef.current) {
-      return
-    }
-
-    register.setTransform((canvasRef.current as any).context.dispatch.setTransform)
-  }, [])
 
   return (
     <div
@@ -40,46 +30,59 @@ const GraphCanvas = (): React.ReactElement => {
       ref={register.canvasContainerRef}
     >
       <TransformWrapper
-        defaultScale={1}
-        defaultPositionX={0}
-        defaultPositionY={0}
-        options={{
-          disabled: cameraMode === 'locked',
-          limitToWrapper: false,
-          limitToBounds: false,
-          centerContent: false,
-          minScale: 0.25,
-          maxScale: 2.5,
+        initialScale={1}
+        initialPositionX={0}
+        initialPositionY={0}
+        disabled={cameraMode === 'locked'}
+        limitToBounds={false}
+        centerZoomedOut={false}
+        centerOnInit={false}
+        minScale={0.25}
+        maxScale={2.5}
+        onInit={(ref) => {
+          register.setTransform(ref.setTransform)
         }}
-        onPanningStop={(e: any) => {
-          setStaticPosition([e.positionX, e.positionY])
+        doubleClick={{
+          disabled: true,
         }}
-        onZoomChange={() => {
+        pinch={{
+          step: 1,
+          disabled: zoomDisabled,
+        }}
+        wheel={{
+          step: 0.2,
+          touchPadDisabled: false,
+        }}
+        panning={{
+          velocityDisabled: true,
+        }}
+        onPanning={() => {
+          // TODO: How do we capture motion during a `setTransform` action?
+        }}
+        onPanningStop={(ctx) => {
+          setStaticPosition([ctx.state.positionX, ctx.state.positionY])
+        }}
+        onZoom={() => {
           // TODO: If we cross a 'zoom breakpoint' here, then update 'static' zoom
+        }}
+        onZoomStop={(ctx) => {
+          setStaticZoom(ctx.state.scale)
+          setStaticPosition([ctx.state.positionX, ctx.state.positionY])
         }}
         onWheelStart={() => {
           setMode('zooming')
         }}
-        onWheelStop={(e: any) => {
+        onWheelStop={() => {
           setMode('idle')
-          setStaticZoom(e.scale)
-          setStaticPosition([e.positionX, e.positionY])
         }}
         onPinchingStart={() => {
           setMode('zooming')
         }}
-        onPinchingStop={(e: any) => {
+        onPinchingStop={() => {
           setMode('idle')
-          setStaticZoom(e.scale)
-          setStaticPosition([e.positionX, e.positionY])
         }}
-        doubleClick={{ disabled: true }}
-        pinch={{ step: 20, disabled: zoomDisabled }}
-        wheel={{ step: 100 }}
-        scalePadding={{ disabled: true }}
-        pan={{ velocity: false }}
       >
-        <TransformComponent ref={canvasRef}>
+        <TransformComponent>
           <div className="w-vw h-vh relative">
             <StaticGrid />
             <Container key="elements-container" />
