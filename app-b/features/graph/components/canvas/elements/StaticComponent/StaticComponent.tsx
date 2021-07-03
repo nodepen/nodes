@@ -52,7 +52,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const pointerDownStartPosition = useRef<[number, number]>([0, 0])
 
   const componentMenuActions = useComponentMenuActions(element)
-  const [showOverlay, setShowOverlay] = useState(false)
+  const [showComponentMenuOverlay, setShowComponentMenuOverlay] = useState(false)
   const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
 
   return (
@@ -107,7 +107,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                 // onClick={(e) => {
                 //   const { pageX, pageY } = e
 
-                //   setShowOverlay((current) => !current)
+                //   setShowComponentMenuOverlay((current) => !current)
                 //   setOverlayPosition([pageX, pageY])
                 // }}
                 onPointerDown={(e) => {
@@ -126,7 +126,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   const { pageX, pageY } = e
 
                   if (now - pointerDownStartTime.current < 300) {
-                    setShowOverlay(true)
+                    setShowComponentMenuOverlay(true)
                     setOverlayPosition([pageX, pageY])
                   }
                 }}
@@ -157,7 +157,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           </div>
         </Draggable>
       </div>
-      {showOverlay ? (
+      {showComponentMenuOverlay ? (
         <OverlayPortal>
           <OverlayContainer position={overlayPosition}>
             <GenericMenu
@@ -169,7 +169,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   <p className="text-darkgreen text-md ml-2">{template.name}</p>
                 </div>
               }
-              onClose={() => setShowOverlay(false)}
+              onClose={() => setShowComponentMenuOverlay(false)}
             />
           </OverlayContainer>
         </OverlayPortal>
