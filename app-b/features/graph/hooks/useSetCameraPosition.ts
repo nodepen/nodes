@@ -2,29 +2,30 @@ import { useGraphManager } from '@/context/graph'
 import { useCallback, useRef } from 'react'
 import { useCameraDispatch, useCameraStaticPosition } from '../store/camera/hooks'
 
-type CameraAnchor = 'TL' | 'TR' | 'C'
+type CameraAnchor = 'NONE' | 'TL' | 'TR' | 'C'
 
 export const useSetCameraPosition = (): ((
   x: number,
   y: number,
   anchor?: CameraAnchor,
-  offset?: number
+  offset?: number,
+  duration?: number,
+  zoom?: number
 ) => Promise<void>) => {
   const {
     registry: { setTransform },
   } = useGraphManager()
-  const { setLivePosition, setStaticPosition, setLiveZoom, setStaticZoom } = useCameraDispatch()
+  const { setStaticPosition, setStaticZoom } = useCameraDispatch()
   const startPosition = useCameraStaticPosition()
 
   const startTime = useRef<number>(0)
-  const duration = useRef<number>(350)
 
   /**
    * Have camera 'look at' position on graph relative to a screen anchor position.
    * @remarks `offset` has no effect on `C` anchor
    */
   const setCameraPosition = useCallback(
-    (x: number, y: number, anchor: CameraAnchor = 'C', offset = 0) => {
+    (x: number, y: number, anchor: CameraAnchor = 'C', offset = 0, duration = 350, zoom = 1) => {
       return new Promise<void>((resolve, reject) => {
         if (!setTransform) {
           reject()
@@ -35,6 +36,9 @@ export const useSetCameraPosition = (): ((
 
         const [dx, dy] = ((): [number, number] => {
           switch (anchor) {
+            case 'NONE': {
+              return [0, 0]
+            }
             case 'C': {
               return [w / 2, h / 2]
             }
@@ -55,7 +59,7 @@ export const useSetCameraPosition = (): ((
         startTime.current = Date.now()
 
         // Trigger library move
-        setTransform(tx, ty, 1, duration.current, 'easeInOutQuint')
+        setTransform(tx, ty, zoom, duration, 'easeInOutQuint')
         setStaticPosition([tx, ty])
         setStaticZoom(1)
 

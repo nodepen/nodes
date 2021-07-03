@@ -1,7 +1,10 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
+import { useSetCameraPosition } from 'features/graph/hooks'
+import { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
+import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
 
 type GenericMenuProps<T> = {
   context: T
@@ -14,6 +17,25 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
   const r = 75
 
   const [positions, setPositions] = useState<{ [key: number]: { dx: number; dy: number } }>({})
+
+  const cameraPosition = useCameraStaticPosition()
+  const cameraZoom = useCameraStaticZoom()
+  const setCanvasTransform = useSetCameraPosition()
+
+  const [initialOverlayPosition] = useState(() => position)
+  const [initialCameraPosition] = useState(() => cameraPosition)
+
+  const handlePanning = useCallback(
+    (ref: ReactZoomPanPinchRef) => {
+      const { positionX, positionY } = ref.state
+
+      const [anchorX, anchorY] = initialOverlayPosition
+      const [cameraX, cameraY] = initialCameraPosition
+
+      setCanvasTransform(cameraX - (positionX - anchorX), cameraY - (positionY - anchorY), 'NONE', 0, 1, cameraZoom)
+    },
+    [setCanvasTransform, initialOverlayPosition, initialCameraPosition, cameraZoom]
+  )
 
   useEffect(() => {
     setTimeout(() => {
@@ -82,7 +104,7 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
   return (
     <>
       <OverlayPortal>
-        <OverlayContainer position={position}>
+        <OverlayContainer position={position} onPanning={handlePanning}>
           <>
             {mask}
             {actions.map((action, i) => {

@@ -1,12 +1,13 @@
 import React from 'react'
-import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
+import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
 
 type OverlayContainerProps = {
   children: JSX.Element
   position: [left: number, top: number]
+  onPanning?: (ref: ReactZoomPanPinchRef, e: TouchEvent | MouseEvent) => void
 }
 
-export const OverlayContainer = ({ children, position }: OverlayContainerProps): React.ReactElement => {
+export const OverlayContainer = ({ children, position, onPanning }: OverlayContainerProps): React.ReactElement => {
   const [left, top] = position
 
   return (
@@ -27,6 +28,7 @@ export const OverlayContainer = ({ children, position }: OverlayContainerProps):
         doubleClick={{
           disabled: true,
         }}
+        onPanning={onPanning}
       >
         <TransformComponent>
           <div className="w-vw h-vh">
