@@ -2,7 +2,7 @@ import React from 'react'
 import { useCameraDispatch, useCameraMode, useCameraZoomLock } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
-import { useGraphManager } from '@/context/graph'
+import { useGraphManager } from 'context/graph'
 import { StaticGrid } from '../layout'
 
 const GraphCanvas = (): React.ReactElement => {
@@ -58,16 +58,17 @@ const GraphCanvas = (): React.ReactElement => {
         }}
         onPanning={() => {
           // TODO: How do we capture motion during a `setTransform` action?
+          // TODO: Do we *really* need to?
         }}
-        onPanningStop={(ctx) => {
-          setStaticPosition([ctx.state.positionX, ctx.state.positionY])
+        onPanningStop={({ state }) => {
+          setStaticPosition([state.positionX, state.positionY])
         }}
         onZoom={() => {
-          // TODO: If we cross a 'zoom breakpoint' here, then update 'static' zoom
+          // TODO: If we cross a 'zoom breakpoint' here, then update 'static' zoom so ZUI elements will update.
         }}
-        onZoomStop={(ctx) => {
-          setStaticZoom(ctx.state.scale)
-          setStaticPosition([ctx.state.positionX, ctx.state.positionY])
+        onZoomStop={({ state }) => {
+          setStaticZoom(state.scale)
+          setStaticPosition([state.positionX, state.positionY])
         }}
         onWheelStart={() => {
           setMode('zooming')
