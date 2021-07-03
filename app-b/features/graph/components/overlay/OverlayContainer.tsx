@@ -5,9 +5,15 @@ type OverlayContainerProps = {
   children: JSX.Element
   position: [left: number, top: number]
   onPanning?: (ref: ReactZoomPanPinchRef, e: TouchEvent | MouseEvent) => void
+  onPanningStop?: (ref: ReactZoomPanPinchRef, e: TouchEvent | MouseEvent) => void
 }
 
-export const OverlayContainer = ({ children, position, onPanning }: OverlayContainerProps): React.ReactElement => {
+export const OverlayContainer = ({
+  children,
+  position,
+  onPanning,
+  onPanningStop,
+}: OverlayContainerProps): React.ReactElement => {
   const [left, top] = position
 
   return (
@@ -29,6 +35,7 @@ export const OverlayContainer = ({ children, position, onPanning }: OverlayConta
           disabled: true,
         }}
         onPanning={onPanning}
+        onPanningStop={onPanningStop}
       >
         <TransformComponent>
           <div className="w-vw h-vh">

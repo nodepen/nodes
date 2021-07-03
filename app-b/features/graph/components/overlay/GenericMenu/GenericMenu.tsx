@@ -21,13 +21,13 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
 
   const [positions, setPositions] = useState<{ [key: number]: { dx: number; dy: number } }>({})
 
-  const [initialOverlayPosition] = useState(() => position)
+  const [overlayAnchorPosition, setOverlayAnchorPosition] = useState(() => position)
 
   const handlePanning = useCallback(
     (ref: ReactZoomPanPinchRef) => {
       const { positionX, positionY } = ref.state
 
-      const [anchorX, anchorY] = initialOverlayPosition
+      const [anchorX, anchorY] = overlayAnchorPosition
       const [dx, dy] = [positionX - anchorX, positionY - anchorY]
 
       if (!registry.canvasContainerRef.current) {
@@ -36,7 +36,36 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
 
       registry.canvasContainerRef.current.style.transform = `translate(${dx}px, ${dy}px)`
     },
-    [initialOverlayPosition, registry.canvasContainerRef]
+    [registry.canvasContainerRef, overlayAnchorPosition]
+  )
+
+  const cameraPosition = useCameraStaticPosition()
+  const cameraZoom = useCameraStaticZoom()
+  const setCanvasCamera = useSetCameraPosition()
+
+  const [initialOverlayPosition] = useState(() => position)
+  const [initialCameraPosition] = useState(() => cameraPosition)
+
+  const handlePanningStop = useCallback(
+    (ref: ReactZoomPanPinchRef) => {
+      const { positionX, positionY } = ref.state
+
+      const [anchorX, anchorY] = initialOverlayPosition
+      const [cameraX, cameraY] = initialCameraPosition
+
+      const [dx, dy] = [positionX - anchorX, positionY - anchorY]
+
+      setCanvasCamera(cameraX - dx, cameraY - dy, 'NONE', 0, 1, cameraZoom)
+
+      setOverlayAnchorPosition([positionX, positionY])
+
+      if (!registry.canvasContainerRef.current) {
+        return
+      }
+
+      registry.canvasContainerRef.current.style.transform = `translate(0px, 0px)`
+    },
+    [registry.canvasContainerRef, initialCameraPosition, initialOverlayPosition, cameraZoom, setCanvasCamera]
   )
 
   useEffect(() => {
@@ -106,7 +135,7 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
   return (
     <>
       <OverlayPortal>
-        <OverlayContainer position={position} onPanning={handlePanning}>
+        <OverlayContainer position={position} onPanning={handlePanning} onPanningStop={handlePanningStop}>
           <>
             {mask}
             {actions.map((action, i) => {
