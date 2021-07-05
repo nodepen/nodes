@@ -139,6 +139,10 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
   const [actionMenu, setActionMenu] = useState<JSX.Element>()
   const actionMenuRef = useRef<HTMLDivElement>(null)
 
+  const overlayMenuRef = useRef<ReactZoomPanPinchRef>()
+  const setOverlayMenuTransform = useRef<ReactZoomPanPinchRef['setTransform']>()
+  const resetOverlayMenuTransform = useRef<ReactZoomPanPinchRef['resetTransform']>()
+
   const generateActionMenu = (
     menu: JSX.Element,
     buttonId: string,
@@ -163,14 +167,30 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
     const menuContent = (
       <div className="absolute bg-red-400 pl-2 pr-2" style={{ width: menuWidth, left: x, top: y }} ref={actionMenuRef}>
         {menu}
+        <button
+          onClick={() => {
+            setActionMenu(undefined)
+            resetOverlayMenuTransform.current?.(150, 'easeInOutQuad')
+
+            // TODO: Perform translate-transition on canvas here too
+
+            setTimeout(() => {
+              if (!overlayMenuRef.current || !registry.canvasContainerRef.current) {
+                return
+              }
+
+              registry.canvasContainerRef.current.style.transition = ''
+              handlePanningStop(overlayMenuRef.current)
+            }, 150)
+          }}
+        >
+          OK
+        </button>
       </div>
     )
 
     setActionMenu(menuContent)
   }
-
-  const overlayMenuRef = useRef<ReactZoomPanPinchRef>()
-  const setOverlayMenuTransform = useRef<ReactZoomPanPinchRef['setTransform']>()
 
   useEffect(() => {
     if (!actionMenu) {
@@ -229,6 +249,7 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
           onInit={(ref) => {
             overlayMenuRef.current = ref
             setOverlayMenuTransform.current = ref.setTransform
+            resetOverlayMenuTransform.current = ref.resetTransform
           }}
           onPanning={handlePanning}
           onPanningStop={handlePanningStop}
