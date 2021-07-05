@@ -55,7 +55,7 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
 
       const [dx, dy] = [positionX - anchorX, positionY - anchorY]
 
-      setCanvasCamera(cameraX - dx, cameraY - dy, 'NONE', 0, 1, cameraZoom)
+      setCanvasCamera(-cameraX - dx, -cameraY - dy, 'NONE', 0, 1, cameraZoom)
 
       setOverlayAnchorPosition([positionX, positionY])
 
