@@ -97,13 +97,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               </div>
               <div
                 id="label-column"
-                className="w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150"
-                // onClick={(e) => {
-                //   const { pageX, pageY } = e
-
-                //   setShowComponentMenuOverlay((current) => !current)
-                //   setOverlayPosition([pageX, pageY])
-                // }}
+                className={`${
+                  showComponentMenuOverlay ? 'menu-target' : 'bg-white'
+                } w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
                 onPointerDown={(e) => {
                   pointerDownStartTime.current = Date.now()
 
@@ -159,6 +155,24 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           onClose={() => setShowComponentMenuOverlay(false)}
         />
       ) : null}
+      <style jsx>{`
+        @keyframes activemenutarget {
+          from {
+            background: #98e2c6;
+          }
+          to {
+            background: #fff;
+          }
+        }
+
+        .menu-target {
+          animation-name: activemenutarget;
+          animation-duration: 900ms;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
+          animation-direction: alternate;
+        }
+      `}</style>
     </div>
   )
 }

@@ -161,7 +161,7 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
                       style={side === 'left' ? { left: '-56px' } : { left: '54px' }}
                       className={`${
                         side === 'left' ? 'justify-end' : ''
-                      } absolute top-0 w-12 h-12 flex items-center overflow-visible whitespace-nowrap`}
+                      } absolute top-0 h-12 flex items-center overflow-visible whitespace-nowrap`}
                     >
                       <p className="font-medium text-lg text-darkgreen" style={{ transform: 'translateY(-3px)' }}>
                         {label}
