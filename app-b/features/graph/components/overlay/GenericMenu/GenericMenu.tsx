@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
@@ -136,28 +136,80 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
     []
   )
 
+  const [actionMenu, setActionMenu] = useState<JSX.Element>()
+  const actionMenuRef = useRef<HTMLDivElement>(null)
+
+  const generateActionMenu = (
+    menu: JSX.Element,
+    buttonId: string,
+    buttonPosition: [number, number],
+    side: 'left' | 'right'
+  ): void => {
+    const button = document.getElementById(buttonId)
+
+    if (!button) {
+      return
+    }
+
+    const [bx, by] = buttonPosition
+    const { width } = button.getBoundingClientRect()
+    const margin = 24
+
+    const menuWidth = Math.min(window.innerWidth, 400)
+
+    const x = side === 'right' ? bx + width + margin + 48 : bx - width - margin - menuWidth
+    const y = by
+
+    const menuContent = (
+      <div className="absolute bg-red-400" style={{ width: menuWidth, left: x, top: y }} ref={actionMenuRef}>
+        {menu}
+      </div>
+    )
+
+    setActionMenu(menuContent)
+  }
+
+  useEffect(() => {
+    if (!actionMenu) {
+      return
+    }
+
+    if (!actionMenuRef.current) {
+      return
+    }
+
+    const { left, top, width } = actionMenuRef.current.getBoundingClientRect()
+
+    // console.log({ width })
+  }, [actionMenu])
+
   return (
     <>
       <OverlayPortal>
         <OverlayContainer position={position} onPanning={handlePanning} onPanningStop={handlePanningStop}>
           <>
             {mask}
+            {actionMenu}
             {actions.map((action, i) => {
-              const { position, label, icon, onClick } = action
+              const { position, label, icon, menu, onClick } = action
               const { dx, dy } = positions?.[position] ?? { dx: 0, dy: 0 }
 
               const side: 'left' | 'right' = position < 90 || position > 270 ? 'right' : 'left'
 
+              const id = `transient-action-${i}-${position}`
+
               return (
                 <button
-                  key={`transient-action-${i}-${position}`}
+                  key={id}
+                  id={id}
                   className="absolute action left-0 top-0 w-12 h-12 flex items-center justify-center rounded-full bg-pale border-2 border-green z-10 pointer-events-auto overflow-visible transition-transform duration-200 ease-in-out"
                   style={{ transform: `translate(${-24 + dx}px, ${-24 + dy}px)` }}
-                  onClick={() => onClick(context)}
+                  onClick={() => generateActionMenu(menu, `${id}-label`, [dx - 24, dy - 24], side)}
                 >
                   <div className="relative w-full h-full">
                     <div className="absolute left-0 top-0 w-12 h-12 flex items-center justify-center">{icon}</div>
                     <div
+                      id={`${id}-label`}
                       style={side === 'left' ? { left: '-56px' } : { left: '54px' }}
                       className={`${
                         side === 'left' ? 'justify-end' : ''
