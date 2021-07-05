@@ -43,8 +43,8 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
   const cameraZoom = useCameraStaticZoom()
   const setCanvasCamera = useSetCameraPosition()
 
-  const [initialOverlayPosition] = useState(() => position)
-  const [initialCameraPosition] = useState(() => cameraPosition)
+  const [initialOverlayPosition, setInitialOverlayPosition] = useState(() => position)
+  const [initialCameraPosition, setInitialCameraPosition] = useState(() => cameraPosition)
 
   const handlePanningStop = useCallback(
     (ref: ReactZoomPanPinchRef) => {
@@ -80,6 +80,10 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
           return { ...all, [position]: { dx: x * (r + 12), dy: y * (r + 12) } }
         }, {})
       )
+
+      setOverlayAnchorPosition(position)
+      setInitialOverlayPosition(position)
+      setInitialCameraPosition(cameraPosition)
     }, 0)
   }, [])
 
