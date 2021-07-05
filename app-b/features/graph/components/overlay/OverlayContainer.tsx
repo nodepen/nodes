@@ -4,6 +4,7 @@ import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from 'reac
 type OverlayContainerProps = {
   children: JSX.Element
   position: [left: number, top: number]
+  onInit?: (ref: ReactZoomPanPinchRef) => void
   onPanning?: (ref: ReactZoomPanPinchRef, e: TouchEvent | MouseEvent) => void
   onPanningStop?: (ref: ReactZoomPanPinchRef, e: TouchEvent | MouseEvent) => void
 }
@@ -11,6 +12,7 @@ type OverlayContainerProps = {
 export const OverlayContainer = ({
   children,
   position,
+  onInit,
   onPanning,
   onPanningStop,
 }: OverlayContainerProps): React.ReactElement => {
@@ -34,6 +36,7 @@ export const OverlayContainer = ({
         doubleClick={{
           disabled: true,
         }}
+        onInit={onInit}
         onPanning={onPanning}
         onPanningStop={onPanningStop}
       >

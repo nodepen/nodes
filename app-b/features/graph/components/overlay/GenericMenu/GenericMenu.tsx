@@ -155,19 +155,22 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
     const { width } = button.getBoundingClientRect()
     const margin = 24
 
-    const menuWidth = Math.min(window.innerWidth, 400)
+    const menuWidth = window.innerWidth < 600 ? window.innerWidth : 250
 
     const x = side === 'right' ? bx + width + margin + 48 : bx - width - margin - menuWidth
     const y = by
 
     const menuContent = (
-      <div className="absolute bg-red-400" style={{ width: menuWidth, left: x, top: y }} ref={actionMenuRef}>
+      <div className="absolute bg-red-400 pl-2 pr-2" style={{ width: menuWidth, left: x, top: y }} ref={actionMenuRef}>
         {menu}
       </div>
     )
 
     setActionMenu(menuContent)
   }
+
+  const overlayMenuRef = useRef<ReactZoomPanPinchRef>()
+  const setOverlayMenuTransform = useRef<ReactZoomPanPinchRef['setTransform']>()
 
   useEffect(() => {
     if (!actionMenu) {
@@ -180,13 +183,56 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
 
     const { left, top, width } = actionMenuRef.current.getBoundingClientRect()
 
-    // console.log({ width })
+    const isWithinHorizontalBounds = left > 0 && left + width < window.innerWidth
+
+    if (isWithinHorizontalBounds) {
+      return
+    }
+
+    const dx = left + width - window.innerWidth
+
+    const [cx, cy] = overlayAnchorPosition
+
+    if (!setOverlayMenuTransform.current) {
+      return
+    }
+
+    setOverlayMenuTransform.current(cx - dx, cy, 1, 150, 'easeInOutQuad')
+
+    const [positionX, positionY] = [cx - dx, cy]
+
+    const [anchorX, anchorY] = overlayAnchorPosition
+    const [odx, ody] = [positionX - anchorX, positionY - anchorY]
+
+    if (!registry.canvasContainerRef.current) {
+      return
+    }
+
+    registry.canvasContainerRef.current.style.transition = 'transform 150ms ease-in-out'
+    registry.canvasContainerRef.current.style.transform = `translate(${odx}px, ${ody}px)`
+
+    setTimeout(() => {
+      if (!overlayMenuRef.current || !registry.canvasContainerRef.current) {
+        return
+      }
+
+      registry.canvasContainerRef.current.style.transition = ''
+      handlePanningStop(overlayMenuRef.current)
+    }, 150)
   }, [actionMenu])
 
   return (
     <>
       <OverlayPortal>
-        <OverlayContainer position={position} onPanning={handlePanning} onPanningStop={handlePanningStop}>
+        <OverlayContainer
+          position={position}
+          onInit={(ref) => {
+            overlayMenuRef.current = ref
+            setOverlayMenuTransform.current = ref.setTransform
+          }}
+          onPanning={handlePanning}
+          onPanningStop={handlePanningStop}
+        >
           <>
             {mask}
             {actionMenu}
