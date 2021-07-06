@@ -178,16 +178,12 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
 
         registry.canvasContainerRef.current.style.transition = ''
         handlePanningStop(overlayMenuRef.current)
-      }, 150)
+      }, 175)
     }
 
     const menuContent = (
-      <GenericMenuManager onCancel={handleCancel}>
-        <div
-          className="absolute bg-red-400 pl-2 pr-2"
-          style={{ width: menuWidth, left: x, top: y }}
-          ref={actionMenuRef}
-        >
+      <GenericMenuManager onCancel={handleCancel} onClose={onClose}>
+        <div className="absolute pl-2 pr-2" style={{ width: menuWidth, left: x, top: y }} ref={actionMenuRef}>
           {menu}
         </div>
       </GenericMenuManager>
