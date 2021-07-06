@@ -78,6 +78,13 @@ export const graphSlice = createSlice({
         }
       }
     },
+    deleteElement: (state: GraphState, action: PayloadAction<string>) => {
+      if (!state.elements[action.payload]) {
+        return
+      }
+
+      delete state.elements[action.payload]
+    },
     moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
       const { id, position } = action.payload
 

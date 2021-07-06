@@ -2,6 +2,7 @@ import React from 'react'
 import { NodePen } from 'glib'
 import { useGenericMenuManager } from 'features/graph/components/overlay/GenericMenu/hooks'
 import { useDebugRender } from 'hooks'
+import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 
 type DeleteMenuProps = {
   element: NodePen.Element<'static-component'>
@@ -10,7 +11,15 @@ type DeleteMenuProps = {
 const DeleteMenu = ({ element }: DeleteMenuProps): React.ReactElement => {
   const { name, icon } = element.template
 
+  const { deleteElement } = useGraphDispatch()
   const { onCancel, onClose } = useGenericMenuManager()
+
+  useDebugRender('Delete Menu')
+
+  const handleDelete = (): void => {
+    deleteElement(element.id)
+    onClose()
+  }
 
   return (
     <div className="w-full flex flex-col justify-start">
@@ -48,7 +57,7 @@ const DeleteMenu = ({ element }: DeleteMenuProps): React.ReactElement => {
         <div className="ml-8 w-full h-8 flex justify-start items-center">
           <button
             className="flex items-center justify-start rounded-full mr-2 p-2 h-8 border-2 border-darkgreen bg-darkgreen"
-            onClick={onCancel}
+            onClick={handleDelete}
           >
             <svg
               className="w-3 h-3 overflow-visible"

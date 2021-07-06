@@ -12,6 +12,7 @@ export const useGraphDispatch = () => {
     undo: () => dispatch(ActionCreators.undo()),
     redo: () => dispatch(ActionCreators.redo()),
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => dispatch(graphActions.addElement(data)),
+    deleteElement: (id: string) => dispatch(graphActions.deleteElement(id)),
     moveElement: (id: string, position: [number, number]) => dispatch(graphActions.moveElement({ id, position })),
     connect: (data: Payload.ConnectElementsPayload) => dispatch(graphActions.connect(data)),
     prepareLiveMotion: (elementId: string) => dispatch(graphActions.prepareLiveMotion(elementId)),
