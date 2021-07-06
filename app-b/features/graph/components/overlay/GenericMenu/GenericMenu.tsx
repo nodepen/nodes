@@ -5,7 +5,8 @@ import { OverlayContainer } from '../OverlayContainer'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
 import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
-import { useGraphManager } from '@/context/graph'
+import { useGraphManager } from 'context/graph'
+import { GenericMenuManager } from './context'
 
 type GenericMenuProps<T> = {
   context: T
@@ -164,29 +165,32 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
     const x = side === 'right' ? bx + width + margin + 48 : bx - width - margin - menuWidth
     const y = by
 
+    const handleCancel = (): void => {
+      setActionMenu(undefined)
+      resetOverlayMenuTransform.current?.(150, 'easeInOutQuad')
+
+      // TODO: Perform translate-transition on canvas here too
+
+      setTimeout(() => {
+        if (!overlayMenuRef.current || !registry.canvasContainerRef.current) {
+          return
+        }
+
+        registry.canvasContainerRef.current.style.transition = ''
+        handlePanningStop(overlayMenuRef.current)
+      }, 150)
+    }
+
     const menuContent = (
-      <div className="absolute bg-red-400 pl-2 pr-2" style={{ width: menuWidth, left: x, top: y }} ref={actionMenuRef}>
-        {menu}
-        <button
-          onClick={() => {
-            setActionMenu(undefined)
-            resetOverlayMenuTransform.current?.(150, 'easeInOutQuad')
-
-            // TODO: Perform translate-transition on canvas here too
-
-            setTimeout(() => {
-              if (!overlayMenuRef.current || !registry.canvasContainerRef.current) {
-                return
-              }
-
-              registry.canvasContainerRef.current.style.transition = ''
-              handlePanningStop(overlayMenuRef.current)
-            }, 150)
-          }}
+      <GenericMenuManager onCancel={handleCancel}>
+        <div
+          className="absolute bg-red-400 pl-2 pr-2"
+          style={{ width: menuWidth, left: x, top: y }}
+          ref={actionMenuRef}
         >
-          OK
-        </button>
-      </div>
+          {menu}
+        </div>
+      </GenericMenuManager>
     )
 
     setActionMenu(menuContent)

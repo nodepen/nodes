@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react'
 import { NodePen } from 'glib'
 import { MenuAction } from 'features/graph/types'
+import { AboutMenu } from '../menus'
 
 export const useComponentMenuActions = (element: NodePen.Element<'static-component'>): MenuAction<typeof element>[] => {
   const handleAction = useCallback((context: typeof element): void => {
@@ -13,7 +14,7 @@ export const useComponentMenuActions = (element: NodePen.Element<'static-compone
         position: 0,
         label: <p>About</p>,
         icon: <p></p>,
-        menu: <p>content</p>,
+        menu: <AboutMenu component={element.template} />,
         onClick: handleAction,
       },
       {
