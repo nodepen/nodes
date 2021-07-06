@@ -1,7 +1,7 @@
 import { Grasshopper } from 'glib'
 import { useGenericMenuManager } from 'features/graph/components/overlay/GenericMenu/hooks'
 import React from 'react'
-import { useDebugRender } from '@/hooks'
+import { useDebugRender } from 'hooks'
 
 type AboutMenuProps = {
   component: Grasshopper.Component
