@@ -278,7 +278,7 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
                   onClick={() => generateActionMenu(menu, `${id}-label`, [dx - 24, dy - 24], side)}
                 >
                   <div className="relative w-full h-full">
-                    <div className="absolute left-0 top-0 w-12 h-12 flex items-center justify-center">{icon}</div>
+                    <div className="absolute left-0 top-0 w-full h-full flex items-center justify-center">{icon}</div>
                     <div
                       id={`${id}-label`}
                       style={side === 'left' ? { left: '-56px' } : { left: '54px' }}
