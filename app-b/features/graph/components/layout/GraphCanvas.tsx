@@ -1,9 +1,10 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useCameraDispatch, useCameraMode, useCameraZoomLock } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
 import { useGraphManager } from 'context/graph'
 import { StaticGrid } from '../layout'
+import { useLongPress } from 'hooks'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
@@ -11,6 +12,12 @@ const GraphCanvas = (): React.ReactElement => {
   const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
   const zoomDisabled = useCameraZoomLock()
   const cameraMode = useCameraMode()
+
+  const handleLongPress = useCallback((): void => {
+    alert('HIT!')
+  }, [])
+
+  const longPressTarget = useLongPress(handleLongPress)
 
   return (
     <div
@@ -84,7 +91,7 @@ const GraphCanvas = (): React.ReactElement => {
         }}
       >
         <TransformComponent>
-          <div className="w-vw h-vh relative">
+          <div className="w-vw h-vh relative" ref={longPressTarget}>
             <StaticGrid />
             <Container key="elements-container" />
           </div>
