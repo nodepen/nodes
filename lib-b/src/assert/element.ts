@@ -22,6 +22,10 @@ export const isWire = (element: Element<ElementTemplateType>): element is Elemen
     return element.template.type === 'wire'
 }
 
+export const isRegion = (element: Element<ElementTemplateType>): element is Element<'region'> => {
+    return element.template.type === 'region'
+}
+
 export const isGraphElement = (state: GraphElement | GripElement | VisibleElement): state is GraphElement => {
     return 'sources' in state
 }

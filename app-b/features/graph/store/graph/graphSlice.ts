@@ -73,6 +73,29 @@ export const graphSlice = createSlice({
           state.elements[id] = element
           break
         }
+        case 'region': {
+          const template = action.payload.template as NodePen.Element<'region'>['template']
+
+          const element: NodePen.Element<'region'> = {
+            id,
+            template,
+            current: {
+              dimensions: {
+                width: 0,
+                height: 0,
+              },
+              position: action.payload.position,
+              from: [...action.payload.position],
+              to: [...action.payload.position],
+              selection: {
+                mode: 'default',
+              },
+            },
+          }
+
+          state.elements[id] = element
+          break
+        }
         default: {
           break
         }

@@ -27,5 +27,8 @@ export type ElementTemplate = {
     },
     'region': {
         type: 'region'
+        mode: 'group' | 'selection'
+        /** The pointerId of the pointer that started region selection. */
+        pointer: number
     }
 }

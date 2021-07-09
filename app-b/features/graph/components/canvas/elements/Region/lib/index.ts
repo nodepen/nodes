@@ -1,0 +1,1 @@
+export { CommonRegion } from './CommonRegion'
