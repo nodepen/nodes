@@ -35,14 +35,14 @@ const ElementsContainer = (): React.ReactElement => {
               return null
             }
 
-            return <StaticComponent key={`graph-element-${el.id}`} element={el} />
+            return <StaticComponent key={`graph-element-static-component-${el.id}`} element={el} />
           }
           case 'wire': {
             if (!assert.element.isWire(el)) {
               return null
             }
 
-            return <Wire wire={el} />
+            return <Wire key={`graph-element-wire-${el.id}`} wire={el} />
           }
           default: {
             return null

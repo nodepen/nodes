@@ -14,7 +14,8 @@ const GraphCanvas = (): React.ReactElement => {
   const cameraMode = useCameraMode()
 
   const handleLongPress = useCallback((): void => {
-    alert('HIT!')
+    // setMode('locked')
+    // Add region select element, which will handle the rest
   }, [])
 
   const longPressTarget = useLongPress(handleLongPress)

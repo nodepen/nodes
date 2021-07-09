@@ -24,5 +24,8 @@ export type ElementTemplate = {
             elementId: string
             parameterId: string
         }
+    },
+    'region': {
+        type: 'region'
     }
 }
