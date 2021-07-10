@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import {
   useCameraDispatch,
@@ -13,7 +13,7 @@ import { useGraphManager } from 'context/graph'
 import { StaticGrid } from '../layout'
 import { useLongPress } from 'hooks'
 import { useGraphDispatch } from '../../store/graph/hooks'
-import { screenSpaceToCameraSpace } from '../../utils'
+import { distance, screenSpaceToCameraSpace } from '../../utils'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
@@ -25,11 +25,27 @@ const GraphCanvas = (): React.ReactElement => {
   const zoomDisabled = useCameraZoomLock()
   const cameraMode = useCameraMode()
 
-  console.log({ cameraMode })
+  const [longPressActivated, setLongPressActivated] = useState(false)
+  const longPressActivatedLocation = useRef<[number, number]>([0, 0])
 
-  const handleLongPress = useCallback(
+  const handlePointerMove = useCallback(
     (e: PointerEvent): void => {
+      if (!longPressActivated) {
+        return
+      }
+
+      const [ax, ay] = longPressActivatedLocation.current
+      const { pageX: bx, pageY: by } = e
+
+      const distanceFromStart = distance([ax, ay], [bx, by])
+
+      if (distanceFromStart < 15) {
+        return
+      }
+
+      // Start region selection
       setMode('locked')
+      setLongPressActivated(false)
 
       const region: NodePen.Element<'region'>['template'] = {
         type: 'region',
@@ -51,8 +67,48 @@ const GraphCanvas = (): React.ReactElement => {
         position: [x, y],
       })
     },
-    [addElement, cameraZoom, cameraPosition, setMode]
+    [cameraPosition, cameraZoom, addElement, setMode, longPressActivated]
   )
+
+  const handleOpenGraphContextMenu = useCallback((position: [number, number]) => {
+    const [x, y] = position
+    alert(`Menu: [${x}, ${y}]`)
+  }, [])
+
+  const handlePointerUp = useCallback(
+    (e: PointerEvent): void => {
+      if (!longPressActivated) {
+        return
+      }
+
+      // Start graph-level context menu
+      const { pageX, pageY } = e
+      setLongPressActivated(false)
+      handleOpenGraphContextMenu([pageX, pageY])
+    },
+    [longPressActivated, handleOpenGraphContextMenu]
+  )
+
+  useEffect(() => {
+    if (!longPressActivated) {
+      return
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerUp)
+    }
+  })
+
+  const handleLongPress = useCallback((e: PointerEvent): void => {
+    const { pageX: ex, pageY: ey } = e
+
+    longPressActivatedLocation.current = [ex, ey]
+    setLongPressActivated(true)
+  }, [])
 
   const longPressTarget = useLongPress(handleLongPress)
 
@@ -93,6 +149,11 @@ const GraphCanvas = (): React.ReactElement => {
             })
 
             e.stopPropagation()
+            break
+          }
+          case 1: {
+            const { pageX: ex, pageY: ey } = e
+            handleOpenGraphContextMenu([ex, ey])
             break
           }
         }
