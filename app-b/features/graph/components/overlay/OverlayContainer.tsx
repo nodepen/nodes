@@ -19,7 +19,7 @@ export const OverlayContainer = ({
   const [left, top] = position
 
   return (
-    <div className="w-full h-full relative pointer-events-auto">
+    <div className="w-full h-full relative pointer-events-auto" onPointerDown={(e) => e.stopPropagation()}>
       <TransformWrapper
         initialScale={1}
         initialPositionX={left}
