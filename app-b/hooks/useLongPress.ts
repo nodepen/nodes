@@ -86,6 +86,10 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 350
     [resetState]
   )
 
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>): void => {
+    e.preventDefault()
+  }, [])
+
   useEffect(() => {
     if (!target.current) {
       return
@@ -93,11 +97,13 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 350
 
     const el = target.current
 
+    el.addEventListener('touchstart', handleTouchStart)
     el.addEventListener('pointerdown', handlePointerDown)
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
 
     return () => {
+      el.removeEventListener('touchstart', handleTouchStart)
       el.removeEventListener('pointerdown', handlePointerDown)
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
