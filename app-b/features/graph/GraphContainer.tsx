@@ -5,7 +5,7 @@ export const GraphContainer = (): React.ReactElement => {
   return (
     <div className="w-full h-full flex flex-col justify-start overflow-hidden">
       <Layout.Controls />
-      <div className="w-full flex-grow relative bg-pale">
+      <div className="w-full flex-grow relative bg-pale" style={{ WebkitUserSelect: 'none' }}>
         {/* <div className="w-full h-full absolute z-0">
           <Layout.StaticGrid />
         </div> */}

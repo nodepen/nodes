@@ -1,8 +1,9 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { CommonRegion } from './lib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch } from 'features/graph/store/camera/hooks'
+import { useSessionManager } from 'context/session'
 
 type SelectionRegionProps = {
   region: NodePen.Element<'region'>
@@ -19,12 +20,13 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     selection: mode,
   } = current
 
+  const { device } = useSessionManager()
   const { setMode } = useCameraDispatch()
   const { deleteElement } = useGraphDispatch()
 
   const regionRef = useRef<HTMLDivElement>(null)
 
-  const handlePointerMove = useCallback((e: PointerEvent): void => {
+  const handlePointerMove = useCallback((e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
     const { pageX, pageY } = e
     console.log([pageX, pageY])
   }, [])
@@ -34,30 +36,27 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     deleteElement(region.id)
   }, [setMode, deleteElement, region.id])
 
-  const handleTouchEnd = useCallback((): void => {
-    alert('touchend')
-  }, [])
-
-  const fallbackToWindow = useRef(false)
+  const [fallbackToWindow, setFallbackToWindow] = useState(false)
 
   useEffect(() => {
-    if (!fallbackToWindow.current) {
+    if (!fallbackToWindow) {
       return
     }
 
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
-    window.addEventListener('touchend', handleTouchEnd)
 
     return () => {
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
-      window.removeEventListener('touchend', handleTouchEnd)
     }
   })
 
   useEffect(() => {
-    window.navigator.vibrate(300)
+    if (device.iOS) {
+      setFallbackToWindow(true)
+      return
+    }
 
     if (!regionRef.current) {
       return
@@ -66,7 +65,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     try {
       regionRef.current.setPointerCapture(pointer)
     } catch {
-      fallbackToWindow.current = true
+      setFallbackToWindow(true)
     }
   }, [])
 
@@ -75,10 +74,9 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   return (
     <div
       ref={regionRef}
-      // onGotPointerCapture={() => alert('nice')}
-      onPointerUp={(): void => {
-        handlePointerUp()
-      }}
+      onGotPointerCapture={(e) => e.preventDefault()}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
     >
       <CommonRegion style={{}} />
     </div>
