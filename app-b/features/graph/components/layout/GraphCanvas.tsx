@@ -69,10 +69,14 @@ const GraphCanvas = (): React.ReactElement => {
     [cameraPosition, cameraZoom, addElement, longPressActivated]
   )
 
-  const handleOpenGraphContextMenu = useCallback((position: [number, number]) => {
-    const [x, y] = position
-    alert(`Menu: [${x}, ${y}]`)
-  }, [])
+  const handleOpenGraphContextMenu = useCallback(
+    (position: [number, number]) => {
+      const [x, y] = position
+      alert(`Menu: [${x}, ${y}]`)
+      setMode('idle')
+    },
+    [setMode]
+  )
 
   const handlePointerUp = useCallback(
     (e: PointerEvent): void => {
@@ -129,7 +133,7 @@ const GraphCanvas = (): React.ReactElement => {
 
         switch (e.button) {
           case 0: {
-            setMode('locked')
+            //setMode('locked')
 
             const region: NodePen.Element<'region'>['template'] = {
               type: 'region',
@@ -227,7 +231,7 @@ const GraphCanvas = (): React.ReactElement => {
         }}
       >
         <TransformComponent>
-          <div className="w-vw h-vh relative" ref={longPressTarget}>
+          <div className="w-vw h-vh relative overflow-visible" ref={longPressTarget}>
             <StaticGrid />
             <Container key="elements-container" />
           </div>

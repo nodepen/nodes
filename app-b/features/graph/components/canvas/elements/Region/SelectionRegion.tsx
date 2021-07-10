@@ -49,7 +49,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
 
   const handlePointerUp = useCallback((): void => {
     // Do selection
-    alert(`from: [${fromX}, ${fromY}] | to: [${toX}, ${toY}]`)
+    // alert(`from: [${fromX}, ${fromY}] | to: [${toX}, ${toY}]`)
     setMode('idle')
     deleteElement(region.id)
   }, [setMode, deleteElement, region.id, fromX, fromY, toX, toY])
@@ -88,6 +88,10 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   }, [])
 
   // Watch pointer motion from here
+  const [min, max] = [
+    { x: Math.min(fromX, toX), y: Math.min(fromY, toY) },
+    { x: Math.max(fromX, toX), y: Math.max(fromY, toY) },
+  ]
 
   return (
     <div
@@ -95,8 +99,13 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
       onGotPointerCapture={(e) => e.preventDefault()}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
+      className="absolute z-20"
+      style={{ left: min.x, top: min.y, width: Math.abs(max.x - min.x), height: Math.abs(max.y - min.y) }}
     >
-      <CommonRegion style={{}} />
+      <div
+        className={`${fromX > toX ? 'border-dashed' : ''} w-full h-full rounded-md border-darkgreen`}
+        style={{ borderWidth: cameraZoom > 1 ? 2 : `${2 / cameraZoom}px` }}
+      />
     </div>
   )
 }
