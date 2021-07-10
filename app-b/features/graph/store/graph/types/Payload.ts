@@ -6,6 +6,12 @@ export type AddElementPayload<T extends NodePen.ElementType> = {
   position: [number, number]
 }
 
+export type UpdateElementPayload<T extends NodePen.ElementType> = {
+  id: string
+  type: NodePen.ElementType
+  data: NodePen.Element<T>['current']
+}
+
 export type MoveElementPayload = {
   id: string
   position: [number, number]

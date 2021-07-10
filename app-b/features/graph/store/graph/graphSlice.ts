@@ -12,6 +12,7 @@ import {
   RegisterElementAnchorPayload,
   RegisterElementPayload,
   StartLiveWirePayload,
+  UpdateElementPayload,
   UpdateLiveWirePayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
@@ -168,6 +169,36 @@ export const graphSlice = createSlice({
 
       // Apply motion to element
       element.current.position = position
+    },
+    updateElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
+      const { id, type, data } = action.payload
+
+      const element = state.elements[id]
+
+      // Make sure element exists
+      if (!element) {
+        console.log(`🐍 Attempted to update an element that doesn't exist!`)
+        return
+      }
+
+      // Make sure element is of same type as incoming data
+      switch (type) {
+        case 'region': {
+          if (!assert.element.isRegion(element)) {
+            console.log(`🐍 Attempted to update a(n) ${element.template.type} with region data!`)
+            return
+          }
+
+          const current = data as NodePen.Element<'region'>['current']
+
+          element.current = current
+          break
+        }
+        default: {
+          console.log(`Update logic for ${type} elements not yet implemented. `)
+          return
+        }
+      }
     },
     connect: (state: GraphState, action: PayloadAction<ConnectElementsPayload>) => {
       const { from, to } = action.payload
