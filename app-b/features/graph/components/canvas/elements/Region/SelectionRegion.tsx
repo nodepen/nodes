@@ -1,9 +1,7 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { NodePen } from 'glib'
-import { CommonRegion } from './lib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
-import { useSessionManager } from 'context/session'
 import { screenSpaceToCameraSpace } from '@/features/graph/utils'
 
 type SelectionRegionProps = {
@@ -21,13 +19,11 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     selection: { mode },
   } = current
 
-  const { device } = useSessionManager()
   const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
   const cameraPosition = useCameraStaticPosition()
   const { deleteElement, updateLiveElement } = useGraphDispatch()
 
-  const regionRef = useRef<HTMLDivElement>(null)
   const lockRegion = useRef(false)
 
   const handleMouseDown = useCallback((e: MouseEvent): void => {
@@ -49,7 +45,6 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   const handlePointerDown = useCallback(
     (e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
       if (e.pointerId !== pointer) {
-        alert('second touch!')
         return
       }
     },
@@ -96,8 +91,6 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     [setMode, deleteElement, region.id, pointer, fromX, fromY, toX, toY]
   )
 
-  const [fallbackToWindow, setFallbackToWindow] = useState(false)
-
   useEffect(() => {
     window.addEventListener('mousedown', handleMouseDown)
     window.addEventListener('mouseup', handleMouseUp)
@@ -114,23 +107,6 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     }
   })
 
-  // useEffect(() => {
-  //   if (device.iOS) {
-  //     setFallbackToWindow(true)
-  //     return
-  //   }
-
-  //   if (!regionRef.current) {
-  //     return
-  //   }
-
-  //   try {
-  //     regionRef.current.setPointerCapture(pointer)
-  //   } catch {
-  //     setFallbackToWindow(true)
-  //   }
-  // }, [])
-
   // Watch pointer motion from here
   const [min, max] = [
     { x: Math.min(fromX, toX), y: Math.min(fromY, toY) },
@@ -139,10 +115,6 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
 
   return (
     <div
-      ref={regionRef}
-      // onGotPointerCapture={(e) => e.preventDefault()}
-      // onPointerMove={handlePointerMove}
-      // onPointerUp={handlePointerUp}
       className="absolute z-20"
       style={{ left: min.x, top: min.y, width: Math.abs(max.x - min.x), height: Math.abs(max.y - min.y) }}
     >
