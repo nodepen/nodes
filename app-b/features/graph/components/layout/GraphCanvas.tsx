@@ -44,7 +44,6 @@ const GraphCanvas = (): React.ReactElement => {
       }
 
       // Start region selection
-      setMode('locked')
       setLongPressActivated(false)
 
       const region: NodePen.Element<'region'>['template'] = {
@@ -67,7 +66,7 @@ const GraphCanvas = (): React.ReactElement => {
         position: [x, y],
       })
     },
-    [cameraPosition, cameraZoom, addElement, setMode, longPressActivated]
+    [cameraPosition, cameraZoom, addElement, longPressActivated]
   )
 
   const handleOpenGraphContextMenu = useCallback((position: [number, number]) => {
@@ -103,12 +102,16 @@ const GraphCanvas = (): React.ReactElement => {
     }
   })
 
-  const handleLongPress = useCallback((e: PointerEvent): void => {
-    const { pageX: ex, pageY: ey } = e
+  const handleLongPress = useCallback(
+    (e: PointerEvent): void => {
+      const { pageX: ex, pageY: ey } = e
 
-    longPressActivatedLocation.current = [ex, ey]
-    setLongPressActivated(true)
-  }, [])
+      setMode('locked')
+      longPressActivatedLocation.current = [ex, ey]
+      setLongPressActivated(true)
+    },
+    [setMode]
+  )
 
   const longPressTarget = useLongPress(handleLongPress)
 

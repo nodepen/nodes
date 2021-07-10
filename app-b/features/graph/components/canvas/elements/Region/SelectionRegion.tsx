@@ -2,8 +2,9 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { CommonRegion } from './lib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
-import { useCameraDispatch } from 'features/graph/store/camera/hooks'
+import { useCameraDispatch, useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
 import { useSessionManager } from 'context/session'
+import { screenSpaceToCameraSpace } from '@/features/graph/utils'
 
 type SelectionRegionProps = {
   region: NodePen.Element<'region'>
@@ -17,24 +18,41 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   const {
     from: [fromX, fromY],
     to: [toX, toY],
-    selection: mode,
+    selection: { mode },
   } = current
 
   const { device } = useSessionManager()
   const { setMode } = useCameraDispatch()
-  const { deleteElement } = useGraphDispatch()
+  const cameraZoom = useCameraStaticZoom()
+  const cameraPosition = useCameraStaticPosition()
+  const { deleteElement, updateLiveElement } = useGraphDispatch()
 
   const regionRef = useRef<HTMLDivElement>(null)
 
-  const handlePointerMove = useCallback((e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
-    const { pageX, pageY } = e
-    console.log([pageX, pageY])
-  }, [])
+  const handlePointerMove = useCallback(
+    (e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
+      const [cx, cy] = cameraPosition
+      const { pageX: ex, pageY: ey } = e
+      const [x, y] = screenSpaceToCameraSpace(
+        { offset: [0, 48 + 36], position: [ex, ey] },
+        { zoom: cameraZoom, position: [cx, cy] }
+      )
+
+      updateLiveElement({
+        id: region.id,
+        type: 'region',
+        data: { to: [x, y] },
+      })
+    },
+    [cameraPosition, cameraZoom, region.id, updateLiveElement]
+  )
 
   const handlePointerUp = useCallback((): void => {
+    // Do selection
+    alert(`from: [${fromX}, ${fromY}] | to: [${toX}, ${toY}]`)
     setMode('idle')
     deleteElement(region.id)
-  }, [setMode, deleteElement, region.id])
+  }, [setMode, deleteElement, region.id, fromX, fromY, toX, toY])
 
   const [fallbackToWindow, setFallbackToWindow] = useState(false)
 

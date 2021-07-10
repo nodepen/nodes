@@ -55,8 +55,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         <Draggable
           scale={scale}
           position={{ x, y }}
-          onMouseDown={() => {
-            console.log({ mode })
+          onMouseDown={(e) => {
+            e.stopPropagation()
           }}
           onStart={(e) => {
             console.log('draggable start!')
@@ -78,6 +78,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           <div
             className={`${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col items-stretch pointer-events-auto`}
             ref={componentRef}
+            onPointerDown={(e) => e.stopPropagation()}
           >
             <div className="h-2 bg-white border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none" />
             <div className="bg-white flex flex-row justify-center items-stretch">

@@ -170,7 +170,7 @@ export const graphSlice = createSlice({
       // Apply motion to element
       element.current.position = position
     },
-    updateElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
+    updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
 
       const element = state.elements[id]
@@ -191,7 +191,7 @@ export const graphSlice = createSlice({
 
           const current = data as NodePen.Element<'region'>['current']
 
-          element.current = current
+          element.current = { ...element.current, ...current }
           break
         }
         default: {

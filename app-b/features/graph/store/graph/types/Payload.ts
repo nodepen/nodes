@@ -9,7 +9,7 @@ export type AddElementPayload<T extends NodePen.ElementType> = {
 export type UpdateElementPayload<T extends NodePen.ElementType> = {
   id: string
   type: NodePen.ElementType
-  data: NodePen.Element<T>['current']
+  data: Partial<NodePen.Element<T>['current']>
 }
 
 export type MoveElementPayload = {
