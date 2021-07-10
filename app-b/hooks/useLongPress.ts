@@ -28,6 +28,8 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 350
         return
       }
 
+      e.preventDefault()
+
       clearTimeout(longPressTimeout.current)
 
       const { pageX, pageY } = e

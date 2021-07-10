@@ -1,30 +1,101 @@
 import React, { useCallback } from 'react'
-import { useCameraDispatch, useCameraMode, useCameraZoomLock } from 'features/graph/store/camera/hooks'
+import { NodePen } from 'glib'
+import {
+  useCameraDispatch,
+  useCameraMode,
+  useCameraStaticPosition,
+  useCameraStaticZoom,
+  useCameraZoomLock,
+} from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../canvas'
 import { useGraphManager } from 'context/graph'
 import { StaticGrid } from '../layout'
 import { useLongPress } from 'hooks'
+import { useGraphDispatch } from '../../store/graph/hooks'
+import { screenSpaceToCameraSpace } from '../../utils'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
 
+  const { addElement } = useGraphDispatch()
   const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
+  const cameraPosition = useCameraStaticPosition()
+  const cameraZoom = useCameraStaticZoom()
   const zoomDisabled = useCameraZoomLock()
   const cameraMode = useCameraMode()
 
-  const handleLongPress = useCallback((): void => {
-    // setMode('locked')
-    // Add region select element, which will handle the rest
-  }, [])
+  console.log({ cameraMode })
+
+  const handleLongPress = useCallback(
+    (e: PointerEvent): void => {
+      setMode('locked')
+
+      const region: NodePen.Element<'region'>['template'] = {
+        type: 'region',
+        mode: 'selection',
+        pointer: e.pointerId,
+      }
+
+      const [cx, cy] = cameraPosition
+      const { pageX: ex, pageY: ey } = e
+      const [x, y] = screenSpaceToCameraSpace(
+        { offset: [0, 48 + 36], position: [ex, ey] },
+        { zoom: cameraZoom, position: [cx, cy] }
+      )
+
+      // Add region select element, which will handle the rest
+      addElement({
+        type: 'region',
+        template: region,
+        position: [x, y],
+      })
+    },
+    [addElement, cameraZoom, cameraPosition, setMode]
+  )
 
   const longPressTarget = useLongPress(handleLongPress)
 
   return (
     <div
       className="w-full h-full relative overflow-hidden"
+      style={{ touchAction: 'none' }}
       onContextMenu={(e) => {
         e.preventDefault()
+      }}
+      onPointerDown={(e) => {
+        if (e.pointerType !== 'mouse') {
+          return
+        }
+
+        switch (e.button) {
+          case 0: {
+            setMode('locked')
+
+            const region: NodePen.Element<'region'>['template'] = {
+              type: 'region',
+              mode: 'selection',
+              pointer: e.pointerId,
+            }
+
+            const [cx, cy] = cameraPosition
+            const { pageX: ex, pageY: ey } = e
+            const [x, y] = screenSpaceToCameraSpace(
+              { offset: [0, 48 + 36], position: [ex, ey] },
+              { zoom: cameraZoom, position: [cx, cy] }
+            )
+
+            // Add region select element, which will handle the rest
+            addElement({
+              type: 'region',
+              template: region,
+              position: [x, y],
+            })
+
+            e.stopPropagation()
+            break
+          }
+        }
       }}
       onMouseDown={(e) => {
         switch (e.button) {
