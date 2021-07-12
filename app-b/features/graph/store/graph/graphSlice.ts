@@ -41,6 +41,10 @@ export const graphSlice = createSlice({
   name: 'graph',
   initialState,
   reducers: {
+    reset: (state: GraphState) => {
+      state.elements = {}
+      state.selection = []
+    },
     addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
 

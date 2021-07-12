@@ -11,6 +11,7 @@ export const useGraphDispatch = () => {
   return {
     undo: () => dispatch(ActionCreators.undo()),
     redo: () => dispatch(ActionCreators.redo()),
+    reset: () => dispatch(graphActions.reset()),
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => dispatch(graphActions.addElement(data)),
     updateLiveElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>) =>
       dispatch(graphActions.updateLiveElement(data)),

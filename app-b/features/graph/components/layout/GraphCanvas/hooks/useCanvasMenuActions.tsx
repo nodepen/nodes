@@ -3,7 +3,7 @@ import { MenuAction } from 'features/graph/types'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 
 export const useCanvasMenuActions = (): MenuAction<never>[] => {
-  const { undo, redo } = useGraphDispatch()
+  const { undo, redo, reset } = useGraphDispatch()
 
   const actions: MenuAction<never>[] = useMemo(() => {
     return [
@@ -74,9 +74,7 @@ export const useCanvasMenuActions = (): MenuAction<never>[] => {
         ),
         label: <p>Reset</p>,
         menu: <p></p>,
-        onClick: (): void => {
-          // ok
-        },
+        onClick: reset,
       },
       {
         position: 0,
