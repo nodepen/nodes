@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { NodePen } from 'glib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
@@ -128,17 +128,75 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     { x: Math.max(fromX, toX), y: Math.max(fromY, toY) },
   ]
 
+  const selectionModeIcon = useMemo(() => {
+    switch (mode) {
+      case 'add': {
+        return (
+          <div className="pr-3 flex items-center rounded-full bg-green">
+            <div className="w-8 h-8 flex justify-center items-center">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="#093824"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+            </div>
+            <p className="text-sm font-semibold text-darkgreen whitespace-nowrap">Add to selection</p>
+          </div>
+        )
+      }
+      case 'remove': {
+        return (
+          <div className="pr-3 flex items-center rounded-full bg-green">
+            <div className="w-8 h-8 flex justify-center items-center">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="#093824"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 12H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+                  vectorEffect="non-scaling-stroke"
+                />
+              </svg>
+            </div>
+            <p className="text-sm font-semibold text-darkgreen whitespace-nowrap">Remove from selection</p>
+          </div>
+        )
+      }
+      default: {
+        return null
+      }
+    }
+  }, [mode])
+
   return (
     <div
       className="absolute z-20"
       style={{ left: min.x, top: min.y, width: Math.abs(max.x - min.x), height: Math.abs(max.y - min.y) }}
     >
       <div
-        className={`${fromX > toX ? 'border-dashed' : ''} ${
-          mode === 'default' ? '' : mode === 'add' ? 'bg-blue-500' : 'bg-red-500'
-        } w-full h-full rounded-md border-darkgreen`}
+        className={`${
+          fromX > toX ? 'border-dashed' : ''
+        } flex justify-center items-center w-full h-full rounded-md border-darkgreen overflow-hidden`}
         style={{ borderWidth: cameraZoom > 1 ? 2 : `${2 / cameraZoom}px` }}
-      />
+      >
+        <div className="m-2 h-8 flex items-center">{selectionModeIcon}</div>
+      </div>
     </div>
   )
 }
