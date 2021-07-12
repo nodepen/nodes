@@ -44,7 +44,8 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
 
   const handlePointerDown = useCallback(
     (e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
-      if (e.pointerId !== pointer) {
+      if (e.pointerId === pointer) {
+        // This shouldn't happen, but we don't care regardless
         return
       }
     },
@@ -54,6 +55,10 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   const handlePointerMove = useCallback(
     (e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
       if (lockRegion.current) {
+        return
+      }
+
+      if (e.pointerId !== pointer) {
         return
       }
 
@@ -70,7 +75,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
         data: { to: [x, y] },
       })
     },
-    [cameraPosition, cameraZoom, region.id, updateLiveElement]
+    [pointer, cameraPosition, cameraZoom, region.id, updateLiveElement]
   )
 
   const handlePointerUp = useCallback(
@@ -81,6 +86,16 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
       }
 
       if (e.pointerId !== pointer) {
+        // Toggle region setting on second tap
+        const settingOrder: { [key: string]: typeof mode } = {
+          default: 'add',
+          add: 'remove',
+          remove: 'default',
+        }
+
+        const nextSetting = settingOrder[mode]
+
+        updateLiveElement({ id: region.id, type: 'region', data: { selection: { mode: nextSetting } } })
         return
       }
       // Do selection
@@ -88,7 +103,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
       setMode('idle')
       deleteElement(region.id)
     },
-    [setMode, deleteElement, region.id, pointer, fromX, fromY, toX, toY]
+    [mode, setMode, updateLiveElement, deleteElement, region.id, pointer, fromX, fromY, toX, toY]
   )
 
   useEffect(() => {
@@ -119,7 +134,9 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
       style={{ left: min.x, top: min.y, width: Math.abs(max.x - min.x), height: Math.abs(max.y - min.y) }}
     >
       <div
-        className={`${fromX > toX ? 'border-dashed' : ''} w-full h-full rounded-md border-darkgreen`}
+        className={`${fromX > toX ? 'border-dashed' : ''} ${
+          mode === 'default' ? '' : mode === 'add' ? 'bg-blue-500' : 'bg-red-500'
+        } w-full h-full rounded-md border-darkgreen`}
         style={{ borderWidth: cameraZoom > 1 ? 2 : `${2 / cameraZoom}px` }}
       />
     </div>
