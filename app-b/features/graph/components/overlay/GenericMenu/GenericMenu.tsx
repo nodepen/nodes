@@ -271,7 +271,15 @@ export const GenericMenu = <T,>({ context, actions, position, onClose }: Generic
                   id={id}
                   className="absolute action left-0 top-0 w-12 h-12 flex items-center justify-center rounded-full bg-pale border-2 border-green z-10 pointer-events-auto overflow-visible transition-transform duration-200 ease-in-out"
                   style={{ transform: `translate(${-24 + dx}px, ${-24 + dy}px)` }}
-                  onClick={() => generateActionMenu(menu, `${id}-label`, [dx - 24, dy - 24], side)}
+                  onClick={() => {
+                    if (onClick) {
+                      onClick(context)
+                      onClose()
+                      return
+                    }
+
+                    generateActionMenu(menu, `${id}-label`, [dx - 24, dy - 24], side)
+                  }}
                 >
                   <div className="relative w-full h-full">
                     <div className="absolute left-0 top-0 w-full h-full flex items-center justify-center">{icon}</div>

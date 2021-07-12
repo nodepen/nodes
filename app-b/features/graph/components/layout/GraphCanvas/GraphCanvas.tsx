@@ -8,12 +8,14 @@ import {
   useCameraZoomLock,
 } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
-import { Container } from '../canvas'
+import { Container } from '../../canvas'
 import { useGraphManager } from 'context/graph'
-import { StaticGrid } from '../layout'
+import { StaticGrid } from '..'
 import { useLongPress } from 'hooks'
-import { useGraphDispatch } from '../../store/graph/hooks'
-import { distance, screenSpaceToCameraSpace } from '../../utils'
+import { useGraphDispatch } from '../../../store/graph/hooks'
+import { distance, screenSpaceToCameraSpace } from '../../../utils'
+import { useCanvasMenuActions } from './hooks'
+import { GenericMenu } from '../../overlay'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
@@ -27,6 +29,9 @@ const GraphCanvas = (): React.ReactElement => {
 
   const [longPressActivated, setLongPressActivated] = useState(false)
   const longPressActivatedLocation = useRef<[number, number]>([0, 0])
+
+  const [showCanvasMenu, setShowCanvasMenu] = useState(false)
+  const canvasMenuLocation = useRef<[number, number]>([0, 0])
 
   const handlePointerMove = useCallback(
     (e: PointerEvent): void => {
@@ -71,26 +76,22 @@ const GraphCanvas = (): React.ReactElement => {
 
   const handleOpenGraphContextMenu = useCallback(
     (position: [number, number]) => {
-      const [x, y] = position
-      alert(`Menu: [${x}, ${y}]`)
+      canvasMenuLocation.current = position
       setMode('idle')
+      setShowCanvasMenu(true)
     },
     [setMode]
   )
 
-  const handlePointerUp = useCallback(
-    (e: PointerEvent): void => {
-      if (!longPressActivated) {
-        return
-      }
+  const handlePointerUp = useCallback((): void => {
+    if (!longPressActivated) {
+      return
+    }
 
-      // Start graph-level context menu
-      const { pageX, pageY } = e
-      setLongPressActivated(false)
-      handleOpenGraphContextMenu([pageX, pageY])
-    },
-    [longPressActivated, handleOpenGraphContextMenu]
-  )
+    // Start graph-level context menu
+    setLongPressActivated(false)
+    handleOpenGraphContextMenu(longPressActivatedLocation.current)
+  }, [longPressActivated, handleOpenGraphContextMenu])
 
   useEffect(() => {
     if (!longPressActivated) {
@@ -118,6 +119,12 @@ const GraphCanvas = (): React.ReactElement => {
   )
 
   const longPressTarget = useLongPress(handleLongPress)
+
+  const actions = useCanvasMenuActions()
+
+  const handleCloseMenu = useCallback((): void => {
+    setShowCanvasMenu(false)
+  }, [])
 
   return (
     <div
@@ -237,6 +244,14 @@ const GraphCanvas = (): React.ReactElement => {
           </div>
         </TransformComponent>
       </TransformWrapper>
+      {showCanvasMenu ? (
+        <GenericMenu
+          context={{} as never}
+          actions={actions}
+          position={canvasMenuLocation.current}
+          onClose={handleCloseMenu}
+        />
+      ) : null}
     </div>
   )
 }

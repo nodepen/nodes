@@ -24,7 +24,6 @@ export const useComponentMenuActions = (element: NodePen.Element<'static-compone
           </svg>
         ),
         menu: <AboutMenu component={element.template} />,
-        onClick: handleAction,
       },
       {
         position: 60,
@@ -83,7 +82,6 @@ export const useComponentMenuActions = (element: NodePen.Element<'static-compone
           </svg>
         ),
         menu: <DeleteMenu element={element} />,
-        onClick: handleAction,
       },
       {
         position: 300,

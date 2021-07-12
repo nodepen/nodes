@@ -3,5 +3,5 @@ export type MenuAction<T> = {
   icon: JSX.Element
   label: JSX.Element
   menu: JSX.Element
-  onClick: (context: T) => void
+  onClick?: (context: T) => void
 }
