@@ -15,7 +15,7 @@ import { useLongPress } from 'hooks'
 import { useGraphDispatch } from '../../../store/graph/hooks'
 import { distance, screenSpaceToCameraSpace } from '../../../utils'
 import { useCanvasMenuActions } from './hooks'
-import { GenericMenu } from '../../overlay'
+import { GenericMenu, PlaceComponentMenu } from '../../overlay'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
@@ -130,6 +130,12 @@ const GraphCanvas = (): React.ReactElement => {
 
   const handleCloseMenu = useCallback((): void => {
     setShowCanvasMenu(false)
+  }, [])
+
+  const [showAddComponent, setShowAddComponent] = useState(false)
+
+  useEffect(() => {
+    setShowAddComponent(true)
   }, [])
 
   return (
@@ -258,6 +264,7 @@ const GraphCanvas = (): React.ReactElement => {
           onClose={handleCloseMenu}
         />
       ) : null}
+      {showAddComponent ? <PlaceComponentMenu position={[0, 0]} onClose={() => ''} /> : null}
     </div>
   )
 }
