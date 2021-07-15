@@ -7,6 +7,7 @@ import { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
 import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
 import { useGraphManager } from 'context/graph'
 import { GenericMenuManager } from './context'
+import { useOverlayOffset } from '../hooks'
 
 type GenericMenuProps<T> = {
   context: T
@@ -26,11 +27,7 @@ export const GenericMenu = <T,>({
 
   const { registry } = useGraphManager()
 
-  const offsetTop = registry.layoutContainerRef?.current?.offsetTop ?? 0
-  const position = useMemo(() => {
-    const [sx, sy] = screenPosition
-    return [sx, sy - offsetTop + 48]
-  }, [])
+  const position = useOverlayOffset(screenPosition)
 
   const [positions, setPositions] = useState<{ [key: number]: { dx: number; dy: number } }>({})
 
