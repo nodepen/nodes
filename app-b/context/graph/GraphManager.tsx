@@ -11,6 +11,7 @@ export const GraphContext = React.createContext<GraphStore>({
   },
   registry: {
     canvasContainerRef: createRef(),
+    layoutContainerRef: createRef(),
   },
 })
 
@@ -24,6 +25,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
   const client = useApolloClient()
 
   const canvasContainerRef = useRef<HTMLDivElement>(null)
+  const layoutContainerRef = useRef<HTMLDivElement>(null)
 
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
@@ -94,6 +96,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     registry: {
       setTransform,
       canvasContainerRef,
+      layoutContainerRef,
     },
     register: {
       setTransform: handleSetTransform,

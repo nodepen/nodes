@@ -1,8 +1,10 @@
+import { useGraphManager } from '@/context/graph'
 import React from 'react'
 import { TransformWrapper, TransformComponent, ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
 
 type OverlayContainerProps = {
   children: JSX.Element
+  /** Position is relative to parent, not page. (Currently content area excluding header.) */
   position: [left: number, top: number]
   static?: boolean
   onInit?: (ref: ReactZoomPanPinchRef) => void
@@ -19,6 +21,8 @@ export const OverlayContainer = ({
   onPanningStop,
 }: OverlayContainerProps): React.ReactElement => {
   const [left, top] = position
+
+  const { registry } = useGraphManager()
 
   return (
     <div className="w-full h-full relative pointer-events-auto" onPointerDown={(e) => e.stopPropagation()}>

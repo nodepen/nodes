@@ -11,14 +11,26 @@ import { GenericMenuManager } from './context'
 type GenericMenuProps<T> = {
   context: T
   actions: MenuAction<T>[]
-  position: [number, number]
+  /** Position is in screen coordinates. Component logic corrects for parent `offsetTop` in calculations. */
+  position: [sx: number, sy: number]
   onClose: () => void
 }
 
-export const GenericMenu = <T,>({ context, actions, position, onClose }: GenericMenuProps<T>): React.ReactElement => {
+export const GenericMenu = <T,>({
+  context,
+  actions,
+  position: screenPosition,
+  onClose,
+}: GenericMenuProps<T>): React.ReactElement => {
   const r = 75
 
   const { registry } = useGraphManager()
+
+  const offsetTop = registry.layoutContainerRef?.current?.offsetTop ?? 0
+  const position = useMemo(() => {
+    const [sx, sy] = screenPosition
+    return [sx, sy - offsetTop + 48]
+  }, [])
 
   const [positions, setPositions] = useState<{ [key: number]: { dx: number; dy: number } }>({})
 

@@ -7,6 +7,7 @@ export type GraphStore = {
   registry: {
     setTransform?: SetTransform
     canvasContainerRef: React.RefObject<HTMLDivElement>
+    layoutContainerRef: React.RefObject<HTMLDivElement>
   }
   register: {
     setTransform: (setTransform: SetTransform) => void
