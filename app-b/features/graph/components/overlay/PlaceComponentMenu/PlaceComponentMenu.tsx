@@ -4,7 +4,7 @@ import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
-import { levenshteinDistance } from './utils'
+import { levenshteinDistance, matchShortcut } from './utils'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -19,6 +19,8 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
   const position = useOverlayOffset(screenPosition)
 
   const [userValue, setUserValue] = useState<string>('')
+
+  const shortcut = matchShortcut(userValue)
 
   const libraryNames = useMemo(() => {
     return library?.map((component) => component.name) ?? []
@@ -68,6 +70,25 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
               <div className="w-6 h-6 ml-2 rounded-full bg-green" /> */}
             </div>
           </div>
+          {shortcut ? (
+            <div className="w-full h-12 p-2 flex items-center justify-start">
+              <div className="w-6 h-6 flex items-center justify-center mr-2">
+                <svg
+                  className="w-6 h-6"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                </svg>
+              </div>
+              <div className="mr-2 p-1 rounded-sm bg-swampgreen text-xs font-semibold font-panel text-darkgreen">
+                {shortcut.pattern}
+              </div>
+              <p className="text-sm whitespace-nowrap">{shortcut.description}</p>
+            </div>
+          ) : null}
           <div className="w-full flex flex-col">
             {displayCandidates.map((name, i) => (
               <p key={`sort-option-${name}-${i}`}>{name}</p>

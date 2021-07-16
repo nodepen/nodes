@@ -18,7 +18,7 @@ export const OverlayPortal = ({ children, z = 99 }: OverlayPortalProps): React.R
     el.style.left = '0'
     el.style.top = '0'
     el.style.width = '100%'
-    el.style.height = 'calc(100% + 48px)'
+    el.style.height = 'calc(100% + 48px + 200px)'
     el.style.pointerEvents = 'none'
     el.style.transform = 'translateY(-48px)'
 
