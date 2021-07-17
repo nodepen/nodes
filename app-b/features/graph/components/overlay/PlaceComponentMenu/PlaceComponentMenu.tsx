@@ -4,7 +4,7 @@ import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
-import { levenshteinDistance, matchShortcut } from './utils'
+import { levenshteinDistance, mapToIds, matchShortcut } from './utils'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -15,6 +15,8 @@ type PlaceComponentMenuProps = {
 export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentMenuProps): React.ReactElement => {
   const { addElement } = useGraphDispatch()
   const { library, registry } = useGraphManager()
+
+  const libraryByIds = useMemo(() => mapToIds(library ?? []), [library])
 
   const position = useOverlayOffset(screenPosition)
 
