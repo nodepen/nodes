@@ -144,23 +144,35 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
           </div>
           {shortcut ? (
             <div className="w-full flex flex-col">
-              <div className="w-full h-12 p-2 flex items-center justify-start">
-                <div className="w-6 h-6 flex items-center justify-center mr-2">
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              <div className="w-full h-10 flex items-center justify-start">
+                <div className="w-10 h-6 flex items-center justify-center">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      fillRule="evenodd"
+                      d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                      clipRule="evenodd"
+                    />
                   </svg>
                 </div>
-                <div className="mr-2 p-1 rounded-sm bg-swampgreen text-xs font-semibold font-panel text-darkgreen">
-                  {shortcut.pattern}
-                </div>
+                <h4 className="text-sm text-darkgreen font-semibold">Shortcut</h4>
               </div>
-              {shortcut.description}
+              <div className="w-full pl-10 flex flex-col">
+                <div className="mb-2 w-full flex items-center">
+                  <div className="mr-3 pl-3 pr-3 pt-1 pb-1 bg-white rounded-md border-2 border-dark shadow-osm">
+                    <p className="font-panel font-semibold text-xs text-dark">{shortcut.pattern}</p>
+                  </div>
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                    <path
+                      fillRule="evenodd"
+                      d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <img width="18" height="18" className="ml-3" src={`data:image/png;base64,${shortcutTemplate.icon}`} />
+                  <p className="ml-2 font-panel font-semibold text-sm">{shortcutTemplate?.name.toUpperCase()}</p>
+                </div>
+                <p className="leading-5">{shortcut.description}</p>
+              </div>
             </div>
           ) : (
             <div
