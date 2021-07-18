@@ -34,7 +34,7 @@ export const useLibraryTextSearch = (
       )
     }
 
-    const candidates = exactMatch ? [exactMatch, ...sortedCandidates.slice(0, 14)] : sortedCandidates.slice(0, 15)
+    const candidates = exactMatch ? [exactMatch, ...sortedCandidates.slice(0, 11)] : sortedCandidates.slice(0, 12)
 
     return [candidates, exactMatch]
   }, [query, library])

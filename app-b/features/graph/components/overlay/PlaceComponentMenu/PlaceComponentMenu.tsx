@@ -35,11 +35,13 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
 
   const selected = useSelectedComponent(candidates, offset, shortcutTemplate)
 
+  const [isHoveringOption, setIsHoveringOption] = useState(false)
+
   return (
     <OverlayPortal>
       <OverlayContainer static position={[0, 0]}>
-        <div className="w-full h-full flex flex-col pl-2 pr-2 bg-green pointer-events-auto">
-          <div className="w-full h-12 flex items-center">
+        <div className="w-full h-full flex flex-col p-2 pb-12 bg-green pointer-events-auto">
+          <div className="w-full h-12 mb-2 flex items-center">
             <div className="w-full h-10 relative rounded-md bg-pale overflow-hidden">
               <input
                 className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-50 text-lg"
@@ -99,11 +101,23 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
               {shortcut.description}
             </div>
           ) : (
-            <div className="w-full flex flex-col">
+            <div
+              className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar"
+              onMouseLeave={() => setIsHoveringOption(false)}
+            >
               {candidates.map((component, i) => (
-                <p className={`${i === offset ? 'bg-darkgreen' : ''}`} key={`sort-option-${component.name}-${i}`}>
-                  {component.name}
-                </p>
+                <button
+                  key={`sort-option-${component.name}-${i}`}
+                  className={`${
+                    i === offset && !isHoveringOption ? 'bg-swampgreen' : ''
+                  } w-full h-8 flex items-center rounded-sm hover:bg-swampgreen`}
+                  onMouseEnter={() => setIsHoveringOption(true)}
+                >
+                  <div className="w-10 h-8 flex items-center justify-center">
+                    <img width="18" height="18" src={`data:image/png;base64,${component.icon}`} />
+                  </div>
+                  <p>{component.name}</p>
+                </button>
               ))}
             </div>
           )}
