@@ -12,28 +12,32 @@ export const useLibraryTextSearch = (
   query: string,
   library: Grasshopper.Component[] = []
 ): [candidates: Grasshopper.Component[], exactMatch: Grasshopper.Component | undefined] => {
-  const sortedCandidates = useMemo(() => {
+  const [candidates, exactMatch] = useMemo(() => {
     if (!query || query.length <= 0) {
       return []
     }
 
-    const candidates = [...library]
+    const allCandidates = [...library]
 
-    return candidates.sort((a, b) => levenshteinDistance(a.name, query) - levenshteinDistance(b.name, query))
+    const sortedCandidates = allCandidates.sort(
+      (a, b) => levenshteinDistance(a.name, query) - levenshteinDistance(b.name, query)
+    )
+
+    const exactMatch = sortedCandidates.find(
+      (candidate) => candidate.name.toLowerCase().indexOf(query.toLowerCase()) === 0
+    )
+
+    if (exactMatch) {
+      sortedCandidates.splice(
+        sortedCandidates.findIndex((candidate) => candidate.name === exactMatch.name),
+        1
+      )
+    }
+
+    const candidates = exactMatch ? [exactMatch, ...sortedCandidates.slice(0, 14)] : sortedCandidates.slice(0, 15)
+
+    return [candidates, exactMatch]
   }, [query, library])
 
-  const exactMatch = sortedCandidates.find(
-    (candidate) => candidate.name.toLowerCase().indexOf(query.toLowerCase()) === 0
-  )
-
-  if (exactMatch) {
-    sortedCandidates.splice(
-      sortedCandidates.findIndex((candidate) => candidate.name === exactMatch.name),
-      1
-    )
-  }
-
-  const candidates = exactMatch ? [exactMatch, ...sortedCandidates.slice(0, 14)] : sortedCandidates.slice(0, 15)
-
-  return [candidates, exactMatch]
+  return [candidates ?? [], exactMatch]
 }

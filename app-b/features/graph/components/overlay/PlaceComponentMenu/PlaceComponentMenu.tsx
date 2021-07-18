@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
-import { useLibraryShortcuts, useLibraryTextSearch } from './hooks'
+import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch } from './hooks'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -25,6 +25,12 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
   const [shortcut, shortcutTemplate] = useLibraryShortcuts(userValue, library)
 
   const autocomplete = exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
+
+  const handleEnter = useCallback(() => {
+    console.log('ok')
+  }, [])
+
+  const offset = useKeyboardSelection(handleEnter, 'down', !!shortcut)
 
   return (
     <OverlayPortal>
@@ -69,7 +75,9 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
           ) : (
             <div className="w-full flex flex-col">
               {candidates.map((component, i) => (
-                <p key={`sort-option-${component.name}-${i}`}>{component.name}</p>
+                <p className={`${i === offset ? 'bg-darkgreen' : ''}`} key={`sort-option-${component.name}-${i}`}>
+                  {component.name}
+                </p>
               ))}
             </div>
           )}
