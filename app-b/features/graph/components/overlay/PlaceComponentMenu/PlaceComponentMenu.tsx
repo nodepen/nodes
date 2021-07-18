@@ -5,7 +5,8 @@ import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
 import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch, useSelectedComponent } from './hooks'
-import { Grasshopper } from '@/../lib-b/dist'
+import { Grasshopper, NodePen } from '@/../lib-b/dist'
+import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -13,7 +14,10 @@ type PlaceComponentMenuProps = {
   onClose: () => void
 }
 
-export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentMenuProps): React.ReactElement => {
+export const PlaceComponentMenu = ({
+  position: screenPosition,
+  onClose,
+}: PlaceComponentMenuProps): React.ReactElement => {
   const { addElement } = useGraphDispatch()
   const { library, registry } = useGraphManager()
 
@@ -29,6 +33,24 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
 
   // Only used in large screen context
   const position = useOverlayOffset(screenPosition)
+  const mapCoordinates = useScreenSpaceToCameraSpace()
+
+  const handlePlaceComponent = useCallback(
+    (
+      template: NodePen.Element<NodePen.ElementType>['template'],
+      data?: NodePen.Element<NodePen.ElementType>['current']
+    ): void => {
+      const [x, y] = mapCoordinates(screenPosition, [0, 48])
+      addElement({
+        type: template.type,
+        template: template,
+        data: data,
+        position: [x, y],
+      })
+      onClose()
+    },
+    [screenPosition, mapCoordinates, addElement, onClose]
+  )
 
   const [userValue, setUserValue] = useState<string>('')
 
@@ -70,7 +92,10 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
                   <div className="absolute h-10 w-20 top-0 right-0 z-60">
                     <div className="inline-block w-10 h-10">
                       <div className="w-full h-full flex justify-end items-center">
-                        <button className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-darkgreen  pointer-events-auto">
+                        <button
+                          className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-darkgreen pointer-events-auto"
+                          onClick={() => onClose()}
+                        >
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -91,7 +116,20 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
                     </div>
                     <div className="inline-block w-10 h-10">
                       <div className="w-full h-full flex justify-center items-center">
-                        <button className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-darkgreen overflow-hidden  pointer-events-auto">
+                        <button
+                          className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-darkgreen overflow-hidden pointer-events-auto"
+                          onClick={() => {
+                            if (!selected) {
+                              return
+                            }
+
+                            switch (selected.category.toLowerCase()) {
+                              default: {
+                                handlePlaceComponent({ type: 'static-component', ...selected })
+                              }
+                            }
+                          }}
+                        >
                           <svg
                             className="w-4 h-4"
                             fill="none"
@@ -128,6 +166,19 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
                         }
                         case 'arrowup': {
                           e.preventDefault()
+                          return
+                        }
+                        case 'enter': {
+                          if (!selected) {
+                            return
+                          }
+
+                          switch (selected.category.toLowerCase()) {
+                            default: {
+                              handlePlaceComponent({ type: 'static-component', ...selected })
+                            }
+                          }
+
                           return
                         }
                       }
@@ -186,6 +237,13 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
                     i === offset && !hoverTemplate ? 'bg-swampgreen' : ''
                   } w-full h-8 flex items-center rounded-md hover:bg-swampgreen`}
                   onMouseEnter={() => setHoverTemplate(component)}
+                  onClick={() => {
+                    switch (component.category.toLowerCase()) {
+                      default: {
+                        handlePlaceComponent({ type: 'static-component', ...component })
+                      }
+                    }
+                  }}
                 >
                   <div className="w-10 h-8 flex items-center justify-center">
                     <img width="18" height="18" src={`data:image/png;base64,${component.icon}`} />

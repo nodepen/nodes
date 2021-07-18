@@ -133,10 +133,7 @@ const GraphCanvas = (): React.ReactElement => {
   }, [])
 
   const [showAddComponent, setShowAddComponent] = useState(false)
-
-  useEffect(() => {
-    setShowAddComponent(true)
-  }, [])
+  const addComponentPosition = useRef<[number, number]>([0, 0])
 
   return (
     <div
@@ -144,6 +141,12 @@ const GraphCanvas = (): React.ReactElement => {
       style={{ touchAction: 'none' }}
       onContextMenu={(e) => {
         e.preventDefault()
+      }}
+      onDoubleClick={(e) => {
+        const { pageX, pageY } = e
+
+        addComponentPosition.current = [pageX, pageY]
+        setShowAddComponent(true)
       }}
       onPointerDown={(e) => {
         if (e.pointerType !== 'mouse') {
@@ -264,7 +267,9 @@ const GraphCanvas = (): React.ReactElement => {
           onClose={handleCloseMenu}
         />
       ) : null}
-      {showAddComponent ? <PlaceComponentMenu position={[0, 0]} onClose={() => ''} /> : null}
+      {showAddComponent ? (
+        <PlaceComponentMenu position={addComponentPosition.current} onClose={() => setShowAddComponent(false)} />
+      ) : null}
     </div>
   )
 }
