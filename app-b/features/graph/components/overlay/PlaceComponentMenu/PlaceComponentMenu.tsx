@@ -67,22 +67,24 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
             </div>
           </div>
           {shortcut ? (
-            <div className="w-full h-12 p-2 flex items-center justify-start">
-              <div className="w-6 h-6 flex items-center justify-center mr-2">
-                <svg
-                  className="w-6 h-6"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
-                </svg>
+            <div className="w-full flex flex-col">
+              <div className="w-full h-12 p-2 flex items-center justify-start">
+                <div className="w-6 h-6 flex items-center justify-center mr-2">
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div className="mr-2 p-1 rounded-sm bg-swampgreen text-xs font-semibold font-panel text-darkgreen">
+                  {shortcut.pattern}
+                </div>
               </div>
-              <div className="mr-2 p-1 rounded-sm bg-swampgreen text-xs font-semibold font-panel text-darkgreen">
-                {shortcut.pattern}
-              </div>
-              <p className="text-sm whitespace-nowrap">{shortcut.description}</p>
+              {shortcut.description}
             </div>
           ) : (
             <div className="w-full flex flex-col">
