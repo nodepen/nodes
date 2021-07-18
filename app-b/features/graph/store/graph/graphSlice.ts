@@ -75,6 +75,10 @@ export const graphSlice = createSlice({
             },
           }
 
+          if (action.payload.data) {
+            element.current = { ...element.current, ...action.payload.data }
+          }
+
           state.elements[id] = element
           break
         }

@@ -3,6 +3,7 @@ import { NodePen } from 'glib'
 export type AddElementPayload<T extends NodePen.ElementType> = {
   type: T
   template: NodePen.Element<T>['template']
+  data?: Partial<NodePen.Element<T>['current']>
   position: [number, number]
 }
 
