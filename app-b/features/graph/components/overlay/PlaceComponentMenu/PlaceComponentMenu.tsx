@@ -24,13 +24,14 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
   const [candidates, exactMatchTemplate] = useLibraryTextSearch(userValue, library)
   const [shortcut, shortcutTemplate] = useLibraryShortcuts(userValue, library)
 
-  const autocomplete = exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
-
   const handleEnter = useCallback(() => {
     console.log('ok')
   }, [])
 
-  const offset = useKeyboardSelection(handleEnter, 'down', exactMatchTemplate?.guid, shortcutTemplate?.guid)
+  const offset = useKeyboardSelection(handleEnter, 'down', !!shortcut)
+
+  const autocomplete =
+    offset === 0 && exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
 
   return (
     <OverlayPortal>

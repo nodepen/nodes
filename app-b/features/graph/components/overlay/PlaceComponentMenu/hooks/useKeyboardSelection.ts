@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 /**
  * Collection of event listeners and handlers that manage up/down keyboard selection of options.
@@ -7,36 +7,19 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 export const useKeyboardSelection = (
   onEnter: () => void,
   positiveDirection: 'up' | 'down',
-  textMatchId?: string,
-  shortcutMatchId?: string
+  shortcutMatch: boolean
 ): number => {
   const [offset, setOffset] = useState(0)
 
-  const textMatch = useRef<string>()
-  const shortcutMatch = useRef<string>()
-
   useEffect(() => {
     if (offset === 0) {
-      if (textMatchId) {
-        textMatch.current = textMatchId
-      }
-
-      if (shortcutMatchId) {
-        shortcutMatch.current = shortcutMatchId
-      }
       return
     }
 
-    if (textMatchId && textMatchId !== textMatch.current) {
-      textMatch.current = textMatchId
+    if (shortcutMatch) {
       setOffset(0)
     }
-
-    if (shortcutMatchId && shortcutMatchId !== shortcutMatch.current) {
-      shortcutMatch.current = shortcutMatchId
-      setOffset(0)
-    }
-  }, [textMatchId, shortcutMatchId, offset])
+  }, [offset, shortcutMatch])
 
   const onKeyDown = useCallback(
     (e: KeyboardEvent) => {
@@ -62,7 +45,6 @@ export const useKeyboardSelection = (
           break
         }
       }
-      console.log(e.key)
     },
     [onEnter, positiveDirection]
   )
