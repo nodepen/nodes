@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
@@ -16,6 +16,16 @@ type PlaceComponentMenuProps = {
 export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentMenuProps): React.ReactElement => {
   const { addElement } = useGraphDispatch()
   const { library, registry } = useGraphManager()
+
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!inputRef.current) {
+      return
+    }
+
+    inputRef.current.focus()
+  }, [])
 
   // Only used in large screen context
   const position = useOverlayOffset(screenPosition)
@@ -106,8 +116,8 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
               <div id="inputs" className="w-full h-full absolute z-0">
                 <div className="w-full h-full relative z-0">
                   <input
-                    className="absolute h-full w-full pl-10 left-0 top-0 bg-pale text-lg z-50"
-                    //style={{ width: 'calc(100% - 80px)' }}
+                    className="absolute h-full w-full pl-10 left-0 top-0 bg-transparent text-lg z-50"
+                    ref={inputRef}
                     value={userValue}
                     onChange={(e) => setUserValue(e.target.value)}
                     onKeyDown={(e) => {
@@ -125,7 +135,7 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
                   />
                   <input
                     value={autocomplete}
-                    className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-40 text-lg text-swampgreen pointer-events-none"
+                    className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-40 text-lg text-swampgreen bg-pale pointer-events-none"
                     disabled
                   />
                 </div>
