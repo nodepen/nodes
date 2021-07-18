@@ -30,7 +30,7 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
     console.log('ok')
   }, [])
 
-  const offset = useKeyboardSelection(handleEnter, 'down', !!shortcut)
+  const offset = useKeyboardSelection(handleEnter, 'down', exactMatchTemplate?.guid, shortcutTemplate?.guid)
 
   return (
     <OverlayPortal>
