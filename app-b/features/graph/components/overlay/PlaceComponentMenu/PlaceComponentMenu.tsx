@@ -4,7 +4,7 @@ import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
-import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch } from './hooks'
+import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch, useSelectedComponent } from './hooks'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -33,22 +33,33 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
   const autocomplete =
     offset === 0 && exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
 
+  const selected = useSelectedComponent(candidates, offset, shortcutTemplate)
+
   return (
     <OverlayPortal>
       <OverlayContainer static position={[0, 0]}>
-        <div className="w-full h-full flex flex-col bg-green pointer-events-auto">
-          <div className="w-full h-12 p-2">
-            <div className="w-full h-full relative rounded-md bg-pale overflow-hidden">
+        <div className="w-full h-full flex flex-col pl-2 pr-2 bg-green pointer-events-auto">
+          <div className="w-full h-12 flex items-center">
+            <div className="w-full h-10 relative rounded-md bg-pale overflow-hidden">
               <input
-                className="absolute w-full h-full bg-transparent left-0 top-0 z-50"
+                className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-50 text-lg"
                 value={userValue}
                 onChange={(e) => setUserValue(e.target.value)}
               />
               <input
                 value={autocomplete}
-                className="absolute w-full h-full left-0 top-0 z-40 text-swampgreen"
+                className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-40 text-lg text-swampgreen"
                 disabled
               />
+              <div className="absolute w-10 h-10 left-0 top-0 z-60">
+                <div className="w-full h-full flex items-center justify-center">
+                  {selected ? (
+                    <img src={`data:image/png;base64,${selected.icon}`} />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full border-2 border-green border-dashed" />
+                  )}
+                </div>
+              </div>
               {/* <div className="w-6 h-6 mr-2 rounded-sm bg-swampgreen" />
               <input className="h-6 flex-grow rounded-sm bg-pale" />
               <div className="w-6 h-6 ml-2 rounded-full bg-green" />

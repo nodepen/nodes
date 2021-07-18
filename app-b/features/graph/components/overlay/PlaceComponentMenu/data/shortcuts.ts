@@ -9,7 +9,7 @@ export const shortcuts: ComponentShortcut[] = [
     },
     pattern: '"∙∙∙',
     description: 'Text Panel with provided content (without quotes)',
-    template: 'put-id-here',
+    template: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
     onCreate: (value: string): NodePen.Element<'panel'> => {
       const content = value.replaceAll('"', '')
 
@@ -35,7 +35,7 @@ export const shortcuts: ComponentShortcut[] = [
     },
     pattern: '//∙∙∙',
     description: 'Text Panel with provided content',
-    template: 'put-id-here',
+    template: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
     onCreate: (value: string): NodePen.Element<'panel'> => {
       const content = value.replace('//', '')
 
