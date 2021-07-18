@@ -5,6 +5,7 @@ import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
 import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch, useSelectedComponent } from './hooks'
+import { Grasshopper } from '@/../lib-b/dist'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -30,12 +31,14 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
 
   const offset = useKeyboardSelection(handleEnter, 'down', !!shortcut)
 
+  const [hoverTemplate, setHoverTemplate] = useState<Grasshopper.Component>()
+
+  const selected = useSelectedComponent(candidates, offset, shortcutTemplate, hoverTemplate)
+
   const autocomplete =
-    offset === 0 && exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
-
-  const selected = useSelectedComponent(candidates, offset, shortcutTemplate)
-
-  const [isHoveringOption, setIsHoveringOption] = useState(false)
+    offset === 0 && !hoverTemplate && exactMatchTemplate
+      ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}`
+      : ''
 
   return (
     <OverlayPortal>
@@ -43,8 +46,30 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
         <div className="w-full h-full flex flex-col p-2 pb-12 bg-green pointer-events-auto">
           <div className="w-full h-12 mb-2 flex items-center">
             <div className="w-full h-10 relative rounded-md bg-pale overflow-hidden">
+              <div className="absolute w-10 h-10 left-0 top-0 z-60">
+                <div className="w-full h-full flex items-center justify-center">
+                  {selected ? (
+                    <img src={`data:image/png;base64,${selected.icon}`} />
+                  ) : (
+                    <div className="w-6 h-6 rounded-full border-2 border-green border-dashed" />
+                  )}
+                </div>
+              </div>
+              <div className="absolute h-10 w-20 top-0 right-0 z-60 pointer-events-auto">
+                <div className="inline-block w-10 h-10">
+                  <div className="w-full h-full flex justify-end items-center">
+                    <button className="w-6 h-6 rounded-full border-2 border-darkgreen"></button>
+                  </div>
+                </div>
+                <div className="inline-block w-10 h-10">
+                  <div className="w-full h-full flex justify-center items-center">
+                    <button className="w-6 h-6 rounded-full border-2 border-darkgreen"></button>
+                  </div>
+                </div>
+              </div>
               <input
-                className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-50 text-lg"
+                className="absolute h-full pl-10 bg-transparent left-0 top-0 z-50 text-lg"
+                style={{ width: 'calc(100% - 80px)' }}
                 value={userValue}
                 onChange={(e) => setUserValue(e.target.value)}
                 onKeyDown={(e) => {
@@ -62,18 +87,9 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
               />
               <input
                 value={autocomplete}
-                className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-40 text-lg text-swampgreen"
+                className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-40 text-lg text-swampgreen pointer-events-none"
                 disabled
               />
-              <div className="absolute w-10 h-10 left-0 top-0 z-60">
-                <div className="w-full h-full flex items-center justify-center">
-                  {selected ? (
-                    <img src={`data:image/png;base64,${selected.icon}`} />
-                  ) : (
-                    <div className="w-6 h-6 rounded-full border-2 border-green border-dashed" />
-                  )}
-                </div>
-              </div>
               {/* <div className="w-6 h-6 mr-2 rounded-sm bg-swampgreen" />
               <input className="h-6 flex-grow rounded-sm bg-pale" />
               <div className="w-6 h-6 ml-2 rounded-full bg-green" />
@@ -103,15 +119,15 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
           ) : (
             <div
               className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar"
-              onMouseLeave={() => setIsHoveringOption(false)}
+              onMouseLeave={() => setHoverTemplate(undefined)}
             >
               {candidates.map((component, i) => (
                 <button
                   key={`sort-option-${component.name}-${i}`}
                   className={`${
-                    i === offset && !isHoveringOption ? 'bg-swampgreen' : ''
-                  } w-full h-8 flex items-center rounded-sm hover:bg-swampgreen`}
-                  onMouseEnter={() => setIsHoveringOption(true)}
+                    i === offset && !hoverTemplate ? 'bg-swampgreen' : ''
+                  } w-full h-8 flex items-center rounded-md hover:bg-swampgreen`}
+                  onMouseEnter={() => setHoverTemplate(component)}
                 >
                   <div className="w-10 h-8 flex items-center justify-center">
                     <img width="18" height="18" src={`data:image/png;base64,${component.icon}`} />

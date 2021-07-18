@@ -4,9 +4,10 @@ import { useMemo } from 'react'
 export const useSelectedComponent = (
   candidates: Grasshopper.Component[],
   selection: number,
-  shortcut?: Grasshopper.Component
+  shortcutTemplate?: Grasshopper.Component,
+  hoverTemplate?: Grasshopper.Component
 ): Grasshopper.Component | undefined => {
   return useMemo(() => {
-    return shortcut ?? candidates[selection]
-  }, [candidates, selection, shortcut])
+    return hoverTemplate ?? shortcutTemplate ?? candidates[selection]
+  }, [candidates, selection, shortcutTemplate, hoverTemplate])
 }
