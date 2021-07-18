@@ -6,7 +6,7 @@ export const GraphContainer = (): React.ReactElement => {
   const { registry } = useGraphManager()
 
   return (
-    <div className="w-full h-full flex flex-col justify-start overflow-hidden">
+    <div className="w-full flex-grow flex flex-col justify-start overflow-hidden">
       <Layout.Controls />
       <div
         className="w-full flex-grow relative bg-pale"
