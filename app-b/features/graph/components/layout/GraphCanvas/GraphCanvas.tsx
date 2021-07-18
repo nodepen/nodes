@@ -126,14 +126,19 @@ const GraphCanvas = (): React.ReactElement => {
 
   const longPressTarget = useLongPress(handleLongPress)
 
-  const actions = useCanvasMenuActions()
-
   const handleCloseMenu = useCallback((): void => {
     setShowCanvasMenu(false)
   }, [])
 
   const [showAddComponent, setShowAddComponent] = useState(false)
   const addComponentPosition = useRef<[number, number]>([0, 0])
+
+  const handleAddComponentMenu = useCallback(() => {
+    addComponentPosition.current = longPressActivatedLocation.current
+    setShowAddComponent(true)
+  }, [])
+
+  const actions = useCanvasMenuActions(handleAddComponentMenu)
 
   return (
     <div

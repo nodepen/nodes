@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 
-export const useCanvasMenuActions = (): MenuAction<never>[] => {
+export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<never>[] => {
   const { undo, redo, reset } = useGraphDispatch()
 
   const actions: MenuAction<never>[] = useMemo(() => {
@@ -77,7 +77,23 @@ export const useCanvasMenuActions = (): MenuAction<never>[] => {
         onClick: reset,
       },
       {
-        position: 0,
+        position: 40,
+        icon: (
+          <svg className="w-6 h-6" fill="none" stroke="#093824" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
+          </svg>
+        ),
+        label: <p>Add Component</p>,
+        menu: <></>,
+        onClick: onAddComponent,
+      },
+      {
+        position: 320,
         icon: (
           <svg className="w-6 h-6" fill="none" stroke="#093824" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path
