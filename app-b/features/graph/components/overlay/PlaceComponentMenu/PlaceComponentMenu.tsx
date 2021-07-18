@@ -45,6 +45,18 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
                 className="absolute w-full h-full pl-10 bg-transparent left-0 top-0 z-50 text-lg"
                 value={userValue}
                 onChange={(e) => setUserValue(e.target.value)}
+                onKeyDown={(e) => {
+                  switch (e.key.toLowerCase()) {
+                    case 'arrowdown': {
+                      e.preventDefault()
+                      return
+                    }
+                    case 'arrowup': {
+                      e.preventDefault()
+                      return
+                    }
+                  }
+                }}
               />
               <input
                 value={autocomplete}
