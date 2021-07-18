@@ -1,10 +1,10 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
-import { levenshteinDistance, mapToIds, matchShortcut } from './utils'
+import { useLibraryShortcuts, useLibraryTextSearch } from './hooks'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -16,39 +16,15 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
   const { addElement } = useGraphDispatch()
   const { library, registry } = useGraphManager()
 
-  const libraryByIds = useMemo(() => mapToIds(library ?? []), [library])
-
+  // Only used in large screen context
   const position = useOverlayOffset(screenPosition)
 
   const [userValue, setUserValue] = useState<string>('')
 
-  const shortcut = matchShortcut(userValue)
+  const [candidates, exactMatchTemplate] = useLibraryTextSearch(userValue, library)
+  const [shortcut, shortcutTemplate] = useLibraryShortcuts(userValue, library)
 
-  const libraryNames = useMemo(() => {
-    return library?.map((component) => component.name) ?? []
-  }, [library])
-
-  const sortedCandidates = useMemo(() => {
-    if (!userValue || userValue.length <= 0) {
-      return []
-    }
-
-    const candidates = [...libraryNames]
-
-    return candidates.sort((a, b) => levenshteinDistance(a, userValue) - levenshteinDistance(b, userValue))
-  }, [libraryNames, userValue])
-
-  const exactMatch = sortedCandidates.find((candidate) => candidate.toLowerCase().indexOf(userValue.toLowerCase()) == 0)
-
-  if (exactMatch) {
-    sortedCandidates.splice(
-      sortedCandidates.findIndex((candidate) => candidate === exactMatch),
-      1
-    )
-  }
-
-  const displayCandidates = (exactMatch ? [exactMatch, ...sortedCandidates] : sortedCandidates).slice(0, 15)
-  const displayExactMatch = exactMatch ? `${userValue}${exactMatch.substr(userValue.length)}` : ''
+  const autocomplete = exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
 
   return (
     <OverlayPortal>
@@ -62,7 +38,7 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
                 onChange={(e) => setUserValue(e.target.value)}
               />
               <input
-                value={displayExactMatch}
+                value={autocomplete}
                 className="absolute w-full h-full left-0 top-0 z-40 text-swampgreen"
                 disabled
               />
@@ -90,12 +66,13 @@ export const PlaceComponentMenu = ({ position: screenPosition }: PlaceComponentM
               </div>
               <p className="text-sm whitespace-nowrap">{shortcut.description}</p>
             </div>
-          ) : null}
-          <div className="w-full flex flex-col">
-            {displayCandidates.map((name, i) => (
-              <p key={`sort-option-${name}-${i}`}>{name}</p>
-            ))}
-          </div>
+          ) : (
+            <div className="w-full flex flex-col">
+              {candidates.map((component, i) => (
+                <p key={`sort-option-${component.name}-${i}`}>{component.name}</p>
+              ))}
+            </div>
+          )}
         </div>
       </OverlayContainer>
     </OverlayPortal>
