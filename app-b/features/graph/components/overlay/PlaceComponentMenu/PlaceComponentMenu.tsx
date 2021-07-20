@@ -31,6 +31,25 @@ export const PlaceComponentMenu = ({
     inputRef.current.focus()
   }, [])
 
+  const handleEscape = useCallback(
+    (e: KeyboardEvent): void => {
+      switch (e.key.toLowerCase()) {
+        case 'escape': {
+          onClose()
+        }
+      }
+    },
+    [onClose]
+  )
+
+  useEffect(() => {
+    window.addEventListener('keyup', handleEscape)
+
+    return () => {
+      window.removeEventListener('keyup', handleEscape)
+    }
+  })
+
   // Only used in large screen context
   const position = useOverlayOffset(screenPosition)
   const mapCoordinates = useScreenSpaceToCameraSpace()
