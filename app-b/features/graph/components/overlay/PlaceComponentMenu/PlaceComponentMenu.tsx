@@ -96,7 +96,35 @@ export const PlaceComponentMenu = ({
 
   const body = useMemo(() => {
     if (showFullLibrary) {
-      return <div>Library!</div>
+      return (
+        <div className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar">
+          {Object.entries(libraryByCategory).map(([category, components]) => (
+            <>
+              <div className="w-full sticky top-0 bg-green z-10">
+                <p>{category}</p>
+              </div>
+              <div
+                className="w-full grid"
+                style={{ gap: '6px', gridTemplateColumns: 'repeat(auto-fill, minmax(32px, 1fr))' }}
+              >
+                {components.map((component, i) => (
+                  <button
+                    key={`component-button-${component.name}-${i}`}
+                    className="relative rounded-sm bg-green hover:bg-swampgreen"
+                    style={{ paddingTop: '100%' }}
+                  >
+                    <div className="absolute top-0 right-0 left-0 bottom-0">
+                      <div className="w-full h-full flex items-center justify-center">
+                        <img width="18" height="18" src={`data:image/png;base64,${component.icon}`} />
+                      </div>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </>
+          ))}
+        </div>
+      )
     }
 
     if (shortcut) {
