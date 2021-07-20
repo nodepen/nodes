@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { NodePen } from 'glib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
 import { useGraphManager } from 'context/graph'
 import { useOverlayOffset } from '../hooks'
 import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch, useSelectedComponent } from './hooks'
-import { Grasshopper, NodePen } from '@/../lib-b/dist'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
-import { mapToCategory, mapToOrderedCategory } from './utils'
+import { mapToOrderedCategory } from './utils'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -109,6 +109,9 @@ export const PlaceComponentMenu = ({
                     key={`component-button-${component.name}-${i}`}
                     className="relative rounded-sm bg-green hover:bg-swampgreen"
                     style={{ paddingTop: '100%' }}
+                    onClick={() => {
+                      handlePlaceComponent({ type: 'static-component', ...component })
+                    }}
                   >
                     <div className="absolute top-0 right-0 left-0 bottom-0">
                       <div className="w-full h-full flex items-center justify-center">
@@ -283,7 +286,7 @@ export const PlaceComponentMenu = ({
               <div id="inputs" className="w-full h-full absolute z-0">
                 <div className="w-full h-full relative z-0">
                   <input
-                    className="absolute h-full w-full pl-10 left-0 top-0 bg-transparent text-lg z-50"
+                    className="absolute h-full w-full pl-10 left-0 top-0 bg-transparent text-lg z-50 no-outline"
                     ref={inputRef}
                     value={userValue}
                     onChange={(e) => setUserValue(e.target.value)}

@@ -62,6 +62,10 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
           -ms-overflow-style: none;
           scrollbar-width: none;
         }
+
+        .no-outline {
+          outline: none;
+        }
       `}</style>
     </Provider>
   )
