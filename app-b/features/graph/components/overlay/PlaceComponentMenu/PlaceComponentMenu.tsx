@@ -100,10 +100,16 @@ export const PlaceComponentMenu = ({
         <div className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar">
           {libraryByCategory.map(([category, components]) => (
             <>
-              <div className="w-full sticky top-0 bg-green z-10">
-                <p>{category}</p>
+              <div className="w-full pl-2 h-10 sticky top-0 bg-green z-10">
+                <div className="w-full h-full flex items-center">
+                  <h4
+                    className="text-sm mr-2 text-darkgreen font-semibold"
+                    style={{ lineHeight: '30px' }}
+                  >{`${category[0].toUpperCase()}${category.substring(1)}`}</h4>
+                  <div className="flex-grow border-b-2 border-swampgreen" />
+                </div>
               </div>
-              <div className="w-full grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}>
+              <div className="w-full grid mb-2" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}>
                 {components.map((component, i) => (
                   <button
                     key={`component-button-${component.name}-${i}`}
