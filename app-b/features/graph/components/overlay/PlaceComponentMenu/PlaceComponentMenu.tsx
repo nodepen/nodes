@@ -63,14 +63,10 @@ export const PlaceComponentMenu = ({
 
   const [offset, setOffset] = useKeyboardSelection(handleEnter, 'down', !!shortcut)
 
-  const [hoverTemplate, setHoverTemplate] = useState<Grasshopper.Component>()
-
-  const selected = useSelectedComponent(candidates, offset, shortcutTemplate, hoverTemplate)
+  const selected = useSelectedComponent(candidates, offset, shortcutTemplate)
 
   const autocomplete =
-    offset === 0 && !hoverTemplate && exactMatchTemplate
-      ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}`
-      : ''
+    offset === 0 && exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
 
   return (
     <OverlayPortal>
@@ -162,12 +158,10 @@ export const PlaceComponentMenu = ({
                       switch (e.key.toLowerCase()) {
                         case 'arrowdown': {
                           e.preventDefault()
-                          setHoverTemplate(undefined)
                           return
                         }
                         case 'arrowup': {
                           e.preventDefault()
-                          setHoverTemplate(undefined)
                           return
                         }
                         case 'enter': {
@@ -230,24 +224,17 @@ export const PlaceComponentMenu = ({
           ) : (
             <div
               className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar"
-              onMouseLeave={() => setHoverTemplate(undefined)}
+              // onMouseLeave={() => setHoverTemplate(undefined)}
             >
               {candidates.map((component, i) => (
                 <button
                   key={`sort-option-${component.name}-${i}`}
-                  className={`${i === offset && !hoverTemplate ? 'bg-swampgreen' : ''} ${
-                    hoverTemplate ? 'hover:bg-swampgreen' : ''
-                  } w-full h-8 flex items-center rounded-md`}
+                  className={`${i === offset ? 'bg-swampgreen' : ''} w-full h-8 flex items-center rounded-md`}
                   onMouseEnter={() => {
-                    setHoverTemplate(component)
                     setOffset(i)
                   }}
                   onMouseMove={() => {
-                    if (hoverTemplate) {
-                      return
-                    }
-
-                    setHoverTemplate(component)
+                    setOffset(i)
                   }}
                   onClick={() => {
                     switch (component.category.toLowerCase()) {
