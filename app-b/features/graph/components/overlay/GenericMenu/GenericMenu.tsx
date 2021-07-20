@@ -289,6 +289,22 @@ export const GenericMenu = <T,>({
 
                     generateActionMenu(menu, `${id}-label`, [dx - 24, dy - 24], side)
                   }}
+                  onPointerUp={(e) => {
+                    switch (e.pointerType) {
+                      case 'mouse': {
+                        if (e.button === 1) {
+                          if (onClick) {
+                            onClick(context)
+                            onClose()
+
+                            return
+                          }
+
+                          generateActionMenu(menu, `${id}-label`, [dx - 24, dy - 24], side)
+                        }
+                      }
+                    }
+                  }}
                 >
                   <div className="relative w-full h-full">
                     <div className="absolute left-0 top-0 w-full h-full flex items-center justify-center">{icon}</div>
