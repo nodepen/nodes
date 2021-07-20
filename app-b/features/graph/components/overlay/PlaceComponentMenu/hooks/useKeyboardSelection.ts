@@ -8,8 +8,12 @@ export const useKeyboardSelection = (
   onEnter: () => void,
   positiveDirection: 'up' | 'down',
   shortcutMatch: boolean
-): number => {
+): [offset: number, setOffset: (offset: number) => void] => {
   const [offset, setOffset] = useState(0)
+
+  const handleSetOffset = useCallback((n: number): void => {
+    setOffset(n)
+  }, [])
 
   useEffect(() => {
     if (offset === 0) {
@@ -57,5 +61,5 @@ export const useKeyboardSelection = (
     }
   })
 
-  return offset
+  return [offset, handleSetOffset]
 }

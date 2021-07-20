@@ -61,7 +61,7 @@ export const PlaceComponentMenu = ({
     console.log('ok')
   }, [])
 
-  const offset = useKeyboardSelection(handleEnter, 'down', !!shortcut)
+  const [offset, setOffset] = useKeyboardSelection(handleEnter, 'down', !!shortcut)
 
   const [hoverTemplate, setHoverTemplate] = useState<Grasshopper.Component>()
 
@@ -162,10 +162,12 @@ export const PlaceComponentMenu = ({
                       switch (e.key.toLowerCase()) {
                         case 'arrowdown': {
                           e.preventDefault()
+                          setHoverTemplate(undefined)
                           return
                         }
                         case 'arrowup': {
                           e.preventDefault()
+                          setHoverTemplate(undefined)
                           return
                         }
                         case 'enter': {
@@ -233,10 +235,20 @@ export const PlaceComponentMenu = ({
               {candidates.map((component, i) => (
                 <button
                   key={`sort-option-${component.name}-${i}`}
-                  className={`${
-                    i === offset && !hoverTemplate ? 'bg-swampgreen' : ''
-                  } w-full h-8 flex items-center rounded-md hover:bg-swampgreen`}
-                  onMouseEnter={() => setHoverTemplate(component)}
+                  className={`${i === offset && !hoverTemplate ? 'bg-swampgreen' : ''} ${
+                    hoverTemplate ? 'hover:bg-swampgreen' : ''
+                  } w-full h-8 flex items-center rounded-md`}
+                  onMouseEnter={() => {
+                    setHoverTemplate(component)
+                    setOffset(i)
+                  }}
+                  onMouseMove={() => {
+                    if (hoverTemplate) {
+                      return
+                    }
+
+                    setHoverTemplate(component)
+                  }}
                   onClick={() => {
                     switch (component.category.toLowerCase()) {
                       default: {
