@@ -92,6 +92,79 @@ export const PlaceComponentMenu = ({
   const autocomplete =
     offset === 0 && exactMatchTemplate ? `${userValue}${exactMatchTemplate.name.substr(userValue.length)}` : ''
 
+  const [showFullLibrary, setShowFullLibrary] = useState(false)
+
+  const body = useMemo(() => {
+    if (showFullLibrary) {
+      return <div>Library!</div>
+    }
+
+    if (shortcut) {
+      return (
+        <div className="w-full flex flex-col">
+          <div className="w-full h-10 flex items-center justify-start">
+            <div className="w-10 h-6 flex items-center justify-center">
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fillRule="evenodd"
+                  d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <h4 className="text-sm text-darkgreen font-semibold">Shortcut</h4>
+          </div>
+          <div className="w-full pl-10 flex flex-col">
+            <div className="mb-2 w-full flex items-center">
+              <div className="mr-3 pl-3 pr-3 pt-1 pb-1 bg-white rounded-md border-2 border-dark shadow-osm">
+                <p className="font-panel font-semibold text-xs text-dark">{shortcut.pattern}</p>
+              </div>
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fillRule="evenodd"
+                  d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                  clipRule="evenodd"
+                />
+              </svg>
+              <img width="18" height="18" className="ml-3" src={`data:image/png;base64,${shortcutTemplate.icon}`} />
+              <p className="ml-2 font-panel font-semibold text-sm">{shortcutTemplate?.name.toUpperCase()}</p>
+            </div>
+            <p className="leading-5">{shortcut.description}</p>
+          </div>
+        </div>
+      )
+    }
+
+    return (
+      <div className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar">
+        {candidates.map((component, i) => (
+          <button
+            key={`sort-option-${component.name}-${i}`}
+            className={`${i === offset ? 'bg-swampgreen' : ''} w-full h-8 flex items-center rounded-md`}
+            onMouseEnter={() => {
+              setOffset(i)
+            }}
+            onMouseMove={() => {
+              setOffset(i)
+            }}
+            onClick={() => {
+              switch (component.category.toLowerCase()) {
+                default: {
+                  handlePlaceComponent({ type: 'static-component', ...component })
+                }
+              }
+            }}
+          >
+            <div className="w-10 h-8 flex items-center justify-center">
+              <img width="18" height="18" src={`data:image/png;base64,${component.icon}`} />
+            </div>
+            <p>{component.name}</p>
+          </button>
+        ))}
+      </div>
+    )
+  }, [showFullLibrary, shortcut, shortcutTemplate, candidates, handlePlaceComponent, offset, setOffset])
+
   return (
     <OverlayPortal>
       <OverlayContainer static position={[0, 0]}>
@@ -102,7 +175,10 @@ export const PlaceComponentMenu = ({
                 <div className="w-full h-full relative z-10">
                   <div className="absolute w-10 h-10 left-0 top-0 z-60">
                     <div className="w-full h-full flex items-center justify-center">
-                      <button className="w-8 h-8 flex items-center justify-center rounded-sm bg-pale hover:bg-green pointer-events-auto">
+                      <button
+                        className="w-8 h-8 flex items-center justify-center rounded-sm bg-pale hover:bg-green pointer-events-auto"
+                        onClick={() => setShowFullLibrary((current) => !current)}
+                      >
                         {selected ? (
                           <img src={`data:image/png;base64,${selected.icon}`} />
                         ) : (
@@ -212,69 +288,7 @@ export const PlaceComponentMenu = ({
               </div>
             </div>
           </div>
-          {shortcut ? (
-            <div className="w-full flex flex-col">
-              <div className="w-full h-10 flex items-center justify-start">
-                <div className="w-10 h-6 flex items-center justify-center">
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      fillRule="evenodd"
-                      d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <h4 className="text-sm text-darkgreen font-semibold">Shortcut</h4>
-              </div>
-              <div className="w-full pl-10 flex flex-col">
-                <div className="mb-2 w-full flex items-center">
-                  <div className="mr-3 pl-3 pr-3 pt-1 pb-1 bg-white rounded-md border-2 border-dark shadow-osm">
-                    <p className="font-panel font-semibold text-xs text-dark">{shortcut.pattern}</p>
-                  </div>
-                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-                    <path
-                      fillRule="evenodd"
-                      d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <img width="18" height="18" className="ml-3" src={`data:image/png;base64,${shortcutTemplate.icon}`} />
-                  <p className="ml-2 font-panel font-semibold text-sm">{shortcutTemplate?.name.toUpperCase()}</p>
-                </div>
-                <p className="leading-5">{shortcut.description}</p>
-              </div>
-            </div>
-          ) : (
-            <div
-              className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar"
-              // onMouseLeave={() => setHoverTemplate(undefined)}
-            >
-              {candidates.map((component, i) => (
-                <button
-                  key={`sort-option-${component.name}-${i}`}
-                  className={`${i === offset ? 'bg-swampgreen' : ''} w-full h-8 flex items-center rounded-md`}
-                  onMouseEnter={() => {
-                    setOffset(i)
-                  }}
-                  onMouseMove={() => {
-                    setOffset(i)
-                  }}
-                  onClick={() => {
-                    switch (component.category.toLowerCase()) {
-                      default: {
-                        handlePlaceComponent({ type: 'static-component', ...component })
-                      }
-                    }
-                  }}
-                >
-                  <div className="w-10 h-8 flex items-center justify-center">
-                    <img width="18" height="18" src={`data:image/png;base64,${component.icon}`} />
-                  </div>
-                  <p>{component.name}</p>
-                </button>
-              ))}
-            </div>
-          )}
+          {body}
         </div>
       </OverlayContainer>
     </OverlayPortal>
