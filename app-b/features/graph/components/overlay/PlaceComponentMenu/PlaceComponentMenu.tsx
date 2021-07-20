@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
@@ -7,6 +7,7 @@ import { useOverlayOffset } from '../hooks'
 import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch, useSelectedComponent } from './hooks'
 import { Grasshopper, NodePen } from '@/../lib-b/dist'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
+import { mapToCategory } from './utils'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -20,6 +21,10 @@ export const PlaceComponentMenu = ({
 }: PlaceComponentMenuProps): React.ReactElement => {
   const { addElement } = useGraphDispatch()
   const { library, registry } = useGraphManager()
+
+  const libraryByCategory = useMemo(() => {
+    return mapToCategory(library ?? [])
+  }, [library])
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -97,42 +102,44 @@ export const PlaceComponentMenu = ({
                 <div className="w-full h-full relative z-10">
                   <div className="absolute w-10 h-10 left-0 top-0 z-60">
                     <div className="w-full h-full flex items-center justify-center">
-                      {selected ? (
-                        <img src={`data:image/png;base64,${selected.icon}`} />
-                      ) : (
-                        <div className="w-6 h-6 rounded-full border-2 border-green border-dashed" />
-                      )}
+                      <button className="w-8 h-8 flex items-center justify-center rounded-sm bg-pale hover:bg-green pointer-events-auto">
+                        {selected ? (
+                          <img src={`data:image/png;base64,${selected.icon}`} />
+                        ) : (
+                          <div className="w-6 h-6 rounded-full border-2 border-swampgreen border-dashed" />
+                        )}
+                      </button>
                     </div>
                   </div>
-                  <div className="absolute h-10 w-20 top-0 right-0 z-60">
-                    <div className="inline-block w-10 h-10">
+                  <div className="absolute h-10 w-20 top-0 right-0 z-60 text-right">
+                    <div className="inline-block h-10">
                       <div className="w-full h-full flex justify-end items-center">
                         <button
-                          className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-darkgreen pointer-events-auto"
-                          onClick={() => onClose()}
+                          className="w-8 h-8 flex items-center justify-center rounded-sm bg-pale hover:bg-green pointer-events-auto"
+                          onClick={onClose}
                         >
                           <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                            className="w-6 h-6"
+                            fill="#093824"
+                            viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M6 18L18 6M6 6l12 12"
-                              vectorEffect="non-scaling-stroke"
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                              clipRule="evenodd"
                             />
                           </svg>
                         </button>
                       </div>
                     </div>
-                    <div className="inline-block w-10 h-10">
-                      <div className="w-full h-full flex justify-center items-center">
+                    <div className="inline-block h-10 mr-1">
+                      <div className="w-full h-full flex justify-end items-center">
                         <button
-                          className="w-6 h-6 flex items-center justify-center rounded-full border-2 border-darkgreen overflow-hidden pointer-events-auto"
+                          className={`${
+                            selected ? 'hover:bg-green' : ''
+                          } w-8 h-8 flex items-center justify-center rounded-sm bg-pale pointer-events-auto`}
+                          disabled={!selected}
                           onClick={() => {
                             if (!selected) {
                               return
@@ -146,18 +153,15 @@ export const PlaceComponentMenu = ({
                           }}
                         >
                           <svg
-                            className="w-4 h-4"
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
+                            className="w-6 h-6"
+                            fill={selected ? '#093824' : '#98E2C6'}
+                            viewBox="0 0 20 20"
                             xmlns="http://www.w3.org/2000/svg"
                           >
                             <path
-                              strokeLinecap="round"
-                              strokeLinejoin="round"
-                              strokeWidth={2}
-                              d="M5 13l4 4L19 7"
-                              vectorEffect="non-scaling-stroke"
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z"
+                              clipRule="evenodd"
                             />
                           </svg>
                         </button>
