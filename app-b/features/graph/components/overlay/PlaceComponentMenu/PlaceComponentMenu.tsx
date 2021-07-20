@@ -7,7 +7,7 @@ import { useOverlayOffset } from '../hooks'
 import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch, useSelectedComponent } from './hooks'
 import { Grasshopper, NodePen } from '@/../lib-b/dist'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
-import { mapToCategory } from './utils'
+import { mapToCategory, mapToOrderedCategory } from './utils'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -23,7 +23,7 @@ export const PlaceComponentMenu = ({
   const { library, registry } = useGraphManager()
 
   const libraryByCategory = useMemo(() => {
-    return mapToCategory(library ?? [])
+    return mapToOrderedCategory(library ?? [])
   }, [library])
 
   const inputRef = useRef<HTMLInputElement>(null)
@@ -98,15 +98,12 @@ export const PlaceComponentMenu = ({
     if (showFullLibrary) {
       return (
         <div className="w-full flex-grow flex flex-col overflow-y-auto no-scrollbar">
-          {Object.entries(libraryByCategory).map(([category, components]) => (
+          {libraryByCategory.map(([category, components]) => (
             <>
               <div className="w-full sticky top-0 bg-green z-10">
                 <p>{category}</p>
               </div>
-              <div
-                className="w-full grid"
-                style={{ gap: '6px', gridTemplateColumns: 'repeat(auto-fill, minmax(32px, 1fr))' }}
-              >
+              <div className="w-full grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(48px, 1fr))' }}>
                 {components.map((component, i) => (
                   <button
                     key={`component-button-${component.name}-${i}`}
@@ -115,7 +112,7 @@ export const PlaceComponentMenu = ({
                   >
                     <div className="absolute top-0 right-0 left-0 bottom-0">
                       <div className="w-full h-full flex items-center justify-center">
-                        <img width="18" height="18" src={`data:image/png;base64,${component.icon}`} />
+                        <img src={`data:image/png;base64,${component.icon}`} />
                       </div>
                     </div>
                   </button>
@@ -191,13 +188,22 @@ export const PlaceComponentMenu = ({
         ))}
       </div>
     )
-  }, [showFullLibrary, shortcut, shortcutTemplate, candidates, handlePlaceComponent, offset, setOffset])
+  }, [
+    showFullLibrary,
+    libraryByCategory,
+    shortcut,
+    shortcutTemplate,
+    candidates,
+    handlePlaceComponent,
+    offset,
+    setOffset,
+  ])
 
   return (
     <OverlayPortal>
       <OverlayContainer static position={[0, 0]}>
-        <div className="w-full h-full flex flex-col p-2 pb-12 bg-green pointer-events-auto">
-          <div className="w-full h-12 mb-2 flex items-center">
+        <div className="w-full h-full flex flex-col p-2 pt-0 pb-12 bg-green pointer-events-auto">
+          <div className="w-full h-10 mb-2 mt-2 flex items-center">
             <div className="w-full h-10 relative rounded-md bg-pale overflow-hidden">
               <div id="buttons" className="w-full h-full absolute z-10 pointer-events-none">
                 <div className="w-full h-full relative z-10">
