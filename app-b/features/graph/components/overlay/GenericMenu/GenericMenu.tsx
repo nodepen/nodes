@@ -105,7 +105,7 @@ export const GenericMenu = <T,>({
       >
         <svg width="50" height="50" viewBox="0 0 10 10" className="overflow-visible">
           <mask id="donut">
-            <circle cx="5" cy="5" r="500" fill="white" />
+            <circle cx="5" cy="5" r={process.browser ? window.innerWidth : 250} fill="white" />
             <circle className="donut-inner" cx="5" cy="5" r={r / 5} fill="black" />
           </mask>
           <circle className="donut-outer" cx="5" cy="5" r="500" fill="#98E2C6" mask="url(#donut)" />
