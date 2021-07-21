@@ -5,7 +5,6 @@ import { useEffect, useState, useCallback } from 'react'
  * @remarks For parity with grasshopper, we pass the possible shortcut because any match resets the keyboard offset.
  */
 export const useKeyboardSelection = (
-  onEnter: () => void,
   positiveDirection: 'up' | 'down',
   shortcutMatch: boolean
 ): [offset: number, setOffset: (offset: number) => void] => {
@@ -44,13 +43,9 @@ export const useKeyboardSelection = (
           })
           break
         }
-        case 'enter': {
-          onEnter()
-          break
-        }
       }
     },
-    [onEnter, positiveDirection]
+    [positiveDirection]
   )
 
   useEffect(() => {

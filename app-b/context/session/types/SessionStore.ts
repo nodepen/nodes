@@ -5,6 +5,7 @@ export type SessionStore = {
   token?: string
   session?: string
   device: {
+    breakpoint: 'sm' | 'md'
     iOS: boolean
   }
 }
