@@ -7,6 +7,7 @@ type OverlayContainerProps = {
   /** Position is relative to parent, not page. (Currently content area excluding header.) */
   position: [left: number, top: number]
   static?: boolean
+  pointerEvents?: boolean
   onInit?: (ref: ReactZoomPanPinchRef) => void
   onPanning?: (ref: ReactZoomPanPinchRef, e: TouchEvent | MouseEvent) => void
   onPanningStop?: (ref: ReactZoomPanPinchRef, e: TouchEvent | MouseEvent) => void
@@ -16,6 +17,7 @@ export const OverlayContainer = ({
   children,
   position,
   static: disabled = false,
+  pointerEvents = true,
   onInit,
   onPanning,
   onPanningStop,
@@ -25,7 +27,7 @@ export const OverlayContainer = ({
   const { registry } = useGraphManager()
 
   return (
-    <div className="w-full h-full relative pointer-events-auto" onPointerDown={(e) => e.stopPropagation()}>
+    <div className={`${pointerEvents ? 'pointer-events-auto' : 'pointer-events-none'} w-full h-full relative`}>
       <TransformWrapper
         disabled={disabled}
         initialScale={1}

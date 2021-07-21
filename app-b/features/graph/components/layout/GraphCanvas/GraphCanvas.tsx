@@ -140,6 +140,13 @@ const GraphCanvas = (): React.ReactElement => {
 
   const actions = useCanvasMenuActions(handleAddComponentMenu)
 
+  useEffect(() => {
+    // Hide add-component popup if we begin interacting with a component.
+    if (showAddComponent && (zoomDisabled || cameraMode === 'locked')) {
+      setShowAddComponent(false)
+    }
+  }, [showAddComponent, zoomDisabled, cameraMode])
+
   return (
     <div
       className="w-full h-full relative overflow-hidden"
@@ -161,6 +168,9 @@ const GraphCanvas = (): React.ReactElement => {
         switch (e.button) {
           case 0: {
             //setMode('locked')
+            if (showAddComponent) {
+              return
+            }
 
             const region: NodePen.Element<'region'>['template'] = {
               type: 'region',
