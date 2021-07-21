@@ -20,7 +20,8 @@
     "react-draggable": "4.4.3",
     "react-redux": "7.2.4",
     "react-zoom-pan-pinch": "2.1.1",
-    "redux-undo": "^1.0.1"
+    "redux-undo": "1.0.1",
+    "reselect": "4.0.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^10.2.3",
