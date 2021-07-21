@@ -7,6 +7,7 @@ import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 
 import { useOverlayDispatch, useParameterMenuConnection } from 'features/graph/store/overlay/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useSessionManager } from 'context/session'
+import { useWireMode } from './hooks'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -144,11 +145,18 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const pointerStartTime = useRef(0)
   const pointerStartPosition = useRef<[number, number]>([0, 0])
   const pointerIsMoving = useRef(false)
+  const pointerPrimaryId = useRef<number>()
 
   const [pointerIsWire, setPointerIsWire] = useState(false)
 
+  const wireMode = useWireMode(pointerPrimaryId.current)
+
   const handleWirePointerMove = (e: PointerEvent): void => {
     if (!pointerIsWire) {
+      return
+    }
+
+    if (e.pointerId !== pointerPrimaryId.current) {
       return
     }
 
@@ -162,9 +170,14 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     updateLiveWire({ type: mode === 'input' ? 'to' : 'from', position: [x, y] })
   }
 
-  const handleWirePointerUp = (): void => {
+  const handleWirePointerUp = (e: PointerEvent): void => {
+    if (e.pointerId !== pointerPrimaryId.current) {
+      return
+    }
+
     endLiveWire()
     setPointerIsWire(false)
+    pointerPrimaryId.current = undefined
   }
 
   useEffect(() => {
@@ -197,6 +210,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     pointerStartTime.current = Date.now()
     pointerIsMoving.current = true
+    pointerPrimaryId.current = e.pointerId
 
     setPointerIsWire(false)
 
