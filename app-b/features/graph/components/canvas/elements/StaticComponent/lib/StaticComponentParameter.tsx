@@ -175,7 +175,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       return
     }
 
-    endLiveWire()
+    endLiveWire(wireMode)
     setPointerIsWire(false)
     pointerPrimaryId.current = undefined
   }

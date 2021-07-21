@@ -1,4 +1,6 @@
 import * as Payload from './Payload'
 
-export type { GraphState } from './GraphState'
 export { Payload }
+
+export type { GraphState } from './GraphState'
+export type { WireMode } from './WireMode'

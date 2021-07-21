@@ -1,7 +1,7 @@
 import { NodePen } from 'glib'
 import { useAppDispatch } from '$'
 import { graphActions } from '../graphSlice'
-import { Payload } from '../types'
+import { Payload, WireMode } from '../types'
 import { ActionCreators } from 'redux-undo'
 import { GraphMode } from '../types/GraphMode'
 
@@ -24,7 +24,7 @@ export const useGraphDispatch = () => {
     updateLiveWire: (data: Payload.UpdateLiveWirePayload) => dispatch(graphActions.updateLiveWire(data)),
     captureLiveWire: (data: Payload.CaptureLiveWirePayload) => dispatch(graphActions.captureLiveWire(data)),
     releaseLiveWire: () => dispatch(graphActions.releaseLiveWire()),
-    endLiveWire: () => dispatch(graphActions.endLiveWire()),
+    endLiveWire: (mode: WireMode) => dispatch(graphActions.endLiveWire(mode)),
     setProvisionalWire: (data: Payload.ProvisionalWirePayload) => dispatch(graphActions.setProvisionalWire(data)),
     clearProvisionalWire: () => dispatch(graphActions.clearProvisionalWire()),
     setMode: (mode: GraphMode) => dispatch(graphActions.setMode(mode)),

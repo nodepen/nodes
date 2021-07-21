@@ -1,7 +1,7 @@
 import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
-import { GraphState } from './types'
+import { GraphState, WireMode } from './types'
 import { newGuid, initializeParameters, findAttachedWires } from '../../utils'
 import {
   AddElementPayload,
@@ -396,8 +396,10 @@ export const graphSlice = createSlice({
     releaseLiveWire: (state: GraphState) => {
       state.registry.wire.capture = undefined
     },
-    endLiveWire: (state: GraphState) => {
+    endLiveWire: (state: GraphState, action: PayloadAction<WireMode>) => {
       delete state.elements['live-wire']
+
+      console.log(action.payload)
 
       // Make connection if capture exists, otherwise stop connection attempt
       if (!state.registry.wire.capture) {
