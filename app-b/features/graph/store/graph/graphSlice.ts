@@ -270,6 +270,118 @@ export const graphSlice = createSlice({
 
       state.elements[wireId] = wire
     },
+    startLiveWires: (state: GraphState, action: PayloadAction<NodePen.Element<'wire'>['template'][]>) => {
+      action.payload.forEach((template) => {
+        if (template.mode !== 'live') {
+          return
+        }
+
+        const id = newGuid()
+
+        const { elementId, parameterId } = template?.from ?? template.to
+
+        const { current } = state.elements[elementId]
+
+        if (!current || !assert.element.isGripElement(current)) {
+          // No anchors
+          return
+        }
+
+        const [x, y] = current.position
+        const [dx, dy] = current.anchors[parameterId]
+
+        const [wx, wy] = [x + dx, y + dy]
+
+        const wire: NodePen.Element<'wire'> = {
+          id,
+          current: {
+            from: [wx, wy],
+            to: [wx, wy],
+            position: [0, 0],
+            dimensions: {
+              width: 0,
+              height: 0,
+            },
+          },
+          template,
+        }
+
+        state.elements[id] = wire
+      })
+    },
+    updateLiveWires: (state: GraphState, action: PayloadAction<[x: number, y: number]>) => {
+      const position = action.payload
+
+      // If wires are currently captured, do no work
+      if (state.registry.wire.capture) {
+        return
+      }
+
+      const wires = Object.values(state.elements).filter(
+        (element) => element.template.type === 'wire' && element.template.mode === 'live'
+      )
+
+      wires.forEach((wire) => {
+        const { current, template } = wire as NodePen.Element<'wire'>
+
+        if (template.mode !== 'live') {
+          return
+        }
+
+        const updateTarget = template.from ? 'to' : 'from'
+
+        current[updateTarget] = position
+      })
+    },
+    captureLiveWires: (state: GraphState, action: PayloadAction<CaptureLiveWirePayload>) => {
+      const { type, elementId, parameterId } = action.payload
+
+      const captureType = type === 'input' ? 'to' : 'from'
+
+      const wires = Object.values(state.elements).filter(
+        (element) => element.template.type === 'wire' && element.template.mode === 'live'
+      )
+
+      if (wires.length === 0) {
+        return
+      }
+
+      wires.forEach((wire) => {
+        const { current, template } = wire as NodePen.Element<'wire'>
+
+        if (template.mode !== 'live') {
+          return
+        }
+
+        if (template[captureType]) {
+          // Cannot attempt a connection between two inputs or two outputs
+          return
+        }
+
+        const captureElement = state.elements[elementId]
+
+        if (!captureElement) {
+          return
+        }
+
+        if (!assert.element.isGripElement(captureElement.current)) {
+          return
+        }
+
+        const [x, y] = captureElement.current.position
+        const [dx, dy] = captureElement.current.anchors[parameterId]
+
+        // Declare capture
+        state.registry.wire.capture = { elementId, parameterId }
+
+        // Update wire position
+        const updateTarget = template.from ? 'to' : 'from'
+        current[updateTarget] = [x + dx, y + dy]
+      })
+    },
+    releaseLiveWires: (state: GraphState) => {
+      state.registry.wire.capture = undefined
+    },
     startLiveWire: (state: GraphState, action: PayloadAction<StartLiveWirePayload>) => {
       const { type, elementId, parameterId } = action.payload
 

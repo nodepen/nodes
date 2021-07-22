@@ -15,7 +15,9 @@ export type ElementTemplate = {
     },
     'wire': {
         type: 'wire'
-        mode: 'data' | 'live' | 'provisional'
+    } & (
+    | {
+        mode: 'data' | 'provisional'
         from: {
             elementId: string
             parameterId: string
@@ -24,7 +26,25 @@ export type ElementTemplate = {
             elementId: string
             parameterId: string
         }
-    },
+    }
+    | {
+        mode: 'live'
+        transpose: boolean
+        from: undefined
+        to: {
+            elementId: string
+            parameterId: string
+        }
+    }
+    | {
+        mode: 'live'
+        transpose: boolean
+        from: {
+            elementId: string
+            parameterId: string
+        }
+        to: undefined
+    }),
     'region': {
         type: 'region'
         mode: 'group' | 'selection'
