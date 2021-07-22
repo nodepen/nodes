@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
-import { overlayReducer } from 'features/graph/store/overlay'
 import { cameraReducer } from 'features/graph/store/camera'
 import { graphReducer, graphActions } from 'features/graph/store/graph'
+import { hotkeyReducer } from 'features/graph/store/hotkey'
+import { overlayReducer } from 'features/graph/store/overlay'
 import undoable, { excludeAction } from 'redux-undo'
 
 export const store = configureStore({
@@ -25,6 +26,7 @@ export const store = configureStore({
         graphActions.registerElementAnchor.type,
       ]),
     }),
+    hotkey: hotkeyReducer,
     overlay: overlayReducer,
   },
 })
