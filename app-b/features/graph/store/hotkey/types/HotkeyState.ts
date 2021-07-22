@@ -1,1 +1,4 @@
-export type HotkeyState = { [key: string]: boolean | undefined }
+export type HotkeyState = {
+  Shift: boolean
+  Control: boolean
+}

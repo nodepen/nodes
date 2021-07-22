@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
 import { GraphManager } from 'context/graph'
+import { KeyboardObserver } from 'features/common/observer'
 
 const GrasshopperEditor: NextPage = () => {
   return (
@@ -15,6 +16,7 @@ const GrasshopperEditor: NextPage = () => {
           <Graph.Container />
         </GraphManager>
       </Layout.Editor>
+      <KeyboardObserver />
     </>
   )
 }

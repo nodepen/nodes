@@ -3,7 +3,10 @@ import { RootState } from '$'
 import { HotkeyState, Payload } from './types'
 import { createSelector } from 'reselect'
 
-const initialState: HotkeyState = {}
+const initialState: HotkeyState = {
+  Shift: false,
+  Control: false,
+}
 
 export const hotkeySlice = createSlice({
   name: 'hotkey',
@@ -12,14 +15,16 @@ export const hotkeySlice = createSlice({
     setKey: (state: HotkeyState, action: PayloadAction<Payload.SetKeyPayload>) => {
       const { key, pressed } = action.payload
 
-      const watched = ['Space', 'Control', 'Shift']
-
-      if (!watched.includes(key)) {
-        console.log(`Not observing ${key}.`)
-        return
+      switch (key) {
+        case 'Shift':
+        case 'Control':
+          state[key] = pressed
+          break
+        default:
+          if (process.env.NEXT_PUBLIC_DEBUG) {
+            console.log(`😔😔😔 Not observing ${key}`)
+          }
       }
-
-      state[key] = pressed
     },
   },
 })
@@ -29,7 +34,7 @@ const selectShift = (state: RootState): boolean => !!state.hotkey['Shift']
 const selectControl = (state: RootState): boolean => !!state.hotkey['Control']
 
 const selectWireMode = createSelector(selectShift, selectControl, (shift, control) =>
-  shift ? 'add' : control ? 'remove' : 'default'
+  shift && control ? 'default' : shift ? 'add' : control ? 'remove' : 'default'
 )
 
 export const hotkeySelectors = {

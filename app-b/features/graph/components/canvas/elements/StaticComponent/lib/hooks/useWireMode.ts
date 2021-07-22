@@ -1,9 +1,12 @@
 import { useState, useEffect, useCallback } from 'react'
+import { useWireMode as useHotkeyWireMode } from 'features/graph/store/hotkey/hooks'
 
 type PointerMode = 'default' | 'add' | 'remove'
 
 export const useWireMode = (primaryPointerId?: number): PointerMode => {
   const [mode, setMode] = useState<PointerMode>('default')
+
+  const hotkeyMode = useHotkeyWireMode()
 
   const nextMode = useCallback((current: PointerMode): PointerMode => {
     const next: { [key in PointerMode]: PointerMode } = {
@@ -53,5 +56,5 @@ export const useWireMode = (primaryPointerId?: number): PointerMode => {
     return 'default'
   }
 
-  return mode
+  return hotkeyMode === 'default' ? mode : hotkeyMode
 }
