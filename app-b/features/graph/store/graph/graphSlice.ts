@@ -401,7 +401,7 @@ export const graphSlice = createSlice({
 
       // Update connections based on current mode
       wires.forEach((wire) => {
-        const { current, template } = wire as NodePen.Element<'wire'>
+        const { template } = wire as NodePen.Element<'wire'>
 
         if (template.mode !== 'live') {
           return
@@ -417,6 +417,7 @@ export const graphSlice = createSlice({
         // Declare incoming connection
         const [from, to] = [template?.from ?? capture, template?.to ?? capture]
 
+        // Verify `toElement` is a `GraphElement` with sources
         const toElement = state.elements[to.elementId]
 
         if (!toElement) {
@@ -427,23 +428,73 @@ export const graphSlice = createSlice({
           return
         }
 
+        if (!toElement.current.sources[to.parameterId]) {
+          // This should not happen
+          console.log(`🐍 Sources array did not exist for a valid connection attempt.`)
+          toElement.current.sources[to.parameterId] = []
+        }
+
         const [fx, fy] = getAnchorCoordinates(state, from.elementId, from.parameterId)
         const [tx, ty] = getAnchorCoordinates(state, to.elementId, to.parameterId)
 
         switch (mode) {
+          // Replace all `toElement` sources with new connection only
           case 'default': {
             break
           }
+          // Merge new connection with any existing ones
           case 'add': {
+            // Update `toElement` parameter sources
+            const sources = toElement.current.sources[to.parameterId]
+
+            if (
+              sources.find(
+                (source) =>
+                  source.elementInstanceId === from.elementId && source.parameterInstanceId === from.parameterId
+              )
+            ) {
+              // Connection already exists
+              // TODO: Perform this check on capture?
+              return
+            }
+
+            // Create wire for connection
+            const id = newGuid()
+
+            const connectionWire: NodePen.Element<'wire'> = {
+              id,
+              current: {
+                from: [fx, fy],
+                to: [tx, ty],
+                position: [0, 0],
+                dimensions: {
+                  width: 0,
+                  height: 0,
+                },
+              },
+              template: {
+                type: 'wire',
+                mode: 'data',
+                from,
+                to,
+              },
+            }
+
+            state.elements[id] = connectionWire
             break
           }
+          // Remove any connections that match the incoming one
           case 'remove': {
             break
           }
+          // Remove original connections and merge new connections at new location
           case 'transpose': {
             break
           }
         }
+
+        // Delete live wire
+        delete state.elements[wire.id]
       })
     },
     startLiveWire: (state: GraphState, action: PayloadAction<StartLiveWirePayload>) => {
