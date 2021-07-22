@@ -1,7 +1,7 @@
 import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
-import { GraphState, WireMode } from './types'
+import { GraphState, Payload, WireMode } from './types'
 import { newGuid, initializeParameters, findAttachedWires } from '../../utils'
 import {
   AddElementPayload,
@@ -16,6 +16,7 @@ import {
   UpdateLiveWirePayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
+import { getAnchorCoordinates } from './utils'
 
 const initialState: GraphState = {
   elements: {},
@@ -270,8 +271,13 @@ export const graphSlice = createSlice({
 
       state.elements[wireId] = wire
     },
-    startLiveWires: (state: GraphState, action: PayloadAction<NodePen.Element<'wire'>['template'][]>) => {
-      action.payload.forEach((template) => {
+    startLiveWires: (state: GraphState, action: PayloadAction<Payload.StartLiveWiresPayload>) => {
+      const { templates, origin } = action.payload
+
+      state.registry.wire.capture = undefined
+      state.registry.wire.origin = origin
+
+      templates.forEach((template) => {
         if (template.mode !== 'live') {
           return
         }
@@ -381,6 +387,64 @@ export const graphSlice = createSlice({
     },
     releaseLiveWires: (state: GraphState) => {
       state.registry.wire.capture = undefined
+    },
+    endLiveWires: (state: GraphState, action: PayloadAction<WireMode>) => {
+      const wires = Object.values(state.elements).filter(
+        (element) => element.template.type === 'wire' && element.template.mode === 'live'
+      )
+
+      if (!state.registry.wire.capture) {
+        // Connection not made, end and remove live wires
+        wires.map((wire) => wire.id).forEach((id) => delete state.elements[id])
+        return
+      }
+
+      // Update connections based on current mode
+      wires.forEach((wire) => {
+        const { current, template } = wire as NodePen.Element<'wire'>
+
+        if (template.mode !== 'live') {
+          return
+        }
+
+        if (!state.registry.wire.capture) {
+          return
+        }
+
+        const mode = template.transpose ? 'transpose' : action.payload
+        const capture = state.registry.wire.capture
+
+        // Declare incoming connection
+        const [from, to] = [template?.from ?? capture, template?.to ?? capture]
+
+        const toElement = state.elements[to.elementId]
+
+        if (!toElement) {
+          return
+        }
+
+        if (!assert.element.isGraphElement(toElement.current)) {
+          return
+        }
+
+        const [fx, fy] = getAnchorCoordinates(state, from.elementId, from.parameterId)
+        const [tx, ty] = getAnchorCoordinates(state, to.elementId, to.parameterId)
+
+        switch (mode) {
+          case 'default': {
+            break
+          }
+          case 'add': {
+            break
+          }
+          case 'remove': {
+            break
+          }
+          case 'transpose': {
+            break
+          }
+        }
+      })
     },
     startLiveWire: (state: GraphState, action: PayloadAction<StartLiveWirePayload>) => {
       const { type, elementId, parameterId } = action.payload

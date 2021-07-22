@@ -1,0 +1,1 @@
+export { getAnchorCoordinates } from './getAnchorCoordinates'

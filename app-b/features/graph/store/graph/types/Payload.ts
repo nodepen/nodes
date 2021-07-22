@@ -59,6 +59,15 @@ export type StartLiveWirePayload = {
   parameterId: string
 }
 
+export type StartLiveWiresPayload = {
+  templates: NodePen.Element<'wire'>['template'][]
+  /** Where operation began. Only relevant to `transpose` actions. */
+  origin: {
+    elementId: string
+    parameterId: string
+  }
+}
+
 export type UpdateLiveWirePayload = {
   type: 'from' | 'to'
   position: [x: number, y: number]
