@@ -73,9 +73,11 @@ export type UpdateLiveWirePayload = {
   position: [x: number, y: number]
 }
 
-export type CaptureLiveWirePayload = {
+export type CaptureLiveWiresPayload = {
   /** Type of parameter attempting capture */
   type: 'input' | 'output'
   elementId: string
   parameterId: string
 }
+
+export type CaptureLiveWirePayload = CaptureLiveWiresPayload

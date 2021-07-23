@@ -30,6 +30,10 @@ export type ElementTemplate = {
     | {
         mode: 'live'
         transpose: boolean
+        initial: {
+            mode: 'default' | 'add' | 'remove'
+            pointer: number
+        }
         from: undefined
         to: {
             elementId: string
@@ -39,6 +43,10 @@ export type ElementTemplate = {
     | {
         mode: 'live'
         transpose: boolean
+        initial: {
+            mode: 'default' | 'add' | 'remove'
+            pointer: number
+        }
         from: {
             elementId: string
             parameterId: string
