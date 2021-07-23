@@ -16,7 +16,7 @@ import {
   UpdateLiveWirePayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
-import { getAnchorCoordinates } from './utils'
+import { getAnchorCoordinates, getConnectedWires } from './utils'
 
 const initialState: GraphState = {
   elements: {},
@@ -31,6 +31,10 @@ const initialState: GraphState = {
     wire: {
       source: {
         type: 'input',
+        elementId: 'unset',
+        parameterId: 'unset',
+      },
+      origin: {
         elementId: 'unset',
         parameterId: 'unset',
       },
@@ -115,6 +119,8 @@ export const graphSlice = createSlice({
       if (!state.elements[action.payload]) {
         return
       }
+
+      // TODO: Remove connections on graph elements
 
       delete state.elements[action.payload]
     },
@@ -440,6 +446,79 @@ export const graphSlice = createSlice({
         switch (mode) {
           // Replace all `toElement` sources with new connection only
           case 'default': {
+            // Identify all existing connections at `toElement` parameter
+            const [, existingConnections] = getConnectedWires(state, to.elementId, to.parameterId)
+
+            existingConnections.forEach((connectionId) => {
+              const connectionWire = state.elements[connectionId]
+
+              if (!assert.element.isWire(connectionWire)) {
+                console.log(`🐍 Found an existing 'wire' connection that is not actually a wire!`)
+                return
+              }
+
+              if (connectionWire.template.mode === 'live') {
+                console.log(`🐍 Found an existing connection with a live wire we failed to clean up!`)
+                delete state.elements[connectionId]
+                return
+              }
+
+              const { from, to } = connectionWire.template
+
+              // Filter this source out of the `toElement` sources
+              if (!assert.element.isGraphElement(toElement.current)) {
+                return
+              }
+
+              toElement.current.sources[to.parameterId] = toElement.current.sources[to.parameterId].filter(
+                (source) =>
+                  source.elementInstanceId !== from.elementId && source.parameterInstanceId !== from.parameterId
+              )
+
+              // Delete this wire connection
+              delete state.elements[connectionId]
+            })
+
+            // Add new connection to `toElement` sources
+            if (
+              toElement.current.sources[to.parameterId].find(
+                (source) =>
+                  source.elementInstanceId === from.elementId && source.parameterInstanceId === from.parameterId
+              )
+            ) {
+              // Connection already exists
+              // TODO: Perform this check on capture?
+              return
+            }
+
+            toElement.current.sources[to.parameterId].push({
+              elementInstanceId: from.elementId,
+              parameterInstanceId: from.parameterId,
+            })
+
+            // Create a new wire for this connection
+            const newConnectionId = newGuid()
+
+            const newConnectionWire: NodePen.Element<'wire'> = {
+              id: newConnectionId,
+              current: {
+                from: [fx, fy],
+                to: [tx, ty],
+                position: [0, 0],
+                dimensions: {
+                  width: 0,
+                  height: 0,
+                },
+              },
+              template: {
+                type: 'wire',
+                mode: 'data',
+                from,
+                to,
+              },
+            }
+
+            state.elements[newConnectionId] = newConnectionWire
             break
           }
           // Merge new connection with any existing ones
