@@ -147,7 +147,7 @@ export const graphSlice = createSlice({
           return
         }
 
-        const parameter = wire.template.from.parameterId
+        const parameter = wire.template.from!.parameterId
 
         const data = element.current
 
@@ -168,7 +168,7 @@ export const graphSlice = createSlice({
           return
         }
 
-        const parameter = wire.template.to.parameterId
+        const parameter = wire.template.to!.parameterId
 
         const data = element.current
 
@@ -617,7 +617,7 @@ export const graphSlice = createSlice({
             elementId: 'unset',
             parameterId: 'unset',
           },
-        },
+        } as any,
         current: {
           from: [wx, wy],
           to: [wx, wy],
