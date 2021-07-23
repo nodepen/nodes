@@ -1,3 +1,4 @@
+import LiveWire from './LiveWire'
 import Wire from './Wire'
 
-export { Wire }
+export { LiveWire, Wire }

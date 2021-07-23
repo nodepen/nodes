@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { assert } from 'glib'
 import { useGraphElements } from '../../store/graph/hooks'
-import { StaticComponent, Wire, SelectionRegion } from './elements'
+import { StaticComponent, LiveWire, Wire, SelectionRegion } from './elements'
 
 const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
@@ -41,7 +41,14 @@ const ElementsContainer = (): React.ReactElement => {
               return null
             }
 
-            return <Wire key={`graph-element-wire-${el.id}`} wire={el} />
+            switch (el.template.mode) {
+              case 'live': {
+                return <LiveWire key={`graph-element-wire-${el.id}`} wire={el} />
+              }
+              default: {
+                return <Wire key={`graph-element-wire-${el.id}`} wire={el} />
+              }
+            }
           }
           case 'region': {
             if (!assert.element.isRegion(el)) {

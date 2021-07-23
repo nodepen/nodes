@@ -7,7 +7,6 @@ import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 
 import { useOverlayDispatch, useParameterMenuConnection } from 'features/graph/store/overlay/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useSessionManager } from 'context/session'
-import { useWireMode } from './hooks'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -26,11 +25,14 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const {
     registerElementAnchor,
     setProvisionalWire,
-    startLiveWire,
-    updateLiveWire,
-    endLiveWire,
-    captureLiveWire,
-    releaseLiveWire,
+    // startLiveWire,
+    // updateLiveWire,
+    // endLiveWire,
+    startLiveWires,
+    captureLiveWires,
+    releaseLiveWires,
+    // captureLiveWire,
+    // releaseLiveWire,
   } = useGraphDispatch()
   const graphMode = useGraphMode()
 
@@ -149,50 +151,50 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   const [pointerIsWire, setPointerIsWire] = useState(false)
 
-  const wireMode = useWireMode(pointerPrimaryId.current)
+  // const wireMode = useWireMode(pointerPrimaryId.current)
 
-  const handleWirePointerMove = (e: PointerEvent): void => {
-    if (!pointerIsWire) {
-      return
-    }
+  // const handleWirePointerMove = (e: PointerEvent): void => {
+  //   if (!pointerIsWire) {
+  //     return
+  //   }
 
-    if (e.pointerId !== pointerPrimaryId.current) {
-      return
-    }
+  //   if (e.pointerId !== pointerPrimaryId.current) {
+  //     return
+  //   }
 
-    const { pageX, pageY } = e
+  //   const { pageX, pageY } = e
 
-    const [x, y] = screenSpaceToCameraSpace(
-      { offset: [0, 48 + 36], position: [pageX, pageY] },
-      { zoom: cameraZoom, position: cameraPosition }
-    )
+  //   const [x, y] = screenSpaceToCameraSpace(
+  //     { offset: [0, 48 + 36], position: [pageX, pageY] },
+  //     { zoom: cameraZoom, position: cameraPosition }
+  //   )
 
-    updateLiveWire({ type: mode === 'input' ? 'to' : 'from', position: [x, y] })
-  }
+  //   updateLiveWire({ type: mode === 'input' ? 'to' : 'from', position: [x, y] })
+  // }
 
-  const handleWirePointerUp = (e: PointerEvent): void => {
-    if (e.pointerId !== pointerPrimaryId.current) {
-      return
-    }
+  // const handleWirePointerUp = (e: PointerEvent): void => {
+  //   if (e.pointerId !== pointerPrimaryId.current) {
+  //     return
+  //   }
 
-    endLiveWire(wireMode)
-    setPointerIsWire(false)
-    pointerPrimaryId.current = undefined
-  }
+  //   endLiveWire(wireMode)
+  //   setPointerIsWire(false)
+  //   pointerPrimaryId.current = undefined
+  // }
 
-  useEffect(() => {
-    if (!pointerIsWire) {
-      return
-    }
+  // useEffect(() => {
+  //   if (!pointerIsWire) {
+  //     return
+  //   }
 
-    window.addEventListener('pointermove', handleWirePointerMove)
-    window.addEventListener('pointerup', handleWirePointerUp)
+  //   window.addEventListener('pointermove', handleWirePointerMove)
+  //   window.addEventListener('pointerup', handleWirePointerUp)
 
-    return () => {
-      window.removeEventListener('pointermove', handleWirePointerMove)
-      window.removeEventListener('pointerup', handleWirePointerUp)
-    }
-  })
+  //   return () => {
+  //     window.removeEventListener('pointermove', handleWirePointerMove)
+  //     window.removeEventListener('pointerup', handleWirePointerUp)
+  //   }
+  // })
 
   const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>): void => {
     e.stopPropagation()
@@ -244,11 +246,46 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
     if (!pointerIsWire && (dx > 20 || dy > 20)) {
-      setPointerIsWire(true)
-      setMode('idle')
-      pointerIsMoving.current = false
+      const map = {
+        from:
+          mode === 'output'
+            ? {
+                elementId,
+                parameterId,
+              }
+            : undefined,
+        to:
+          mode === 'output'
+            ? undefined
+            : {
+                elementId,
+                parameterId,
+              },
+      } as any
+      startLiveWires({
+        templates: [
+          {
+            type: 'wire',
+            mode: 'live',
+            initial: {
+              pointer: e.pointerId,
+              mode: 'default',
+            },
+            transpose: false,
+            ...map,
+          },
+        ],
+        origin: {
+          elementId,
+          parameterId,
+        },
+      })
 
-      startLiveWire({ type: mode, elementId, parameterId })
+      // setPointerIsWire(true)
+      // setMode('idle')
+      // pointerIsMoving.current = false
+
+      // startLiveWire({ type: mode, elementId, parameterId })
 
       if (!gripRef.current) {
         return
@@ -258,44 +295,44 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     }
   }
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLButtonElement>): void => {
-    if (!device.iOS) {
-      return
-    }
+  // const handleTouchMove = (e: React.TouchEvent<HTMLButtonElement>): void => {
+  //   if (!device.iOS) {
+  //     return
+  //   }
 
-    e.preventDefault()
+  //   e.preventDefault()
 
-    if (e.touches.length < 1) {
-      return
-    }
+  //   if (e.touches.length < 1) {
+  //     return
+  //   }
 
-    const { screenX: ex, screenY: ey } = e.touches[0]
-    const [sx, sy] = pointerStartPosition.current
+  //   const { screenX: ex, screenY: ey } = e.touches[0]
+  //   const [sx, sy] = pointerStartPosition.current
 
-    console.log(ex.toString())
+  //   console.log(ex.toString())
 
-    const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
+  //   const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
-    if (!pointerIsWire && (dx > 20 || dy > 20)) {
-      setPointerIsWire(true)
-      setMode('idle')
-      pointerIsMoving.current = false
+  //   if (!pointerIsWire && (dx > 20 || dy > 20)) {
+  //     setPointerIsWire(true)
+  //     setMode('idle')
+  //     pointerIsMoving.current = false
 
-      startLiveWire({ type: mode, elementId, parameterId })
-    }
-  }
+  //     startLiveWire({ type: mode, elementId, parameterId })
+  //   }
+  // }
 
-  const handlePointerUp = (): void => {
-    pointerIsMoving.current = false
-    setMode('idle')
-  }
+  // const handlePointerUp = (): void => {
+  //   pointerIsMoving.current = false
+  //   setMode('idle')
+  // }
 
   const handlePointerEnter = (): void => {
     if (pointerIsMoving.current) {
       return
     }
 
-    captureLiveWire({ type: mode, elementId, parameterId })
+    captureLiveWires({ type: mode, elementId, parameterId })
   }
 
   const handlePointerLeave = (): void => {
@@ -303,7 +340,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       return
     }
 
-    releaseLiveWire()
+    releaseLiveWires()
   }
 
   return (
@@ -314,9 +351,9 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         onMouseDown={handleMouseDown}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handlePointerUp}
+        // onPointerUp={handlePointerUp}
+        // onTouchMove={handleTouchMove}
+        // onTouchEnd={handlePointerUp}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
         style={{ touchAction: 'none' }}
