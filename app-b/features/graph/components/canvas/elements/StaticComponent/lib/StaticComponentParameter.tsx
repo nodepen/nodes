@@ -1,5 +1,5 @@
 import { NodePen, Grasshopper } from 'glib'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { useDebugRender } from '@/hooks'
 import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
@@ -149,7 +149,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const pointerIsMoving = useRef(false)
   const pointerPrimaryId = useRef<number>()
 
-  const [pointerIsWire, setPointerIsWire] = useState(false)
+  // const [pointerIsWire, setPointerIsWire] = useState(false)
 
   // const wireMode = useWireMode(pointerPrimaryId.current)
 
@@ -214,7 +214,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     pointerIsMoving.current = true
     pointerPrimaryId.current = e.pointerId
 
-    setPointerIsWire(false)
+    // setPointerIsWire(false)
 
     const { pageX, pageY } = e
 
@@ -241,11 +241,11 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     const { pageX: ex, pageY: ey } = e
     const [sx, sy] = pointerStartPosition.current
 
-    console.log(ex.toString())
+    // console.log(ex.toString())
 
     const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
-    if (!pointerIsWire && (dx > 20 || dy > 20)) {
+    if (dx > 20 || dy > 20) {
       const map = {
         from:
           mode === 'output'
@@ -286,6 +286,9 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       // pointerIsMoving.current = false
 
       // startLiveWire({ type: mode, elementId, parameterId })
+
+      pointerIsMoving.current = false
+      setMode('idle')
 
       if (!gripRef.current) {
         return
