@@ -4,8 +4,7 @@ import { useDebugRender } from '@/hooks'
 import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
-import { useStore } from 'react-redux'
-import { store as Store } from '$'
+import { useAppStore } from '$'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -17,7 +16,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const { current, id: elementId } = parent
   const { name, nickname, id: parameterId } = template
 
-  const store = useStore() as typeof Store
+  const store = useAppStore()
 
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
