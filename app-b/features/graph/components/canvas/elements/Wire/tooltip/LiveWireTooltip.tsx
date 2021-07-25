@@ -1,14 +1,18 @@
-import { useState, useEffect, useCallback } from 'react'
-import { WireMode } from '@/features/graph/store/graph/types'
-import { MouseTooltip } from '@/features/graph/components/overlay'
+import { useCallback } from 'react'
+import { WireMode } from 'features/graph/store/graph/types'
+import { PointerTooltip } from 'features/graph/components/overlay'
 
-export const LiveWireTooltip = (
-  initialPosition: [number, number],
-  initialPointer: number,
+type LiveWireTooltipProps = {
+  initialPosition: [number, number]
+  initialPointer: number
   mode: WireMode | 'transpose'
-): React.ReactElement => {
-  const [position, setPosition] = useState(initialPosition)
+}
 
+export const LiveWireTooltip = ({
+  initialPosition,
+  initialPointer,
+  mode,
+}: LiveWireTooltipProps): React.ReactElement => {
   const getTooltip = useCallback((type: typeof mode): JSX.Element => {
     switch (type) {
       case 'default': {
@@ -26,5 +30,14 @@ export const LiveWireTooltip = (
     }
   }, [])
 
-  return <></>
+  return (
+    <PointerTooltip
+      initialPosition={initialPosition}
+      offset={[25, 25]}
+      pointerFilter={[initialPointer]}
+      pointerTypeFilter={[]}
+    >
+      {getTooltip(mode)}
+    </PointerTooltip>
+  )
 }

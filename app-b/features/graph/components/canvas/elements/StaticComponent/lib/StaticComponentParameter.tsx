@@ -207,7 +207,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
             mode: 'live',
             initial: {
               pointer: e.pointerId,
-              mode: initialMode === 'transpose' ? 'default' : 'add',
+              mode: initialMode === 'transpose' ? 'default' : initialMode,
             },
             transpose: initialMode === 'transpose',
             ...map,

@@ -17,7 +17,8 @@ export const useLiveWireMotion = (
   const [internalMode, setInternalMode] = useState<LiveWireMode>(initialMode)
   const hotkeyMode = useWireMode()
 
-  const mode = hotkeyMode === 'default' ? internalMode : hotkeyMode
+  const mode =
+    hotkeyMode === 'default' ? internalMode : hotkeyMode === 'transpose' && !allowTranspose ? 'default' : hotkeyMode
 
   const primaryPointerId = useRef<number>(initialPointer)
 
@@ -81,5 +82,5 @@ export const useLiveWireMotion = (
     }
   })
 
-  return mode === 'transpose' && !allowTranspose ? 'default' : mode
+  return mode
 }

@@ -24,7 +24,7 @@ export const useGraphDispatch = () => {
     updateLiveWires: (x: number, y: number) => dispatch(graphActions.updateLiveWires([x, y])),
     captureLiveWires: (data: Payload.CaptureLiveWirePayload) => dispatch(graphActions.captureLiveWires(data)),
     releaseLiveWires: () => dispatch(graphActions.releaseLiveWires()),
-    endLiveWires: (mode: WireMode) => dispatch(graphActions.endLiveWires(mode)),
+    endLiveWires: (mode: WireMode | 'cancel') => dispatch(graphActions.endLiveWires(mode)),
     startLiveWire: (data: Payload.StartLiveWirePayload) => dispatch(graphActions.startLiveWire(data)),
     updateLiveWire: (data: Payload.UpdateLiveWirePayload) => dispatch(graphActions.updateLiveWire(data)),
     captureLiveWire: (data: Payload.CaptureLiveWirePayload) => dispatch(graphActions.captureLiveWire(data)),

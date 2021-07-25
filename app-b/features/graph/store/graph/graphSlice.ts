@@ -394,12 +394,12 @@ export const graphSlice = createSlice({
     releaseLiveWires: (state: GraphState) => {
       state.registry.wire.capture = undefined
     },
-    endLiveWires: (state: GraphState, action: PayloadAction<WireMode>) => {
+    endLiveWires: (state: GraphState, action: PayloadAction<WireMode | 'cancel'>) => {
       const wires = Object.values(state.elements).filter(
         (element) => element.template.type === 'wire' && element.template.mode === 'live'
       )
 
-      if (!state.registry.wire.capture) {
+      if (action.payload === 'cancel' || !state.registry.wire.capture) {
         // Connection not made, end and remove live wires
         wires.map((wire) => wire.id).forEach((id) => delete state.elements[id])
         return
