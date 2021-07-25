@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
 
@@ -41,8 +41,21 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   ].join('')
 
   const pathRef = useRef<SVGPathElement>(null)
-  const length = pathRef.current ? pathRef.current.getTotalLength() : 0
-  const offset = 12 - (length % 12)
+
+  const [offset, setOffset] = useState(0)
+
+  useLayoutEffect(() => {
+    if (wire.template.mode !== 'live') {
+      return
+    }
+
+    const length = pathRef.current ? pathRef.current.getTotalLength() : 0
+    const nextOffset = 12 - (length % 12)
+
+    if (offset !== nextOffset) {
+      setOffset(nextOffset)
+    }
+  })
 
   return (
     <div className={`absolute pointer-events-none z-0 overflow-visible`} style={{ width, height, left: x, top: y - 2 }}>
