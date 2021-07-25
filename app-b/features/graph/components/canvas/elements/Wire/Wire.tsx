@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
 
@@ -40,6 +40,10 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     `S ${end.x} ${end.y} ${end.x} ${end.y} `,
   ].join('')
 
+  const pathRef = useRef<SVGPathElement>(null)
+  const length = pathRef.current ? pathRef.current.getTotalLength() : 0
+  const offset = 12 - (length % 12)
+
   return (
     <div className={`absolute pointer-events-none z-0 overflow-visible`} style={{ width, height, left: x, top: y - 2 }}>
       <svg
@@ -50,9 +54,11 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
       >
         <path
           d={d}
+          ref={pathRef}
           strokeWidth="3px"
           stroke="#333333"
-          strokeDasharray={template.mode === 'provisional' ? '4 8' : ''}
+          strokeDasharray={template.mode === 'provisional' ? '4 8' : template.mode === 'live' ? '4 8' : ''}
+          strokeDashoffset={template.mode === 'live' ? offset : 0}
           strokeLinecap="round"
           fill="none"
           vectorEffect="non-scaling-stroke"
