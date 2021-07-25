@@ -564,6 +564,38 @@ export const graphSlice = createSlice({
           }
           // Remove any connections that match the incoming one
           case 'remove': {
+            const wires = Object.values(state.elements).filter(
+              (element) => element.template.type === 'wire' && element.template.mode !== 'live'
+            )
+
+            const connections = wires.filter((wire) => {
+              if (!assert.element.isWire(wire)) {
+                return
+              }
+
+              if (wire.template.mode === 'live') {
+                return
+              }
+
+              const {
+                from: { elementId: fromElementId, parameterId: fromParameterId },
+                to: { elementId: toElementId, parameterId: toParameterId },
+              } = wire.template
+
+              const tests: boolean[] = [
+                from.elementId === fromElementId,
+                from.parameterId === fromParameterId,
+                to.elementId === toElementId,
+                to.parameterId === toParameterId,
+              ]
+
+              const connectionMatches = !tests.some((test) => !test)
+
+              return connectionMatches
+            })
+
+            console.log(`Found ${connections.length} matching connections.`)
+
             break
           }
           // Remove original connections and merge new connections at new location
