@@ -574,6 +574,9 @@ export const graphSlice = createSlice({
 
         // Delete live wire
         delete state.elements[wire.id]
+
+        // Clear registry
+        state.registry.wire.capture = undefined
       })
     },
     startLiveWire: (state: GraphState, action: PayloadAction<StartLiveWirePayload>) => {

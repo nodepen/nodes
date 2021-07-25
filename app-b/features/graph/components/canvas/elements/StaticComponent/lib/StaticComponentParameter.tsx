@@ -1,10 +1,11 @@
 import { NodePen, Grasshopper } from 'glib'
-import React, { useEffect, useMemo, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDebugRender } from '@/hooks'
 import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useAppStore } from '$'
+import { MouseTooltip } from 'features/graph/components/overlay'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -61,14 +62,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         <svg className="w-4 h-4 overflow-visible" viewBox="0 0 10 10">
           <path d={d} fill="#333" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" />
           <circle cx="5" cy="5" r="4" stroke="#333" strokeWidth="2px" vectorEffect="non-scaling-stroke" fill="#FFF" />
-          <path
-            d={capture}
-            fill="#FFF"
-            opacity="0"
-            stroke="none"
-            onPointerUp={() => console.log('up')}
-            onTouchMove={() => console.log('touch')}
-          />
+          <path d={capture} fill="#FFF" opacity="0" stroke="none" />
         </svg>
       </div>
     )
@@ -253,12 +247,28 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     releaseLiveWires()
   }
 
+  const [showTooltip, setShowTooltip] = useState(false)
+  const tooltipPosition = useRef<[number, number]>([0, 0])
+
+  const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLButtonElement>): void => {
+    const { pageX, pageY } = e
+
+    tooltipPosition.current = [pageX, pageY]
+    setShowTooltip(true)
+  }, [])
+
+  const handleMouseLeave = useCallback((): void => {
+    setShowTooltip(false)
+  }, [])
+
   return (
     <>
       <button
         className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible`}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerEnter={handlePointerEnter}
