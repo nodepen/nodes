@@ -6,6 +6,7 @@ import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useAppStore } from '$'
 import { MouseTooltip } from 'features/graph/components/overlay'
+import WireModeTooltip from './WireModeTooltip'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -279,7 +280,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       </button>
       {showTooltip ? (
         <MouseTooltip initialPosition={tooltipPosition.current} offset={[25, 25]}>
-          <div className="w-6 h-6 rounded-full bg-red-500" />
+          <WireModeTooltip source={{ elementId, parameterId }} />
         </MouseTooltip>
       ) : null}
     </>
