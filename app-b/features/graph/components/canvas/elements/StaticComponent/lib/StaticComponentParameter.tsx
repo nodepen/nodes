@@ -264,7 +264,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   return (
     <>
       <button
-        className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible`}
+        className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible cursor-default`}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
         onMouseEnter={handleMouseEnter}
@@ -277,6 +277,11 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       >
         {body}
       </button>
+      {showTooltip ? (
+        <MouseTooltip initialPosition={tooltipPosition.current} offset={[25, 25]}>
+          <div className="w-6 h-6 rounded-full bg-red-500" />
+        </MouseTooltip>
+      ) : null}
     </>
   )
 }

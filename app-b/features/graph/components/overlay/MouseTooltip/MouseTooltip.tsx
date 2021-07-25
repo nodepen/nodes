@@ -4,11 +4,11 @@ import { OverlayPortal } from '../OverlayPortal'
 
 type MouseTooltipProps = {
   initialPosition: [sx: number, sy: number]
-  content: JSX.Element
   offset: [dx: number, dy: number]
+  children?: JSX.Element
 }
 
-const MouseTooltip = ({ initialPosition, content, offset }: MouseTooltipProps): React.ReactElement => {
+const MouseTooltip = ({ initialPosition, offset, children }: MouseTooltipProps): React.ReactElement => {
   const [[sx, sy], setPosition] = useState(initialPosition)
 
   const handleMouseMove = useCallback((e: MouseEvent): void => {
@@ -27,13 +27,15 @@ const MouseTooltip = ({ initialPosition, content, offset }: MouseTooltipProps): 
   const [dx, dy] = offset
 
   return (
-    <OverlayPortal>
-      <OverlayContainer position={[sx, sy]} pointerEvents={false}>
+    <OverlayPortal z={200}>
+      <OverlayContainer static position={[0, 0]} pointerEvents={false}>
         <div
           className="w-vw h-vh flex items-center justify-center"
-          style={{ transform: `translateX(-50%) translateX(-${dx}px) translateY(-50%) translateY(-${dy}px)` }}
+          style={{
+            transform: `translateX(-50%) translateX(${sx}px) translateX(${dx}px) translateY(-50%) translateY(${sy}px) translateY(${dy}px) translateY(-40px) `,
+          }}
         >
-          {content}
+          {children}
         </div>
       </OverlayContainer>
     </OverlayPortal>
