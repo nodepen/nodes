@@ -5,7 +5,7 @@ import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useAppStore } from '$'
-import { MouseTooltip } from 'features/graph/components/overlay'
+import { MouseTooltip, PointerTooltip } from 'features/graph/components/overlay'
 import WireModeTooltip from './WireModeTooltip'
 
 type StaticComponentParameterProps = {
@@ -253,12 +253,14 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>): void => {
-      const liveWires = Object.values(store.getState().graph.present.elements).filter(
-        (element) => element.template.type === 'wire' && element.template.mode === 'live'
+      const liveWiresOrRegions = Object.values(store.getState().graph.present.elements).filter(
+        (element) =>
+          (element.template.type === 'wire' && element.template.mode === 'live') ||
+          (element.template.type === 'region' && element.template.mode === 'selection')
       )
 
-      if (liveWires.length > 0) {
-        // Connection is happening, do no work
+      if (liveWiresOrRegions.length > 0) {
+        // Live action is happening, do no work
         return
       }
 
@@ -303,9 +305,14 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         {body}
       </button>
       {showTooltip ? (
-        <MouseTooltip initialPosition={tooltipPosition.current} offset={[25, 25]}>
+        <PointerTooltip
+          initialPosition={tooltipPosition.current}
+          offset={[25, 25]}
+          pointerFilter={[]}
+          pointerTypeFilter={['mouse']}
+        >
           <WireModeTooltip source={{ elementId, parameterId }} />
-        </MouseTooltip>
+        </PointerTooltip>
       ) : null}
     </>
   )

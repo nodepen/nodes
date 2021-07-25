@@ -6,7 +6,11 @@ import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
 
 type LiveWireMode = WireMode | 'transpose'
 
-export const useLiveWireMotion = (initialMode: WireMode, initialPointer: number): LiveWireMode => {
+export const useLiveWireMotion = (
+  initialMode: WireMode,
+  initialPointer: number,
+  allowTranspose: boolean
+): LiveWireMode => {
   const { updateLiveWires, endLiveWires } = useGraphDispatch()
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
 
@@ -77,5 +81,5 @@ export const useLiveWireMotion = (initialMode: WireMode, initialPointer: number)
     }
   })
 
-  return mode
+  return mode === 'transpose' && !allowTranspose ? 'default' : mode
 }

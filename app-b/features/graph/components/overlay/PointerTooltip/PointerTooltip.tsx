@@ -2,25 +2,44 @@ import React, { useState, useCallback, useEffect } from 'react'
 import { OverlayContainer } from '../OverlayContainer'
 import { OverlayPortal } from '../OverlayPortal'
 
-type MouseTooltipProps = {
+type PointerTooltipProps = {
   initialPosition: [sx: number, sy: number]
   offset: [dx: number, dy: number]
+  pointerFilter: number[]
+  pointerTypeFilter: React.PointerEvent['pointerType'][]
   children?: JSX.Element
 }
 
-const MouseTooltip = ({ initialPosition, offset, children }: MouseTooltipProps): React.ReactElement => {
+const PointerTooltip = ({
+  initialPosition,
+  offset,
+  pointerFilter,
+  pointerTypeFilter,
+  children,
+}: PointerTooltipProps): React.ReactElement => {
   const [[sx, sy], setPosition] = useState(initialPosition)
 
-  const handleMouseMove = useCallback((e: MouseEvent): void => {
-    const { pageX, pageY } = e
-    setPosition([pageX, pageY])
-  }, [])
+  const handlePointerMove = useCallback(
+    (e: PointerEvent): void => {
+      if (pointerFilter.length > 0 && !pointerFilter.includes(e.pointerId)) {
+        return
+      }
+
+      if (pointerTypeFilter.length > 0 && !pointerTypeFilter.includes(e.pointerType as any)) {
+        return
+      }
+
+      const { pageX, pageY } = e
+      setPosition([pageX, pageY])
+    },
+    [pointerFilter, pointerTypeFilter]
+  )
 
   useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('pointermove', handlePointerMove)
 
     return () => {
-      window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('pointermove', handlePointerMove)
     }
   })
 
@@ -42,4 +61,4 @@ const MouseTooltip = ({ initialPosition, offset, children }: MouseTooltipProps):
   )
 }
 
-export default React.memo(MouseTooltip)
+export default React.memo(PointerTooltip)
