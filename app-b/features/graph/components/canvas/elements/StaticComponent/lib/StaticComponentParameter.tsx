@@ -251,15 +251,38 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const [showTooltip, setShowTooltip] = useState(false)
   const tooltipPosition = useRef<[number, number]>([0, 0])
 
-  const handleMouseEnter = useCallback((e: React.MouseEvent<HTMLButtonElement>): void => {
-    const { pageX, pageY } = e
+  const handleMouseEnter = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>): void => {
+      const liveWires = Object.values(store.getState().graph.present.elements).filter(
+        (element) => element.template.type === 'wire' && element.template.mode === 'live'
+      )
 
-    tooltipPosition.current = [pageX, pageY]
-    setShowTooltip(true)
-  }, [])
+      if (liveWires.length > 0) {
+        // Connection is happening, do no work
+        return
+      }
+
+      const { pageX, pageY } = e
+      tooltipPosition.current = [pageX, pageY]
+
+      setShowTooltip(true)
+    },
+    [store]
+  )
 
   const handleMouseLeave = useCallback((): void => {
     setShowTooltip(false)
+  }, [])
+
+  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLButtonElement>): void => {
+    if (e.pointerType !== 'mouse') {
+      return
+    }
+
+    const { pageX, pageY } = e
+    tooltipPosition.current = [pageX, pageY]
+
+    setShowTooltip(true)
   }, [])
 
   return (
@@ -270,6 +293,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         onMouseDown={handleMouseDown}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onPointerUp={handlePointerUp}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerEnter={handlePointerEnter}

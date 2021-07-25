@@ -34,16 +34,11 @@ const selectShift = (state: RootState): boolean => !!state.hotkey['Shift']
 const selectControl = (state: RootState): boolean => !!state.hotkey['Control']
 
 const selectWireMode = createSelector(selectShift, selectControl, (shift, control) =>
-  shift && control ? 'default' : shift ? 'add' : control ? 'remove' : 'default'
-)
-
-const selectWireStartMode = createSelector(selectShift, selectControl, (shift, control) =>
   shift && control ? 'transpose' : shift ? 'add' : control ? 'remove' : 'default'
 )
 
 export const hotkeySelectors = {
   selectWireMode,
-  selectWireStartMode,
 }
 
 const { actions, reducer } = hotkeySlice

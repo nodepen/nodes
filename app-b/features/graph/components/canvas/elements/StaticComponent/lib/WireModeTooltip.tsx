@@ -1,7 +1,7 @@
 import React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAppStore } from '$'
-import { useWireStartMode } from 'features/graph/store/hotkey/hooks'
+import { useWireMode } from 'features/graph/store/hotkey/hooks'
 import { getConnectedWires } from '@/features/graph/store/graph/utils'
 
 type WireModeTooltipProps = {
@@ -12,7 +12,7 @@ type WireModeTooltipProps = {
 }
 
 const WireModeTooltip = ({ source }: WireModeTooltipProps): React.ReactElement => {
-  const mode = useWireStartMode()
+  const mode = useWireMode()
   const store = useAppStore()
 
   const sourceReference = useRef<[string, string]>([source.elementId, source.parameterId])

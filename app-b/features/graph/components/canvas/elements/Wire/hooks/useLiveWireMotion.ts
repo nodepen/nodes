@@ -4,11 +4,13 @@ import { useWireMode } from '@/features/graph/store/hotkey/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
 
-export const useLiveWireMotion = (initialMode: WireMode, initialPointer: number): WireMode => {
+type LiveWireMode = WireMode | 'transpose'
+
+export const useLiveWireMotion = (initialMode: WireMode, initialPointer: number): LiveWireMode => {
   const { updateLiveWires, endLiveWires } = useGraphDispatch()
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
 
-  const [internalMode, setInternalMode] = useState<WireMode>(initialMode)
+  const [internalMode, setInternalMode] = useState<LiveWireMode>(initialMode)
   const hotkeyMode = useWireMode()
 
   const mode = hotkeyMode === 'default' ? internalMode : hotkeyMode
@@ -36,10 +38,11 @@ export const useLiveWireMotion = (initialMode: WireMode, initialPointer: number)
         return
       }
 
-      const nextMode: { [key in WireMode]: WireMode } = {
+      const nextMode: { [key in LiveWireMode]: LiveWireMode } = {
         default: 'add',
         add: 'remove',
-        remove: 'default',
+        remove: 'transpose',
+        transpose: 'default',
       }
 
       const next = nextMode[mode]
@@ -57,7 +60,7 @@ export const useLiveWireMotion = (initialMode: WireMode, initialPointer: number)
         return
       }
 
-      endLiveWires(mode)
+      endLiveWires(mode === 'transpose' ? 'default' : mode)
     },
     [mode, endLiveWires]
   )
