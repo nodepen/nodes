@@ -8,6 +8,7 @@ import { useAppStore } from '$'
 import { PointerTooltip } from 'features/graph/components/overlay'
 import WireModeTooltip from './WireModeTooltip'
 import { getConnectedWires } from '@/features/graph/store/graph/utils'
+import { useSessionManager } from '@/context/session'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -20,6 +21,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const { name, nickname, id: parameterId } = template
 
   const store = useAppStore()
+
+  const { device } = useSessionManager()
 
   useDebugRender(`StaticComponentParameter | ${parent.template.name} | ${name} | ${parameterId}`)
 
@@ -310,6 +313,10 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   const handleMouseEnter = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>): void => {
+      if (device.breakpoint === 'sm') {
+        return
+      }
+
       const liveWiresOrRegions = Object.values(store.getState().graph.present.elements).filter(
         (element) =>
           (element.template.type === 'wire' && element.template.mode === 'live') ||
@@ -324,12 +331,20 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       const { pageX, pageY } = e
       tooltipPosition.current = [pageX, pageY]
 
+      console.log('?')
+
+      console.log(e.button)
+
       setShowTooltip(true)
     },
-    [store]
+    [store, device.breakpoint]
   )
 
   const handleMouseLeave = useCallback((): void => {
+    setShowTooltip(false)
+  }, [])
+
+  const handleMouseUp = useCallback((): void => {
     setShowTooltip(false)
   }, [])
 
@@ -367,6 +382,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         onMouseDown={handleMouseDown}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onMouseUp={handleMouseUp}
         onPointerUp={handlePointerUp}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
