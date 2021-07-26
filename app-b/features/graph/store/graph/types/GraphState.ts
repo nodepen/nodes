@@ -22,6 +22,7 @@ export type GraphState = {
         elementId: string
         parameterId: string
       }
+      primary: string
       capture?: {
         elementId: string
         parameterId: string

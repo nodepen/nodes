@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 import Wire from './Wire'
 import { useLiveWireMotion } from './hooks'
 import { LiveWireTooltip } from './tooltip'
-import { useGraphDispatch } from 'features/graph/store/graph/hooks'
+import { useGraphDispatch, useGraphPrimaryLiveWire } from 'features/graph/store/graph/hooks'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
@@ -11,6 +11,7 @@ type WireProps = {
 
 const LiveWire = ({ wire }: WireProps): React.ReactElement => {
   const { endLiveWires } = useGraphDispatch()
+  const primaryId = useGraphPrimaryLiveWire()
 
   const initialMode = wire.template.mode === 'live' ? wire.template.initial.mode : 'default'
   const initialPointer = wire.template.mode === 'live' ? wire.template.initial.pointer : 0
@@ -27,7 +28,9 @@ const LiveWire = ({ wire }: WireProps): React.ReactElement => {
 
   return (
     <>
-      <LiveWireTooltip initialPosition={[0, 0]} initialPointer={initialPointer} mode={mode} />
+      {wire.id === primaryId ? (
+        <LiveWireTooltip initialPosition={[0, 0]} initialPointer={initialPointer} mode={mode} />
+      ) : null}
       <Wire wire={wire} />
     </>
   )

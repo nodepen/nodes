@@ -34,6 +34,7 @@ const initialState: GraphState = {
         elementId: 'unset',
         parameterId: 'unset',
       },
+      primary: 'unset',
       origin: {
         elementId: 'unset',
         parameterId: 'unset',
@@ -283,12 +284,16 @@ export const graphSlice = createSlice({
       state.registry.wire.capture = undefined
       state.registry.wire.origin = origin
 
-      templates.forEach((template) => {
+      templates.forEach((template, i) => {
         if (template.mode !== 'live') {
           return
         }
 
         const id = newGuid()
+
+        if (i === 0) {
+          state.registry.wire.primary = id
+        }
 
         const { elementId, parameterId } = template?.from ?? template.to
 
@@ -1001,6 +1006,7 @@ export const graphSlice = createSlice({
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
   state.graph.present.elements
 const selectMode = (state: RootState): GraphMode => state.graph.present.mode
+const selectPrimaryWire = (state: RootState): string => state.graph.present.registry.wire.primary
 
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
   return {
@@ -1009,7 +1015,7 @@ const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: bool
   }
 }
 
-export const graphSelectors = { selectElements, selectMode, selectGraphHistory }
+export const graphSelectors = { selectElements, selectMode, selectGraphHistory, selectPrimaryWire }
 
 const { actions, reducer } = graphSlice
 
