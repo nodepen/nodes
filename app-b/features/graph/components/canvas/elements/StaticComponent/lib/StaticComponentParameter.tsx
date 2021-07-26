@@ -1,6 +1,6 @@
 import { NodePen, Grasshopper } from 'glib'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useDebugRender } from '@/hooks'
+import { useDebugRender, useLongPress } from '@/hooks'
 import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
@@ -111,6 +111,15 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     }
   }
 
+  const longPressActive = useRef(false)
+
+  const handleLongPress = useCallback((): void => {
+    console.log('long press!')
+    longPressActive.current = true
+  }, [])
+
+  const longPressTarget = useLongPress(handleLongPress)
+
   const pointerStartTime = useRef(0)
   const pointerStartPosition = useRef<[number, number]>([0, 0])
   const pointerIsMoving = useRef(false)
@@ -180,9 +189,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         return 'default'
       }
 
-      const initialMode = getInitialMode(shiftKey, controlKey)
-
-      console.log({ initialMode })
+      const initialMode = longPressActive.current ? 'transpose' : getInitialMode(shiftKey, controlKey)
 
       const map = {
         from:
@@ -201,60 +208,74 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
               },
       } as any
 
-      if (initialMode === 'transpose') {
-        const state = store.getState().graph.present
+      switch (initialMode) {
+        case 'transpose': {
+          const state = store.getState().graph.present
 
-        const [existingFromWires, existingToWires] = getConnectedWires(state, elementId, parameterId)
+          const [existingFromWires, existingToWires] = getConnectedWires(state, elementId, parameterId)
 
-        const existingWires = [...existingFromWires, ...existingToWires].map(
-          (wireId) => state.elements[wireId] as NodePen.Element<'wire'>
-        )
-        const liveTemplates = existingWires.map((wire) => {
-          const ends: any =
-            mode === 'input' ? { from: wire.template.from, to: undefined } : { from: undefined, to: wire.template.to }
+          const existingWires = [...existingFromWires, ...existingToWires].map(
+            (wireId) => state.elements[wireId] as NodePen.Element<'wire'>
+          )
 
-          const template: NodePen.Element<'wire'>['template'] = {
-            type: 'wire',
-            mode: 'live',
-            initial: {
-              pointer: e.pointerId,
-              mode: 'default',
-            },
-            transpose: true,
-            ...ends,
+          if (existingWires.length > 0) {
+            const liveTemplates = existingWires.map((wire) => {
+              const ends: any =
+                mode === 'input'
+                  ? { from: wire.template.from, to: undefined }
+                  : { from: undefined, to: wire.template.to }
+
+              const template: NodePen.Element<'wire'>['template'] = {
+                type: 'wire',
+                mode: 'live',
+                initial: {
+                  pointer: e.pointerId,
+                  mode: 'default',
+                },
+                transpose: true,
+                ...ends,
+              }
+
+              return template
+            })
+
+            startLiveWires({
+              templates: liveTemplates,
+              origin: {
+                elementId,
+                parameterId,
+              },
+            })
+
+            break
           }
 
-          return template
-        })
-
-        startLiveWires({
-          templates: liveTemplates,
-          origin: {
-            elementId,
-            parameterId,
-          },
-        })
-      } else {
-        startLiveWires({
-          templates: [
-            {
-              type: 'wire',
-              mode: 'live',
-              initial: {
-                pointer: e.pointerId,
-                mode: initialMode,
+          // Transpose not possible, fall through to default
+        }
+        /* eslint-disable-next-line */
+        default: {
+          startLiveWires({
+            templates: [
+              {
+                type: 'wire',
+                mode: 'live',
+                initial: {
+                  pointer: e.pointerId,
+                  mode: initialMode === 'transpose' ? 'default' : initialMode,
+                },
+                transpose: false,
+                ...map,
               },
-              transpose: false,
-              ...map,
+            ],
+            origin: {
+              elementId,
+              parameterId,
             },
-          ],
-          origin: {
-            elementId,
-            parameterId,
-          },
-        })
+          })
+        }
       }
 
+      longPressActive.current = false
       pointerIsMoving.current = false
       setCameraMode('idle')
 
@@ -312,21 +333,35 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     setShowTooltip(false)
   }, [])
 
-  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLButtonElement>): void => {
-    if (e.pointerType !== 'mouse') {
-      return
-    }
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent<HTMLButtonElement>): void => {
+      switch (e.pointerType) {
+        case 'mouse': {
+          const { pageX, pageY } = e
+          tooltipPosition.current = [pageX, pageY]
 
-    const { pageX, pageY } = e
-    tooltipPosition.current = [pageX, pageY]
+          setShowTooltip(true)
 
-    setShowTooltip(true)
-  }, [])
+          break
+        }
+        default: {
+          if (longPressActive.current) {
+            // Show menu
+          }
+
+          longPressActive.current = false
+          setCameraMode('idle')
+        }
+      }
+    },
+    [setCameraMode]
+  )
 
   return (
     <>
       <button
         className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible cursor-default`}
+        ref={longPressTarget as any}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
         onMouseEnter={handleMouseEnter}

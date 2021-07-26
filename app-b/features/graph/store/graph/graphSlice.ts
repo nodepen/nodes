@@ -294,6 +294,7 @@ export const graphSlice = createSlice({
 
         if (!current || !assert.element.isGripElement(current)) {
           // No anchors
+          console.log('🐍🐍🐍 Anchor element does not exist!')
           return
         }
 
@@ -324,6 +325,7 @@ export const graphSlice = createSlice({
 
       // If wires are currently captured, do no work
       if (state.registry.wire.capture) {
+        console.log('🐍🐍🐍 Wires are captured!')
         return
       }
 
@@ -393,6 +395,7 @@ export const graphSlice = createSlice({
       state.registry.wire.capture = undefined
     },
     endLiveWires: (state: GraphState, action: PayloadAction<WireMode | 'cancel'>) => {
+      console.log('ending live wires')
       const wires = Object.values(state.elements).filter(
         (element): element is LiveWireElement => element.template.type === 'wire' && element.template.mode === 'live'
       )

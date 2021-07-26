@@ -1,11 +1,8 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { WireMode } from 'features/graph/store/graph/types'
 import { useWireMode } from 'features/graph/store/hotkey/hooks'
-import { useGraphDispatch, useLiveWiresOrigin } from 'features/graph/store/graph/hooks'
+import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useScreenSpaceToCameraSpace } from 'features/graph/hooks'
-import { stageWireTranspose } from '@/features/graph/store/graph/utils/stageWireTranspose'
-import { useAppStore } from '@/features/common/store'
-import { isInputOrOutput } from '@/features/graph/utils'
 
 type LiveWireMode = WireMode | 'transpose'
 
@@ -15,11 +12,8 @@ export const useLiveWireMotion = (
   isTranspose: boolean,
   isPrimary: boolean
 ): LiveWireMode => {
-  const store = useAppStore()
-
-  const { updateLiveWires, endLiveWires, startLiveWires } = useGraphDispatch()
+  const { updateLiveWires, endLiveWires } = useGraphDispatch()
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
-  const origin = useLiveWiresOrigin()
 
   const [internalMode, setInternalMode] = useState<LiveWireMode>(initialMode)
   const hotkeyMode = useWireMode()
@@ -46,6 +40,10 @@ export const useLiveWireMotion = (
 
   const handlePointerDown = useCallback(
     (e: PointerEvent) => {
+      if (isTranspose) {
+        return
+      }
+
       if (e.pointerId === primaryPointerId.current) {
         return
       }
@@ -55,70 +53,70 @@ export const useLiveWireMotion = (
         return
       }
 
-      const nextMode: { [key in LiveWireMode]: LiveWireMode } = {
+      const nextMode: { [key in LiveWireMode]: WireMode } = {
         default: 'add',
         add: 'remove',
-        remove: 'transpose',
+        remove: 'default',
         transpose: 'default',
       }
 
       const next = nextMode[mode]
 
-      if (isPrimary && next === 'transpose') {
-        // Cancel wires and reset with a transpose at origin
-        const state = store.getState().graph.present
+      // if (isPrimary && next === 'transpose') {
+      //   // Cancel wires and reset with a transpose at origin
+      //   const state = store.getState().graph.present
 
-        const templates = stageWireTranspose(state, origin.elementId, origin.parameterId, initialPointer)
+      //   const templates = stageWireTranspose(state, origin.elementId, origin.parameterId, initialPointer)
 
-        if (templates.length === 0) {
-          // Transpose is not possible from this parameter, skip to `default`
-          setInternalMode('default')
-          return
-        }
+      //   if (templates.length === 0) {
+      //     // Transpose is not possible from this parameter, skip to `default`
+      //     setInternalMode('default')
+      //     return
+      //   }
 
-        endLiveWires('cancel')
-        startLiveWires({ templates, origin })
-      }
+      //   endLiveWires('cancel')
+      //   startLiveWires({ templates, origin })
+      // }
 
-      if (isPrimary && next === 'default') {
-        // Cancel wires and reset with a new wire from origin
-        const state = store.getState().graph.present
-        const originElement = state.elements[origin.elementId]
+      // if (isPrimary && next === 'default') {
+      //   // Cancel wires and reset with a new wire from origin
+      //   const state = store.getState().graph.present
+      //   const originElement = state.elements[origin.elementId]
 
-        const parameterType = isInputOrOutput(originElement, origin.parameterId)
+      //   const parameterType = isInputOrOutput(originElement, origin.parameterId)
 
-        if (!parameterType) {
-          console.log('🐍🐍🐍 Tried to start live wire from a parameter that is not an input or an output!')
-          return
-        }
+      //   if (!parameterType) {
+      //     console.log('🐍🐍🐍 Tried to start live wire from a parameter that is not an input or an output!')
+      //     return
+      //   }
 
-        const connection = {
-          from: parameterType === 'output' ? origin : undefined,
-          to: parameterType === 'input' ? origin : undefined,
-        } as any
+      //   const connection = {
+      //     from: parameterType === 'output' ? origin : undefined,
+      //     to: parameterType === 'input' ? origin : undefined,
+      //   } as any
 
-        endLiveWires('cancel')
-        startLiveWires({
-          templates: [
-            {
-              type: 'wire',
-              mode: 'live',
-              initial: {
-                mode: 'default',
-                pointer: initialPointer,
-              },
-              transpose: false,
-              ...connection,
-            },
-          ],
-          origin,
-        })
-      }
+      //   endLiveWires('cancel')
+      //   startLiveWires({
+      //     templates: [
+      //       {
+      //         type: 'wire',
+      //         mode: 'live',
+      //         initial: {
+      //           mode: 'default',
+      //           pointer: initialPointer,
+      //         },
+      //         transpose: false,
+      //         ...connection,
+      //       },
+      //     ],
+      //     origin,
+      //   })
+      // }
 
       // Toggle to next mode
       setInternalMode(next)
     },
-    [mode, isPrimary, endLiveWires, startLiveWires, store, initialPointer, origin]
+    [mode, isTranspose]
   )
 
   const handlePointerUp = useCallback(
@@ -149,10 +147,20 @@ export const useLiveWireMotion = (
       return
     }
 
-    if (mode !== 'transpose' && isTranspose) {
+    if (isTranspose && !(hotkeyMode === 'transpose' || hotkeyMode === 'default')) {
       endLiveWires('cancel')
     }
-  }, [mode, isTranspose, isPrimary, endLiveWires])
+  }, [isPrimary, isTranspose, hotkeyMode, endLiveWires])
+
+  // useEffect(() => {
+  //   if (!isPrimary) {
+  //     return
+  //   }
+
+  //   if (mode !== 'transpose' && isTranspose) {
+  //     endLiveWires('cancel')
+  //   }
+  // }, [mode, isTranspose, isPrimary, endLiveWires])
 
   return mode
 }

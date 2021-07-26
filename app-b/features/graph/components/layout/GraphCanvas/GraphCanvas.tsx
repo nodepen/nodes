@@ -16,9 +16,11 @@ import { useGraphDispatch } from '../../../store/graph/hooks'
 import { distance, screenSpaceToCameraSpace } from '../../../utils'
 import { useCanvasMenuActions } from './hooks'
 import { GenericMenu, PlaceComponentMenu } from '../../overlay'
+import { useAppStore } from '@/features/common/store'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
+  const state = useAppStore()
 
   const { addElement } = useGraphDispatch()
   const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
@@ -109,6 +111,12 @@ const GraphCanvas = (): React.ReactElement => {
 
   const handleLongPress = useCallback(
     (e: PointerEvent): void => {
+      const cameraMode = state.getState().camera.mode
+
+      if (cameraMode === 'locked') {
+        return
+      }
+
       const { pageX: ex, pageY: ey } = e
 
       setMode('locked')
@@ -121,7 +129,7 @@ const GraphCanvas = (): React.ReactElement => {
         // Do nothing
       }
     },
-    [setMode]
+    [setMode, state]
   )
 
   const longPressTarget = useLongPress(handleLongPress)
