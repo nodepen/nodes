@@ -594,7 +594,37 @@ export const graphSlice = createSlice({
               return connectionMatches
             })
 
-            console.log(`Found ${connections.length} matching connections.`)
+            connections.forEach((connection) => {
+              if (!assert.element.isWire(connection)) {
+                return
+              }
+
+              if (connection.template.mode === 'live') {
+                return
+              }
+
+              const { from: connectionFrom, to: connectionTo } = connection.template
+
+              const toElement = state.elements[connectionTo.elementId]
+
+              if (!toElement) {
+                return
+              }
+
+              if (!assert.element.isGraphElement(toElement.current)) {
+                return
+              }
+
+              const { sources } = toElement.current
+
+              sources[connectionTo.parameterId] = sources[connectionTo.parameterId].filter(
+                (source) =>
+                  source.elementInstanceId !== connectionFrom.elementId &&
+                  source.parameterInstanceId !== connectionFrom.parameterId
+              )
+
+              delete state.elements[connection.id]
+            })
 
             break
           }
