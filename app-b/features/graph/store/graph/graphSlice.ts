@@ -5,15 +5,13 @@ import { GraphState, Payload, WireMode, LiveWireElement } from './types'
 import { newGuid, initializeParameters, findAttachedWires } from '../../utils'
 import {
   AddElementPayload,
-  CaptureLiveWirePayload,
+  CaptureLiveWiresPayload,
   ConnectElementsPayload,
   MoveElementPayload,
   ProvisionalWirePayload,
   RegisterElementAnchorPayload,
   RegisterElementPayload,
-  StartLiveWirePayload,
   UpdateElementPayload,
-  UpdateLiveWirePayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
 import { getAnchorCoordinates, getConnectedWires } from './utils'
@@ -29,11 +27,6 @@ const initialState: GraphState = {
       toWires: [],
     },
     wire: {
-      source: {
-        type: 'input',
-        elementId: 'unset',
-        parameterId: 'unset',
-      },
       primary: 'unset',
       origin: {
         elementId: 'unset',
@@ -350,7 +343,7 @@ export const graphSlice = createSlice({
         current[updateTarget] = position
       })
     },
-    captureLiveWires: (state: GraphState, action: PayloadAction<CaptureLiveWirePayload>) => {
+    captureLiveWires: (state: GraphState, action: PayloadAction<CaptureLiveWiresPayload>) => {
       const { type, elementId, parameterId } = action.payload
 
       const captureType = type === 'input' ? 'to' : 'from'
@@ -704,231 +697,6 @@ export const graphSlice = createSlice({
 
       // Clear registry
       state.registry.wire.capture = undefined
-    },
-    startLiveWire: (state: GraphState, action: PayloadAction<StartLiveWirePayload>) => {
-      const { type, elementId, parameterId } = action.payload
-
-      state.registry.wire.capture = undefined
-
-      state.registry.wire.source = {
-        type,
-        elementId,
-        parameterId,
-      }
-
-      const sourceElement = state.elements[elementId]
-
-      if (!sourceElement) {
-        return
-      }
-
-      const sourceElementData = sourceElement.current
-
-      if (!assert.element.isGripElement(sourceElementData)) {
-        return
-      }
-
-      const [x, y] = sourceElementData.position
-      const [dx, dy] = sourceElementData.anchors[parameterId]
-
-      const [wx, wy] = [x + dx, y + dy]
-
-      const wire: NodePen.Element<'wire'> = {
-        id: 'live-wire',
-        template: {
-          type: 'wire',
-          mode: 'live',
-          from: {
-            elementId: 'unset',
-            parameterId: 'unset',
-          },
-          to: {
-            elementId: 'unset',
-            parameterId: 'unset',
-          },
-        } as any,
-        current: {
-          from: [wx, wy],
-          to: [wx, wy],
-          position: [0, 0],
-          dimensions: {
-            width: 0,
-            height: 0,
-          },
-        },
-      }
-
-      state.elements['live-wire'] = wire
-    },
-    updateLiveWire: (state: GraphState, action: PayloadAction<UpdateLiveWirePayload>) => {
-      const { type, position } = action.payload
-
-      const wire = state.elements['live-wire']
-
-      if (!wire) {
-        return
-      }
-
-      if (!assert.element.isWire(wire)) {
-        return
-      }
-
-      if (state.registry.wire.capture) {
-        // Wire is currently captured, don't move it
-        return
-      }
-
-      wire.current[type] = position
-    },
-    captureLiveWire: (state: GraphState, action: PayloadAction<CaptureLiveWirePayload>) => {
-      const { type, elementId, parameterId } = action.payload
-
-      const wire = state.elements['live-wire']
-
-      if (!wire) {
-        // Cannot capture a wire that does not exist
-        return
-      }
-
-      if (!assert.element.isWire(wire)) {
-        return
-      }
-
-      if (type === state.registry.wire.source.type) {
-        // Cannot attempt a connection between two inputs or two outputs
-        return
-      }
-
-      if (elementId === state.registry.wire.source.elementId) {
-        // Cannot attempt a connection to self
-        return
-      }
-
-      if (elementId === state.registry.wire.capture?.elementId) {
-        // No need to duplicate claim
-        return
-      }
-
-      const element = state.elements[elementId]
-
-      if (!element) {
-        return
-      }
-
-      const elementData = element.current
-
-      if (!assert.element.isGripElement(elementData)) {
-        return
-      }
-
-      state.registry.wire.capture = { elementId, parameterId }
-
-      const [x, y] = elementData.position
-      const [dx, dy] = elementData.anchors[parameterId]
-
-      wire.current[type === 'input' ? 'from' : 'to'] = [x + dx, y + dy]
-    },
-    releaseLiveWire: (state: GraphState) => {
-      state.registry.wire.capture = undefined
-    },
-    endLiveWire: (state: GraphState, action: PayloadAction<WireMode>) => {
-      delete state.elements['live-wire']
-
-      console.log(action.payload)
-
-      // Make connection if capture exists, otherwise stop connection attempt
-      if (!state.registry.wire.capture) {
-        return
-      }
-
-      const fromElementId =
-        state.registry.wire.source.type === 'input'
-          ? state.registry.wire.capture.elementId
-          : state.registry.wire.source.elementId
-      const fromParameterId =
-        state.registry.wire.source.type === 'input'
-          ? state.registry.wire.capture.parameterId
-          : state.registry.wire.source.parameterId
-
-      const toElementId =
-        state.registry.wire.source.type === 'input'
-          ? state.registry.wire.source.elementId
-          : state.registry.wire.capture.elementId
-      const toParameterId =
-        state.registry.wire.source.type === 'input'
-          ? state.registry.wire.source.parameterId
-          : state.registry.wire.capture.parameterId
-
-      const fromElement = state.elements[fromElementId] as NodePen.Element<'static-component'>
-      const toElement = state.elements[toElementId] as NodePen.Element<'static-component'>
-
-      if (!fromElement) {
-        console.debug(`🐍 Element ${fromElementId} declared for connection does not exist!`)
-        return
-      }
-
-      if (!toElement) {
-        console.debug(`🐍 Element ${toElementId} declared for connection does not exist!`)
-        return
-      }
-
-      const toElementData = toElement.current
-
-      if (!assert.element.isGraphElement(toElementData)) {
-        return
-      }
-
-      // Check for existing connection
-      const currentSources = toElementData.sources[toParameterId]
-
-      if (
-        currentSources.some(
-          (source) => source.elementInstanceId === fromElementId && source.parameterInstanceId === fromParameterId
-        )
-      ) {
-        console.debug(`🐍 Attempted to create a connection that already exists!`)
-        return
-      }
-
-      currentSources.push({
-        elementInstanceId: fromElementId,
-        parameterInstanceId: fromParameterId,
-      })
-
-      const [xFrom, yFrom] = fromElement.current.position
-      const [dxFrom, dyFrom] = fromElement.current.anchors[fromParameterId]
-
-      const [xTo, yTo] = toElement.current.position
-      const [dxTo, dyTo] = toElement.current.anchors[toParameterId]
-
-      const wireId = newGuid()
-
-      const wire: NodePen.Element<'wire'> = {
-        id: wireId,
-        template: {
-          type: 'wire',
-          mode: 'data',
-          from: {
-            elementId: fromElementId,
-            parameterId: fromParameterId,
-          },
-          to: {
-            elementId: toElementId,
-            parameterId: toParameterId,
-          },
-        },
-        current: {
-          from: [xFrom + dxFrom, yFrom + dyFrom],
-          to: [xTo + dxTo, yTo + dyTo],
-          position: [0, 0],
-          dimensions: {
-            width: 0,
-            height: 0,
-          },
-        },
-      }
-
-      state.elements[wireId] = wire
     },
     setProvisionalWire: (state: GraphState, action: PayloadAction<ProvisionalWirePayload>) => {
       const { from, to } = action.payload

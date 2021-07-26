@@ -97,13 +97,13 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 350
 
     const el = target.current
 
-    el.addEventListener('touchstart', handleTouchStart)
+    el.addEventListener('touchstart', handleTouchStart as any)
     el.addEventListener('pointerdown', handlePointerDown)
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
 
     return () => {
-      el.removeEventListener('touchstart', handleTouchStart)
+      el.removeEventListener('touchstart', handleTouchStart as any)
       el.removeEventListener('pointerdown', handlePointerDown)
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)

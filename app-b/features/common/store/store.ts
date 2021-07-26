@@ -12,11 +12,6 @@ export const store = configureStore({
       // TODO: Add an 'internal move' so we can't undo the recenter move-on-place
       filter: excludeAction([
         graphActions.updateLiveElement.type,
-        graphActions.startLiveWire.type,
-        graphActions.updateLiveWire.type,
-        graphActions.captureLiveWire.type,
-        graphActions.releaseLiveWire.type,
-        graphActions.endLiveWire.type,
         graphActions.setProvisionalWire.type,
         graphActions.clearProvisionalWire.type,
         graphActions.prepareLiveMotion.type,

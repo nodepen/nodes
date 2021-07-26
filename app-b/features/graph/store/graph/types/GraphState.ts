@@ -12,12 +12,6 @@ export type GraphState = {
       toWires: string[]
     }
     wire: {
-      /** @deprecated */
-      source: {
-        type: 'input' | 'output'
-        elementId: string
-        parameterId: string
-      }
       origin: {
         elementId: string
         parameterId: string

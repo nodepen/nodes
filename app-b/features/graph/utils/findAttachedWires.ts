@@ -7,8 +7,8 @@ export const findAttachedWires = (
 ): [from: string[], to: string[]] => {
   return elements.reduce(
     ([currentFrom, currentTo], wire) => {
-      const from = wire.template.from.elementId === target ? [...currentFrom, wire.id] : currentFrom
-      const to = wire.template.to.elementId === target ? [...currentTo, wire.id] : currentTo
+      const from = wire.template.from?.elementId === target ? [...currentFrom, wire.id] : currentFrom
+      const to = wire.template.to?.elementId === target ? [...currentTo, wire.id] : currentTo
 
       return [from, to]
     },

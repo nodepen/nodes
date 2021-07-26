@@ -3,7 +3,7 @@ import { firebase } from './auth/firebase'
 import nookies from 'nookies'
 import { SessionStore } from './types'
 
-export const SessionContext = createContext<SessionStore>({ device: { iOS: false } })
+export const SessionContext = createContext<SessionStore>({ device: { iOS: false, breakpoint: 'sm' } })
 
 type SessionManagerProps = {
   children?: JSX.Element

@@ -53,12 +53,6 @@ export type RegisterElementAnchorPayload = {
   position: [dx: number, dy: number]
 }
 
-export type StartLiveWirePayload = {
-  type: 'input' | 'output'
-  elementId: string
-  parameterId: string
-}
-
 export type StartLiveWiresPayload = {
   templates: NodePen.Element<'wire'>['template'][]
   /** Where operation began. Only relevant to `transpose` actions. */
@@ -68,16 +62,9 @@ export type StartLiveWiresPayload = {
   }
 }
 
-export type UpdateLiveWirePayload = {
-  type: 'from' | 'to'
-  position: [x: number, y: number]
-}
-
 export type CaptureLiveWiresPayload = {
   /** Type of parameter attempting capture */
   type: 'input' | 'output'
   elementId: string
   parameterId: string
 }
-
-export type CaptureLiveWirePayload = CaptureLiveWiresPayload

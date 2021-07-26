@@ -161,7 +161,12 @@ export const PlaceComponentMenu = ({
                   clipRule="evenodd"
                 />
               </svg>
-              <img width="18" height="18" className="ml-3" src={`data:image/png;base64,${shortcutTemplate.icon}`} />
+              <img
+                width="18"
+                height="18"
+                className="ml-3"
+                src={`data:image/png;base64,${shortcutTemplate?.icon ?? ''}`}
+              />
               <p className="ml-2 font-panel font-semibold text-sm">{shortcutTemplate?.name.toUpperCase()}</p>
             </div>
             <p className="leading-5">{shortcut.description}</p>
