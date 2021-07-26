@@ -5,8 +5,9 @@ import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useAppStore } from '$'
-import { MouseTooltip, PointerTooltip } from 'features/graph/components/overlay'
+import { PointerTooltip } from 'features/graph/components/overlay'
 import WireModeTooltip from './WireModeTooltip'
+import { getConnectedWires } from '@/features/graph/store/graph/utils'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -200,24 +201,59 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
               },
       } as any
 
-      startLiveWires({
-        templates: [
-          {
+      if (initialMode === 'transpose') {
+        const state = store.getState().graph.present
+
+        const [existingFromWires, existingToWires] = getConnectedWires(state, elementId, parameterId)
+
+        const existingWires = [...existingFromWires, ...existingToWires].map(
+          (wireId) => state.elements[wireId] as NodePen.Element<'wire'>
+        )
+        const liveTemplates = existingWires.map((wire) => {
+          const ends: any =
+            mode === 'input' ? { from: wire.template.from, to: undefined } : { from: undefined, to: wire.template.to }
+
+          const template: NodePen.Element<'wire'>['template'] = {
             type: 'wire',
             mode: 'live',
             initial: {
               pointer: e.pointerId,
-              mode: initialMode === 'transpose' ? 'default' : initialMode,
+              mode: 'default',
             },
-            transpose: initialMode === 'transpose',
-            ...map,
+            transpose: true,
+            ...ends,
+          }
+
+          return template
+        })
+
+        startLiveWires({
+          templates: liveTemplates,
+          origin: {
+            elementId,
+            parameterId,
           },
-        ],
-        origin: {
-          elementId,
-          parameterId,
-        },
-      })
+        })
+      } else {
+        startLiveWires({
+          templates: [
+            {
+              type: 'wire',
+              mode: 'live',
+              initial: {
+                pointer: e.pointerId,
+                mode: initialMode,
+              },
+              transpose: false,
+              ...map,
+            },
+          ],
+          origin: {
+            elementId,
+            parameterId,
+          },
+        })
+      }
 
       pointerIsMoving.current = false
       setCameraMode('idle')
