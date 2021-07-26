@@ -325,7 +325,6 @@ export const graphSlice = createSlice({
 
       // If wires are currently captured, do no work
       if (state.registry.wire.capture) {
-        console.log('🐍🐍🐍 Wires are captured!')
         return
       }
 
@@ -395,7 +394,6 @@ export const graphSlice = createSlice({
       state.registry.wire.capture = undefined
     },
     endLiveWires: (state: GraphState, action: PayloadAction<WireMode | 'cancel'>) => {
-      console.log('ending live wires')
       const wires = Object.values(state.elements).filter(
         (element): element is LiveWireElement => element.template.type === 'wire' && element.template.mode === 'live'
       )
@@ -585,8 +583,6 @@ export const graphSlice = createSlice({
           case 'add': {
             // Update `toElement` parameter sources
             const sources = toElement.current.sources[to.parameterId]
-
-            console.log({ from, to })
 
             if (
               sources.find(

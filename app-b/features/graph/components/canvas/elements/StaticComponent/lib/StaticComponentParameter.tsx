@@ -347,6 +347,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         default: {
           if (longPressActive.current) {
             // Show menu
+            console.log('Launch menu!')
           }
 
           longPressActive.current = false
