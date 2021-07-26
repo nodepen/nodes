@@ -1,7 +1,7 @@
 import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
-import { GraphState, Payload, WireMode } from './types'
+import { GraphState, Payload, WireMode, LiveWireElement } from './types'
 import { newGuid, initializeParameters, findAttachedWires } from '../../utils'
 import {
   AddElementPayload,
@@ -635,6 +635,64 @@ export const graphSlice = createSlice({
           }
           // Remove original connections and merge new connections at new location
           case 'transpose': {
+            const { origin } = state.registry.wire
+
+            const [existingFrom, existingTo] = getConnectedWires(state, origin.elementId, origin.parameterId)
+
+            // Remove origin as source from all relevant targets
+            existingFrom.forEach((fromId) => {
+              const fromWire = state.elements[fromId]
+
+              if (!assert.element.isWire(fromWire)) {
+                return
+              }
+
+              if (fromWire.template.mode === 'live') {
+                return
+              }
+
+              const { from: expiredFrom, to: expiredTo } = fromWire.template
+
+              const expiredToElement = state.elements[expiredTo.elementId]
+
+              if (!expiredToElement || !assert.element.isGraphElement(expiredToElement.current)) {
+                return
+              }
+
+              // Filter out expired sources
+              expiredToElement.current.sources[expiredTo.parameterId] = expiredToElement.current.sources[
+                expiredTo.parameterId
+              ].filter(
+                (source) =>
+                  source.elementInstanceId !== expiredFrom.elementId &&
+                  source.parameterInstanceId !== expiredFrom.parameterId
+              )
+
+              // Delete expired wire
+              delete state.elements[fromId]
+            })
+
+            // Remove all sources if origin is an input
+            if (existingTo.length > 0) {
+              const originElement = state.elements[origin.elementId]
+
+              if (!originElement || !assert.element.isGraphElement(originElement.current)) {
+                return
+              }
+
+              // Clear sources
+              originElement.current.sources[origin.parameterId] = []
+
+              // Delete expired wires
+              existingTo.forEach((toId) => {
+                delete state.elements[toId]
+              })
+            }
+
+            // const wires = Object.values(state.elements).filter(
+            //   (element): element is LiveWireElement => element.template.type === 'wire' && element.template.mode !== 'live'
+            // )
+
             break
           }
         }
