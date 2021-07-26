@@ -833,7 +833,10 @@ export const graphSlice = createSlice({
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
   state.graph.present.elements
 const selectMode = (state: RootState): GraphMode => state.graph.present.mode
+
 const selectPrimaryWire = (state: RootState): string => state.graph.present.registry.wire.primary
+const selectLiveWiresOrigin = (state: RootState): GraphState['registry']['wire']['origin'] =>
+  state.graph.present.registry.wire.origin
 
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
   return {
@@ -842,7 +845,13 @@ const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: bool
   }
 }
 
-export const graphSelectors = { selectElements, selectMode, selectGraphHistory, selectPrimaryWire }
+export const graphSelectors = {
+  selectElements,
+  selectMode,
+  selectGraphHistory,
+  selectPrimaryWire,
+  selectLiveWiresOrigin,
+}
 
 const { actions, reducer } = graphSlice
 
