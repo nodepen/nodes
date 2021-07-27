@@ -2,7 +2,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
 import { LiveWireElement } from '@/features/graph/store/graph/types'
-import { distance } from '@/features/graph/utils'
+import { distance, pointBetween } from '@/features/graph/utils'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
@@ -21,7 +21,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   const dist = distance([ax, ay], [bx, by])
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
-  const lead = Math.max(width / 2, dist / 4)
+  const lead = Math.max(width / 2, dist / 2)
   const leg = Math.min(height / 4, lead / 6)
 
   const start = {
@@ -55,10 +55,30 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     y: (start.y + end.y) / 2,
   }
 
+  // Legs should be modified to be some proportion of their horizontal deviation
+  const dx = Math.abs(startLeg.x - endLeg.x)
+  const legt = 1 - dx / width
+
+  // Object.assign(startLeg, pointBetween([startLeg.x, startLeg.y], [mid.x, mid.x], legt))
+  // Object.assign(endLeg, pointBetween([endLeg.x, endLeg.y], [mid.x, mid.x], legt))
+
+  const startA1 = pointBetween([start.x, start.y], [startLead.x, startLead.y], 0.7)
+  const startA2 = pointBetween([mid.x, mid.y], [startA1.x, startA1.y], 0.5)
+
+  const startLegA1 = pointBetween([startLeg.x, startLeg.y], [startLeg.x, mid.y], 0.25)
+  const startLegA2 = pointBetween([startLegA1.x, startLegA1.y], [mid.x, mid.y], 0.6)
+
   const points = `${start.x},${start.y} ${startLead.x},${startLead.y} ${startLeg.x},${startLeg.y} ${mid.x},${mid.y} ${endLeg.x},${endLeg.y} ${endLead.x},${endLead.y} ${end.x},${end.y}`
 
   // const ymod = by > ay ? -1 : 1
   // const xmod = bx > ax ? -1 : 1
+
+  const d = [
+    `M ${start.x} ${start.y} `,
+    `C ${startA1.x} ${startA1.y} ${startA2.x} ${startA2.y} ${mid.x} ${mid.y}`,
+    // `S ${end.x} ${end.y} ${end.x} ${end.y}`,
+    // `C ${startLegA1.x} ${startLegA1.y} ${startLegA2.x} ${startLegA2.y} ${mid.x} ${mid.y}`,
+  ].join('')
 
   // const d = [
   //   `M ${start.x} ${start.y} `,
@@ -141,8 +161,8 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
         height={height}
         viewBox={`0 0 ${width} ${height}`}
       >
-        <polyline points={points} strokeWidth="3px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
-        {/* <path
+        <polyline points={points} strokeWidth="3px" stroke="#777777" fill="none" vectorEffect="non-scaling-stroke" />
+        <path
           d={d}
           ref={pathRef}
           strokeWidth="3px"
@@ -153,7 +173,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
           fill="none"
           vectorEffect="non-scaling-stroke"
           className={`${template.mode === 'provisional' ? 'animate-march' : 'none'}`}
-        /> */}
+        />
       </svg>
       {arrow}
     </div>
