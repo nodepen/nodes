@@ -1,4 +1,4 @@
-import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef } from 'react'
 import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
 import { LiveWireElement } from '@/features/graph/store/graph/types'
@@ -59,20 +59,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
 
   const pathRef = useRef<SVGPathElement>(null)
 
-  const [offset, setOffset] = useState(0)
-
-  useLayoutEffect(() => {
-    if (wire.template.mode !== 'live') {
-      return
-    }
-
-    const length = pathRef.current ? pathRef.current.getTotalLength() : 0
-    const nextOffset = 12 - (length % 12)
-
-    if (offset !== nextOffset) {
-      setOffset(nextOffset)
-    }
-  })
+  const offset = wire.template.mode === 'live' ? 12 - ((pathRef.current?.getTotalLength() ?? 0) % 12) : 0
 
   const arrow = useMemo(() => {
     if (template.mode !== 'live') {
