@@ -2,6 +2,7 @@ import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
 import { LiveWireElement } from '@/features/graph/store/graph/types'
+import { distance } from '@/features/graph/utils'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
@@ -16,30 +17,53 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
 
   // useDebugRender(`Wire | ${id}`)
 
+  const dist = distance([ax, ay], [bx, by])
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
+  const lead = Math.max(width / 2, dist / 4)
+  const leg = Math.min(height / 4, lead / 2)
 
   const start = {
     x: ax < bx ? 0 : width,
     y: ay < by ? 0 : height,
   }
+  const startLead = {
+    x: ax < bx ? start.x + lead : start.x - lead,
+    y: start.y,
+  }
+  const startLeg = {
+    x: startLead.x,
+    y: ay < by ? startLead.y + leg : startLead.y - leg,
+  }
+
   const end = {
     x: start.x === 0 ? width : 0,
     y: start.y === 0 ? height : 0,
   }
+  const endLead = {
+    x: ax < bx ? end.x - lead : end.x + lead,
+    y: end.y,
+  }
+  const endLeg = {
+    x: endLead.x,
+    y: ay < by ? endLead.y - leg : endLead.y + leg,
+  }
+
   const mid = {
     x: (start.x + end.x) / 2,
     y: (start.y + end.y) / 2,
   }
 
-  const ymod = by > ay ? -1 : 1
-  const xmod = bx > ax ? -1 : 1
+  const points = `${start.x},${start.y} ${startLead.x},${startLead.y} ${startLeg.x},${startLeg.y} ${mid.x},${mid.y} ${endLeg.x},${endLeg.y} ${endLead.x},${endLead.y} ${end.x},${end.y}`
 
-  const d = [
-    `M ${start.x} ${start.y} `,
-    `C ${start.x} ${start.y} ${mid.x + (width * xmod) / 10} ${mid.y + (height * ymod) / 2} ${mid.x} ${mid.y} `,
-    `S ${end.x} ${end.y} ${end.x} ${end.y} `,
-  ].join('')
+  // const ymod = by > ay ? -1 : 1
+  // const xmod = bx > ax ? -1 : 1
+
+  // const d = [
+  //   `M ${start.x} ${start.y} `,
+  //   `C ${start.x} ${start.y} ${mid.x + (width * xmod) / 10} ${mid.y + (height * ymod) / 2} ${mid.x} ${mid.y} `,
+  //   `S ${end.x} ${end.y} ${end.x} ${end.y} `,
+  // ].join('')
 
   const pathRef = useRef<SVGPathElement>(null)
 
@@ -116,7 +140,8 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
         height={height}
         viewBox={`0 0 ${width} ${height}`}
       >
-        <path
+        <polyline points={points} strokeWidth="3px" stroke="#333333" fill="none" vectorEffect="non-scaling-stroke" />
+        {/* <path
           d={d}
           ref={pathRef}
           strokeWidth="3px"
@@ -127,7 +152,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
           fill="none"
           vectorEffect="non-scaling-stroke"
           className={`${template.mode === 'provisional' ? 'animate-march' : 'none'}`}
-        />
+        /> */}
       </svg>
       {arrow}
     </div>
