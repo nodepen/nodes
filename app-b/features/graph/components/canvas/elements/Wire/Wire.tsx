@@ -22,7 +22,6 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
   const lead = Math.max(width / 2, dist / 2)
-  const leg = Math.min(height / 4, lead / 6)
 
   const start = {
     x: ax < bx ? 0 : width,
@@ -31,10 +30,6 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   const startLead = {
     x: ax < bx ? start.x + lead * t : start.x - lead * t,
     y: start.y,
-  }
-  const startLeg = {
-    x: startLead.x,
-    y: ay < by ? startLead.y + leg : startLead.y - leg,
   }
 
   const end = {
@@ -45,46 +40,22 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     x: ax < bx ? end.x - lead * t : end.x + lead * t,
     y: end.y,
   }
-  const endLeg = {
-    x: endLead.x,
-    y: ay < by ? endLead.y - leg : endLead.y + leg,
-  }
 
   const mid = {
     x: (start.x + end.x) / 2,
     y: (start.y + end.y) / 2,
   }
 
-  // Legs should be modified to be some proportion of their horizontal deviation
-  const dx = Math.abs(startLeg.x - endLeg.x)
-  const legt = 1 - dx / width
-
-  // Object.assign(startLeg, pointBetween([startLeg.x, startLeg.y], [mid.x, mid.x], legt))
-  // Object.assign(endLeg, pointBetween([endLeg.x, endLeg.y], [mid.x, mid.x], legt))
-
   const startA1 = pointBetween([start.x, start.y], [startLead.x, startLead.y], 0.7)
   const startA2 = pointBetween([mid.x, mid.y], [startA1.x, startA1.y], 0.5)
 
-  const startLegA1 = pointBetween([startLeg.x, startLeg.y], [startLeg.x, mid.y], 0.25)
-  const startLegA2 = pointBetween([startLegA1.x, startLegA1.y], [mid.x, mid.y], 0.6)
-
-  const points = `${start.x},${start.y} ${startLead.x},${startLead.y} ${startLeg.x},${startLeg.y} ${mid.x},${mid.y} ${endLeg.x},${endLeg.y} ${endLead.x},${endLead.y} ${end.x},${end.y}`
-
-  // const ymod = by > ay ? -1 : 1
-  // const xmod = bx > ax ? -1 : 1
+  const endA1 = pointBetween([end.x, end.y], [endLead.x, endLead.y], 0.7)
 
   const d = [
     `M ${start.x} ${start.y} `,
     `C ${startA1.x} ${startA1.y} ${startA2.x} ${startA2.y} ${mid.x} ${mid.y}`,
-    // `S ${end.x} ${end.y} ${end.x} ${end.y}`,
-    // `C ${startLegA1.x} ${startLegA1.y} ${startLegA2.x} ${startLegA2.y} ${mid.x} ${mid.y}`,
+    `S ${endA1.x} ${endA1.y} ${end.x} ${end.y}`,
   ].join('')
-
-  // const d = [
-  //   `M ${start.x} ${start.y} `,
-  //   `C ${start.x} ${start.y} ${mid.x + (width * xmod) / 10} ${mid.y + (height * ymod) / 2} ${mid.x} ${mid.y} `,
-  //   `S ${end.x} ${end.y} ${end.x} ${end.y} `,
-  // ].join('')
 
   const pathRef = useRef<SVGPathElement>(null)
 
@@ -117,7 +88,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     // Get absolute position of wire endpoint
     const [left, top] = [ex < sx ? 0 : width, ey < sy ? 0 : height]
 
-    const pointLeft = anchorType === 'input' ? bx < ax : ax < bx
+    const pointLeft = anchorType === 'output'
 
     const r = 5
     const h = Math.sqrt(2) * r
@@ -130,7 +101,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
               <polyline
                 points={`${h / 2},2 ${h / 2 - r + 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`}
                 stroke="#333"
-                strokeWidth="2px"
+                strokeWidth="3px"
                 strokeLinejoin="round"
                 strokeLinecap="round"
                 fill="none"
@@ -140,7 +111,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
               <polyline
                 points={`${h / 2},2 ${h / 2 + r - 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`}
                 stroke="#333"
-                strokeWidth="2px"
+                strokeWidth="3px"
                 strokeLinejoin="round"
                 strokeLinecap="round"
                 fill="none"
@@ -161,7 +132,6 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
         height={height}
         viewBox={`0 0 ${width} ${height}`}
       >
-        <polyline points={points} strokeWidth="3px" stroke="#777777" fill="none" vectorEffect="non-scaling-stroke" />
         <path
           d={d}
           ref={pathRef}
