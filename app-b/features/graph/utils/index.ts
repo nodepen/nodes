@@ -1,3 +1,4 @@
+export { bezierLength } from './bezierLength'
 export { categorize } from './categorize'
 export { distance } from './distance'
 export { findAttachedWires } from './findAttachedWires'

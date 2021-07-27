@@ -2,7 +2,7 @@ import React, { useMemo, useRef } from 'react'
 import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
 import { LiveWireElement } from '@/features/graph/store/graph/types'
-import { distance, pointBetween } from '@/features/graph/utils'
+import { distance, pointBetween, bezierLength } from '@/features/graph/utils'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
@@ -59,7 +59,8 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
 
   const pathRef = useRef<SVGPathElement>(null)
 
-  const offset = wire.template.mode === 'live' ? 12 - ((pathRef.current?.getTotalLength() ?? 0) % 12) : 0
+  const length = bezierLength({ a: start, b: startA1, c: startA2, d: mid }, 500) * 2
+  const offset = wire.template.mode === 'live' ? 12 - (length % 12) : 0
 
   const arrow = useMemo(() => {
     if (template.mode !== 'live') {
