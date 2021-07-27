@@ -16,19 +16,20 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   } = current
 
   // useDebugRender(`Wire | ${id}`)
+  const t = ax < bx ? 1 : -1
 
   const dist = distance([ax, ay], [bx, by])
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
   const lead = Math.max(width / 2, dist / 4)
-  const leg = Math.min(height / 4, lead / 2)
+  const leg = Math.min(height / 4, lead / 6)
 
   const start = {
     x: ax < bx ? 0 : width,
     y: ay < by ? 0 : height,
   }
   const startLead = {
-    x: ax < bx ? start.x + lead : start.x - lead,
+    x: ax < bx ? start.x + lead * t : start.x - lead * t,
     y: start.y,
   }
   const startLeg = {
@@ -41,7 +42,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     y: start.y === 0 ? height : 0,
   }
   const endLead = {
-    x: ax < bx ? end.x - lead : end.x + lead,
+    x: ax < bx ? end.x - lead * t : end.x + lead * t,
     y: end.y,
   }
   const endLeg = {
