@@ -1,7 +1,7 @@
-import { useCallback } from 'react'
 import { WireMode } from 'features/graph/store/graph/types'
 import { PointerTooltip } from 'features/graph/components/overlay'
-import { useSessionManager } from '@/context/session'
+import { useSessionManager } from 'context/session'
+import { getWireModeTooltip } from 'features/graph/utils'
 
 type LiveWireTooltipProps = {
   initialPosition: [number, number]
@@ -16,23 +16,6 @@ export const LiveWireTooltip = ({
 }: LiveWireTooltipProps): React.ReactElement => {
   const { device } = useSessionManager()
 
-  const getTooltip = useCallback((type: typeof mode): JSX.Element => {
-    switch (type) {
-      case 'default': {
-        return <>D</>
-      }
-      case 'add': {
-        return <>+</>
-      }
-      case 'remove': {
-        return <>-</>
-      }
-      case 'transpose': {
-        return <>~~~</>
-      }
-    }
-  }, [])
-
   const offset: [number, number] = device.breakpoint === 'sm' ? [0, -50] : [25, 25]
 
   return (
@@ -42,7 +25,7 @@ export const LiveWireTooltip = ({
       pointerFilter={[initialPointer]}
       pointerTypeFilter={[]}
     >
-      {getTooltip(mode)}
+      {getWireModeTooltip(mode)}
     </PointerTooltip>
   )
 }

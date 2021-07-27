@@ -2,7 +2,8 @@ import React from 'react'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useAppStore } from '$'
 import { useWireMode } from 'features/graph/store/hotkey/hooks'
-import { getConnectedWires } from '@/features/graph/store/graph/utils'
+import { getConnectedWires } from 'features/graph/store/graph/utils'
+import { getWireModeTooltip } from 'features/graph/utils'
 
 type WireModeTooltipProps = {
   source: {
@@ -17,24 +18,7 @@ const WireModeTooltip = ({ source }: WireModeTooltipProps): React.ReactElement =
 
   const sourceReference = useRef<[string, string]>([source.elementId, source.parameterId])
 
-  const getTooltip = useCallback((type: typeof mode): JSX.Element => {
-    switch (type) {
-      case 'default': {
-        return <>D</>
-      }
-      case 'add': {
-        return <>+</>
-      }
-      case 'remove': {
-        return <>-</>
-      }
-      case 'transpose': {
-        return <>~~~</>
-      }
-    }
-  }, [])
-
-  const [tooltip, setTooltip] = useState<JSX.Element>(() => getTooltip('default'))
+  const [tooltip, setTooltip] = useState<JSX.Element>(() => getWireModeTooltip('default'))
 
   useEffect(() => {
     switch (mode) {
@@ -54,7 +38,7 @@ const WireModeTooltip = ({ source }: WireModeTooltipProps): React.ReactElement =
 
           if (allTranspose) {
             // Set the transpose tooltip
-            setTooltip(getTooltip('transpose'))
+            setTooltip(getWireModeTooltip('transpose'))
             break
           }
         } else {
@@ -68,19 +52,19 @@ const WireModeTooltip = ({ source }: WireModeTooltipProps): React.ReactElement =
 
           if (connectionCount > 0) {
             // Set the transpose tooltip
-            setTooltip(getTooltip('transpose'))
+            setTooltip(getWireModeTooltip('transpose'))
             break
           }
         }
 
-        setTooltip(getTooltip('default'))
+        setTooltip(getWireModeTooltip('default'))
         break
       }
       default: {
-        setTooltip(getTooltip(mode))
+        setTooltip(getWireModeTooltip(mode))
       }
     }
-  }, [mode, store, getTooltip])
+  }, [mode, store])
 
   return tooltip
 }

@@ -14,7 +14,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     to: [bx, by],
   } = current
 
-  useDebugRender(`Wire | ${id}`)
+  // useDebugRender(`Wire | ${id}`)
 
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
