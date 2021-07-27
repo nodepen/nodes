@@ -1,6 +1,7 @@
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useMemo, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
+import { LiveWireElement } from '@/features/graph/store/graph/types'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
@@ -57,6 +58,56 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     }
   })
 
+  const arrow = useMemo(() => {
+    if (template.mode !== 'live') {
+      return null
+    }
+
+    const liveWire = wire as LiveWireElement
+    const anchorType = liveWire.template.from ? 'input' : 'output'
+
+    const [sx, sy] = anchorType === 'input' ? [ax, ay] : [bx, by]
+    const [ex, ey] = anchorType === 'input' ? [bx, by] : [ax, ay]
+
+    // Get absolute position of wire endpoint
+    const [left, top] = [ex < sx ? 0 : width, ey < sy ? 0 : height]
+
+    const pointLeft = anchorType === 'input' ? bx < ax : ax < bx
+
+    const r = 5
+    const h = Math.sqrt(2) * r
+
+    return (
+      <div className="absolute w-6 h-6" style={{ left: left - 12, top: top - 12 }}>
+        <div className="w-full h-full flex justify-center items-center">
+          <svg className="overflow-visible" width="24" height="24" viewBox={`0 0 ${h} ${h}`}>
+            {pointLeft ? (
+              <polyline
+                points={`${h / 2},2 ${h / 2 - r + 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`}
+                stroke="#333"
+                strokeWidth="2px"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                fill="none"
+                vectorEffect="non-scaling-stroke"
+              />
+            ) : (
+              <polyline
+                points={`${h / 2},2 ${h / 2 + r - 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`}
+                stroke="#333"
+                strokeWidth="2px"
+                strokeLinejoin="round"
+                strokeLinecap="round"
+                fill="none"
+                vectorEffect="non-scaling-stroke"
+              />
+            )}
+          </svg>
+        </div>
+      </div>
+    )
+  }, [ax, ay, bx, by, width, height, wire, template.mode])
+
   return (
     <div className={`absolute pointer-events-none z-0 overflow-visible`} style={{ width, height, left: x, top: y - 2 }}>
       <svg
@@ -78,6 +129,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
           className={`${template.mode === 'provisional' ? 'animate-march' : 'none'}`}
         />
       </svg>
+      {arrow}
     </div>
   )
 }
