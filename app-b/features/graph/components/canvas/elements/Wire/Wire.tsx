@@ -16,19 +16,19 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   } = current
 
   // useDebugRender(`Wire | ${id}`)
-  const t = ax < bx ? 1 : -1
 
   const dist = distance([ax, ay], [bx, by])
-  const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
   const lead = Math.max(width / 2, dist / 2)
+
+  const invert = ax < bx ? 1 : -1
 
   const start = {
     x: ax < bx ? 0 : width,
     y: ay < by ? 0 : height,
   }
   const startLead = {
-    x: ax < bx ? start.x + lead * t : start.x - lead * t,
+    x: ax < bx ? start.x + lead * invert : start.x - lead * invert,
     y: start.y,
   }
 
@@ -37,7 +37,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     y: start.y === 0 ? height : 0,
   }
   const endLead = {
-    x: ax < bx ? end.x - lead * t : end.x + lead * t,
+    x: ax < bx ? end.x - lead * invert : end.x + lead * invert,
     y: end.y,
   }
 
@@ -93,36 +93,30 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
     const r = 5
     const h = Math.sqrt(2) * r
 
+    const points = pointLeft
+      ? `${h / 2},2 ${h / 2 - r + 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`
+      : `${h / 2},2 ${h / 2 + r - 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`
+
     return (
       <div className="absolute w-6 h-6" style={{ left: left - 12, top: top - 12 }}>
         <div className="w-full h-full flex justify-center items-center">
           <svg className="overflow-visible" width="24" height="24" viewBox={`0 0 ${h} ${h}`}>
-            {pointLeft ? (
-              <polyline
-                points={`${h / 2},2 ${h / 2 - r + 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`}
-                stroke="#333"
-                strokeWidth="3px"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                fill="none"
-                vectorEffect="non-scaling-stroke"
-              />
-            ) : (
-              <polyline
-                points={`${h / 2},2 ${h / 2 + r - 2},${h / 2} ${h / 2},${h - 2} ${h / 2},2`}
-                stroke="#333"
-                strokeWidth="3px"
-                strokeLinejoin="round"
-                strokeLinecap="round"
-                fill="none"
-                vectorEffect="non-scaling-stroke"
-              />
-            )}
+            <polyline
+              points={points}
+              stroke="#333"
+              strokeWidth="3px"
+              strokeLinejoin="round"
+              strokeLinecap="round"
+              fill="none"
+              vectorEffect="non-scaling-stroke"
+            />
           </svg>
         </div>
       </div>
     )
   }, [ax, ay, bx, by, width, height, wire, template.mode])
+
+  const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
 
   return (
     <div className={`absolute pointer-events-none z-0 overflow-visible`} style={{ width, height, left: x, top: y - 2 }}>
