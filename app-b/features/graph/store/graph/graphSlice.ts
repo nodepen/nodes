@@ -347,6 +347,11 @@ export const graphSlice = createSlice({
     captureLiveWires: (state: GraphState, action: PayloadAction<CaptureLiveWiresPayload>) => {
       const { type, elementId, parameterId } = action.payload
 
+      if (state.registry.wire.origin.elementId === elementId) {
+        // Components cannot connect to themselves
+        return
+      }
+
       const captureType = type === 'input' ? 'to' : 'from'
 
       const wires = Object.values(state.elements).filter(
