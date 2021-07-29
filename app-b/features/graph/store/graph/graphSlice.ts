@@ -262,11 +262,9 @@ export const graphSlice = createSlice({
         }
       }
 
-      prepareLiveMotion(state, nextSelection)
+      prepareLiveMotion(state, 'unset', nextSelection)
 
       state.selection = nextSelection
-
-      // TODO: stage live motion based on selection
     },
     updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
@@ -838,16 +836,16 @@ export const graphSlice = createSlice({
     clearProvisionalWire: (state: GraphState) => {
       delete state.elements['provisional-wire']
     },
-    prepareLiveMotion: (state: GraphState, action: PayloadAction<string>) => {
-      const targetId = action.payload
+    prepareLiveMotion: (state: GraphState, action: PayloadAction<Payload.PrepareLiveMotionPayload>) => {
+      const { anchor, targets } = action.payload
 
-      if (state.selection.includes(targetId)) {
-        // Live motion is staged when selection changes. If target is included, skip redundant work.
-        state.registry.move.elements = state.registry.move.elements.filter((id) => id !== targetId)
+      if (state.selection.includes(anchor)) {
+        // Live motion is staged when selection changes. If anchor element is included, skip redundant work.
+        state.registry.move.elements = state.registry.move.elements.filter((id) => id !== anchor)
         return
       }
 
-      prepareLiveMotion(state, [targetId])
+      prepareLiveMotion(state, anchor, targets)
 
       // Given a target element that is about to move, cache information about
       // other live motion that must follow it.
@@ -874,7 +872,7 @@ export const graphSlice = createSlice({
       fromWires.forEach((id) => {
         const wire = state.elements[id]
 
-        if (!assert.element.isWire(wire)) {
+        if (!wire || !assert.element.isWire(wire)) {
           return
         }
 
@@ -886,7 +884,7 @@ export const graphSlice = createSlice({
       toWires.forEach((id) => {
         const wire = state.elements[id]
 
-        if (!assert.element.isWire(wire)) {
+        if (!wire || !assert.element.isWire(wire)) {
           return
         }
 

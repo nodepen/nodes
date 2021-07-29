@@ -1,11 +1,11 @@
 import { NodePen } from 'glib'
-import { useGraphDispatch } from 'features/graph/store/graph/hooks'
+import { useGraphDispatch, useGraphSelection } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraMode, useCameraDispatch } from 'features/graph/store/camera/hooks'
 import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
-import { useComponentMenuActions, useSelectionStatus } from './lib/hooks'
+import { useComponentMenuActions } from './lib/hooks'
 import { GenericMenu } from 'features/graph/components/overlay'
 
 type StaticComponentProps = {
@@ -31,7 +31,10 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   const isMoved = useRef(false)
   const isVisible = useCriteria(width, height)
-  const isSelected = useSelectionStatus(id)
+
+  const selection = useGraphSelection()
+  const isSelected = selection.includes(id)
+  // const isSelected = true
 
   useEffect(() => {
     if (isMoved.current || !width || !height) {
@@ -62,7 +65,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           onStart={(e) => {
             e.stopPropagation()
             setZoomLock(true)
-            prepareLiveMotion(id)
+            prepareLiveMotion({ anchor: id, targets: [id] })
           }}
           onDrag={(_, d) => {
             const { deltaX, deltaY } = d
@@ -72,6 +75,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             const { x, y } = e
             moveElement(element.id, [x, y])
             setZoomLock(false)
+            prepareLiveMotion({ anchor: 'selection', targets: selection })
           }}
           disabled={mode !== 'idle'}
         >

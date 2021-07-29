@@ -19,7 +19,7 @@ export const useGraphDispatch = () => {
     moveElement: (id: string, position: [number, number]) => dispatch(graphActions.moveElement({ id, position })),
     updateSelection: (data: Payload.UpdateSelectionPayload) => dispatch(graphActions.updateSelection(data)),
     connect: (data: Payload.ConnectElementsPayload) => dispatch(graphActions.connect(data)),
-    prepareLiveMotion: (elementId: string) => dispatch(graphActions.prepareLiveMotion(elementId)),
+    prepareLiveMotion: (data: Payload.PrepareLiveMotionPayload) => dispatch(graphActions.prepareLiveMotion(data)),
     dispatchLiveMotion: (dx: number, dy: number) => dispatch(graphActions.dispatchLiveMotion([dx, dy])),
     startLiveWires: (data: Payload.StartLiveWiresPayload) => dispatch(graphActions.startLiveWires(data)),
     updateLiveWires: (x: number, y: number) => dispatch(graphActions.updateLiveWires([x, y])),

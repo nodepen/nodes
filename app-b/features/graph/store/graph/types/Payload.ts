@@ -36,6 +36,11 @@ export type UpdateSelectionPayload = {
     }
 )
 
+export type PrepareLiveMotionPayload = {
+  anchor: string
+  targets: string[]
+}
+
 export type ConnectElementsPayload = {
   mode: 'replace' | 'merge'
   from: {
