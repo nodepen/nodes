@@ -26,6 +26,11 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
 
   const lockRegion = useRef(false)
 
+  useEffect(() => {
+    // Clear existing selection on mount
+    updateSelection({ mode: 'default', type: 'id', ids: [] })
+  }, [])
+
   const handleMouseDown = useCallback((e: MouseEvent): void => {
     switch (e.button) {
       case 2: {

@@ -788,6 +788,11 @@ export const graphSlice = createSlice({
 
       // Clear registry
       state.registry.wire.capture = undefined
+
+      // Update selection, if applicable
+      if (state.selection.length > 0) {
+        prepareLiveMotion(state, 'selection', state.selection)
+      }
     },
     setProvisionalWire: (state: GraphState, action: PayloadAction<ProvisionalWirePayload>) => {
       const { from, to } = action.payload
