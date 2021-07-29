@@ -17,6 +17,7 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.updateLiveElement(data)),
     deleteElement: (id: string) => dispatch(graphActions.deleteElement(id)),
     moveElement: (id: string, position: [number, number]) => dispatch(graphActions.moveElement({ id, position })),
+    updateSelection: (data: Payload.UpdateSelectionPayload) => dispatch(graphActions.updateSelection(data)),
     connect: (data: Payload.ConnectElementsPayload) => dispatch(graphActions.connect(data)),
     prepareLiveMotion: (elementId: string) => dispatch(graphActions.prepareLiveMotion(elementId)),
     dispatchLiveMotion: (dx: number, dy: number) => dispatch(graphActions.dispatchLiveMotion([dx, dy])),

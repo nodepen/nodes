@@ -2,7 +2,14 @@ import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
 import { GraphState, Payload, WireMode, LiveWireElement } from './types'
-import { newGuid, initializeParameters, findAttachedWires } from '../../utils'
+import {
+  newGuid,
+  initializeParameters,
+  findAttachedWires,
+  getElementExtents,
+  regionContainsRegion,
+  regionIntersectsRegion,
+} from '../../utils'
 import {
   AddElementPayload,
   CaptureLiveWiresPayload,
@@ -182,6 +189,15 @@ export const graphSlice = createSlice({
     updateSelection: (state: GraphState, action: PayloadAction<Payload.UpdateSelectionPayload>) => {
       const { mode } = action.payload
 
+      const SELECTABLE_ELEMENTS: NodePen.ElementType[] = [
+        'static-component',
+        'static-parameter',
+        'panel',
+        'number-slider',
+      ]
+
+      type SelectableElement = NodePen.Element<'static-component'> | NodePen.Element<'static-parameter'>
+
       const stagedElementIds: string[] = []
 
       // Stage elements for selection update operation
@@ -193,8 +209,30 @@ export const graphSlice = createSlice({
         }
         case 'region': {
           const { includeIntersection, region } = action.payload
+
+          const candidates = Object.values(state.elements).filter((element): element is SelectableElement =>
+            SELECTABLE_ELEMENTS.includes(element.template.type)
+          )
+
+          candidates.forEach((element) => {
+            const [min, max] = getElementExtents(element)
+
+            if (regionContainsRegion([region.from, region.to], [min, max])) {
+              stagedElementIds.push(element.id)
+              return
+            }
+
+            if (includeIntersection && regionIntersectsRegion([region.from, region.to], [min, max])) {
+              stagedElementIds.push(element.id)
+            }
+          })
+
+          break
         }
       }
+
+      console.log(`Selection captured ${stagedElementIds.length} elements!`)
+      console.log({ selection: stagedElementIds })
 
       // Perform selection update
       switch (mode) {
@@ -212,6 +250,8 @@ export const graphSlice = createSlice({
           break
         }
       }
+
+      // TODO: stage live motion based on selection
     },
     updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
@@ -873,6 +913,7 @@ export const graphSlice = createSlice({
 
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
   state.graph.present.elements
+const selectSelection = (state: RootState): string[] => state.graph.present.selection
 const selectMode = (state: RootState): GraphMode => state.graph.present.mode
 
 const selectPrimaryWire = (state: RootState): string => state.graph.present.registry.wire.primary
@@ -888,10 +929,11 @@ const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: bool
 
 export const graphSelectors = {
   selectElements,
+  selectSelection,
   selectMode,
-  selectGraphHistory,
   selectPrimaryWire,
   selectLiveWiresOrigin,
+  selectGraphHistory,
 }
 
 const { actions, reducer } = graphSlice

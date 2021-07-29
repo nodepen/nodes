@@ -26,10 +26,14 @@ export const isRegion = (element: Element<ElementTemplateType>): element is Elem
     return element.template.type === 'region'
 }
 
-export const isGraphElement = (state: GraphElement | GripElement | VisibleElement): state is GraphElement => {
-    return 'sources' in state
+export const isVisibleElement = (data: GraphElement | GripElement | VisibleElement): data is VisibleElement => {
+    return 'position' in data && 'dimensions' in data
 }
 
-export const isGripElement = (state: GraphElement | GripElement | VisibleElement): state is GripElement => {
-    return 'anchors' in state
+export const isGraphElement = (data: GraphElement | GripElement | VisibleElement): data is GraphElement => {
+    return 'sources' in data
+}
+
+export const isGripElement = (data: GraphElement | GripElement | VisibleElement): data is GripElement => {
+    return 'anchors' in data
 }
