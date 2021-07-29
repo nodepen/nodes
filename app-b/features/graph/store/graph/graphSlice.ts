@@ -21,7 +21,7 @@ import {
   UpdateElementPayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
-import { getAnchorCoordinates, getConnectedWires } from './utils'
+import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
 import { prepareLiveMotion } from './reducers/prepareLiveMotion'
 
 const initialState: GraphState = {
@@ -118,12 +118,21 @@ export const graphSlice = createSlice({
       }
     },
     deleteElement: (state: GraphState, action: PayloadAction<string>) => {
-      if (!state.elements[action.payload]) {
+      const element = state.elements[action.payload]
+
+      if (!element) {
         return
       }
 
-      // TODO: Remove connections on graph elements
+      // Clear wires and sources
+      const [fromWires, toWires] = getConnectedWires(state, element.id)
+      const wires = [...fromWires, ...toWires]
 
+      wires.forEach((wireId) => {
+        deleteWire(state, wireId)
+      })
+
+      // Delete the specified element
       delete state.elements[action.payload]
     },
     moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
