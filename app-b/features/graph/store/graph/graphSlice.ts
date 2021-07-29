@@ -179,6 +179,40 @@ export const graphSlice = createSlice({
       // Apply motion to element
       element.current.position = position
     },
+    updateSelection: (state: GraphState, action: PayloadAction<Payload.UpdateSelectionPayload>) => {
+      const { mode } = action.payload
+
+      const stagedElementIds: string[] = []
+
+      // Stage elements for selection update operation
+      switch (action.payload.type) {
+        case 'id': {
+          const { ids } = action.payload
+          stagedElementIds.push(...ids)
+          break
+        }
+        case 'region': {
+          const { includeIntersection, region } = action.payload
+        }
+      }
+
+      // Perform selection update
+      switch (mode) {
+        case 'set': {
+          state.selection = stagedElementIds
+          break
+        }
+        case 'add': {
+          const validStagedElementIds = stagedElementIds.filter((id) => !state.selection.includes(id))
+          state.selection = [...state.selection, ...validStagedElementIds]
+          break
+        }
+        case 'remove': {
+          state.selection = state.selection.filter((id) => !stagedElementIds.includes(id))
+          break
+        }
+      }
+    },
     updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
 
@@ -348,7 +382,7 @@ export const graphSlice = createSlice({
       const { type, elementId, parameterId } = action.payload
 
       if (state.registry.wire.origin.elementId === elementId) {
-        // Components cannot connect to themselves
+        // Components cannot connect to themselves, that's illegal
         return
       }
 
@@ -750,12 +784,15 @@ export const graphSlice = createSlice({
       delete state.elements['provisional-wire']
     },
     prepareLiveMotion: (state: GraphState, action: PayloadAction<string>) => {
+      if (state.selection.length > 0) {
+        // Live motion is staged when selection changes, do no work
+        return
+      }
+
       const targetId = action.payload
 
       // Given a target element that is about to move, cache information about
       // other live motion that must follow it.
-
-      // TODO: Identify all selected elements
 
       // Identify all connected wires
       const wires = Object.values(state.elements).filter((element) =>

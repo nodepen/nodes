@@ -18,6 +18,24 @@ export type MoveElementPayload = {
   position: [number, number]
 }
 
+export type UpdateSelectionPayload = {
+  mode: 'set' | 'add' | 'remove'
+} & (
+  | {
+      type: 'region'
+      includeIntersection: boolean
+      /** Coordinates in graph space. */
+      region: {
+        from: [x: number, y: number]
+        to: [x: number, y: number]
+      }
+    }
+  | {
+      type: 'id'
+      ids: string[]
+    }
+)
+
 export type ConnectElementsPayload = {
   mode: 'replace' | 'merge'
   from: {

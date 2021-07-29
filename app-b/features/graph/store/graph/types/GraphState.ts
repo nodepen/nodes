@@ -3,7 +3,7 @@ import { GraphMode } from './GraphMode'
 
 export type GraphState = {
   elements: { [id: string]: NodePen.Element<NodePen.ElementType> }
-  selection: []
+  selection: string[]
   mode: GraphMode
   registry: {
     move: {
