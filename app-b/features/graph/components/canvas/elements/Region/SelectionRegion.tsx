@@ -2,7 +2,10 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react'
 import { NodePen } from 'glib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
-import { screenSpaceToCameraSpace } from '@/features/graph/utils'
+import { screenSpaceToCameraSpace } from 'features/graph/utils'
+import { useSelectionMode } from 'features/graph/store/hotkey/hooks'
+import { PointerTooltip } from '../../../overlay'
+import { useSessionManager } from '@/context/session'
 
 type SelectionRegionProps = {
   region: NodePen.Element<'region'>
@@ -19,6 +22,8 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     selection: { mode },
   } = current
 
+  const { device } = useSessionManager()
+
   const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
   const cameraPosition = useCameraStaticPosition()
@@ -26,10 +31,24 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
 
   const lockRegion = useRef(false)
 
+  const hotkeyMode = useSelectionMode()
+
   useEffect(() => {
-    // Clear existing selection on mount
+    // Clear existing selection on mount, if hotkeys are not pressed
+    if (hotkeyMode !== 'default') {
+      return
+    }
+
     updateSelection({ mode: 'default', type: 'id', ids: [] })
   }, [])
+
+  useEffect(() => {
+    updateLiveElement({
+      id: region.id,
+      type: 'region',
+      data: { selection: { mode: hotkeyMode === 'toggle' ? 'default' : hotkeyMode } },
+    })
+  }, [hotkeyMode])
 
   const handleMouseDown = useCallback((e: MouseEvent): void => {
     switch (e.button) {
@@ -143,7 +162,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     switch (mode) {
       case 'add': {
         return (
-          <div className="pr-3 flex items-center rounded-full bg-green">
+          <div className="flex items-center rounded-full bg-green">
             <div className="w-8 h-8 flex justify-center items-center">
               <svg
                 className="w-6 h-6"
@@ -161,13 +180,12 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
                 />
               </svg>
             </div>
-            <p className="text-sm font-semibold text-darkgreen whitespace-nowrap">Add to selection</p>
           </div>
         )
       }
       case 'remove': {
         return (
-          <div className="pr-3 flex items-center rounded-full bg-green">
+          <div className="flex items-center rounded-full bg-green">
             <div className="w-8 h-8 flex justify-center items-center">
               <svg
                 className="w-6 h-6"
@@ -185,7 +203,6 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
                 />
               </svg>
             </div>
-            <p className="text-sm font-semibold text-darkgreen whitespace-nowrap">Remove from selection</p>
           </div>
         )
       }
@@ -196,19 +213,27 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   }, [mode])
 
   return (
-    <div
-      className="absolute z-20"
-      style={{ left: min.x, top: min.y, width: Math.abs(max.x - min.x), height: Math.abs(max.y - min.y) }}
-    >
+    <>
       <div
-        className={`${
-          fromX > toX ? 'border-dashed' : ''
-        } flex justify-center items-center w-full h-full rounded-md border-darkgreen overflow-hidden`}
-        style={{ borderWidth: cameraZoom > 1 ? 2 : `${2 / cameraZoom}px` }}
+        className="absolute z-50"
+        style={{ left: min.x, top: min.y, width: Math.abs(max.x - min.x), height: Math.abs(max.y - min.y) }}
       >
-        <div className="m-2 h-8 flex items-center">{selectionModeIcon}</div>
+        <div
+          className={`${
+            fromX > toX ? 'border-dashed' : ''
+          } flex justify-center items-center w-full h-full rounded-md border-darkgreen overflow-hidden`}
+          style={{ borderWidth: cameraZoom > 1 ? 2 : `${2 / cameraZoom}px` }}
+        />
       </div>
-    </div>
+      <PointerTooltip
+        offset={device.breakpoint === 'sm' ? [0, -50] : fromX > toX && fromY > toY ? [-25, -25] : [25, 25]}
+        initialPosition={[-50, -50]}
+        pointerFilter={[pointer]}
+        pointerTypeFilter={[]}
+      >
+        {selectionModeIcon ?? <></>}
+      </PointerTooltip>
+    </>
   )
 }
 
