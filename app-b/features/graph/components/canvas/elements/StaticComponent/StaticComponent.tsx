@@ -5,7 +5,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
-import { useComponentMenuActions } from './lib/hooks'
+import { useComponentMenuActions, useSelectionStatus } from './lib/hooks'
 import { GenericMenu } from 'features/graph/components/overlay'
 
 type StaticComponentProps = {
@@ -31,6 +31,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   const isMoved = useRef(false)
   const isVisible = useCriteria(width, height)
+  const isSelected = useSelectionStatus(id)
 
   useEffect(() => {
     if (isMoved.current || !width || !height) {
@@ -80,8 +81,16 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             ref={componentRef}
             onPointerDown={(e) => e.stopPropagation()}
           >
-            <div className="h-2 bg-white border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none" />
-            <div className="bg-white flex flex-row justify-center items-stretch">
+            <div
+              className={`${
+                isSelected ? 'bg-green' : 'bg-white'
+              } h-2 border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none transition-colors duration-150`}
+            />
+            <div
+              className={`${
+                isSelected ? 'bg-green' : 'bg-white'
+              } flex flex-row justify-center items-stretch transition-colors duration-150`}
+            >
               <div className="flex-grow flex flex-col items-stretch">
                 {Object.entries(element.current.inputs).map(([id, i]) => {
                   const parameter = element.template.inputs[i]
@@ -144,7 +153,11 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                 })}
               </div>
             </div>
-            <div className="h-2 bg-white border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none shadow-osm" />
+            <div
+              className={`${
+                isSelected ? 'bg-green' : 'bg-white'
+              } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none shadow-osm transition-colors duration-150`}
+            />
           </div>
         </Draggable>
       </div>
