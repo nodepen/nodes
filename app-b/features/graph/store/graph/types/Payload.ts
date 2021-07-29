@@ -19,7 +19,7 @@ export type MoveElementPayload = {
 }
 
 export type UpdateSelectionPayload = {
-  mode: 'default' | 'add' | 'remove'
+  mode: 'default' | 'add' | 'remove' | 'toggle'
 } & (
   | {
       type: 'region'

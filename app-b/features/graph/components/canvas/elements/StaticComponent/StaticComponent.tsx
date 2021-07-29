@@ -1,12 +1,13 @@
 import { NodePen } from 'glib'
 import { useGraphDispatch, useGraphSelection } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraMode, useCameraDispatch } from 'features/graph/store/camera/hooks'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import Draggable from 'react-draggable'
 import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
 import { useComponentMenuActions } from './lib/hooks'
 import { GenericMenu } from 'features/graph/components/overlay'
+import { useAppStore } from '@/features/common/store'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -15,6 +16,8 @@ type StaticComponentProps = {
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
   const { template, current, id } = element
 
+  const store = useAppStore()
+
   useDebugRender(`StaticComponent | ${template.name} | ${id}`)
 
   const [x, y] = current.position
@@ -22,7 +25,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const scale = useCameraStaticZoom()
   const mode = useCameraMode()
 
-  const { moveElement, registerElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
+  const { moveElement, registerElement, prepareLiveMotion, dispatchLiveMotion, updateSelection } = useGraphDispatch()
   const { setZoomLock } = useCameraDispatch()
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -52,6 +55,14 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const componentMenuActions = useComponentMenuActions(element)
   const [showComponentMenuOverlay, setShowComponentMenuOverlay] = useState(false)
   const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
+
+  const handleClick = useCallback((): void => {
+    const { Shift, Control } = store.getState().hotkey
+
+    const mode = Shift && Control ? 'toggle' : Shift ? 'add' : Control ? 'remove' : 'default'
+
+    updateSelection({ type: 'id', ids: [id], mode })
+  }, [id, store, updateSelection])
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
@@ -83,6 +94,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             className={`${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col items-stretch pointer-events-auto`}
             ref={componentRef}
             onPointerDown={(e) => e.stopPropagation()}
+            onClick={handleClick}
+            role="presentation"
           >
             <div
               className={`${

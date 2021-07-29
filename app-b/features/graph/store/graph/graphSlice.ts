@@ -260,6 +260,20 @@ export const graphSlice = createSlice({
           nextSelection.push(...next)
           break
         }
+        case 'toggle': {
+          let currentSelection = [...state.selection]
+
+          stagedElementIds.forEach((id) => {
+            if (currentSelection.includes(id)) {
+              currentSelection = currentSelection.filter((selectedId) => selectedId !== id)
+            } else {
+              currentSelection.push(id)
+            }
+          })
+
+          nextSelection.push(...currentSelection)
+          break
+        }
       }
 
       prepareLiveMotion(state, 'unset', nextSelection)
