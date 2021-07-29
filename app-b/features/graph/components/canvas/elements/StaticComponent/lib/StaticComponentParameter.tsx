@@ -331,10 +331,6 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       const { pageX, pageY } = e
       tooltipPosition.current = [pageX, pageY]
 
-      console.log('?')
-
-      console.log(e.button)
-
       setShowTooltip(true)
     },
     [store, device.breakpoint]

@@ -22,7 +22,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
   const cameraPosition = useCameraStaticPosition()
-  const { deleteElement, updateLiveElement } = useGraphDispatch()
+  const { deleteElement, updateLiveElement, updateSelection } = useGraphDispatch()
 
   const lockRegion = useRef(false)
 
@@ -99,11 +99,17 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
         return
       }
       // Do selection
-      // alert(`from: [${fromX}, ${fromY}] | to: [${toX}, ${toY}]`)
+      updateSelection({
+        type: 'region',
+        mode: mode,
+        includeIntersection: fromX > toX,
+        region: { from: [fromX, fromY], to: [toX, toY] },
+      })
+
       setMode('idle')
       deleteElement(region.id)
     },
-    [mode, setMode, updateLiveElement, deleteElement, region.id, pointer, fromX, fromY, toX, toY]
+    [mode, setMode, updateSelection, updateLiveElement, deleteElement, region.id, pointer, fromX, fromY, toX, toY]
   )
 
   useEffect(() => {

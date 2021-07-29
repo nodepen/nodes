@@ -6,10 +6,8 @@ export const getElementExtents = (
   const [x, y] = element.current.position
   const { width, height } = element.current.dimensions
 
-  const [dx, dy] = [width / 2, height / 2]
-
   return [
-    [x - dx, y - dy],
-    [x + dx, y + dy],
+    [x, y],
+    [x + width, y + height],
   ]
 }

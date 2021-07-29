@@ -216,9 +216,14 @@ export const graphSlice = createSlice({
 
           candidates.forEach((element) => {
             const [min, max] = getElementExtents(element)
+            let captured = false
 
             if (regionContainsRegion([region.from, region.to], [min, max])) {
               stagedElementIds.push(element.id)
+              captured = true
+            }
+
+            if (captured) {
               return
             }
 
@@ -232,11 +237,10 @@ export const graphSlice = createSlice({
       }
 
       console.log(`Selection captured ${stagedElementIds.length} elements!`)
-      console.log({ selection: stagedElementIds })
 
       // Perform selection update
       switch (mode) {
-        case 'set': {
+        case 'default': {
           state.selection = stagedElementIds
           break
         }
