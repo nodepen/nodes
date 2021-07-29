@@ -60,7 +60,6 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             e.stopPropagation()
           }}
           onStart={(e) => {
-            console.log('draggable start!')
             e.stopPropagation()
             setZoomLock(true)
             prepareLiveMotion(id)

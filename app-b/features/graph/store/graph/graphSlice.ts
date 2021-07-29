@@ -22,6 +22,7 @@ import {
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
 import { getAnchorCoordinates, getConnectedWires } from './utils'
+import { prepareLiveMotion } from './reducers/prepareLiveMotion'
 
 const initialState: GraphState = {
   elements: {},
@@ -238,22 +239,32 @@ export const graphSlice = createSlice({
 
       console.log(`Selection captured ${stagedElementIds.length} elements!`)
 
+      const nextSelection: string[] = []
+
       // Perform selection update
       switch (mode) {
         case 'default': {
-          state.selection = stagedElementIds
+          nextSelection.push(...stagedElementIds)
+          //state.selection = stagedElementIds
           break
         }
         case 'add': {
           const validStagedElementIds = stagedElementIds.filter((id) => !state.selection.includes(id))
-          state.selection = [...state.selection, ...validStagedElementIds]
+          // state.selection = [...state.selection, ...validStagedElementIds]
+          nextSelection.push(...state.selection)
+          nextSelection.push(...validStagedElementIds)
           break
         }
         case 'remove': {
-          state.selection = state.selection.filter((id) => !stagedElementIds.includes(id))
+          const next = state.selection.filter((id) => !stagedElementIds.includes(id))
+          nextSelection.push(...next)
           break
         }
       }
+
+      prepareLiveMotion(state, nextSelection)
+
+      state.selection = nextSelection
 
       // TODO: stage live motion based on selection
     },
@@ -832,20 +843,23 @@ export const graphSlice = createSlice({
 
       if (state.selection.includes(targetId)) {
         // Live motion is staged when selection changes. If target is included, skip redundant work.
+        state.registry.move.elements = state.registry.move.elements.filter((id) => id !== targetId)
         return
       }
+
+      prepareLiveMotion(state, [targetId])
 
       // Given a target element that is about to move, cache information about
       // other live motion that must follow it.
 
       // Identify all connected wires
-      const wires = Object.values(state.elements).filter((element) =>
-        assert.element.isWire(element)
-      ) as NodePen.Element<'wire'>[]
-      const [fromWires, toWires] = findAttachedWires(wires, targetId)
+      // const wires = Object.values(state.elements).filter((element) =>
+      //   assert.element.isWire(element)
+      // ) as NodePen.Element<'wire'>[]
+      // const [fromWires, toWires] = findAttachedWires(wires, targetId)
 
-      state.registry.move.fromWires = fromWires
-      state.registry.move.toWires = toWires
+      // state.registry.move.fromWires = fromWires
+      // state.registry.move.toWires = toWires
 
       // Note: we do not have to clean up the registry because it is always refreshed before it's needed
     },
@@ -855,7 +869,7 @@ export const graphSlice = createSlice({
       // (i.e. we should be able to 'skip' live frames)
       const [dx, dy] = action.payload
 
-      const { fromWires, toWires } = state.registry.move
+      const { fromWires, toWires, elements } = state.registry.move
 
       fromWires.forEach((id) => {
         const wire = state.elements[id]
@@ -879,6 +893,18 @@ export const graphSlice = createSlice({
         const [x, y] = wire.current.to
 
         wire.current.to = [x + dx, y + dy]
+      })
+
+      elements.forEach((id) => {
+        const element = state.elements[id]
+
+        if (!element || !assert.element.isVisibleElement(element.current)) {
+          return
+        }
+
+        const [x, y] = element.current.position
+
+        element.current.position = [x + dx, y + dy]
       })
     },
     setMode: (state: GraphState, action: PayloadAction<GraphMode>) => {
