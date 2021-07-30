@@ -15,7 +15,7 @@ export const useGraphDispatch = () => {
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => dispatch(graphActions.addElement(data)),
     updateLiveElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>) =>
       dispatch(graphActions.updateLiveElement(data)),
-    deleteElement: (id: string) => dispatch(graphActions.deleteElement(id)),
+    deleteElements: (ids: string[]) => dispatch(graphActions.deleteElements(ids)),
     moveElement: (id: string, position: [number, number]) => dispatch(graphActions.moveElement({ id, position })),
     updateSelection: (data: Payload.UpdateSelectionPayload) => dispatch(graphActions.updateSelection(data)),
     connect: (data: Payload.ConnectElementsPayload) => dispatch(graphActions.connect(data)),

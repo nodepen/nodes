@@ -117,23 +117,27 @@ export const graphSlice = createSlice({
         }
       }
     },
-    deleteElement: (state: GraphState, action: PayloadAction<string>) => {
-      const element = state.elements[action.payload]
+    deleteElements: (state: GraphState, action: PayloadAction<string[]>) => {
+      action.payload.forEach((id) => {
+        const element = state.elements[id]
 
-      if (!element) {
-        return
-      }
+        if (!element) {
+          return
+        }
 
-      // Clear wires and sources
-      const [fromWires, toWires] = getConnectedWires(state, element.id)
-      const wires = [...fromWires, ...toWires]
+        // Clear wires and sources
+        const [fromWires, toWires] = getConnectedWires(state, element.id)
+        const wires = [...fromWires, ...toWires]
 
-      wires.forEach((wireId) => {
-        deleteWire(state, wireId)
+        console.log(wires)
+
+        wires.forEach((wireId) => {
+          deleteWire(state, wireId)
+        })
+
+        // Delete the specified element
+        delete state.elements[id]
       })
-
-      // Delete the specified element
-      delete state.elements[action.payload]
     },
     moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
       const { id, position } = action.payload

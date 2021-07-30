@@ -25,7 +25,7 @@ export const getConnectedWires = (
       }
     }
 
-    if (to?.elementId === elementId && to?.parameterId === parameterId) {
+    if (to?.elementId === elementId) {
       if (parameterId && to?.parameterId === parameterId) {
         toWires.push(wire.id)
       } else {

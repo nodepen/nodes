@@ -11,13 +11,13 @@ type DeleteMenuProps = {
 const DeleteMenu = ({ element }: DeleteMenuProps): React.ReactElement => {
   const { name, icon } = element.template
 
-  const { deleteElement } = useGraphDispatch()
+  const { deleteElements } = useGraphDispatch()
   const { onCancel, onClose } = useGenericMenuManager()
 
   useDebugRender('Delete Menu')
 
   const handleDelete = (): void => {
-    deleteElement(element.id)
+    deleteElements([element.id])
     onClose()
   }
 
