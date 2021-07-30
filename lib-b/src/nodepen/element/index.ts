@@ -1,2 +1,2 @@
-export { ElementBase as Element } from './ElementBase'
-export { ElementTemplateType } from './templates'
+export type { ElementBase as Element } from './ElementBase'
+export type { ElementTemplateType } from './templates'

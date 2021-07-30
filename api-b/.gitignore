@@ -4,6 +4,9 @@ dist
 auth.json
 origins.ts
 
+glib
+
 # gcloud
 app.yaml
 app.dev.yaml
+.gcloudignore

@@ -1,3 +1,3 @@
-export { GrasshopperComponent as Component } from './GrasshopperComponent'
-export { GrasshopperParameter as Parameter } from './GrasshopperParameter'
-export { GrasshopperParameterType as ParameterType } from './GrasshopperParameterType'
+export type { GrasshopperComponent as Component } from './GrasshopperComponent'
+export type { GrasshopperParameter as Parameter } from './GrasshopperParameter'
+export type { GrasshopperParameterType as ParameterType } from './GrasshopperParameterType'

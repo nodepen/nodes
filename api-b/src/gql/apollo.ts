@@ -34,7 +34,7 @@ export const api = new ApolloServer({
 
     if (!user.id) {
       throw new AuthenticationError(
-        'NodePen will no honor unauthenticated request.'
+        'NodePen will not honor unauthenticated requests.'
       )
     }
 

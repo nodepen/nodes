@@ -1,2 +1,2 @@
-export { Element } from './element'
-export { ElementTemplateType as ElementType } from './element'
+export type { Element } from './element'
+export type { ElementTemplateType as ElementType } from './element'
