@@ -3,10 +3,7 @@ import { RootState } from '$'
 import { HotkeyState, Payload } from './types'
 import { createSelector } from 'reselect'
 
-const initialState: HotkeyState = {
-  Shift: false,
-  Control: false,
-}
+const initialState: HotkeyState = {}
 
 export const hotkeySlice = createSlice({
   name: 'hotkey',
@@ -15,10 +12,16 @@ export const hotkeySlice = createSlice({
     setKey: (state: HotkeyState, action: PayloadAction<Payload.SetKeyPayload>) => {
       const { key, pressed } = action.payload
 
-      switch (key) {
-        case 'Shift':
-        case 'Control':
-          state[key] = pressed
+      const stateKey = key.toLowerCase()
+
+      switch (stateKey) {
+        case 'shift':
+        case 'control':
+        case 'a':
+        case 'd':
+        case 'y':
+        case 'z':
+          state[stateKey] = pressed
           break
         default:
           if (process.env.NEXT_PUBLIC_DEBUG) {
@@ -30,8 +33,8 @@ export const hotkeySlice = createSlice({
 })
 
 // const selectSpace = (state: RootState): boolean => !!state.hotkey['Space']
-const selectShift = (state: RootState): boolean => !!state.hotkey['Shift']
-const selectControl = (state: RootState): boolean => !!state.hotkey['Control']
+const selectShift = (state: RootState): boolean => !!state.hotkey['shift']
+const selectControl = (state: RootState): boolean => !!state.hotkey['control']
 
 const selectSelectionMode = createSelector(selectShift, selectControl, (shift, control) =>
   shift && control ? 'toggle' : shift ? 'add' : control ? 'remove' : 'default'

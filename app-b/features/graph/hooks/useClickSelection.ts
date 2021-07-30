@@ -8,9 +8,9 @@ export const useClickSelection = (elementId: string): (() => void) => {
   const { updateSelection } = useGraphDispatch()
 
   const handleClick = useCallback((): void => {
-    const { Control, Shift } = store.getState().hotkey
+    const { control, shift } = store.getState().hotkey
 
-    const mode = Shift && Control ? 'toggle' : Shift ? 'add' : Control ? 'remove' : 'default'
+    const mode = shift && control ? 'toggle' : shift ? 'add' : control ? 'remove' : 'default'
 
     updateSelection({ type: 'id', ids: [elementId], mode })
   }, [elementId, store, updateSelection])

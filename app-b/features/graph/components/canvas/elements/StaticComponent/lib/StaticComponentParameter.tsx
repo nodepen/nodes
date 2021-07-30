@@ -179,7 +179,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     const [dx, dy] = [Math.abs(ex - sx), Math.abs(ey - sy)]
 
     if (dx > 20 || dy > 20) {
-      const { Shift: shiftKey, Control: controlKey } = store.getState().hotkey
+      const { shift: shiftKey, control: controlKey } = store.getState().hotkey
 
       const getInitialMode = (shift: boolean, control: boolean): 'default' | 'add' | 'remove' | 'transpose' => {
         if (shift && !control) {
