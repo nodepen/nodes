@@ -85,9 +85,17 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           <div
             className={`${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col items-stretch pointer-events-auto`}
             ref={componentRef}
-            onPointerDown={(e) => e.stopPropagation()}
-            onClick={handleClick}
-            role="presentation"
+            onPointerDown={(e) => {
+              e.stopPropagation()
+              pointerDownStartTime.current = Date.now()
+            }}
+            onPointerUp={() => {
+              const duration = Date.now() - pointerDownStartTime.current
+
+              if (duration < 150) {
+                handleClick()
+              }
+            }}
           >
             <div
               className={`${

@@ -129,8 +129,6 @@ export const graphSlice = createSlice({
         const [fromWires, toWires] = getConnectedWires(state, element.id)
         const wires = [...fromWires, ...toWires]
 
-        console.log(wires)
-
         wires.forEach((wireId) => {
           deleteWire(state, wireId)
         })

@@ -9,6 +9,7 @@ import { PointerTooltip } from 'features/graph/components/overlay'
 import WireModeTooltip from './WireModeTooltip'
 import { getConnectedWires } from '@/features/graph/store/graph/utils'
 import { useSessionManager } from '@/context/session'
+import { useClickSelection } from '@/features/graph/hooks'
 
 type StaticComponentParameterProps = {
   parent: NodePen.Element<'static-component'>
@@ -133,6 +134,10 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   }
 
   const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+    if (e.pointerType === 'mouse' && e.button === 2) {
+      return
+    }
+
     e.stopPropagation()
     e.preventDefault()
 
@@ -344,6 +349,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     setShowTooltip(false)
   }, [])
 
+  const handlePointerClick = useClickSelection(elementId)
+
   const handlePointerUp = useCallback(
     (e: React.PointerEvent<HTMLButtonElement>): void => {
       switch (e.pointerType) {
@@ -361,12 +368,21 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
             console.log('Launch menu!')
           }
 
-          longPressActive.current = false
-          setCameraMode('idle')
+          break
         }
       }
+
+      pointerIsMoving.current = false
+      longPressActive.current = false
+      setCameraMode('idle')
+
+      const duration = Date.now() - pointerStartTime.current
+
+      if (duration < 150) {
+        handlePointerClick()
+      }
     },
-    [setCameraMode]
+    [setCameraMode, handlePointerClick]
   )
 
   return (
