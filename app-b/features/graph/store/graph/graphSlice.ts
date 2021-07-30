@@ -207,6 +207,17 @@ export const graphSlice = createSlice({
       // Apply motion to element
       element.current.position = position
     },
+    moveLiveElement: (state: GraphState, action: PayloadAction<Payload.MoveElementPayload>) => {
+      const { id, position } = action.payload
+
+      const element = state.elements[id]
+
+      if (!element) {
+        return
+      }
+
+      element.current.position = position
+    },
     updateSelection: (state: GraphState, action: PayloadAction<Payload.UpdateSelectionPayload>) => {
       const { mode } = action.payload
 

@@ -84,9 +84,9 @@ export const GraphControls = (): React.ReactElement => {
               </div>
             </div>
           </div>
-          <div className="w-full p-2">
+          {/* <div className="w-full p-2">
             <hr className="w-full border-t-2 border-swampgreen rounded-full" />
-          </div>
+          </div> */}
           <button className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen">
             <div className="w-12 h-12 flex justify-center items-center">
               <svg
@@ -150,58 +150,6 @@ export const GraphControls = (): React.ReactElement => {
               </button>
             )
           })}
-          <div className="w-full p-2">
-            <hr className="w-full border-t-2 border-swampgreen rounded-full" />
-          </div>
-          <button
-            className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen"
-            onClick={undo}
-          >
-            <div className="w-12 h-12 flex justify-center items-center">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="#093824"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0019 16V8a1 1 0 00-1.6-.8l-5.333 4zM4.066 11.2a1 1 0 000 1.6l5.334 4A1 1 0 0011 16V8a1 1 0 00-1.6-.8l-5.334 4z"
-                />
-              </svg>
-            </div>
-            <div className="flex-grow h-full flex justify-start items-center">
-              <p className="font-sans font-bold text-sm select-none">UNDO</p>
-            </div>
-          </button>
-          <button
-            className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen"
-            onClick={redo}
-          >
-            <div className="w-12 h-12 flex justify-center items-center">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="#093824"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M11.933 12.8a1 1 0 000-1.6L6.6 7.2A1 1 0 005 8v8a1 1 0 001.6.8l5.333-4zM19.933 12.8a1 1 0 000-1.6l-5.333-4A1 1 0 0013 8v8a1 1 0 001.6.8l5.333-4z"
-                />
-              </svg>
-            </div>
-            <div className="flex-grow h-full flex justify-start items-center">
-              <p className="font-sans font-bold text-sm select-none">REDO</p>
-            </div>
-          </button>
-
           <div className="w-full h-12" />
         </div>
       </div>

@@ -11,6 +11,7 @@ export const store = configureStore({
     graph: undoable(graphReducer, {
       // TODO: Add an 'internal move' so we can't undo the recenter move-on-place
       filter: excludeAction([
+        graphActions.moveLiveElement.type,
         graphActions.updateLiveElement.type,
         graphActions.updateSelection.type,
         graphActions.setProvisionalWire.type,
