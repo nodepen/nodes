@@ -1,7 +1,7 @@
 import { useGraphManager } from '@/context/graph'
 import React from 'react'
 import { Layout } from './components'
-import { DeleteKeyObserver, HistoryHotkeyObserver } from './components/observer'
+import { DeleteKeyObserver, HistoryHotkeyObserver, SelectionHotkeyObserver } from './components/observer'
 
 export const GraphContainer = (): React.ReactElement => {
   const { registry } = useGraphManager()
@@ -10,6 +10,7 @@ export const GraphContainer = (): React.ReactElement => {
     <>
       <DeleteKeyObserver />
       <HistoryHotkeyObserver />
+      <SelectionHotkeyObserver />
       <div className="w-full flex-grow flex flex-col justify-start overflow-hidden">
         <Layout.Controls />
         <div

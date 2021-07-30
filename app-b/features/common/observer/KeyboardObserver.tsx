@@ -7,6 +7,10 @@ const KeyboardObserver = (): React.ReactElement => {
   const handleKeyDown = useCallback(
     (e: KeyboardEvent): void => {
       setKey({ key: e.key, pressed: true })
+
+      if (e.key.toLowerCase() === 'd') {
+        e.preventDefault()
+      }
     },
     [setKey]
   )
