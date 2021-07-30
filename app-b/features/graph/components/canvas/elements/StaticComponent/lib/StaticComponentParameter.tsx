@@ -376,6 +376,8 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
       longPressActive.current = false
       setCameraMode('idle')
 
+      gripRef.current?.releasePointerCapture(e.pointerId)
+
       const duration = Date.now() - pointerStartTime.current
 
       if (e.button === 0 && duration < 150) {

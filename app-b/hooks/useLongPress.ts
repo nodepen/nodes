@@ -1,7 +1,7 @@
 import { distance } from '@/features/graph/utils'
 import React, { useEffect, useRef, useCallback } from 'react'
 
-export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 350): React.RefObject<HTMLDivElement> => {
+export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 600): React.RefObject<HTMLDivElement> => {
   const target = useRef<HTMLDivElement>(null)
 
   const longPressActive = useRef<boolean>(false)
@@ -44,6 +44,12 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 350
           return
         }
 
+        try {
+          window.navigator.vibrate(50)
+        } catch {
+          // Do nothing
+        }
+
         onLongPress(e)
 
         resetState()
@@ -66,7 +72,7 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 350
 
       const dist = distance([ax, ay], [bx, by])
 
-      if (dist > 25) {
+      if (dist > 15) {
         // Cancel long press
         resetState()
       }

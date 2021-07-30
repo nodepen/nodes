@@ -133,17 +133,28 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   pointerDownStartPosition.current = [pageX, pageY]
                 }}
                 onPointerUp={(e) => {
-                  if (e.pointerType === 'mouse' && e.button !== 2) {
-                    return
-                  }
+                  switch (e.pointerType) {
+                    case 'mouse': {
+                      if (e.button !== 2) {
+                        return
+                      }
 
-                  const now = Date.now()
+                      const pointerDuration = Date.now() - pointerDownStartTime.current
 
-                  const { pageX, pageY } = e
+                      if (pointerDuration > 300 || showComponentMenuOverlay) {
+                        return
+                      }
 
-                  if (now - pointerDownStartTime.current < 300 && !showComponentMenuOverlay) {
-                    setShowComponentMenuOverlay(true)
-                    setOverlayPosition([pageX, pageY])
+                      const { pageX, pageY } = e
+
+                      setShowComponentMenuOverlay(true)
+                      setOverlayPosition([pageX, pageY])
+
+                      break
+                    }
+                    case 'touch': {
+                      break
+                    }
                   }
                 }}
               >

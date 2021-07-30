@@ -122,12 +122,6 @@ const GraphCanvas = (): React.ReactElement => {
       setMode('locked')
       longPressActivatedLocation.current = [ex, ey]
       setLongPressActivated(true)
-
-      try {
-        window.navigator.vibrate(50)
-      } catch {
-        // Do nothing
-      }
     },
     [setMode, state]
   )
