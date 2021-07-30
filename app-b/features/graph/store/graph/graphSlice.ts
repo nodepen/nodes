@@ -137,6 +137,15 @@ export const graphSlice = createSlice({
         delete state.elements[id]
       })
     },
+    deleteLiveElements: (state: GraphState, action: PayloadAction<string[]>) => {
+      action.payload.forEach((id) => {
+        if (!state.elements[id]) {
+          return
+        }
+
+        delete state.elements[id]
+      })
+    },
     moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
       const { id, position } = action.payload
 

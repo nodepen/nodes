@@ -125,6 +125,10 @@ export const useLiveWireMotion = (
         return
       }
 
+      if (e.button === 1) {
+        return
+      }
+
       endLiveWires(mode === 'transpose' ? 'default' : mode)
     },
     [mode, endLiveWires]

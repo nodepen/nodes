@@ -37,10 +37,7 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
         ),
         label: <p>Undo</p>,
         menu: <p></p>,
-        onClick: (): void => {
-          undo()
-          undo()
-        },
+        onClick: undo,
       },
       {
         position: 200,

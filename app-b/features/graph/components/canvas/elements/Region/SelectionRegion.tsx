@@ -27,7 +27,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
   const { setMode } = useCameraDispatch()
   const cameraZoom = useCameraStaticZoom()
   const cameraPosition = useCameraStaticPosition()
-  const { deleteElements, updateLiveElement, updateSelection } = useGraphDispatch()
+  const { deleteLiveElements, updateLiveElement, updateSelection } = useGraphDispatch()
 
   const lockRegion = useRef(false)
 
@@ -131,9 +131,9 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
       })
 
       setMode('idle')
-      deleteElements([region.id])
+      deleteLiveElements([region.id])
     },
-    [mode, setMode, updateSelection, updateLiveElement, deleteElements, region.id, pointer, fromX, fromY, toX, toY]
+    [mode, setMode, updateSelection, updateLiveElement, deleteLiveElements, region.id, pointer, fromX, fromY, toX, toY]
   )
 
   useEffect(() => {
