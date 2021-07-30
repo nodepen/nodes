@@ -36,6 +36,26 @@ export const hotkeySlice = createSlice({
 const selectShift = (state: RootState): boolean => !!state.hotkey['shift']
 const selectControl = (state: RootState): boolean => !!state.hotkey['control']
 
+const selectY = (state: RootState): boolean => !!state.hotkey['y']
+const selectZed = (state: RootState): boolean => !!state.hotkey['z']
+
+const selectHistoryHotkey = createSelector(selectControl, selectY, selectZed, (control, y, z) => {
+  if (!control) {
+    return undefined
+  }
+
+  if ([control, y, z].every((key) => key)) {
+    return undefined
+  }
+
+  if (control && y) {
+    return 'redo'
+  }
+
+  if (control && z) {
+    return 'undo'
+  }
+})
 const selectSelectionMode = createSelector(selectShift, selectControl, (shift, control) =>
   shift && control ? 'toggle' : shift ? 'add' : control ? 'remove' : 'default'
 )
@@ -44,6 +64,7 @@ const selectWireMode = createSelector(selectShift, selectControl, (shift, contro
 )
 
 export const hotkeySelectors = {
+  selectHistoryHotkey,
   selectSelectionMode,
   selectWireMode,
 }
