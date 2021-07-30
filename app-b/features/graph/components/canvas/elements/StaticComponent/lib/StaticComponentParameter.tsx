@@ -378,7 +378,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
       const duration = Date.now() - pointerStartTime.current
 
-      if (duration < 150) {
+      if (e.button === 0 && duration < 150) {
         handlePointerClick()
       }
     },

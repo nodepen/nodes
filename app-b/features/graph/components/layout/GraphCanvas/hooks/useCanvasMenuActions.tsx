@@ -1,9 +1,11 @@
 import { useMemo } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
+import { useSetCameraPosition } from 'features/graph/hooks'
 
 export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<never>[] => {
   const { undo, redo, reset } = useGraphDispatch()
+  const setCameraPosition = useSetCameraPosition()
 
   const actions: MenuAction<never>[] = useMemo(() => {
     return [
@@ -54,7 +56,7 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
         label: <p>Center</p>,
         menu: <p></p>,
         onClick: (): void => {
-          // ok
+          setCameraPosition(0, 0, 'TL', 0, 0, 1)
         },
       },
       {
@@ -108,7 +110,7 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
         },
       },
     ]
-  }, [])
+  }, [setCameraPosition, onAddComponent])
 
   return actions
 }

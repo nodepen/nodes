@@ -105,7 +105,7 @@ export const useSetCameraPosition = (): ((
         // }, 5)
       })
     },
-    [startPosition]
+    [startPosition, setTransform]
   )
 
   return setCameraPosition

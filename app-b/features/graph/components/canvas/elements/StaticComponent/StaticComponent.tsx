@@ -89,10 +89,10 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               e.stopPropagation()
               pointerDownStartTime.current = Date.now()
             }}
-            onPointerUp={() => {
+            onPointerUp={(e) => {
               const duration = Date.now() - pointerDownStartTime.current
 
-              if (duration < 150) {
+              if (e.button === 0 && duration < 150) {
                 handleClick()
               }
             }}
@@ -124,7 +124,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               <div
                 id="label-column"
                 className={`${
-                  showComponentMenuOverlay ? 'menu-target' : 'bg-white'
+                  showComponentMenuOverlay ? 'bg-green' : 'bg-white'
                 } w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
                 onPointerDown={(e) => {
                   pointerDownStartTime.current = Date.now()
