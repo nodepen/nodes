@@ -34,6 +34,9 @@ const set = setAsync.bind(client) as typeof setAsync
 const setexAsync = promisify(client.setex)
 const setex = setexAsync.bind(client) as typeof setexAsync
 
+const subscribeAsync = promisify(client.subscribe)
+const subscribe = subscribeAsync.bind(client) as typeof subscribeAsync
+
 // Export db object
 export const db = {
   del,
@@ -44,4 +47,5 @@ export const db = {
   hset,
   set,
   setex,
+  subscribe,
 }

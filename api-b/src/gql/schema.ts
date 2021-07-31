@@ -5,6 +5,14 @@ export const schema = gql`
     getInstalledComponents: [GrasshopperComponent]!
   }
 
+  type Subscription {
+    onSolution(solutionId: String): SolutionManifest
+  }
+
+  type SolutionManifest {
+    solutionId: String!
+  }
+
   type GrasshopperComponent {
     guid: String!
     name: String!

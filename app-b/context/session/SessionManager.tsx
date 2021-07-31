@@ -2,6 +2,7 @@ import React, { useState, useEffect, createContext, useCallback } from 'react'
 import { firebase } from './auth/firebase'
 import nookies from 'nookies'
 import { SessionStore } from './types'
+import { useApolloClient, gql, useSubscription } from '@apollo/client'
 
 export const SessionContext = createContext<SessionStore>({ device: { iOS: false, breakpoint: 'sm' } })
 
@@ -101,6 +102,49 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
   useEffect(() => {
     handleResize()
   }, [])
+
+  // const client = useApolloClient()
+
+  const { data } = useSubscription(
+    gql`
+      subscription {
+        onSolution {
+          solutionId
+        }
+      }
+    `,
+    {
+      onSubscriptionData: (x) => {
+        console.log(x)
+      },
+    }
+  )
+
+  console.log({ subscription: data })
+
+  // useEffect(() => {
+  //   if (!token) {
+  //     return
+  //   }
+
+  //   const subscription = client
+  //     .subscribe({
+  //       query: gql`
+  //         subscription {
+  //           onSolution {
+  //             solutionId
+  //           }
+  //         }
+  //       `,
+  //     })
+  //     .subscribe({
+  //       next: (res) => console.log(res),
+  //     })
+
+  //   return () => {
+  //     subscription.unsubscribe()
+  //   }
+  // }, [client, token])
 
   const session: SessionStore = {
     user,

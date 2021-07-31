@@ -390,7 +390,9 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   return (
     <>
       <button
-        className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 hover:bg-gray-300 overflow-visible cursor-default`}
+        className={`${p} ${border} ${
+          device.breakpoint === 'sm' ? '' : 'hover:bg-gray-300'
+        } flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 overflow-visible cursor-default`}
         ref={longPressTarget as any}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
