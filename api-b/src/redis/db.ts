@@ -1,5 +1,6 @@
 import redis from 'redis'
 import { promisify } from 'util'
+import { initialize } from './pubsub'
 
 // Initialize client
 const client = process.env.NP_DB_HOST
@@ -39,6 +40,7 @@ const subscribe = subscribeAsync.bind(client) as typeof subscribeAsync
 
 // Export db object
 export const db = {
+  client,
   del,
   expire,
   get,

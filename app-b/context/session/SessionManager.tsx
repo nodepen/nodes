@@ -107,16 +107,17 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
 
   const { data } = useSubscription(
     gql`
-      subscription {
-        onSolution {
+      subscription OnSolution($id: String!) {
+        onSolution(solutionId: $id) {
           solutionId
         }
       }
     `,
     {
-      onSubscriptionData: (x) => {
-        console.log(x)
+      variables: {
+        id: 'okay',
       },
+      skip: !token,
     }
   )
 

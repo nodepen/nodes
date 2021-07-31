@@ -1,4 +1,4 @@
-import { db } from './redis'
+import { db, initialize } from './redis'
 import { api } from './gql'
 
 import firebase, { ServiceAccount } from 'firebase-admin'
@@ -13,6 +13,10 @@ const PORT = process.env.PORT || 4000
 
 api.listen({ port: PORT }).then(({ url }) => {
   console.log(`Listening at ${url}`)
+})
+
+db.client.on('connect', () => {
+  initialize(db.client)
 })
 
 // setTimeout(() => {
