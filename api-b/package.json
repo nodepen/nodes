@@ -20,17 +20,20 @@
   },
   "homepage": "https://github.com/cdriesler/nodepen#readme",
   "dependencies": {
-    "apollo-server": "^2.24.0",
+    "@graphql-tools/schema": "^8.0.1",
+    "apollo-server-express": "^3.1.1",
     "bee-queue": "^1.3.1",
     "copyfiles": "^2.4.1",
     "cors": "^2.8.5",
     "dotenv": "^9.0.2",
+    "express": "^4.17.1",
     "firebase-admin": "^9.8.0",
     "glib": "file:./glib",
     "graphql": "^15.5.0",
     "graphql-redis-subscriptions": "^2.4.0",
     "graphql-subscriptions": "^1.2.1",
-    "redis": "^3.1.2"
+    "redis": "^3.1.2",
+    "subscriptions-transport-ws": "^0.9.19"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",

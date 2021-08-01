@@ -22,13 +22,15 @@
     "react-redux": "7.2.4",
     "react-zoom-pan-pinch": "2.1.1",
     "redux-undo": "1.0.1",
-    "reselect": "4.0.0"
+    "reselect": "4.0.0",
+    "subscriptions-transport-ws": "^0.9.19"
   },
   "devDependencies": {
     "@tailwindcss/jit": "^0.1.18",
     "@types/node": "^15.0.2",
     "@types/react": "^17.0.5",
     "@types/react-dom": "^17.0.7",
+    "@types/ws": "^7.4.7",
     "@typescript-eslint/eslint-plugin": "^4.23.0",
     "@typescript-eslint/parser": "^4.23.0",
     "autoprefixer": "^10.2.5",

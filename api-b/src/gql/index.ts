@@ -1,1 +1,1 @@
-export { api } from './apollo'
+export { server as api } from './apollo'

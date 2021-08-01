@@ -1,5 +1,5 @@
-import { db, initialize } from './redis'
 import { api } from './gql'
+import { db, initialize } from './redis'
 
 import firebase, { ServiceAccount } from 'firebase-admin'
 import credentials from './auth/auth.json'
@@ -11,8 +11,12 @@ firebase.initializeApp({
 
 const PORT = process.env.PORT || 4000
 
-api.listen({ port: PORT }).then(({ url }) => {
-  console.log(`Listening at ${url}`)
+// api.listen({ port: PORT }).then(({ url }) => {
+//   console.log(`Listening at ${url}`)
+// })
+
+api.listen(PORT, () => {
+  console.log('Listening!')
 })
 
 db.client.on('connect', () => {

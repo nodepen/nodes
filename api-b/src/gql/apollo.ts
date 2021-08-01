@@ -1,17 +1,26 @@
-import { ApolloServer, AuthenticationError, Config } from 'apollo-server'
+import {
+  ApolloServer,
+  AuthenticationError,
+  Config,
+} from 'apollo-server-express'
 import { schema as typeDefs } from './schema'
 import { resolvers } from './resolvers'
 import admin from 'firebase-admin'
 import { origins } from './origins'
+import { execute, subscribe } from 'graphql'
+import { makeExecutableSchema } from '@graphql-tools/schema'
+import { SubscriptionServer } from 'subscriptions-transport-ws'
+import { server } from '../express'
 
-export const api = new ApolloServer({
-  typeDefs,
-  resolvers,
-  cors: {
-    origin: origins,
-    credentials: true,
-    allowedHeaders: '*',
-  },
+const schema = makeExecutableSchema({ typeDefs, resolvers })
+
+export const gqlQueryServer = new ApolloServer({
+  schema,
+  // cors: {
+  //   origin: origins,
+  //   credentials: true,
+  //   allowedHeaders: '*',
+  // },
   context: async ({ req, res }) => {
     const token = req.headers?.authorization
 
@@ -41,3 +50,23 @@ export const api = new ApolloServer({
     return { user }
   },
 })
+
+const gqlSubscriptionServer = SubscriptionServer.create(
+  {
+    schema,
+    execute,
+    subscribe,
+  },
+  {
+    server,
+    path: gqlQueryServer.graphqlPath,
+  }
+)
+
+const SIGNALS = ['SIGINT', 'SIGTERM']
+
+SIGNALS.forEach((signal) => {
+  process.on(signal, () => gqlSubscriptionServer.close)
+})
+
+export { server }
