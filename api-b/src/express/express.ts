@@ -1,6 +1,8 @@
 import express from 'express'
+import cors from 'cors'
 import { createServer } from 'http'
 
-const app = express()
+export const app = express()
+app.use(cors())
 
 export const server = createServer(app)

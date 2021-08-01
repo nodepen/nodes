@@ -1,1 +1,1 @@
-export { server } from './express'
+export { app, server } from './express'
