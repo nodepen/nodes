@@ -26,7 +26,8 @@ initializeServer().then(({ server }) => {
 // })
 
 db.client.on('connect', () => {
-  initialize(db.client)
+  console.log('Redis connected!')
+  // initialize(db.client)
 })
 
 // setTimeout(() => {
