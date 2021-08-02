@@ -6,6 +6,8 @@ origins.ts
 
 glib
 
+.env
+
 # gcloud
 app.yaml
 app.dev.yaml

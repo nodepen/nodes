@@ -105,7 +105,7 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
 
   // const client = useApolloClient()
 
-  const { data } = useSubscription(
+  const { data, error } = useSubscription(
     gql`
       subscription OnSolution($id: String!) {
         onSolution(solutionId: $id) {
@@ -121,7 +121,15 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     }
   )
 
-  console.log({ subscription: data })
+  if (data) {
+    console.log(`Subscription still active! [ ${data.onSolution.solutionId} ]`)
+  }
+
+  if (error) {
+    console.error(`${error.name} : ${error.message}`)
+  }
+
+  // console.log({ subscription: data })
 
   // useEffect(() => {
   //   if (!token) {

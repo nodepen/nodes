@@ -12,5 +12,5 @@ export const initialize = (client: RedisClient): void => {
     pubsub.publish('SOLUTION_COMPLETE', {
       onSolution: { solutionId: Date.now().toString() },
     })
-  }, 1000)
+  }, 10000)
 }

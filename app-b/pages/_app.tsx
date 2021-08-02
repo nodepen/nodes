@@ -15,7 +15,7 @@ import { getMainDefinition } from '@apollo/client/utilities'
 const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   const wsLink = process.browser
     ? new WebSocketLink({
-        uri: 'ws://localhost:4000/graphql',
+        uri: process.env.NEXT_PUBLIC_NP_API_URL?.replace('https', 'wss') ?? 'ws://localhost:4000/graphql',
         options: {
           reconnect: true,
           connectionParams: {
