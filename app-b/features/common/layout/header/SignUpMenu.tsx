@@ -7,14 +7,16 @@ export const SignUpMenu = (): React.ReactElement => {
     firebase.auth().signInWithRedirect(provider)
   }
 
-  return (
-    <>
-      <button onClick={handleGoogleSignup}>
-        <img src="auth/google-signin.png" width={200} />
-      </button>
-      <div>OR</div>
-      <div>Username</div>
-      <div>Password</div>
-    </>
-  )
+  return <></>
+
+  // return (
+  //   <>
+  //     <button onClick={handleGoogleSignup}>
+  //       <img src="auth/google-signin.png" width={200} />
+  //     </button>
+  //     <div>OR</div>
+  //     <div>Username</div>
+  //     <div>Password</div>
+  //   </>
+  // )
 }

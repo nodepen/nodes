@@ -18,17 +18,21 @@ export const getConnectedWires = (
     const { from, to } = wire.template
 
     if (from?.elementId === elementId) {
-      if (parameterId && from?.parameterId === parameterId) {
+      if (!parameterId) {
         fromWires.push(wire.id)
-      } else {
+      }
+
+      if (from.parameterId === parameterId) {
         fromWires.push(wire.id)
       }
     }
 
     if (to?.elementId === elementId) {
-      if (parameterId && to?.parameterId === parameterId) {
+      if (!parameterId) {
         toWires.push(wire.id)
-      } else {
+      }
+
+      if (to.parameterId === parameterId) {
         toWires.push(wire.id)
       }
     }
