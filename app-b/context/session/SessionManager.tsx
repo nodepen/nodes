@@ -1,8 +1,8 @@
-import React, { useState, useEffect, createContext, useCallback } from 'react'
-import { firebase } from './auth/firebase'
-import nookies from 'nookies'
+import React, { createContext } from 'react'
 import { SessionStore } from './types'
-import { useApolloClient, gql, useSubscription } from '@apollo/client'
+import { gql, useSubscription } from '@apollo/client'
+import { useAuthentication } from './hooks/useAuthentication'
+import { useDeviceConfiguration } from './hooks/useDeviceConfiguration'
 
 export const SessionContext = createContext<SessionStore>({ device: { iOS: false, breakpoint: 'sm' } })
 
@@ -11,99 +11,9 @@ type SessionManagerProps = {
 }
 
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
-  const [user, setUser] = useState<SessionStore['user']>(undefined)
-  const [token, setToken] = useState<string>()
-  const [iOS, setIOS] = useState(false)
+  const { user, token } = useAuthentication()
 
-  useEffect(() => {
-    return firebase.auth().onIdTokenChanged(async (u) => {
-      nookies.destroy(undefined, 'token')
-
-      if (!u) {
-        const anon = await firebase.auth().signInAnonymously()
-
-        if (!anon.user) {
-          // Handle this failure gracefully
-          nookies.set(undefined, 'token', '', { path: '/' })
-          setToken(undefined)
-          return
-        }
-
-        const token = await anon.user.getIdToken()
-
-        nookies.set(undefined, 'token', token, { path: '/' })
-
-        setUser(anon.user)
-        setToken(token)
-      } else {
-        const token = await u.getIdToken()
-
-        nookies.set(undefined, 'token', token, { path: '/' })
-
-        setUser(u)
-        setToken(token)
-      }
-    })
-  }, [])
-
-  useEffect(() => {
-    const handleRefresh = setInterval(async () => {
-      const u = firebase.auth().currentUser
-      await u?.getIdToken(true)
-    }, 1000 * 60 * 10)
-
-    return () => clearInterval(handleRefresh)
-  }, [])
-
-  useEffect(() => {
-    firebase
-      .auth()
-      .getRedirectResult()
-      .then((res) => {
-        if (res.user) {
-          setUser(res.user)
-          return res.user.getIdToken()
-        }
-      })
-      .then((token) => {
-        if (token) {
-          setToken(token)
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }, [])
-
-  useEffect(() => {
-    if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
-      setIOS(true)
-    }
-  }, [])
-
-  const [breakpoint, setBreakpoint] = useState<SessionStore['device']['breakpoint']>('sm')
-
-  const handleResize = useCallback((): void => {
-    const size: SessionStore['device']['breakpoint'] = window.innerWidth < 750 ? 'sm' : 'md'
-
-    if (breakpoint !== size) {
-      setBreakpoint(size)
-    }
-  }, [breakpoint])
-
-  useEffect(() => {
-    window.addEventListener('resize', handleResize)
-
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-  })
-
-  useEffect(() => {
-    handleResize()
-  }, [])
-
-  // const client = useApolloClient()
+  const { iOS, breakpoint } = useDeviceConfiguration()
 
   const { data, error } = useSubscription(
     gql`
@@ -118,6 +28,7 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
         id: 'okay',
       },
       skip: !token,
+      shouldResubscribe: true,
     }
   )
 
@@ -128,32 +39,6 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
   if (error) {
     console.error(`${error.name} : ${error.message}`)
   }
-
-  // console.log({ subscription: data })
-
-  // useEffect(() => {
-  //   if (!token) {
-  //     return
-  //   }
-
-  //   const subscription = client
-  //     .subscribe({
-  //       query: gql`
-  //         subscription {
-  //           onSolution {
-  //             solutionId
-  //           }
-  //         }
-  //       `,
-  //     })
-  //     .subscribe({
-  //       next: (res) => console.log(res),
-  //     })
-
-  //   return () => {
-  //     subscription.unsubscribe()
-  //   }
-  // }, [client, token])
 
   const session: SessionStore = {
     user,
