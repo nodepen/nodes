@@ -1,4 +1,4 @@
-import { NextPage, GetServerSideProps } from 'next'
+import { NextPage } from 'next'
 import Head from 'next/head'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
@@ -23,9 +23,27 @@ const GrasshopperEditor: NextPage = () => {
 
 export default GrasshopperEditor
 
-export const getServerSideProps: GetServerSideProps = async ({ req, res, params }) => {
-  console.log(req.headers)
-  console.log(req.cookies)
+// export const getServerSideProps: GetServerSideProps = async ({ req, res, params }) => {
+//   const [type, owner, id] = (params?.['gh'] ?? []) as string[]
 
-  return { props: {} }
-}
+//   const response: GetServerSidePropsResult<any> = { redirect: { destination: '/', permanent: false } }
+
+//   if (type !== 'gh') {
+//     return response
+//   }
+
+//   // Fetch info
+//   const { token } = req.cookies
+
+//   switch (type) {
+//     case 'gh': {
+//       // Fetch graph and allow continu
+//       break
+//     }
+//     default: {
+//       return { redirect: '/' }
+//     }
+//   }
+
+//   return { props: {} }
+// }

@@ -20,7 +20,7 @@ type GraphManagerProps = {
 }
 
 export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
-  const { token } = useSessionManager()
+  const { token, session } = useSessionManager()
 
   const client = useApolloClient()
 
@@ -78,12 +78,13 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     fetchLibrary()
       .then((lib) => {
         setLibrary(lib)
+        session.initialize('', '')
       })
       .catch((err) => {
         console.log(document.cookie)
         console.error(err)
       })
-  }, [token, library, client])
+  }, [token, library, client, session])
 
   const [setTransform, setSetTransform] = useState<SetTransform>()
 
@@ -91,8 +92,10 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     setSetTransform(() => setTransform)
   }, [])
 
+  const libraryValue = session.id ? library : undefined
+
   const store: GraphStore = {
-    library,
+    library: libraryValue,
     registry: {
       setTransform,
       canvasContainerRef,
