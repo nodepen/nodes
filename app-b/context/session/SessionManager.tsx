@@ -21,30 +21,30 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
 
   const { id, initialize } = useSession(user?.uid)
 
-  const { data, error } = useSubscription(
-    gql`
-      subscription OnSolution($id: String!) {
-        onSolution(solutionId: $id) {
-          solutionId
-        }
-      }
-    `,
-    {
-      variables: {
-        id: 'okay',
-      },
-      skip: !token,
-      shouldResubscribe: true,
-    }
-  )
+  // const { data, error } = useSubscription(
+  //   gql`
+  //     subscription OnSolution($id: String!) {
+  //       onSolution(solutionId: $id) {
+  //         solutionId
+  //       }
+  //     }
+  //   `,
+  //   {
+  //     variables: {
+  //       id: 'okay',
+  //     },
+  //     skip: !token,
+  //     shouldResubscribe: true,
+  //   }
+  // )
 
-  if (data) {
-    console.log(`Subscription still active! [ ${data.onSolution.solutionId} ]`)
-  }
+  // if (data) {
+  //   console.log(`Subscription still active! [ ${data.onSolution.solutionId} ]`)
+  // }
 
-  if (error) {
-    console.error(`${error.name} : ${error.message}`)
-  }
+  // if (error) {
+  //   console.error(`${error.name} : ${error.message}`)
+  // }
 
   const session: SessionStore = {
     user,
