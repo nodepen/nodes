@@ -78,13 +78,12 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
     fetchLibrary()
       .then((lib) => {
         setLibrary(lib)
-        session.initialize('', '')
       })
       .catch((err) => {
         console.log(document.cookie)
         console.error(err)
       })
-  }, [token, library, client, session])
+  }, [token, library, client])
 
   const [setTransform, setSetTransform] = useState<SetTransform>()
 

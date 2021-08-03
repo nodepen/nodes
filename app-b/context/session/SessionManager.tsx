@@ -19,7 +19,7 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
 
   const { iOS, breakpoint } = useDeviceConfiguration()
 
-  const { id, initialize } = useSession()
+  const { id, initialize } = useSession(user?.uid)
 
   const { data, error } = useSubscription(
     gql`

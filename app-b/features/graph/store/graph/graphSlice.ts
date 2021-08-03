@@ -26,6 +26,7 @@ import { prepareLiveMotion } from './reducers/prepareLiveMotion'
 
 const initialState: GraphState = {
   elements: {},
+  solution: {},
   selection: [],
   mode: 'idle',
   registry: {
@@ -991,6 +992,7 @@ export const graphSlice = createSlice({
 
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
   state.graph.present.elements
+const selectSolution = (state: RootState): GraphState['solution'] => state.graph.present.solution
 const selectSelection = (state: RootState): string[] => state.graph.present.selection
 const selectMode = (state: RootState): GraphMode => state.graph.present.mode
 
@@ -1007,6 +1009,7 @@ const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: bool
 
 export const graphSelectors = {
   selectElements,
+  selectSolution,
   selectSelection,
   selectMode,
   selectPrimaryWire,
