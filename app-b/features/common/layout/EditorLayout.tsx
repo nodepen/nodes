@@ -47,6 +47,32 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           />
         </a>
         <div className="flex-grow h-full p-1 pr-2 flex justify-end items-center">
+          <div className="mr-4 flex items-center rounded-sm">
+            <svg
+              className="mr-1 w-6 h-6"
+              fill="none"
+              stroke="#333"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                vectorEffect="non-scaling-stroke"
+                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+              />
+            </svg>
+            <p className="text-sm font-semibold text-dark select-none">OFFLINE</p>
+          </div>
+          <a
+            className="pl-2 pr-2 text-sm font-semibold text-dark rounded-sm border-2 border-dark"
+            href="https://github.com/cdriesler/nodepen#beta"
+            target="_blank"
+            rel="noreferrer"
+          >
+            BETA
+          </a>
           {/* {isAnonymous ? (
             <>
               <button className="h-full mr-1 pl-2 pr-2 flex justify-center items-center border-dark border-2 rounded-md text-sm text-dark font-semibold font-sans">
