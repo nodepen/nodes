@@ -21,9 +21,6 @@ export const GraphContainer = (): React.ReactElement => {
           <div className="w-full h-full absolute z-10">
             <Layout.Canvas />
           </div>
-          <div className="w-full h-full absolute z-20 pointer-events-none">
-            <Layout.Overlay />
-          </div>
         </div>
       </div>
     </>

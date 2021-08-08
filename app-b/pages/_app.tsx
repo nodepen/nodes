@@ -37,7 +37,7 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
           const definition = getMainDefinition(query)
           return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
         },
-        wsLink!,
+        wsLink ?? batchHttpLink,
         batchHttpLink
       )
     : batchHttpLink
