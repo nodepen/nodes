@@ -8,9 +8,9 @@ export const initialize = (client: RedisClient): void => {
     console.log(`Message from ${channel}: ${message} `)
   })
 
-  setInterval(() => {
-    pubsub.publish('SOLUTION_COMPLETE', {
-      onSolution: { solutionId: Date.now().toString() },
-    })
-  }, 10000)
+  // setInterval(() => {
+  //   pubsub.publish('SOLUTION_COMPLETE', {
+  //     onSolution: { solutionId: Date.now().toString() },
+  //   })
+  // }, 10000)
 }
