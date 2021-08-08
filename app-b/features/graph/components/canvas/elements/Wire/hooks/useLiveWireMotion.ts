@@ -62,58 +62,6 @@ export const useLiveWireMotion = (
 
       const next = nextMode[mode]
 
-      // if (isPrimary && next === 'transpose') {
-      //   // Cancel wires and reset with a transpose at origin
-      //   const state = store.getState().graph.present
-
-      //   const templates = stageWireTranspose(state, origin.elementId, origin.parameterId, initialPointer)
-
-      //   if (templates.length === 0) {
-      //     // Transpose is not possible from this parameter, skip to `default`
-      //     setInternalMode('default')
-      //     return
-      //   }
-
-      //   endLiveWires('cancel')
-      //   startLiveWires({ templates, origin })
-      // }
-
-      // if (isPrimary && next === 'default') {
-      //   // Cancel wires and reset with a new wire from origin
-      //   const state = store.getState().graph.present
-      //   const originElement = state.elements[origin.elementId]
-
-      //   const parameterType = isInputOrOutput(originElement, origin.parameterId)
-
-      //   if (!parameterType) {
-      //     console.log('🐍🐍🐍 Tried to start live wire from a parameter that is not an input or an output!')
-      //     return
-      //   }
-
-      //   const connection = {
-      //     from: parameterType === 'output' ? origin : undefined,
-      //     to: parameterType === 'input' ? origin : undefined,
-      //   } as any
-
-      //   endLiveWires('cancel')
-      //   startLiveWires({
-      //     templates: [
-      //       {
-      //         type: 'wire',
-      //         mode: 'live',
-      //         initial: {
-      //           mode: 'default',
-      //           pointer: initialPointer,
-      //         },
-      //         transpose: false,
-      //         ...connection,
-      //       },
-      //     ],
-      //     origin,
-      //   })
-      // }
-
-      // Toggle to next mode
       setInternalMode(next)
     },
     [mode, isTranspose]
