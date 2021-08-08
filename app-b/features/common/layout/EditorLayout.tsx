@@ -47,7 +47,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           />
         </a>
         <div className="flex-grow h-full p-1 pr-2 flex justify-end items-center">
-          <div className="mr-4 flex items-center rounded-sm">
+          <div className="mr-4 flex items-center rounded-sm" title="NodePen is not currently generating solutions.">
             <svg
               className="mr-1 w-6 h-6"
               fill="none"

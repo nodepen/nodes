@@ -78,7 +78,24 @@ const Home: NextPage = () => {
         <meta name="keywords" content="grasshopper, online grasshopper, web grasshopper, rhino.compute" />
       </Head>
       <div className="w-76 flex flex-col items-center">
-        <b>:)</b>
+        <a
+          className="rounded-sm mb-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
+          href="https://twitter.com/cdriesler"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img className="h-4 mr-2" src="/logos/twitter.svg" alt="The Twitter logo." />
+          <p className=" text-darkgreen font-semibold font-md">VIEW UPDATES</p>
+        </a>
+        <a
+          className="rounded-sm mt-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
+          href="https://github.com/cdriesler/nodepen"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img className="h-6 mr-2" src="/logos/github.svg" alt="The GitHub logo." />
+          <p className=" text-darkgreen font-semibold font-md">VIEW CODE</p>
+        </a>
       </div>
       <div
         ref={circleRef}
@@ -95,9 +112,13 @@ const Home: NextPage = () => {
           </svg>
         </div>
         <div className="bg-pale rounded-lg w-64 lg:w-76 p-2 flex flex-col justify-center items-center z-50">
-          <img className="h-16 mt-2 mb-1" src="/nodepen-brand.svg" alt="The NodePen logo." />
-          <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p>
-          {/* <p className="font-sans font-semibold text-md mb-2">SAME GRASSHOPPER, NEW DIGS</p> */}
+          <img
+            className="h-16 mt-2 mb-1"
+            src="/nodepen-brand.svg"
+            alt="The NodePen logo."
+            title="NodePen: Same Grasshopper, New Digs"
+          />
+          {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
         </div>
       </div>
       <div className="w-76 flex flex-col items-center">
