@@ -1,4 +1,4 @@
-import { GraphElement, VisibleElement } from './types'
+import { GraphElement, VisibleElement } from './common'
 import { ElementTemplateType } from '../templates'
 
 export type ElementDataEntry = {

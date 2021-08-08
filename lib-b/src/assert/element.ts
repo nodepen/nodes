@@ -1,4 +1,4 @@
-import { GraphElement, GripElement, VisibleElement } from '../nodepen/element/data/types'
+import { GraphElement, GripElement, VisibleElement } from '../nodepen/element/data/common'
 import { Element } from '../nodepen'
 import { ElementTemplateType } from '../nodepen/element/templates'
 
