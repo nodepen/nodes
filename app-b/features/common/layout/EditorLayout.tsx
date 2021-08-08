@@ -1,31 +1,31 @@
-import { useState, useRef, useCallback } from 'react'
-import { useSessionManager } from 'context/session'
-import { useOutsideClick } from '@/hooks'
-import { SignUpMenu, UserImage, UserMenu } from './header'
+// import { useState, useRef, useCallback } from 'react'
+// import { useSessionManager } from 'context/session'
+// import { useOutsideClick } from '@/hooks'
+// import { SignUpMenu, UserImage, UserMenu } from './header'
 
 type EditorLayoutProps = {
   children?: JSX.Element
 }
 
 export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElement => {
-  const { user } = useSessionManager()
+  // const { user } = useSessionManager()
 
-  const isAnonymous = user?.isAnonymous ?? true
+  // const isAnonymous = user?.isAnonymous ?? true
 
-  const menuRef = useRef<HTMLDivElement>(null)
+  // const menuRef = useRef<HTMLDivElement>(null)
 
-  const [menuVisible, setMenuVisible] = useState(false)
-  const [menuContent, setMenuContent] = useState<JSX.Element>()
+  // const [menuVisible, setMenuVisible] = useState(false)
+  // const [menuContent, setMenuContent] = useState<JSX.Element>()
 
-  const handleOutsideClick = useCallback(() => {
-    setMenuVisible(false)
-  }, [])
+  // const handleOutsideClick = useCallback(() => {
+  //   setMenuVisible(false)
+  // }, [])
 
-  useOutsideClick(menuRef, handleOutsideClick)
+  // useOutsideClick(menuRef, handleOutsideClick)
 
   return (
     <div className="w-vw h-vh flex flex-col justify-start overflow-visible">
-      <div
+      {/* <div
         className={`${
           menuVisible ? 'border-b-2 border-dark' : 'border-b-0'
         } fixed w-vw pl-2 pr-2 max-h-0 bg-white z-50 overflow-hidden`}
@@ -33,7 +33,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
         ref={menuRef}
       >
         <div className="w-full pt-2 pb-4 flex flex-col items-end">{menuContent}</div>
-      </div>
+      </div> */}
       <div
         className="w-full h-10 flex justify-start items-center bg-white border-b-2 border-dark"
         style={{ zIndex: 99998 }}
@@ -47,7 +47,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           />
         </button>
         <div className="flex-grow h-full p-1 pr-2 flex justify-end items-center">
-          {isAnonymous ? (
+          {/* {isAnonymous ? (
             <>
               <button className="h-full mr-1 pl-2 pr-2 flex justify-center items-center border-dark border-2 rounded-md text-sm text-dark font-semibold font-sans">
                 <svg
@@ -129,7 +129,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
                 <UserImage />
               </button>
             </>
-          )}
+          )} */}
         </div>
       </div>
       {children}

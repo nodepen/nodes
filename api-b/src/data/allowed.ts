@@ -22,13 +22,15 @@ const allowedComponents = {
   params: {
     input: [
       '57da07bd-ecab-415d-9d86-af36d7073abc', // Number Slider
-      '59e0b89a-e487-49f8-bab8-b5bab16be14c', // Panel
+      // '59e0b89a-e487-49f8-bab8-b5bab16be14c', // Panel
     ],
+    /* eslint-disable-next-line */
+    // @ts-ignore
     primitive: [
       // 'cb95db89-6165-43b6-9c41-5702bc5bf137', // Boolean (Bool)
       // '15b7afe5-d0d0-43e1-b894-34fcfe3be384', // Domain (Domain)
       // '2e3ab970-8545-46bb-836c-1c11e5610bce', // Integer (Int)
-      '3e8ca6be-fda8-4aaf-b5c0-3c54c8bb7312', // Number (Num)
+      // '3e8ca6be-fda8-4aaf-b5c0-3c54c8bb7312', // Number (Num)
       // '3ede854e-c753-40eb-84cb-b48008f14fd4', // Text (Txt)
     ],
   },
