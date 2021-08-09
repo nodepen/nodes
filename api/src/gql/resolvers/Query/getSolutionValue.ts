@@ -34,9 +34,7 @@ export const getSolutionValue = async (
         data: reply,
       }
 
-      db.del(key, (err, reply) => {
-        resolve(response)
-      })
+      resolve(response)
     })
   })
 }

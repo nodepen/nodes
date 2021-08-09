@@ -58,6 +58,8 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
       const jsonkey = `${solutionKey}:json`
       await db.set(jsonkey, JSON.stringify(graph))
 
+      await db.expire(jsonkey, 60 * 60 * 12)
+
       // Request a ghx graph be created
       const validTypes = [
         'static-component',
@@ -128,6 +130,8 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
         duration.toString()
       )
 
+      await db.expire(`${solutionKey}:solution`, 600)
+
       // Batch store solution items
       const writeSolution = db.multi()
 
@@ -136,7 +140,7 @@ const run = async (job: Job<AlphaJobArgs>): Promise<string> => {
           const key = `${solutionKey}:solution:${elementId}:${parameterId}`
           const tree = resultsToDataTree(values)
 
-          writeSolution.set(key, JSON.stringify(tree))
+          writeSolution.setex(key, 60 * 10, JSON.stringify(tree))
         }
       )
 
@@ -173,6 +177,8 @@ const succeeded = async (
 
       await db.hset(key, 'status', 'SUCCEEDED')
 
+      await db.expire(key, 60 * 60 * 12)
+
       return
     }
   }
@@ -187,6 +193,8 @@ const failed = async (job: Job<AlphaJobArgs>): Promise<void> => {
       const key = `session:${sessionId}:graph:${solutionId}`
 
       const result = await db.hget(key, 'status')
+
+      await db.expire(key, 60 * 60 * 12)
 
       if (result.toString() === 'TIMEOUT') {
         return
@@ -273,77 +281,4 @@ const resultsToDataTree = (
   })
 
   return tree
-}
-
-const scan = async (): Promise<string[]> => {
-  const keys: string[] = []
-
-  return new Promise<string[]>((resolve, reject) => {
-    db.scan(
-      '0',
-      'MATCH',
-      'session:*:graph:*:ghx',
-      'COUNT',
-      '1000',
-      (err, [_, k1]) => {
-        if (err) {
-          reject()
-        }
-
-        keys.push(...k1)
-
-        db.scan(
-          '0',
-          'MATCH',
-          'session:*:graph:*:json',
-          'COUNT',
-          '1000',
-          (err, [_, k2]) => {
-            if (err) {
-              reject()
-            }
-
-            keys.push(...k2)
-
-            db.scan(
-              '0',
-              'MATCH',
-              'session:*:graph:*:solution:*:*',
-              'COUNT',
-              '1000',
-              (err, [_, k3]) => {
-                if (err) {
-                  reject()
-                }
-
-                keys.push(...k3)
-
-                resolve(keys)
-              }
-            )
-          }
-        )
-      }
-    )
-  })
-}
-
-const clear = async (keys: string[]): Promise<void> => {
-  const now = Date.now()
-
-  keys.forEach((key) => {
-    const solutionKey = key.split(':').slice(0, 4).join(':')
-
-    db.hget(solutionKey, 'started_at', (err, res) => {
-      if (!!err) {
-        return
-      }
-
-      const then = new Date(res)
-
-      if (now - then.getMilliseconds() > 1000 * 60 * 10) {
-        db.del(key)
-      }
-    })
-  })
 }
