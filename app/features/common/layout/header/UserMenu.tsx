@@ -1,17 +1,14 @@
 import { useSessionManager } from '@/context/session'
-import { firebase } from 'context/session/auth/firebase'
-import auth from 'firebase'
+import { auth } from 'context/session/auth/firebase'
+import { signOut } from '@firebase/auth'
 
 export const UserMenu = (): React.ReactElement => {
   const { user } = useSessionManager()
 
   const handleSignOut = (): void => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        window.location.reload()
-      })
+    signOut(auth).then(() => {
+      window.location.reload()
+    })
   }
 
   return (

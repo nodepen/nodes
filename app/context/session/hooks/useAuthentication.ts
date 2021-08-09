@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react'
 import nookies from 'nookies'
 
-import { firebase } from '../auth/firebase'
+import { auth } from '../auth/firebase'
+import { User, onIdTokenChanged, signInAnonymously, getRedirectResult } from 'firebase/auth'
 
 type AuthContext = {
   token?: string
-  user?: firebase.User
+  user?: User
 }
 
 export const useAuthentication = (): AuthContext => {
-  const [user, setUser] = useState<firebase.User>()
+  const [user, setUser] = useState<User>()
   const [token, setToken] = useState<string>()
 
   useEffect(() => {
-    return firebase.auth().onIdTokenChanged(async (u) => {
+    return onIdTokenChanged(auth, async (u) => {
       nookies.destroy(undefined, 'token')
 
       if (!u) {
-        const anon = await firebase.auth().signInAnonymously()
+        const anon = await signInAnonymously(auth)
 
         if (!anon.user) {
           // Handle this failure gracefully
@@ -45,7 +46,7 @@ export const useAuthentication = (): AuthContext => {
 
   useEffect(() => {
     const handleRefresh = setInterval(async () => {
-      const u = firebase.auth().currentUser
+      const u = auth.currentUser
       await u?.getIdToken(true)
     }, 1000 * 60 * 10)
 
@@ -53,11 +54,9 @@ export const useAuthentication = (): AuthContext => {
   }, [])
 
   useEffect(() => {
-    firebase
-      .auth()
-      .getRedirectResult()
+    getRedirectResult(auth)
       .then((res) => {
-        if (res.user) {
+        if (res?.user) {
           setUser(res.user)
           return res.user.getIdToken()
         }

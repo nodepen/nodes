@@ -11,7 +11,7 @@
     "@apollo/client": "3.3.19",
     "@next/bundle-analyzer": "^10.2.3",
     "@reduxjs/toolkit": "1.5.1",
-    "firebase": "8.7.0",
+    "firebase": "9.0.0-beta.8",
     "glib": "file:./glib",
     "graphql": "15.5.0",
     "next": "11.0.1",
