@@ -1,8 +1,0 @@
-node_modules
-dist
-
-.env
-auth.json
-
-app.yaml
-app.dev.yaml
