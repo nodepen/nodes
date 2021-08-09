@@ -1,4 +1,4 @@
-import { Grasshopper } from '~/../lib-b/dist'
+import { Grasshopper } from 'glib'
 import { installed } from './installed'
 
 const getAllowedIds = (): string[] => {
