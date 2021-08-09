@@ -8,7 +8,7 @@
     ],
     "allowJs": true,
     "skipLibCheck": true,
-    "strict": false,
+    "strict": true,
     "forceConsistentCasingInFileNames": true,
     "noEmit": true,
     "esModuleInterop": true,
@@ -19,23 +19,20 @@
     "jsx": "preserve",
     "baseUrl": ".",
     "paths": {
-      "~/*": [
-        "./*"
-      ],
       "@/*": [
         "./*"
       ],
-    },
+      "$": [
+        "./features/common/store"
+      ]
+    }
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx",
-    "tailwind.config.js",
-    "postcss.config.js",
-    "next.config.js",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"
-  ]
+  ],
 }

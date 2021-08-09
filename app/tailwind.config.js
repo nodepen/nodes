@@ -1,15 +1,10 @@
-/*
- ** TailwindCSS Configuration File
- **
- ** Docs: https://tailwindcss.com/docs/configuration
- ** Default: https://github.com/tailwindcss/tailwindcss/blob/master/stubs/defaultConfig.stub.js
- */
 module.exports = {
-  purge: ['./components/**/*.tsx', './layouts/**/*.tsx', './pages/**/*.tsx'],
-  future: {
-    removeDeprecatedGapUtilities: true,
-    purgeLayersByDefault: true,
-  },
+  purge: [
+    './pages/**/*.{js,ts,jsx,tsx}',
+    './features/**/*.{js,ts,jsx,tsx}',
+    './context/**/*.{js,ts,jsx,tsx}',
+  ],
+  darkMode: false,
   theme: {
     fontFamily: {
       panel: ['Overpass Mono', 'monospace'],
@@ -88,10 +83,19 @@ module.exports = {
             transform: 'translateX(-100%)',
           },
         },
+        march: {
+          '0%': {
+            'stroke-dashoffset': 12,
+          },
+          '100%': {
+            'stroke-dashoffset': 0,
+          }
+        }
       },
       animation: {
         swell: 'swell 3200ms ease-in-out infinite',
         scroll: 'scroll 3200ms linear infinite',
+        march: 'march 500ms linear infinite',
       },
       transitionProperty: {
         height: 'height',
@@ -102,6 +106,7 @@ module.exports = {
   },
   variants: {
     cursor: ['responsive, hover'],
+    font: ['hover']
   },
   plugins: [],
 }

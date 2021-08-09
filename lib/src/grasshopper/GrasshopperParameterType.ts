@@ -1,0 +1,1 @@
+export type GrasshopperParameterType = 'string' | 'integer' | 'number'

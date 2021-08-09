@@ -1,39 +1,99 @@
-import React, { useRef, useEffect, useCallback } from 'react'
+import { distance } from '@/features/graph/utils'
+import React, { useEffect, useRef, useCallback } from 'react'
 
-export const useLongPress = (
-  onLongPress: (e: PointerEvent) => void,
-  ref: React.MutableRefObject<HTMLDivElement> | undefined,
-  delay = 500
-): React.MutableRefObject<HTMLDivElement> => {
-  const defaultRef = useRef<HTMLDivElement>(null)
+export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 600): React.RefObject<HTMLDivElement> => {
+  const target = useRef<HTMLDivElement>(null)
 
-  const target = ref ?? defaultRef
+  const longPressActive = useRef<boolean>(false)
+  const longPressPointerId = useRef<number | undefined>(undefined)
+  const longPressStartTime = useRef<number>(0)
+  const longPressStartPosition = useRef<[number, number]>([0, 0])
 
-  const timer = useRef<any>(undefined)
+  const longPressTimeout = useRef<number>(0)
+
+  const resetState = useCallback((): void => {
+    longPressActive.current = false
+    longPressPointerId.current = undefined
+    clearTimeout(longPressTimeout.current)
+  }, [])
 
   const handlePointerDown = useCallback(
     (e: PointerEvent): void => {
-      if (e.pointerType == 'mouse') {
+      if (longPressActive.current) {
         return
       }
 
-      if (timer.current) {
-        clearTimeout(timer.current)
+      if (e.pointerType === 'mouse') {
+        // Ignore mouse events, long press is touch only
+        return
       }
 
-      timer.current = setTimeout(() => {
+      e.preventDefault()
+
+      clearTimeout(longPressTimeout.current)
+
+      const { pageX, pageY } = e
+
+      longPressActive.current = true
+      longPressPointerId.current = e.pointerId
+      longPressStartTime.current = Date.now()
+      longPressStartPosition.current = [pageX, pageY]
+
+      const timeout = setTimeout(() => {
+        if (!longPressActive.current) {
+          return
+        }
+
+        try {
+          window.navigator.vibrate(50)
+        } catch {
+          // Do nothing
+        }
+
         onLongPress(e)
-        timer.current = undefined
+
+        resetState()
       }, delay)
+
+      longPressTimeout.current = timeout as any
     },
-    [delay, onLongPress]
+    [onLongPress, delay, resetState]
   )
 
-  const handlePointerUp = useCallback((): void => {
-    if (timer.current) {
-      clearTimeout(timer.current)
-      timer.current = undefined
-    }
+  const handlePointerMove = useCallback(
+    (e: PointerEvent): void => {
+      if (!longPressActive.current) {
+        return
+      }
+
+      const { pageX: bx, pageY: by } = e
+
+      const [ax, ay] = longPressStartPosition.current
+
+      const dist = distance([ax, ay], [bx, by])
+
+      if (dist > 15) {
+        // Cancel long press
+        resetState()
+      }
+    },
+    [resetState]
+  )
+
+  const handlePointerUp = useCallback(
+    (e: PointerEvent): void => {
+      if (e.pointerId !== longPressPointerId.current) {
+        // Pointer is not relevant, do nothing
+        return
+      }
+
+      resetState()
+    },
+    [resetState]
+  )
+
+  const handleTouchStart = useCallback((e: React.TouchEvent<HTMLDivElement>): void => {
+    e.preventDefault()
   }, [])
 
   useEffect(() => {
@@ -41,9 +101,20 @@ export const useLongPress = (
       return
     }
 
-    target.current.addEventListener('pointerdown', handlePointerDown)
-    target.current.addEventListener('pointerup', handlePointerUp)
-  }, [target, handlePointerDown, handlePointerUp])
+    const el = target.current
+
+    el.addEventListener('touchstart', handleTouchStart as any)
+    el.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+
+    return () => {
+      el.removeEventListener('touchstart', handleTouchStart as any)
+      el.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerUp)
+    }
+  })
 
   return target
 }

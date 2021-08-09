@@ -1,5 +1,4 @@
-import { Query } from './Query'
-import { Mutation } from './Mutation'
-import { Types } from './Types'
+import { Query } from './query'
+import { Subscription } from './subscription'
 
-export const resolvers = { Query, Mutation, ...Types }
+export const resolvers = { Query, Subscription }

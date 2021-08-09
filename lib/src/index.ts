@@ -1,4 +1,8 @@
-import * as Glasshopper from './glasshopper'
+// Import types
 import * as Grasshopper from './grasshopper'
+import * as NodePen from './nodepen'
 
-export { Glasshopper, Grasshopper }
+// Import utilities
+import * as assert from './assert'
+
+export { Grasshopper, NodePen, assert }

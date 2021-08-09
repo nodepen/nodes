@@ -1,0 +1,1 @@
+export { useGenericMenuManager } from './useGenericMenuManager'

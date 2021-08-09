@@ -1,15 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { GetServerSideProps, NextPage } from 'next'
+import { NextPage } from 'next'
 import Head from 'next/head'
-import { ApolloClient, InMemoryCache } from '@apollo/client'
-import { QUEUE_STATUS } from '@/queries'
 
-type HomeProps = {
-  solutionCount: number
-  userCount: number
-}
-
-const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
+const Home: NextPage = () => {
   const [[w, h], setCircleDimensions] = useState<[number, number]>([0, 0])
   const [offset, setOffset] = useState(0)
 
@@ -57,6 +50,10 @@ const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
   }
 
   useEffect(() => {
+    if (!circleRef.current) {
+      return
+    }
+
     const { clientWidth, clientHeight } = circleRef.current
     setCircleDimensions([clientWidth, clientHeight])
   }, [])
@@ -72,7 +69,7 @@ const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
   return (
     <div className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row">
       <Head>
-        <title>nodepen: grasshopper online</title>
+        <title>NodePen</title>
         <meta
           name="description"
           content="NodePen is a web client for Grasshopper, the visual programming language for Rhino 3D. Same Grasshopper, new digs. Powered by Rhino
@@ -81,30 +78,24 @@ const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
         <meta name="keywords" content="grasshopper, online grasshopper, web grasshopper, rhino.compute" />
       </Head>
       <div className="w-76 flex flex-col items-center">
-        {solutionCount ? (
-          <>
-            <h2 className="flex flex-row text-darkgreen text-4xl font-semibold font-panel leading-5">
-              {`${solutionCount.toString()}`.split('').map((x, i) => (
-                <p className="animate-pulse" key={`sc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
-                  {x}
-                </p>
-              ))}
-            </h2>
-            <h3 className="text-swampgreen text-xl font-black font-panel mb-3">GRAPHS SOLVED</h3>
-          </>
-        ) : null}
-        {userCount ? (
-          <>
-            <h2 className="flex flex-row text-darkgreen text-4xl font-semibold font-panel leading-5">
-              {`${userCount.toString()}`.split('').map((x, i) => (
-                <p className="animate-pulse" key={`uc-${i}`} style={{ animationDelay: `${(i / x.length) * 100}ms` }}>
-                  {x}
-                </p>
-              ))}
-            </h2>
-            <h3 className="text-swampgreen text-xl font-black font-panel mb-3">USERS</h3>
-          </>
-        ) : null}
+        <a
+          className="rounded-sm mb-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
+          href="https://twitter.com/cdriesler"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img className="h-4 mr-2" src="/logos/twitter.svg" alt="The Twitter logo." />
+          <p className=" text-darkgreen font-semibold font-md">VIEW UPDATES</p>
+        </a>
+        <a
+          className="rounded-sm mt-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
+          href="https://github.com/cdriesler/nodepen"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          <img className="h-6 mr-2" src="/logos/github.svg" alt="The GitHub logo." />
+          <p className=" text-darkgreen font-semibold font-md">VIEW CODE</p>
+        </a>
       </div>
       <div
         ref={circleRef}
@@ -120,19 +111,24 @@ const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
             {grid}
           </svg>
         </div>
-        <div className="card-mono rounded-md w-64 lg:w-76 z-10 p-2 flex flex-col justify-center items-center">
-          <h1 className="font-display text-3xl mb-2">nodepen</h1>
-          <p className="font-sans font-semibold text-sm mb-2">SAME GRASSHOPPER, NEW DIGS</p>
+        <div className="bg-pale rounded-lg w-64 lg:w-76 p-2 flex flex-col justify-center items-center z-50">
+          <img
+            className="h-16 mt-2 mb-1"
+            src="/nodepen-brand.svg"
+            alt="The NodePen logo."
+            title="NodePen: Same Grasshopper, New Digs"
+          />
+          {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
         </div>
       </div>
       <div className="w-76 flex flex-col items-center">
-        <a href="/alpha/graph" className="font-sans font-semibold text-sm">
-          <div className="w-48 h-10 card-mono rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
+        <a href="/gh" className="font-sans font-semibold text-sm">
+          <div className="w-48 h-10 border-2 border-solid border-dark shadow-osm bg-light rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
             <div className="flex-grow flex flex-row justify-center items-center">
               <div className="font-sans font-semibold text-sm">LAUNCH NODEPEN</div>
             </div>
           </div>
-        </a>{' '}
+        </a>
       </div>
 
       <style jsx>{`
@@ -155,25 +151,6 @@ const Home: NextPage<HomeProps> = ({ solutionCount, userCount }) => {
       `}</style>
     </div>
   )
-}
-
-export const getServerSideProps: GetServerSideProps<HomeProps> = async () => {
-  const client = new ApolloClient({
-    ssrMode: true,
-    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'https://api.dev.nodepen.io/graphql',
-    cache: new InMemoryCache(),
-  })
-
-  const { data } = await client.query({ query: QUEUE_STATUS, variables: { depth: 10 } })
-
-  const status = data.getQueueStatus
-
-  return {
-    props: {
-      solutionCount: status?.total_count,
-      userCount: status?.session_count,
-    },
-  }
 }
 
 export default Home

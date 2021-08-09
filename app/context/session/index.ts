@@ -1,2 +1,2 @@
 export { SessionManager } from './SessionManager'
-export { useSessionManager } from './useSessionManager'
+export { useSessionManager } from './hooks'

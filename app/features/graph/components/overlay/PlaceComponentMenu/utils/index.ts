@@ -1,0 +1,5 @@
+export { levenshteinDistance } from './levenshteinDistance'
+export { mapToCategory } from './mapToCategory'
+export { mapToIds } from './mapToIds'
+export { mapToOrderedCategory } from './mapToOrderedCategory'
+export { matchShortcut } from './matchShortcut'

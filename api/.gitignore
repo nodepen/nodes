@@ -1,8 +1,15 @@
 node_modules
 dist
 
-.env
 auth.json
+origins.ts
 
+glib
+
+.env
+
+# gcloud
 app.yaml
+app.beta.yaml
 app.dev.yaml
+.gcloudignore

@@ -33,7 +33,12 @@ yarn-error.log*
 # vercel
 .vercel
 
+.vscode
+
+*.auth.ts
+
+glib
+
 # gcloud
 app.yaml
 app.dev.yaml
-.gcloudignore

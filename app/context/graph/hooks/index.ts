@@ -1,1 +1,1 @@
-export { useSolutionQuery } from './useSolutionQuery'
+export { useGraphManager } from './useGraphManager'

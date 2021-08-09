@@ -1,5 +1,5 @@
-const withTM = require('next-transpile-modules')(['three', '@react-three/drei'])
+const withBundleAnalyzer = require('@next/bundle-analyzer')({ enabled: process.env.ANALYZE === 'true' })
 
-module.exports = withTM({
-  distDir: 'build',
-});
+module.exports = withBundleAnalyzer({
+    distDir: 'build',
+})

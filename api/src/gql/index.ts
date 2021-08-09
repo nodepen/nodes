@@ -1,2 +1,1 @@
-export { resolvers } from './resolvers'
-export { schema } from './schema'
+export { initialize } from './apollo'

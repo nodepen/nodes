@@ -2,7 +2,8 @@
   "root": true,
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
-    "ecmaFeatures": { "jsx": true }
+    "ecmaFeatures": { "jsx": true },
+    "project": "./tsconfig.json"
   },
   "extends": [
     "eslint:recommended",
@@ -11,24 +12,36 @@
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
     "plugin:jsx-a11y/recommended",
-    "prettier/@typescript-eslint",
     "plugin:prettier/recommended"
   ],
   "plugins": [
+    "@typescript-eslint",
     "react-hooks"
   ],
   "rules": {
-    "prettier/prettier": [ 
-        "error", {}, { "usePrettierrc": true }
-      ],
+    "jsx-a11y/anchor-is-valid": "off",
     "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off",
     "react-hooks/rules-of-hooks": "error",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
     "@typescript-eslint/no-var-requires": [ "off", [ "**/*.spec.tsx" ] ],
-    "@typescript-eslint/explicit-module-boundary-types": [ "off", [ "pages/**/*.tsx", "components/**/*.tsx" ] ]
+    "@typescript-eslint/explicit-module-boundary-types": [ "off", [ "pages/**/*.tsx", "components/**/*.tsx" ] ],
+    "@typescript-eslint/explicit-function-return-type": [
+      "warn",
+      {
+        "allowExpressions": true,
+        "allowConciseArrowFunctionExpressionsStartingWithVoid": true
+      }
+    ]
   },
   "settings": {
       "react": {
-          "version": "16.13.1"
+          "version": "detect"
       }
   }
 }

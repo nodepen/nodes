@@ -1,3 +1,3 @@
-export { Category } from './Category'
-export { Component } from './Component'
-export { ComponentParameter } from './ComponentParameter'
+export type { GrasshopperComponent as Component } from './GrasshopperComponent'
+export type { GrasshopperParameter as Parameter } from './GrasshopperParameter'
+export type { GrasshopperParameterType as ParameterType } from './GrasshopperParameterType'

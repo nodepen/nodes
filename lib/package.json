@@ -1,32 +1,23 @@
 {
-  "name": "glib",
+  "name": "nodepen-lib",
   "version": "1.0.0",
-  "description": "common glasshopper models",
+  "description": "shared nodepen types and utilities",
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "lint": "eslint '*/**/*.{js,ts}' --fix",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/cdriesler/glasshopper.io.git"
+    "url": "git+https://github.com/cdriesler/nodepen.git"
   },
-  "author": "chuck",
-  "license": "GPL-3.0",
+  "author": "Chuck Driesler",
+  "license": "AGPL-3.0",
   "bugs": {
-    "url": "https://github.com/cdriesler/glasshopper.io/issues"
+    "url": "https://github.com/cdriesler/nodepen/issues"
   },
-  "homepage": "https://github.com/cdriesler/glasshopper.io#readme",
-  "dependencies": {
-    "typescript": "^3.9.3"
-  },
+  "homepage": "https://github.com/cdriesler/nodepen#readme",
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^3.0.2",
-    "@typescript-eslint/parser": "^3.0.2",
-    "eslint": "^7.1.0",
-    "eslint-config-prettier": "^6.11.0",
-    "eslint-plugin-prettier": "^3.1.3",
-    "prettier": "^2.0.5"
+    "typescript": "^4.2.4"
   }
 }

@@ -1,1 +1,0 @@
-export { alpha } from './alpha'

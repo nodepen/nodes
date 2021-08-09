@@ -1,34 +1,63 @@
-import React, { useMemo, useEffect } from 'react'
-import { context as Context } from './state/context'
+import React, { createContext } from 'react'
 import { SessionStore } from './types'
-import { newGuid } from '@/utils'
-import { useQuery } from '@apollo/client'
-import { USER_SESSION } from '@/queries'
+import { gql, useSubscription } from '@apollo/client'
+import { useAuthentication } from './hooks/useAuthentication'
+import { useDeviceConfiguration } from './hooks/useDeviceConfiguration'
+import { useSession } from './hooks/useSession'
+
+export const SessionContext = createContext<SessionStore>({
+  device: { iOS: false, breakpoint: 'sm' },
+  session: { initialize: console.log as any },
+})
 
 type SessionManagerProps = {
-  children?: React.ReactNode
+  children?: JSX.Element
 }
 
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
-  // TODO: Figure out auth at some point
-  const id = useMemo(() => (process.browser ? window?.localStorage?.getItem('np:alpha:02:user') ?? newGuid() : ''), [])
+  const { user, token } = useAuthentication()
 
-  const { data } = useQuery(USER_SESSION, { variables: { id } })
+  const { iOS, breakpoint } = useDeviceConfiguration()
 
-  useEffect(() => {
-    window.localStorage.setItem('np:alpha:02:user', id)
-  }, [])
+  const { id, initialize } = useSession(user?.uid)
+
+  // const { data, error } = useSubscription(
+  //   gql`
+  //     subscription OnSolution($id: String!) {
+  //       onSolution(solutionId: $id) {
+  //         solutionId
+  //       }
+  //     }
+  //   `,
+  //   {
+  //     variables: {
+  //       id: 'okay',
+  //     },
+  //     skip: !token,
+  //     shouldResubscribe: true,
+  //   }
+  // )
+
+  // if (data) {
+  //   console.log(`Subscription still active! [ ${data.onSolution.solutionId} ]`)
+  // }
+
+  // if (error) {
+  //   console.error(`${error.name} : ${error.message}`)
+  // }
 
   const session: SessionStore = {
-    user: {
-      id,
-      token: '',
-      name: newGuid(),
-    },
+    user,
+    token,
     session: {
-      id: data?.getUser?.session,
+      id,
+      initialize,
+    },
+    device: {
+      breakpoint,
+      iOS,
     },
   }
 
-  return <Context.Provider value={session}>{children}</Context.Provider>
+  return <SessionContext.Provider value={session}>{children}</SessionContext.Provider>
 }

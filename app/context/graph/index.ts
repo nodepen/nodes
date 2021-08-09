@@ -1,2 +1,2 @@
 export { GraphManager } from './GraphManager'
-export { useGraphManager } from './useGraphManager'
+export { useGraphManager } from './hooks'

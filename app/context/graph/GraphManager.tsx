@@ -1,225 +1,109 @@
-import React, { useEffect, useReducer } from 'react'
-import { Grasshopper, Glasshopper } from 'glib'
-import { context as Context, reducer, initial } from './state'
-import { useSessionManager } from '~/context/session'
-import { useQuery, useApolloClient } from '@apollo/client'
-import { COMPUTE_CONFIGURATION, SESSION_CURRENT_GRAPH, SOLUTION_MESSAGES, SOLUTION_VALUE } from '@/queries'
-import { useSolutionQuery } from './hooks'
+import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
+import { Grasshopper } from 'glib'
+import { GraphStore } from './types'
+import { useSessionManager } from '../session'
+import { useApolloClient, gql } from '@apollo/client'
+import { SetTransform } from '@/features/graph/types'
+
+export const GraphContext = React.createContext<GraphStore>({
+  register: {
+    setTransform: () => '',
+  },
+  registry: {
+    canvasContainerRef: createRef(),
+    layoutContainerRef: createRef(),
+  },
+})
 
 type GraphManagerProps = {
-  children?: React.ReactNode
-  config?: Grasshopper.Component[]
+  children?: JSX.Element
 }
 
-export const GraphManager = ({ children, config }: GraphManagerProps): React.ReactElement => {
-  const { session, user, error } = useSessionManager()
+export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
+  const { token, session } = useSessionManager()
+
   const client = useApolloClient()
 
-  const [store, dispatch] = useReducer(reducer, initial)
+  const canvasContainerRef = useRef<HTMLDivElement>(null)
+  const layoutContainerRef = useRef<HTMLDivElement>(null)
 
-  const { data } = useQuery(COMPUTE_CONFIGURATION, {})
-
-  useEffect(() => {
-    if (store.preflight.getLibrary) {
-      console.log('🐍 Ignoring change in config query because library has already been loaded.')
-      return
-    }
-
-    if (data || config) {
-      dispatch({ type: 'session/load-components', components: data?.getComputeConfiguration ?? config })
-    }
-  }, [data, config])
-
-  const { status, duration } = useSolutionQuery(session.id, store.solution.id, store)
+  const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
   useEffect(() => {
-    if (!session.id) {
-      // No session yet, do no work
-      console.log('⌚ Not restoring session yet because no id exists.')
+    if (!token || !!library) {
       return
     }
 
-    if (Object.keys(store.elements).length > 0) {
-      console.log('🐍 Ignoring new session id because we have already restored it once.')
-      return
-    }
-
-    const getCurrentGraph = async (sessionId: string): Promise<string> => {
-      const { data } = await client.query({
-        query: SESSION_CURRENT_GRAPH,
-        variables: {
-          sessionId: sessionId,
-        },
+    const fetchLibrary = async (): Promise<Grasshopper.Component[]> => {
+      const { data, error } = await client.query({
+        query: gql`
+          query {
+            getInstalledComponents {
+              guid
+              name
+              nickname
+              description
+              icon
+              libraryName
+              category
+              subcategory
+              isObsolete
+              isVariable
+              inputs {
+                name
+                nickname
+                description
+                type
+                isOptional
+              }
+              outputs {
+                name
+                nickname
+                description
+                type
+                isOptional
+              }
+            }
+          }
+        `,
       })
 
-      const elements = data.getSessionCurrentGraph
-
-      return elements
-    }
-
-    // Restore graph
-    console.log(`Restoring session for session:${session.id}`)
-    getCurrentGraph(session.id).then((elements) => {
-      dispatch({ type: 'session/restore-session', elements })
-    })
-  }, [session.id])
-
-  useEffect(() => {
-    if (!store.solution.id || !session.id) {
-      return
-    }
-
-    const fetchSolutionMessages = async (
-      session: string,
-      solution: string
-    ): Promise<Glasshopper.Payload.SolutionMessage[]> => {
-      const { data } = await client.query({
-        query: SOLUTION_MESSAGES,
-        variables: {
-          sessionId: session,
-          solutionId: solution,
-        },
-      })
-
-      const messages: any[] = JSON.parse(data.getSolutionMessages)
-
-      const result: Glasshopper.Payload.SolutionMessage[] = messages.map(({ elementId, message, level }) => ({
-        element: elementId,
-        message,
-        level: level.toLowerCase(),
-      }))
-
-      return result
-    }
-
-    const fetchSolutionValue = async (
-      session: string,
-      solution: string,
-      element: string,
-      parameter: string
-    ): Promise<Glasshopper.Payload.SolutionValue> => {
-      const { data } = await client.query({
-        query: SOLUTION_VALUE,
-        variables: {
-          sessionId: session,
-          solutionId: solution,
-          elementId: element,
-          parameterId: parameter,
-        },
-      })
-
-      const tree: Glasshopper.Data.DataTree = JSON.parse(data.getSolutionValue.data)
-
-      return {
-        for: {
-          solution,
-          element,
-          parameter,
-        },
-        data: tree,
+      if (error) {
+        console.error(error)
       }
+
+      return data?.getInstalledComponents
     }
 
-    if (status === 'SUCCEEDED') {
-      fetchSolutionMessages(session.id, store.solution.id)
-        .then((messages) => {
-          // Store messages
-          dispatch({ type: 'graph/values/consume-solution-messages', messages })
-          dispatch({ type: 'graph/solution/set-status', status: 'SUCCEEDED', duration })
+    fetchLibrary()
+      .then((lib) => {
+        setLibrary(lib)
+      })
+      .catch((err) => {
+        console.log(document.cookie)
+        console.error(err)
+      })
+  }, [token, library, client])
 
-          // Collect all value requests that need to happen
-          const requests: { session: string; solution: string; element: string; parameter: string }[] = []
+  const [setTransform, setSetTransform] = useState<SetTransform>()
 
-          Object.values(store.elements).forEach((element) => {
-            switch (element.template.type) {
-              case 'static-parameter': {
-                requests.push({
-                  session: session.id,
-                  solution: store.solution.id,
-                  element: element.id,
-                  parameter: 'output',
-                })
-                break
-              }
-              case 'static-component': {
-                const component = element as Glasshopper.Element.StaticComponent
+  const handleSetTransform = useCallback((setTransform: SetTransform) => {
+    setSetTransform(() => setTransform)
+  }, [])
 
-                ;[...Object.keys(component.current.inputs), ...Object.keys(component.current.outputs)].forEach(
-                  (parameterId) => {
-                    requests.push({
-                      session: session.id,
-                      solution: store.solution.id,
-                      element: element.id,
-                      parameter: parameterId,
-                    })
-                  }
-                )
-                break
-              }
-              case 'number-slider': {
-                requests.push({
-                  session: session.id,
-                  solution: store.solution.id,
-                  element: element.id,
-                  parameter: 'output',
-                })
-                break
-              }
-            }
-          })
+  const libraryValue = session.id ? library : undefined
 
-          return Promise.allSettled(
-            requests.map((r) => fetchSolutionValue(r.session, r.solution, r.element, r.parameter))
-          )
-        })
-        .then((values) => {
-          const resolved: PromiseFulfilledResult<Glasshopper.Payload.SolutionValue>[] = []
-          const rejected: PromiseRejectedResult[] = []
+  const store: GraphStore = {
+    library: libraryValue,
+    registry: {
+      setTransform,
+      canvasContainerRef,
+      layoutContainerRef,
+    },
+    register: {
+      setTransform: handleSetTransform,
+    },
+  }
 
-          values.forEach((value) => {
-            switch (value.status) {
-              case 'fulfilled': {
-                resolved.push(value)
-                break
-              }
-              case 'rejected': {
-                rejected.push(value)
-                break
-              }
-            }
-          })
-
-          dispatch({ type: 'graph/values/consume-solution-values', values: resolved.map(({ value }) => value) })
-
-          rejected.forEach(({ reason }) => {
-            console.error(reason)
-          })
-        })
-    }
-
-    if (status === 'FAILED') {
-      dispatch({ type: 'graph/solution/set-status', status: 'FAILED', duration })
-      console.error('Compute failed to execute solution!')
-    }
-
-    if (status === 'TIMEOUT') {
-      dispatch({ type: 'graph/solution/set-status', status: 'TIMEOUT', duration })
-      console.error('Solution timed out!')
-    }
-  }, [status])
-
-  useEffect(() => {
-    if (store.ready) {
-      return
-    }
-
-    if (!Object.values(store.preflight).some((done) => !done)) {
-      dispatch({ type: 'session/set-ready' })
-      dispatch({ type: 'session/expire-solution' })
-    }
-  })
-
-  const manager = { store, dispatch }
-
-  return <Context.Provider value={manager}>{children}</Context.Provider>
+  return <GraphContext.Provider value={store}>{children}</GraphContext.Provider>
 }

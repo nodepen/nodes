@@ -1,11 +1,14 @@
+import firebase from 'firebase/app'
+
 export type SessionStore = {
-  session?: {
-    id: string
+  user?: firebase.User
+  token?: string
+  session: {
+    id?: string
+    initialize: (userId: string, graphId: string) => Promise<void>
   }
-  user?: {
-    id: string
-    token: string
-    name: string
+  device: {
+    breakpoint: 'sm' | 'md'
+    iOS: boolean
   }
-  error?: any
 }
