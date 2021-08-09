@@ -1,10 +1,10 @@
-import { auth } from 'context/session/auth/firebase'
-import { GoogleAuthProvider, signInWithRedirect } from '@firebase/auth'
+import { firebase } from 'context/session/auth/firebase'
 
 export const SignUpMenu = (): React.ReactElement => {
   const handleGoogleSignup = (): void => {
-    const provider = new GoogleAuthProvider()
-    signInWithRedirect(auth, provider)
+    const provider = new firebase.auth.GoogleAuthProvider()
+
+    firebase.auth().signInWithRedirect(provider)
   }
 
   return <></>

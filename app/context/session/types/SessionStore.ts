@@ -1,7 +1,7 @@
-import { User } from 'firebase/auth'
+import firebase from 'firebase/app'
 
 export type SessionStore = {
-  user?: User
+  user?: firebase.User
   token?: string
   session: {
     id?: string
