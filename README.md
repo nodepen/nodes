@@ -1,81 +1,35 @@
-# nodepen
-
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/cdriesler/glasshopper.io/cd?style=flat-square)
+# NodePen
 
 NodePen is a web client for [grasshopper](https://www.rhino3d.com/6/new/grasshopper/), a visual programming language for [Rhino 3D](https://www.rhino3d.com/). Rhino 7 shipped with [Rhino compute](https://www.rhino3d.com/compute), and that powers this 'shallow' wrapper for the same grasshopper you know and love.
 
-The name absolutely channels the goals of this project: a place for tinkering with and sharing grasshopper snippets online. But that's a ways off! This is a personal project that has been in development since Winter 2019. You should check out what I'm doing with some other cool people at [Hypar](https://hypar.io) in the meantime.
+The name channels the _goals_ of this project: a place for tinkering with and sharing grasshopper snippets online. But that's a ways off! This is a personal project that has been in development since Winter 2019. You should check out what I'm doing with some other cool people at [Hypar](https://hypar.io) in the meantime.
 
 The project is under active development, but you can tinker with the latest build by visiting [nodepen.io](http://nodepen.io).
 
-The public pre-release has been online since May 7, 2021. The first release on this repo, [0.4.1](https://github.com/cdriesler/nodepen/releases/tag/0.4.1), was the end of an initial [proof-of-concept](https://twitter.com/cdriesler/status/1216726073473490946?s=20) phase.
+The current public beta began with a release of the editor only (no solutions) on August 8, 2021.
 
-Yes this project was called glasshopper for a long time I don't want to talk about it.
+The public alpha ([0.5.0](https://github.com/cdriesler/nodepen/releases/tag/0.5.0)) was online between May 7, 2021 and August 8, 2021. Over three months, it delivered 24,765 solutions to 2,501 unique users. It validated the queue-based backend solution infrastructure, but the editor experience left a lot to be desired (especially on mobile devices, which accounted for >70% (!) of all visits).
 
-## Project summary
+The first release on this repo ([0.4.1](https://github.com/cdriesler/nodepen/releases/tag/0.4.1)) was the end of an initial [proof-of-concept](https://twitter.com/cdriesler/status/1216726073473490946?s=20) phase.
 
-I owe you a diagram.
+Yes this project was called glasshopper for a long time and I don't want to talk about it.
 
-- `/app` - next.js client delivering a stylized version of the canvas
-- `/api` - graphql service keeping you in sync with a redis database and rhino compute results
-- `/compute` - graph creation and execution courtesy of a rhino.compute server
-- `/dispatch` - a [bee-queue](https://github.com/bee-queue/bee-queue) service that catches and runs solution jobs scheduled by the api
-- `/lib` - typescript types shared between the `app`, `api`, and `dispatch` projects
+## Beta
 
-## Build and run locally
+NodePen is currently available as a public beta! The goal is to refine the graph editor experience on desktop _and_ mobile devices through a series of partial releases.
 
-NodePen requires access to a number of technologies to run locally. I develop on windows and will provide some details about my setup.
+At the moment, that means NodePen is _severely limited_ in what it can do.
 
-- A redis instance running on the default port: 6379 (I use Ubuntu 20.04 on WSL with it installed)
-- Node.js installed (I use `v12.18.1`)
-- The ability to build and run a .NET Framework 4.6.2 app (The build scripts use [VS2019 Build Tools](https://visualstudio.microsoft.com/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16))
-- A valid installation of Rhino 7+ (Must also have been opened at least once.)
+- The editor is _not_ requesting solutions anymore. There will be no results to inspect yet.
+- A limited number of components are available to use. Right now, _no parameters_ are available, either.
+- ZUI interactions are planned but not yet implemented.
 
-NodePen also references a number of `.env` files for local runs:
+Feedback is appreciated in all forms (github, twitter, etc), even for features that are obviously absent but desired. I am especially interested in:
 
-- In `\api`, create a `.env` file with:
+- Ways you manage to break the graph, or leave parts of it in an un-editable state
+- UX decisions that feel cumbersome on mobile
+- Any extreme performance degradations (especially on mobile devices)
 
-```
-PORT=4000
-```
+## Local Development
 
-- In `\dispatch`, create a `.env` file with:
-
-```
-PORT=4100
-NP_DB_PORT=6379
-NP_COMPUTE_URL=http://localhost:9900
-```
-
-- In `\app`, create a `.env.development.local` file with:
-
-```
-NEXT_PUBLIC_NP_API_URL=http://localhost:4000/graphql
-```
-
-I owe you a docker-compose script. But for now, this is how I develop locally:
-
-- Open Ubuntu 20.04 on WSL and run `redis-server` to launch the redis instance.
-- Wait for the database to be ready for connections.
-- Open VS Code and then open a terminal in `\lib`. Build the shared types project:
-  - `npm i`
-  - `npm run build`
-- Open `compute\NodePen.Compute.sln` in VS 2019. Build and then run the project in debug mode.
-- In VS Code, replace the open terminal with three parallel terminals:
-  - `\app`
-  - `\api`
-  - `\dispatch`
-- In the `api` terminal:
-  - `npm i`
-  - `npm run dev`
-- In the `dispatch` terminal:
-  - `npm i`
-  - `npm run dev`
-- Both `api` and `dispatch` will confirm that they are ready in the console.
-- In the `app` terminal:
-  - `npm i`
-  - `npm run dev`
-- Next.js will confirm that the app compiled successfully and can now be tested.
-- Visit `localhost:3000` to begin using/testing the app.
-
-All node projects will rebuild and refresh on code saves. The compute project requires the program to be stopped or paused to save and rebuild code changes.
+_To be updated when solutions are re-enabled._
