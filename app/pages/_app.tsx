@@ -1,7 +1,6 @@
 import type { AppProps } from 'next/app'
 import { Provider } from 'react-redux'
 import { store } from '$'
-import { SessionManager } from 'context/session'
 
 /* eslint-disable */
 import { ApolloProvider, ApolloClient, InMemoryCache, ApolloLink, concat, split } from '@apollo/client'
@@ -64,9 +63,7 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   return (
     <Provider store={store}>
       <ApolloProvider client={client}>
-        <SessionManager>
-          <Component {...pageProps} />
-        </SessionManager>
+        <Component {...pageProps} />
       </ApolloProvider>
       <style global jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
