@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { assert } from 'glib'
 import { useGraphElements } from '../../store/graph/hooks'
-import { StaticComponent, LiveWire, Wire, SelectionRegion } from './elements'
+import { StaticComponent, LiveWire, NumberSlider, Wire, SelectionRegion } from './elements'
 
 const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
@@ -66,6 +66,13 @@ const ElementsContainer = (): React.ReactElement => {
                 return null
               }
             }
+          }
+          case 'number-slider': {
+            if (!assert.element.isNumberSlider(el)) {
+              return null
+            }
+
+            return <NumberSlider key={`graph-element-number-slider-${el.id}`} element={el} />
           }
           default: {
             return null

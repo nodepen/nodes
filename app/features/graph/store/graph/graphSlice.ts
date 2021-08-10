@@ -117,6 +117,42 @@ export const graphSlice = createSlice({
           state.elements[id] = element
           break
         }
+        case 'number-slider': {
+          const template = action.payload.template as NodePen.Element<'number-slider'>['template']
+
+          const element: NodePen.Element<'number-slider'> = {
+            id,
+            template,
+            current: {
+              dimensions: {
+                width: 150,
+                height: 36,
+              },
+              position: action.payload.position,
+              anchors: {},
+              sources: {
+                input: [],
+              },
+              values: {},
+              inputs: {
+                input: 0,
+              },
+              outputs: {
+                output: 0,
+              },
+              solution: {
+                id: 'unset',
+                mode: 'immediate',
+              },
+              mode: 'rational',
+              domain: [0, 1],
+              precision: 1,
+            },
+          }
+
+          state.elements[id] = element
+          break
+        }
         default: {
           break
         }

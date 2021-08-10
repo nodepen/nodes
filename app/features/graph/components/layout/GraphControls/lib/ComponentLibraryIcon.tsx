@@ -66,11 +66,32 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
     const [ex, ey] = getScreenPosition(e)
     const [x, y] = screenSpaceToCameraSpace({ offset: [0, 48 + 36], position: [ex, ey] }, { zoom, position: [cx, cy] })
 
-    addElement({
-      type: 'static-component',
-      template: { type: 'static-component', ...template },
-      position: [x, y],
-    })
+    switch (category.toLowerCase()) {
+      case 'params': {
+        switch (guid) {
+          case '57da07bd-ecab-415d-9d86-af36d7073abc': {
+            addElement({
+              type: 'number-slider',
+              template: { type: 'number-slider' },
+              position: [x, y],
+            })
+            break
+          }
+          default: {
+            break
+          }
+        }
+        break
+      }
+      default: {
+        addElement({
+          type: 'static-component',
+          template: { type: 'static-component', ...template },
+          position: [x, y],
+        })
+        break
+      }
+    }
   }
 
   return (
