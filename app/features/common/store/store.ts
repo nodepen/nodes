@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { cameraReducer, cameraActions } from 'features/graph/store/camera'
 import { graphReducer, graphActions } from 'features/graph/store/graph'
 import { hotkeyReducer, hotkeyActions } from 'features/graph/store/hotkey'
-import undoable, { excludeAction } from 'redux-undo'
+import undoable, { excludeAction, groupByActionTypes } from 'redux-undo'
 
 export const store = configureStore({
   reducer: {
@@ -18,14 +18,17 @@ export const store = configureStore({
         graphActions.prepareLiveMotion.type,
         graphActions.dispatchLiveMotion.type,
         graphActions.setMode.type,
-        graphActions.registerElement.type,
-        graphActions.registerElementAnchor.type,
         graphActions.startLiveWires.type,
         graphActions.updateLiveWires.type,
         graphActions.captureLiveWires.type,
         graphActions.releaseLiveWires.type,
         ...Object.values(cameraActions).map((action) => action.type),
         ...Object.values(hotkeyActions).map((action) => action.type),
+      ]),
+      groupBy: groupByActionTypes([
+        graphActions.addElement.type,
+        graphActions.registerElement.type,
+        graphActions.registerElementAnchor.type,
       ]),
       limit: 10,
     }),
