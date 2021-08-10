@@ -17,7 +17,6 @@ import {
   MoveElementPayload,
   ProvisionalWirePayload,
   RegisterElementAnchorPayload,
-  RegisterElementPayload,
   UpdateElementPayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
@@ -30,6 +29,9 @@ const initialState: GraphState = {
   selection: [],
   mode: 'idle',
   registry: {
+    latest: {
+      element: 'unset',
+    },
     move: {
       elements: [],
       fromWires: [],
@@ -55,6 +57,8 @@ export const graphSlice = createSlice({
     },
     addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
+
+      state.registry.latest.element = id
 
       switch (action.payload.type) {
         case 'static-component': {
@@ -206,17 +210,6 @@ export const graphSlice = createSlice({
       })
 
       // Apply motion to element
-      element.current.position = position
-    },
-    moveLiveElement: (state: GraphState, action: PayloadAction<Payload.MoveElementPayload>) => {
-      const { id, position } = action.payload
-
-      const element = state.elements[id]
-
-      if (!element) {
-        return
-      }
-
       element.current.position = position
     },
     updateSelection: (state: GraphState, action: PayloadAction<Payload.UpdateSelectionPayload>) => {
@@ -961,8 +954,8 @@ export const graphSlice = createSlice({
 
       state.mode = mode
     },
-    registerElement: (state: GraphState, action: PayloadAction<RegisterElementPayload>) => {
-      const { id, dimensions } = action.payload
+    registerElement: (state: GraphState, action: PayloadAction<Payload.RegisterElementPayload>) => {
+      const { id, dimensions, adjustment } = action.payload
 
       if (!state.elements[id]) {
         return
@@ -971,6 +964,15 @@ export const graphSlice = createSlice({
       const [width, height] = dimensions
 
       state.elements[id].current.dimensions = { width, height }
+
+      if (!adjustment) {
+        return
+      }
+
+      const [x, y] = state.elements[id].current.position
+      const [dx, dy] = adjustment
+
+      state.elements[id].current.position = [x + dx, y + dy]
     },
     registerElementAnchor: (state: GraphState, action: PayloadAction<RegisterElementAnchorPayload>) => {
       const { elementId, anchorId, position } = action.payload

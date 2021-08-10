@@ -23,7 +23,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const scale = useCameraStaticZoom()
   const mode = useCameraMode()
 
-  const { moveElement, moveLiveElement, registerElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
+  const { moveElement, registerElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
   const { setZoomLock } = useCameraDispatch()
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -43,8 +43,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
     }
     isMoved.current = true
 
-    moveLiveElement({ id, position: [x - width / 2, y - height / 2] })
-    registerElement({ id, dimensions: [width, height] })
+    registerElement({ id, dimensions: [width, height], adjustment: [width / -2, height / -2] })
   }, [width, height])
 
   const pointerDownStartTime = useRef<number>(Date.now())

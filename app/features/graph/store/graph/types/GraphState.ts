@@ -10,6 +10,9 @@ export type GraphState = {
   }
   mode: GraphMode
   registry: {
+    latest: {
+      element: string
+    }
     move: {
       elements: string[]
       fromWires: string[]

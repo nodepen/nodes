@@ -67,6 +67,7 @@ export type ProvisionalWirePayload = {
 export type RegisterElementPayload = {
   id: string
   dimensions: [width: number, height: number]
+  adjustment?: [dx: number, dy: number]
 }
 
 export type RegisterElementAnchorPayload = {

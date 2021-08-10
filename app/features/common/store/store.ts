@@ -2,7 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { cameraReducer, cameraActions } from 'features/graph/store/camera'
 import { graphReducer, graphActions } from 'features/graph/store/graph'
 import { hotkeyReducer, hotkeyActions } from 'features/graph/store/hotkey'
-import undoable, { excludeAction, groupByActionTypes } from 'redux-undo'
+import undoable, { excludeAction } from 'redux-undo'
 
 export const store = configureStore({
   reducer: {
@@ -10,7 +10,6 @@ export const store = configureStore({
     graph: undoable(graphReducer, {
       // TODO: Add an 'internal move' so we can't undo the recenter move-on-place
       filter: excludeAction([
-        graphActions.moveLiveElement.type,
         graphActions.updateLiveElement.type,
         graphActions.updateSelection.type,
         graphActions.setProvisionalWire.type,
@@ -25,11 +24,21 @@ export const store = configureStore({
         ...Object.values(cameraActions).map((action) => action.type),
         ...Object.values(hotkeyActions).map((action) => action.type),
       ]),
-      groupBy: groupByActionTypes([
-        graphActions.addElement.type,
-        graphActions.registerElement.type,
-        graphActions.registerElementAnchor.type,
-      ]),
+      groupBy: (action, current, _previous) => {
+        const ELEMENT_PLACEMENT = [
+          graphActions.addElement.type,
+          graphActions.registerElement.type,
+          graphActions.registerElementAnchor.type,
+        ]
+
+        const id = current.registry.latest.element
+
+        if (ELEMENT_PLACEMENT.includes(action.type)) {
+          return `ELEMENT_PLACEMENT_${id}`
+        }
+
+        return null
+      },
       limit: 10,
     }),
     hotkey: hotkeyReducer,
