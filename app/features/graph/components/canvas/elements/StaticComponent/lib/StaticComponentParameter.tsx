@@ -8,7 +8,7 @@ import { useAppStore } from '$'
 import { PointerTooltip } from 'features/graph/components/overlay'
 import WireModeTooltip from './WireModeTooltip'
 import { getConnectedWires } from '@/features/graph/store/graph/utils'
-import { useSessionManager } from '@/context/session'
+import { useSessionManager } from '@/features/common/context/session'
 import { useClickSelection } from '@/features/graph/hooks'
 
 type StaticComponentParameterProps = {

@@ -1,4 +1,4 @@
-import { useGraphManager } from '@/context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 import { useCallback, useRef } from 'react'
 import { useCameraDispatch, useCameraStaticPosition } from '../store/camera/hooks'
 

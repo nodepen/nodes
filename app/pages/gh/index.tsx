@@ -2,8 +2,8 @@ import { NextPage } from 'next'
 import Head from 'next/head'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
-import { GraphManager } from 'context/graph'
-import { SessionManager } from 'context/session'
+import { GraphManager } from '@/features/graph/context/graph'
+import { SessionManager } from '@/features/common/context/session'
 import { KeyboardObserver } from 'features/common/observer'
 
 const GrasshopperEditor: NextPage = () => {

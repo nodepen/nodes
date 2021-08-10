@@ -1,4 +1,4 @@
-import { useGraphManager } from '@/context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 import React, { useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 

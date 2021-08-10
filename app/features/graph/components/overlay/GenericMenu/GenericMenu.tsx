@@ -5,7 +5,7 @@ import { OverlayContainer } from '../OverlayContainer'
 import { useSetCameraPosition } from 'features/graph/hooks'
 import { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
 import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
-import { useGraphManager } from 'context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 import { GenericMenuManager } from './context'
 import { useOverlayOffset } from '../hooks'
 

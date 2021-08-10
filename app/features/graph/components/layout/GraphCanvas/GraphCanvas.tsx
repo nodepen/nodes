@@ -9,7 +9,7 @@ import {
 } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../../canvas'
-import { useGraphManager } from 'context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 import { StaticGrid } from '..'
 import { useLongPress } from 'hooks'
 import { useGraphDispatch } from '../../../store/graph/hooks'

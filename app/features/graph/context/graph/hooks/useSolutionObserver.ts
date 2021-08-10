@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react'
 import { useGraphElements, useGraphSolution } from '@/features/graph/store/graph/hooks'
-import { useSessionManager } from '@/context/session'
+import { useSessionManager } from '@/features/common/context/session'
 import { gql, useSubscription } from '@apollo/client'
 
 export const useSolutionObserver = (): void => {
@@ -29,7 +29,7 @@ export const useSolutionObserver = (): void => {
   }, [solution.id, elements])
 
   // Subscribe to all solution events for session
-  const { data, error } = useSubscription(
+  const { data } = useSubscription(
     gql`
       subscription {
         onSolution {
@@ -56,7 +56,7 @@ export const useSolutionObserver = (): void => {
   )
 
   useEffect(() => {
-    const { id, manifest } = data.onSolution
+    const { id } = data.onSolution
 
     if (id !== currentSolution.current) {
       // We don't care about this solution anymore

@@ -5,7 +5,7 @@ import { useCameraDispatch, useCameraStaticPosition, useCameraStaticZoom } from 
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
 import { useSelectionMode } from 'features/graph/store/hotkey/hooks'
 import { PointerTooltip } from '../../../overlay'
-import { useSessionManager } from '@/context/session'
+import { useSessionManager } from '@/features/common/context/session'
 
 type SelectionRegionProps = {
   region: NodePen.Element<'region'>

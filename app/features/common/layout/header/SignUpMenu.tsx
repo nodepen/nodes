@@ -1,4 +1,4 @@
-import { firebase } from 'context/session/auth/firebase'
+import { firebase } from '@/features/common/context/session/auth/firebase'
 
 export const SignUpMenu = (): React.ReactElement => {
   const handleGoogleSignup = (): void => {

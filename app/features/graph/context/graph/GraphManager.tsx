@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
 import { Grasshopper } from 'glib'
 import { GraphStore } from './types'
-import { useSessionManager } from '../session'
+import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
 
