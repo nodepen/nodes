@@ -153,6 +153,24 @@ export const graphSlice = createSlice({
           state.elements[id] = element
           break
         }
+        case 'annotation': {
+          const template = action.payload.template as NodePen.Element<'annotation'>['template']
+
+          const element: NodePen.Element<'annotation'> = {
+            id,
+            template,
+            current: {
+              position: action.payload.position,
+              dimensions: {
+                width: 0,
+                height: 0,
+              },
+            },
+          }
+
+          state.elements[id] = element
+          break
+        }
         default: {
           break
         }

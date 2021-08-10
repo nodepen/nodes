@@ -1,8 +1,8 @@
+import { NodePen } from 'glib'
 import { useGraphManager } from 'features/graph/context/graph'
-import { useGraphDispatch } from '../../store/graph/hooks'
-import React, { useState, useEffect, useLayoutEffect, useRef } from 'react'
+import { useGraphDispatch, useGraphElements } from '../../store/graph/hooks'
+import React, { useState, useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
-import { useAppStore } from '@/features/common/store'
 
 type UnderlayPortalProps = {
   children: JSX.Element
@@ -13,7 +13,7 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
   const { register } = useGraphManager()
   const { addElement, deleteLiveElements } = useGraphDispatch()
 
-  const store = useAppStore()
+  const elements = useGraphElements()
 
   const [ready, setReady] = useState(false)
 
@@ -21,7 +21,7 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
 
   useEffect(() => {
     // Add annotation element on load and register its ref
-    const parentElement = store.getState().graph.present.elements[parent]
+    const parentElement = elements[parent]
 
     if (!parentElement) {
       console.log(`🐍🐍🐍 Attempted to create an underlay for an element that doesn't exist!`)
@@ -44,9 +44,23 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
 
   const [container, setContainer] = useState<HTMLDivElement | null>(null)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
+    if (!ready) {
+      return
+    }
+
+    const annotations = Object.values(elements).filter(
+      (element): element is NodePen.Element<'annotation'> => element.template.type === 'annotation'
+    )
+
+    if (!annotations.find((annotation) => annotation.template.parent === parent)) {
+      // Nothing to reference, do no work
+      return
+    }
+
     if (!portalRef.current) {
       console.log(`🐍🐍🐍 Could not reference portal's ref object on initialization!`)
+      return
     }
 
     setContainer(portalRef.current)
@@ -55,9 +69,7 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
       register.portal.remove(parent)
 
       // Find the underlay annotation
-      const elements = Object.values(store.getState().graph.present.elements)
-
-      const underlay = elements.find(
+      const underlay = Object.values(elements).find(
         (element) => element.template.type === 'annotation' && element.template.parent === parent
       )
 
@@ -65,7 +77,7 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
         deleteLiveElements([underlay.id])
       }
     }
-  }, [ready])
+  }, [ready, elements])
 
   return container ? createPortal(children, container) : null
 }

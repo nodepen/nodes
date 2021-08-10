@@ -22,15 +22,22 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
       <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
         <div className="w-min h-full relative">
           <Draggable position={{ x, y }}>
-            <div className="w-24 h-8 bg-white flex items-center justify-center">
-              <button onClick={() => setShowUnderlay((current) => !current)}>TRY IT</button>
+            <div className="w-24 h-8 bg-white flex items-center justify-center pointer-events-auto">
+              <button
+                onClick={(e) => {
+                  e.stopPropagation()
+                  setShowUnderlay((current) => !current)
+                }}
+              >
+                TRY IT
+              </button>
             </div>
           </Draggable>
         </div>
       </div>
       {showUnderlay ? (
         <UnderlayPortal parent={id}>
-          <div>Howdy from number slider!</div>
+          <div>Howdy from number slider! {id}</div>
         </UnderlayPortal>
       ) : null}
     </>

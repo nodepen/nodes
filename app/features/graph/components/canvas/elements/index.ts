@@ -1,3 +1,4 @@
+export { Annotation } from './Annotation'
 export { NumberSlider } from './NumberSlider'
 export { SelectionRegion } from './Region'
 export { StaticComponent } from './StaticComponent'
