@@ -77,7 +77,7 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
         deleteLiveElements([underlay.id])
       }
     }
-  }, [ready, elements])
+  }, [ready])
 
-  return container ? createPortal(children, container) : null
+  return container ? createPortal(children, container, `underlay-${parent}`) : null
 }
