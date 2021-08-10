@@ -1,7 +1,8 @@
 export type NumberSliderData = {
+    mode: 'integer' | 'rational' | 'even' | 'odd'
     domain: [min: number, max: number]
     /**
-     * 0 for integer, >0 for decimal count (up to 6)
+     * 0 implies integer type
      */
-    precision: number
+    precision: 0 | 1 | 2 | 3 | 4 | 5 | 6
 }
