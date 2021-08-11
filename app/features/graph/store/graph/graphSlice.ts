@@ -391,6 +391,24 @@ export const graphSlice = createSlice({
 
       state.selection = nextSelection
     },
+    updateElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
+      const { id, type, data } = action.payload
+
+      const element = state.elements[id]
+
+      // Make sure element exists
+      if (!element) {
+        console.log(`🐍 Attempted to update an element that doesn't exist!`)
+        return
+      }
+
+      if (element.template.type !== type) {
+        console.log(`🐍 Attempted to update data for element with the wrong data type!`)
+        return
+      }
+
+      element.current = { ...element.current, ...data }
+    },
     updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
 

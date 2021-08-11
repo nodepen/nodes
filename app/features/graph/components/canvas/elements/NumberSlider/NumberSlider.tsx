@@ -4,6 +4,7 @@ import Draggable from 'react-draggable'
 import { UnderlayPortal } from '../../../underlay'
 import { useDebugRender } from '@/hooks'
 import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
+import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -14,6 +15,7 @@ const INITIAL_WIDTH = 125
 const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const { template, current, id } = element
 
+  const { registerElement, updateElement } = useGraphDispatch()
   const { setZoomLock } = useCameraDispatch()
 
   const [width, setWidth] = useState(INITIAL_WIDTH)
@@ -23,6 +25,17 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     // Is this... is this okay?
     document.documentElement.style['cursor'] = isDragging ? 'ew-resize' : 'auto'
   }, [isDragging])
+
+  useEffect(() => {
+    if (isDragging) {
+      return
+    }
+
+    // Capture undo case
+    if (current.dimensions.width !== width) {
+      setWidth(current.dimensions.width)
+    }
+  }, [isDragging, width, current.dimensions.width])
 
   useDebugRender(`NumberSlider | ${id}`)
 
@@ -70,6 +83,17 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 onStop={() => {
                   setZoomLock(false)
                   setIsDragging(false)
+                  updateElement({
+                    id,
+                    type: 'number-slider',
+                    data: {
+                      dimensions: {
+                        width,
+                        height: 32,
+                      },
+                    },
+                  })
+                  // TODO: update element dimensions and output anchor
                 }}
               >
                 <div className="w-2 h-4 bg-red-400 hover:cursor-move-ew" />
