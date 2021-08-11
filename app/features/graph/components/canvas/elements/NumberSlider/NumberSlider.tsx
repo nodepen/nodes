@@ -1,15 +1,28 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { NodePen } from 'glib'
 import Draggable from 'react-draggable'
 import { UnderlayPortal } from '../../../underlay'
 import { useDebugRender } from '@/hooks'
+import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
 }
 
+const INITIAL_WIDTH = 125
+
 const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const { template, current, id } = element
+
+  const { setZoomLock } = useCameraDispatch()
+
+  const [width, setWidth] = useState(INITIAL_WIDTH)
+  const [isDragging, setIsDragging] = useState(false)
+
+  useEffect(() => {
+    // Is this... is this okay?
+    document.documentElement.style['cursor'] = isDragging ? 'ew-resize' : 'auto'
+  }, [isDragging])
 
   useDebugRender(`NumberSlider | ${id}`)
 
@@ -21,16 +34,46 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     <>
       <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
         <div className="w-min h-full relative">
-          <Draggable position={{ x, y }}>
-            <div className="w-24 h-8 bg-white flex items-center justify-center pointer-events-auto">
-              <button
+          <Draggable position={{ x, y }} disabled={isDragging}>
+            <div
+              className="h-8 p-2 bg-white flex items-center justify-start pointer-events-auto"
+              onPointerDown={(e) => e.stopPropagation()}
+              style={{ width }}
+            >
+              <div className="h-full flex mr-2 p-1 pl-2 pr-2 items-center justify-center border-2 border-dark">
+                Slider
+              </div>
+              {/* <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setShowUnderlay((current) => !current)
                 }}
               >
                 TRY IT
-              </button>
+              </button> */}
+              <Draggable
+                axis="x"
+                bounds={{ left: 0 }}
+                position={{ x: width - INITIAL_WIDTH, y: 0 }}
+                onMouseDown={(e) => e.stopPropagation()}
+                onStart={(e) => {
+                  e.stopPropagation()
+                  setZoomLock(true)
+                  setIsDragging(true)
+                }}
+                onDrag={(e, d) => {
+                  const { deltaX: dx } = d
+                  const next = width + dx
+
+                  setWidth(next < INITIAL_WIDTH ? INITIAL_WIDTH : next)
+                }}
+                onStop={() => {
+                  setZoomLock(false)
+                  setIsDragging(false)
+                }}
+              >
+                <div className="w-2 h-4 bg-red-400 hover:cursor-move-ew" />
+              </Draggable>
             </div>
           </Draggable>
         </div>
