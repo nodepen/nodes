@@ -13,6 +13,8 @@ export const useGraphDispatch = () => {
     redo: () => dispatch(ActionCreators.redo()),
     reset: () => dispatch(graphActions.reset()),
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => dispatch(graphActions.addElement(data)),
+    addLiveElement: (data: Payload.AddElementPayload<NodePen.ElementType>) =>
+      dispatch(graphActions.addLiveElement(data)),
     updateLiveElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>) =>
       dispatch(graphActions.updateLiveElement(data)),
     deleteElements: (ids: string[]) => dispatch(graphActions.deleteElements(ids)),

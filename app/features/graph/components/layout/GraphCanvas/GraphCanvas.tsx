@@ -22,7 +22,7 @@ const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
   const state = useAppStore()
 
-  const { addElement } = useGraphDispatch()
+  const { addLiveElement } = useGraphDispatch()
   const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
   const cameraPosition = useCameraStaticPosition()
   const cameraZoom = useCameraStaticZoom()
@@ -67,13 +67,13 @@ const GraphCanvas = (): React.ReactElement => {
       )
 
       // Add region select element, which will handle the rest
-      addElement({
+      addLiveElement({
         type: 'region',
         template: region,
         position: [x, y],
       })
     },
-    [cameraPosition, cameraZoom, addElement, longPressActivated]
+    [cameraPosition, cameraZoom, addLiveElement, longPressActivated]
   )
 
   const handleOpenGraphContextMenu = useCallback(
@@ -188,7 +188,7 @@ const GraphCanvas = (): React.ReactElement => {
             )
 
             // Add region select element, which will handle the rest
-            addElement({
+            addLiveElement({
               type: 'region',
               template: region,
               position: [x, y],

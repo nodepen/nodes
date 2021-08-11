@@ -9,7 +9,9 @@ export const store = configureStore({
     camera: cameraReducer,
     graph: undoable(graphReducer, {
       filter: excludeAction([
+        graphActions.addLiveElement.type,
         graphActions.updateLiveElement.type,
+        graphActions.deleteLiveElements.type,
         graphActions.updateSelection.type,
         graphActions.setProvisionalWire.type,
         graphActions.clearProvisionalWire.type,

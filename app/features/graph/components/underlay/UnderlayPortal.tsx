@@ -11,7 +11,7 @@ type UnderlayPortalProps = {
 
 export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React.ReactElement | null => {
   const { register } = useGraphManager()
-  const { addElement, deleteLiveElements } = useGraphDispatch()
+  const { addLiveElement, deleteLiveElements } = useGraphDispatch()
 
   const elements = useGraphElements()
 
@@ -37,7 +37,7 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
 
     register.portal.add(parent, portalRef)
 
-    addElement({ type: 'annotation', template: { type: 'annotation', parent }, position })
+    addLiveElement({ type: 'annotation', template: { type: 'annotation', parent }, position })
 
     setReady(true)
   }, [])
