@@ -76,7 +76,7 @@ const Home: NextPage = () => {
           content="NodePen is a web client for Grasshopper, the visual programming language for Rhino 3D. Same Grasshopper, new digs. Powered by Rhino
           Compute."
         />
-        <meta name="keywords" content="grasshopper, online grasshopper, web grasshopper, rhino.compute" />
+        <meta name="keywords" content="grasshopper, grasshopper online, grasshopper 3d" />
       </Head>
       <div className="w-76 flex flex-col items-center">
         <a

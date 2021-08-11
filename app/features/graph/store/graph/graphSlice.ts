@@ -130,13 +130,11 @@ export const graphSlice = createSlice({
               },
               position: action.payload.position,
               anchors: {},
-              sources: {
-                input: [],
+              sources: {},
+              values: {
+                output: {},
               },
-              values: {},
-              inputs: {
-                input: 0,
-              },
+              inputs: {},
               outputs: {
                 output: 0,
               },
