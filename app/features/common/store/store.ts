@@ -8,7 +8,6 @@ export const store = configureStore({
   reducer: {
     camera: cameraReducer,
     graph: undoable(graphReducer, {
-      // TODO: Add an 'internal move' so we can't undo the recenter move-on-place
       filter: excludeAction([
         graphActions.updateLiveElement.type,
         graphActions.updateSelection.type,

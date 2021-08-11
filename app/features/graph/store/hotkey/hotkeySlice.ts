@@ -24,7 +24,7 @@ export const hotkeySlice = createSlice({
           state[stateKey] = pressed
           break
         default:
-          if (process.env.NEXT_PUBLIC_DEBUG) {
+          if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
             console.log(`😔😔😔 Not observing ${key}`)
           }
       }

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { NodePen } from 'glib'
+import { NodePen, Grasshopper } from 'glib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
@@ -9,7 +9,8 @@ import { useOverlayOffset } from '../hooks'
 import { useKeyboardSelection, useLibraryShortcuts, useLibraryTextSearch, useSelectedComponent } from './hooks'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
 import { mapToOrderedCategory } from './utils'
-import { useOutsideClick } from '@/hooks'
+import { addDefaultElement } from 'features/graph/utils'
+import { useOutsideClick } from 'hooks'
 
 type PlaceComponentMenuProps = {
   /** Position to place element in screen coordinate space. */
@@ -66,16 +67,12 @@ export const PlaceComponentMenu = ({
 
   const handlePlaceComponent = useCallback(
     (
-      template: NodePen.Element<NodePen.ElementType>['template'],
-      data?: NodePen.Element<NodePen.ElementType>['current']
+      template: Grasshopper.Component,
+      data?: NodePen.Element<'static-component' | 'number-slider'>['current']
     ): void => {
       const [x, y] = mapCoordinates(screenPosition)
-      addElement({
-        type: template.type,
-        template: template,
-        data: data,
-        position: [x, y],
-      })
+
+      addDefaultElement(addElement, [x, y], template, data)
       onClose()
     },
     [screenPosition, mapCoordinates, addElement, onClose]
@@ -117,7 +114,7 @@ export const PlaceComponentMenu = ({
                     className="relative rounded-sm bg-green hover:bg-swampgreen"
                     style={{ paddingTop: '100%' }}
                     onClick={() => {
-                      handlePlaceComponent({ type: 'static-component', ...component })
+                      handlePlaceComponent(component)
                     }}
                   >
                     <div className="absolute top-0 right-0 left-0 bottom-0">
@@ -194,7 +191,7 @@ export const PlaceComponentMenu = ({
             onClick={() => {
               switch (component.category.toLowerCase()) {
                 default: {
-                  handlePlaceComponent({ type: 'static-component', ...component })
+                  handlePlaceComponent(component)
                 }
               }
             }}
@@ -295,7 +292,7 @@ export const PlaceComponentMenu = ({
 
                                   switch (selected.category.toLowerCase()) {
                                     default: {
-                                      handlePlaceComponent({ type: 'static-component', ...selected })
+                                      handlePlaceComponent(selected)
                                     }
                                   }
                                 }}
@@ -343,7 +340,7 @@ export const PlaceComponentMenu = ({
 
                               switch (selected.category.toLowerCase()) {
                                 default: {
-                                  handlePlaceComponent({ type: 'static-component', ...selected })
+                                  handlePlaceComponent(selected)
                                 }
                               }
 
