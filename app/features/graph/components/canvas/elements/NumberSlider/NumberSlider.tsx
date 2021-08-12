@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 import Draggable from 'react-draggable'
 import { UnderlayPortal } from '../../../underlay'
 import { useDebugRender } from '@/hooks'
-import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
+import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 
 type NumberSliderProps = {
@@ -16,7 +16,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const { template, current, id } = element
 
   const { registerElement, updateElement } = useGraphDispatch()
+
   const { setZoomLock } = useCameraDispatch()
+  const zoom = useCameraStaticZoom()
 
   const [width, setWidth] = useState(INITIAL_WIDTH)
   const [isDragging, setIsDragging] = useState(false)
@@ -46,11 +48,17 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   return (
     <>
       <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
-        <div className="w-min h-full relative">
-          <Draggable position={{ x, y }} disabled={isDragging}>
+        <div
+          className="w-min h-full relative pointer-events-auto"
+          onPointerDown={(e) => e.stopPropagation()}
+          onDoubleClick={(e) => e.stopPropagation()}
+        >
+          <Draggable position={{ x, y }} scale={zoom} disabled={isDragging}>
             <div
-              className="h-8 p-2 bg-white flex items-center justify-start pointer-events-auto"
-              onPointerDown={(e) => e.stopPropagation()}
+              className="h-8 p-2 bg-white flex items-center justify-start"
+              onDoubleClick={() => {
+                setShowUnderlay(true)
+              }}
               style={{ width }}
             >
               <div className="h-full flex mr-2 p-1 pl-2 pr-2 items-center justify-center border-2 border-dark">
@@ -68,9 +76,11 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 axis="x"
                 bounds={{ left: 0 }}
                 position={{ x: width - INITIAL_WIDTH, y: 0 }}
+                scale={zoom}
                 onMouseDown={(e) => e.stopPropagation()}
                 onStart={(e) => {
                   e.stopPropagation()
+                  setShowUnderlay(false)
                   setZoomLock(true)
                   setIsDragging(true)
                 }}

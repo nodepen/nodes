@@ -169,7 +169,7 @@ export const graphSlice = createSlice({
             template,
             current: {
               position: action.payload.position,
-              dimensions: {
+              dimensions: action.payload.data?.dimensions ?? {
                 width: 0,
                 height: 0,
               },

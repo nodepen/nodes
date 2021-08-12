@@ -9,8 +9,9 @@ type AnnotationProps = {
 }
 
 const Annotation = ({ annotation }: AnnotationProps): React.ReactElement => {
-  const { id, template } = annotation
-  const [x, y] = annotation.current.position
+  const { id, template, current } = annotation
+  const [x, y] = current.position
+  const { width } = current.dimensions
 
   useDebugRender(`Annotation | ${id}`)
 
@@ -31,8 +32,6 @@ const Annotation = ({ annotation }: AnnotationProps): React.ReactElement => {
     console.log(`🐍🐍🐍 Attempted to render an annotation for a parent element that does not exist!`)
     return <></>
   }
-
-  const { width } = parent.current.dimensions
 
   return (
     <div

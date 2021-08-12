@@ -31,13 +31,20 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
     const { current } = parentElement
 
     const [x, y] = current.position
-    const { height } = current.dimensions
+    const { height, width } = current.dimensions
 
-    const position: [number, number] = [x - 40, y + height - 20]
+    const margin = 27
+
+    const position: [number, number] = [x - margin, y + height / 2]
 
     register.portal.add(parent, portalRef)
 
-    addLiveElement({ type: 'annotation', template: { type: 'annotation', parent }, position })
+    addLiveElement({
+      type: 'annotation',
+      template: { type: 'annotation', parent },
+      position,
+      data: { dimensions: { width: width + margin * 2, height: 0 } },
+    })
 
     setReady(true)
   }, [])
