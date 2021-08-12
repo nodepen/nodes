@@ -125,7 +125,7 @@ export const graphSlice = createSlice({
             template,
             current: {
               dimensions: {
-                width: 150,
+                width: 250,
                 height: 36,
               },
               position: action.payload.position,

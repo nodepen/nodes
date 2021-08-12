@@ -35,7 +35,7 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
 
     const margin = 27
 
-    const position: [number, number] = [x - margin, y + height / 2]
+    const position: [number, number] = [x - margin, y + height - 16]
 
     register.portal.add(parent, portalRef)
 
