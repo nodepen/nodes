@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import Draggable from 'react-draggable'
-import { ElementContainer } from '../../common'
+import { ElementContainer, ParameterIcon } from '../../common'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride } from './hooks'
 import { useDebugRender } from '@/hooks'
@@ -51,8 +51,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           style={{ width: internalWidth, height: elementHeight }}
         >
           <div className="w-full h-full flex items-center pr-2">
-            <div className="h-full flex mr-2 p-1 pl-2 pr-2 border-2 border-dark rounded-md items-center justify-center">
-              <h3 className="font-panel font-bold text-sm select-none" style={{ transform: 'translateY(1px)' }}>
+            <div className="h-full flex mr-2 p-1 pr-2 items-center justify-center">
+              <ParameterIcon type="number" size="sm" />
+              <h3 className="ml-1 font-panel font-bold text-sm select-none" style={{ transform: 'translateY(1px)' }}>
                 SLIDER
               </h3>
             </div>
