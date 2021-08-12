@@ -1,5 +1,4 @@
 import { useGraphManager } from '@/features/graph/context/graph'
-import { useGraphElements } from '@/features/graph/store/graph/hooks'
 import { useDebugRender } from '@/hooks'
 import { NodePen } from 'glib'
 import React, { useRef } from 'react'
@@ -15,7 +14,6 @@ const Annotation = ({ annotation }: AnnotationProps): React.ReactElement => {
 
   useDebugRender(`Annotation | ${id}`)
 
-  const elements = useGraphElements()
   const { registry } = useGraphManager()
 
   const fallbackRef = useRef<HTMLDivElement>(null)
@@ -25,13 +23,6 @@ const Annotation = ({ annotation }: AnnotationProps): React.ReactElement => {
   }
 
   const annotationRef = registry.portals?.[template.parent] ?? fallbackRef
-
-  const parent = elements[template.parent]
-
-  if (!parent) {
-    console.log(`🐍🐍🐍 Attempted to render an annotation for a parent element that does not exist!`)
-    return <></>
-  }
 
   return (
     <div

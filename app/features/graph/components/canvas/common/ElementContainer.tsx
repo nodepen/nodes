@@ -8,9 +8,19 @@ type ElementContainerProps = {
   children: JSX.Element
   element: NodePen.Element<'static-component' | 'static-parameter' | 'panel' | 'number-slider'>
   disabled?: boolean
+  onStart?: DraggableEventHandler
+  onDrag?: DraggableEventHandler
+  onStop?: DraggableEventHandler
 }
 
-const ElementContainer = ({ children, element, disabled = false }: ElementContainerProps): React.ReactElement => {
+const ElementContainer = ({
+  children,
+  element,
+  disabled = false,
+  onStart,
+  onDrag,
+  onStop,
+}: ElementContainerProps): React.ReactElement => {
   const {
     id,
     current: {
@@ -36,25 +46,29 @@ const ElementContainer = ({ children, element, disabled = false }: ElementContai
   }, [])
 
   const handleDragStart: DraggableEventHandler = useCallback(
-    (e, _) => {
+    (e, d) => {
       e.stopPropagation()
 
       setZoomLock(true)
       prepareLiveMotion({ anchor: id, targets: [id] })
+
+      onStart?.(e, d)
     },
-    [id, setZoomLock, prepareLiveMotion]
+    [id, setZoomLock, prepareLiveMotion, onStart]
   )
 
   const handleDrag: DraggableEventHandler = useCallback(
-    (_, d) => {
+    (e, d) => {
       const { deltaX, deltaY } = d
       dispatchLiveMotion(deltaX, deltaY)
+
+      onDrag?.(e, d)
     },
-    [dispatchLiveMotion]
+    [dispatchLiveMotion, onDrag]
   )
 
   const handleDragStop: DraggableEventHandler = useCallback(
-    (_, d) => {
+    (e, d) => {
       const { x, y } = d
 
       // Unlock camera
@@ -65,17 +79,15 @@ const ElementContainer = ({ children, element, disabled = false }: ElementContai
 
       // Recalculate staged motion in case we moved a non-selected item
       prepareLiveMotion({ anchor: 'selection', targets: selection })
+
+      onStop?.(e, d)
     },
-    [id, selection, setZoomLock, moveElement, prepareLiveMotion]
+    [id, selection, setZoomLock, moveElement, prepareLiveMotion, onStop]
   )
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
-      <div
-        className="w-min h-full relative pointer-events-auto"
-        onPointerDown={handleStopPropagation}
-        onDoubleClick={handleStopPropagation}
-      >
+      <div className="w-min h-full relative">
         <Draggable
           position={{ x, y }}
           scale={cameraZoom}
@@ -85,7 +97,15 @@ const ElementContainer = ({ children, element, disabled = false }: ElementContai
           onDrag={handleDrag}
           onStop={handleDragStop}
         >
-          {children}
+          <div
+            className=" pointer-events-auto"
+            role="presentation"
+            onPointerDown={handleStopPropagation}
+            onDoubleClick={handleStopPropagation}
+            onMouseDown={handleStopPropagation}
+          >
+            {children}
+          </div>
         </Draggable>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { NodePen } from 'glib'
 import Draggable from 'react-draggable'
 import { ElementContainer } from '../../common'
@@ -14,7 +14,7 @@ type NumberSliderProps = {
 const INITIAL_WIDTH = 125
 
 const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
-  const { template, current, id } = element
+  const { current, id } = element
 
   const { registerElement, updateElement } = useGraphDispatch()
 
@@ -44,9 +44,13 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const [showUnderlay, setShowUnderlay] = useState(false)
 
+  const onDragStart = useCallback((): void => {
+    setShowUnderlay(false)
+  }, [])
+
   return (
     <>
-      <ElementContainer element={element}>
+      <ElementContainer element={element} onStart={onDragStart}>
         <div
           className="h-8 p-2 bg-white flex items-center justify-start"
           onDoubleClick={() => {
@@ -65,7 +69,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               </button> */}
           <Draggable
             axis="x"
-            bounds={{ left: 0 }}
+            bounds={{ left: 0, right: 300 }}
             position={{ x: width - INITIAL_WIDTH, y: 0 }}
             scale={zoom}
             onMouseDown={(e) => e.stopPropagation()}
