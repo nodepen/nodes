@@ -24,13 +24,7 @@ const Annotation = ({ annotation }: AnnotationProps): React.ReactElement => {
 
   const annotationRef = registry.portals?.[template.parent] ?? fallbackRef
 
-  return (
-    <div
-      className={`absolute pointer-events-none z-0 overflow-visible h-8 bg-red-500`}
-      style={{ width, left: x, top: y }}
-      ref={annotationRef}
-    />
-  )
+  return <div className={`absolute z-0 overflow-visible`} style={{ width, left: x, top: y }} ref={annotationRef} />
 }
 
 export default React.memo(Annotation)

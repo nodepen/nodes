@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, MouseEvent } from 'react'
+import React, { useMemo, useCallback, MouseEvent, useRef, useEffect } from 'react'
 import Draggable, { DraggableEventHandler } from 'react-draggable'
 import { NodePen } from 'glib'
 import { useCameraDispatch, useCameraMode, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
@@ -28,7 +28,7 @@ const ElementContainer = ({
     },
   } = element
 
-  const { prepareLiveMotion, dispatchLiveMotion, moveElement } = useGraphDispatch()
+  const { prepareLiveMotion, dispatchLiveMotion, moveElement, registerElement } = useGraphDispatch()
   const selection = useGraphSelection()
 
   const { setZoomLock } = useCameraDispatch()
@@ -85,6 +85,29 @@ const ElementContainer = ({
     [id, selection, setZoomLock, moveElement, prepareLiveMotion, onStop]
   )
 
+  const containerRef = useRef<HTMLDivElement>(null)
+  const isRegistered = useRef(false)
+
+  useEffect(() => {
+    if (isRegistered.current) {
+      return
+    }
+
+    if (!containerRef.current) {
+      return
+    }
+
+    const { width: clientWidth, height: clientHeight } = containerRef.current.getBoundingClientRect()
+
+    const [width, height] = [clientWidth / cameraZoom, clientHeight / cameraZoom]
+
+    registerElement({
+      id,
+      dimensions: [width, height],
+      adjustment: [width / -2, height / -2],
+    })
+  }, [])
+
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
       <div className="w-min h-full relative">
@@ -100,6 +123,7 @@ const ElementContainer = ({
           <div
             className=" pointer-events-auto"
             role="presentation"
+            ref={containerRef}
             onPointerDown={handleStopPropagation}
             onDoubleClick={handleStopPropagation}
             onMouseDown={handleStopPropagation}

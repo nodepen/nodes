@@ -14,11 +14,11 @@ type NumberSliderProps = {
 
 const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const { current, id } = element
-  const { width: elementWidth } = current.dimensions
+  const { width: elementWidth, height: elementHeight } = current.dimensions
 
   useDebugRender(`NumberSlider | ${id}`)
 
-  const { registerElement, updateElement } = useGraphDispatch()
+  const { updateElement } = useGraphDispatch()
 
   const { setZoomLock } = useCameraDispatch()
   const zoom = useCameraStaticZoom()
@@ -44,22 +44,24 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     <>
       <ElementContainer element={element} onStart={onDragStart}>
         <div
-          className="w-full h-8 p-2 bg-white relative"
+          className="relative p-2 bg-white rounded-md border-2 border-dark shadow-osm"
           onDoubleClick={() => {
             setShowUnderlay(true)
           }}
-          style={{ width: internalWidth }}
+          style={{ width: internalWidth, height: elementHeight }}
         >
           <div className="w-full h-full flex items-center pr-2">
-            <div className="h-full flex mr-2 p-1 pl-2 pr-2 items-center justify-center border-2 border-dark">
-              Slider
+            <div className="h-full flex mr-2 p-1 pl-2 pr-2 border-2 border-dark rounded-md items-center justify-center">
+              <h3 className="font-panel font-bold text-sm select-none" style={{ transform: 'translateY(1px)' }}>
+                SLIDER
+              </h3>
             </div>
             <div className="h-full flex-grow mr-2 bg-gray-300" />
           </div>
           <Draggable
             axis="x"
             bounds={{ left: initialWidth.current - 16, right: initialWidth.current + 300 }}
-            position={{ x: internalWidth - 24, y: -16 }}
+            position={{ x: internalWidth - 28, y: -26 }}
             scale={zoom}
             onMouseDown={(e) => e.stopPropagation()}
             onStart={(e, _) => {
@@ -83,7 +85,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 data: {
                   dimensions: {
                     width: internalWidth,
-                    height: 32,
+                    height: elementHeight,
                   },
                   anchors: {
                     output: [internalWidth + 2, -16],
@@ -92,13 +94,19 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               })
             }}
           >
-            <div className="w-2 h-full bg-red-500 hover:cursor-move-ew" />
+            <div className="w-2 h-full flex items-center justify-center hover:cursor-move-ew">
+              <div className="w-full h-4 border-dark border-l-2 border-r-2" />
+            </div>
           </Draggable>
         </div>
       </ElementContainer>
       {showUnderlay ? (
         <UnderlayPortal parent={id}>
-          <div>Howdy from number slider! {id}</div>
+          <div className="w-full pt-8 flex flex-col items-center bg-green rounded-md">
+            <div className="flex flex-col items-center" style={{ maxWidth: 300 }}>
+              <div className="w-full">Howdy from number slider! {id}</div>
+            </div>
+          </div>
         </UnderlayPortal>
       ) : null}
     </>
