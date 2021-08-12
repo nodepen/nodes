@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { NodePen } from 'glib'
 import Draggable from 'react-draggable'
+import { ElementContainer } from '../../common'
 import { UnderlayPortal } from '../../../underlay'
 import { useDebugRender } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
@@ -41,30 +42,20 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   useDebugRender(`NumberSlider | ${id}`)
 
-  const [x, y] = current.position
-
   const [showUnderlay, setShowUnderlay] = useState(false)
 
   return (
     <>
-      <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
+      <ElementContainer element={element}>
         <div
-          className="w-min h-full relative pointer-events-auto"
-          onPointerDown={(e) => e.stopPropagation()}
-          onDoubleClick={(e) => e.stopPropagation()}
+          className="h-8 p-2 bg-white flex items-center justify-start"
+          onDoubleClick={() => {
+            setShowUnderlay(true)
+          }}
+          style={{ width }}
         >
-          <Draggable position={{ x, y }} scale={zoom} disabled={isDragging}>
-            <div
-              className="h-8 p-2 bg-white flex items-center justify-start"
-              onDoubleClick={() => {
-                setShowUnderlay(true)
-              }}
-              style={{ width }}
-            >
-              <div className="h-full flex mr-2 p-1 pl-2 pr-2 items-center justify-center border-2 border-dark">
-                Slider
-              </div>
-              {/* <button
+          <div className="h-full flex mr-2 p-1 pl-2 pr-2 items-center justify-center border-2 border-dark">Slider</div>
+          {/* <button
                 onClick={(e) => {
                   e.stopPropagation()
                   setShowUnderlay((current) => !current)
@@ -72,46 +63,46 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               >
                 TRY IT
               </button> */}
-              <Draggable
-                axis="x"
-                bounds={{ left: 0 }}
-                position={{ x: width - INITIAL_WIDTH, y: 0 }}
-                scale={zoom}
-                onMouseDown={(e) => e.stopPropagation()}
-                onStart={(e) => {
-                  e.stopPropagation()
-                  setShowUnderlay(false)
-                  setZoomLock(true)
-                  setIsDragging(true)
-                }}
-                onDrag={(e, d) => {
-                  const { deltaX: dx } = d
-                  const next = width + dx
+          <Draggable
+            axis="x"
+            bounds={{ left: 0 }}
+            position={{ x: width - INITIAL_WIDTH, y: 0 }}
+            scale={zoom}
+            onMouseDown={(e) => e.stopPropagation()}
+            onStart={(e, _) => {
+              e.stopPropagation()
+              setShowUnderlay(false)
+              setZoomLock(true)
+              setIsDragging(true)
+            }}
+            onDrag={(_, d) => {
+              const { deltaX: dx } = d
+              const next = width + dx
 
-                  setWidth(next < INITIAL_WIDTH ? INITIAL_WIDTH : next)
-                }}
-                onStop={() => {
-                  setZoomLock(false)
-                  setIsDragging(false)
-                  updateElement({
-                    id,
-                    type: 'number-slider',
-                    data: {
-                      dimensions: {
-                        width,
-                        height: 32,
-                      },
-                    },
-                  })
-                  // TODO: update element dimensions and output anchor
-                }}
-              >
-                <div className="w-2 h-4 bg-red-400 hover:cursor-move-ew" />
-              </Draggable>
-            </div>
+              setWidth(next < INITIAL_WIDTH ? INITIAL_WIDTH : next)
+            }}
+            onStop={() => {
+              setZoomLock(false)
+              setIsDragging(false)
+              updateElement({
+                id,
+                type: 'number-slider',
+                data: {
+                  dimensions: {
+                    width,
+                    height: 32,
+                  },
+                  anchors: {
+                    output: [width + 2, -16],
+                  },
+                },
+              })
+            }}
+          >
+            <div className="w-2 h-4 bg-red-400 hover:cursor-move-ew" />
           </Draggable>
         </div>
-      </div>
+      </ElementContainer>
       {showUnderlay ? (
         <UnderlayPortal parent={id}>
           <div>Howdy from number slider! {id}</div>
