@@ -8,16 +8,13 @@ type ParameterIconProps = {
 
 export const ParameterIcon = ({ type, size }: ParameterIconProps): React.ReactElement => {
   const sizes = {
-    sm: '24px',
-    md: '36px',
-  }
-
-  const sizeNumbers = {
     sm: 24,
     md: 36,
   }
 
-  const s = sizeNumbers[size] / 2
+  const px = `${sizes[size]}px`
+  const s = sizes[size] / 2
+
   const a = s
   const b = s / 2
   const f = (Math.sqrt(3) / 2) * s
@@ -46,22 +43,24 @@ export const ParameterIcon = ({ type, size }: ParameterIconProps): React.ReactEl
   const icon = getIcon(type)
 
   return (
-    <svg width={sizes[size]} height={sizes[size]} viewBox={`-1 -1 ${sizes[size] + 1} ${sizes[size] + 1}`}>
-      <defs>
-        <clipPath id="annoying">
-          <polygon points={points} />
-        </clipPath>
-      </defs>
-      <polygon
-        points={points}
-        stroke="#333333"
-        strokeWidth="4px"
-        fill="#333"
-        vectorEffect="non-scaling-stroke"
-        clipPath="url(#annoying)"
-        style={{ transform: `translate(${s}px, ${s}px)` }}
-      />
-      {icon}
-    </svg>
+    <div title={`${type} parameter`}>
+      <svg width={px} height={px} viewBox={`0 0 ${s * 2} ${s * 2}`}>
+        <defs>
+          <clipPath id="annoying">
+            <polygon points={points} />
+          </clipPath>
+        </defs>
+        <polygon
+          points={points}
+          stroke="#333333"
+          strokeWidth="4px"
+          fill="#333"
+          vectorEffect="non-scaling-stroke"
+          clipPath="url(#annoying)"
+          style={{ transform: `translate(${s}px, ${s}px)` }}
+        />
+        {icon}
+      </svg>
+    </div>
   )
 }
