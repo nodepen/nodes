@@ -23,6 +23,18 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const { setZoomLock } = useCameraDispatch()
   const zoom = useCameraStaticZoom()
 
+  const { rounding, precision, domain } = current
+  const [{ rounding: internalRounding, precision: internalPrecision, domain: internalDomain }, setInternalValue] =
+    useState<Pick<typeof current, 'rounding' | 'precision' | 'domain'>>({
+      rounding,
+      precision,
+      domain,
+    })
+
+  useEffect(() => {
+    setInternalValue({ rounding, precision, domain })
+  }, [rounding, precision, domain])
+
   const initialWidth = useRef(elementWidth)
   const [internalWidth, setInternalWidth] = useState(elementWidth)
 
@@ -62,7 +74,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           <Draggable
             axis="x"
             bounds={{ left: initialWidth.current - 16, right: initialWidth.current + 300 }}
-            position={{ x: internalWidth - 28, y: -26 }}
+            position={{ x: internalWidth - 28, y: -22 }}
             scale={zoom}
             onMouseDown={(e) => e.stopPropagation()}
             onStart={(e, _) => {

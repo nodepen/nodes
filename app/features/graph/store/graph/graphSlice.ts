@@ -126,7 +126,7 @@ export const graphSlice = createSlice({
             current: {
               dimensions: {
                 width: 300,
-                height: 46,
+                height: 42,
               },
               position: action.payload.position,
               anchors: {},
@@ -142,9 +142,9 @@ export const graphSlice = createSlice({
                 id: 'unset',
                 mode: 'immediate',
               },
-              mode: 'rational',
+              rounding: 'rational',
               domain: [0, 1],
-              precision: 1,
+              precision: 3,
             },
           }
 
