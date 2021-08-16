@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useForm } from 'react-hook-form'
+import { coerceValue } from '../utils'
 
 type NumberSliderMenuProps = {
   id: string
@@ -15,7 +16,13 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
 
   const internalConfiguration = useRef<typeof initial>(initial)
   const internalRounding = watch('rounding')
-  const internalRange = watch('domain.1') - watch('domain.0')
+  const internalPrecision = watch('precision')
+  const [, internalRange] = coerceValue(watch('domain.1') - watch('domain.0'), internalPrecision)
+  const [internalNumericValue, internalValue] = coerceValue(watch('value'), internalPrecision)
+
+  const [hoverPrecision, setHoverPrecision] = useState<number>()
+  const precisionEnabled = internalRounding === 'rational'
+  const visiblePrecision = precisionEnabled ? hoverPrecision ?? internalPrecision : 0
 
   const onSubmit = handleSubmit((values) => {
     console.log(values)
@@ -41,7 +48,13 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
               className={`${
                 internalRounding === option ? 'bg-green' : ''
               } w-12 h-12 flex items-center justify-center rounded-md hover:bg-swampgreen`}
-              onClick={() => setValue('rounding', option)}
+              onClick={() => {
+                setValue('rounding', option)
+                if (option !== 'rational') {
+                  setValue('precision', 0)
+                  setValue('value', coerceValue(internalNumericValue, 0)[0])
+                }
+              }}
             >
               <p className="text-xl font-bold font-panel text-darkgreen" style={{ transform: 'translateY(3px)' }}>
                 {labels[option]}
@@ -49,8 +62,47 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
             </button>
           ))}
         </div>
-        <h4 className="mb-2 text-md text-darkgreen font-semibold">Digits</h4>
-        <div className="w-full mb-4 p-2 h-12 rounded-md bg-pale flex items-center"></div>
+        <h4 className={`${precisionEnabled ? 'text-darkgreen' : 'text-swampgreen'} mb-2 text-md font-semibold`}>
+          Digits
+        </h4>
+        <div className="w-full mb-4 p-2 h-12 rounded-md bg-pale flex items-center">
+          <button
+            className={`${visiblePrecision === 0 ? 'rounded-md' : 'rounded-tl-md rounded-bl-md'} ${
+              precisionEnabled ? 'bg-green' : 'text-swampgreen'
+            } h-full flex-grow flex items-center justify-center font-semibold`}
+            onPointerEnter={() => setHoverPrecision(0)}
+            onPointerLeave={() => setHoverPrecision(undefined)}
+            onClick={() => setValue('precision', 0)}
+            disabled={!precisionEnabled}
+          >
+            0
+          </button>
+          <div
+            className={`${visiblePrecision === 0 ? '' : 'bg-green'} ${
+              precisionEnabled ? '' : 'text-swampgreen'
+            } h-full flex-grow flex items-center justify-center font-semibold`}
+          >
+            .
+          </div>
+          {Array.from(Array(6)).map((_, i) => {
+            const isHighlighted = i < visiblePrecision
+
+            return (
+              <button
+                className={`${isHighlighted ? 'bg-green' : ''} ${
+                  visiblePrecision === i + 1 ? 'rounded-tr-md rounded-br-md' : ''
+                } ${precisionEnabled ? '' : 'text-swampgreen'} h-full flex-grow font-semibold`}
+                key={`precision-button-${i}`}
+                onPointerEnter={() => setHoverPrecision(i + 1)}
+                onPointerLeave={() => setHoverPrecision(undefined)}
+                onClick={() => setValue('precision', (i + 1) as 1 | 2 | 3 | 4 | 5 | 6)}
+                disabled={!precisionEnabled}
+              >
+                0
+              </button>
+            )
+          })}
+        </div>
         <div className="w-full mb-4 domain-container">
           <div className="flex flex-col">
             <h4 className="mb-2 text-md text-darkgreen font-semibold">Min</h4>
