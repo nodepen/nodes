@@ -9,7 +9,7 @@ export const addDefaultElement = (
   addElement: ReturnType<typeof useGraphDispatch>['addElement'],
   position: [x: number, y: number],
   template: Grasshopper.Component,
-  data?: NodePen.Element<'static-component' | 'number-slider'>['current']
+  data?: Partial<NodePen.Element<'static-component' | 'number-slider'>['current']>
 ): void => {
   const { category, guid } = template
   const [x, y] = position

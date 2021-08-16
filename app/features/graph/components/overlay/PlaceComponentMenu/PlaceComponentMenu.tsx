@@ -23,7 +23,7 @@ export const PlaceComponentMenu = ({
   onClose,
 }: PlaceComponentMenuProps): React.ReactElement => {
   const { addElement } = useGraphDispatch()
-  const { library, registry } = useGraphManager()
+  const { library } = useGraphManager()
   const { device } = useSessionManager()
 
   const isFullWidth = useMemo(() => device.breakpoint === 'sm', [device.breakpoint])
@@ -68,7 +68,7 @@ export const PlaceComponentMenu = ({
   const handlePlaceComponent = useCallback(
     (
       template: Grasshopper.Component,
-      data?: NodePen.Element<'static-component' | 'number-slider'>['current']
+      data?: Partial<NodePen.Element<'static-component' | 'number-slider'>['current']>
     ): void => {
       const [x, y] = mapCoordinates(screenPosition)
 
@@ -338,11 +338,13 @@ export const PlaceComponentMenu = ({
                                 return
                               }
 
-                              switch (selected.category.toLowerCase()) {
-                                default: {
-                                  handlePlaceComponent(selected)
-                                }
+                              if (shortcut) {
+                                const data = shortcut.onCreate(userValue)
+                                handlePlaceComponent(selected, data)
+                                return
                               }
+
+                              handlePlaceComponent(selected)
 
                               return
                             }
