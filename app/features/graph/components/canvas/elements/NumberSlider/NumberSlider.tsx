@@ -105,9 +105,33 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                   }}
                   onStop={(_e, _d) => {
                     setCursorOverride(false)
+
+                    updateElement({
+                      id,
+                      type: 'number-slider',
+                      data: {
+                        values: {
+                          output: {
+                            '{0;}': [
+                              {
+                                type: 'number',
+                                data: internalValue,
+                              },
+                            ],
+                          },
+                        },
+                      },
+                    })
                   }}
                 >
-                  <div className="absolute w-4 h-4 bg-white border-2 border-dark rounded-full z-10 hover:cursor-move-ew" />
+                  <div className="absolute w-4 h-4 z-10 hover:cursor-move-ew">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div
+                        className="w-3 h-3 rounded-sm border-2 border-dark bg-white"
+                        style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
+                      />
+                    </div>
+                  </div>
                 </Draggable>
                 {showUnderlay ? null : (
                   <div
@@ -119,7 +143,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                         className="w-6 h-6 rounded-sm bg-green"
                         style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
                       />
-                      <div className="bg-green rounded-md" style={{ transform: 'translateY(-12px)' }}>
+                      <div className="bg-green rounded-md" style={{ transform: 'translateY(-16px)' }}>
                         <p className="h-10 p-2 pl-4 pr-4 rounded-md text-lg" style={{ transform: 'translateY(-4px)' }}>
                           {internalValueLabel.current}
                         </p>
@@ -137,8 +161,8 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           </div>
           <Draggable
             axis="x"
-            bounds={{ left: initialWidth.current - 16, right: initialWidth.current + 300 }}
-            position={{ x: internalWidth - 28, y: -22 }}
+            bounds={{ left: initialWidth.current - 34, right: initialWidth.current + 300 }}
+            position={{ x: internalWidth - 34, y: -22 }}
             scale={zoom}
             onMouseDown={(e) => e.stopPropagation()}
             onStart={(e, _) => {
@@ -176,6 +200,33 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               <div className="w-full h-4 border-dark border-l-2 border-r-2" />
             </div>
           </Draggable>
+          <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
+            <div className="relative w-full h-full">
+              <div className="absolute w-full h-full" style={{ left: -7 }}>
+                <div className="w-full h-full flex items-center">
+                  <svg className="w-4 h-4 overflow-visible" viewBox="0 0 10 10">
+                    <path
+                      d="M5,10 a1,1 0 0,0 0,-8"
+                      fill="#333"
+                      stroke="#333"
+                      strokeWidth="2px"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                    <circle
+                      cx="5"
+                      cy="5"
+                      r="4"
+                      stroke="#333"
+                      strokeWidth="2px"
+                      vectorEffect="non-scaling-stroke"
+                      fill="#FFF"
+                    />
+                    <path d="M5,20 a1,1 0 0,0 0,-30" fill="#FFF" opacity="0" stroke="none" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </ElementContainer>
       {showUnderlay ? (
