@@ -136,7 +136,7 @@ export const graphSlice = createSlice({
                   '{0;}': [
                     {
                       type: 'number',
-                      data: 5,
+                      data: 0.25,
                     },
                   ],
                 },
@@ -149,10 +149,14 @@ export const graphSlice = createSlice({
                 id: 'unset',
                 mode: 'immediate',
               },
-              rounding: 'integer',
-              domain: [0, 10],
-              precision: 0,
+              rounding: 'rational',
+              domain: [0, 1],
+              precision: 3,
             },
+          }
+
+          if (action.payload.data) {
+            element.current = { ...element.current, ...action.payload.data }
           }
 
           state.elements[id] = element

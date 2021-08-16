@@ -30,9 +30,17 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   // Keep internal value in sync with actual current value, but allow for fast-local-temporary changes.
   const { data: currentValue } = current.values['output']['{0;}'][0]
   const [internalValue, setInternalValue] = useState(currentValue as number)
+  const internalValueLabel = useRef<string>(currentValue.toString())
+
+  const handleSetInternalValue = (value: number): void => {
+    const [v, l] = coerceValue(value, precision)
+
+    internalValueLabel.current = l
+    setInternalValue(v)
+  }
 
   useEffect(() => {
-    setInternalValue(currentValue as number)
+    handleSetInternalValue(currentValue as number)
   }, [currentValue])
 
   const sliderRef = useRef<HTMLDivElement>(null)
@@ -55,7 +63,6 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   }, [])
 
   const sliderPosition = getSliderPosition(internalValue, [min, max], sliderWidth)
-
   const sliderStep = getSliderStep(rounding, precision, domain, sliderWidth)
 
   return (
@@ -76,13 +83,13 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               </h3>
             </div>
             <div className="h-full flex-grow mr-4" ref={sliderRef}>
-              <div className="w-full h-full relative">
+              <div className="w-full h-full relative overflow-visible">
                 <Draggable
                   axis="x"
                   grid={[sliderStep, 0]}
                   bounds={{ left: -8, right: sliderWidth - 8 }}
                   position={{ x: sliderPosition - 8, y: 3 }}
-                  onStart={(e, d) => {
+                  onStart={(e, _d) => {
                     e.stopPropagation()
                     setCursorOverride(true)
                   }}
@@ -91,18 +98,24 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                     const pct = (x + 8) / sliderWidth
                     const range = max - min
 
-                    const v = pct * range
+                    const v = pct * range + min
 
-                    console.log(coerceValue(v, precision))
-
-                    setSlider
+                    handleSetInternalValue(v)
                   }}
-                  onStop={(e, d) => {
+                  onStop={(_e, _d) => {
                     setCursorOverride(false)
                   }}
                 >
                   <div className="absolute w-4 h-4 bg-white border-2 border-dark rounded-full z-10 hover:cursor-move-ew" />
                 </Draggable>
+                <div
+                  className="absolute"
+                  style={{ width: sliderWidth, height: sliderWidth, left: sliderPosition - sliderWidth / 2, top: 40 }}
+                >
+                  <div className="w-full h-full flex flex-col justify-start items-center">
+                    <div className="p-2 bg-green rounded-sm">{internalValueLabel.current}</div>
+                  </div>
+                </div>
                 <div className="absolute left-0 top-0 w-full h-full z-0">
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="flex-grow bg-dark" style={{ height: '2px' }} />
