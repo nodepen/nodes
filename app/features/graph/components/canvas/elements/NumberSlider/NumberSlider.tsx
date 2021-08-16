@@ -8,6 +8,7 @@ import { useDebugRender } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { coerceValue, getSliderPosition, getSliderStep } from './utils'
+import { NumberSliderMenu } from './components'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -108,14 +109,16 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 >
                   <div className="absolute w-4 h-4 bg-white border-2 border-dark rounded-full z-10 hover:cursor-move-ew" />
                 </Draggable>
-                <div
-                  className="absolute"
-                  style={{ width: sliderWidth, height: sliderWidth, left: sliderPosition - sliderWidth / 2, top: 40 }}
-                >
-                  <div className="w-full h-full flex flex-col justify-start items-center">
-                    <div className="p-2 bg-green rounded-sm">{internalValueLabel.current}</div>
+                {showUnderlay ? null : (
+                  <div
+                    className="absolute"
+                    style={{ width: sliderWidth, height: sliderWidth, left: sliderPosition - sliderWidth / 2, top: 40 }}
+                  >
+                    <div className="w-full h-full flex flex-col justify-start items-center">
+                      <div className="p-2 bg-green rounded-sm">{internalValueLabel.current}</div>
+                    </div>
                   </div>
-                </div>
+                )}
                 <div className="absolute left-0 top-0 w-full h-full z-0">
                   <div className="w-full h-full flex items-center justify-center">
                     <div className="flex-grow bg-dark" style={{ height: '2px' }} />
@@ -171,7 +174,11 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         <UnderlayPortal parent={id}>
           <div className="w-full pt-8 flex flex-col items-center bg-green rounded-md">
             <div className="flex flex-col items-center" style={{ maxWidth: 300 }}>
-              <div className="w-full">Howdy from number slider! {id}</div>
+              <NumberSliderMenu
+                id={id}
+                initial={{ rounding, precision, domain, value: internalValue }}
+                onClose={() => setShowUnderlay(false)}
+              />
             </div>
           </div>
         </UnderlayPortal>
