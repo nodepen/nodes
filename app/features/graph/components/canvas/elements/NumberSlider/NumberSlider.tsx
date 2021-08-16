@@ -24,6 +24,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const zoom = useCameraStaticZoom()
 
   const { rounding, precision, domain } = current
+  const [min, max] = domain
 
   // Keep internal value in sync with actual current value, but allow for fast-local-temporary changes.
   const { data: currentValue } = current.values['output']['{0;}'][0]
@@ -33,22 +34,26 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     setInternalValue(currentValue as number)
   }, [currentValue])
 
+  const sliderRef = useRef<HTMLDivElement>(null)
+
   const initialWidth = useRef(elementWidth)
   const [internalWidth, setInternalWidth] = useState(elementWidth)
+  const [sliderWidth, setSliderWidth] = useState(172)
 
   useEffect(() => {
     setInternalWidth(elementWidth)
+    setSliderWidth((current) => sliderRef?.current?.clientWidth ?? current)
   }, [elementWidth])
 
-  const [isDragging, setIsDragging] = useState(false)
-
-  useCursorOverride(isDragging)
+  const setCursorOverride = useCursorOverride()
 
   const [showUnderlay, setShowUnderlay] = useState(false)
 
   const onDragStart = useCallback((): void => {
     setShowUnderlay(false)
   }, [])
+
+  const sliderPosition = ((internalValue - min) / (max - min)) * sliderWidth
 
   return (
     <>
@@ -67,7 +72,11 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 SLIDER
               </h3>
             </div>
-            <div className="h-full flex-grow mr-2 bg-gray-300" />
+            <div className="h-full flex-grow mr-2" ref={sliderRef}>
+              <div className="w-full h-full relative">
+                <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ left: sliderPosition }} />
+              </div>
+            </div>
           </div>
           <Draggable
             axis="x"
@@ -79,17 +88,18 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               e.stopPropagation()
               setShowUnderlay(false)
               setZoomLock(true)
-              setIsDragging(true)
+              setCursorOverride(true)
             }}
             onDrag={(_, d) => {
               const { deltaX: dx } = d
               const next = internalWidth + dx
 
               setInternalWidth(next < initialWidth.current ? initialWidth.current : next)
+              setSliderWidth((current) => sliderRef?.current?.clientWidth ?? current)
             }}
             onStop={() => {
               setZoomLock(false)
-              setIsDragging(false)
+              setCursorOverride(false)
               updateElement({
                 id,
                 type: 'number-slider',
