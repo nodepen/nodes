@@ -64,6 +64,12 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
     even: 'E',
     odd: 'O',
   }
+  const titles: { [key in typeof initial['rounding']]: string } = {
+    rational: 'Rational',
+    integer: 'Integer',
+    even: 'Even',
+    odd: 'Odd',
+  }
 
   return (
     <div className="w-full mb-4 flex flex-col" onPointerDown={(e) => e.stopPropagation()}>
@@ -85,7 +91,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
               }}
             >
               <p className="text-xl font-bold font-panel text-darkgreen" style={{ transform: 'translateY(3px)' }}>
-                {labels[option]}
+                <span title={titles[option]}>{labels[option]}</span>
               </p>
             </button>
           ))}

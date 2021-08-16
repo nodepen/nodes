@@ -147,11 +147,17 @@ export const PlaceComponentMenu = ({
             <h4 className="text-sm text-darkgreen font-semibold">Shortcut</h4>
           </div>
           <div className="w-full pl-10 flex flex-col">
-            <div className="mb-2 w-full flex items-center">
+            <div className="mb-2 w-full h-6 flex items-center overflow-hidden whitespace-nowrap">
               <div className="mr-3 pl-3 pr-3 pt-1 pb-1 bg-pale rounded-md">
                 <p className="font-panel font-semibold text-xs text-dark">{shortcut.pattern}</p>
               </div>
-              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+              <svg
+                className="w-4 h-4"
+                style={{ minWidth: 16 }}
+                fill="currentColor"
+                viewBox="0 0 20 20"
+                xmlns="http://www.w3.org/2000/svg"
+              >
                 <path
                   fillRule="evenodd"
                   d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
@@ -164,7 +170,9 @@ export const PlaceComponentMenu = ({
                 className="ml-3"
                 src={`data:image/png;base64,${shortcutTemplate?.icon ?? ''}`}
               />
-              <p className="ml-2 font-panel font-semibold text-sm">{shortcutTemplate?.name.toUpperCase()}</p>
+              <p className="ml-2 font-panel font-semibold text-sm whitespace-nowrap">
+                {shortcut?.label?.toUpperCase() ?? shortcutTemplate?.name.toUpperCase()}
+              </p>
             </div>
             <p className="leading-5">{shortcut.description}</p>
           </div>

@@ -1,14 +1,61 @@
-import { newGuid } from 'features/graph/utils'
 import { NodePen } from 'glib'
 import { ComponentShortcut } from '../types'
 
 export const shortcuts: ComponentShortcut[] = [
   {
     test: (value: string): boolean => {
+      const crumbs = value.split('<')
+
+      if (crumbs.length !== 2) {
+        return false
+      }
+
+      if (!crumbs.every((crumb) => !isNaN(parseFloat(crumb)))) {
+        return false
+      }
+
+      return true
+    },
+    template: '57da07bd-ecab-415d-9d86-af36d7073abc',
+    pattern: '# < #',
+    label: 'slider',
+    description: 'Create a number slider set to the provided value. The first number will be used as the minimum.',
+    onCreate: (value: string): Partial<NodePen.Element<'number-slider'>['current']> => {
+      const crumbs = value.split('<')
+
+      const [min, val] = crumbs
+
+      const [, minDecimals] = min.split('.')
+      const [valueNumber, valueDecimals] = val.split('.')
+
+      const precision = Math.min(6, Math.max((minDecimals ?? ''.length, (valueDecimals ?? '').length))) as 0
+
+      const data: Partial<NodePen.Element<'number-slider'>['current']> = {
+        precision,
+        domain: [parseFloat(min), Math.min(Math.pow(10, 7), Math.pow(10, valueNumber.length))],
+        rounding: 'rational',
+        values: {
+          output: {
+            '{0;}': [
+              {
+                type: 'number',
+                data: Math.min(Math.pow(10, 7), parseFloat(val)),
+              },
+            ],
+          },
+        },
+      }
+
+      return data
+    },
+  },
+  {
+    test: (value: string): boolean => {
       return !isNaN(parseFloat(value))
     },
     template: '57da07bd-ecab-415d-9d86-af36d7073abc',
     pattern: '#',
+    label: 'slider',
     description: 'Create a number slider set to the provided value.',
     onCreate: (value: string): Partial<NodePen.Element<'number-slider'>['current']> => {
       const [num, decimals] = value.split('.')
@@ -17,14 +64,14 @@ export const shortcuts: ComponentShortcut[] = [
 
       const data: Partial<NodePen.Element<'number-slider'>['current']> = {
         precision,
-        domain: [0, Math.pow(10, num.length)],
+        domain: [0, Math.min(Math.pow(10, 7), Math.pow(10, num.length))],
         rounding: 'rational',
         values: {
           output: {
             '{0;}': [
               {
                 type: 'number',
-                data: parseFloat(value),
+                data: Math.min(Math.pow(10, 7), parseFloat(value)),
               },
             ],
           },
