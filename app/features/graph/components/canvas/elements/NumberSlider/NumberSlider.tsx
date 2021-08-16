@@ -111,11 +111,19 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 </Draggable>
                 {showUnderlay ? null : (
                   <div
-                    className="absolute"
-                    style={{ width: sliderWidth, height: sliderWidth, left: sliderPosition - sliderWidth / 2, top: 40 }}
+                    className="absolute pointer-events-none"
+                    style={{ width: sliderWidth, height: sliderWidth, left: sliderPosition - sliderWidth / 2, top: 45 }}
                   >
                     <div className="w-full h-full flex flex-col justify-start items-center">
-                      <div className="p-2 bg-green rounded-sm">{internalValueLabel.current}</div>
+                      <div
+                        className="w-6 h-6 rounded-sm bg-green"
+                        style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
+                      />
+                      <div className="bg-green rounded-md" style={{ transform: 'translateY(-12px)' }}>
+                        <p className="h-10 p-2 pl-4 pr-4 rounded-md text-lg" style={{ transform: 'translateY(-4px)' }}>
+                          {internalValueLabel.current}
+                        </p>
+                      </div>
                     </div>
                   </div>
                 )}
