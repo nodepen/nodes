@@ -132,7 +132,14 @@ export const graphSlice = createSlice({
               anchors: {},
               sources: {},
               values: {
-                output: {},
+                output: {
+                  '{0;}': [
+                    {
+                      type: 'number',
+                      data: 0.25,
+                    },
+                  ],
+                },
               },
               inputs: {},
               outputs: {

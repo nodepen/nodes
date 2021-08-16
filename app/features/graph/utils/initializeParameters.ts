@@ -32,6 +32,7 @@ export const initializeParameters = (
     return all
   }, {} as ElementData['sources'])
 
+  // TODO: Parse default values somehow
   const values = Object.keys(inputs).reduce((all, id) => {
     all[id] = {}
     return all

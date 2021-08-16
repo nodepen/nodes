@@ -24,19 +24,14 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const zoom = useCameraStaticZoom()
 
   const { rounding, precision, domain } = current
-  const [
-    { rounding: internalRounding, precision: internalPrecision, domain: internalDomain, value: internalValue },
-    setInternalValue,
-  ] = useState<Pick<typeof current, 'rounding' | 'precision' | 'domain'> & { value: number }>({
-    rounding,
-    precision,
-    domain,
-    value: 0.25,
-  })
+
+  // Keep internal value in sync with actual current value, but allow for fast-local-temporary changes.
+  const { data: currentValue } = current.values['output']['{0;}'][0]
+  const [internalValue, setInternalValue] = useState(currentValue as number)
 
   useEffect(() => {
-    setInternalValue({ rounding, precision, domain, value: internalValue })
-  }, [rounding, precision, domain])
+    setInternalValue(currentValue as number)
+  }, [currentValue])
 
   const initialWidth = useRef(elementWidth)
   const [internalWidth, setInternalWidth] = useState(elementWidth)
