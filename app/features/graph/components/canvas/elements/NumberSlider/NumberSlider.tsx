@@ -7,6 +7,7 @@ import { useCursorOverride } from './hooks'
 import { useDebugRender } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
+import { coerceValue, getSliderPosition, getSliderStep } from './utils'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -53,7 +54,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     setShowUnderlay(false)
   }, [])
 
-  const sliderPosition = ((internalValue - min) / (max - min)) * sliderWidth
+  const sliderPosition = getSliderPosition(internalValue, [min, max], sliderWidth)
+
+  const sliderStep = getSliderStep(rounding, precision, domain, sliderWidth)
 
   return (
     <>
@@ -72,9 +75,39 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 SLIDER
               </h3>
             </div>
-            <div className="h-full flex-grow mr-2" ref={sliderRef}>
+            <div className="h-full flex-grow mr-4" ref={sliderRef}>
               <div className="w-full h-full relative">
-                <div className="absolute w-2 h-2 bg-red-500 rounded-full" style={{ left: sliderPosition }} />
+                <Draggable
+                  axis="x"
+                  grid={[sliderStep, 0]}
+                  bounds={{ left: -8, right: sliderWidth - 8 }}
+                  position={{ x: sliderPosition - 8, y: 3 }}
+                  onStart={(e, d) => {
+                    e.stopPropagation()
+                    setCursorOverride(true)
+                  }}
+                  onDrag={(e, d) => {
+                    const { x } = d
+                    const pct = (x + 8) / sliderWidth
+                    const range = max - min
+
+                    const v = pct * range
+
+                    console.log(coerceValue(v, precision))
+
+                    setSlider
+                  }}
+                  onStop={(e, d) => {
+                    setCursorOverride(false)
+                  }}
+                >
+                  <div className="absolute w-4 h-4 bg-white border-2 border-dark rounded-full z-10 hover:cursor-move-ew" />
+                </Draggable>
+                <div className="absolute left-0 top-0 w-full h-full z-0">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <div className="flex-grow bg-dark" style={{ height: '2px' }} />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

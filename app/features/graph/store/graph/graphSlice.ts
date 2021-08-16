@@ -136,7 +136,7 @@ export const graphSlice = createSlice({
                   '{0;}': [
                     {
                       type: 'number',
-                      data: 0.25,
+                      data: 5,
                     },
                   ],
                 },
@@ -149,9 +149,9 @@ export const graphSlice = createSlice({
                 id: 'unset',
                 mode: 'immediate',
               },
-              rounding: 'rational',
-              domain: [0, 1],
-              precision: 3,
+              rounding: 'integer',
+              domain: [0, 10],
+              precision: 0,
             },
           }
 
