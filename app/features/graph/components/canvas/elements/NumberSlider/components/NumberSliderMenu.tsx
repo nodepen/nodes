@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useForm } from 'react-hook-form'
 import { coerceValue } from '../utils'
+import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 
 type NumberSliderMenuProps = {
   id: string
@@ -10,11 +11,14 @@ type NumberSliderMenuProps = {
 }
 
 const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): React.ReactElement => {
+  const { updateElement } = useGraphDispatch()
+
   const { register, setValue, handleSubmit, watch, getValues } = useForm<NumberSliderMenuProps['initial']>({
     defaultValues: initial,
   })
 
   const internalConfiguration = useRef<typeof initial>(initial)
+  const internalAll = watch()
   const internalRounding = watch('rounding')
   const internalPrecision = watch('precision')
   const [, internalRange] = coerceValue(watch('domain.1') - watch('domain.0'), internalPrecision)
@@ -25,9 +29,33 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
   const visiblePrecision = precisionEnabled ? hoverPrecision ?? internalPrecision : 0
 
   const onSubmit = handleSubmit((values) => {
-    console.log(values)
     internalConfiguration.current = values
   })
+
+  const handleCommit = (): void => {
+    const { domain, precision, rounding, value } = internalAll
+
+    updateElement({
+      id,
+      type: 'number-slider',
+      data: {
+        domain: domain,
+        precision,
+        rounding,
+        values: {
+          output: {
+            '{0;}': [
+              {
+                type: 'number',
+                data: value,
+              },
+            ],
+          },
+        },
+      },
+    })
+    onClose()
+  }
 
   const options: typeof initial['rounding'][] = ['rational', 'integer', 'even', 'odd']
   const labels: { [key in typeof initial['rounding']]: string } = {
@@ -136,6 +164,14 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
         <input className="hidden" {...register('rounding')} />
         <input className="hidden" {...register('precision')} />
       </form>
+      <div className="w-full mt-4 flex items-center">
+        <button className="mr-2 p-4 pt-1 pb-1 rounded-md bg-swampgreen text-darkgreen" onClick={() => handleCommit()}>
+          OK
+        </button>
+        <button className="p-2" onClick={() => onClose()}>
+          Cancel
+        </button>
+      </div>
       <style jsx>{`
         .domain-container {
           display: grid;
