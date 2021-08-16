@@ -3,6 +3,7 @@ import { NodePen } from 'glib'
 import { useForm } from 'react-hook-form'
 import { coerceValue } from '../utils'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
+import { useNumberSliderForm } from '../store'
 
 type NumberSliderMenuProps = {
   id: string
@@ -12,6 +13,8 @@ type NumberSliderMenuProps = {
 
 const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): React.ReactElement => {
   const { updateElement } = useGraphDispatch()
+
+  const { state, dispatch } = useNumberSliderForm(initial)
 
   const { register, setValue, handleSubmit, watch, getValues } = useForm<NumberSliderMenuProps['initial']>({
     defaultValues: initial,
