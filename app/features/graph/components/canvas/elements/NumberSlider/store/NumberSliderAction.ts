@@ -13,13 +13,13 @@ export type NumberSliderAction =
     }
   | {
       type: 'set-domain-minimum'
-      minimum: number
+      minimum: string
     }
   | {
       type: 'set-domain-maximum'
-      maximum: number
+      maximum: string
     }
   | {
       type: 'set-value'
-      value: number
+      value: string
     }

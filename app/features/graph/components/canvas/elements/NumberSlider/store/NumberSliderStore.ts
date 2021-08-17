@@ -23,4 +23,7 @@ export type NumberSliderStore = {
     value: number
     label: string
   }
+  errors: {
+    [key in keyof NumberSliderStore]?: string
+  }
 }

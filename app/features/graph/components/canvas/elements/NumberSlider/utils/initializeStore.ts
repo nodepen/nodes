@@ -38,5 +38,6 @@ export const initializeStore = (
       value: rangeValue,
       label: rangeLabel,
     },
+    errors: {},
   }
 }
