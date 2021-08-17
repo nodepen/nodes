@@ -1,9 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useState } from 'react'
 import { NodePen } from 'glib'
-import { useForm } from 'react-hook-form'
 import { coerceValue } from '../utils'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
-import { useNumberSliderForm } from '../store'
+import { useNumberSliderForm, NumberSliderAction } from '../store'
 
 type NumberSliderMenuProps = {
   id: string
@@ -23,6 +22,37 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
   // const { register, setValue, handleSubmit, watch, getValues } = useForm<NumberSliderMenuProps['initial']>({
   //   defaultValues: initial,
   // })
+
+  const handleChange = (type: NumberSliderAction['type'], value: string): void => {
+    switch (type) {
+      case 'set-domain-minimum': {
+        dispatch({ type, minimum: value })
+        break
+      }
+      case 'set-domain-maximum': {
+        dispatch({ type, maximum: value })
+        break
+      }
+      case 'set-value': {
+        dispatch({ type, value: value })
+        break
+      }
+      default: {
+        break
+      }
+    }
+  }
+
+  const handleBlur = (type: NumberSliderAction['type'], value: number): void => {
+    if (errors[type]) {
+      // Field has validation errors, do no cleanup
+      return
+    }
+
+    const [, coercedLabel] = coerceValue(value, state.precision)
+
+    handleChange(type, coercedLabel)
+  }
 
   // const internalConfiguration = useRef<typeof initial>(initial)
   // const internalAll = watch()
@@ -147,7 +177,8 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
           <input
             className="w-full p-2 h-12 rounded-md bg-pale"
             value={domain.minimum.label}
-            onChange={(e) => dispatch({ type: 'set-domain-minimum', minimum: e.target.value })}
+            onChange={(e) => handleChange('set-domain-minimum', e.target.value)}
+            onBlur={() => handleBlur('set-domain-minimum', state.domain.minimum.value)}
           />
         </div>
         <div className="w-full h-full flex flex-col justify-end">
@@ -168,7 +199,8 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
           <input
             className="w-full p-2 h-12 rounded-md bg-pale"
             value={domain.maximum.label}
-            onChange={(e) => dispatch({ type: 'set-domain-maximum', maximum: e.target.value })}
+            onChange={(e) => handleChange('set-domain-maximum', e.target.value)}
+            onBlur={() => handleBlur('set-domain-maximum', state.domain.maximum.value)}
           />
         </div>
       </div>
@@ -180,7 +212,8 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
       <input
         className="w-full p-2 h-12 rounded-md bg-pale"
         value={value.label}
-        onChange={(e) => dispatch({ type: 'set-value', value: e.target.value })}
+        onChange={(e) => handleChange('set-value', e.target.value)}
+        onBlur={() => handleBlur('set-value', state.value.value)}
       />
       <div className="w-full mt-4 flex items-center">
         <button className="mr-2 p-4 pt-1 pb-1 rounded-md bg-swampgreen text-darkgreen" onClick={() => handleCommit()}>

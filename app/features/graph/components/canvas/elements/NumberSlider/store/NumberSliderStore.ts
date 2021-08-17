@@ -1,4 +1,5 @@
 import { NodePen } from 'glib'
+import { NumberSliderAction } from './NumberSliderAction'
 
 type NumberSliderData = NodePen.Element<'number-slider'>['current']
 
@@ -24,6 +25,6 @@ export type NumberSliderStore = {
     label: string
   }
   errors: {
-    [key in keyof NumberSliderStore]?: string
+    [key in NumberSliderAction['type']]?: string
   }
 }
