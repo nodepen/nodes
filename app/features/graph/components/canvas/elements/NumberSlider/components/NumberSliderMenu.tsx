@@ -17,6 +17,8 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
 
   const { rounding, precision, domain, value, range, errors } = state
 
+  const hasErrors = Object.values(errors).some((error) => !!error)
+
   // const [internalState, setInternalState] = useState<typeof state>(state)
 
   // const { register, setValue, handleSubmit, watch, getValues } = useForm<NumberSliderMenuProps['initial']>({
@@ -175,7 +177,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
         <div className="flex flex-col">
           <h4 className="mb-2 text-md text-darkgreen font-semibold">Min</h4>
           <input
-            className="w-full p-2 h-12 rounded-md bg-pale"
+            className={`${errors['set-domain-minimum'] ? 'text-error' : ''} w-full p-2 h-12 rounded-md bg-pale`}
             value={domain.minimum.label}
             onChange={(e) => handleChange('set-domain-minimum', e.target.value)}
             onBlur={() => handleBlur('set-domain-minimum', state.domain.minimum.value)}
@@ -197,7 +199,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
         <div className="flex flex-col">
           <h4 className="mb-2 text-md text-darkgreen font-semibold">Max</h4>
           <input
-            className="w-full p-2 h-12 rounded-md bg-pale"
+            className={`${errors['set-domain-maximum'] ? 'text-error' : ''} w-full p-2 h-12 rounded-md bg-pale`}
             value={domain.maximum.label}
             onChange={(e) => handleChange('set-domain-maximum', e.target.value)}
             onBlur={() => handleBlur('set-domain-maximum', state.domain.maximum.value)}
@@ -210,13 +212,19 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
       </div>
       <h4 className="mb-2 text-md text-darkgreen font-semibold">Value</h4>
       <input
-        className="w-full p-2 h-12 rounded-md bg-pale"
+        className={`${errors['set-value'] ? 'text-error' : ''} w-full p-2 h-12 rounded-md bg-pale`}
         value={value.label}
         onChange={(e) => handleChange('set-value', e.target.value)}
         onBlur={() => handleBlur('set-value', state.value.value)}
       />
       <div className="w-full mt-4 flex items-center">
-        <button className="mr-2 p-4 pt-1 pb-1 rounded-md bg-swampgreen text-darkgreen" onClick={() => handleCommit()}>
+        <button
+          disabled={hasErrors}
+          className={`${
+            hasErrors ? 'bg-green text-swampgreen' : 'bg-swampgreen text-darkgreen'
+          } mr-2 p-4 pt-1 pb-1 rounded-md`}
+          onClick={() => handleCommit()}
+        >
           OK
         </button>
         <button className="p-2" onClick={() => onClose()}>

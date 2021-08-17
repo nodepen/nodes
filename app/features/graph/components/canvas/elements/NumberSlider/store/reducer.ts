@@ -19,38 +19,50 @@ export const reducer = (state: NumberSliderStore, action: NumberSliderAction): N
     case 'set-domain-minimum': {
       const { minimum } = action
 
-      const domain: NumberSliderStore['domain'] = {
-        minimum: {
-          value: parseFloat(minimum),
-          label: minimum,
-        },
-        maximum: { ...state.domain.maximum },
+      state.errors[action.type] = validate(minimum)
+
+      const incoming: NumberSliderStore['domain']['minimum'] = {
+        label: minimum,
+        value: parseFloat(minimum),
       }
 
-      return { ...state, domain }
+      const {
+        domain: { maximum },
+        ...rest
+      } = coerceAll(state, state.precision)
+
+      return { ...state, ...rest, domain: { minimum: incoming, maximum } }
     }
     case 'set-domain-maximum': {
       const { maximum } = action
 
-      const domain: NumberSliderStore['domain'] = {
-        minimum: { ...state.domain.minimum },
-        maximum: {
-          value: parseFloat(maximum),
-          label: maximum,
-        },
+      state.errors[action.type] = validate(maximum)
+
+      const incoming: NumberSliderStore['domain']['minimum'] = {
+        label: maximum,
+        value: parseFloat(maximum),
       }
 
-      return { ...state, domain }
+      const {
+        domain: { minimum },
+        ...rest
+      } = coerceAll(state, state.precision)
+
+      return { ...state, ...rest, domain: { minimum, maximum: incoming } }
     }
     case 'set-value': {
-      const { value: v } = action
+      const { value } = action
 
-      const value: NumberSliderStore['value'] = {
-        label: v,
-        value: parseFloat(v),
+      state.errors['set-value'] = validate(value)
+
+      const incoming: NumberSliderStore['value'] = {
+        label: value,
+        value: parseFloat(value),
       }
 
-      return { ...state, value }
+      const { value: _discard, ...rest } = coerceAll(state, state.precision)
+
+      return { ...state, ...rest, value: incoming }
     }
     default: {
       throw new Error(`Invalid action attempted during number slider configuration.`)
@@ -93,4 +105,17 @@ const coerceAll = (
       label: rngLabel,
     },
   }
+}
+
+const validate = (value: string): string | undefined => {
+  const tests = [
+    value.split('.').length <= 2,
+    /^\d+\.\d+$/.test(value),
+    Array.from(value).every((c) => '.0123456789'.includes(c)),
+    !isNaN(parseFloat(value)),
+  ]
+
+  const pass = tests.every((test) => test)
+
+  return pass ? undefined : 'invalid'
 }
