@@ -2,7 +2,10 @@ import { NodePen } from 'glib'
 
 type NumberSliderData = NodePen.Element<'number-slider'>['current']
 
-export type NumberSliderAction =
+export type NumberSliderAction = {
+  skipClamp: boolean
+  skipLabel: boolean
+} & (
   | {
       type: 'set-rounding'
       rounding: NumberSliderData['rounding']
@@ -22,5 +25,5 @@ export type NumberSliderAction =
   | {
       type: 'set-value'
       value: string
-      clamp: boolean
     }
+)

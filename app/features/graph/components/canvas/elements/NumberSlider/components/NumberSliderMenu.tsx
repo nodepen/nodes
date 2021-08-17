@@ -19,18 +19,18 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
 
   const hasErrors = Object.values(errors).some((error) => !!error)
 
-  const handleChange = (type: NumberSliderAction['type'], value: string, clamp = false): void => {
+  const handleChange = (type: NumberSliderAction['type'], value: string, skipLabel = true, skipClamp = true): void => {
     switch (type) {
       case 'set-domain-minimum': {
-        dispatch({ type, minimum: value })
+        dispatch({ type, skipLabel, skipClamp, minimum: value })
         break
       }
       case 'set-domain-maximum': {
-        dispatch({ type, maximum: value })
+        dispatch({ type, skipLabel, skipClamp, maximum: value })
         break
       }
       case 'set-value': {
-        dispatch({ type, value: value, clamp })
+        dispatch({ type, skipLabel, skipClamp, value: value })
         break
       }
       default: {
@@ -47,7 +47,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
 
     const [, coercedLabel] = coerceValue(value, state.precision)
 
-    handleChange(type, coercedLabel, true)
+    handleChange(type, coercedLabel, false, false)
   }
 
   const [hoverPrecision, setHoverPrecision] = useState<number>()
@@ -106,7 +106,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
               rounding === option ? 'bg-green' : ''
             } w-12 h-12 flex items-center justify-center rounded-md hover:bg-swampgreen`}
             onClick={() => {
-              dispatch({ type: 'set-rounding', rounding: option })
+              dispatch({ type: 'set-rounding', rounding: option, skipClamp: false, skipLabel: false })
             }}
           >
             <p className="text-xl font-bold font-panel text-darkgreen" style={{ transform: 'translateY(3px)' }}>
@@ -125,7 +125,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
           } h-full flex-grow flex items-center justify-center font-semibold`}
           onPointerEnter={() => setHoverPrecision(0)}
           onPointerLeave={() => setHoverPrecision(undefined)}
-          onClick={() => dispatch({ type: 'set-precision', precision: 0 })}
+          onClick={() => dispatch({ type: 'set-precision', precision: 0, skipClamp: false, skipLabel: false })}
           disabled={!precisionEnabled}
         >
           0
@@ -148,7 +148,14 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
               key={`precision-button-${i}`}
               onPointerEnter={() => setHoverPrecision(i + 1)}
               onPointerLeave={() => setHoverPrecision(undefined)}
-              onClick={() => dispatch({ type: 'set-precision', precision: (i + 1) as 1 | 2 | 3 | 4 | 5 | 6 })}
+              onClick={() =>
+                dispatch({
+                  type: 'set-precision',
+                  precision: (i + 1) as 1 | 2 | 3 | 4 | 5 | 6,
+                  skipClamp: false,
+                  skipLabel: false,
+                })
+              }
               disabled={!precisionEnabled}
             >
               0
