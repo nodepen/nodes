@@ -107,10 +107,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
 
   return (
-    <div
-      className={`${template.mode === 'live' ? 'z-50' : 'z-0'} absolute pointer-events-none overflow-visible`}
-      style={{ width, height, left: x, top: y - 2 }}
-    >
+    <div className={`absolute pointer-events-none overflow-visible z-0`} style={{ width, height, left: x, top: y - 2 }}>
       <svg
         className="absolute left-0 top-0 overflow-visible z-10"
         width={width}
