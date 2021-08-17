@@ -22,4 +22,5 @@ export type NumberSliderAction =
   | {
       type: 'set-value'
       value: string
+      clamp: boolean
     }

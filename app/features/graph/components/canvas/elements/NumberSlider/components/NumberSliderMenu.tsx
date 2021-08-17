@@ -25,7 +25,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
   //   defaultValues: initial,
   // })
 
-  const handleChange = (type: NumberSliderAction['type'], value: string): void => {
+  const handleChange = (type: NumberSliderAction['type'], value: string, clamp = false): void => {
     switch (type) {
       case 'set-domain-minimum': {
         dispatch({ type, minimum: value })
@@ -36,7 +36,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
         break
       }
       case 'set-value': {
-        dispatch({ type, value: value })
+        dispatch({ type, value: value, clamp })
         break
       }
       default: {
@@ -53,7 +53,7 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
 
     const [, coercedLabel] = coerceValue(value, state.precision)
 
-    handleChange(type, coercedLabel)
+    handleChange(type, coercedLabel, true)
   }
 
   // const internalConfiguration = useRef<typeof initial>(initial)

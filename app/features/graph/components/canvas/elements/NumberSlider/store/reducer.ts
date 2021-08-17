@@ -23,7 +23,21 @@ export const reducer = (state: NumberSliderStore, action: NumberSliderAction): N
 
       const incoming: NumberSliderStore['domain']['minimum'] = {
         label: minimum,
-        value: parseFloat(minimum),
+        value: Math.max(Math.pow(10, 6) * -1, parseFloat(minimum)),
+      }
+
+      // Constrain maximum based on minimum, if valid
+      if (!state.errors[action.type]) {
+        const minimumDelta = Math.pow(10, -state.precision)
+
+        const adjustedMaximum =
+          state.domain.maximum.value - incoming.value > minimumDelta
+            ? state.domain.maximum.value
+            : incoming.value + minimumDelta
+        const adjustedValue = clamp(state.value.value, [incoming.value, adjustedMaximum])
+
+        state.domain.maximum.value = adjustedMaximum
+        state.value.value = adjustedValue
       }
 
       const {
@@ -40,7 +54,21 @@ export const reducer = (state: NumberSliderStore, action: NumberSliderAction): N
 
       const incoming: NumberSliderStore['domain']['minimum'] = {
         label: maximum,
-        value: parseFloat(maximum),
+        value: Math.min(Math.pow(10, 6), parseFloat(maximum)),
+      }
+
+      // Constrain minimum based on maximum, if valid
+      if (!state.errors[action.type]) {
+        const minimumDelta = Math.pow(10, -state.precision)
+
+        const adjustedMinimum =
+          incoming.value - state.domain.minimum.value > minimumDelta
+            ? state.domain.minimum.value
+            : incoming.value - minimumDelta
+        const adjustedValue = clamp(state.value.value, [adjustedMinimum, incoming.value])
+
+        state.domain.minimum.value = adjustedMinimum
+        state.value.value = adjustedValue
       }
 
       const {
@@ -51,13 +79,20 @@ export const reducer = (state: NumberSliderStore, action: NumberSliderAction): N
       return { ...state, ...rest, domain: { minimum, maximum: incoming } }
     }
     case 'set-value': {
-      const { value } = action
+      const { value, clamp: doClamp } = action
+
+      console.log
 
       state.errors['set-value'] = validate(value)
 
+      const adjustedValue =
+        doClamp && !state.errors['set-value']
+          ? clamp(parseFloat(value), [state.domain.minimum.value, state.domain.maximum.value])
+          : parseFloat(value)
+
       const incoming: NumberSliderStore['value'] = {
-        label: value,
-        value: parseFloat(value),
+        label: adjustedValue.toString(),
+        value: adjustedValue,
       }
 
       const { value: _discard, ...rest } = coerceAll(state, state.precision)
@@ -74,8 +109,14 @@ const coerceAll = (
   state: NumberSliderStore,
   precision: NumberSliderStore['precision']
 ): Pick<NumberSliderStore, 'domain' | 'value' | 'range'> => {
+  const delta = Math.pow(10, -precision)
+  const adjustedMaximum =
+    state.domain.maximum.value - state.domain.minimum.value >= delta
+      ? state.domain.maximum.value
+      : state.domain.minimum.value + delta
+
   const [minValue, minLabel] = coerceValue(state.domain.minimum.value, precision)
-  const [maxValue, maxLabel] = coerceValue(state.domain.maximum.value, precision)
+  const [maxValue, maxLabel] = coerceValue(adjustedMaximum, precision)
   const [valValue, valLabel] = coerceValue(state.value.value, precision)
   const [rngValue, rngLabel] = coerceValue(maxValue - minValue, precision)
 
@@ -108,14 +149,14 @@ const coerceAll = (
 }
 
 const validate = (value: string): string | undefined => {
-  const tests = [
-    value.split('.').length <= 2,
-    /^\d+\.\d+$/.test(value),
-    Array.from(value).every((c) => '.0123456789'.includes(c)),
-    !isNaN(parseFloat(value)),
-  ]
+  const tests = [value.split('.').length <= 2, Array.from(value.substr(1)).every((c) => '.0123456789'.includes(c))]
 
   const pass = tests.every((test) => test)
 
   return pass ? undefined : 'invalid'
+}
+
+const clamp = (value: number, domain: [min: number, max: number]): number => {
+  const [min, max] = domain
+  return value < min ? min : value > max ? max : value
 }
