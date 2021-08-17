@@ -90,6 +90,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                   grid={[sliderStep, 0]}
                   bounds={{ left: -8, right: sliderWidth - 8 }}
                   position={{ x: sliderPosition - 8, y: 3 }}
+                  disabled={showUnderlay}
                   onStart={(e, _d) => {
                     e.stopPropagation()
                     setCursorOverride(true)
