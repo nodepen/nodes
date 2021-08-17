@@ -19,12 +19,6 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
 
   const hasErrors = Object.values(errors).some((error) => !!error)
 
-  // const [internalState, setInternalState] = useState<typeof state>(state)
-
-  // const { register, setValue, handleSubmit, watch, getValues } = useForm<NumberSliderMenuProps['initial']>({
-  //   defaultValues: initial,
-  // })
-
   const handleChange = (type: NumberSliderAction['type'], value: string, clamp = false): void => {
     switch (type) {
       case 'set-domain-minimum': {
@@ -56,20 +50,9 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
     handleChange(type, coercedLabel, true)
   }
 
-  // const internalConfiguration = useRef<typeof initial>(initial)
-  // const internalAll = watch()
-  // const internalRounding = watch('rounding')
-  // const internalPrecision = watch('precision')
-  // const [, internalRange] = coerceValue(watch('domain.1') - watch('domain.0'), internalPrecision)
-  // const [internalNumericValue, internalValue] = coerceValue(watch('value'), internalPrecision)
-
   const [hoverPrecision, setHoverPrecision] = useState<number>()
   const precisionEnabled = rounding === 'rational'
   const visiblePrecision = precisionEnabled ? hoverPrecision ?? precision : 0
-
-  // const onSubmit = handleSubmit((values) => {
-  //   internalConfiguration.current = values
-  // })
 
   const handleCommit = (): void => {
     updateElement({

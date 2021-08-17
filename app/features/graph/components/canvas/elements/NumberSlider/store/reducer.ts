@@ -95,6 +95,7 @@ export const reducer = (state: NumberSliderStore, action: NumberSliderAction): N
         value: adjustedValue,
       }
 
+      /* eslint-disable-next-line */
       const { value: _discard, ...rest } = coerceAll(state, state.precision)
 
       return { ...state, ...rest, value: incoming }
@@ -109,7 +110,8 @@ const coerceAll = (
   state: NumberSliderStore,
   precision: NumberSliderStore['precision']
 ): Pick<NumberSliderStore, 'domain' | 'value' | 'range'> => {
-  const delta = Math.pow(10, -precision)
+  const eoAdjustment = state.rounding === 'even' || state.rounding === 'odd' ? 2 : 1
+  const delta = Math.pow(10, -precision) * eoAdjustment
   const adjustedMaximum =
     state.domain.maximum.value - state.domain.minimum.value >= delta
       ? state.domain.maximum.value
@@ -149,7 +151,12 @@ const coerceAll = (
 }
 
 const validate = (value: string): string | undefined => {
-  const tests = [value.split('.').length <= 2, Array.from(value.substr(1)).every((c) => '.0123456789'.includes(c))]
+  const tests = [
+    value.length > 0,
+    value.split('.').length <= 2,
+    Array.from(value).every((c) => '-+.0123456789'.includes(c)),
+    Array.from(value.substr(1)).every((c) => '.0123456789'.includes(c)),
+  ]
 
   const pass = tests.every((test) => test)
 
