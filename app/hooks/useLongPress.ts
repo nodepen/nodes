@@ -30,6 +30,9 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 600
 
       e.preventDefault()
 
+      // Only honor long-press for most-local usage
+      e.stopPropagation()
+
       clearTimeout(longPressTimeout.current)
 
       const { pageX, pageY } = e

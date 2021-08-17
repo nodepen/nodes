@@ -1,14 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
-import Draggable from 'react-draggable'
+import Draggable, { DraggableData } from 'react-draggable'
 import { ElementContainer, ParameterIcon } from '../../common'
+import { FullWidthMenu } from '../../../overlay'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride } from './hooks'
-import { useDebugRender } from '@/hooks'
+import { useDebugRender, useLongPress } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { coerceValue, getSliderPosition, getSliderStep } from './utils'
 import { NumberSliderMenu } from './components'
+import { useSessionManager } from '@/features/common/context/session'
+import { distance } from '@/features/graph/utils'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -19,6 +22,8 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const { width: elementWidth, height: elementHeight } = current.dimensions
 
   useDebugRender(`NumberSlider | ${id}`)
+
+  const { device } = useSessionManager()
 
   const { updateElement } = useGraphDispatch()
 
@@ -58,23 +63,82 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const setCursorOverride = useCursorOverride()
 
   const [showUnderlay, setShowUnderlay] = useState(false)
+  const showUnderlayAnchor = useRef<[number, number]>([0, 0])
+  const showUnderlayOnRelease = useRef(false)
 
-  const onDragStart = useCallback((): void => {
+  const onDragStart = useCallback((_, d: DraggableData): void | false => {
+    const { x, y } = d
+    showUnderlayAnchor.current = [x, y]
+
+    console.log('D:')
     setShowUnderlay(false)
+  }, [])
+
+  const onDrag = useCallback((_, d: DraggableData): void => {
+    if (!showUnderlayOnRelease.current) {
+      return
+    }
+
+    const { x, y } = d
+    const dragDistance = distance(showUnderlayAnchor.current, [x, y])
+
+    if (dragDistance > 20) {
+      showUnderlayOnRelease.current = false
+    }
   }, [])
 
   const sliderPosition = getSliderPosition(internalValue, [min, max], sliderWidth)
   const sliderStep = getSliderStep(rounding, precision, domain, sliderWidth)
 
+  const handleLongPress = useCallback(() => {
+    showUnderlayOnRelease.current = true
+  }, [])
+
+  const handlePointerUp = useCallback(() => {
+    if (showUnderlayOnRelease.current) {
+      setShowUnderlay(true)
+    }
+
+    showUnderlayOnRelease.current = false
+  }, [])
+
+  const longPressTarget = useLongPress(handleLongPress)
+
+  // const testRef = useRef<HTMLDivElement>(null)
+
+  // const [disableParent, setDisableParent] = useState(false)
+
+  // useEffect(() => {
+  //   testRef.current?.addEventListener('pointerdown', (e) => {
+  //     //e.stopPropagation()
+  //     // setDisableParent(true)
+  //     e.stopPropagation()
+  //     e.stopImmediatePropagation()
+  //     console.log('PLEASE')
+  //   })
+
+  //   testRef.current?.addEventListener('pointerup', (e) => {
+  //     console.log('PLEASE (UP)')
+  //     // setDisableParent(false)
+  //   })
+
+  //   testRef.current?.addEventListener('touchstart', (e) => {
+  //     // setDisableParent(true)
+  //     console.log('PLEASE (TOUCH)')
+  //   })
+  // }, [])
+
   return (
     <>
-      <ElementContainer element={element} onStart={onDragStart}>
+      <ElementContainer element={element} onStart={onDragStart} onDrag={onDrag} disabled={disableParent}>
         <div
           className="relative p-2 bg-white rounded-md border-2 border-dark shadow-osm"
           onDoubleClick={() => {
             setShowUnderlay(true)
           }}
+          onPointerUp={handlePointerUp}
           style={{ width: internalWidth, height: elementHeight }}
+          ref={longPressTarget}
         >
           <div className="w-full h-full flex items-center pr-2">
             <div className="h-full flex mr-2 p-1 pr-2 items-center justify-center">
@@ -84,14 +148,17 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               </h3>
             </div>
             <div className="h-full flex-grow mr-4" ref={sliderRef}>
-              <div className="w-full h-full relative overflow-visible">
+              <div className="w-full h-full relative overflow-visible pointer-events-auto">
                 <Draggable
                   axis="x"
                   grid={[sliderStep, 0]}
                   bounds={{ left: -8, right: sliderWidth - 8 }}
                   position={{ x: sliderPosition - 8, y: 3 }}
                   disabled={showUnderlay}
+                  // onMouseDown={(e) => e.stopPropagation()}
+                  allowAnyClick={true}
                   onStart={(e, _d) => {
+                    console.log('!!')
                     e.stopPropagation()
                     setCursorOverride(true)
                   }}
@@ -125,8 +192,17 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                     })
                   }}
                 >
-                  <div className="absolute w-4 h-4 z-10 hover:cursor-move-ew">
-                    <div className="w-full h-full flex items-center justify-center">
+                  <div
+                    className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
+
+                    // onPointerDown={() => console.log('DOWN')}
+                    // onPointerUp={() => setDisableParent(false)}
+                  >
+                    <div
+                      className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible"
+                      // onPointerDown={() => console.log('DOWN')}
+                      // ref={testRef}
+                    >
                       <div
                         className="w-3 h-3 rounded-sm border-2 border-dark bg-white"
                         style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
@@ -231,17 +307,31 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         </div>
       </ElementContainer>
       {showUnderlay ? (
-        <UnderlayPortal parent={id}>
-          <div className="w-full pt-8 flex flex-col items-center bg-green rounded-md">
-            <div className="flex flex-col items-center" style={{ maxWidth: 300 }}>
-              <NumberSliderMenu
-                id={id}
-                initial={{ rounding, precision, domain, value: internalValue }}
-                onClose={() => setShowUnderlay(false)}
-              />
+        device.breakpoint === 'sm' ? (
+          <FullWidthMenu>
+            <div className="w-full pt-2 pl-4 pr-4 flex flex-col items-center bg-green rounded-md">
+              <div className="flex flex-col items-center" style={{ maxWidth: 500 }}>
+                <NumberSliderMenu
+                  id={id}
+                  initial={{ rounding, precision, domain, value: internalValue }}
+                  onClose={() => setShowUnderlay(false)}
+                />
+              </div>
             </div>
-          </div>
-        </UnderlayPortal>
+          </FullWidthMenu>
+        ) : (
+          <UnderlayPortal parent={id}>
+            <div className="w-full pt-8 flex flex-col items-center bg-green rounded-md">
+              <div className="flex flex-col items-center" style={{ maxWidth: 300 }}>
+                <NumberSliderMenu
+                  id={id}
+                  initial={{ rounding, precision, domain, value: internalValue }}
+                  onClose={() => setShowUnderlay(false)}
+                />
+              </div>
+            </div>
+          </UnderlayPortal>
+        )
       ) : null}
     </>
   )

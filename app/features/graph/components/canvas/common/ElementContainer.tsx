@@ -121,7 +121,7 @@ const ElementContainer = ({
           onStop={handleDragStop}
         >
           <div
-            className=" pointer-events-auto"
+            className="pointer-events-auto"
             role="presentation"
             ref={containerRef}
             onPointerDown={handleStopPropagation}
