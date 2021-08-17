@@ -106,8 +106,6 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   // const testRef = useRef<HTMLDivElement>(null)
 
-  // const [disableParent, setDisableParent] = useState(false)
-
   // useEffect(() => {
   //   testRef.current?.addEventListener('pointerdown', (e) => {
   //     //e.stopPropagation()
@@ -128,9 +126,74 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   //   })
   // }, [])
 
+  const [sliderActive, setSliderActive] = useState(false)
+  const sliderTargetRef = useRef<HTMLDivElement>(null)
+
+  const [resizeActive, setResizeActive] = useState(false)
+  const resizeTargetRef = useRef<HTMLDivElement>(null)
+
+  const primaryPointer = useRef(0)
+  const primaryPointerAnchor = useRef<[number, number]>([0, 0])
+
+  const handleStartSlider = useCallback((e: PointerEvent): void => {
+    e.stopImmediatePropagation()
+
+    const { pageX, pageY } = e
+
+    primaryPointer.current = e.pointerId
+    primaryPointerAnchor.current = [pageX, pageY]
+
+    setSliderActive(true)
+    console.log('HOWDY')
+  }, [])
+
+  useEffect(() => {
+    const slider = sliderTargetRef.current
+
+    if (!slider) {
+      return
+    }
+
+    slider.addEventListener('pointerdown', handleStartSlider)
+
+    return () => {
+      slider.removeEventListener('pointerdown', handleStartSlider)
+    }
+  })
+
+  const handleWindowPointerMove = useCallback((e: PointerEvent): void => {
+    const { pageX } = e
+    const [anchorX] = primaryPointerAnchor.current
+
+    const dx = pageX - anchorX
+
+    console.log({ dx })
+  }, [])
+
+  const handleWindowPointerUp = useCallback((): void => {
+    setSliderActive(false)
+    setResizeActive(false)
+  }, [])
+
+  // handleSetInternalValue
+  useEffect(() => {
+    if (!sliderActive && !resizeActive) {
+      // Nothing is in motion
+      return
+    }
+
+    window.addEventListener('pointermove', handleWindowPointerMove)
+    window.addEventListener('pointerup', handleWindowPointerUp)
+
+    return () => {
+      window.removeEventListener('pointermove', handleWindowPointerMove)
+      window.removeEventListener('pointerup', handleWindowPointerUp)
+    }
+  })
+
   return (
     <>
-      <ElementContainer element={element} onStart={onDragStart} onDrag={onDrag} disabled={disableParent}>
+      <ElementContainer element={element} onStart={onDragStart} onDrag={onDrag} disabled={sliderActive || resizeActive}>
         <div
           className="relative p-2 bg-white rounded-md border-2 border-dark shadow-osm"
           onDoubleClick={() => {
@@ -149,7 +212,24 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
             </div>
             <div className="h-full flex-grow mr-4" ref={sliderRef}>
               <div className="w-full h-full relative overflow-visible pointer-events-auto">
-                <Draggable
+                <div
+                  className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
+                  ref={sliderTargetRef}
+                  // onPointerDown={() => console.log('DOWN')}
+                  // onPointerUp={() => setDisableParent(false)}
+                >
+                  <div
+                    className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible"
+                    // onPointerDown={() => console.log('DOWN')}
+                    // ref={testRef}
+                  >
+                    <div
+                      className="w-3 h-3 rounded-sm border-2 border-dark bg-white"
+                      style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
+                    />
+                  </div>
+                </div>
+                {/* <Draggable
                   axis="x"
                   grid={[sliderStep, 0]}
                   bounds={{ left: -8, right: sliderWidth - 8 }}
@@ -209,7 +289,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                       />
                     </div>
                   </div>
-                </Draggable>
+                </Draggable> */}
                 {showUnderlay ? null : (
                   <div
                     className="absolute pointer-events-none"
