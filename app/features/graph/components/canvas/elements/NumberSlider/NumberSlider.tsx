@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react'
 import { NodePen } from 'glib'
 import Draggable, { DraggableData } from 'react-draggable'
 import { ElementContainer, ParameterIcon } from '../../common'
@@ -38,16 +38,19 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const [internalValue, setInternalValue] = useState(currentValue as number)
   const internalValueLabel = useRef<string>(currentValue.toString())
 
-  const handleSetInternalValue = (value: number): void => {
-    const [v, l] = coerceValue(value, precision)
+  const handleSetInternalValue = useCallback(
+    (value: number): void => {
+      const [v, l] = coerceValue(value, precision)
 
-    internalValueLabel.current = l
-    setInternalValue(v)
-  }
+      internalValueLabel.current = l
+      setInternalValue(v)
+    },
+    [precision]
+  )
 
   useEffect(() => {
     handleSetInternalValue(currentValue as number)
-  }, [currentValue])
+  }, [currentValue, handleSetInternalValue])
 
   const sliderRef = useRef<HTMLDivElement>(null)
 
@@ -88,7 +91,6 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   }, [])
 
   const sliderPosition = getSliderPosition(internalValue, [min, max], sliderWidth)
-  const sliderStep = getSliderStep(rounding, precision, domain, sliderWidth)
 
   const handleLongPress = useCallback(() => {
     showUnderlayOnRelease.current = true
@@ -104,30 +106,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const longPressTarget = useLongPress(handleLongPress)
 
-  // const testRef = useRef<HTMLDivElement>(null)
-
-  // useEffect(() => {
-  //   testRef.current?.addEventListener('pointerdown', (e) => {
-  //     //e.stopPropagation()
-  //     // setDisableParent(true)
-  //     e.stopPropagation()
-  //     e.stopImmediatePropagation()
-  //     console.log('PLEASE')
-  //   })
-
-  //   testRef.current?.addEventListener('pointerup', (e) => {
-  //     console.log('PLEASE (UP)')
-  //     // setDisableParent(false)
-  //   })
-
-  //   testRef.current?.addEventListener('touchstart', (e) => {
-  //     // setDisableParent(true)
-  //     console.log('PLEASE (TOUCH)')
-  //   })
-  // }, [])
-
   const [sliderActive, setSliderActive] = useState(false)
   const sliderTargetRef = useRef<HTMLDivElement>(null)
+  const sliderInitialValue = useRef(0)
 
   const [resizeActive, setResizeActive] = useState(false)
   const resizeTargetRef = useRef<HTMLDivElement>(null)
@@ -135,17 +116,22 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const primaryPointer = useRef(0)
   const primaryPointerAnchor = useRef<[number, number]>([0, 0])
 
-  const handleStartSlider = useCallback((e: PointerEvent): void => {
-    e.stopImmediatePropagation()
+  const handleStartSlider = useCallback(
+    (e: PointerEvent): void => {
+      e.stopImmediatePropagation()
 
-    const { pageX, pageY } = e
+      const { pageX, pageY } = e
 
-    primaryPointer.current = e.pointerId
-    primaryPointerAnchor.current = [pageX, pageY]
+      primaryPointer.current = e.pointerId
+      primaryPointerAnchor.current = [pageX, pageY]
 
-    setSliderActive(true)
-    console.log('HOWDY')
-  }, [])
+      sliderInitialValue.current = internalValue
+
+      setSliderActive(true)
+      setCursorOverride(true)
+    },
+    [setCursorOverride, internalValue]
+  )
 
   useEffect(() => {
     const slider = sliderTargetRef.current
@@ -161,21 +147,47 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     }
   })
 
-  const handleWindowPointerMove = useCallback((e: PointerEvent): void => {
-    const { pageX } = e
-    const [anchorX] = primaryPointerAnchor.current
+  const handleWindowPointerMove = useCallback(
+    (e: PointerEvent): void => {
+      if (e.pointerId !== primaryPointer.current) {
+        return
+      }
 
-    const dx = pageX - anchorX
+      const { pageX } = e
+      const [anchorX] = primaryPointerAnchor.current
 
-    console.log({ dx })
-  }, [])
+      const dx = pageX - anchorX
+      const pct = dx / sliderWidth
 
-  const handleWindowPointerUp = useCallback((): void => {
-    setSliderActive(false)
-    setResizeActive(false)
-  }, [])
+      const [min, max] = domain
+      const range = max - min
 
-  // handleSetInternalValue
+      const delta = range * pct
+      const next = sliderInitialValue.current + delta
+
+      const rounded = Math.round(next * Math.pow(10, precision)) / Math.pow(10, precision)
+
+      const clamped = rounded < min ? min : rounded > max ? max : rounded
+
+      handleSetInternalValue(clamped)
+    },
+    [sliderWidth, domain, precision, handleSetInternalValue]
+  )
+
+  const handleWindowPointerUp = useCallback(
+    (e: PointerEvent): void => {
+      if (e.pointerId !== primaryPointer.current) {
+        return
+      }
+
+      setSliderActive(false)
+      setResizeActive(false)
+
+      setCursorOverride(false)
+    },
+    [setCursorOverride]
+  )
+
   useEffect(() => {
     if (!sliderActive && !resizeActive) {
       // Nothing is in motion
@@ -215,81 +227,15 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 <div
                   className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
                   ref={sliderTargetRef}
-                  // onPointerDown={() => console.log('DOWN')}
-                  // onPointerUp={() => setDisableParent(false)}
+                  style={{ top: 3, left: sliderPosition - 8 }}
                 >
-                  <div
-                    className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible"
-                    // onPointerDown={() => console.log('DOWN')}
-                    // ref={testRef}
-                  >
+                  <div className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible">
                     <div
                       className="w-3 h-3 rounded-sm border-2 border-dark bg-white"
                       style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
                     />
                   </div>
                 </div>
-                {/* <Draggable
-                  axis="x"
-                  grid={[sliderStep, 0]}
-                  bounds={{ left: -8, right: sliderWidth - 8 }}
-                  position={{ x: sliderPosition - 8, y: 3 }}
-                  disabled={showUnderlay}
-                  // onMouseDown={(e) => e.stopPropagation()}
-                  allowAnyClick={true}
-                  onStart={(e, _d) => {
-                    console.log('!!')
-                    e.stopPropagation()
-                    setCursorOverride(true)
-                  }}
-                  onDrag={(e, d) => {
-                    const { x } = d
-                    const pct = (x + 8) / sliderWidth
-                    const range = max - min
-
-                    const v = pct * range + min
-
-                    handleSetInternalValue(v)
-                  }}
-                  onStop={(_e, _d) => {
-                    setCursorOverride(false)
-
-                    updateElement({
-                      id,
-                      type: 'number-slider',
-                      data: {
-                        values: {
-                          output: {
-                            '{0;}': [
-                              {
-                                type: 'number',
-                                data: internalValue,
-                              },
-                            ],
-                          },
-                        },
-                      },
-                    })
-                  }}
-                >
-                  <div
-                    className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
-
-                    // onPointerDown={() => console.log('DOWN')}
-                    // onPointerUp={() => setDisableParent(false)}
-                  >
-                    <div
-                      className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible"
-                      // onPointerDown={() => console.log('DOWN')}
-                      // ref={testRef}
-                    >
-                      <div
-                        className="w-3 h-3 rounded-sm border-2 border-dark bg-white"
-                        style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
-                      />
-                    </div>
-                  </div>
-                </Draggable> */}
                 {showUnderlay ? null : (
                   <div
                     className="absolute pointer-events-none"
