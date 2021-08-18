@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState, useRef } from 'react'
+import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
@@ -56,27 +56,28 @@ export const GenericMenu = <T,>({
   // const [initialOverlayPosition, setInitialOverlayPosition] = useState(() => position)
   // const [initialCameraPosition, setInitialCameraPosition] = useState(() => cameraPosition)
 
-  // const handlePanningStop = useCallback(
-  //   (ref: ReactZoomPanPinchRef) => {
-  //     const { positionX, positionY } = ref.state
+  const handlePanningStop = useCallback(
+    (ref: ReactZoomPanPinchRef) => {
+      const { positionX, positionY } = ref.state
 
-  //     const [anchorX, anchorY] = initialOverlayPosition
-  //     const [cameraX, cameraY] = initialCameraPosition
+      setOverlayAnchorPosition([positionX, positionY])
 
-  //     const [dx, dy] = [positionX - anchorX, positionY - anchorY]
+      // const [anchorX, anchorY] = initialOverlayPosition
+      // const [cameraX, cameraY] = initialCameraPosition
 
-  //     setCanvasCamera(-cameraX - dx, -cameraY - dy, 'NONE', 0, 1, cameraZoom)
+      // const [dx, dy] = [positionX - anchorX, positionY - anchorY]
 
-  //     setOverlayAnchorPosition([positionX, positionY])
+      // setCanvasCamera(-cameraX - dx, -cameraY - dy, 'NONE', 0, 1, cameraZoom)
 
-  //     if (!registry.canvasContainerRef.current) {
-  //       return
-  //     }
+      // if (!registry.canvasContainerRef.current) {
+      //   return
+      // }
 
-  //     registry.canvasContainerRef.current.style.transform = `translate(0px, 0px)`
-  //   },
-  //   [registry.canvasContainerRef, initialCameraPosition, initialOverlayPosition, cameraZoom, setCanvasCamera]
-  // )
+      // registry.canvasContainerRef.current.style.transform = `translate(0px, 0px)`
+    },
+    []
+    // [registry.canvasContainerRef, initialCameraPosition, initialOverlayPosition, cameraZoom, setCanvasCamera]
+  )
 
   useEffect(() => {
     setTimeout(() => {
@@ -153,6 +154,8 @@ export const GenericMenu = <T,>({
   const setOverlayMenuTransform = useRef<ReactZoomPanPinchRef['setTransform']>()
   const resetOverlayMenuTransform = useRef<ReactZoomPanPinchRef['resetTransform']>()
 
+  const [lockOverlay, setLockOverlay] = useState(false)
+
   const generateActionMenu = (
     menu: JSX.Element,
     buttonId: string,
@@ -183,15 +186,18 @@ export const GenericMenu = <T,>({
           return
         }
 
-        registry.canvasContainerRef.current.style.transition = ''
+        setLockOverlay(false)
+
+        // registry.canvasContainerRef.current.style.transition = ''
         // handlePanningStop(overlayMenuRef.current)
       }, 175)
     }
 
     const menuContent = (
+      // Provide basic navigation handlers to all generic menus
       <GenericMenuManager onCancel={handleCancel} onClose={onClose}>
         <div
-          className="absolute pl-2 pr-2 overflow-auto"
+          className="absolute pl-2 pr-2 overflow-hidden"
           style={{ width: menuWidth, height: 'calc(100vh - 40px)', left: x, top: y }}
           ref={actionMenuRef}
         >
@@ -212,7 +218,7 @@ export const GenericMenu = <T,>({
       return
     }
 
-    const { left, width } = actionMenuRef.current.getBoundingClientRect()
+    const { left, top, width } = actionMenuRef.current.getBoundingClientRect()
 
     const isWithinHorizontalBounds = left > 0 && left + width < window.innerWidth
 
@@ -221,6 +227,7 @@ export const GenericMenu = <T,>({
     }
 
     const dx = left + width - window.innerWidth
+    const dy = top - 40
 
     const [cx, cy] = overlayAnchorPosition
 
@@ -228,7 +235,11 @@ export const GenericMenu = <T,>({
       return
     }
 
-    setOverlayMenuTransform.current(cx - dx, cy, 1, 150, 'easeInOutQuad')
+    setOverlayMenuTransform.current(cx - dx, cy - dy, 1, 150, 'easeInOutQuad')
+
+    setTimeout(() => {
+      setLockOverlay(true)
+    }, 175)
 
     // const [positionX, positionY] = [cx - dx, cy]
 
@@ -262,8 +273,9 @@ export const GenericMenu = <T,>({
             setOverlayMenuTransform.current = ref.setTransform
             resetOverlayMenuTransform.current = ref.resetTransform
           }}
+          static={lockOverlay}
           // onPanning={handlePanning}
-          // onPanningStop={handlePanningStop}
+          onPanningStop={handlePanningStop}
         >
           <>
             {mask}
