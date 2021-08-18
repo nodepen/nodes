@@ -8,9 +8,10 @@ type NumberSliderMenuProps = {
   id: string
   initial: Pick<NodePen.Element<'number-slider'>['current'], 'precision' | 'domain' | 'rounding'> & { value: number }
   onClose: () => void
+  onCancel?: () => void
 }
 
-const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): React.ReactElement => {
+const NumberSliderMenu = ({ id, initial, onClose, onCancel }: NumberSliderMenuProps): React.ReactElement => {
   const { updateElement } = useGraphDispatch()
 
   const { state, dispatch } = useNumberSliderForm(initial)
@@ -217,7 +218,17 @@ const NumberSliderMenu = ({ id, initial, onClose }: NumberSliderMenuProps): Reac
         >
           OK
         </button>
-        <button className="p-2" onClick={() => onClose()}>
+        <button
+          className="p-2"
+          onClick={() => {
+            if (onCancel) {
+              onCancel()
+              return
+            }
+
+            onClose()
+          }}
+        >
           Cancel
         </button>
       </div>

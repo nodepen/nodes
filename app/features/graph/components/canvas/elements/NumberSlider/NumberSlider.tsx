@@ -4,7 +4,7 @@ import { DraggableData } from 'react-draggable'
 import { ElementContainer, ParameterIcon } from '../../common'
 import { FullWidthMenu } from '../../../overlay'
 import { UnderlayPortal } from '../../../underlay'
-import { useCursorOverride } from './hooks'
+import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
 import { useDebugRender, useLongPress } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
@@ -12,6 +12,7 @@ import { coerceValue, getSliderPosition } from './utils'
 import { NumberSliderMenu } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { distance } from '@/features/graph/utils'
+import { GenericMenu } from 'features/graph/components/overlay'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -64,45 +65,41 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const setCursorOverride = useCursorOverride()
 
+  const numberSliderMenuActions = useNumberSliderMenuActions(element)
+  const [showGenericMenu, setShowGenericMenu] = useState(false)
+  const showGenericMenuAt = useRef<[number, number]>([0, 0])
+  const showGenericMenuOnRelease = useRef(false)
+
   const [showUnderlay, setShowUnderlay] = useState(false)
-  const showUnderlayAnchor = useRef<[number, number]>([0, 0])
-  const showUnderlayOnRelease = useRef(false)
+  // const showGenericMenuAt = useRef<[number, number]>([0, 0])
+  // const showGenericMenuOnRelease = useRef(false)
 
   const onDragStart = useCallback((_, d: DraggableData): void | false => {
     const { x, y } = d
-    showUnderlayAnchor.current = [x, y]
-
-    console.log('D:')
+    showGenericMenuAt.current = [x, y]
     setShowUnderlay(false)
   }, [])
 
   const onDrag = useCallback((_, d: DraggableData): void => {
-    if (!showUnderlayOnRelease.current) {
+    if (!showGenericMenuOnRelease.current) {
       return
     }
 
     const { x, y } = d
-    const dragDistance = distance(showUnderlayAnchor.current, [x, y])
+    const dragDistance = distance(showGenericMenuAt.current, [x, y])
 
     if (dragDistance > 20) {
-      showUnderlayOnRelease.current = false
+      showGenericMenuOnRelease.current = false
     }
   }, [])
 
   const sliderPosition = getSliderPosition(internalValue, [min, max], sliderWidth)
 
-  const handleLongPress = useCallback(() => {
-    showUnderlayOnRelease.current = true
-  }, [])
+  const handleLongPress = useCallback((e: PointerEvent) => {
+    const { pageX, pageY } = e
 
-  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-    e.stopPropagation()
-
-    if (showUnderlayOnRelease.current) {
-      setShowUnderlay(true)
-    }
-
-    showUnderlayOnRelease.current = false
+    showGenericMenuOnRelease.current = true
+    showGenericMenuAt.current = [pageX, pageY]
   }, [])
 
   const longPressTarget = useLongPress(handleLongPress)
@@ -118,6 +115,8 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     (e: PointerEvent): void => {
       e.stopImmediatePropagation()
 
+      setShowUnderlay(false)
+
       const { pageX, pageY } = e
 
       primaryPointer.current = e.pointerId
@@ -125,8 +124,13 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
       sliderInitialValue.current = internalValue
 
+      // TODO: Figure out why this isn't interacting with history correctly
+      setSliderWidth((current) => sliderRef?.current?.clientWidth ?? current)
+
       setSliderActive(true)
       setCursorOverride(true)
+
+      sliderRef.current?.setPointerCapture(e.pointerId)
     },
     [internalValue, setCursorOverride]
   )
@@ -153,6 +157,8 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     (e: PointerEvent): void => {
       e.stopImmediatePropagation()
 
+      setShowUnderlay(false)
+
       const { pageX, pageY } = e
 
       primaryPointer.current = e.pointerId
@@ -162,6 +168,8 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
       setResizeActive(true)
       setCursorOverride(true)
+
+      resizeTargetRef.current?.setPointerCapture(e.pointerId)
     },
     [internalWidth, setCursorOverride]
   )
@@ -183,6 +191,10 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const handleWindowPointerMove = useCallback(
     (e: PointerEvent): void => {
       if (e.pointerId !== primaryPointer.current) {
+        return
+      }
+
+      if (!sliderActive && !resizeActive) {
         return
       }
 
@@ -312,13 +324,54 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     }
   })
 
+  const handlePointerUp = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      e.stopPropagation()
+
+      if (showGenericMenuOnRelease.current) {
+        setShowGenericMenu(true)
+      }
+
+      showGenericMenuOnRelease.current = false
+
+      handleWindowPointerUp(e.nativeEvent)
+    },
+    [handleWindowPointerUp]
+  )
+
   return (
     <>
       <ElementContainer element={element} onStart={onDragStart} onDrag={onDrag} disabled={sliderActive || resizeActive}>
         <div
           className="relative p-2 bg-white rounded-md border-2 border-dark shadow-osm"
-          onDoubleClick={() => {
-            setShowUnderlay(true)
+          role="presentation"
+          onMouseDown={(e) => {
+            const { pageX, pageY } = e
+
+            switch (e.button) {
+              case 1: {
+                showGenericMenuAt.current = [pageX, pageY]
+                setShowGenericMenu(true)
+                break
+              }
+              default: {
+                break
+              }
+            }
+          }}
+          onDoubleClick={(e) => {
+            const { pageX, pageY } = e
+
+            switch (device.breakpoint) {
+              case 'sm': {
+                showGenericMenuAt.current = [pageX, pageY]
+                setShowGenericMenu(true)
+                break
+              }
+              default: {
+                setShowUnderlay(true)
+              }
+            }
           }}
           onPointerUp={handlePointerUp}
           style={{ width: internalWidth, height: elementHeight }}
@@ -336,6 +389,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 <div
                   className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
                   ref={sliderTargetRef}
+                  onPointerUp={() => {
+                    console.log('???')
+                  }}
                   style={{ top: 3, left: sliderPosition - 8 }}
                 >
                   <div className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible">
@@ -406,31 +462,25 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         </div>
       </ElementContainer>
       {showUnderlay ? (
-        device.breakpoint === 'sm' ? (
-          <FullWidthMenu>
-            <div className="w-full pt-2 pl-4 pr-4 flex flex-col items-center bg-green rounded-md">
-              <div className="flex flex-col items-center" style={{ maxWidth: 500 }}>
-                <NumberSliderMenu
-                  id={id}
-                  initial={{ rounding, precision, domain, value: internalValue }}
-                  onClose={() => setShowUnderlay(false)}
-                />
-              </div>
+        <UnderlayPortal parent={id}>
+          <div className="w-full pt-8 flex flex-col items-center bg-green rounded-md">
+            <div className="flex flex-col items-center" style={{ maxWidth: 300 }}>
+              <NumberSliderMenu
+                id={id}
+                initial={{ rounding, precision, domain, value: internalValue }}
+                onClose={() => setShowUnderlay(false)}
+              />
             </div>
-          </FullWidthMenu>
-        ) : (
-          <UnderlayPortal parent={id}>
-            <div className="w-full pt-8 flex flex-col items-center bg-green rounded-md">
-              <div className="flex flex-col items-center" style={{ maxWidth: 300 }}>
-                <NumberSliderMenu
-                  id={id}
-                  initial={{ rounding, precision, domain, value: internalValue }}
-                  onClose={() => setShowUnderlay(false)}
-                />
-              </div>
-            </div>
-          </UnderlayPortal>
-        )
+          </div>
+        </UnderlayPortal>
+      ) : null}
+      {showGenericMenu ? (
+        <GenericMenu
+          context={element}
+          actions={numberSliderMenuActions}
+          position={showGenericMenuAt.current}
+          onClose={() => setShowGenericMenu(false)}
+        />
       ) : null}
     </>
   )

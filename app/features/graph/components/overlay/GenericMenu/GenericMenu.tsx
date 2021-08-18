@@ -8,6 +8,7 @@ import { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
 import { useGraphManager } from '@/features/graph/context/graph'
 import { GenericMenuManager } from './context'
 import { useOverlayOffset } from '../hooks'
+import { useSessionManager } from '@/features/common/context/session'
 
 type GenericMenuProps<T> = {
   context: T
@@ -25,6 +26,7 @@ export const GenericMenu = <T,>({
 }: GenericMenuProps<T>): React.ReactElement => {
   const r = 75
 
+  const { device } = useSessionManager()
   const { registry } = useGraphManager()
 
   const position = useOverlayOffset(screenPosition)
@@ -172,7 +174,7 @@ export const GenericMenu = <T,>({
     const { width } = button.getBoundingClientRect()
     const margin = 75
 
-    const menuWidth = Math.min(600, window.innerWidth)
+    const menuWidth = Math.min(475, window.innerWidth)
 
     const x = side === 'right' ? bx + width + margin + 48 : bx - width - margin - menuWidth
     const y = by
@@ -238,7 +240,9 @@ export const GenericMenu = <T,>({
     setOverlayMenuTransform.current(cx - dx, cy - dy, 1, 150, 'easeInOutQuad')
 
     setTimeout(() => {
-      setLockOverlay(true)
+      if (device.breakpoint === 'sm') {
+        setLockOverlay(true)
+      }
     }, 175)
 
     // const [positionX, positionY] = [cx - dx, cy]
