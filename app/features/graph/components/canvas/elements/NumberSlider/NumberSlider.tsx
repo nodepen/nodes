@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect, useRef, useState, useMemo } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
-import Draggable, { DraggableData } from 'react-draggable'
+import { DraggableData } from 'react-draggable'
 import { ElementContainer, ParameterIcon } from '../../common'
 import { FullWidthMenu } from '../../../overlay'
 import { UnderlayPortal } from '../../../underlay'
@@ -8,7 +8,7 @@ import { useCursorOverride } from './hooks'
 import { useDebugRender, useLongPress } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
-import { coerceValue, getSliderPosition, getSliderStep } from './utils'
+import { coerceValue, getSliderPosition } from './utils'
 import { NumberSliderMenu } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { distance } from '@/features/graph/utils'
@@ -52,10 +52,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     handleSetInternalValue(currentValue as number)
   }, [currentValue, handleSetInternalValue])
 
-  const sliderRef = useRef<HTMLDivElement>(null)
-
-  const initialWidth = useRef(elementWidth)
   const [internalWidth, setInternalWidth] = useState(elementWidth)
+
+  const sliderRef = useRef<HTMLDivElement>(null)
   const [sliderWidth, setSliderWidth] = useState(172)
 
   useEffect(() => {
@@ -106,15 +105,12 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const longPressTarget = useLongPress(handleLongPress)
 
+  const primaryPointer = useRef(0)
+  const primaryPointerAnchor = useRef<[number, number]>([0, 0])
+
   const [sliderActive, setSliderActive] = useState(false)
   const sliderTargetRef = useRef<HTMLDivElement>(null)
   const sliderInitialValue = useRef(0)
-
-  const [resizeActive, setResizeActive] = useState(false)
-  const resizeTargetRef = useRef<HTMLDivElement>(null)
-
-  const primaryPointer = useRef(0)
-  const primaryPointerAnchor = useRef<[number, number]>([0, 0])
 
   const handleStartSlider = useCallback(
     (e: PointerEvent): void => {
@@ -130,20 +126,55 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
       setSliderActive(true)
       setCursorOverride(true)
     },
-    [setCursorOverride, internalValue]
+    [internalValue, setCursorOverride]
   )
 
   useEffect(() => {
-    const slider = sliderTargetRef.current
+    const sliderGrip = sliderTargetRef.current
 
-    if (!slider) {
+    if (!sliderGrip) {
       return
     }
 
-    slider.addEventListener('pointerdown', handleStartSlider)
+    sliderGrip.addEventListener('pointerdown', handleStartSlider)
 
     return () => {
-      slider.removeEventListener('pointerdown', handleStartSlider)
+      sliderGrip.removeEventListener('pointerdown', handleStartSlider)
+    }
+  })
+
+  const [resizeActive, setResizeActive] = useState(false)
+  const resizeTargetRef = useRef<HTMLDivElement>(null)
+  const resizeInitialValue = useRef(0)
+
+  const handleStartResize = useCallback(
+    (e: PointerEvent): void => {
+      e.stopImmediatePropagation()
+
+      const { pageX, pageY } = e
+
+      primaryPointer.current = e.pointerId
+      primaryPointerAnchor.current = [pageX, pageY]
+
+      resizeInitialValue.current = internalWidth
+
+      setResizeActive(true)
+      setCursorOverride(true)
+    },
+    [internalWidth, setCursorOverride]
+  )
+
+  useEffect(() => {
+    const resizeGrip = resizeTargetRef.current
+
+    if (!resizeGrip) {
+      return
+    }
+
+    resizeGrip.addEventListener('pointerdown', handleStartResize)
+
+    return () => {
+      resizeGrip.removeEventListener('pointerdown', handleStartResize)
     }
   })
 
@@ -156,22 +187,36 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
       const { pageX } = e
       const [anchorX] = primaryPointerAnchor.current
 
-      const dx = pageX - anchorX
-      const pct = dx / sliderWidth
+      const dx = (pageX - anchorX) / zoom
 
-      const [min, max] = domain
-      const range = max - min
+      if (sliderActive) {
+        const pct = dx / sliderWidth
 
-      const delta = range * pct
-      const next = sliderInitialValue.current + delta
+        const [min, max] = domain
+        const range = max - min
 
-      const rounded = Math.round(next * Math.pow(10, precision)) / Math.pow(10, precision)
+        const delta = range * pct
+        const next = sliderInitialValue.current + delta
 
-      const clamped = rounded < min ? min : rounded > max ? max : rounded
+        const rounded = Math.round(next * Math.pow(10, precision)) / Math.pow(10, precision)
 
-      handleSetInternalValue(clamped)
+        const clamped = rounded < min ? min : rounded > max ? max : rounded
+
+        handleSetInternalValue(clamped)
+        return
+      }
+
+      if (resizeActive) {
+        const next = resizeInitialValue.current + dx
+
+        const clamped = next < 300 ? 300 : next > 450 ? 450 : next
+
+        setInternalWidth(clamped)
+        setSliderWidth((current) => sliderRef?.current?.clientWidth ?? current)
+        return
+      }
     },
-    [sliderWidth, domain, precision, handleSetInternalValue]
+    [zoom, sliderWidth, domain, precision, handleSetInternalValue, sliderActive, resizeActive]
   )
 
   const handleWindowPointerUp = useCallback(
@@ -180,12 +225,61 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         return
       }
 
-      setSliderActive(false)
-      setResizeActive(false)
-
       setCursorOverride(false)
+
+      if (sliderActive) {
+        setSliderActive(false)
+
+        // Commit new value
+        updateElement({
+          id,
+          type: 'number-slider',
+          data: {
+            values: {
+              output: {
+                '{0;}': [
+                  {
+                    type: 'number',
+                    data: internalValue,
+                  },
+                ],
+              },
+            },
+          },
+        })
+      }
+
+      if (resizeActive) {
+        setResizeActive(false)
+        setZoomLock(false)
+
+        // Commit new dimensions
+        updateElement({
+          id,
+          type: 'number-slider',
+          data: {
+            dimensions: {
+              width: internalWidth,
+              height: elementHeight,
+            },
+            anchors: {
+              output: [internalWidth + 2, -16],
+            },
+          },
+        })
+      }
     },
-    [setCursorOverride]
+    [
+      updateElement,
+      id,
+      internalWidth,
+      internalValue,
+      elementHeight,
+      sliderActive,
+      resizeActive,
+      setCursorOverride,
+      setZoomLock,
+    ]
   )
 
   useEffect(() => {
@@ -262,47 +356,11 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               </div>
             </div>
           </div>
-          <Draggable
-            axis="x"
-            bounds={{ left: initialWidth.current - 34, right: initialWidth.current + 300 }}
-            position={{ x: internalWidth - 34, y: -22 }}
-            scale={zoom}
-            onMouseDown={(e) => e.stopPropagation()}
-            onStart={(e, _) => {
-              e.stopPropagation()
-              setShowUnderlay(false)
-              setZoomLock(true)
-              setCursorOverride(true)
-            }}
-            onDrag={(_, d) => {
-              const { deltaX: dx } = d
-              const next = internalWidth + dx
-
-              setInternalWidth(next < initialWidth.current ? initialWidth.current : next)
-              setSliderWidth((current) => sliderRef?.current?.clientWidth ?? current)
-            }}
-            onStop={() => {
-              setZoomLock(false)
-              setCursorOverride(false)
-              updateElement({
-                id,
-                type: 'number-slider',
-                data: {
-                  dimensions: {
-                    width: internalWidth,
-                    height: elementHeight,
-                  },
-                  anchors: {
-                    output: [internalWidth + 2, -16],
-                  },
-                },
-              })
-            }}
-          >
-            <div className="w-2 h-full flex items-center justify-center hover:cursor-move-ew">
+          <div className="w-2 h-full absolute" style={{ left: internalWidth - 26, top: 0 }} ref={resizeTargetRef}>
+            <div className="w-full h-full flex items-center justify-center hover:cursor-move-ew">
               <div className="w-full h-4 border-dark border-l-2 border-r-2" />
             </div>
-          </Draggable>
+          </div>
           <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
             <div className="relative w-full h-full">
               <div className="absolute w-full h-full" style={{ left: -7 }}>
