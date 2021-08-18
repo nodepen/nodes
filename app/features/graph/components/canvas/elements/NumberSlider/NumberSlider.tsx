@@ -95,7 +95,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     showUnderlayOnRelease.current = true
   }, [])
 
-  const handlePointerUp = useCallback(() => {
+  const handlePointerUp = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+
     if (showUnderlayOnRelease.current) {
       setShowUnderlay(true)
     }
