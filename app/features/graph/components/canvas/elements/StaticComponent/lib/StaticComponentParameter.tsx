@@ -118,7 +118,6 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const longPressActive = useRef(false)
 
   const handleLongPress = useCallback((): void => {
-    console.log('long press!')
     longPressActive.current = true
   }, [])
 
@@ -129,11 +128,11 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const pointerIsMoving = useRef(false)
   const pointerPrimaryId = useRef<number>()
 
-  const handleMouseDown = (e: React.MouseEvent<HTMLButtonElement>): void => {
+  const handleMouseDown = (e: React.MouseEvent<HTMLDivElement>): void => {
     e.stopPropagation()
   }
 
-  const handlePointerDown = (e: React.PointerEvent<HTMLButtonElement>): void => {
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (e.pointerType === 'mouse' && e.button === 2) {
       return
     }
@@ -162,7 +161,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
     gripRef.current.setPointerCapture(e.pointerId)
   }
 
-  const handlePointerMove = (e: React.PointerEvent<HTMLButtonElement>): void => {
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.preventDefault()
 
     if (!pointerIsMoving.current) {
@@ -317,7 +316,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const tooltipPosition = useRef<[number, number]>([0, 0])
 
   const handleMouseEnter = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>): void => {
+    (e: React.MouseEvent<HTMLDivElement>): void => {
       if (device.breakpoint === 'sm') {
         return
       }
@@ -352,7 +351,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const handlePointerClick = useClickSelection(elementId)
 
   const handlePointerUp = useCallback(
-    (e: React.PointerEvent<HTMLButtonElement>): void => {
+    (e: React.PointerEvent<HTMLDivElement>): void => {
       switch (e.pointerType) {
         case 'mouse': {
           const { pageX, pageY } = e
@@ -365,6 +364,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         default: {
           if (longPressActive.current) {
             // Show menu
+            e.stopPropagation()
             console.log('Launch menu!')
           }
 
@@ -394,19 +394,24 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
           device.breakpoint === 'sm' ? '' : 'hover:bg-gray-300'
         } flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 overflow-visible cursor-default`}
         ref={longPressTarget as any}
-        onClick={handleClick}
-        onMouseDown={handleMouseDown}
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        onMouseUp={handleMouseUp}
-        onPointerUp={handlePointerUp}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
         style={{ touchAction: 'none' }}
       >
-        {body}
+        <div
+          onClick={handleClick}
+          onMouseDown={handleMouseDown}
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}
+          onMouseUp={handleMouseUp}
+          onPointerUp={handlePointerUp}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerEnter={handlePointerEnter}
+          onPointerLeave={handlePointerLeave}
+          className="w-full h-full flex flex-row justify-start items-center"
+          role="presentation"
+        >
+          {body}
+        </div>
       </button>
       {showTooltip ? (
         <PointerTooltip

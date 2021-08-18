@@ -172,7 +172,7 @@ export const GenericMenu = <T,>({
     const { width } = button.getBoundingClientRect()
     const margin = 75
 
-    const menuWidth = window.innerWidth < 600 ? window.innerWidth : 250
+    const menuWidth = Math.min(600, window.innerWidth)
 
     const x = side === 'right' ? bx + width + margin + 48 : bx - width - margin - menuWidth
     const y = by
