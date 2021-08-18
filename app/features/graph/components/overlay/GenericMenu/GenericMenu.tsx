@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useMemo, useState, useRef } from 'react'
+import React, { useEffect, useMemo, useState, useRef } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { OverlayPortal } from '../OverlayPortal'
 import { OverlayContainer } from '../OverlayContainer'
-import { useSetCameraPosition } from 'features/graph/hooks'
+// import { useSetCameraPosition } from 'features/graph/hooks'
 import { ReactZoomPanPinchRef } from 'react-zoom-pan-pinch'
-import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
+// import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
 import { useGraphManager } from '@/features/graph/context/graph'
 import { GenericMenuManager } from './context'
 import { useOverlayOffset } from '../hooks'
@@ -33,50 +33,50 @@ export const GenericMenu = <T,>({
 
   const [overlayAnchorPosition, setOverlayAnchorPosition] = useState(() => position)
 
-  const handlePanning = useCallback(
-    (ref: ReactZoomPanPinchRef) => {
-      const { positionX, positionY } = ref.state
+  // const handlePanning = useCallback(
+  //   (ref: ReactZoomPanPinchRef) => {
+  //     const { positionX, positionY } = ref.state
 
-      const [anchorX, anchorY] = overlayAnchorPosition
-      const [dx, dy] = [positionX - anchorX, positionY - anchorY]
+  //     const [anchorX, anchorY] = overlayAnchorPosition
+  //     const [dx, dy] = [positionX - anchorX, positionY - anchorY]
 
-      if (!registry.canvasContainerRef.current) {
-        return
-      }
+  //     if (!registry.canvasContainerRef.current) {
+  //       return
+  //     }
 
-      registry.canvasContainerRef.current.style.transform = `translate(${dx}px, ${dy}px)`
-    },
-    [registry.canvasContainerRef, overlayAnchorPosition]
-  )
+  //     registry.canvasContainerRef.current.style.transform = `translate(${dx}px, ${dy}px)`
+  //   },
+  //   [registry.canvasContainerRef, overlayAnchorPosition]
+  // )
 
-  const cameraPosition = useCameraStaticPosition()
-  const cameraZoom = useCameraStaticZoom()
-  const setCanvasCamera = useSetCameraPosition()
+  // const cameraPosition = useCameraStaticPosition()
+  // const cameraZoom = useCameraStaticZoom()
+  // const setCanvasCamera = useSetCameraPosition()
 
-  const [initialOverlayPosition, setInitialOverlayPosition] = useState(() => position)
-  const [initialCameraPosition, setInitialCameraPosition] = useState(() => cameraPosition)
+  // const [initialOverlayPosition, setInitialOverlayPosition] = useState(() => position)
+  // const [initialCameraPosition, setInitialCameraPosition] = useState(() => cameraPosition)
 
-  const handlePanningStop = useCallback(
-    (ref: ReactZoomPanPinchRef) => {
-      const { positionX, positionY } = ref.state
+  // const handlePanningStop = useCallback(
+  //   (ref: ReactZoomPanPinchRef) => {
+  //     const { positionX, positionY } = ref.state
 
-      const [anchorX, anchorY] = initialOverlayPosition
-      const [cameraX, cameraY] = initialCameraPosition
+  //     const [anchorX, anchorY] = initialOverlayPosition
+  //     const [cameraX, cameraY] = initialCameraPosition
 
-      const [dx, dy] = [positionX - anchorX, positionY - anchorY]
+  //     const [dx, dy] = [positionX - anchorX, positionY - anchorY]
 
-      setCanvasCamera(-cameraX - dx, -cameraY - dy, 'NONE', 0, 1, cameraZoom)
+  //     setCanvasCamera(-cameraX - dx, -cameraY - dy, 'NONE', 0, 1, cameraZoom)
 
-      setOverlayAnchorPosition([positionX, positionY])
+  //     setOverlayAnchorPosition([positionX, positionY])
 
-      if (!registry.canvasContainerRef.current) {
-        return
-      }
+  //     if (!registry.canvasContainerRef.current) {
+  //       return
+  //     }
 
-      registry.canvasContainerRef.current.style.transform = `translate(0px, 0px)`
-    },
-    [registry.canvasContainerRef, initialCameraPosition, initialOverlayPosition, cameraZoom, setCanvasCamera]
-  )
+  //     registry.canvasContainerRef.current.style.transform = `translate(0px, 0px)`
+  //   },
+  //   [registry.canvasContainerRef, initialCameraPosition, initialOverlayPosition, cameraZoom, setCanvasCamera]
+  // )
 
   useEffect(() => {
     setTimeout(() => {
@@ -92,8 +92,8 @@ export const GenericMenu = <T,>({
       )
 
       setOverlayAnchorPosition(position)
-      setInitialOverlayPosition(position)
-      setInitialCameraPosition(cameraPosition)
+      // setInitialOverlayPosition(position)
+      // setInitialCameraPosition(cameraPosition)
     }, 0)
   }, [])
 
@@ -167,7 +167,7 @@ export const GenericMenu = <T,>({
 
     const [bx, by] = buttonPosition
     const { width } = button.getBoundingClientRect()
-    const margin = 24
+    const margin = 75
 
     const menuWidth = window.innerWidth < 600 ? window.innerWidth : 250
 
@@ -178,21 +178,23 @@ export const GenericMenu = <T,>({
       setActionMenu(undefined)
       resetOverlayMenuTransform.current?.(150, 'easeInOutQuad')
 
-      // TODO: Perform translate-transition on canvas here too
-
       setTimeout(() => {
         if (!overlayMenuRef.current || !registry.canvasContainerRef.current) {
           return
         }
 
         registry.canvasContainerRef.current.style.transition = ''
-        handlePanningStop(overlayMenuRef.current)
+        // handlePanningStop(overlayMenuRef.current)
       }, 175)
     }
 
     const menuContent = (
       <GenericMenuManager onCancel={handleCancel} onClose={onClose}>
-        <div className="absolute pl-2 pr-2" style={{ width: menuWidth, left: x, top: y }} ref={actionMenuRef}>
+        <div
+          className="absolute pl-2 pr-2 overflow-auto"
+          style={{ width: menuWidth, height: 'calc(100vh - 40px)', left: x, top: y }}
+          ref={actionMenuRef}
+        >
           {menu}
         </div>
       </GenericMenuManager>
@@ -210,7 +212,7 @@ export const GenericMenu = <T,>({
       return
     }
 
-    const { left, top, width } = actionMenuRef.current.getBoundingClientRect()
+    const { left, width } = actionMenuRef.current.getBoundingClientRect()
 
     const isWithinHorizontalBounds = left > 0 && left + width < window.innerWidth
 
@@ -228,26 +230,26 @@ export const GenericMenu = <T,>({
 
     setOverlayMenuTransform.current(cx - dx, cy, 1, 150, 'easeInOutQuad')
 
-    const [positionX, positionY] = [cx - dx, cy]
+    // const [positionX, positionY] = [cx - dx, cy]
 
-    const [anchorX, anchorY] = overlayAnchorPosition
-    const [odx, ody] = [positionX - anchorX, positionY - anchorY]
+    // const [anchorX, anchorY] = overlayAnchorPosition
+    // const [odx, ody] = [positionX - anchorX, positionY - anchorY]
 
-    if (!registry.canvasContainerRef.current) {
-      return
-    }
+    // if (!registry.canvasContainerRef.current) {
+    //   return
+    // }
 
-    registry.canvasContainerRef.current.style.transition = 'transform 150ms ease-in-out'
-    registry.canvasContainerRef.current.style.transform = `translate(${odx}px, ${ody}px)`
+    // registry.canvasContainerRef.current.style.transition = 'transform 150ms ease-in-out'
+    // registry.canvasContainerRef.current.style.transform = `translate(${odx}px, ${ody}px)`
 
-    setTimeout(() => {
-      if (!overlayMenuRef.current || !registry.canvasContainerRef.current) {
-        return
-      }
+    // setTimeout(() => {
+    //   if (!overlayMenuRef.current || !registry.canvasContainerRef.current) {
+    //     return
+    //   }
 
-      registry.canvasContainerRef.current.style.transition = ''
-      handlePanningStop(overlayMenuRef.current)
-    }, 150)
+    //   registry.canvasContainerRef.current.style.transition = ''
+    //   handlePanningStop(overlayMenuRef.current)
+    // }, 150)
   }, [actionMenu])
 
   return (
@@ -260,8 +262,8 @@ export const GenericMenu = <T,>({
             setOverlayMenuTransform.current = ref.setTransform
             resetOverlayMenuTransform.current = ref.resetTransform
           }}
-          onPanning={handlePanning}
-          onPanningStop={handlePanningStop}
+          // onPanning={handlePanning}
+          // onPanningStop={handlePanningStop}
         >
           <>
             {mask}
