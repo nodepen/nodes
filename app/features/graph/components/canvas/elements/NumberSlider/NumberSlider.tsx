@@ -198,7 +198,20 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         const delta = range * pct
         const next = sliderInitialValue.current + delta
 
-        const rounded = Math.round(next * Math.pow(10, precision)) / Math.pow(10, precision)
+        let rounded = Math.round(next * Math.pow(10, precision)) / Math.pow(10, precision)
+
+        const isEven = rounded % 2 === 0
+
+        switch (rounding) {
+          case 'even': {
+            rounded = isEven ? rounded : rounded - 1
+            break
+          }
+          case 'odd': {
+            rounded = isEven ? rounded - 1 : rounded
+            break
+          }
+        }
 
         const clamped = rounded < min ? min : rounded > max ? max : rounded
 
@@ -216,7 +229,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         return
       }
     },
-    [zoom, sliderWidth, domain, precision, handleSetInternalValue, sliderActive, resizeActive]
+    [zoom, sliderWidth, rounding, domain, precision, handleSetInternalValue, sliderActive, resizeActive]
   )
 
   const handleWindowPointerUp = useCallback(
