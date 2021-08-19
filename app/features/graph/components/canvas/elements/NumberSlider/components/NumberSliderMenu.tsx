@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { NodePen } from 'glib'
 import { coerceValue } from '../utils'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
@@ -9,10 +9,28 @@ type NumberSliderMenuProps = {
   initial: Pick<NodePen.Element<'number-slider'>['current'], 'precision' | 'domain' | 'rounding'> & { value: number }
   onClose: () => void
   onCancel?: () => void
+  focus?: string
 }
 
-const NumberSliderMenu = ({ id, initial, onClose, onCancel }: NumberSliderMenuProps): React.ReactElement => {
+const NumberSliderMenu = ({ id, initial, onClose, onCancel, focus }: NumberSliderMenuProps): React.ReactElement => {
   const { updateElement } = useGraphDispatch()
+
+  const valueInputRef = useRef<HTMLInputElement>(null)
+
+  useEffect(() => {
+    if (!focus) {
+      return
+    }
+
+    switch (focus) {
+      case 'value': {
+        const input = valueInputRef.current
+
+        input?.focus()
+        input?.setSelectionRange(0, 99)
+      }
+    }
+  }, [focus])
 
   const { state, dispatch } = useNumberSliderForm(initial)
 
@@ -205,6 +223,7 @@ const NumberSliderMenu = ({ id, initial, onClose, onCancel }: NumberSliderMenuPr
       <input
         className={`${errors['set-value'] ? 'text-error' : ''} w-full p-2 h-12 rounded-md bg-pale`}
         value={value.label}
+        ref={valueInputRef}
         onChange={(e) => handleChange('set-value', e.target.value)}
         onBlur={() => handleBlur('set-value', state.value.value)}
       />

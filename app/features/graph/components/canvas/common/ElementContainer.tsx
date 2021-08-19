@@ -114,6 +114,7 @@ const ElementContainer = ({
         <Draggable
           position={{ x, y }}
           scale={cameraZoom}
+          cancel=".no-drag"
           disabled={isDisabled}
           onMouseDown={handleStopPropagation}
           onStart={handleDragStart}

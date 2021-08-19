@@ -2,7 +2,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { DraggableData } from 'react-draggable'
 import { ElementContainer, ParameterIcon } from '../../common'
-import { FullWidthMenu } from '../../../overlay'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
 import { useDebugRender, useLongPress } from '@/hooks'
@@ -71,6 +70,11 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const showGenericMenuOnRelease = useRef(false)
 
   const [showUnderlay, setShowUnderlay] = useState(false)
+  const underlayFocusElement = useRef<string>()
+
+  useEffect(() => {
+    underlayFocusElement.current = undefined
+  }, [showUnderlay])
   // const showGenericMenuAt = useRef<[number, number]>([0, 0])
   // const showGenericMenuOnRelease = useRef(false)
 
@@ -389,9 +393,6 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 <div
                   className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
                   ref={sliderTargetRef}
-                  onPointerUp={() => {
-                    console.log('???')
-                  }}
                   style={{ top: 3, left: sliderPosition - 8 }}
                 >
                   <div className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible">
@@ -411,7 +412,16 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                         className="w-6 h-6 rounded-sm bg-green"
                         style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
                       />
-                      <div className="bg-green rounded-md" style={{ transform: 'translateY(-16px)' }}>
+                      <div
+                        className="bg-green rounded-md pointer-events-auto no-drag"
+                        style={{ transform: 'translateY(-16px)' }}
+                        onDoubleClick={(e) => {
+                          e.stopPropagation()
+
+                          underlayFocusElement.current = 'value'
+                          setShowUnderlay(true)
+                        }}
+                      >
                         <p className="h-10 p-2 pl-4 pr-4 rounded-md text-lg" style={{ transform: 'translateY(-4px)' }}>
                           {internalValueLabel.current}
                         </p>
@@ -469,6 +479,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 id={id}
                 initial={{ rounding, precision, domain, value: internalValue }}
                 onClose={() => setShowUnderlay(false)}
+                focus={underlayFocusElement.current}
               />
             </div>
           </div>
