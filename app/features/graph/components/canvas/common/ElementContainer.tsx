@@ -13,6 +13,10 @@ type ElementContainerProps = {
   onStop?: DraggableEventHandler
 }
 
+/**
+ * The generic element container wraps its child and attaches all draggable event and propagation logic.
+ * TODO: Something funky is happening with how this interacts with any `Draggable` children.
+ */
 const ElementContainer = ({
   children,
   element,
