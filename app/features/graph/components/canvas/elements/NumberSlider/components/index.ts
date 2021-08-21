@@ -1,3 +1,4 @@
+import { NumberSliderGrip } from './NumberSliderGrip'
 import NumberSliderMenu from './NumberSliderMenu'
 
-export { NumberSliderMenu }
+export { NumberSliderGrip, NumberSliderMenu }

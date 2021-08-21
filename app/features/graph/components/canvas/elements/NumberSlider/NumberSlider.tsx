@@ -1,14 +1,14 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { DraggableData } from 'react-draggable'
-import { ElementContainer, ParameterIcon } from '../../common'
+import { ElementContainer, GripContainer, ParameterIcon } from '../../common'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
 import { useDebugRender, useLongPress } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { coerceValue, getSliderPosition } from './utils'
-import { NumberSliderMenu } from './components'
+import { NumberSliderGrip, NumberSliderMenu } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { distance } from '@/features/graph/utils'
 import { GenericMenu } from 'features/graph/components/overlay'
@@ -443,31 +443,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
             </div>
           </div>
           <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
-            <div className="relative w-full h-full">
-              <div className="absolute w-full h-full" style={{ left: -7 }}>
-                <div className="w-full h-full flex items-center">
-                  <svg className="w-4 h-4 overflow-visible" viewBox="0 0 10 10">
-                    <path
-                      d="M5,10 a1,1 0 0,0 0,-8"
-                      fill="#333"
-                      stroke="#333"
-                      strokeWidth="2px"
-                      vectorEffect="non-scaling-stroke"
-                    />
-                    <circle
-                      cx="5"
-                      cy="5"
-                      r="4"
-                      stroke="#333"
-                      strokeWidth="2px"
-                      vectorEffect="non-scaling-stroke"
-                      fill="#FFF"
-                    />
-                    <path d="M5,20 a1,1 0 0,0 0,-30" fill="#FFF" opacity="0" stroke="none" />
-                  </svg>
-                </div>
-              </div>
-            </div>
+            <GripContainer elementId={id} parameterId={'output'} mode="output">
+              <NumberSliderGrip />
+            </GripContainer>
           </div>
         </div>
       </ElementContainer>
