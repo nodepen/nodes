@@ -45,8 +45,10 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     const [sx, sy] = [left + width / 2, top + height / 2]
 
+    const offset = 2 * cameraZoom
+
     const [x, y] = screenSpaceToCameraSpace(
-      { offset: [0, 48 + 36], position: [sx, sy] },
+      { offset: [0, 48 + 40], position: [sx, sy + offset] },
       { zoom: cameraZoom, position: cameraPosition }
     )
 
