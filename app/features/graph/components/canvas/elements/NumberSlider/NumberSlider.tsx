@@ -25,7 +25,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const { device } = useSessionManager()
 
-  const { updateElement } = useGraphDispatch()
+  const { updateElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
 
   const { setZoomLock } = useCameraDispatch()
   const zoom = useCameraStaticZoom()
@@ -156,6 +156,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const [resizeActive, setResizeActive] = useState(false)
   const resizeTargetRef = useRef<HTMLDivElement>(null)
   const resizeInitialValue = useRef(0)
+  const resizePreviousValue = useRef(0)
 
   const handleStartResize = useCallback(
     (e: PointerEvent): void => {
@@ -169,13 +170,16 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
       primaryPointerAnchor.current = [pageX, pageY]
 
       resizeInitialValue.current = internalWidth
+      resizePreviousValue.current = internalWidth
 
       setResizeActive(true)
       setCursorOverride(true)
 
       resizeTargetRef.current?.setPointerCapture(e.pointerId)
+
+      prepareLiveMotion({ anchor: id, targets: [id] })
     },
-    [internalWidth, setCursorOverride]
+    [id, internalWidth, setCursorOverride, prepareLiveMotion]
   )
 
   useEffect(() => {
@@ -244,10 +248,25 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
         setInternalWidth(clamped)
         setSliderWidth((current) => sliderRef?.current?.clientWidth ?? current)
+
+        const delta = clamped - resizePreviousValue.current
+        dispatchLiveMotion(delta, 0)
+        resizePreviousValue.current = clamped
+
         return
       }
     },
-    [zoom, sliderWidth, rounding, domain, precision, handleSetInternalValue, sliderActive, resizeActive]
+    [
+      zoom,
+      sliderWidth,
+      rounding,
+      domain,
+      precision,
+      handleSetInternalValue,
+      sliderActive,
+      resizeActive,
+      dispatchLiveMotion,
+    ]
   )
 
   const handleWindowPointerUp = useCallback(
@@ -284,6 +303,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         setResizeActive(false)
         setZoomLock(false)
 
+        const dx = internalWidth - current.dimensions.width
+        const [ax, ay] = current.anchors['output']
+
         // Commit new dimensions
         updateElement({
           id,
@@ -294,7 +316,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               height: elementHeight,
             },
             anchors: {
-              output: [internalWidth + 2, -16],
+              output: [ax + dx, ay],
             },
           },
         })
@@ -303,6 +325,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     [
       updateElement,
       id,
+      current,
       internalWidth,
       internalValue,
       elementHeight,
@@ -443,9 +466,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
             </div>
           </div>
           <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
-            <GripContainer elementId={id} parameterId={'output'} mode="output">
-              <NumberSliderGrip />
-            </GripContainer>
+            <NumberSliderGrip elementId={id} />
           </div>
         </div>
       </ElementContainer>

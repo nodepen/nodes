@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
-import { GripIcon, useGripContext } from '../../../common'
+import { GripContainer, GripIcon, useGripContext } from '../../../common'
 
-export const NumberSliderGrip = (): React.ReactElement => {
+const NumberSliderGrip = (): React.ReactElement => {
   const { gripRef, register } = useGripContext()
 
   useEffect(() => {
@@ -16,5 +16,17 @@ export const NumberSliderGrip = (): React.ReactElement => {
         </div>
       </div>
     </div>
+  )
+}
+
+type NumberSliderGripContainerProps = {
+  elementId: string
+}
+
+export const NumberSliderGripContainer = ({ elementId }: NumberSliderGripContainerProps): React.ReactElement => {
+  return (
+    <GripContainer elementId={elementId} parameterId={'output'} mode="output">
+      <NumberSliderGrip />
+    </GripContainer>
   )
 }

@@ -37,7 +37,15 @@ export type UpdateSelectionPayload = {
 )
 
 export type PrepareLiveMotionPayload = {
+  /**
+   * The id of the element the user is currently moving directly.
+   * @Remarks This element will be excluded from `dispatchLiveMotion` on the assumption that it is a `Draggable` element.
+   */
   anchor: string
+  /**
+   * The ids of all elements that will be involved in the move. (i.e. selection)
+   * @remarks This is used to identify attached elements and wires, so the anchor element must be specified here if it should be included.
+   */
   targets: string[]
 }
 
