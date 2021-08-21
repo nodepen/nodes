@@ -6,7 +6,7 @@ type GripContextProps = {
 
 type GripContextState = {
   gripRef: React.RefObject<HTMLDivElement>
-  register: () => void
+  register: (offset: [dx: number, dy: number]) => void
 }
 
 const Context = React.createContext<GripContextState>({ gripRef: React.createRef(), register: () => '' })

@@ -1,11 +1,11 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useEffect } from 'react'
 import { GripIcon, useGripContext } from '../../../common'
 
 export const NumberSliderGrip = (): React.ReactElement => {
   const { gripRef, register } = useGripContext()
 
   useEffect(() => {
-    register()
+    register([-6, 0])
   }, [])
 
   return (
