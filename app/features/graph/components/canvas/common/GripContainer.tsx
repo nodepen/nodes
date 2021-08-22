@@ -1,10 +1,13 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { GripContext } from './GripContext'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
 import { useAppStore } from '@/features/common/store'
 import { getWireMode } from '@/features/graph/store/hotkey/utils'
+import { getLiveWires } from '@/features/graph/store/graph/utils'
+import { PointerTooltip } from '../../overlay'
+import { WireModeTooltip } from '../elements/StaticComponent/lib'
 
 type GripContainerProps = {
   elementId: string
@@ -57,23 +60,61 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
 
   const pointerIsMoving = useRef(false)
 
-  const handlePointerEnter = (): void => {
+  const [showWireTooltip, setShowWireTooltip] = useState(false)
+  const wireTooltipPosition = useRef<[number, number]>([0, 0])
+
+  const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (pointerIsMoving.current) {
       // Prevent self-collision
       return
+    }
+
+    switch (e.pointerType) {
+      case 'mouse': {
+        const { pageX, pageY } = e
+
+        const liveWires = getLiveWires(store.getState().graph.present)
+
+        if (liveWires.length === 0) {
+          wireTooltipPosition.current = [pageX, pageY]
+          setShowWireTooltip(true)
+          return
+        }
+      }
     }
 
     captureLiveWires({ type: mode, elementId, parameterId })
   }
 
-  const handlePointerLeave = (): void => {
+  const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (pointerIsMoving.current) {
       // Prevent self-collision
       return
     }
 
+    switch (e.pointerType) {
+      case 'mouse': {
+        if (showWireTooltip) {
+          setShowWireTooltip(false)
+        }
+      }
+    }
+
     releaseLiveWires()
   }
+
+  // const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
+  //   if (pointerIsMoving.current) {
+  //     return
+  //   }
+
+  //   switch (e.pointerType) {
+  //     case 'mouse': {
+  //       const { pageX, pageY } = e
+  //       setWireTooltipPosition([pageX, pageY])
+  //     }
+  //   }
+  // }
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
@@ -83,14 +124,26 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
 
   return (
     <GripContext gripRef={gripRef} register={handleRegister}>
-      <div
-        className="w-full h-full"
-        onPointerUp={handlePointerUp}
-        onPointerEnter={handlePointerEnter}
-        onPointerLeave={handlePointerLeave}
-      >
-        {children}
-      </div>
+      <>
+        <div
+          className="w-full h-full"
+          onPointerUp={handlePointerUp}
+          onPointerEnter={handlePointerEnter}
+          onPointerLeave={handlePointerLeave}
+        >
+          {children}
+        </div>
+        {showWireTooltip ? (
+          <PointerTooltip
+            initialPosition={wireTooltipPosition.current}
+            offset={[25, 25]}
+            pointerFilter={[]}
+            pointerTypeFilter={['mouse']}
+          >
+            <WireModeTooltip source={{ elementId, parameterId }} />
+          </PointerTooltip>
+        ) : null}
+      </>
     </GripContext>
   )
 }

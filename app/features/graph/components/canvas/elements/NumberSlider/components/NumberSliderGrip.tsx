@@ -5,7 +5,7 @@ const NumberSliderGrip = (): React.ReactElement => {
   const { gripRef, register } = useGripContext()
 
   useEffect(() => {
-    register([-6, 0])
+    register([-6, 2])
   }, [])
 
   return (
