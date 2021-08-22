@@ -359,7 +359,7 @@ export const graphSlice = createSlice({
         }
       }
 
-      console.log(`Selection captured ${stagedElementIds.length} elements!`)
+      // console.log(`Selection captured ${stagedElementIds.length} elements!`)
 
       const nextSelection: string[] = []
 

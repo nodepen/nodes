@@ -89,14 +89,6 @@ const ElementContainer = ({
     (e, d) => {
       const { x, y } = d
 
-      // Handle click, if motion was sufficiently short
-      const dragDuration = Date.now() - dragStartTime.current
-      const dragDistance = distance(dragStartPosition.current, [x, y])
-
-      if (dragDuration < 250 && dragDistance < 15) {
-        handleClickSelection()
-      }
-
       // Perform state operations
       setZoomLock(false)
       moveElement(id, [x, y])
@@ -104,6 +96,14 @@ const ElementContainer = ({
       // Perform cleanup operations
       // Recalculate staged motion in case we moved a non-selected item
       prepareLiveMotion({ anchor: 'selection', targets: selection })
+
+      // Handle click, if motion was sufficiently short
+      const dragDuration = Date.now() - dragStartTime.current
+      const dragDistance = distance(dragStartPosition.current, [x, y])
+
+      if (dragDuration < 250 && dragDistance < 15) {
+        handleClickSelection()
+      }
 
       // Run callback, if provided
       onStop?.(e, d)
