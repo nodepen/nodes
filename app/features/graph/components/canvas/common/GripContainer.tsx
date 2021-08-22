@@ -7,7 +7,7 @@ import { useAppStore } from '@/features/common/store'
 import { getWireMode } from '@/features/graph/store/hotkey/utils'
 import { getLiveWires } from '@/features/graph/store/graph/utils'
 import { PointerTooltip } from '../../overlay'
-import { WireModeTooltip } from '../elements/StaticComponent/lib'
+import { GripTooltip } from './GripTooltip'
 
 type GripContainerProps = {
   elementId: string
@@ -148,7 +148,7 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
             pointerFilter={[]}
             pointerTypeFilter={['mouse']}
           >
-            <WireModeTooltip source={{ elementId, parameterId }} />
+            <GripTooltip source={{ elementId, parameterId }} />
           </PointerTooltip>
         ) : null}
       </>

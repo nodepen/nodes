@@ -12,7 +12,7 @@ type WireModeTooltipProps = {
   }
 }
 
-const WireModeTooltip = ({ source }: WireModeTooltipProps): React.ReactElement => {
+export const GripTooltip = ({ source }: WireModeTooltipProps): React.ReactElement => {
   const mode = useWireMode()
   const store = useAppStore()
 
@@ -68,5 +68,3 @@ const WireModeTooltip = ({ source }: WireModeTooltipProps): React.ReactElement =
 
   return tooltip
 }
-
-export default React.memo(WireModeTooltip)
