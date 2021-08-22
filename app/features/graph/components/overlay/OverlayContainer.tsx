@@ -33,6 +33,8 @@ export const OverlayContainer = ({
         minScale={1}
         maxScale={1}
         limitToBounds={false}
+        velocityAnimation={{ disabled: true }}
+        zoomAnimation={{ disabled: true }}
         wheel={{
           disabled: true,
         }}

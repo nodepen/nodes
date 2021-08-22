@@ -225,6 +225,7 @@ const GraphCanvas = (): React.ReactElement => {
         centerOnInit={false}
         minScale={0.25}
         maxScale={2.5}
+        velocityAnimation={{ disabled: true }}
         zoomAnimation={{ disabled: true }}
         onInit={(ref) => {
           register.setTransform(ref.setTransform)
