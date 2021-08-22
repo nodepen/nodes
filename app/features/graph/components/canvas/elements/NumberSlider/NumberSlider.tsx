@@ -6,7 +6,7 @@ import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
 import { useDebugRender, useLongPress } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
-import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
+import { useGraphDispatch, useGraphSelection } from '@/features/graph/store/graph/hooks'
 import { coerceValue, getSliderPosition } from './utils'
 import { NumberSliderGrip, NumberSliderMenu } from './components'
 import { useSessionManager } from '@/features/common/context/session'
@@ -25,7 +25,10 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const { device } = useSessionManager()
 
-  const { updateElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
+  const { updateElement, prepareLiveMotion, dispatchLiveMotion, updateSelection } = useGraphDispatch()
+  const selected = useGraphSelection()
+
+  const isSelected = selected.includes(id)
 
   const { setZoomLock } = useCameraDispatch()
   const zoom = useCameraStaticZoom()
@@ -370,7 +373,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     <>
       <ElementContainer element={element} onStart={onDragStart} onDrag={onDrag} disabled={sliderActive || resizeActive}>
         <div
-          className="relative p-2 bg-white rounded-md border-2 border-dark shadow-osm"
+          className={`${
+            isSelected ? 'bg-green' : 'bg-white'
+          } relative p-2 rounded-md border-2 border-dark shadow-osm transition-colors duration-150`}
           role="presentation"
           onMouseDown={(e) => {
             const { pageX, pageY } = e
@@ -388,6 +393,10 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           }}
           onDoubleClick={(e) => {
             const { pageX, pageY } = e
+
+            if (isSelected) {
+              updateSelection({ type: 'id', mode: 'remove', ids: [id] })
+            }
 
             switch (device.breakpoint) {
               case 'sm': {

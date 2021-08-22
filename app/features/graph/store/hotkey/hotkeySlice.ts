@@ -29,6 +29,13 @@ export const hotkeySlice = createSlice({
           }
       }
     },
+    clearKeys: (state: HotkeyState) => {
+      const keys = Object.keys(state)
+
+      for (const key of keys) {
+        state[key] = false
+      }
+    },
   },
 })
 

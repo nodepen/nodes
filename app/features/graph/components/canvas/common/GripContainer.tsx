@@ -116,6 +116,10 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
   //   }
   // }
 
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
+    e.stopPropagation()
+  }
+
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
@@ -127,9 +131,13 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
       <>
         <div
           className="w-full h-full"
+          onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
+          role="presentation"
+          onMouseDown={(e) => e.stopPropagation()}
+          onDoubleClick={(e) => e.stopPropagation()}
         >
           {children}
         </div>

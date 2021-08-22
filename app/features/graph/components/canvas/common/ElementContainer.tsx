@@ -3,6 +3,8 @@ import Draggable, { DraggableEventHandler } from 'react-draggable'
 import { NodePen } from 'glib'
 import { useCameraDispatch, useCameraMode, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch, useGraphSelection } from '@/features/graph/store/graph/hooks'
+import { useClickSelection } from '@/features/graph/hooks'
+import { distance } from '@/features/graph/utils'
 
 type ElementContainerProps = {
   children: JSX.Element
@@ -49,13 +51,25 @@ const ElementContainer = ({
     e.stopPropagation()
   }, [])
 
+  const handleClickSelection = useClickSelection(element.id)
+
+  const dragStartTime = useRef(Date.now())
+  const dragStartPosition = useRef<[number, number]>([0, 0])
+
   const handleDragStart: DraggableEventHandler = useCallback(
     (e, d) => {
       e.stopPropagation()
 
+      // Cache initial motion data
+      const { x, y } = d
+      dragStartTime.current = Date.now()
+      dragStartPosition.current = [x, y]
+
+      // Perform state operations
       setZoomLock(true)
       prepareLiveMotion({ anchor: id, targets: [id] })
 
+      // Run callback, if provided
       onStart?.(e, d)
     },
     [id, setZoomLock, prepareLiveMotion, onStart]
@@ -63,8 +77,8 @@ const ElementContainer = ({
 
   const handleDrag: DraggableEventHandler = useCallback(
     (e, d) => {
-      const { deltaX, deltaY } = d
-      dispatchLiveMotion(deltaX, deltaY)
+      const { deltaX: dx, deltaY: dy } = d
+      dispatchLiveMotion(dx, dy)
 
       onDrag?.(e, d)
     },
@@ -75,18 +89,26 @@ const ElementContainer = ({
     (e, d) => {
       const { x, y } = d
 
-      // Unlock camera
-      setZoomLock(false)
+      // Handle click, if motion was sufficiently short
+      const dragDuration = Date.now() - dragStartTime.current
+      const dragDistance = distance(dragStartPosition.current, [x, y])
 
-      // Commit motion to state
+      if (dragDuration < 250 && dragDistance < 15) {
+        handleClickSelection()
+      }
+
+      // Perform state operations
+      setZoomLock(false)
       moveElement(id, [x, y])
 
+      // Perform cleanup operations
       // Recalculate staged motion in case we moved a non-selected item
       prepareLiveMotion({ anchor: 'selection', targets: selection })
 
+      // Run callback, if provided
       onStop?.(e, d)
     },
-    [id, selection, setZoomLock, moveElement, prepareLiveMotion, onStop]
+    [id, selection, setZoomLock, moveElement, prepareLiveMotion, onStop, handleClickSelection]
   )
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -110,6 +132,8 @@ const ElementContainer = ({
       dimensions: [width, height],
       adjustment: [width / -2, height / -2],
     })
+
+    isRegistered.current = true
   }, [])
 
   return (

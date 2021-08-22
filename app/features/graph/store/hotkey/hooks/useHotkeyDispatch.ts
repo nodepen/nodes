@@ -7,5 +7,6 @@ export const useHotkeyDispatch = () => {
 
   return {
     setKey: (data: Payload.SetKeyPayload) => dispatch(hotkeyActions.setKey(data)),
+    clearKeys: () => dispatch(hotkeyActions.clearKeys()),
   }
 }
