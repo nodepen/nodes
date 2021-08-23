@@ -1,4 +1,4 @@
-import { useGraphManager } from '@/context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 import React from 'react'
 import { Layout } from './components'
 import { DeleteKeyObserver, HistoryHotkeyObserver, SelectionHotkeyObserver } from './components/observer'

@@ -15,6 +15,9 @@ module.exports = {
       '1000': '10',
     },
     extend: {
+      cursor: {
+        'move-ew': 'ew-resize'
+      },
       screens: {
         xs: '400px',
       },

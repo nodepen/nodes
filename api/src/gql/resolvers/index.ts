@@ -1,4 +1,4 @@
 import { Query } from './query'
-import { Subscription } from './subscription'
+// import { Subscription } from './subscription'
 
-export const resolvers = { Query, Subscription }
+export const resolvers = { Query }

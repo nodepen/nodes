@@ -8,18 +8,16 @@ export const store = configureStore({
   reducer: {
     camera: cameraReducer,
     graph: undoable(graphReducer, {
-      // TODO: Add an 'internal move' so we can't undo the recenter move-on-place
       filter: excludeAction([
-        graphActions.moveLiveElement.type,
+        graphActions.addLiveElement.type,
         graphActions.updateLiveElement.type,
+        graphActions.deleteLiveElements.type,
         graphActions.updateSelection.type,
         graphActions.setProvisionalWire.type,
         graphActions.clearProvisionalWire.type,
         graphActions.prepareLiveMotion.type,
         graphActions.dispatchLiveMotion.type,
         graphActions.setMode.type,
-        graphActions.registerElement.type,
-        graphActions.registerElementAnchor.type,
         graphActions.startLiveWires.type,
         graphActions.updateLiveWires.type,
         graphActions.captureLiveWires.type,
@@ -27,6 +25,21 @@ export const store = configureStore({
         ...Object.values(cameraActions).map((action) => action.type),
         ...Object.values(hotkeyActions).map((action) => action.type),
       ]),
+      groupBy: (action, current, _previous) => {
+        const ELEMENT_PLACEMENT = [
+          graphActions.addElement.type,
+          graphActions.registerElement.type,
+          graphActions.registerElementAnchor.type,
+        ]
+
+        const id = current.registry.latest.element
+
+        if (ELEMENT_PLACEMENT.includes(action.type)) {
+          return `ELEMENT_PLACEMENT_${id}`
+        }
+
+        return null
+      },
       limit: 10,
     }),
     hotkey: hotkeyReducer,

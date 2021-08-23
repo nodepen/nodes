@@ -1,5 +1,5 @@
-import { useSessionManager } from '@/context/session'
-import { firebase } from 'context/session/auth/firebase'
+import { useSessionManager } from '@/features/common/context/session'
+import { firebase } from '@/features/common/context/session/auth/firebase'
 import auth from 'firebase'
 
 export const UserMenu = (): React.ReactElement => {

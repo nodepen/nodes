@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
-import { useGraphManager } from 'context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 import { categorize, flattenCategory } from '../../../utils'
 import { ComponentLibraryIcon } from './lib'
-import { useSessionManager } from '@/context/session'
+import { useSessionManager } from '@/features/common/context/session'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
@@ -13,7 +13,7 @@ export const GraphControls = (): React.ReactElement => {
 
   const libraryByCategory = useMemo(() => categorize(library ?? []), [library])
 
-  const [selectedCategory, setSelectedCategory] = useState('sets')
+  const [selectedCategory, setSelectedCategory] = useState('params')
 
   const selectedCategoryComponents = useMemo(
     () => flattenCategory(libraryByCategory, selectedCategory),

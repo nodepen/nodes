@@ -1,9 +1,9 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useGraphDispatch, useGraphSelection } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraMode, useCameraDispatch } from 'features/graph/store/camera/hooks'
 import Draggable from 'react-draggable'
-import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
+import { useElementDimensions, useCriteria, useDebugRender, useLongPress } from 'hooks'
 import { StaticComponentParameter } from './lib'
 import { useComponentMenuActions } from './lib/hooks'
 import { GenericMenu } from 'features/graph/components/overlay'
@@ -23,7 +23,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const scale = useCameraStaticZoom()
   const mode = useCameraMode()
 
-  const { moveElement, moveLiveElement, registerElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
+  const { moveElement, registerElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
   const { setZoomLock } = useCameraDispatch()
 
   const componentRef = useRef<HTMLDivElement>(null)
@@ -43,8 +43,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
     }
     isMoved.current = true
 
-    moveLiveElement({ id, position: [x - width / 2, y - height / 2] })
-    registerElement({ id, dimensions: [width, height] })
+    registerElement({ id, dimensions: [width, height], adjustment: [width / -2, height / -2] })
   }, [width, height])
 
   const pointerDownStartTime = useRef<number>(Date.now())
@@ -52,9 +51,43 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   const componentMenuActions = useComponentMenuActions(element)
   const [showComponentMenuOverlay, setShowComponentMenuOverlay] = useState(false)
-  const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
+  const overlayPosition = useRef<[number, number]>([0, 0])
+  // const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
 
   const handleClick = useClickSelection(id)
+
+  const longPressActive = useRef(false)
+
+  const handleLongPress = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    longPressActive.current = true
+
+    overlayPosition.current = [pageX, pageY]
+  }, [])
+
+  const longPressTarget = useLongPress(handleLongPress)
+
+  // const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
+  //   if (e.pointerType === 'mouse') {
+  //     return
+  //   }
+
+  //   const { pageX, pageY } = e
+  //   overlayPosition.current = [pageX, pageY]
+
+  //   longPressActive.current = false
+  //   longPressTarget.current?.setPointerCapture(e.pointerId)
+  // }
+
+  // const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
+  //   if (!longPressActive.current) {
+  //     return
+  //   }
+
+  //   setShowComponentMenuOverlay(true)
+  //   longPressActive.current = false
+  // }
 
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
@@ -126,13 +159,24 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                 className={`${
                   showComponentMenuOverlay ? 'bg-green' : 'bg-white'
                 } w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
+                ref={longPressTarget}
                 onPointerDown={(e) => {
-                  pointerDownStartTime.current = Date.now()
-
                   const { pageX, pageY } = e
-                  pointerDownStartPosition.current = [pageX, pageY]
+
+                  switch (e.pointerType) {
+                    case 'mouse': {
+                      pointerDownStartTime.current = Date.now()
+                      pointerDownStartPosition.current = [pageX, pageY]
+                      break
+                    }
+                    default: {
+                      break
+                    }
+                  }
                 }}
                 onPointerUp={(e) => {
+                  e.stopPropagation()
+
                   switch (e.pointerType) {
                     case 'mouse': {
                       if (e.button !== 2) {
@@ -147,12 +191,18 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
                       const { pageX, pageY } = e
 
+                      overlayPosition.current = [pageX, pageY]
                       setShowComponentMenuOverlay(true)
-                      setOverlayPosition([pageX, pageY])
 
                       break
                     }
-                    case 'touch': {
+                    default: {
+                      if (!longPressActive.current) {
+                        return
+                      }
+
+                      setShowComponentMenuOverlay(true)
+                      longPressActive.current = false
                       break
                     }
                   }
@@ -192,7 +242,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         <GenericMenu
           context={element}
           actions={componentMenuActions}
-          position={overlayPosition}
+          position={overlayPosition.current}
           onClose={() => setShowComponentMenuOverlay(false)}
         />
       ) : null}

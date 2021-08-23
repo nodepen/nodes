@@ -24,9 +24,16 @@ export const hotkeySlice = createSlice({
           state[stateKey] = pressed
           break
         default:
-          if (process.env.NEXT_PUBLIC_DEBUG) {
+          if (process.env.NEXT_PUBLIC_DEBUG === 'true') {
             console.log(`😔😔😔 Not observing ${key}`)
           }
+      }
+    },
+    clearKeys: (state: HotkeyState) => {
+      const keys = Object.keys(state)
+
+      for (const key of keys) {
+        state[key] = false
       }
     },
   },

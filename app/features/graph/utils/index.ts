@@ -1,3 +1,4 @@
+export { addDefaultElement } from './addDefaultElement'
 export { bezierLength } from './bezierLength'
 export { categorize } from './categorize'
 export { distance } from './distance'

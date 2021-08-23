@@ -1,7 +1,8 @@
 import React, { useEffect } from 'react'
 import { assert } from 'glib'
 import { useGraphElements } from '../../store/graph/hooks'
-import { StaticComponent, LiveWire, Wire, SelectionRegion } from './elements'
+import { StaticComponent, LiveWire, Annotation, NumberSlider, Wire, SelectionRegion } from './elements'
+import { NodePen } from '@/glib/src'
 
 const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
@@ -66,6 +67,18 @@ const ElementsContainer = (): React.ReactElement => {
                 return null
               }
             }
+          }
+          case 'number-slider': {
+            if (!assert.element.isNumberSlider(el)) {
+              return null
+            }
+
+            return <NumberSlider key={`graph-element-number-slider-${el.id}`} element={el} />
+          }
+          case 'annotation': {
+            const annotation = el as NodePen.Element<'annotation'>
+
+            return <Annotation key={`graph-element-annotation-${el.id}`} annotation={annotation} />
           }
           default: {
             return null

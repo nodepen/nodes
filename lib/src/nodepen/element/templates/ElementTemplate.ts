@@ -7,6 +7,10 @@ export type ElementTemplate = {
     'static-parameter': {
         type: 'static-parameter'
     } & GrasshopperComponent,
+    'annotation': {
+        type: 'annotation'
+        parent: string
+    },
     'panel': {
         type: 'panel'
     },

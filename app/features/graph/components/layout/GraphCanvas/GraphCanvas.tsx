@@ -9,7 +9,7 @@ import {
 } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
 import { Container } from '../../canvas'
-import { useGraphManager } from 'context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 import { StaticGrid } from '..'
 import { useLongPress } from 'hooks'
 import { useGraphDispatch } from '../../../store/graph/hooks'
@@ -22,7 +22,7 @@ const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
   const state = useAppStore()
 
-  const { addElement } = useGraphDispatch()
+  const { addLiveElement } = useGraphDispatch()
   const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
   const cameraPosition = useCameraStaticPosition()
   const cameraZoom = useCameraStaticZoom()
@@ -67,13 +67,13 @@ const GraphCanvas = (): React.ReactElement => {
       )
 
       // Add region select element, which will handle the rest
-      addElement({
+      addLiveElement({
         type: 'region',
         template: region,
         position: [x, y],
       })
     },
-    [cameraPosition, cameraZoom, addElement, longPressActivated]
+    [cameraPosition, cameraZoom, addLiveElement, longPressActivated]
   )
 
   const handleOpenGraphContextMenu = useCallback(
@@ -188,7 +188,7 @@ const GraphCanvas = (): React.ReactElement => {
             )
 
             // Add region select element, which will handle the rest
-            addElement({
+            addLiveElement({
               type: 'region',
               template: region,
               position: [x, y],
@@ -225,6 +225,8 @@ const GraphCanvas = (): React.ReactElement => {
         centerOnInit={false}
         minScale={0.25}
         maxScale={2.5}
+        velocityAnimation={{ disabled: true }}
+        zoomAnimation={{ disabled: true }}
         onInit={(ref) => {
           register.setTransform(ref.setTransform)
         }}

@@ -1,4 +1,4 @@
-import { useSessionManager } from 'context/session'
+import { useSessionManager } from '@/features/common/context/session'
 
 export const UserImage = (): React.ReactElement => {
   const { user } = useSessionManager()

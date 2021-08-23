@@ -1,0 +1,1 @@
+export { getWireMode } from './getWireMode'

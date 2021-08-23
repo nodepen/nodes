@@ -8,7 +8,7 @@ import { useAppStore } from '$'
 import { PointerTooltip } from 'features/graph/components/overlay'
 import WireModeTooltip from './WireModeTooltip'
 import { getConnectedWires } from '@/features/graph/store/graph/utils'
-import { useSessionManager } from '@/context/session'
+import { useSessionManager } from '@/features/common/context/session'
 import { useClickSelection } from '@/features/graph/hooks'
 
 type StaticComponentParameterProps = {
@@ -45,8 +45,10 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
     const [sx, sy] = [left + width / 2, top + height / 2]
 
+    const offset = 2 * cameraZoom
+
     const [x, y] = screenSpaceToCameraSpace(
-      { offset: [0, 48 + 36], position: [sx, sy] },
+      { offset: [0, 48 + 40], position: [sx, sy + offset] },
       { zoom: cameraZoom, position: cameraPosition }
     )
 
@@ -118,7 +120,6 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
   const longPressActive = useRef(false)
 
   const handleLongPress = useCallback((): void => {
-    console.log('long press!')
     longPressActive.current = true
   }, [])
 
@@ -365,6 +366,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         default: {
           if (longPressActive.current) {
             // Show menu
+            e.stopPropagation()
             console.log('Launch menu!')
           }
 
@@ -394,6 +396,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
           device.breakpoint === 'sm' ? '' : 'hover:bg-gray-300'
         } flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 overflow-visible cursor-default`}
         ref={longPressTarget as any}
+        style={{ touchAction: 'none' }}
         onClick={handleClick}
         onMouseDown={handleMouseDown}
         onMouseEnter={handleMouseEnter}
@@ -404,7 +407,6 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         onPointerMove={handlePointerMove}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
-        style={{ touchAction: 'none' }}
       >
         {body}
       </button>

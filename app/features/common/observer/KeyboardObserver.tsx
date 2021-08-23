@@ -2,7 +2,11 @@ import React, { useEffect, useCallback } from 'react'
 import { useHotkeyDispatch } from 'features/graph/store/hotkey/hooks'
 
 const KeyboardObserver = (): React.ReactElement => {
-  const { setKey } = useHotkeyDispatch()
+  const { setKey, clearKeys } = useHotkeyDispatch()
+
+  const handlePointerEnter = useCallback((): void => {
+    clearKeys()
+  }, [clearKeys])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent): void => {
@@ -23,10 +27,12 @@ const KeyboardObserver = (): React.ReactElement => {
   )
 
   useEffect(() => {
+    window.document.documentElement.addEventListener('mouseenter', handlePointerEnter)
     window.addEventListener('keydown', handleKeyDown)
     window.addEventListener('keyup', handleKeyUp)
 
     return () => {
+      window.document.documentElement.removeEventListener('mouseenter', handlePointerEnter)
       window.removeEventListener('keydown', handleKeyDown)
       window.removeEventListener('keyup', handleKeyUp)
     }

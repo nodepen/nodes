@@ -4,7 +4,7 @@ import { Grasshopper } from 'glib'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
 import { ComponentLibraryDetails } from './ComponentLibraryDetails'
-import { getScreenPosition, screenSpaceToCameraSpace } from '../../../../utils'
+import { addDefaultElement, getScreenPosition, screenSpaceToCameraSpace } from '../../../../utils'
 
 type ComponentLibraryEntryProps = {
   template: Grasshopper.Component
@@ -66,11 +66,7 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
     const [ex, ey] = getScreenPosition(e)
     const [x, y] = screenSpaceToCameraSpace({ offset: [0, 48 + 36], position: [ex, ey] }, { zoom, position: [cx, cy] })
 
-    addElement({
-      type: 'static-component',
-      template: { type: 'static-component', ...template },
-      position: [x, y],
-    })
+    addDefaultElement(addElement, [x, y], template)
   }
 
   return (

@@ -2,7 +2,7 @@ import { NodePen } from 'glib'
 import { GraphMode } from './GraphMode'
 
 export type GraphState = {
-  elements: { [id: string]: NodePen.Element<NodePen.ElementType> }
+  elements: { [elementId: string]: NodePen.Element<NodePen.ElementType> }
   selection: string[]
   solution: {
     id?: string
@@ -10,6 +10,9 @@ export type GraphState = {
   }
   mode: GraphMode
   registry: {
+    latest: {
+      element: string
+    }
     move: {
       elements: string[]
       fromWires: string[]

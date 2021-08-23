@@ -1,7 +1,14 @@
 import { distance } from '@/features/graph/utils'
 import React, { useEffect, useRef, useCallback } from 'react'
 
-export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 600): React.RefObject<HTMLDivElement> => {
+export const useLongPress = (
+  onLongPress: (e: PointerEvent) => void,
+  delay = 600,
+  /**
+   * Note to Chuck: Using this breaks things. Best to toggle flags with long press, then block the later events.
+   */
+  stopPropagationOnStart = false
+): React.RefObject<HTMLDivElement> => {
   const target = useRef<HTMLDivElement>(null)
 
   const longPressActive = useRef<boolean>(false)
@@ -30,6 +37,10 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 600
 
       e.preventDefault()
 
+      if (stopPropagationOnStart) {
+        e.stopPropagation()
+      }
+
       clearTimeout(longPressTimeout.current)
 
       const { pageX, pageY } = e
@@ -57,7 +68,7 @@ export const useLongPress = (onLongPress: (e: PointerEvent) => void, delay = 600
 
       longPressTimeout.current = timeout as any
     },
-    [onLongPress, delay, resetState]
+    [onLongPress, delay, resetState, stopPropagationOnStart]
   )
 
   const handlePointerMove = useCallback(

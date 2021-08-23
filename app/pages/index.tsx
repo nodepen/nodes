@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { NextPage } from 'next'
+import Link from 'next/link'
 import Head from 'next/head'
 
 const Home: NextPage = () => {
@@ -75,7 +76,7 @@ const Home: NextPage = () => {
           content="NodePen is a web client for Grasshopper, the visual programming language for Rhino 3D. Same Grasshopper, new digs. Powered by Rhino
           Compute."
         />
-        <meta name="keywords" content="grasshopper, online grasshopper, web grasshopper, rhino.compute" />
+        <meta name="keywords" content="grasshopper, grasshopper online, grasshopper 3d" />
       </Head>
       <div className="w-76 flex flex-col items-center">
         <a
@@ -122,13 +123,15 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className="w-76 flex flex-col items-center">
-        <a href="/gh" className="font-sans font-semibold text-sm">
-          <div className="w-48 h-10 border-2 border-solid border-dark shadow-osm bg-light rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
-            <div className="flex-grow flex flex-row justify-center items-center">
-              <div className="font-sans font-semibold text-sm">LAUNCH NODEPEN</div>
+        <Link href="/gh">
+          <a className="font-sans font-semibold text-sm">
+            <div className="w-48 h-10 border-2 border-solid border-dark shadow-osm bg-light rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
+              <div className="flex-grow flex flex-row justify-center items-center">
+                <div className="font-sans font-semibold text-sm">LAUNCH NODEPEN</div>
+              </div>
             </div>
-          </div>
-        </a>
+          </a>
+        </Link>
       </div>
 
       <style jsx>{`

@@ -1,5 +1,5 @@
 import React from 'react'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAppStore } from '$'
 import { useWireMode } from 'features/graph/store/hotkey/hooks'
 import { getConnectedWires } from 'features/graph/store/graph/utils'

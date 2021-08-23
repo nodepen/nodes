@@ -9,4 +9,5 @@ export type ElementData = {
     'panel': VisibleElement & GripElement
     'wire': VisibleElement & DirectionalElement
     'region': VisibleElement & DirectionalElement & SelectionElement
+    'annotation': VisibleElement
 } & ElementDataEntry

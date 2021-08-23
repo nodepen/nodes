@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { useGraphManager } from 'context/graph'
+import { useGraphManager } from '@/features/graph/context/graph'
 
 /**
  * Given a position in screen coordinate space, returns the matching left and top offset

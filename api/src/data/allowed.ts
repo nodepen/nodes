@@ -20,10 +20,8 @@ const getAllowedIds = (): string[] => {
 
 const allowedComponents = {
   params: {
-    /* eslint-disable-next-line */
-    // @ts-ignore
     input: [
-      // '57da07bd-ecab-415d-9d86-af36d7073abc', // Number Slider
+      '57da07bd-ecab-415d-9d86-af36d7073abc', // Number Slider
       // '59e0b89a-e487-49f8-bab8-b5bab16be14c', // Panel
     ],
     /* eslint-disable-next-line */

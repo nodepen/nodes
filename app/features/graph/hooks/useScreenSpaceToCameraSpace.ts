@@ -14,7 +14,7 @@ export const useScreenSpaceToCameraSpace = (): ((
   const cameraZoom = useCameraStaticZoom()
 
   const callback = useCallback(
-    (screenPosition: [number, number], screenOffset: [number, number] = [0, 48 + 36]): [number, number] => {
+    (screenPosition: [number, number], screenOffset: [number, number] = [0, 48 + 40]): [number, number] => {
       const [cx, cy] = cameraPosition
       const [ex, ey] = screenPosition
       const [x, y] = screenSpaceToCameraSpace(

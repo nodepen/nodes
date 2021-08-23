@@ -17,7 +17,6 @@ import {
   MoveElementPayload,
   ProvisionalWirePayload,
   RegisterElementAnchorPayload,
-  RegisterElementPayload,
   UpdateElementPayload,
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
@@ -30,6 +29,9 @@ const initialState: GraphState = {
   selection: [],
   mode: 'idle',
   registry: {
+    latest: {
+      element: 'unset',
+    },
     move: {
       elements: [],
       fromWires: [],
@@ -55,6 +57,8 @@ export const graphSlice = createSlice({
     },
     addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
+
+      state.registry.latest.element = id
 
       switch (action.payload.type) {
         case 'static-component': {
@@ -113,7 +117,104 @@ export const graphSlice = createSlice({
           state.elements[id] = element
           break
         }
+        case 'number-slider': {
+          const template = action.payload.template as NodePen.Element<'number-slider'>['template']
+
+          const element: NodePen.Element<'number-slider'> = {
+            id,
+            template,
+            current: {
+              dimensions: {
+                width: 300,
+                height: 42,
+              },
+              position: action.payload.position,
+              anchors: {},
+              sources: {},
+              values: {
+                output: {
+                  '{0;}': [
+                    {
+                      type: 'number',
+                      data: 0.25,
+                    },
+                  ],
+                },
+              },
+              inputs: {},
+              outputs: {
+                output: 0,
+              },
+              solution: {
+                id: 'unset',
+                mode: 'immediate',
+              },
+              rounding: 'rational',
+              domain: [0, 1],
+              precision: 3,
+            },
+          }
+
+          if (action.payload.data) {
+            element.current = { ...element.current, ...action.payload.data }
+          }
+
+          state.elements[id] = element
+          break
+        }
         default: {
+          console.log(`🐍🐍🐍 Cannot handle element type ${action.payload.type} in 'addElement'.`)
+          break
+        }
+      }
+    },
+    addLiveElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
+      const id = newGuid()
+
+      switch (action.payload.type) {
+        case 'annotation': {
+          const template = action.payload.template as NodePen.Element<'annotation'>['template']
+
+          const element: NodePen.Element<'annotation'> = {
+            id,
+            template,
+            current: {
+              position: action.payload.position,
+              dimensions: action.payload.data?.dimensions ?? {
+                width: 0,
+                height: 0,
+              },
+            },
+          }
+
+          state.elements[id] = element
+          break
+        }
+        case 'region': {
+          const template = action.payload.template as NodePen.Element<'region'>['template']
+
+          const element: NodePen.Element<'region'> = {
+            id,
+            template,
+            current: {
+              dimensions: {
+                width: 0,
+                height: 0,
+              },
+              position: action.payload.position,
+              from: [...action.payload.position],
+              to: [...action.payload.position],
+              selection: {
+                mode: 'default',
+              },
+            },
+          }
+
+          state.elements[id] = element
+          break
+        }
+        default: {
+          console.log(`🐍🐍🐍 Cannot handle element type ${action.payload.type} in 'addLiveElement'.`)
           break
         }
       }
@@ -208,17 +309,6 @@ export const graphSlice = createSlice({
       // Apply motion to element
       element.current.position = position
     },
-    moveLiveElement: (state: GraphState, action: PayloadAction<Payload.MoveElementPayload>) => {
-      const { id, position } = action.payload
-
-      const element = state.elements[id]
-
-      if (!element) {
-        return
-      }
-
-      element.current.position = position
-    },
     updateSelection: (state: GraphState, action: PayloadAction<Payload.UpdateSelectionPayload>) => {
       const { mode } = action.payload
 
@@ -269,7 +359,7 @@ export const graphSlice = createSlice({
         }
       }
 
-      console.log(`Selection captured ${stagedElementIds.length} elements!`)
+      // console.log(`Selection captured ${stagedElementIds.length} elements!`)
 
       const nextSelection: string[] = []
 
@@ -311,6 +401,24 @@ export const graphSlice = createSlice({
       prepareLiveMotion(state, 'unset', nextSelection)
 
       state.selection = nextSelection
+    },
+    updateElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
+      const { id, type, data } = action.payload
+
+      const element = state.elements[id]
+
+      // Make sure element exists
+      if (!element) {
+        console.log(`🐍 Attempted to update an element that doesn't exist!`)
+        return
+      }
+
+      if (element.template.type !== type) {
+        console.log(`🐍 Attempted to update data for element with the wrong data type!`)
+        return
+      }
+
+      element.current = { ...element.current, ...data }
     },
     updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
@@ -961,8 +1069,8 @@ export const graphSlice = createSlice({
 
       state.mode = mode
     },
-    registerElement: (state: GraphState, action: PayloadAction<RegisterElementPayload>) => {
-      const { id, dimensions } = action.payload
+    registerElement: (state: GraphState, action: PayloadAction<Payload.RegisterElementPayload>) => {
+      const { id, dimensions, adjustment } = action.payload
 
       if (!state.elements[id]) {
         return
@@ -971,6 +1079,15 @@ export const graphSlice = createSlice({
       const [width, height] = dimensions
 
       state.elements[id].current.dimensions = { width, height }
+
+      if (!adjustment) {
+        return
+      }
+
+      const [x, y] = state.elements[id].current.position
+      const [dx, dy] = adjustment
+
+      state.elements[id].current.position = [x + dx, y + dy]
     },
     registerElementAnchor: (state: GraphState, action: PayloadAction<RegisterElementAnchorPayload>) => {
       const { elementId, anchorId, position } = action.payload

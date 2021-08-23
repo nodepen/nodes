@@ -1,6 +1,6 @@
 import { WireMode } from 'features/graph/store/graph/types'
 import { PointerTooltip } from 'features/graph/components/overlay'
-import { useSessionManager } from 'context/session'
+import { useSessionManager } from '@/features/common/context/session'
 import { getWireModeTooltip } from 'features/graph/utils'
 
 type LiveWireTooltipProps = {

@@ -1,17 +1,22 @@
 import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
 import { Grasshopper } from 'glib'
 import { GraphStore } from './types'
-import { useSessionManager } from '../session'
+import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
 
 export const GraphContext = React.createContext<GraphStore>({
   register: {
     setTransform: () => '',
+    portal: {
+      add: () => '',
+      remove: () => '',
+    },
   },
   registry: {
     canvasContainerRef: createRef(),
     layoutContainerRef: createRef(),
+    portals: {},
   },
 })
 
@@ -93,15 +98,39 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
 
   const libraryValue = session.id ? library : undefined
 
+  const [portals, setPortals] = useState<GraphStore['registry']['portals']>({})
+
+  const handleAddPortal = useCallback((id: string, ref: React.RefObject<HTMLDivElement>): void => {
+    setPortals((current) => ({ ...current, [id]: ref }))
+  }, [])
+
+  const handleRemovePortal = useCallback((id: string): void => {
+    setPortals((current) => {
+      const next = { ...current }
+
+      if (id in next) {
+        delete next[id]
+        return next
+      }
+
+      return current
+    })
+  }, [])
+
   const store: GraphStore = {
     library: libraryValue,
     registry: {
       setTransform,
       canvasContainerRef,
       layoutContainerRef,
+      portals,
     },
     register: {
       setTransform: handleSetTransform,
+      portal: {
+        add: handleAddPortal,
+        remove: handleRemovePortal,
+      },
     },
   }
 

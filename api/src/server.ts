@@ -3,7 +3,7 @@ import { db, initialize } from './redis'
 
 import firebase, { ServiceAccount } from 'firebase-admin'
 import credentials from './auth/auth.json'
-import { pubsub } from './gql/pubsub'
+// import { pubsub } from './gql/pubsub'
 
 firebase.initializeApp({
   credential: firebase.credential.cert(credentials as ServiceAccount),
@@ -25,10 +25,10 @@ initializeServer().then(({ server }) => {
 
 // })
 
-db.client.on('connect', () => {
-  console.log('Redis connected!')
-  // initialize(db.client)
-})
+// db.client.on('connect', () => {
+//   console.log('Redis connected!')
+//   // initialize(db.client)
+// })
 
 // setTimeout(() => {
 //   pubsub.publish('SOLUTION_COMPLETE', { onSolution: { solutionId: '123' } })
