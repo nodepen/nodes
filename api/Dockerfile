@@ -19,10 +19,10 @@ COPY --from=builder /api/dist ./dist
 COPY --from=builder /api/node_modules ./node_modules
 COPY --from=builder /api/package.json ./package.json
 
-RUN apk add --no-cache redis
-RUN npm install -g concurrently
+# RUN apk add --no-cache redis
+# RUN npm install -g concurrently
 
 EXPOSE 4000
-EXPOSE 6379
+# EXPOSE 6379
 
-CMD ["concurrently", "redis-server --bind '0.0.0.0'", "npm run start"]
+CMD ["npm", "run", "start"]

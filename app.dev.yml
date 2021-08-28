@@ -1,0 +1,23 @@
+version: "3.9"
+services:
+  app:
+    build: ./app
+    ports:
+      - "3000:8080"
+    environment:
+      NEXT_PUBLIC_NP_API_URL: "localhost:4000/graphql"
+      NEXT_PUBLIC_DEBUG: "true"
+  api:
+    build: ./api
+    ports:
+      - "4000:4000"
+    depends_on:
+      - "redis"
+    environment:
+      NP_DB_HOST: "redis"
+      NP_DB_PORT: "6379"
+      PORT: "4000"
+  redis:
+    image: "redis:alpine"
+    ports:
+      - "6379:6379"
