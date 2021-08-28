@@ -25,10 +25,10 @@ initializeServer().then(({ server }) => {
 
 // })
 
-// db.client.on('connect', () => {
-//   console.log('Redis connected!')
-//   // initialize(db.client)
-// })
+db.client.on('connect', () => {
+  console.log('Redis connected!')
+  // initialize(db.client)
+})
 
 // setTimeout(() => {
 //   pubsub.publish('SOLUTION_COMPLETE', { onSolution: { solutionId: '123' } })
