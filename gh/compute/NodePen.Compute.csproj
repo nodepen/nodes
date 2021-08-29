@@ -83,7 +83,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Web.WebView2">
-      <Version>1.0.705.50</Version>
+      <Version>1.0.818.41</Version>
     </PackageReference>
     <PackageReference Include="Nancy">
       <Version>1.4.4</Version>
