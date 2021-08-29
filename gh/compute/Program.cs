@@ -60,8 +60,12 @@ namespace NodePen.Compute
 
     public void Start(int http_port)
     {
+      Log.Information(Environment.GetEnvironmentVariable("RHINO_TOKEN"));
       Log.Information("Launching RhinoCore library as {User}", Environment.UserName);
       Program.RhinoCore = new Rhino.Runtime.InProcess.RhinoCore(null, Rhino.Runtime.InProcess.WindowStyle.NoWindow);
+
+      Environment.SetEnvironmentVariable("RHINO_TOKEN", null, EnvironmentVariableTarget.Process);
+
       var config = new HostConfiguration();
 
       config.RewriteLocalhost = true;
