@@ -2,8 +2,6 @@ node_modules
 dist
 .vscode
 
-glib
-
 .env
 app.yaml
 app.beta.yaml

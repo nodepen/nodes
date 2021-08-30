@@ -7,7 +7,7 @@ npm run build
 cd ..
 rm -rf app/glib/
 cp -R lib/. app/glib/
-rm -rf app/glib/
+rm -rf api/glib/
 cp -R lib/. api/glib/
 
 # Re-install local lib
