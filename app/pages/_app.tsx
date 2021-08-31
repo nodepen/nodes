@@ -1,3 +1,4 @@
+import getConfig from 'next/config'
 import type { AppProps } from 'next/app'
 import { Provider } from 'react-redux'
 import { store } from '$'
@@ -13,6 +14,8 @@ import 'tailwindcss/tailwind.css'
 import { getMainDefinition } from '@apollo/client/utilities'
 /* eslint-enable */
 
+const { publicRuntimeConfig } = getConfig()
+
 const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   // const wsLink = process.browser
   //   ? new WebSocketLink({
@@ -27,7 +30,7 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   //   : null
 
   const batchHttpLink = new BatchHttpLink({
-    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql',
+    uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
     batchInterval: 25,
     batchMax: 50,
   })
