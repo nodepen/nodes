@@ -34,14 +34,14 @@ RUN ["powershell", "& \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\
 ### main image
 # tag must match windows host for build (and run, if running with process isolation)
 # e.g. 1903 for Windows 10 version 1903 host
-FROM mcr.microsoft.com/windows:2019
+FROM mcr.microsoft.com/windows:1809
 
 # install .net 4.8 if you're using the 1809 base image (see https://git.io/JUYio)
 # comment this out for 1903 and newer
-# RUN curl -fSLo dotnet-framework-installer.exe https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe `
-#     && .\dotnet-framework-installer.exe /q `
-#     && del .\dotnet-framework-installer.exe `
-#     && powershell Remove-Item -Force -Recurse ${Env:TEMP}\*
+RUN curl -fSLo dotnet-framework-installer.exe https://download.visualstudio.microsoft.com/download/pr/7afca223-55d2-470a-8edc-6a1739ae3252/abd170b4b0ec15ad0222a809b761a036/ndp48-x86-x64-allos-enu.exe `
+    && .\dotnet-framework-installer.exe /q `
+    && del .\dotnet-framework-installer.exe `
+    && powershell Remove-Item -Force -Recurse ${Env:TEMP}\*
 
 # install rhino (with “-package -quiet” args)
 # NOTE: edit this if you use a different version of rhino!
