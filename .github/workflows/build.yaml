@@ -1,0 +1,14 @@
+name: Build service images
+
+on: [push]
+
+jobs:
+  runs-local:
+    runs-on: self-hosted
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v2
+    - name: Build np-gh-compute
+      run: |
+        cd gh/compute
+        docker build -t np-gh-compute:latest --build-arg NODEPEN_RHINO_TOKEN=${{ secrets.NODEPEN_RHINO_TOKEN }} .
