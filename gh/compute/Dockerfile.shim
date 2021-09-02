@@ -1,0 +1,7 @@
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8
+
+ARG NODEPEN_RHINO_TOKEN
+
+ENV RHINO_TOKEN $NODEPEN_RHINO_TOKEN
+
+RUN ["powershell", "$env:RHINO_TOKEN"]
