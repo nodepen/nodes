@@ -7,5 +7,6 @@ jobs:
     runs-on: self-hosted
     steps:
     - run: docker version
-    - run: docker build -t local-test --build-arg NODEPEN_RHINO_TOKEN=FAKE -f Dockerfile.shim .
-      working-directory: ./gh/compute/
+    - run: |
+        cd gh/compute
+        docker build -t local-test --build-arg NODEPEN_RHINO_TOKEN=FAKE -f Dockerfile.shim .
