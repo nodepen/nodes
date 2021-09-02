@@ -9,5 +9,6 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
     - name: Build shim
-      run: docker build -t local-test --build-arg NODEPEN_RHINO_TOKEN=FAKE -f Dockerfile.shim .
-      working-directory: ./gh/compute
+      run: |
+        cd gh/compute
+        docker build -t local-test --build-arg NODEPEN_RHINO_TOKEN=FAKE -f Dockerfile.shim .
