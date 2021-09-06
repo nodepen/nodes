@@ -21,6 +21,9 @@ initializeServer().then(({ server }) => {
   })
 })
 
+console.log({ dbHost: process.env.NP_DB_HOST })
+console.log({ dbPort: process.env.NP_DB_PORT })
+
 // api.listen(PORT, () => {
 
 // })
