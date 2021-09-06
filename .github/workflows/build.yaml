@@ -7,15 +7,23 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - uses: google-github-actions/setup-gcloud@master
-      - uses: RafikFarhad/push-to-gcr-github-action@v4
+      - uses: actions/setup-node@v2
         with:
-          gcloud_service_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
-          registry: gcr.io
+          node-version: "12"
+      - name: Build and install glib
+        run: |
+          cd .github/scripts
+          ./build.lib.sh
+      - uses: google-github-actions/setup-gcloud@master
+        with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
-          image_name: np-app
-          image_tag: dev
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - uses: docker/build-push-action@v2
+        with:
           context: ./api
+          push: true
+          tags: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:dev
   # runs-local:
   #   runs-on: self-hosted
   #   steps:
