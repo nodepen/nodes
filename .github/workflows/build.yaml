@@ -51,7 +51,7 @@ jobs:
           context: ./app
           push: true
           tags: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next
-    api:
+  api:
     runs-on: ubuntu-latest
     needs: [lib]
     steps:
@@ -85,7 +85,7 @@ jobs:
           context: ./api
           push: true
           tags: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next
-  gh-compute:
+  gh:compute:
     runs-on: self-hosted
     steps:
     - name: Checkout
