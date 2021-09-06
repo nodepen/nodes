@@ -22,6 +22,7 @@ jobs:
           path: |
             lib/
             !lib/node_modules/
+          retention-days: 1
   api:
     runs-on: ubuntu-latest
     needs: [lib]
@@ -35,16 +36,15 @@ jobs:
         with:
           name: glib
           path: api/glib/
-      - name: Display structure
-        run: |
-          ls
-          cd api
-          ls
-          cd glib
-          ls
       - name: Restore glib dependencies
         working-directory: ./api/glib
         run: npm ci
+      - name: Restore api secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "auth.json"
+          dir: "api/src/auth/"
+          json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
       - uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}

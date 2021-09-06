@@ -6,7 +6,7 @@ import {
 import { schema as typeDefs } from './schema'
 import { resolvers } from './resolvers'
 import admin from 'firebase-admin'
-import { origins } from './origins'
+// import origins from '../auth/origins.json'
 import { execute, subscribe } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
