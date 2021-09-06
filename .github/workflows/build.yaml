@@ -105,4 +105,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger dev deployment
-        run: 'curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" --request POST --data ''{"event_type": "deploy-dev"}'' https://api.github.com/repos/cdriesler/nodepen-admin/dispatches'
+        run: 'curl -X POST -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/cdriesler/nodepen-admin/dispatches -d ''{"event_type": "deploy-dev"}'''
