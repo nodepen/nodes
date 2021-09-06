@@ -101,9 +101,8 @@ jobs:
           cd gh/compute
           docker build -t gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next --build-arg NODEPEN_RHINO_TOKEN=${{ secrets.NODEPEN_RHINO_TOKEN }} .
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next
-  validate:
-    runs-on: self-hosted
-    needs: [app, api, gh-compute]
+  deploy:
+    runs-on: ubuntu-latest
     steps:
-      - name: Validate
-        run: docker version
+      - name: Trigger dev deployment
+        run: curl -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" --request POST --data '{\"event_type\": \"deploy-dev\"}'' https://api.github.com/repos/cdriesler/nodepen-admin/dispatches
