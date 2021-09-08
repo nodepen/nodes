@@ -23,6 +23,6 @@ COPY --from=builder /api/package.json ./package.json
 # RUN npm install -g concurrently
 
 EXPOSE 4000
-# EXPOSE 6379
+EXPOSE 8080
 
 CMD ["npm", "run", "start"]
