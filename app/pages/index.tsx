@@ -123,7 +123,7 @@ const Home: NextPage = () => {
         </div>
       </div>
       <div className="w-76 flex flex-col items-center">
-        <Link href="/gh">
+        <Link href="/gh" prefetch={false}>
           <a className="font-sans font-semibold text-sm">
             <div className="w-48 h-10 border-2 border-solid border-dark shadow-osm bg-light rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
               <div className="flex-grow flex flex-row justify-center items-center">
