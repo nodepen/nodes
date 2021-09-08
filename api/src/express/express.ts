@@ -6,7 +6,11 @@ export const app = express()
 app.use(cors())
 
 app.get('/', (_, res) => {
-  res.set('Howdy!')
+  res.send('Howdy!')
+})
+
+app.get('/health', (_, res) => {
+  res.send('Feeling swell!')
 })
 
 export const server = createServer(app)
