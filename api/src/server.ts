@@ -9,7 +9,7 @@ firebase.initializeApp({
   credential: firebase.credential.cert(credentials as ServiceAccount),
 })
 
-const PORT = process.env.PORT || 4000
+const PORT = process.env.NP_API_PORT || 4000
 
 // api.listen({ port: PORT }).then(({ url }) => {
 //   console.log(`Listening at ${url}`)
