@@ -56,7 +56,9 @@ jobs:
         with:
           context: ./app
           push: true
-          tags: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next-${{ github.sha }}
+          tags: |
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next-${{ github.sha }}
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next
   api:
     runs-on: ubuntu-latest
     needs: [lib]
@@ -90,7 +92,9 @@ jobs:
         with:
           context: ./api
           push: true
-          tags: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next-${{ github.sha }}
+          tags: |
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next-${{ github.sha }}
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next
   gh-compute:
     runs-on: self-hosted
     steps:
@@ -101,6 +105,8 @@ jobs:
           cd gh/compute
           docker build -t gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next-${{ github.sha }} --build-arg NODEPEN_RHINO_TOKEN=${{ secrets.NODEPEN_RHINO_TOKEN }} .
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next-${{ github.sha }}
+          docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next
+          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next
   deploy:
     runs-on: ubuntu-latest
     needs: [app, api, gh-compute]
