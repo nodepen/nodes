@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { NextPage } from 'next'
-import Link from 'next/link'
+// import Link from 'next/link'
 import Head from 'next/head'
 
 const Home: NextPage = () => {
