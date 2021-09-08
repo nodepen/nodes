@@ -29,6 +29,8 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   //     })
   //   : null
 
+  console.log({ publicRuntimeConfig })
+
   const batchHttpLink = new BatchHttpLink({
     uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
     batchInterval: 25,
