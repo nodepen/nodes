@@ -2,13 +2,17 @@ import { startup } from './startup'
 
 const PORT = process.env.NP_API_PORT || 4000
 
-startup().then((api) => {
-  api.listen(PORT, () => {
-    console.log(
-      `[ STARTUP ] NodePen API initialized! | Listening on port ${PORT}`
-    )
+startup()
+  .then((api) => {
+    api.listen(PORT, () => {
+      console.log(
+        `[ STARTUP ] NodePen API initialized! | Listening on port ${PORT}`
+      )
+    })
   })
-})
+  .catch((err) => {
+    console.log(err)
+  })
 
 // initializeServer().then(({ server }) => {
 //   server.listen(PORT, () => {

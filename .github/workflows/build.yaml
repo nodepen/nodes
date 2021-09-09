@@ -79,7 +79,7 @@ jobs:
         uses: jsdaniell/create-json@1.1.2
         with:
           name: "auth.json"
-          dir: "api/src/auth/"
+          dir: "api/src/firebase/auth/"
           json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
       - uses: google-github-actions/setup-gcloud@master
         with:

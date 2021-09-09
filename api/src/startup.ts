@@ -2,6 +2,7 @@ import { Server } from 'http'
 import { initialize } from './gql'
 import { admin } from './firebase'
 import { db } from './redis'
+import { ghq } from './bq'
 
 type GlobalServerConfig = {
   port: number
@@ -17,14 +18,30 @@ export const startup = async (): Promise<Server> => {
   console.log('[ STARTUP ] GraphQL server initialized!')
 
   // Wait for redis connection
-  return new Promise<Server>((resolve, reject) => {
+  const initializeRedis = new Promise<void>((resolve, reject) => {
     db.client.on('connect', () => {
       console.log(`[ STARTUP ] Redis instance connected!`)
-      resolve(api)
+      resolve()
     })
 
     db.client.on('error', (err) => {
       reject(err)
     })
   })
+
+  // Wait for gh solution queue connection
+  const initializeQueue = new Promise<void>((resolve, reject) => {
+    ghq.on('ready', () => {
+      console.log(`[ STARTUP ] Grasshopper solution queue connected!`)
+      resolve()
+    })
+
+    ghq.on('error', (err) => {
+      reject(err)
+    })
+  })
+
+  await Promise.all([initializeRedis, initializeQueue])
+
+  return api
 }
