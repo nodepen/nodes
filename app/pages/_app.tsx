@@ -3,11 +3,14 @@ import { Provider } from 'react-redux'
 import { store } from '$'
 
 import 'tailwindcss/tailwind.css'
+import { SessionManager } from '@/features/common/context/session'
 
 const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   return (
     <Provider store={store}>
-      <Component {...pageProps} />
+      <SessionManager>
+        <Component {...pageProps} />
+      </SessionManager>
       <style global jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nova+Mono&display=swap');

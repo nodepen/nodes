@@ -10,7 +10,7 @@ import admin from 'firebase-admin'
 import { execute, subscribe } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
-import { app, server } from '../express'
+import { app, server } from './express'
 
 type UserRecord = {
   id: string
@@ -27,6 +27,10 @@ const authorize = async (token: string): Promise<UserRecord> => {
   }
 }
 
+/**
+ * Attach the GraphQL server instances to the imported core server object.
+ * @returns The modified core server object
+ */
 export const initialize = async () => {
   const schema = makeExecutableSchema({ typeDefs, resolvers })
 
@@ -58,7 +62,6 @@ export const initialize = async () => {
   })
 
   await gqlQueryServer.start()
-  console.log('gql server started')
   gqlQueryServer.applyMiddleware({ app: app as any })
 
   const gqlSubscriptionServer = SubscriptionServer.create(
@@ -74,6 +77,7 @@ export const initialize = async () => {
         }
 
         return authorize(token).then((user) => {
+          console.log(`[ CONNECT ] ${user.id} (${user.name}) `)
           return user
         })
       },

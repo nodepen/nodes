@@ -3,24 +3,24 @@ import Head from 'next/head'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
 import { GraphManager } from '@/features/graph/context/graph'
-import { SessionManager } from '@/features/common/context/session'
 import { KeyboardObserver } from 'features/common/observer'
 import { ApolloContext } from '@/features/common/context/apollo'
+import { useSessionManager } from '@/features/common/context/session'
 
 const GrasshopperEditor: NextPage = () => {
+  const { token } = useSessionManager()
+
   return (
     <>
       <Head>
         <script defer src="https://unpkg.com/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script>
       </Head>
-      <ApolloContext>
-        <SessionManager>
-          <Layout.Editor>
-            <GraphManager>
-              <Graph.Container />
-            </GraphManager>
-          </Layout.Editor>
-        </SessionManager>
+      <ApolloContext token={token}>
+        <Layout.Editor>
+          <GraphManager>
+            <Graph.Container />
+          </GraphManager>
+        </Layout.Editor>
       </ApolloContext>
       <KeyboardObserver />
     </>

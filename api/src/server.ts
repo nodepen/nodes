@@ -1,38 +1,29 @@
-import { initialize as initializeServer } from './gql'
-import { db, initialize } from './redis'
-
-import firebase, { ServiceAccount } from 'firebase-admin'
-import credentials from './auth/auth.json'
-// import { pubsub } from './gql/pubsub'
-
-firebase.initializeApp({
-  credential: firebase.credential.cert(credentials as ServiceAccount),
-})
+import { startup } from './startup'
 
 const PORT = process.env.NP_API_PORT || 4000
 
-// api.listen({ port: PORT }).then(({ url }) => {
-//   console.log(`Listening at ${url}`)
-// })
-
-initializeServer().then(({ server }) => {
-  server.listen(PORT, () => {
-    console.log('Listening!')
+startup().then((api) => {
+  api.listen(PORT, () => {
+    console.log(
+      `[ STARTUP ] NodePen API initialized! | Listening on port ${PORT}`
+    )
   })
 })
 
-console.log({ dbHost: process.env.NP_DB_HOST })
-console.log({ dbPort: process.env.NP_DB_PORT })
-
-// api.listen(PORT, () => {
-
+// initializeServer().then(({ server }) => {
+//   server.listen(PORT, () => {
+//     console.log('Listening!')
+//   })
 // })
 
-db.client.on('connect', () => {
-  console.log('Redis connected!')
-  // initialize(db.client)
-})
+// console.log({ dbHost: process.env.NP_DB_HOST })
+// console.log({ dbPort: process.env.NP_DB_PORT })
 
-// setTimeout(() => {
-//   pubsub.publish('SOLUTION_COMPLETE', { onSolution: { solutionId: '123' } })
-// }, 500)
+// // api.listen(PORT, () => {
+
+// // })
+
+// db.client.on('connect', () => {
+//   console.log('Redis connected!')
+//   // initialize(db.client)
+// })
