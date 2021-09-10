@@ -3,15 +3,17 @@ import { db } from './db'
 
 dotenv.config()
 
-db.client.on('ready', () => {
-  console.log('Redis connection ready!')
+console.log('howdy!')
 
-  setInterval(() => {
-    db.client.publish(
-      'SOLUTION_COMPLETE',
-      JSON.stringify({
-        onSolution: { solutionId: `DISPATCH ${Date.now().toString()}` },
-      })
-    )
-  }, 1000)
-})
+// db.client.on('ready', () => {
+//   console.log('Redis connection ready!')
+
+//   setInterval(() => {
+//     db.client.publish(
+//       'SOLUTION_COMPLETE',
+//       JSON.stringify({
+//         onSolution: { solutionId: `DISPATCH ${Date.now().toString()}` },
+//       })
+//     )
+//   }, 1000)
+// })

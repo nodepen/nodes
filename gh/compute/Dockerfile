@@ -36,7 +36,10 @@ RUN ["powershell", "& \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\
 # e.g. 1903 for Windows 10 version 1903 host
 # FROM mcr.microsoft.com/windows:20H2
 # FROM mcr.microsoft.com/windows:1903
+
 FROM mcr.microsoft.com/windows:10.0.19042.1110
+# FROM mcr.microsoft.com/windows/nanoserver:10.0.19042.1110
+
 # FROM mcr.microsoft.com/windows/servercore:20H2
 # FROM mcr.microsoft.com/windows/servercore:19042.1165
 
