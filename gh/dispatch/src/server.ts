@@ -18,15 +18,15 @@ app.listen(port, () => {
   console.log(`Dispatch listening on port ${port} !`)
 })
 
-// db.client.on('ready', () => {
-//   console.log('Redis connection ready!')
+db.client.on('ready', () => {
+  console.log('Redis connection ready!')
 
-//   setInterval(() => {
-//     db.client.publish(
-//       'SOLUTION_COMPLETE',
-//       JSON.stringify({
-//         onSolution: { solutionId: `DISPATCH ${Date.now().toString()}` },
-//       })
-//     )
-//   }, 1000)
-// })
+  // setInterval(() => {
+  //   db.client.publish(
+  //     'SOLUTION_COMPLETE',
+  //     JSON.stringify({
+  //       onSolution: { solutionId: `DISPATCH ${Date.now().toString()}` },
+  //     })
+  //   )
+  // }, 1000)
+})
