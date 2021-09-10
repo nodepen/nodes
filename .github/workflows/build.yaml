@@ -117,7 +117,7 @@ jobs:
           cd gh/dispatch
           docker build -t gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next-${{ github.sha }} .
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next-${{ github.sha }}
-          docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next
+          docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next
   # deploy:
   #   runs-on: ubuntu-latest
