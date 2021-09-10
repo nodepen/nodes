@@ -14,6 +14,8 @@ COPY --from=installer C:\\nodejs\ .
 RUN SETX PATH C:\\nodejs
 RUN npm config set registry https://registry.npmjs.org/
 
+# FROM stefanscherer/node-windows:12.18.3-nanoserver-1909
+
 WORKDIR /dispatch
 
 COPY package.json /dispatch/package.json
@@ -22,6 +24,6 @@ RUN npm install
 COPY . /dispatch
 RUN npm run build
 
-CMD ["npm", "run", "start"]
+CMD ["node", "dist/server.js"]
 
 
