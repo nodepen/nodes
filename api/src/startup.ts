@@ -41,7 +41,17 @@ export const startup = async (): Promise<Server> => {
     })
   })
 
-  await Promise.all([initializeRedis, initializeQueue])
+  const redisConnectionResults = await Promise.allSettled([
+    initializeRedis,
+    initializeQueue,
+  ])
+
+  // Log any redis connection errors
+  redisConnectionResults
+    .filter((res): res is PromiseRejectedResult => res.status === 'rejected')
+    .forEach((res: PromiseRejectedResult) =>
+      console.log(`[ STARTUP ] [ ERROR ] ${res.reason}`)
+    )
 
   return api
 }

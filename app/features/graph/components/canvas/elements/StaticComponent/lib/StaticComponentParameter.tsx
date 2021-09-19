@@ -1,6 +1,6 @@
 import { NodePen, Grasshopper } from 'glib'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-import { useDebugRender, useLongPress } from '@/hooks'
+import { useDebugRender } from '@/hooks'
 import { useGraphDispatch, useGraphMode } from 'features/graph/store/graph/hooks'
 import { useCameraDispatch, useCameraStaticZoom, useCameraStaticPosition } from 'features/graph/store/camera/hooks'
 import { screenSpaceToCameraSpace } from 'features/graph/utils'
@@ -119,11 +119,11 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
 
   const longPressActive = useRef(false)
 
-  const handleLongPress = useCallback((): void => {
-    longPressActive.current = true
-  }, [])
+  // const handleLongPress = useCallback((): void => {
+  //   longPressActive.current = true
+  // }, [])
 
-  const longPressTarget = useLongPress(handleLongPress)
+  // const longPressTarget = useLongPress(handleLongPress)
 
   const pointerStartTime = useRef(0)
   const pointerStartPosition = useRef<[number, number]>([0, 0])
@@ -395,7 +395,7 @@ const StaticComponentParameter = ({ parent, template, mode }: StaticComponentPar
         className={`${p} ${border} ${
           device.breakpoint === 'sm' ? '' : 'hover:bg-gray-300'
         } flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 overflow-visible cursor-default`}
-        ref={longPressTarget as any}
+        // ref={longPressTarget as any}
         style={{ touchAction: 'none' }}
         onClick={handleClick}
         onMouseDown={handleMouseDown}

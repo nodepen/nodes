@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useGraphDispatch, useGraphSelection } from 'features/graph/store/graph/hooks'
 import { useCameraStaticZoom, useCameraMode, useCameraDispatch } from 'features/graph/store/camera/hooks'
 import Draggable from 'react-draggable'
-import { useElementDimensions, useCriteria, useDebugRender, useLongPress } from 'hooks'
+import { useElementDimensions, useCriteria, useDebugRender } from 'hooks'
 import { StaticComponentParameter } from './lib'
 import { useComponentMenuActions } from './lib/hooks'
 import { GenericMenu } from 'features/graph/components/overlay'
@@ -58,15 +58,15 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   const longPressActive = useRef(false)
 
-  const handleLongPress = useCallback((e: PointerEvent): void => {
-    const { pageX, pageY } = e
+  // const handleLongPress = useCallback((e: PointerEvent): void => {
+  //   const { pageX, pageY } = e
 
-    longPressActive.current = true
+  //   longPressActive.current = true
 
-    overlayPosition.current = [pageX, pageY]
-  }, [])
+  //   overlayPosition.current = [pageX, pageY]
+  // }, [])
 
-  const longPressTarget = useLongPress(handleLongPress)
+  // const longPressTarget = useLongPress(handleLongPress)
 
   // const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
   //   if (e.pointerType === 'mouse') {
@@ -159,7 +159,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                 className={`${
                   showComponentMenuOverlay ? 'bg-green' : 'bg-white'
                 } w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
-                ref={longPressTarget}
+                // ref={longPressTarget}
                 onPointerDown={(e) => {
                   const { pageX, pageY } = e
 

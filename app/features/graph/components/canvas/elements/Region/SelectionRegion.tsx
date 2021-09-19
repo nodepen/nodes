@@ -104,6 +104,8 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
 
   const handlePointerUp = useCallback(
     (e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
+      e.stopPropagation()
+
       if (e.pointerType === 'mouse' && e.button === 2) {
         lockRegion.current = false
         return
@@ -141,7 +143,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     window.addEventListener('mouseup', handleMouseUp)
     window.addEventListener('pointerdown', handlePointerDown)
     window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', handlePointerUp)
+    window.addEventListener('pointerup', handlePointerUp, { passive: true, capture: true })
 
     return () => {
       window.removeEventListener('mousedown', handleMouseDown)

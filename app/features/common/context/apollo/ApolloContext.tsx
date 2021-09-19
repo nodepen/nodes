@@ -14,7 +14,7 @@ type ApolloContextProps = {
 const { publicRuntimeConfig } = getConfig()
 
 export const ApolloContext = ({ children, token }: ApolloContextProps): React.ReactElement => {
-  console.log({ publicRuntimeConfig })
+  // console.log({ publicRuntimeConfig })
 
   const wsLink =
     process.browser && token
