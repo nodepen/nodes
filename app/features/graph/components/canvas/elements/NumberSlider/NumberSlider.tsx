@@ -4,7 +4,7 @@ import { DraggableData } from 'react-draggable'
 import { ElementContainer, GripContainer, ParameterIcon } from '../../common'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
-import { useDebugRender, useLongPress } from '@/hooks'
+import { useDebugRender } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch, useGraphSelection } from '@/features/graph/store/graph/hooks'
 import { coerceValue, getSliderPosition } from './utils'
@@ -102,14 +102,14 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const sliderPosition = getSliderPosition(internalValue, [min, max], sliderWidth)
 
-  const handleLongPress = useCallback((e: PointerEvent) => {
-    const { pageX, pageY } = e
+  // const handleLongPress = useCallback((e: PointerEvent) => {
+  //   const { pageX, pageY } = e
 
-    showGenericMenuOnRelease.current = true
-    showGenericMenuAt.current = [pageX, pageY]
-  }, [])
+  //   showGenericMenuOnRelease.current = true
+  //   showGenericMenuAt.current = [pageX, pageY]
+  // }, [])
 
-  const longPressTarget = useLongPress(handleLongPress)
+  // const longPressTarget = useLongPress(handleLongPress)
 
   const primaryPointer = useRef(0)
   const primaryPointerAnchor = useRef<[number, number]>([0, 0])
@@ -356,7 +356,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const handlePointerUp = useCallback(
     (e: React.PointerEvent<HTMLDivElement>) => {
-      e.stopPropagation()
+      // e.stopPropagation()
 
       if (showGenericMenuOnRelease.current) {
         setShowGenericMenu(true)
@@ -411,7 +411,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           }}
           onPointerUp={handlePointerUp}
           style={{ width: internalWidth, height: elementHeight }}
-          ref={longPressTarget}
+          // ref={longPressTarget}
         >
           <div className="w-full h-full flex items-center pr-2">
             <div className="h-full flex mr-2 p-1 pr-2 items-center justify-center">

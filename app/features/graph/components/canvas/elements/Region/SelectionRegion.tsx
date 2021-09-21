@@ -143,7 +143,7 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
     window.addEventListener('mouseup', handleMouseUp)
     window.addEventListener('pointerdown', handlePointerDown)
     window.addEventListener('pointermove', handlePointerMove)
-    window.addEventListener('pointerup', handlePointerUp, { passive: true, capture: true })
+    window.addEventListener('pointerup', handlePointerUp)
 
     return () => {
       window.removeEventListener('mousedown', handleMouseDown)
