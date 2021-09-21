@@ -7,6 +7,8 @@ const Home: NextPage = () => {
   const [[w, h], setCircleDimensions] = useState<[number, number]>([0, 0])
   const [offset, setOffset] = useState(0)
 
+  const [isHovered, setIsHovered] = useState(false)
+
   const circleRef = useRef<HTMLDivElement>(null)
 
   const grid = useMemo(() => {
@@ -61,13 +63,16 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const speed = 0.25 / 45
-    const march = setInterval(() => {
-      setOffset((offset + speed) % 0.25)
-    }, 40)
+    const march = setInterval(
+      () => {
+        setOffset((offset + speed) % 0.25)
+      },
+      isHovered ? 15 : 40
+    )
     return () => clearInterval(march)
-  }, [offset])
+  }, [offset, isHovered])
 
-  const [[dx, dy], setMaskOffset] = useState<[number, number]>([0, 48])
+  const [[dx, dy], setMaskOffset] = useState<[number, number]>([0, 48 + 30])
 
   const handlePointerDown = useCallback((e: PointerEvent): void => {
     e.preventDefault()
@@ -85,7 +90,7 @@ const Home: NextPage = () => {
     const ht = Math.abs(y) / cy
 
     const min = 1
-    const max = 4
+    const max = 5
     const r = max - min
 
     const ox = min + r * wt
@@ -107,8 +112,6 @@ const Home: NextPage = () => {
     }
   })
 
-  const [isHovered, setIsHovered] = useState(false)
-
   const [mobileMargin, setMobileMargin] = useState(0)
 
   useEffect(() => {
@@ -119,6 +122,10 @@ const Home: NextPage = () => {
     const m = (window.innerWidth - 304) / 2
     setMobileMargin(m)
   }, [])
+
+  // const ds = isHovered ? 24 : 0
+  const ds = 0
+  const s = mobileMargin > 0 ? 304 + ds : 512 + ds
 
   return (
     <div
@@ -157,8 +164,18 @@ const Home: NextPage = () => {
       </div>
       <div
         ref={circleRef}
-        className={`w-76 h-76 lg:w-128 lg:h-128 rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center`}
-        style={{ transform: `translate(${dx * 0.05}px, ${dy * 0.05}px)`, marginTop: mobileMargin }}
+        // w-76 h-76 lg:w-128 lg:h-128
+        className={`rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center`}
+        style={{
+          transform: `translate(${dx * 0.05}px, ${dy * 0.05}px)`,
+          marginTop: mobileMargin,
+          width: s,
+          height: s,
+          transitionProperty: 'width, height',
+          transitionDuration: '150ms',
+          transitionDelay: '150ms',
+          transitionTimingFunction: 'ease-out',
+        }}
       >
         <div style={circleStyle}>
           <svg
