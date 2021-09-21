@@ -107,9 +107,22 @@ const Home: NextPage = () => {
     }
   })
 
+  const [isHovered, setIsHovered] = useState(false)
+
+  const [mobileMargin, setMobileMargin] = useState(0)
+
+  useEffect(() => {
+    if (window.innerWidth > 1024) {
+      return
+    }
+
+    const m = (window.innerWidth - 304) / 2
+    setMobileMargin(m)
+  }, [])
+
   return (
     <div
-      className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row"
+      className="w-vw h-vh bg-green flex flex-col justify-start items-center lg:flex-row lg:justify-evenly"
       style={{ touchAction: 'none' }}
     >
       <Head>
@@ -122,8 +135,8 @@ const Home: NextPage = () => {
         <meta name="keywords" content="grasshopper, grasshopper online, grasshopper 3d" />
         <meta name="theme-color" content="#98E2C6" />
       </Head>
-      <div className="w-76 flex flex-col items-center">
-        <a
+      <div className="w-76 hidden lg:flex lg:flex-col lg:items-center">
+        {/* <a
           className="rounded-sm mb-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
           href="https://twitter.com/cdriesler"
           target="_blank"
@@ -140,12 +153,12 @@ const Home: NextPage = () => {
         >
           <img className="h-6 mr-2" src="/logos/github.svg" alt="The GitHub logo." />
           <p className=" text-darkgreen font-semibold font-md">VIEW CODE</p>
-        </a>
+        </a> */}
       </div>
       <div
         ref={circleRef}
         className={`w-76 h-76 lg:w-128 lg:h-128 rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center`}
-        style={{ transform: `translate(${dx * 0.05}px, ${dy * 0.05}px)` }}
+        style={{ transform: `translate(${dx * 0.05}px, ${dy * 0.05}px)`, marginTop: mobileMargin }}
       >
         <div style={circleStyle}>
           <svg
@@ -158,7 +171,7 @@ const Home: NextPage = () => {
           </svg>
         </div>
         <div
-          className={`bg-pale rounded-full w-full h-full p-2 flex flex-col justify-center items-center z-50`}
+          className={`bg-pale rounded-full w-full h-full p-2 pt-16 flex flex-col justify-center items-center z-50`}
           style={{ transform: `translate(${dx}px, ${dy}px)` }}
         >
           <img
@@ -168,18 +181,46 @@ const Home: NextPage = () => {
             title="NodePen: Same Grasshopper, New Digs"
             style={{ transform: `translate(${dx * -0.9}px, ${dy * -0.9}px)` }}
           />
+          <button
+            className="w-8 h-8 mt-8 relative overflow-visible"
+            style={{ transform: `translate(${dx * -0.95}px, ${dy * -0.95}px)` }}
+            onPointerEnter={() => setIsHovered(true)}
+            onPointerLeave={() => setIsHovered(false)}
+          >
+            <svg
+              className="absolute w-8 h-8 left-0 top-0 z-10 transition-colors duration-150"
+              fill={isHovered ? '#093824' : '#333'}
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="absolute w-12 h-12 z-0 overflow-visible" style={{ left: -8, top: -8 }}>
+              <div className="w-full h-full flex items-center justify-center">
+                <div
+                  className="w-full h-full rounded-full bg-green transition-transform duration-300 ease-out"
+                  style={{ transform: isHovered ? 'scale(1)' : 'scale(0)' }}
+                />
+              </div>
+            </div>
+          </button>
+
           {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
         </div>
       </div>
       <div className="w-76 flex flex-col items-center">
         {/* <Link href="/gh" prefetch={false}> */}
-        <a href="/gh" className="font-sans font-semibold text-sm">
+        {/* <a href="/gh" className="font-sans font-semibold text-sm">
           <div className="w-48 h-10 border-2 border-solid border-dark shadow-osm bg-light rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
             <div className="flex-grow flex flex-row justify-center items-center">
               <div className="font-sans font-semibold text-sm">LAUNCH NODEPEN</div>
             </div>
           </div>
-        </a>
+        </a> */}
         {/* </Link> */}
       </div>
 
