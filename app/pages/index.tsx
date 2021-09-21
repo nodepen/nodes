@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { NextPage } from 'next'
 // import Link from 'next/link'
 import Head from 'next/head'
@@ -67,8 +67,51 @@ const Home: NextPage = () => {
     return () => clearInterval(march)
   }, [offset])
 
+  const [[dx, dy], setMaskOffset] = useState<[number, number]>([0, 48])
+
+  const handlePointerDown = useCallback((e: PointerEvent): void => {
+    e.preventDefault()
+  }, [])
+
+  const handlePointerMove = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    const [w, h] = [window.innerWidth, window.innerHeight]
+    const [cx, cy] = [w / 2, h / 2]
+
+    const [x, y] = [pageX - cx, pageY - cy]
+
+    const wt = Math.abs(x) / cx
+    const ht = Math.abs(y) / cy
+
+    const min = 1
+    const max = 4
+    const r = max - min
+
+    const ox = min + r * wt
+    const oy = min + r * ht
+
+    const tx = x / ox
+    const ty = y / oy
+
+    setMaskOffset([tx, ty])
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('pointermove', handlePointerMove)
+
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('pointermove', handlePointerMove)
+    }
+  })
+
   return (
-    <div className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row">
+    <div
+      className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row"
+      style={{ touchAction: 'none' }}
+    >
       <Head>
         <title>NodePen</title>
         <meta
@@ -77,6 +120,7 @@ const Home: NextPage = () => {
           Compute."
         />
         <meta name="keywords" content="grasshopper, grasshopper online, grasshopper 3d" />
+        <meta name="theme-color" content="#98E2C6" />
       </Head>
       <div className="w-76 flex flex-col items-center">
         <a
@@ -100,7 +144,8 @@ const Home: NextPage = () => {
       </div>
       <div
         ref={circleRef}
-        className="w-76 h-76 lg:w-128 lg:h-128 rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center"
+        className={`w-76 h-76 lg:w-128 lg:h-128 rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center`}
+        style={{ transform: `translate(${dx * 0.05}px, ${dy * 0.05}px)` }}
       >
         <div style={circleStyle}>
           <svg
@@ -112,12 +157,16 @@ const Home: NextPage = () => {
             {grid}
           </svg>
         </div>
-        <div className="bg-pale rounded-lg w-64 lg:w-76 p-2 flex flex-col justify-center items-center z-50">
+        <div
+          className={`bg-pale rounded-full w-full h-full p-2 flex flex-col justify-center items-center z-50`}
+          style={{ transform: `translate(${dx}px, ${dy}px)` }}
+        >
           <img
-            className="h-16 mt-2 mb-1"
+            className={`h-16 mt-2 mb-1`}
             src="/nodepen-brand.svg"
             alt="The NodePen logo."
             title="NodePen: Same Grasshopper, New Digs"
+            style={{ transform: `translate(${dx * -0.9}px, ${dy * -0.9}px)` }}
           />
           {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
         </div>
