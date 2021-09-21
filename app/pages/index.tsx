@@ -198,7 +198,9 @@ const Home: NextPage = () => {
             title="NodePen: Same Grasshopper, New Digs"
             style={{ transform: `translate(${dx * -0.9}px, ${dy * -0.9}px)` }}
           />
-          <button
+          {/* <Link href="/gh"> */}
+          <a
+            href="/gh"
             className="w-8 h-8 mt-8 relative overflow-visible"
             style={{ transform: `translate(${dx * -0.95}px, ${dy * -0.95}px)` }}
             onPointerEnter={() => setIsHovered(true)}
@@ -224,8 +226,8 @@ const Home: NextPage = () => {
                 />
               </div>
             </div>
-          </button>
-
+          </a>
+          {/* </Link> */}
           {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
         </div>
       </div>
