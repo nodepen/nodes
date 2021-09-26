@@ -5,7 +5,7 @@ import { ElementContainer, GripContainer, ParameterIcon } from '../../common'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
 import { useDebugRender } from '@/hooks'
-import { useCameraDispatch, useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
+import { useCameraDispatch, useCameraStaticZoom, useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch, useGraphSelection } from '@/features/graph/store/graph/hooks'
 import { coerceValue, getSliderPosition } from './utils'
 import { NumberSliderGrip, NumberSliderMenu } from './components'
@@ -32,6 +32,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const { setZoomLock } = useCameraDispatch()
   const zoom = useCameraStaticZoom()
+  const zoomLevel = useCameraZoomLevel()
 
   const { rounding, precision, domain } = current
   const [min, max] = domain
@@ -372,112 +373,145 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   return (
     <>
       <ElementContainer element={element} onStart={onDragStart} onDrag={onDrag} disabled={sliderActive || resizeActive}>
-        <div
-          className={`${
-            isSelected ? 'bg-green' : 'bg-white'
-          } relative p-2 rounded-md border-2 border-dark shadow-osm transition-colors duration-150`}
-          role="presentation"
-          onMouseDown={(e) => {
-            const { pageX, pageY } = e
-
-            switch (e.button) {
-              case 1: {
-                showGenericMenuAt.current = [pageX, pageY]
-                setShowGenericMenu(true)
-                break
-              }
-              default: {
-                break
-              }
-            }
-          }}
-          onDoubleClick={(e) => {
-            const { pageX, pageY } = e
-
-            if (isSelected) {
-              updateSelection({ type: 'id', mode: 'remove', ids: [id] })
-            }
-
-            switch (device.breakpoint) {
-              case 'sm': {
-                showGenericMenuAt.current = [pageX, pageY]
-                setShowGenericMenu(true)
-                break
-              }
-              default: {
-                setShowUnderlay(true)
-              }
-            }
-          }}
-          onPointerUp={handlePointerUp}
-          style={{ width: internalWidth, height: elementHeight }}
-          // ref={longPressTarget}
-        >
-          <div className="w-full h-full flex items-center pr-2">
-            <div className="h-full flex mr-2 p-1 pr-2 items-center justify-center">
-              <ParameterIcon type="number" size="sm" />
-              <h3 className="ml-2 font-panel font-bold text-sm select-none" style={{ transform: 'translateY(1px)' }}>
-                SLIDER
-              </h3>
+        <>
+          <div
+            className={`${
+              zoomLevel === 'near' ? '' : 'pointer-events-none'
+            } w-10 h-10 absolute transition-transform duration-300 ease-out z-0`}
+            style={{ left: -48, top: 4, transform: zoomLevel === 'near' ? 'translateX(0px)' : 'translateX(48px)' }}
+          >
+            <div className="w-full h-full flex items-center justify-center">
+              <button
+                className="w-10 h-10 rounded-full bg-green flex items-center justify-center"
+                onClick={(e) => e.stopPropagation()}
+                onMouseDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.stopPropagation()}
+              >
+                <svg className="w-6 h-6" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <path
+                    fillRule="evenodd"
+                    d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </button>
             </div>
-            <div className="h-full flex-grow mr-4" ref={sliderRef}>
-              <div className="w-full h-full relative overflow-visible pointer-events-auto">
-                <div
-                  className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
-                  ref={sliderTargetRef}
-                  style={{ top: 3, left: sliderPosition - 8 }}
-                >
-                  <div className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible">
-                    <div
-                      className="w-3 h-3 rounded-sm border-2 border-dark bg-white"
-                      style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
-                    />
-                  </div>
-                </div>
-                {showUnderlay ? null : (
+          </div>
+          <div
+            className={`${
+              isSelected ? 'bg-green' : 'bg-white'
+            } relative p-2 rounded-md border-2 border-dark shadow-osm transition-colors duration-150`}
+            role="presentation"
+            onMouseDown={(e) => {
+              const { pageX, pageY } = e
+
+              switch (e.button) {
+                case 1: {
+                  showGenericMenuAt.current = [pageX, pageY]
+                  setShowGenericMenu(true)
+                  break
+                }
+                default: {
+                  break
+                }
+              }
+            }}
+            onDoubleClick={(e) => {
+              const { pageX, pageY } = e
+
+              if (isSelected) {
+                updateSelection({ type: 'id', mode: 'remove', ids: [id] })
+              }
+
+              switch (device.breakpoint) {
+                case 'sm': {
+                  showGenericMenuAt.current = [pageX, pageY]
+                  setShowGenericMenu(true)
+                  break
+                }
+                default: {
+                  setShowUnderlay(true)
+                }
+              }
+            }}
+            onPointerUp={handlePointerUp}
+            style={{ width: internalWidth, height: elementHeight }}
+            // ref={longPressTarget}
+          >
+            <div className="w-full h-full flex items-center pr-2 z-10">
+              <div className="h-full flex mr-2 p-1 pr-2 items-center justify-center">
+                <ParameterIcon type="number" size="sm" />
+                <h3 className="ml-2 font-panel font-bold text-sm select-none" style={{ transform: 'translateY(1px)' }}>
+                  SLIDER
+                </h3>
+              </div>
+              <div className="h-full flex-grow mr-4" ref={sliderRef}>
+                <div className="w-full h-full relative overflow-visible pointer-events-auto">
                   <div
-                    className="absolute pointer-events-none"
-                    style={{ width: sliderWidth, height: sliderWidth, left: sliderPosition - sliderWidth / 2, top: 45 }}
+                    className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
+                    ref={sliderTargetRef}
+                    style={{ top: 3, left: sliderPosition - 8 }}
                   >
-                    <div className="w-full h-full flex flex-col justify-start items-center">
+                    <div className="w-full h-full flex items-center pointer-events-auto justify-center overflow-visible">
                       <div
-                        className="w-6 h-6 rounded-sm bg-green"
+                        className="w-3 h-3 rounded-sm border-2 border-dark bg-white"
                         style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
                       />
-                      <div
-                        className="bg-green rounded-md pointer-events-auto no-drag"
-                        style={{ transform: 'translateY(-16px)' }}
-                        onDoubleClick={(e) => {
-                          e.stopPropagation()
-
-                          underlayFocusElement.current = 'value'
-                          setShowUnderlay(true)
-                        }}
-                      >
-                        <p className="h-10 p-2 pl-4 pr-4 rounded-md text-lg" style={{ transform: 'translateY(-4px)' }}>
-                          {internalValueLabel.current}
-                        </p>
-                      </div>
                     </div>
                   </div>
-                )}
-                <div className="absolute left-0 top-0 w-full h-full z-0">
-                  <div className="w-full h-full flex items-center justify-center">
-                    <div className="flex-grow bg-dark" style={{ height: '2px' }} />
+                  {showUnderlay ? null : (
+                    <div
+                      className="absolute pointer-events-none"
+                      style={{
+                        width: sliderWidth,
+                        height: sliderWidth,
+                        left: sliderPosition - sliderWidth / 2,
+                        top: 45,
+                      }}
+                    >
+                      <div className="w-full h-full flex flex-col justify-start items-center">
+                        <div
+                          className="w-6 h-6 rounded-sm bg-green"
+                          style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
+                        />
+                        <div
+                          className="bg-green rounded-md pointer-events-auto no-drag"
+                          style={{ transform: 'translateY(-16px)' }}
+                          onDoubleClick={(e) => {
+                            e.stopPropagation()
+
+                            underlayFocusElement.current = 'value'
+                            setShowUnderlay(true)
+                          }}
+                        >
+                          <p
+                            className="h-10 p-2 pl-4 pr-4 rounded-md text-lg"
+                            style={{ transform: 'translateY(-4px)' }}
+                          >
+                            {internalValueLabel.current}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                  <div className="absolute left-0 top-0 w-full h-full z-0">
+                    <div className="w-full h-full flex items-center justify-center">
+                      <div className="flex-grow bg-dark" style={{ height: '2px' }} />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-          <div className="w-2 h-full absolute" style={{ left: internalWidth - 26, top: 0 }} ref={resizeTargetRef}>
-            <div className="w-full h-full flex items-center justify-center hover:cursor-move-ew">
-              <div className="w-full h-4 border-dark border-l-2 border-r-2" />
+            <div className="w-2 h-full absolute" style={{ left: internalWidth - 26, top: 0 }} ref={resizeTargetRef}>
+              <div className="w-full h-full flex items-center justify-center hover:cursor-move-ew">
+                <div className="w-full h-4 border-dark border-l-2 border-r-2" />
+              </div>
+            </div>
+            <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
+              <NumberSliderGrip elementId={id} />
             </div>
           </div>
-          <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
-            <NumberSliderGrip elementId={id} />
-          </div>
-        </div>
+        </>
       </ElementContainer>
       {showUnderlay ? (
         <UnderlayPortal parent={id}>
