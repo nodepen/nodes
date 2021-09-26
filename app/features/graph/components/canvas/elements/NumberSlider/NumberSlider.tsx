@@ -11,7 +11,7 @@ import { coerceValue, getSliderPosition } from './utils'
 import { NumberSliderGrip, NumberSliderMenu } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { distance } from '@/features/graph/utils'
-import { GenericMenu } from 'features/graph/components/overlay'
+import { FullWidthMenu, GenericMenu } from 'features/graph/components/overlay'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -30,7 +30,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const isSelected = selected.includes(id)
 
-  const { setZoomLock } = useCameraDispatch()
+  const { setZoomLock, setMode: setCameraMode } = useCameraDispatch()
   const zoom = useCameraStaticZoom()
   const zoomLevel = useCameraZoomLevel()
 
@@ -121,8 +121,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const handleStartSlider = useCallback(
     (e: PointerEvent): void => {
-      e.stopImmediatePropagation()
+      e.stopPropagation()
 
+      setCameraMode('locked')
       setShowUnderlay(false)
 
       const { pageX, pageY } = e
@@ -140,7 +141,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
       sliderRef.current?.setPointerCapture(e.pointerId)
     },
-    [internalValue, setCursorOverride]
+    [internalValue, setCursorOverride, setCameraMode]
   )
 
   useEffect(() => {
@@ -164,8 +165,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
   const handleStartResize = useCallback(
     (e: PointerEvent): void => {
-      e.stopImmediatePropagation()
+      e.stopPropagation()
 
+      setCameraMode('locked')
       setShowUnderlay(false)
 
       const { pageX, pageY } = e
@@ -183,7 +185,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
 
       prepareLiveMotion({ anchor: id, targets: [id] })
     },
-    [id, internalWidth, setCursorOverride, prepareLiveMotion]
+    [id, internalWidth, setCursorOverride, prepareLiveMotion, setCameraMode]
   )
 
   useEffect(() => {
@@ -279,6 +281,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         return
       }
 
+      setCameraMode('idle')
       setCursorOverride(false)
 
       if (sliderActive) {
@@ -370,9 +373,24 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     [handleWindowPointerUp]
   )
 
+  const [showEditMenu, setShowEditMenu] = useState(false)
+  const editMenuLocation = useRef<[number, number]>([0, 0])
+
+  const onDragStop = useCallback(() => {
+    return {
+      selection: showEditMenu,
+    }
+  }, [showEditMenu])
+
   return (
     <>
-      <ElementContainer element={element} onStart={onDragStart} onDrag={onDrag} disabled={sliderActive || resizeActive}>
+      <ElementContainer
+        element={element}
+        onStart={onDragStart}
+        onDrag={onDrag}
+        onStop={onDragStop}
+        disabled={sliderActive || resizeActive}
+      >
         <>
           <div
             className={`${
@@ -387,10 +405,26 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           >
             <div className="w-full h-full flex items-center justify-center">
               <button
-                className="w-10 h-10 ml-1 mr-1 rounded-md bg-green flex items-center justify-center"
-                onClick={(e) => e.stopPropagation()}
+                className="w-10 h-10 ml-1 mr-1 rounded-md bg-green flex items-center justify-center pointer-events-auto"
+                onClick={(e) => {
+                  e.stopPropagation()
+
+                  const { pageX: x, pageY: y } = e
+
+                  editMenuLocation.current = [x, y]
+
+                  setShowEditMenu(true)
+                }}
                 onMouseDown={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.nativeEvent.stopPropagation()}
+                onPointerDown={(e) => {
+                  e.stopPropagation()
+
+                  const { pageX: x, pageY: y } = e
+
+                  editMenuLocation.current = [x, y]
+
+                  setShowEditMenu(true)
+                }}
                 onTouchStart={(e) => e.stopPropagation()}
               >
                 <svg className="w-6 h-6" fill="#093824" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -591,6 +625,17 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           position={showGenericMenuAt.current}
           onClose={() => setShowGenericMenu(false)}
         />
+      ) : null}
+      {showEditMenu ? (
+        <FullWidthMenu start={editMenuLocation.current}>
+          <div className="w-full p-4">
+            <NumberSliderMenu
+              id={id}
+              initial={{ rounding, precision, domain, value: internalValue }}
+              onClose={() => setShowEditMenu(false)}
+            />
+          </div>
+        </FullWidthMenu>
       ) : null}
     </>
   )
