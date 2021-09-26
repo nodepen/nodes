@@ -144,12 +144,12 @@ const ElementContainer = ({
     const container = containerRef.current
 
     container.addEventListener('pointerdown', handleStopPropagation)
-    container.addEventListener('mousedown', handleStopPropagation)
+    // container.addEventListener('mousedown', handleStopPropagation)
     container.addEventListener('dblclick', handleStopPropagation)
 
     return () => {
       container.removeEventListener('pointerdown', handleStopPropagation)
-      container.removeEventListener('mousedown', handleStopPropagation)
+      // container.removeEventListener('mousedown', handleStopPropagation)
       container.removeEventListener('dblclick', handleStopPropagation)
     }
   })

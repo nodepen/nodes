@@ -218,11 +218,11 @@ const Home: NextPage = () => {
                 clipRule="evenodd"
               />
             </svg>
-            <div className="absolute w-12 h-12 z-0 overflow-visible" style={{ left: -8, top: -8 }}>
+            <div className="absolute w-12 h-12 z-0 rounded-md overflow-hidden" style={{ left: -8, top: -8 }}>
               <div className="w-full h-full flex items-center justify-center">
                 <div
-                  className="w-full h-full rounded-full bg-green transition-transform duration-300 ease-out"
-                  style={{ transform: isHovered ? 'scale(1)' : 'scale(0)' }}
+                  className={`w-full h-full rounded-full bg-green transition-all duration-300 ease-out`}
+                  style={{ transform: isHovered ? 'scale(1.35)' : 'scale(0)' }}
                 />
               </div>
             </div>
