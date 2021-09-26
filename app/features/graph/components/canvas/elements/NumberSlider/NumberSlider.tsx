@@ -385,12 +385,13 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               transform: zoomLevel === 'near' ? 'translateY(-48px)' : 'translateY(0px)',
             }}
           >
-            <div className="w-full h-full flex items-center justify-end">
+            <div className="w-full h-full flex items-center justify-center">
               <button
                 className="w-10 h-10 ml-1 mr-1 rounded-md bg-green flex items-center justify-center"
                 onClick={(e) => e.stopPropagation()}
                 onMouseDown={(e) => e.stopPropagation()}
-                onPointerDown={(e) => e.stopPropagation()}
+                onPointerDown={(e) => e.nativeEvent.stopPropagation()}
+                onTouchStart={(e) => e.stopPropagation()}
               >
                 <svg className="w-6 h-6" fill="#093824" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                   <path
@@ -432,9 +433,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
             </div>
           </div>
           <div
-            className={`${
-              isSelected ? 'bg-green' : 'bg-white'
-            } relative p-2 rounded-md border-2 border-dark shadow-osm transition-colors duration-150`}
+            className={`${isSelected ? 'bg-green' : 'bg-white'} ${
+              zoomLevel === 'far' ? '' : 'shadow-osm'
+            } relative p-2 rounded-md border-2 border-dark transition-colors duration-150`}
             role="presentation"
             onMouseDown={(e) => {
               const { pageX, pageY } = e
@@ -474,13 +475,22 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           >
             <div className="w-full h-full flex items-center pr-2 z-10">
               <div className="h-full flex mr-2 p-1 pr-2 items-center justify-center">
-                <ParameterIcon type="number" size="sm" />
-                <h3 className="ml-2 font-panel font-bold text-sm select-none" style={{ transform: 'translateY(1px)' }}>
+                <ParameterIcon type={zoomLevel === 'far' ? 'none' : 'number'} size="sm" />
+                <h3
+                  className={`${
+                    zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'
+                  } ml-2 font-panel font-bold text-sm select-none transition-opacity duration-300`}
+                  style={{ transform: 'translateY(1px)' }}
+                >
                   SLIDER
                 </h3>
               </div>
               <div className="h-full flex-grow mr-4" ref={sliderRef}>
-                <div className="w-full h-full relative overflow-visible pointer-events-auto">
+                <div
+                  className={`${
+                    zoomLevel === 'far' ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
+                  } w-full h-full relative overflow-visible transition-opacity duration-300`}
+                >
                   <div
                     className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
                     ref={sliderTargetRef}
@@ -495,7 +505,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                   </div>
                   {showUnderlay ? null : (
                     <div
-                      className="absolute pointer-events-none"
+                      className={`${
+                        zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'
+                      } absolute pointer-events-none transition-opacity duration-300`}
                       style={{
                         width: sliderWidth,
                         height: sliderWidth,
@@ -536,12 +548,23 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 </div>
               </div>
             </div>
-            <div className="w-2 h-full absolute" style={{ left: internalWidth - 26, top: 0 }} ref={resizeTargetRef}>
+            <div
+              className={`${
+                zoomLevel === 'far' ? 'pointer-events-none opacity-0' : 'opacity-100'
+              } w-2 h-full absolute transition-opacity duration-300`}
+              style={{ left: internalWidth - 26, top: 0 }}
+              ref={resizeTargetRef}
+            >
               <div className="w-full h-full flex items-center justify-center hover:cursor-move-ew">
                 <div className="w-full h-4 border-dark border-l-2 border-r-2" />
               </div>
             </div>
-            <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
+            <div
+              className={`${
+                zoomLevel === 'far' ? 'pointer-events-none opacity-0' : 'opacity-100'
+              } absolute w-8 h-full overflow-visible transition-opacity duration-300`}
+              style={{ right: -32, top: 0 }}
+            >
               <NumberSliderGrip elementId={id} />
             </div>
           </div>

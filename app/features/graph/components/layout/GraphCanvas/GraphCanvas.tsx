@@ -257,8 +257,8 @@ const GraphCanvas = (): React.ReactElement => {
           // If we cross a 'zoom breakpoint' here, then update the zoom level in state.
 
           const breakpoints = {
-            near: 0.5,
-            default: 1.25,
+            near: 0.75,
+            default: 2,
           }
 
           const zoomLevel: typeof cameraZoomLevel =
