@@ -5,6 +5,7 @@ import {
   useCameraMode,
   useCameraStaticPosition,
   useCameraStaticZoom,
+  useCameraZoomLevel,
   useCameraZoomLock,
 } from 'features/graph/store/camera/hooks'
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch'
@@ -23,11 +24,12 @@ const GraphCanvas = (): React.ReactElement => {
   const state = useAppStore()
 
   const { addLiveElement } = useGraphDispatch()
-  const { setMode, setStaticZoom, setStaticPosition } = useCameraDispatch()
+  const { setMode, setStaticZoom, setStaticPosition, setZoomLevel } = useCameraDispatch()
   const cameraPosition = useCameraStaticPosition()
   const cameraZoom = useCameraStaticZoom()
   const zoomDisabled = useCameraZoomLock()
   const cameraMode = useCameraMode()
+  const cameraZoomLevel = useCameraZoomLevel()
 
   const [longPressActivated, setLongPressActivated] = useState(false)
   const longPressActivatedLocation = useRef<[number, number]>([0, 0])
@@ -251,8 +253,20 @@ const GraphCanvas = (): React.ReactElement => {
         onPanningStop={({ state }) => {
           setStaticPosition([state.positionX, state.positionY])
         }}
-        onZoom={() => {
-          // TODO: If we cross a 'zoom breakpoint' here, then update 'static' zoom so ZUI elements will update.
+        onZoom={({ state }) => {
+          // If we cross a 'zoom breakpoint' here, then update the zoom level in state.
+
+          const breakpoints = {
+            near: 0.5,
+            default: 1.25,
+          }
+
+          const zoomLevel: typeof cameraZoomLevel =
+            state.scale < breakpoints.near ? 'far' : state.scale < breakpoints.default ? 'default' : 'near'
+
+          if (cameraZoomLevel !== zoomLevel) {
+            setZoomLevel(zoomLevel)
+          }
         }}
         onZoomStop={({ state }) => {
           setStaticZoom(state.scale)
