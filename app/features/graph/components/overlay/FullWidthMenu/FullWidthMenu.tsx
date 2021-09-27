@@ -28,13 +28,7 @@ const FullWidthMenu = ({ children, start }: FullWidthMenuProps): React.ReactElem
     <OverlayPortal>
       <>
         <OverlayContainer position={[0, 0]} static>
-          <div
-            className="w-full bg-green overflow-auto container"
-            style={{
-              height: 'calc(100vh - 40px)',
-            }}
-            onPointerDown={(e) => e.stopPropagation()}
-          >
+          <div className="w-full h-full bg-green overflow-auto container" onPointerDown={(e) => e.stopPropagation()}>
             {children}
           </div>
         </OverlayContainer>
