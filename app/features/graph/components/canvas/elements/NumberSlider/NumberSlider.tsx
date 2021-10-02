@@ -399,7 +399,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               width: internalWidth,
               left: 0,
               top: 0,
-              transform: zoomLevel === 'near' ? 'translateY(-48px)' : 'translateY(0px)',
+              transform: zoomLevel === 'near' && device.breakpoint === 'sm' ? 'translateY(-48px)' : 'translateY(0px)',
             }}
           >
             <div className="w-full h-full flex items-center justify-center">
