@@ -376,16 +376,9 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const [showEditMenu, setShowEditMenu] = useState(false)
   const editMenuLocation = useRef<[number, number]>([0, 0])
 
-  const lockSelection = useRef(false)
-
   const onDragStop = useCallback(() => {
-    const selection = showEditMenu || lockSelection.current
-
-    lockSelection.current = false
-
-    // Block selection if edit menu is visible, or if a child component has blocked selection.
-    // TODO: I really don't like this. Find a better way to interact with Draggable capture-phase events.
-    return { selection }
+    // Block selection if edit menu is visible
+    return { selection: showEditMenu }
   }, [showEditMenu])
 
   return (
@@ -599,13 +592,8 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 <div className="w-full h-4 border-dark border-l-2 border-r-2" />
               </div>
             </div>
-            <div
-              className={`${
-                zoomLevel === 'far' ? 'pointer-events-none opacity-0' : 'opacity-100'
-              } absolute w-8 h-full overflow-visible transition-opacity duration-300`}
-              style={{ right: -32, top: 0 }}
-            >
-              <NumberSliderGrip elementId={id} lockSelection={() => (lockSelection.current = true)} />
+            <div className="absolute w-8 h-full overflow-visible" style={{ right: -32, top: 0 }}>
+              <NumberSliderGrip elementId={id} />
             </div>
           </div>
         </>

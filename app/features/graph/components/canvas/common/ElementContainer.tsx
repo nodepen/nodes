@@ -48,7 +48,8 @@ const ElementContainer = ({
   }, [disabled, cameraMode])
 
   const handleStopPropagation = useCallback((e: PointerEvent | MouseEvent | globalThis.MouseEvent): void => {
-    console.log('ElementContainer : handleStopPropagation')
+    // console.log('ElementContainer : handleStopPropagation')
+
     e.stopPropagation()
   }, [])
 
@@ -61,7 +62,7 @@ const ElementContainer = ({
     (e, d) => {
       e.stopPropagation()
 
-      console.log('ElementContainer : handleDragStart')
+      // console.log('ElementContainer : handleDragStart')
 
       // Cache initial motion data
       const { x, y } = d
@@ -92,7 +93,7 @@ const ElementContainer = ({
     (e, d) => {
       const { x, y } = d
 
-      console.log('ElementContainer : handleDragStop')
+      // console.log('ElementContainer : handleDragStop')
 
       // Perform state operations
       setZoomLock(false)

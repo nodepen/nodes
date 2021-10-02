@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 import { GripContext } from './GripContext'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
-import { store, useAppStore } from '@/features/common/store'
+import { useAppStore } from '@/features/common/store'
 import { getWireMode } from '@/features/graph/store/hotkey/utils'
 import { getConnectedWires, getLiveWires } from '@/features/graph/store/graph/utils'
 import { PointerTooltip } from '../../overlay'
@@ -11,6 +11,7 @@ import { GripTooltip } from './GripTooltip'
 import { getInitialWireMode } from '@/features/graph/store/hotkey/utils/getInitialWireMode'
 import { WireMode } from '@/features/graph/store/graph/types'
 import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
+import { distance } from '@/features/graph/utils'
 
 type GripContainerProps = {
   elementId: string
@@ -31,6 +32,23 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
 
   const gripRef = useRef<HTMLDivElement>(null)
+
+  const map = {
+    from:
+      mode === 'output'
+        ? {
+            elementId,
+            parameterId,
+          }
+        : undefined,
+    to:
+      mode === 'output'
+        ? undefined
+        : {
+            elementId,
+            parameterId,
+          },
+  } as any
 
   const handleRegister = useCallback(
     (offset: [ox: number, oy: number]) => {
@@ -72,6 +90,10 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const wireTooltipPosition = useRef<[number, number]>([0, 0])
 
   const resetLocalState = (): void => {
+    if (gripRef.current && localPointerId.current) {
+      gripRef.current.releasePointerCapture(localPointerId.current)
+    }
+
     localPointerId.current = undefined
     setShowWireTooltip(false)
     setCameraMode('idle')
@@ -117,23 +139,50 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
     releaseLiveWires()
   }
 
-  // const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-  //   if (localPointerActive.current) {
-  //     return
-  //   }
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
+    const { pointerId, pageX, pageY } = e
 
-  //   switch (e.pointerType) {
-  //     case 'mouse': {
-  //       const { pageX, pageY } = e
-  //       setWireTooltipPosition([pageX, pageY])
-  //     }
-  //   }
-  // }
+    if (pointerId !== localPointerId.current) {
+      return
+    }
+
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        const d = distance(localPointerStartPosition.current, [pageX, pageY])
+
+        if (d < 20) {
+          break
+        }
+
+        startLiveWires({
+          templates: [
+            {
+              type: 'wire',
+              mode: 'live',
+              initial: {
+                pointer: e.pointerId,
+                mode: 'default',
+              },
+              transpose: false,
+              ...map,
+            },
+          ],
+          origin: {
+            elementId,
+            parameterId,
+          },
+        })
+
+        resetLocalState()
+      }
+    }
+  }
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
-    console.log('GripContainer : handlePointerDown')
+    // console.log('GripContainer : handlePointerDown')
 
     const { pointerId, pageX: ex, pageY: ey } = e
 
@@ -167,23 +216,6 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
         const initialMode = getInitialMode(store.getState().graph.present, store.getState().hotkey)
 
         resetLocalState()
-
-        const map = {
-          from:
-            mode === 'output'
-              ? {
-                  elementId,
-                  parameterId,
-                }
-              : undefined,
-          to:
-            mode === 'output'
-              ? undefined
-              : {
-                  elementId,
-                  parameterId,
-                },
-        } as any
 
         switch (initialMode) {
           case 'transpose': {
@@ -267,7 +299,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
       gripRef.current.releasePointerCapture(localPointerId.current)
     }
 
-    console.log('GripContainer : handlePointerUp')
+    // console.log('GripContainer : handlePointerUp')
 
     switch (e.pointerType) {
       case 'mouse': {
@@ -277,9 +309,9 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
       case 'pen':
       case 'touch': {
         const now = Date.now()
-        const duration = localPointerStartTime.current - now
+        const duration = now - localPointerStartTime.current
 
-        if (duration < 50) {
+        if (duration > 150) {
           break
         }
 
@@ -299,6 +331,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           className="w-full h-full no-drag"
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
+          onPointerMove={handlePointerMove}
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
           role="presentation"
