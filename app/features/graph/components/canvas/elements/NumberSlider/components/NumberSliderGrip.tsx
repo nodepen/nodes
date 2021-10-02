@@ -21,15 +21,22 @@ const NumberSliderGrip = (): React.ReactElement => {
 
 type NumberSliderGripContainerProps = {
   elementId: string
+  lockSelection: () => void
 }
 
-export const NumberSliderGripContainer = ({ elementId }: NumberSliderGripContainerProps): React.ReactElement => {
+export const NumberSliderGripContainer = ({
+  elementId,
+  lockSelection,
+}: NumberSliderGripContainerProps): React.ReactElement => {
   return (
     <GripContainer
       elementId={elementId}
       parameterId={'output'}
       mode="output"
-      onClick={() => console.log('param click!')}
+      onClick={() => {
+        lockSelection()
+        console.log('param clicked!')
+      }}
     >
       <NumberSliderGrip />
     </GripContainer>

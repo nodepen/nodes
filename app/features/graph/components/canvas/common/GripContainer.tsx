@@ -3,13 +3,14 @@ import { NodePen } from 'glib'
 import { GripContext } from './GripContext'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { useScreenSpaceToCameraSpace } from '@/features/graph/hooks'
-import { useAppStore } from '@/features/common/store'
+import { store, useAppStore } from '@/features/common/store'
 import { getWireMode } from '@/features/graph/store/hotkey/utils'
 import { getConnectedWires, getLiveWires } from '@/features/graph/store/graph/utils'
 import { PointerTooltip } from '../../overlay'
 import { GripTooltip } from './GripTooltip'
 import { getInitialWireMode } from '@/features/graph/store/hotkey/utils/getInitialWireMode'
 import { WireMode } from '@/features/graph/store/graph/types'
+import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
 
 type GripContainerProps = {
   elementId: string
@@ -24,6 +25,7 @@ type GripContainerProps = {
  */
 const GripContainer = ({ elementId, parameterId, mode, children, onClick }: GripContainerProps): React.ReactElement => {
   const store = useAppStore()
+  const { setMode: setCameraMode } = useCameraDispatch()
   const { registerElementAnchor, captureLiveWires, startLiveWires, releaseLiveWires, endLiveWires } = useGraphDispatch()
 
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
@@ -68,6 +70,12 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
 
   const [showWireTooltip, setShowWireTooltip] = useState(false)
   const wireTooltipPosition = useRef<[number, number]>([0, 0])
+
+  const resetLocalState = (): void => {
+    localPointerId.current = undefined
+    setShowWireTooltip(false)
+    setCameraMode('idle')
+  }
 
   const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (e.pointerId === localPointerId.current) {
@@ -125,7 +133,11 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
+    console.log('GripContainer : handlePointerDown')
+
     const { pointerId, pageX: ex, pageY: ey } = e
+
+    setCameraMode('locked')
 
     localPointerId.current = pointerId
     localPointerStartTime.current = Date.now()
@@ -154,10 +166,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
       case 'mouse': {
         const initialMode = getInitialMode(store.getState().graph.present, store.getState().hotkey)
 
-        // Reset local reference to allow self-transpose
-        localPointerId.current = undefined
-
-        setShowWireTooltip(false)
+        resetLocalState()
 
         const map = {
           from:
@@ -241,18 +250,24 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
         break
       }
       case 'pen':
-      case 'touch':
+      case 'touch': {
+        if (!gripRef.current) {
+          break
+        }
+
+        gripRef.current.setPointerCapture(pointerId)
+      }
     }
   }
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
-    const { pointerId } = e
-
-    if (localPointerId.current !== pointerId) {
-      return
+    if (gripRef.current && localPointerId.current) {
+      gripRef.current.releasePointerCapture(localPointerId.current)
     }
+
+    console.log('GripContainer : handlePointerUp')
 
     switch (e.pointerType) {
       case 'mouse': {
@@ -264,7 +279,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
         const now = Date.now()
         const duration = localPointerStartTime.current - now
 
-        if (duration > 50) {
+        if (duration < 50) {
           break
         }
 
@@ -274,14 +289,14 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
       }
     }
 
-    localPointerId.current = undefined
+    resetLocalState()
   }
 
   return (
     <GripContext gripRef={gripRef} register={handleRegister}>
       <>
         <div
-          className="w-full h-full"
+          className="w-full h-full no-drag"
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
           onPointerEnter={handlePointerEnter}
