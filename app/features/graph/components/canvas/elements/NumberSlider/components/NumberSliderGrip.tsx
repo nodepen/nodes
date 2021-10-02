@@ -25,7 +25,12 @@ type NumberSliderGripContainerProps = {
 
 export const NumberSliderGripContainer = ({ elementId }: NumberSliderGripContainerProps): React.ReactElement => {
   return (
-    <GripContainer elementId={elementId} parameterId={'output'} mode="output">
+    <GripContainer
+      elementId={elementId}
+      parameterId={'output'}
+      mode="output"
+      onClick={() => console.log('param click!')}
+    >
       <NumberSliderGrip />
     </GripContainer>
   )

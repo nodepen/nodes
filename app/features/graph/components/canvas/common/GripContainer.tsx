@@ -15,13 +15,14 @@ type GripContainerProps = {
   elementId: string
   parameterId: string
   mode: 'input' | 'output'
+  onClick?: () => void
   children: JSX.Element
 }
 
 /**
  * The generic grip container wraps its child and attaches all wire creation events and logic.
  */
-const GripContainer = ({ elementId, parameterId, mode, children }: GripContainerProps): React.ReactElement => {
+const GripContainer = ({ elementId, parameterId, mode, children, onClick }: GripContainerProps): React.ReactElement => {
   const store = useAppStore()
   const { registerElementAnchor, captureLiveWires, startLiveWires, releaseLiveWires, endLiveWires } = useGraphDispatch()
 
@@ -126,6 +127,10 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
 
     const { pointerId, pageX: ex, pageY: ey } = e
 
+    localPointerId.current = pointerId
+    localPointerStartTime.current = Date.now()
+    localPointerStartPosition.current = [ex, ey]
+
     const getInitialMode = (
       graph: ReturnType<typeof store['getState']>['graph']['present'],
       hotkey: ReturnType<typeof store['getState']>['hotkey']
@@ -148,6 +153,11 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
     switch (e.pointerType) {
       case 'mouse': {
         const initialMode = getInitialMode(store.getState().graph.present, store.getState().hotkey)
+
+        // Reset local reference to allow self-transpose
+        localPointerId.current = undefined
+
+        setShowWireTooltip(false)
 
         const map = {
           from:
@@ -192,6 +202,7 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
                 }
                 return template
               })
+
               startLiveWires({
                 templates: liveTemplates,
                 origin: {
@@ -199,6 +210,7 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
                   parameterId,
                 },
               })
+
               break
             }
             // Transpose not possible, fall through to default
@@ -225,21 +237,42 @@ const GripContainer = ({ elementId, parameterId, mode, children }: GripContainer
             })
           }
         }
+
         break
       }
       case 'pen':
-      case 'touch': {
-        localPointerId.current = pointerId
-        localPointerStartTime.current = Date.now()
-        localPointerStartPosition.current = [ex, ey]
-      }
+      case 'touch':
     }
   }
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
-    endLiveWires(getWireMode(store.getState().hotkey))
+    const { pointerId } = e
+
+    if (localPointerId.current !== pointerId) {
+      return
+    }
+
+    switch (e.pointerType) {
+      case 'mouse': {
+        endLiveWires(getWireMode(store.getState().hotkey))
+        break
+      }
+      case 'pen':
+      case 'touch': {
+        const now = Date.now()
+        const duration = localPointerStartTime.current - now
+
+        if (duration > 50) {
+          break
+        }
+
+        // Do click action
+        onClick?.()
+        break
+      }
+    }
 
     localPointerId.current = undefined
   }

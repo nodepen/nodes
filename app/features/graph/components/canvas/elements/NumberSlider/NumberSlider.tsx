@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { DraggableData } from 'react-draggable'
-import { ElementContainer, GripContainer, ParameterIcon } from '../../common'
+import { ElementContainer, ParameterIcon } from '../../common'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
 import { useDebugRender } from '@/hooks'
