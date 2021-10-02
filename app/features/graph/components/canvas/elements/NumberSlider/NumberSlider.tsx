@@ -484,23 +484,22 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 }
               }
             }}
-            onDoubleClick={(e) => {
-              const { pageX, pageY } = e
-
+            onDoubleClick={() => {
               if (isSelected) {
                 updateSelection({ type: 'id', mode: 'remove', ids: [id] })
               }
 
               switch (device.breakpoint) {
                 case 'sm': {
-                  showGenericMenuAt.current = [pageX, pageY]
-                  setShowGenericMenu(true)
                   break
                 }
                 default: {
                   setShowUnderlay(true)
                 }
               }
+            }}
+            onContextMenu={() => {
+              console.log('right click')
             }}
             onPointerUp={handlePointerUp}
             style={{ width: internalWidth, height: elementHeight }}

@@ -48,7 +48,7 @@ const ElementContainer = ({
   }, [disabled, cameraMode])
 
   const handleStopPropagation = useCallback((e: PointerEvent | MouseEvent | globalThis.MouseEvent): void => {
-    // console.log('ElementContainer : handleStopPropagation')
+    // console.log(`ElementContainer : handleStopPropagation : ${e.type}`)
 
     e.stopPropagation()
   }, [])
@@ -144,24 +144,6 @@ const ElementContainer = ({
     isRegistered.current = true
   }, [])
 
-  useEffect(() => {
-    if (!containerRef.current) {
-      return
-    }
-
-    const container = containerRef.current
-
-    // container.addEventListener('pointerdown', handleStopPropagation)
-    // container.addEventListener('mousedown', handleStopPropagation)
-    container.addEventListener('dblclick', handleStopPropagation)
-
-    return () => {
-      // container.removeEventListener('pointerdown', handleStopPropagation)
-      // container.removeEventListener('mousedown', handleStopPropagation)
-      container.removeEventListener('dblclick', handleStopPropagation)
-    }
-  })
-
   return (
     <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
       <div className="w-min h-full relative">
@@ -180,6 +162,7 @@ const ElementContainer = ({
             ref={containerRef}
             onPointerDown={handleStopPropagation}
             onMouseDown={handleStopPropagation}
+            onDoubleClick={handleStopPropagation}
           >
             {children}
           </div>

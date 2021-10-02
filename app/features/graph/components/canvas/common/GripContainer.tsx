@@ -335,8 +335,6 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
           role="presentation"
-          onMouseDown={(e) => e.stopPropagation()}
-          onDoubleClick={(e) => e.stopPropagation()}
         >
           {children}
         </div>
