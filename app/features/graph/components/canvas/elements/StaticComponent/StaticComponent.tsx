@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 import { useDebugRender } from 'hooks'
 import { ElementContainer } from '../../common'
 import { useGraphSelection } from '@/features/graph/store/graph/hooks'
-import { StaticComponentParameter } from './lib'
+import { StaticComponentParameter } from './components'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -40,8 +40,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   <StaticComponentParameter
                     key={`input-param-${id}`}
                     mode={'input'}
-                    template={{ id, ...parameter }}
-                    parent={element}
+                    template={parameter}
+                    elementId={element.id}
+                    parameterId={id}
                   />
                 )
               })}
@@ -65,8 +66,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
                   <StaticComponentParameter
                     key={`output-param-${id}`}
                     mode={'output'}
-                    template={{ id, ...parameter }}
-                    parent={element}
+                    template={parameter}
+                    elementId={element.id}
+                    parameterId={id}
                   />
                 )
               })}
