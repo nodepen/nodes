@@ -2,7 +2,6 @@ import { Grasshopper } from 'glib'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import React, { useEffect } from 'react'
 import { GripContainer, GripIcon, useGripContext } from '../../../common'
-import { useSessionManager } from '@/features/common/context/session'
 
 type StaticComponentParameterProps = {
   template: Grasshopper.Parameter
@@ -16,7 +15,7 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
   const zoomLevel = useCameraZoomLevel()
 
   useEffect(() => {
-    const offset: [number, number] = [mode === 'input' ? -14 : 14, 2]
+    const offset: [number, number] = [mode === 'input' ? -2 : 2, 2]
     register(offset)
   }, [])
 
@@ -25,9 +24,8 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
   return (
     <div
       className={`${mode === 'input' ? 'flex-row' : 'flex-row-reverse'} w-full h-full flex justify-start items-center`}
-      ref={gripRef}
     >
-      <div style={{ transform: t }}>
+      <div style={{ transform: t }} ref={gripRef}>
         <GripIcon mode={mode} shadow={zoomLevel !== 'far'} />
       </div>
       <p className="font-panel font-semibold select-none" style={{ transform: 'translateY(1px)' }}>
@@ -50,16 +48,12 @@ export const StaticComponentParameterContainer = ({
   mode,
   template,
 }: StaticComponentParameterContainerProps): React.ReactElement => {
-  const { device } = useSessionManager()
-
   const border = mode === 'input' ? 'border-l-2 rounded-tr-md rounded-br-md' : 'border-r-2 rounded-tl-md rounded-bl-md'
   const p = mode === 'input' ? 'pr-4' : 'pl-4'
 
   return (
     <div
-      className={`${p} ${border} ${
-        device.breakpoint === 'sm' ? '' : 'hover:bg-gray-300'
-      } flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 overflow-visible cursor-default`}
+      className={`${p} ${border} flex-grow pt-2 pb-2 flex flex-row justify-start items-center border-dark transition-colors duration-75 overflow-visible cursor-default`}
     >
       <GripContainer
         elementId={elementId}
