@@ -511,20 +511,18 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 <h3
                   className={`${
                     zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'
-                  } ml-2 font-panel font-bold text-sm select-none transition-opacity duration-300`}
+                  } ml-2 font-panel font-bold text-sm select-none`}
                   style={{ transform: 'translateY(1px)' }}
                 >
                   SLIDER
                 </h3>
               </div>
               <div className="h-full flex-grow mr-4" ref={sliderRef}>
-                <div
-                  className={`${
-                    zoomLevel === 'far' ? 'opacity-0 pointer-events-none' : 'opacity-100 pointer-events-auto'
-                  } w-full h-full relative overflow-visible transition-opacity duration-300`}
-                >
+                <div className="w-full h-full relative overflow-visible">
                   <div
-                    className="absolute w-4 h-4 z-10 hover:cursor-move-ew"
+                    className={`${
+                      zoomLevel === 'far' ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    } absolute w-4 h-4 z-10 hover:cursor-move-ew`}
                     ref={sliderTargetRef}
                     style={{ top: 3, left: sliderPosition - 8 }}
                   >
@@ -535,55 +533,60 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                       />
                     </div>
                   </div>
-                  {showUnderlay ? null : (
-                    <div
-                      className={`${
-                        zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'
-                      } absolute pointer-events-none transition-opacity duration-300`}
-                      style={{
-                        width: sliderWidth,
-                        height: sliderWidth,
-                        left: sliderPosition - sliderWidth / 2,
-                        top: 45,
-                      }}
-                    >
-                      <div className="w-full h-full flex flex-col justify-start items-center">
-                        <div
-                          className="w-6 h-6 rounded-sm bg-green"
-                          style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
-                        />
-                        <div
-                          className="bg-green rounded-md pointer-events-auto no-drag"
-                          style={{ transform: 'translateY(-16px)' }}
-                          onDoubleClick={(e) => {
-                            e.stopPropagation()
-
-                            underlayFocusElement.current = 'value'
-                            setShowUnderlay(true)
-                          }}
-                        >
-                          <p
-                            className="h-10 p-2 pl-4 pr-4 rounded-md text-lg"
-                            style={{ transform: 'translateY(-4px)' }}
-                          >
-                            {internalValueLabel.current}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  <div className="absolute left-0 top-0 w-full h-full z-0">
+                  <div
+                    className={`${
+                      zoomLevel === 'far' ? 'opacity-0 pointer-events-none' : 'opacity-100'
+                    } absolute left-0 top-0 w-full h-full z-0`}
+                  >
                     <div className="w-full h-full flex items-center justify-center">
                       <div className="flex-grow bg-dark" style={{ height: '2px' }} />
                     </div>
                   </div>
+                  {showUnderlay ? null : (
+                    <div
+                      className="absolute pointer-events-none z-0"
+                      style={{
+                        width: sliderWidth,
+                        height: sliderWidth,
+                        left: sliderPosition - sliderWidth / 2,
+                        top: 32,
+                      }}
+                    >
+                      <div className="w-full h-full pt-4 flex flex-col justify-start items-center overflow-hidden">
+                        <div
+                          className="w-full h-full flex flex-col justify-start items-center transition-transform duration-300 ease-out"
+                          style={{ transform: zoomLevel === 'far' ? 'translateY(-64px)' : 'translateY(0px)' }}
+                        >
+                          <div
+                            className="w-6 h-6 rounded-sm bg-green"
+                            style={{ transform: 'rotate(45deg)', transformOrigin: '50% 50%' }}
+                          />
+                          <div
+                            className="bg-green rounded-md pointer-events-auto no-drag"
+                            style={{ transform: 'translateY(-16px)' }}
+                            onDoubleClick={(e) => {
+                              e.stopPropagation()
+
+                              underlayFocusElement.current = 'value'
+                              setShowUnderlay(true)
+                            }}
+                          >
+                            <p
+                              className="h-10 p-2 pl-4 pr-4 rounded-md text-lg"
+                              style={{ transform: 'translateY(-4px)' }}
+                            >
+                              {internalValueLabel.current}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
             <div
-              className={`${
-                zoomLevel === 'far' ? 'pointer-events-none opacity-0' : 'opacity-100'
-              } w-2 h-full absolute transition-opacity duration-300`}
+              className={`${zoomLevel === 'far' ? 'pointer-events-none opacity-0' : 'opacity-100'} w-2 h-full absolute`}
               style={{ left: internalWidth - 26, top: 0 }}
               ref={resizeTargetRef}
             >
