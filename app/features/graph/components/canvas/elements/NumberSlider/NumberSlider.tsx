@@ -549,7 +549,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                         width: sliderWidth,
                         height: sliderWidth,
                         left: sliderPosition - sliderWidth / 2,
-                        top: 32,
+                        top: 34,
                       }}
                     >
                       <div className="w-full h-full pt-4 flex flex-col justify-start items-center overflow-hidden">

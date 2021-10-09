@@ -4,7 +4,7 @@ import { MenuAction } from 'features/graph/types'
 import { AboutMenu, DeleteMenu } from '../menus'
 
 export const useComponentMenuActions = (element: NodePen.Element<'static-component'>): MenuAction<typeof element>[] => {
-  const handleAction = useCallback((context: typeof element): void => {
+  const handleAction = useCallback((_context: typeof element): void => {
     console.log('Action!')
   }, [])
 
