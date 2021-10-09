@@ -28,7 +28,10 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
       <div style={{ transform: t }} ref={gripRef}>
         <GripIcon mode={mode} shadow={zoomLevel !== 'far'} />
       </div>
-      <p className="font-panel font-semibold select-none" style={{ transform: 'translateY(1px)' }}>
+      <p
+        className={`${zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'} font-panel font-semibold select-none`}
+        style={{ transform: 'translateY(1px)' }}
+      >
         {nickname}
       </p>
     </div>

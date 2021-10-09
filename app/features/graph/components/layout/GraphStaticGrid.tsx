@@ -1,8 +1,11 @@
 import React from 'react'
+import { useCameraZoomLevel } from '../../store/camera/hooks'
 
 const GraphStaticGrid = (): React.ReactElement => {
-  const size = 10
-  const thickness = 0.3
+  const zoomLevel = useCameraZoomLevel()
+
+  const size = zoomLevel === 'far' ? 50 : 10
+  const thickness = zoomLevel === 'far' ? 1 : 0.3
 
   return (
     <div className="w-full h-full relative overflow-visible">

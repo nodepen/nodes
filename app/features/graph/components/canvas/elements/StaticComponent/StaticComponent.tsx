@@ -3,6 +3,7 @@ import { NodePen } from 'glib'
 import { useDebugRender } from 'hooks'
 import { ElementContainer } from '../../common'
 import { useGraphSelection } from '@/features/graph/store/graph/hooks'
+import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { StaticComponentParameter } from './components'
 
 type StaticComponentProps = {
@@ -13,6 +14,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const { template, id } = element
 
   useDebugRender(`StaticComponent | ${template.name} | ${id}`)
+
+  const zoomLevel = useCameraZoomLevel()
 
   const selection = useGraphSelection()
 
@@ -52,7 +55,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               className={`w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md bg-white border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
             >
               <div
-                className="font-panel text-v font-bold text-sm select-none"
+                className={`${
+                  zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'
+                } font-panel text-v font-bold text-sm select-none`}
                 style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
               >
                 {template.nickname.toUpperCase()}
@@ -75,9 +80,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             </div>
           </div>
           <div
-            className={`${
-              isSelected ? 'bg-green' : 'bg-white'
-            } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none shadow-osm transition-colors duration-150`}
+            className={`${isSelected ? 'bg-green' : 'bg-white'} ${
+              zoomLevel === 'far' ? '' : 'shadow-osm'
+            } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none transition-colors duration-150`}
           />
         </div>
       </ElementContainer>
