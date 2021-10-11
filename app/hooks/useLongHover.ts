@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useEffect } from 'react'
 
-export const useLongHover = (onLongHover: () => void, delay = 300): React.RefObject<HTMLDivElement> => {
+export const useLongHover = (onLongHover: (e: PointerEvent) => void, delay = 300): React.RefObject<HTMLDivElement> => {
   const targetRef = useRef<HTMLDivElement>(null)
 
   const debounceHandler = useRef<ReturnType<typeof setTimeout>>()
@@ -17,7 +17,7 @@ export const useLongHover = (onLongHover: () => void, delay = 300): React.RefObj
       }
 
       const debounce = setTimeout(() => {
-        onLongHover()
+        onLongHover(e)
       }, delay)
 
       debounceHandler.current = debounce

@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { NodePen } from 'glib'
-import { useDebugRender } from 'hooks'
+import { useDebugRender, useLongHover } from 'hooks'
 import { ElementContainer } from '../../common'
 import { useGraphSelection } from '@/features/graph/store/graph/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { StaticComponentParameter } from './components'
+import { HoverTooltip } from '../../../overlay'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -20,6 +21,18 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const selection = useGraphSelection()
 
   const isSelected = selection.includes(id)
+
+  const [showTooltip, setShowTooltip] = useState(false)
+  const tooltipPosition = useRef<[number, number]>([0, 0])
+
+  const handleLongHover = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    tooltipPosition.current = [pageX, pageY]
+    setShowTooltip(true)
+  }, [])
+
+  const longHoverTarget = useLongHover(handleLongHover)
 
   return (
     <>
@@ -53,6 +66,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             <div
               id="label-column"
               className={`w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md bg-white border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
+              ref={longHoverTarget}
             >
               <div
                 className={`${
@@ -86,6 +100,11 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           />
         </div>
       </ElementContainer>
+      {showTooltip ? (
+        <HoverTooltip position={tooltipPosition.current} onClose={() => setShowTooltip(false)}>
+          <div className="w-12 h-12 bg-blue-500" />
+        </HoverTooltip>
+      ) : null}
     </>
   )
 }

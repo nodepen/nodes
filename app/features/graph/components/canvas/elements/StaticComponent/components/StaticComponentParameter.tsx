@@ -1,8 +1,9 @@
 import { Grasshopper } from 'glib'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { GripContainer, GripIcon, useGripContext } from '../../../common'
 import { useLongHover } from 'hooks'
+import { HoverTooltip } from '@/features/graph/components/overlay'
 
 type StaticComponentParameterProps = {
   template: Grasshopper.Parameter
@@ -15,8 +16,14 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
   const { gripRef, register } = useGripContext()
   const zoomLevel = useCameraZoomLevel()
 
-  const onLongHover = useCallback(() => {
-    console.log('ok!')
+  const [showTooltip, setShowTooltip] = useState(false)
+  const tooltipPosition = useRef<[number, number]>([0, 0])
+
+  const onLongHover = useCallback((e: PointerEvent) => {
+    const { pageX, pageY } = e
+
+    tooltipPosition.current = [pageX, pageY]
+    setShowTooltip(true)
   }, [])
 
   const longHoverTarget = useLongHover(onLongHover)
@@ -29,20 +36,29 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
   const t = mode === 'input' ? 'translateX(-9px)' : 'translateX(9px)'
 
   return (
-    <div
-      className={`${mode === 'input' ? 'flex-row' : 'flex-row-reverse'} w-full h-full flex justify-start items-center`}
-      ref={longHoverTarget}
-    >
-      <div style={{ transform: t }} ref={gripRef}>
-        <GripIcon mode={mode} shadow={zoomLevel !== 'far'} />
-      </div>
-      <p
-        className={`${zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'} font-panel font-semibold select-none`}
-        style={{ transform: 'translateY(1px)' }}
+    <>
+      <div
+        className={`${
+          mode === 'input' ? 'flex-row' : 'flex-row-reverse'
+        } w-full h-full flex justify-start items-center`}
+        ref={longHoverTarget}
       >
-        {nickname}
-      </p>
-    </div>
+        <div style={{ transform: t }} ref={gripRef}>
+          <GripIcon mode={mode} shadow={zoomLevel !== 'far'} />
+        </div>
+        <p
+          className={`${zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'} font-panel font-semibold select-none`}
+          style={{ transform: 'translateY(1px)' }}
+        >
+          {nickname}
+        </p>
+      </div>
+      {showTooltip ? (
+        <HoverTooltip position={tooltipPosition.current} onClose={() => setShowTooltip(false)}>
+          <div className="w-12 h-12 bg-red-500" />
+        </HoverTooltip>
+      ) : null}
+    </>
   )
 }
 

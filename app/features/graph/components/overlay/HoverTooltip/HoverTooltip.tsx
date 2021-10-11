@@ -1,4 +1,5 @@
 import React, { useEffect, useCallback } from 'react'
+import { useOverlayOffset } from '../hooks'
 import { OverlayContainer } from '../OverlayContainer'
 import { OverlayPortal } from '../OverlayPortal'
 
@@ -13,6 +14,8 @@ type HoverTooltipProps = {
  * @remarks Any keystroke or pointer event will fire the provided `onClose` callback.
  */
 const HoverTooltip = ({ position, onClose, children }: HoverTooltipProps): React.ReactElement => {
+  const offsetPosition = useOverlayOffset(position)
+
   const handlePointerDown = useCallback(
     (e: PointerEvent): void => {
       if (e.pointerType !== 'mouse') {
@@ -52,8 +55,8 @@ const HoverTooltip = ({ position, onClose, children }: HoverTooltipProps): React
   })
 
   return (
-    <OverlayPortal>
-      <OverlayContainer static position={position} pointerEvents={false}>
+    <OverlayPortal z={201}>
+      <OverlayContainer static position={offsetPosition} pointerEvents={false}>
         {children}
       </OverlayContainer>
     </OverlayPortal>
