@@ -5,6 +5,7 @@ import { ElementContainer } from '../../common'
 import { useGraphSelection } from '@/features/graph/store/graph/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { StaticComponentParameter } from './components'
+import { StaticComponentTooltip } from './tooltips'
 import { HoverTooltip } from '../../../overlay'
 
 type StaticComponentProps = {
@@ -102,7 +103,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
       </ElementContainer>
       {showTooltip ? (
         <HoverTooltip position={tooltipPosition.current} onClose={() => setShowTooltip(false)}>
-          <div className="w-12 h-12 bg-blue-500" />
+          <StaticComponentTooltip template={template} />
         </HoverTooltip>
       ) : null}
     </>

@@ -1,0 +1,1 @@
+export { StaticComponentTooltip } from './StaticComponentTooltip'

@@ -12,7 +12,9 @@ const KeyboardObserver = (): React.ReactElement => {
     (e: KeyboardEvent): void => {
       setKey({ key: e.key, pressed: true })
 
-      if (e.key.toLowerCase() === 'd') {
+      const prevent = ['a', 'd']
+
+      if (prevent.includes(e.key.toLowerCase())) {
         e.preventDefault()
       }
     },
