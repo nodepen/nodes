@@ -1,7 +1,8 @@
 import { Grasshopper } from 'glib'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { GripContainer, GripIcon, useGripContext } from '../../../common'
+import { useLongHover } from 'hooks'
 
 type StaticComponentParameterProps = {
   template: Grasshopper.Parameter
@@ -14,6 +15,12 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
   const { gripRef, register } = useGripContext()
   const zoomLevel = useCameraZoomLevel()
 
+  const onLongHover = useCallback(() => {
+    console.log('ok!')
+  }, [])
+
+  const longHoverTarget = useLongHover(onLongHover)
+
   useEffect(() => {
     const offset: [number, number] = [mode === 'input' ? -2 : 2, 2]
     register(offset)
@@ -24,6 +31,7 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
   return (
     <div
       className={`${mode === 'input' ? 'flex-row' : 'flex-row-reverse'} w-full h-full flex justify-start items-center`}
+      ref={longHoverTarget}
     >
       <div style={{ transform: t }} ref={gripRef}>
         <GripIcon mode={mode} shadow={zoomLevel !== 'far'} />
