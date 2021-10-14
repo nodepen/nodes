@@ -22,6 +22,10 @@ const HoverTooltip = ({
 }: HoverTooltipProps): React.ReactElement | null => {
   const offsetPosition = useOverlayOffset(position)
 
+  const handleClick = useCallback((): void => {
+    onClose()
+  }, [onClose])
+
   const handlePointerDown = useCallback(
     (e: PointerEvent): void => {
       if (e.pointerType !== 'mouse') {
@@ -49,11 +53,13 @@ const HoverTooltip = ({
   }, [onClose])
 
   useEffect(() => {
+    window.addEventListener('click', handleClick)
     window.addEventListener('pointerdown', handlePointerDown)
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('keydown', handleKeyDown)
 
     return () => {
+      window.removeEventListener('click', handleClick)
       window.removeEventListener('pointerdown', handlePointerDown)
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('keydown', handleKeyDown)
@@ -74,13 +80,13 @@ const HoverTooltip = ({
         return `translateX(${dx}px) translateY(${dy}px)`
       }
       case 'TR': {
-        return `translateX(calc(-100% - ${dx}px)) translateY(${dy}px)`
+        return `translateX(calc(-100% + ${dx}px)) translateY(${dy}px)`
       }
       case 'BL': {
         return `translateX(${dx}px) translateY(calc(-100% - ${dy}px))`
       }
       case 'BR': {
-        return `translateX(calc(-100% - ${dx}px)) translateY(calc(-100% - ${dy}px))`
+        return `translateX(calc(-100% + ${dx}px)) translateY(calc(-100% - ${dy}px))`
       }
     }
   })()

@@ -1,0 +1,1 @@
+export { StaticComponentDetails } from './StaticComponentDetails'
