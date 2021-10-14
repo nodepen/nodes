@@ -5,15 +5,21 @@ import { OverlayPortal } from '../OverlayPortal'
 
 type HoverTooltipProps = {
   position: [x: number, y: number]
+  offset?: [dx: number, dy: number]
   onClose: () => void
   children: JSX.Element
 }
 
 /**
- * A tooltip that appears with the top left corner anchored at the provided position.
+ * A tooltip that appears anchored to the provided position. Will select best corner based on screen space.
  * @remarks Any keystroke or pointer event will fire the provided `onClose` callback.
  */
-const HoverTooltip = ({ position, onClose, children }: HoverTooltipProps): React.ReactElement => {
+const HoverTooltip = ({
+  position,
+  offset = [8, 8],
+  onClose,
+  children,
+}: HoverTooltipProps): React.ReactElement | null => {
   const offsetPosition = useOverlayOffset(position)
 
   const handlePointerDown = useCallback(
@@ -54,10 +60,35 @@ const HoverTooltip = ({ position, onClose, children }: HoverTooltipProps): React
     }
   })
 
+  const [x, y] = position
+  const [dx, dy] = offset
+
+  const vertical = y > window.innerHeight * 0.55 ? 'B' : 'T'
+  const horizontal = x > window.innerWidth * 0.55 ? 'R' : 'L'
+
+  const anchor: 'TL' | 'TR' | 'BL' | 'BR' = `${vertical}${horizontal}`
+
+  const transform = ((): string => {
+    switch (anchor) {
+      case 'TL': {
+        return `translateX(${dx}px) translateY(${dy}px)`
+      }
+      case 'TR': {
+        return `translateX(calc(-100% - ${dx}px)) translateY(${dy}px)`
+      }
+      case 'BL': {
+        return `translateX(${dx}px) translateY(calc(-100% - ${dy}px))`
+      }
+      case 'BR': {
+        return `translateX(calc(-100% - ${dx}px)) translateY(calc(-100% - ${dy}px))`
+      }
+    }
+  })()
+
   return (
     <OverlayPortal z={201}>
       <OverlayContainer static position={offsetPosition} pointerEvents={false}>
-        {children}
+        <div style={{ transform, width: 'min-content', height: 'min-content' }}>{children}</div>
       </OverlayContainer>
     </OverlayPortal>
   )

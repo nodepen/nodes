@@ -9,7 +9,7 @@ export const StaticComponentTooltip = ({ template }: StaticComponentTooltipProps
   const { icon, nickname, description } = template
 
   return (
-    <div style={{ minWidth: 250, width: 'min-content' }} className="m-2">
+    <div style={{ minWidth: 250, width: 'min-content' }}>
       <div className="w-full p-2 flex flex-col items-start rounded-md bg-green">
         <div className="w-full h-12 flex items-center justify-start">
           <img
