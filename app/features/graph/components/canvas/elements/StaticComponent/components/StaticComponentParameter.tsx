@@ -1,9 +1,10 @@
 import { Grasshopper } from 'glib'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { GripContainer, GripIcon, useGripContext } from '../../../common'
+import { GripContainer, GripIcon, TooltipContainer, useGripContext } from '../../../common'
 import { useLongHover } from 'hooks'
 import { HoverTooltip } from '@/features/graph/components/overlay'
+import { StaticComponentParameterDetails } from '../details'
 
 type StaticComponentParameterProps = {
   template: Grasshopper.Parameter
@@ -55,7 +56,9 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
       </div>
       {showTooltip ? (
         <HoverTooltip position={tooltipPosition.current} onClose={() => setShowTooltip(false)}>
-          <div className="w-12 h-12 bg-red-500" />
+          <TooltipContainer>
+            <StaticComponentParameterDetails template={template} />
+          </TooltipContainer>
         </HoverTooltip>
       ) : null}
     </>

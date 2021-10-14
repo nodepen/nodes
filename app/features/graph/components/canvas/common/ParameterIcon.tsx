@@ -21,7 +21,7 @@ export const ParameterIcon = ({ type, size }: ParameterIconProps): React.ReactEl
   const points = `${a},0 ${b},-${f} -${b},-${f} -${a},0 -${b},${f} ${b},${f}`
 
   const getIcon = (type: Grasshopper.ParameterType | 'none'): JSX.Element | null => {
-    switch (type) {
+    switch (type.toLowerCase()) {
       case 'number':
         return (
           <path
