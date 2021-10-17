@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { NextPage } from 'next'
-// import Link from 'next/link'
 import Head from 'next/head'
 
 const Home: NextPage = () => {
@@ -123,7 +122,6 @@ const Home: NextPage = () => {
     setMobileMargin(m)
   }, [])
 
-  // const ds = isHovered ? 24 : 0
   const ds = 0
   const s = mobileMargin > 0 ? 304 + ds : 512 + ds
 
@@ -142,29 +140,9 @@ const Home: NextPage = () => {
         <meta name="keywords" content="grasshopper, grasshopper online, grasshopper 3d" />
         <meta name="theme-color" content="#98E2C6" />
       </Head>
-      <div className="w-76 hidden lg:flex lg:flex-col lg:items-center">
-        {/* <a
-          className="rounded-sm mb-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
-          href="https://twitter.com/cdriesler"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img className="h-4 mr-2" src="/logos/twitter.svg" alt="The Twitter logo." />
-          <p className=" text-darkgreen font-semibold font-md">VIEW UPDATES</p>
-        </a>
-        <a
-          className="rounded-sm mt-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
-          href="https://github.com/cdriesler/nodepen"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img className="h-6 mr-2" src="/logos/github.svg" alt="The GitHub logo." />
-          <p className=" text-darkgreen font-semibold font-md">VIEW CODE</p>
-        </a> */}
-      </div>
+      <div className="w-76 hidden lg:flex lg:flex-col lg:items-center" />
       <div
         ref={circleRef}
-        // w-76 h-76 lg:w-128 lg:h-128
         className={`rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center`}
         style={{
           transform: `translate(${dx * 0.05}px, ${dy * 0.05}px)`,
@@ -198,7 +176,6 @@ const Home: NextPage = () => {
             title="NodePen: Same Grasshopper, New Digs"
             style={{ transform: `translate(${dx * -0.9}px, ${dy * -0.9}px)` }}
           />
-          {/* <Link href="/gh"> */}
           <a
             href="/gh"
             className="w-8 h-8 mt-8 relative overflow-visible"
@@ -227,40 +204,10 @@ const Home: NextPage = () => {
               </div>
             </div>
           </a>
-          {/* </Link> */}
           {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
         </div>
       </div>
-      <div className="w-76 flex flex-col items-center">
-        {/* <Link href="/gh" prefetch={false}> */}
-        {/* <a href="/gh" className="font-sans font-semibold text-sm">
-          <div className="w-48 h-10 border-2 border-solid border-dark shadow-osm bg-light rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
-            <div className="flex-grow flex flex-row justify-center items-center">
-              <div className="font-sans font-semibold text-sm">LAUNCH NODEPEN</div>
-            </div>
-          </div>
-        </a> */}
-        {/* </Link> */}
-      </div>
-
-      <style jsx>{`
-        @keyframes arrowloop {
-          from {
-            transform: translateX(-15px);
-          }
-          to {
-            transform: translateX(15px);
-          }
-        }
-
-        .arrow {
-          animation-name: arrowloop;
-          animation-duration: 800ms;
-          animation-timing-function: ease-in-out;
-          animation-iteration-count: infinite;
-          animation-direction: alternate;
-        }
-      `}</style>
+      <div className="w-76 flex flex-col items-center" />
     </div>
   )
 }
