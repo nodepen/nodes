@@ -5,6 +5,7 @@ import { Payload, WireMode } from '../types'
 import { ActionCreators } from 'redux-undo'
 import { GraphMode } from '../types/GraphMode'
 
+/* eslint-disable-next-line */
 export const useGraphDispatch = () => {
   const dispatch = useAppDispatch()
 

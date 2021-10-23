@@ -1,16 +1,14 @@
 import { NodePen } from 'glib'
 
-type SolutionReference = {
-    status: 'ready'
-} | {
-    status: 'cached'
-    data: NodePen.DataTree
-}
-
 export type SolutionState = {
+  current: {
+    solutionId: string
+  }
+  data: {
     [solutionId: string]: {
-        [elementId: string]: {
-            [parameterId: string]: SolutionReference | undefined
-        }
+      [elementId: string]: {
+        [parameterId: string]: NodePen.DataTree
+      }
     }
+  }
 }
