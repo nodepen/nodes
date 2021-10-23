@@ -217,6 +217,10 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
 
         resetLocalState()
 
+        if (e.button !== 0) {
+          return
+        }
+
         switch (initialMode) {
           case 'transpose': {
             // TODO
