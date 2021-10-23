@@ -28,7 +28,8 @@ export const solutionSlice = createSlice({
 })
 
 const selectCurrentSolutionId = (state: RootState): string => state.solution.current.solutionId
-const selectCurrentSolutionValues = (state: RootState): SolutionState['data'] => state.solution.data
+const selectCurrentSolutionValues = (state: RootState): SolutionState['data'][''] =>
+  state.solution.data[state.solution.current.solutionId]
 
 export const solutionSelectors = {
   selectCurrentSolutionId,
