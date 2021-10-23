@@ -21,7 +21,7 @@ import {
 } from './types/Payload'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
-import { prepareLiveMotion } from './reducers/prepareLiveMotion'
+import { prepareLiveMotion } from './reducers'
 
 const initialState: GraphState = {
   elements: {},
@@ -54,6 +54,9 @@ export const graphSlice = createSlice({
     reset: (state: GraphState) => {
       state.elements = {}
       state.selection = []
+    },
+    expireSolution: (state: GraphState) => {
+      state.solution.id = newGuid()
     },
     addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()

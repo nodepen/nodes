@@ -13,7 +13,10 @@ export const useGraphDispatch = () => {
     undo: () => dispatch(ActionCreators.undo()),
     redo: () => dispatch(ActionCreators.redo()),
     reset: () => dispatch(graphActions.reset()),
-    addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => dispatch(graphActions.addElement(data)),
+    addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
+      dispatch(graphActions.expireSolution())
+      dispatch(graphActions.addElement(data))
+    },
     addLiveElement: (data: Payload.AddElementPayload<NodePen.ElementType>) =>
       dispatch(graphActions.addLiveElement(data)),
     updateElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>) =>

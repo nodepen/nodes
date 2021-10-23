@@ -1,5 +1,5 @@
 import type { AppProps } from 'next/app'
-import { Provider } from 'react-redux'
+import { Provider as ReduxProvider } from 'react-redux'
 import { store } from '$'
 
 import 'tailwindcss/tailwind.css'
@@ -7,7 +7,7 @@ import { SessionManager } from '@/features/common/context/session'
 
 const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
   return (
-    <Provider store={store}>
+    <ReduxProvider store={store}>
       <SessionManager>
         <Component {...pageProps} />
       </SessionManager>
@@ -39,7 +39,7 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
           outline: none;
         }
       `}</style>
-    </Provider>
+    </ReduxProvider>
   )
 }
 

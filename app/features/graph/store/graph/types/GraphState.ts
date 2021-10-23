@@ -2,12 +2,17 @@ import { NodePen } from 'glib'
 import { GraphMode } from './GraphMode'
 
 export type GraphState = {
+  meta?: {
+    id: string
+    name: string
+    author: string
+  }
   elements: { [elementId: string]: NodePen.Element<NodePen.ElementType> }
-  selection: string[]
   solution: {
     id?: string
     manifest?: unknown
   }
+  selection: string[]
   mode: GraphMode
   registry: {
     latest: {
