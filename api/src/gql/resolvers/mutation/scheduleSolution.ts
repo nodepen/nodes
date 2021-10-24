@@ -30,7 +30,11 @@ export const scheduleSolution = async (
 
   const solutionId = uuidv4()
 
-  await db.setex(`graph:${graphId}:json`, 60 * 60, graphElements)
+  await db.setex(
+    `graph:${graphId}:solution:${solutionId}:json`,
+    60 * 60,
+    graphElements
+  )
 
   const job = await ghq.createJob({ graphId, solutionId }).save()
 

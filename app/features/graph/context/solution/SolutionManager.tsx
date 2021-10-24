@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
+import { NodePen } from 'glib'
 import { useSubscription, gql, useApolloClient } from '@apollo/client'
-import { useGraphSolution } from '../../store/graph/hooks'
+import { useGraphElements, useGraphSolution } from '../../store/graph/hooks'
 import { useSolutionDispatch } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
 
@@ -21,6 +22,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
   const client = useApolloClient()
 
+  const elements = useGraphElements()
   const solution = useGraphSolution()
 
   const { expireSolution } = useSolutionDispatch()
@@ -36,6 +38,11 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
     expireSolution(solutionId)
 
+    const validElementTypes: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider']
+    const validElements = Object.values(elements).filter((element) => validElementTypes.includes(element.template.type))
+
+    const elementsJson = JSON.stringify(validElements)
+
     client
       .mutate({
         mutation: gql`
@@ -46,7 +53,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         variables: {
           context: {
             graphId: 'test-id',
-            graphElements: JSON.stringify(['test', 'elements', 'array']),
+            graphElements: elementsJson,
           },
         },
       })

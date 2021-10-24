@@ -1,6 +1,7 @@
 import Queue from 'bee-queue'
 import { ClientOpts } from 'redis'
 import { db } from '../db'
+import axios from 'axios'
 
 const opts: ClientOpts = process.env.NP_DB_HOST
   ? {
@@ -14,13 +15,28 @@ const ghq = new Queue('gh', {
   isWorker: true,
 })
 
-const processJob = async (
-  job: Queue.Job<any>,
-  done: Queue.DoneCallback<unknown>
-): Promise<unknown> => {
+const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
   const { graphId, solutionId } = job.data
 
-  return done(null, job.data)
+  const graphJson = await db.get(`graph:${graphId}:solution:${solutionId}:json`)
+
+  console.log({ graphJson })
+
+  const { data: graphGhx } = await axios.post(
+    'http://localhost:9900/grasshopper/graph',
+    graphJson
+  )
+
+  console.log(graphGhx)
+
+  const { data: graphSolution } = await axios.post(
+    'http://localhost:9900/grasshopper/solve',
+    graphGhx
+  )
+
+  console.log((graphSolution as any).data)
+
+  return job.data
 }
 
 ghq.process(processJob)

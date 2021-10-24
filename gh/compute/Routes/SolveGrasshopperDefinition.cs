@@ -226,6 +226,8 @@ namespace NodePen.Compute.Routes
         result.Values.Add(branchData);
       }
 
+      Console.WriteLine(result);
+
       return result;
     }
 

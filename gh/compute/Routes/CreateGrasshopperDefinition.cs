@@ -17,7 +17,8 @@ namespace NodePen.Compute.Routes
 {
   public partial class NodePenRoutes
   {
-    private class NodePenElement {
+    private class NodePenElement
+    {
       [JsonProperty("id")]
       public string Id { get; set; }
 
@@ -61,10 +62,10 @@ namespace NodePen.Compute.Routes
 
     private class NodePenElementSource
     {
-      [JsonProperty("element")]
+      [JsonProperty("elementInstanceId")]
       public string Element { get; set; }
 
-      [JsonProperty("parameter")]
+      [JsonProperty("parameterInstanceId")]
       public string Parameter { get; set; }
     }
 
@@ -308,12 +309,12 @@ namespace NodePen.Compute.Routes
         instance.SetPersistentData(tree);
       });
 
-      // var path = "C:\\Users\\cdrie\\Desktop\\testing\\test.ghx";
+      var path = "C:\\Users\\User\\Desktop\\testing\\test.ghx";
 
       var archive = new GH_Archive();
       archive.AppendObject(ghdoc, "Definition");
-      // archive.Path = path;
-      // archive.WriteToFile(path, true, false);
+      archive.Path = path;
+      archive.WriteToFile(path, true, false);
 
       var xml = archive.Serialize_Xml();
 
