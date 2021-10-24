@@ -5,27 +5,12 @@ import {
 } from 'apollo-server-express'
 import { typeDefs } from './schemas'
 import { resolvers } from './resolvers'
-import admin from 'firebase-admin'
 // import origins from '../auth/origins.json'
 import { execute, subscribe } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { app, server } from './express'
-
-type UserRecord = {
-  id: string
-  name: string
-}
-
-const authorize = async (token: string): Promise<UserRecord> => {
-  const session = await admin.auth().verifyIdToken(token)
-  const user = await admin.auth().getUser(session.uid)
-
-  return {
-    id: user.uid,
-    name: user.displayName ?? 'anonymous',
-  }
-}
+import { authenticate } from './utils'
 
 /**
  * Attach the GraphQL server instances to the imported core server object.
@@ -45,7 +30,7 @@ export const initialize = async () => {
       }
 
       try {
-        Object.assign(user, await authorize(token))
+        Object.assign(user, await authenticate(token))
       } catch (e) {
         // Reject all unauthorized requests
         console.log(e)
@@ -76,7 +61,7 @@ export const initialize = async () => {
           throw new Error('NodePen will not honor unauthenticated requests.')
         }
 
-        return authorize(token).then((user) => {
+        return authenticate(token).then((user) => {
           console.log(`[ CONNECT ] ${user.id} (${user.name}) `)
           return user
         })

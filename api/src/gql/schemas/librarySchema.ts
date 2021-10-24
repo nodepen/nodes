@@ -1,5 +1,8 @@
 import { gql } from 'apollo-server-express'
 
+/**
+ * Types related to getting the current grasshopper configuration & installed plugins.
+ */
 export const librarySchema = gql`
   extend type Query {
     getInstalledComponents: [GrasshopperComponent]!
