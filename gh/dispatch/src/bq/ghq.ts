@@ -1,5 +1,6 @@
 import Queue from 'bee-queue'
 import { ClientOpts } from 'redis'
+import { db } from '../db'
 
 const opts: ClientOpts = process.env.NP_DB_HOST
   ? {
@@ -10,6 +11,7 @@ const opts: ClientOpts = process.env.NP_DB_HOST
 
 const ghq = new Queue('gh', {
   redis: opts,
+  isWorker: true,
 })
 
 const processJob = async (
@@ -33,6 +35,13 @@ ghq.on('job succeeded', (jobId, res) => {
     `\n\tgraphId    : ${graphId}`,
     `\n\tsolutionId : ${solutionId}`,
   ].join(' ')
+
+  db.client.publish(
+    'SOLUTION_COMPLETE',
+    JSON.stringify({
+      onSolution: { solutionId },
+    })
+  )
 
   console.log(message)
 })

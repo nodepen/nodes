@@ -51,27 +51,26 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         },
       })
       .then((res) => {
-        console.log(res)
+        // console.log(res)
       })
-
-    // Schedule new solution for all `immediate` parameters
-  }, [solution.id, expireSolution])
+  }, [solution.id])
 
   // Subscribe to all solution events for session
   const { data } = useSubscription(
     gql`
       subscription {
         onSolution {
-          id
-          manifest {
-            status
-            duration
-            runtimeMessages {
-              level
-              elementId
-              message
-            }
-          }
+          solutionId
+          # id
+          # manifest {
+          #   status
+          #   duration
+          #   runtimeMessages {
+          #     level
+          #     elementId
+          #     message
+          #   }
+          # }
         }
       }
     `,
@@ -86,6 +85,9 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
   useEffect(() => {
     // Data arrived from subscription
+    console.log(data)
+
+    // Request values for all `immediate` parameters
   }, [data])
 
   return <>{children}</>

@@ -10,6 +10,9 @@ const opts: ClientOpts = process.env.NP_DB_HOST
 
 const ghq = new Queue('gh', {
   redis: opts,
+  isWorker: false,
 })
+
+ghq.checkStalledJobs(5000)
 
 export { ghq }
