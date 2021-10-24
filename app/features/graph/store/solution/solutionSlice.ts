@@ -3,37 +3,45 @@ import { RootState } from '$'
 import { Payload, SolutionState } from './types'
 
 const initialState: SolutionState = {
-  current: {
-    solutionId: '',
-  },
-  data: {},
+  meta: {},
+  values: {},
+  messages: {},
 }
 
 export const solutionSlice = createSlice({
   name: 'solution',
   initialState,
   reducers: {
-    expireSolution: (state: SolutionState, action: PayloadAction<Payload.ExpireSolutionPayload>) => {
-      const { current, data } = state
-      const { id: newSolutionId } = action.payload
+    expireSolution: (state: SolutionState) => {
+      // Flag current solution as expired
+      state.meta.id = undefined
+      state.meta.phase = 'expired'
+      state.meta.error = undefined
+      state.meta.duration = 0
 
-      // Remove current values
-      delete data[current.solutionId]
+      // Delete any stored values
+      state.values = {}
+      state.messages = {}
+    },
+    updateSolution: (state: SolutionState, action: PayloadAction<Payload.UpdateSolutionPayload>) => {
+      const { meta, messages } = action.payload
 
-      // Assign new generation
-      current.solutionId = newSolutionId
-      data.solutionId = {}
+      state.meta = { ...state.meta, ...meta }
+      state.messages = messages ?? {}
     },
   },
 })
 
-const selectCurrentSolutionId = (state: RootState): string => state.solution.current.solutionId
-const selectCurrentSolutionValues = (state: RootState): SolutionState['data'][''] =>
-  state.solution.data[state.solution.current.solutionId]
+const selectCurrentSolutionId = (state: RootState): string | undefined => state.solution.meta.id
+const selectCurrentSolutionPhase = (state: RootState): SolutionState['meta']['phase'] => state.solution.meta.phase
+const selectCurrentSolutionValues = (state: RootState): SolutionState['values'] => state.solution.values
+const selectCurrentSolutionMessages = (state: RootState): SolutionState['messages'] => state.solution.messages
 
 export const solutionSelectors = {
   selectCurrentSolutionId,
+  selectCurrentSolutionPhase,
   selectCurrentSolutionValues,
+  selectCurrentSolutionMessages,
 }
 
 const { actions, reducer } = solutionSlice

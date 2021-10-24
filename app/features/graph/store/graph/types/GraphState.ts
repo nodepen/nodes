@@ -8,10 +8,6 @@ export type GraphState = {
     author: string
   }
   elements: { [elementId: string]: NodePen.Element<NodePen.ElementType> }
-  solution: {
-    id?: string
-    manifest?: unknown
-  }
   selection: string[]
   mode: GraphMode
   registry: {

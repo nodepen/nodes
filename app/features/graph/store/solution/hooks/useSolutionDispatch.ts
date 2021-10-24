@@ -1,13 +1,17 @@
 import { useAppDispatch } from '$'
 import { solutionActions } from '../solutionSlice'
+import { Payload } from '../types'
 
 /* eslint-disable-next-line */
 export const useSolutionDispatch = () => {
   const dispatch = useAppDispatch()
 
   return {
-    expireSolution: (newSolutionId: string) => {
-      dispatch(solutionActions.expireSolution({ id: newSolutionId }))
+    expireSolution: () => {
+      dispatch(solutionActions.expireSolution())
+    },
+    updateSolution: (data: Payload.UpdateSolutionPayload) => {
+      dispatch(solutionActions.updateSolution(data))
     },
   }
 }

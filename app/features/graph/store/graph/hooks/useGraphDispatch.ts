@@ -1,6 +1,7 @@
 import { NodePen } from 'glib'
 import { useAppDispatch } from '$'
 import { graphActions } from '../graphSlice'
+import { solutionActions } from '../../solution/solutionSlice'
 import { Payload, WireMode } from '../types'
 import { ActionCreators } from 'redux-undo'
 import { GraphMode } from '../types/GraphMode'
@@ -20,7 +21,7 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.reset())
     },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
-      dispatch(graphActions.expireSolution())
+      dispatch(solutionActions.expireSolution())
       dispatch(graphActions.addElement(data))
     },
     addLiveElement: (data: Payload.AddElementPayload<NodePen.ElementType>) =>
@@ -29,7 +30,7 @@ export const useGraphDispatch = () => {
       console.log('?')
       if ('values' in data.data) {
         // Not all 'patch' operations require generating a new solution.
-        dispatch(graphActions.expireSolution())
+        dispatch(solutionActions.expireSolution())
       }
 
       dispatch(graphActions.updateElement(data))
@@ -38,7 +39,7 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.updateLiveElement(data))
     },
     deleteElements: (ids: string[]) => {
-      dispatch(graphActions.expireSolution())
+      dispatch(solutionActions.expireSolution())
       dispatch(graphActions.deleteElements(ids))
     },
     deleteLiveElements: (ids: string[]) => {
@@ -69,7 +70,7 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.releaseLiveWires())
     },
     endLiveWires: (mode: WireMode | 'cancel') => {
-      dispatch(graphActions.expireSolution())
+      dispatch(solutionActions.expireSolution())
       dispatch(graphActions.endLiveWires(mode))
     },
     setProvisionalWire: (data: Payload.ProvisionalWirePayload) => {

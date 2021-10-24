@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react'
 import { NodePen } from 'glib'
 import { useSubscription, gql, useApolloClient } from '@apollo/client'
-import { useGraphElements, useGraphSolution } from '../../store/graph/hooks'
-import { useSolutionDispatch } from '../../store/solution/hooks'
+import { useGraphElements } from '../../store/graph/hooks'
+import { useSolutionDispatch, useSolutionId, useSolutionPhase } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
 
 type SolutionManagerProps = {
@@ -23,44 +23,66 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   const client = useApolloClient()
 
   const elements = useGraphElements()
-  const solution = useGraphSolution()
 
-  const { expireSolution } = useSolutionDispatch()
+  const { expireSolution, updateSolution } = useSolutionDispatch()
+  const solutionId = useSolutionId()
+  const solutionPhase = useSolutionPhase()
 
   useEffect(() => {
-    const solutionId = solution.id
+    switch (solutionPhase) {
+      case 'expired': {
+        console.log(`🏃🏃🏃 DETECTED`)
 
-    if (!solutionId) {
-      return
+        const validElementTypes: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider']
+        const validElements = Object.values(elements).filter((element) =>
+          validElementTypes.includes(element.template.type)
+        )
+
+        const elementsJson = JSON.stringify(validElements)
+
+        client
+          .mutate({
+            mutation: gql`
+              mutation ScheduleSolutionFromManager($context: ScheduleSolutionInput!) {
+                scheduleSolution(context: $context)
+              }
+            `,
+            variables: {
+              context: {
+                graphId: 'test-id',
+                graphElements: elementsJson,
+              },
+            },
+          })
+          .then(({ data }) => {
+            const newSolutionId = data.scheduleSolution
+
+            updateSolution({
+              meta: {
+                id: newSolutionId,
+                phase: 'scheduled',
+              },
+            })
+
+            console.log('??')
+          })
+        break
+      }
+      case 'scheduled': {
+        console.log(`🏃🏃🏃 SCHEDULED ${solutionId} New solution successfully scheduled!`)
+        break
+      }
+      case 'idle': {
+        if (!solutionId) {
+          // TODO: Surface meta.error
+          console.log(`🏃🏃🏃 FAILED`)
+        }
+
+        console.log(`🏃🏃🏃 SUCCEEDED ${solutionId}`)
+        break
+      }
     }
-
-    console.log(`New solution: ${solutionId}`)
-
-    expireSolution(solutionId)
-
-    const validElementTypes: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider']
-    const validElements = Object.values(elements).filter((element) => validElementTypes.includes(element.template.type))
-
-    const elementsJson = JSON.stringify(validElements)
-
-    client
-      .mutate({
-        mutation: gql`
-          mutation ScheduleSolutionFromManager($context: ScheduleSolutionInput!) {
-            scheduleSolution(context: $context)
-          }
-        `,
-        variables: {
-          context: {
-            graphId: 'test-id',
-            graphElements: elementsJson,
-          },
-        },
-      })
-      .then((res) => {
-        // console.log(res)
-      })
-  }, [solution.id])
+  }, [solutionPhase])
 
   // Subscribe to all solution events for session
   const { data } = useSubscription(

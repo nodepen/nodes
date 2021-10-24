@@ -1,14 +1,20 @@
 import { NodePen } from 'glib'
 
 export type SolutionState = {
-  current: {
-    solutionId: string
+  meta: {
+    id?: string
+    phase?: 'expired' | 'scheduled' | 'idle'
+    /** Store details about NodePen errors during solve. */
+    error?: string
+    /** Duration of the previous run */
+    duration?: number
   }
-  data: {
-    [solutionId: string]: {
-      [elementId: string]: {
-        [parameterId: string]: NodePen.DataTree
-      }
+  values: {
+    [elementId: string]: {
+      [parameterId: string]: NodePen.DataTree
     }
+  }
+  messages: {
+    [elementId: string]: any // TODO: bring back runtimeMessage types
   }
 }

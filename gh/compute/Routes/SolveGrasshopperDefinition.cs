@@ -97,9 +97,10 @@ namespace NodePen.Compute.Routes
 
     private static SolutionData ExtractSolutionData(IGH_Param parameter, string elementId, string parameterId)
     {
-      var result = new SolutionData();
-      result.ElementId = elementId;
-      result.ParameterId = parameterId;
+      var result = new SolutionData() {
+        ElementId = elementId,
+        ParameterId = parameterId,
+      };
 
       for (var i = 0; i < parameter.VolatileData.PathCount; i++)
       {

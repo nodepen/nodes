@@ -3,10 +3,13 @@ import { assert } from 'glib'
 import { useGraphElements } from '../../store/graph/hooks'
 import { StaticComponent, LiveWire, Annotation, NumberSlider, Wire, SelectionRegion } from './elements'
 import { NodePen } from '@/glib/src'
+import { useSolutionDispatch } from '../../store/solution/hooks'
 
 const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
   const elements = Object.values(graph)
+
+  const { expireSolution } = useSolutionDispatch()
 
   // useDebugRender('ElementsContainer')
 
@@ -15,6 +18,7 @@ const ElementsContainer = (): React.ReactElement => {
       switch (e.code) {
         case 'Space': {
           console.log(elements)
+          expireSolution()
         }
       }
     }
