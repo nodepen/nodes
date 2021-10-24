@@ -1,16 +1,8 @@
 import { gql } from 'apollo-server-express'
 
-export const schema = gql`
-  type Query {
+export const librarySchema = gql`
+  extend type Query {
     getInstalledComponents: [GrasshopperComponent]!
-  }
-
-  type Subscription {
-    onSolution(solutionId: String): SolutionManifest
-  }
-
-  type SolutionManifest {
-    solutionId: String!
   }
 
   type GrasshopperComponent {

@@ -3,7 +3,7 @@ import {
   AuthenticationError,
   Config,
 } from 'apollo-server-express'
-import { schema as typeDefs } from './schema'
+import { typeDefs } from './schemas'
 import { resolvers } from './resolvers'
 import admin from 'firebase-admin'
 // import origins from '../auth/origins.json'
