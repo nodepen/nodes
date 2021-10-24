@@ -53,7 +53,18 @@ export const initialize = async () => {
     {
       schema,
       execute,
-      subscribe,
+      subscribe: (...params) => {
+        // const [_schema, _document, _root, context, variables, operation] =
+        //   params
+
+        // console.log(context)
+        // console.log(variables)
+        // console.log(operation)
+
+        // TODO: Authorize `context.id` user for `operation` on `variables.graphId`
+
+        return subscribe(...params)
+      },
       onConnect: (params: { [key: string]: string }) => {
         const token = params?.authorization
 
