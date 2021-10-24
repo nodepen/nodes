@@ -13,5 +13,8 @@ export const useSolutionDispatch = () => {
     updateSolution: (data: Payload.UpdateSolutionPayload) => {
       dispatch(solutionActions.updateSolution(data))
     },
+    tryApplySolutionManifest: (data: Payload.ApplySolutionManifestPayload) => {
+      dispatch(solutionActions.tryApplySolutionManifest(data))
+    },
   }
 }

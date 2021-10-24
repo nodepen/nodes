@@ -1,4 +1,5 @@
 export { useSolutionDispatch } from './useSolutionDispatch'
 export { useSolutionId } from './useSolutionId'
+export { useSolutionMetadata } from './useSolutionMetadata'
 export { useSolutionPhase } from './useSolutionPhase'
 export { useSolutionValues } from './useSolutionValues'

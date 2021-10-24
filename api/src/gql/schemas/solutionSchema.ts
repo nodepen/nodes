@@ -13,6 +13,7 @@ export const solutionSchema = gql`
   }
 
   input ScheduleSolutionInput {
+    solutionId: String!
     graphId: String!
     graphElements: String! #json
   }

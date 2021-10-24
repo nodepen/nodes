@@ -6,10 +6,17 @@ export type ExpireSolutionPayload = {
 
 export type UpdateSolutionPayload = {
   meta: SolutionState['meta']
-  messages?: SolutionState['messages']
+}
+
+export type ApplySolutionManifestPayload = {
+  solutionId: string
+  manifest: {
+    duration: number
+    messages?: any[]
+  }
 }
 
 export type ApplySolutionValuesPayload = {
   solutionId: string
-  values: any[]
+  values: any
 }

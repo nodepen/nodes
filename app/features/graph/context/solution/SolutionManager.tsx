@@ -2,8 +2,9 @@ import React, { useEffect } from 'react'
 import { NodePen } from 'glib'
 import { useSubscription, gql, useApolloClient } from '@apollo/client'
 import { useGraphElements } from '../../store/graph/hooks'
-import { useSolutionDispatch, useSolutionId, useSolutionPhase } from '../../store/solution/hooks'
+import { useSolutionDispatch, useSolutionMetadata } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
+import { newGuid } from '../../utils'
 
 type SolutionManagerProps = {
   children?: JSX.Element
@@ -24,14 +25,15 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
   const elements = useGraphElements()
 
-  const { expireSolution, updateSolution } = useSolutionDispatch()
-  const solutionId = useSolutionId()
-  const solutionPhase = useSolutionPhase()
+  const { updateSolution, tryApplySolutionManifest } = useSolutionDispatch()
+  const meta = useSolutionMetadata()
 
   useEffect(() => {
-    switch (solutionPhase) {
+    switch (meta.phase) {
       case 'expired': {
         console.log(`🏃🏃🏃 DETECTED`)
+
+        const newSolutionId = newGuid()
 
         const validElementTypes: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider']
         const validElements = Object.values(elements).filter((element) =>
@@ -39,6 +41,15 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         )
 
         const elementsJson = JSON.stringify(validElements)
+
+        updateSolution({
+          meta: {
+            id: newSolutionId,
+            phase: 'scheduled',
+          },
+        })
+
+        console.log(`🏃🏃🏃 SCHEDULED ${newSolutionId}`)
 
         client
           .mutate({
@@ -50,42 +61,44 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
             variables: {
               context: {
                 graphId: 'test-id',
+                solutionId: newSolutionId,
                 graphElements: elementsJson,
               },
             },
           })
-          .then(({ data }) => {
-            const newSolutionId = data.scheduleSolution
+          .then(() => {
+            // Do nothing
+          })
+          .catch((err) => {
+            console.error(err)
 
             updateSolution({
               meta: {
-                id: newSolutionId,
-                phase: 'scheduled',
+                phase: 'idle',
+                error: 'Failed to schedule a new solution.',
               },
             })
-
-            console.log('??')
           })
         break
       }
       case 'scheduled': {
-        console.log(`🏃🏃🏃 SCHEDULED ${solutionId} New solution successfully scheduled!`)
+        // Do nothing
         break
       }
       case 'idle': {
-        if (!solutionId) {
+        if (meta.error) {
           // TODO: Surface meta.error
           console.log(`🏃🏃🏃 FAILED`)
         }
 
-        console.log(`🏃🏃🏃 SUCCEEDED ${solutionId}`)
+        console.log(`🏃🏃🏃 SUCCEEDED ${meta.id}`)
         break
       }
     }
-  }, [solutionPhase])
+  }, [meta])
 
   // Subscribe to all solution events for session
-  const { data } = useSubscription(
+  const { data, error } = useSubscription(
     gql`
       subscription {
         onSolution {
@@ -113,8 +126,25 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   )
 
   useEffect(() => {
+    if (error) {
+      console.error(error)
+      return
+    }
+
+    if (!data) {
+      return
+    }
+
     // Data arrived from subscription
-    console.log(data)
+    const { solutionId: incomingSolutionId } = data.onSolution
+
+    tryApplySolutionManifest({
+      solutionId: incomingSolutionId,
+      manifest: {
+        duration: 100,
+        messages: [],
+      },
+    })
 
     // Request values for all `immediate` parameters
   }, [data])
