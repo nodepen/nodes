@@ -1,32 +1,43 @@
 import dotenv from 'dotenv'
-import { db } from './db'
-import express from 'express'
+import { startup } from './startup'
 
 dotenv.config()
 
-console.log('howdy!')
+const PORT = process.env.PORT || 9801
 
-const port = 9800
+startup()
+  .then((dispatch) => {
+    dispatch.listen(PORT, () => {
+      console.log(
+        `[ STARTUP ] NodePen Grasshopper Dispatch initialized! | Listening on port ${PORT}`
+      )
+    })
+  })
+  .catch((err) => {
+    console.log(err)
+  })
 
-const app = express()
+// const port = 9800
 
-app.get('/', (_, res) => {
-  res.send('Ready to run')
-})
+// const app = express()
 
-app.listen(port, () => {
-  console.log(`Dispatch listening on port ${port} !`)
-})
+// app.get('/', (_, res) => {
+//   res.send('Ready to run')
+// })
 
-db.client.on('ready', () => {
-  console.log('Redis connection ready!')
+// app.listen(port, () => {
+//   console.log(`Dispatch listening on port ${port} !`)
+// })
 
-  // setInterval(() => {
-  //   db.client.publish(
-  //     'SOLUTION_COMPLETE',
-  //     JSON.stringify({
-  //       onSolution: { solutionId: `DISPATCH ${Date.now().toString()}` },
-  //     })
-  //   )
-  // }, 1000)
-})
+// db.client.on('ready', () => {
+//   console.log('Redis connection ready!')
+
+//   // setInterval(() => {
+//   //   db.client.publish(
+//   //     'SOLUTION_COMPLETE',
+//   //     JSON.stringify({
+//   //       onSolution: { solutionId: `DISPATCH ${Date.now().toString()}` },
+//   //     })
+//   //   )
+//   // }, 1000)
+// })
