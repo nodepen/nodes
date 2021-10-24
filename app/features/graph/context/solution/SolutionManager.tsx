@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { useSubscription, gql } from '@apollo/client'
+import { useSubscription, gql, useApolloClient } from '@apollo/client'
 import { useGraphSolution } from '../../store/graph/hooks'
 import { useSolutionDispatch } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
@@ -19,6 +19,8 @@ type SolutionManagerProps = {
 export const SolutionManager = ({ children }: SolutionManagerProps): React.ReactElement => {
   const { isAuthenticated } = useSessionManager()
 
+  const client = useApolloClient()
+
   const solution = useGraphSolution()
 
   const { expireSolution } = useSolutionDispatch()
@@ -33,6 +35,24 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     console.log(`New solution: ${solutionId}`)
 
     expireSolution(solutionId)
+
+    client
+      .mutate({
+        mutation: gql`
+          mutation ScheduleSolutionFromManager($context: ScheduleSolutionInput!) {
+            scheduleSolution(context: $context)
+          }
+        `,
+        variables: {
+          context: {
+            graphId: 'test-id',
+            graphElements: JSON.stringify(['test', 'elements', 'array']),
+          },
+        },
+      })
+      .then((res) => {
+        console.log(res)
+      })
 
     // Schedule new solution for all `immediate` parameters
   }, [solution.id, expireSolution])
