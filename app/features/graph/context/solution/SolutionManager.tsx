@@ -107,7 +107,11 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
           solutionId
           graphId
           exceptionMessages
-          runtimeMessages
+          runtimeMessages {
+            elementId
+            message
+            level
+          }
         }
       }
     `,
@@ -130,8 +134,12 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       return
     }
 
+    if (!data.onSolution) {
+      return
+    }
+
     // Data arrived from subscription
-    const { solutionId: incomingSolutionId, graphId, exceptionMessages } = data.onSolution
+    const { solutionId: incomingSolutionId, graphId, exceptionMessages, runtimeMessages } = data.onSolution
 
     if (exceptionMessages) {
       updateSolution({
@@ -146,11 +154,15 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       return
     }
 
+    for (const runtimeMessage of runtimeMessages) {
+      console.log(runtimeMessage)
+    }
+
     tryApplySolutionManifest({
       solutionId: incomingSolutionId,
       manifest: {
         duration: 100,
-        messages: [],
+        messages: runtimeMessages,
       },
     })
 

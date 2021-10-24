@@ -37,17 +37,22 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
       graphGhx
     )
 
-    console.log((graphSolution as any).data)
+    const { data, messages, timeout } = graphSolution as any
 
-    for (const { elementId, parameterId, values } of (graphSolution as any)
-      .data) {
-      console.log(`${elementId} : ${parameterId}`)
-      for (const value of values) {
-        console.log(value)
-      }
+    // for (const { elementId, parameterId, values } of data) {
+    //   console.log(`${elementId} : ${parameterId}`)
+    //   for (const value of values) {
+    //     console.log(value)
+    //   }
+    // }
+
+    // console.log(messages)
+
+    return {
+      ...job.data,
+      runtimeMessages: messages ?? [],
+      exceptionMessages: timeout ? ['Solution timed out.'] : undefined,
     }
-
-    return job.data
   } catch (err) {
     // console.error(err)
     console.log('Error!')
@@ -59,7 +64,7 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 ghq.process(processJob)
 
 ghq.on('job succeeded', (jobId, res) => {
-  const { graphId, solutionId, exceptionMessages } = res
+  const { graphId, solutionId, runtimeMessages, exceptionMessages } = res
 
   const message = [
     `[ JOB ${jobId.padStart(4, '0')} ]`,
@@ -72,7 +77,7 @@ ghq.on('job succeeded', (jobId, res) => {
   db.client.publish(
     'SOLUTION_COMPLETE',
     JSON.stringify({
-      onSolution: { solutionId, graphId, exceptionMessages },
+      onSolution: { solutionId, graphId, runtimeMessages, exceptionMessages },
     })
   )
 

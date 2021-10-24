@@ -246,7 +246,7 @@ namespace NodePen.Compute.Routes
     {
       var message = new SolutionMessage();
       message.ElementId = elementId;
-      message.Level = component.RuntimeMessageLevel.ToString();
+      message.Level = component.RuntimeMessageLevel.ToString().ToLower();
       message.Message = component.RuntimeMessages(component.RuntimeMessageLevel)[0];
 
       return message;
