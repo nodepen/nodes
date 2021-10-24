@@ -1,6 +1,7 @@
 import { NodePen } from 'glib'
 import { useGenericMenuManager } from 'features/graph/components/overlay/GenericMenu/hooks'
 import { NumberSliderMenu } from '../components'
+import { createDataTreePathString } from '@/features/graph/utils'
 
 type EditMenuProps = {
   slider: NodePen.Element<'number-slider'>
@@ -11,7 +12,9 @@ export const EditMenu = ({ slider }: EditMenuProps): React.ReactElement => {
 
   const { rounding, precision, domain, values } = current
 
-  const value = values['output']['{0;}'][0].data as number
+  const path = createDataTreePathString([0])
+
+  const value = values['output'][path][0].data as number
 
   const { onClose, onCancel } = useGenericMenuManager()
 

@@ -1,6 +1,7 @@
 export { addDefaultElement } from './addDefaultElement'
 export { bezierLength } from './bezierLength'
 export { categorize } from './categorize'
+export { createDataTreePathString } from './createDataTreePathString'
 export { distance } from './distance'
 export { findAttachedWires } from './findAttachedWires'
 export { flattenCategory } from './flattenCategory'

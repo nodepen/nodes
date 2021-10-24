@@ -9,6 +9,7 @@ import {
   getElementExtents,
   regionContainsRegion,
   regionIntersectsRegion,
+  createDataTreePathString,
 } from '../../utils'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
@@ -110,6 +111,8 @@ export const graphSlice = createSlice({
         case 'number-slider': {
           const template = action.payload.template as NodePen.Element<'number-slider'>['template']
 
+          const path = createDataTreePathString([0])
+
           const element: NodePen.Element<'number-slider'> = {
             id,
             template,
@@ -123,7 +126,7 @@ export const graphSlice = createSlice({
               sources: {},
               values: {
                 output: {
-                  '{0;}': [
+                  [path]: [
                     {
                       type: 'number',
                       data: 0.25,

@@ -58,6 +58,9 @@ namespace NodePen.Compute.Routes
 
       [JsonProperty("precision")]
       public int? Precision { get; set; }
+
+      [JsonProperty("rounding")]
+      public string Rounding { get; set; } = "rational";
     }
 
     private class NodePenElementSource
@@ -157,7 +160,7 @@ namespace NodePen.Compute.Routes
 
               sliderInstance.Slider.FixDomain();
 
-              var incoming = Convert.ToString(element.Current.Values["{0}"][0].data);
+              var incoming = Convert.ToString(element.Current.Values["output"]["{0}"][0].data);
               var success = decimal.TryParse(incoming, out decimal value);
 
               sliderInstance.SetSliderValue(success ? value : 5);

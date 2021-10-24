@@ -37,7 +37,15 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
       graphGhx
     )
 
-    // console.log((graphSolution as any).data)
+    console.log((graphSolution as any).data)
+
+    for (const { elementId, parameterId, values } of (graphSolution as any)
+      .data) {
+      console.log(`${elementId} : ${parameterId}`)
+      for (const value of values) {
+        console.log(value)
+      }
+    }
 
     return job.data
   } catch (err) {

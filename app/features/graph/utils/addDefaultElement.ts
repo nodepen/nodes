@@ -21,7 +21,10 @@ export const addDefaultElement = (
           addElement({
             type: 'number-slider',
             position: [x, y],
-            template: { type: 'number-slider' },
+            template: {
+              ...template,
+              type: 'number-slider',
+            },
             data,
           })
           break
