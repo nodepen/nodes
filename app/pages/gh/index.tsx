@@ -3,6 +3,7 @@ import Head from 'next/head'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
 import { GraphManager } from '@/features/graph/context/graph'
+import { SolutionManager } from 'features/graph/context/solution'
 import { KeyboardObserver } from 'features/common/observer'
 import { ApolloContext } from '@/features/common/context/apollo'
 import { useSessionManager } from '@/features/common/context/session'
@@ -18,7 +19,9 @@ const GrasshopperEditor: NextPage = () => {
       <ApolloContext token={token}>
         <Layout.Editor>
           <GraphManager>
-            <Graph.Container />
+            <SolutionManager>
+              <Graph.Container />
+            </SolutionManager>
           </GraphManager>
         </Layout.Editor>
       </ApolloContext>

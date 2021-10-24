@@ -10,15 +10,6 @@ import {
   regionContainsRegion,
   regionIntersectsRegion,
 } from '../../utils'
-import {
-  AddElementPayload,
-  CaptureLiveWiresPayload,
-  ConnectElementsPayload,
-  MoveElementPayload,
-  ProvisionalWirePayload,
-  RegisterElementAnchorPayload,
-  UpdateElementPayload,
-} from './types/Payload'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
 import { prepareLiveMotion } from './reducers'
@@ -58,7 +49,7 @@ export const graphSlice = createSlice({
     expireSolution: (state: GraphState) => {
       state.solution.id = newGuid()
     },
-    addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
+    addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
 
       state.registry.latest.element = id
@@ -171,7 +162,7 @@ export const graphSlice = createSlice({
         }
       }
     },
-    addLiveElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
+    addLiveElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
 
       switch (action.payload.type) {
@@ -251,7 +242,7 @@ export const graphSlice = createSlice({
         delete state.elements[id]
       })
     },
-    moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
+    moveElement: (state: GraphState, action: PayloadAction<Payload.MoveElementPayload>) => {
       const { id, position } = action.payload
 
       const element = state.elements[id]
@@ -405,7 +396,7 @@ export const graphSlice = createSlice({
 
       state.selection = nextSelection
     },
-    updateElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
+    updateElement: (state: GraphState, action: PayloadAction<Payload.UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
 
       const element = state.elements[id]
@@ -423,7 +414,10 @@ export const graphSlice = createSlice({
 
       element.current = { ...element.current, ...data }
     },
-    updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
+    updateLiveElement: (
+      state: GraphState,
+      action: PayloadAction<Payload.UpdateElementPayload<NodePen.ElementType>>
+    ) => {
       const { id, type, data } = action.payload
 
       const element = state.elements[id]
@@ -452,68 +446,6 @@ export const graphSlice = createSlice({
           return
         }
       }
-    },
-    connect: (state: GraphState, action: PayloadAction<ConnectElementsPayload>) => {
-      const { from, to } = action.payload
-
-      const fromElement = state.elements[from.elementId] as NodePen.Element<'static-component'>
-      const toElement = state.elements[to.elementId] as NodePen.Element<'static-component'>
-
-      if (!fromElement) {
-        console.debug(`🐍 Element ${from.elementId} declared for connection does not exist!`)
-        return
-      }
-
-      if (!toElement) {
-        console.debug(`🐍 Element ${to.elementId} declared for connection does not exist!`)
-        return
-      }
-
-      // Check for existing connection
-      const currentSources = toElement.current.sources[to.parameterId]
-
-      if (
-        currentSources.some(
-          (source) => source.elementInstanceId === from.elementId && source.parameterInstanceId === from.parameterId
-        )
-      ) {
-        console.debug(`🐍 Attempted to create a connection that already exists!`)
-        return
-      }
-
-      currentSources.push({
-        elementInstanceId: from.elementId,
-        parameterInstanceId: from.parameterId,
-      })
-
-      const [xFrom, yFrom] = fromElement.current.position
-      const [dxFrom, dyFrom] = fromElement.current.anchors[from.parameterId]
-
-      const [xTo, yTo] = toElement.current.position
-      const [dxTo, dyTo] = toElement.current.anchors[to.parameterId]
-
-      const wireId = newGuid()
-
-      const wire: NodePen.Element<'wire'> = {
-        id: wireId,
-        template: {
-          type: 'wire',
-          mode: 'data',
-          from,
-          to,
-        },
-        current: {
-          from: [xFrom + dxFrom, yFrom + dyFrom],
-          to: [xTo + dxTo, yTo + dyTo],
-          position: [0, 0],
-          dimensions: {
-            width: 0,
-            height: 0,
-          },
-        },
-      }
-
-      state.elements[wireId] = wire
     },
     startLiveWires: (state: GraphState, action: PayloadAction<Payload.StartLiveWiresPayload>) => {
       const { templates, origin } = action.payload
@@ -588,7 +520,7 @@ export const graphSlice = createSlice({
         current[updateTarget] = position
       })
     },
-    captureLiveWires: (state: GraphState, action: PayloadAction<CaptureLiveWiresPayload>) => {
+    captureLiveWires: (state: GraphState, action: PayloadAction<Payload.CaptureLiveWiresPayload>) => {
       const { type, elementId, parameterId } = action.payload
 
       if (state.registry.wire.origin.elementId === elementId) {
@@ -951,7 +883,7 @@ export const graphSlice = createSlice({
         prepareLiveMotion(state, 'selection', state.selection)
       }
     },
-    setProvisionalWire: (state: GraphState, action: PayloadAction<ProvisionalWirePayload>) => {
+    setProvisionalWire: (state: GraphState, action: PayloadAction<Payload.ProvisionalWirePayload>) => {
       const { from, to } = action.payload
 
       const fromElement = state.elements[from.elementId]
@@ -1092,7 +1024,7 @@ export const graphSlice = createSlice({
 
       state.elements[id].current.position = [x + dx, y + dy]
     },
-    registerElementAnchor: (state: GraphState, action: PayloadAction<RegisterElementAnchorPayload>) => {
+    registerElementAnchor: (state: GraphState, action: PayloadAction<Payload.RegisterElementAnchorPayload>) => {
       const { elementId, anchorId, position } = action.payload
 
       if (!state.elements[elementId]) {

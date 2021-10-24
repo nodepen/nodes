@@ -30,6 +30,8 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       return
     }
 
+    console.log(`New solution: ${solutionId}`)
+
     expireSolution(solutionId)
 
     // Schedule new solution for all `immediate` parameters
