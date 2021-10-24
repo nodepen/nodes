@@ -21,26 +21,25 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.reset())
     },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
-      dispatch(solutionActions.expireSolution())
       dispatch(graphActions.addElement(data))
+      dispatch(solutionActions.expireSolution())
     },
     addLiveElement: (data: Payload.AddElementPayload<NodePen.ElementType>) =>
       dispatch(graphActions.addLiveElement(data)),
     updateElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>) => {
-      console.log('?')
+      dispatch(graphActions.updateElement(data))
+
       if ('values' in data.data) {
         // Not all 'patch' operations require generating a new solution.
         dispatch(solutionActions.expireSolution())
       }
-
-      dispatch(graphActions.updateElement(data))
     },
     updateLiveElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.updateLiveElement(data))
     },
     deleteElements: (ids: string[]) => {
-      dispatch(solutionActions.expireSolution())
       dispatch(graphActions.deleteElements(ids))
+      dispatch(solutionActions.expireSolution())
     },
     deleteLiveElements: (ids: string[]) => {
       dispatch(graphActions.deleteLiveElements(ids))
@@ -70,8 +69,8 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.releaseLiveWires())
     },
     endLiveWires: (mode: WireMode | 'cancel') => {
-      dispatch(solutionActions.expireSolution())
       dispatch(graphActions.endLiveWires(mode))
+      dispatch(solutionActions.expireSolution())
     },
     setProvisionalWire: (data: Payload.ProvisionalWirePayload) => {
       dispatch(graphActions.setProvisionalWire(data))

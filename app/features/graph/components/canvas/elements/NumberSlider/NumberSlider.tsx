@@ -281,6 +281,8 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         return
       }
 
+      console.log('?')
+
       setCameraMode('idle')
       setCursorOverride(false)
 
@@ -358,20 +360,20 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     }
   })
 
-  const handlePointerUp = useCallback(
-    (e: React.PointerEvent<HTMLDivElement>) => {
-      // e.stopPropagation()
+  // const handlePointerUp = useCallback(
+  //   (e: React.PointerEvent<HTMLDivElement>) => {
+  //     // e.stopPropagation()
 
-      if (showGenericMenuOnRelease.current) {
-        setShowGenericMenu(true)
-      }
+  //     if (showGenericMenuOnRelease.current) {
+  //       setShowGenericMenu(true)
+  //     }
 
-      showGenericMenuOnRelease.current = false
+  //     showGenericMenuOnRelease.current = false
 
-      handleWindowPointerUp(e.nativeEvent)
-    },
-    [handleWindowPointerUp]
-  )
+  //     handleWindowPointerUp(e.nativeEvent)
+  //   },
+  //   [handleWindowPointerUp]
+  // )
 
   const [showEditMenu, setShowEditMenu] = useState(false)
   const editMenuLocation = useRef<[number, number]>([0, 0])
@@ -501,7 +503,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
             onContextMenu={() => {
               console.log('right click')
             }}
-            onPointerUp={handlePointerUp}
+            // onPointerUp={handlePointerUp}
             style={{ width: internalWidth, height: elementHeight }}
             // ref={longPressTarget}
           >
