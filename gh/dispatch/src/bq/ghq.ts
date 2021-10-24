@@ -16,33 +16,42 @@ const ghq = new Queue('gh', {
 })
 
 const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
-  const { graphId, solutionId } = job.data
+  try {
+    const { graphId, solutionId } = job.data
 
-  const graphJson = await db.get(`graph:${graphId}:solution:${solutionId}:json`)
+    const graphJson = await db.get(
+      `graph:${graphId}:solution:${solutionId}:json`
+    )
 
-  console.log({ graphJson })
+    // console.log({ graphJson })
 
-  const { data: graphGhx } = await axios.post(
-    'http://localhost:9900/grasshopper/graph',
-    graphJson
-  )
+    const { data: graphGhx } = await axios.post(
+      'http://localhost:9900/grasshopper/graph',
+      graphJson
+    )
 
-  console.log(graphGhx)
+    // console.log(graphGhx)
 
-  const { data: graphSolution } = await axios.post(
-    'http://localhost:9900/grasshopper/solve',
-    graphGhx
-  )
+    const { data: graphSolution } = await axios.post(
+      'http://localhost:9900/grasshopper/solve',
+      graphGhx
+    )
 
-  console.log((graphSolution as any).data)
+    // console.log((graphSolution as any).data)
 
-  return job.data
+    return job.data
+  } catch (err) {
+    // console.error(err)
+    console.log('Error!')
+
+    return { ...job.data, exceptionMessages: ['Error during job processing!'] }
+  }
 }
 
 ghq.process(processJob)
 
 ghq.on('job succeeded', (jobId, res) => {
-  const { graphId, solutionId } = res
+  const { graphId, solutionId, exceptionMessages } = res
 
   const message = [
     `[ JOB ${jobId.padStart(4, '0')} ]`,
@@ -55,7 +64,7 @@ ghq.on('job succeeded', (jobId, res) => {
   db.client.publish(
     'SOLUTION_COMPLETE',
     JSON.stringify({
-      onSolution: { solutionId },
+      onSolution: { solutionId, graphId, exceptionMessages },
     })
   )
 

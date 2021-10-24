@@ -89,6 +89,8 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         if (meta.error) {
           // TODO: Surface meta.error
           console.log(`🏃🏃🏃 FAILED`)
+          console.error(meta.error)
+          break
         }
 
         console.log(`🏃🏃🏃 SUCCEEDED ${meta.id}`)
@@ -103,16 +105,9 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       subscription {
         onSolution {
           solutionId
-          # id
-          # manifest {
-          #   status
-          #   duration
-          #   runtimeMessages {
-          #     level
-          #     elementId
-          #     message
-          #   }
-          # }
+          graphId
+          exceptionMessages
+          runtimeMessages
         }
       }
     `,
@@ -136,7 +131,20 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     }
 
     // Data arrived from subscription
-    const { solutionId: incomingSolutionId } = data.onSolution
+    const { solutionId: incomingSolutionId, graphId, exceptionMessages } = data.onSolution
+
+    if (exceptionMessages) {
+      updateSolution({
+        meta: {
+          phase: 'idle',
+          error: exceptionMessages[0],
+        },
+      })
+
+      // console.error(exceptionMessages[0])
+
+      return
+    }
 
     tryApplySolutionManifest({
       solutionId: incomingSolutionId,
