@@ -9,7 +9,7 @@ export const solutionSchema = gql`
   }
 
   extend type Subscription {
-    onSolution(solutionId: String): SolutionManifest
+    onSolution(graphId: String): SolutionManifest
   }
 
   input ScheduleSolutionInput {

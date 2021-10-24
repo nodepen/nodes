@@ -102,8 +102,8 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   // Subscribe to all solution events for session
   const { data, error } = useSubscription(
     gql`
-      subscription {
-        onSolution {
+      subscription WatchGraphUpdates($graphId: String) {
+        onSolution(graphId: $graphId) {
           solutionId
           graphId
           exceptionMessages
@@ -113,7 +113,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     `,
     {
       variables: {
-        graphId: 'graphSlice.meta.id',
+        graphId: 'test-id',
       },
       skip: !isAuthenticated,
       shouldResubscribe: true,
