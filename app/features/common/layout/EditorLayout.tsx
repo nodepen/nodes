@@ -49,7 +49,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           />
         </a>
         <div className="flex-grow h-full p-1 pr-2 flex justify-end items-center">
-          <div className="w-6 h-6 mr-2 bg-red-300">
+          <div className="h-6 mr-2">
             <SolutionStatusPip />
           </div>
           <button

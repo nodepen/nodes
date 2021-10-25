@@ -11,10 +11,10 @@ type SolutionManagerProps = {
 }
 
 /**
- * Watch for changes in graphSlice.solution.id
  * Expire solutionSlice in response to changes
  * Schedule solution
- * Consume initial results
+ * Consume initial results summary (duration, runtimeMessages)
+ * Request any `immediate` values like panels
  * @param param0
  * @returns
  */
@@ -31,7 +31,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   useEffect(() => {
     switch (meta.phase) {
       case 'expired': {
-        console.log(`🏃🏃🏃 DETECTED`)
+        // console.log(`🏃🏃🏃 DETECTED`)
 
         const newSolutionId = newGuid()
 
@@ -49,7 +49,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
           },
         })
 
-        console.log(`🏃🏃🏃 SCHEDULED ${newSolutionId}`)
+        // console.log(`🏃🏃🏃 SCHEDULED ${newSolutionId}`)
 
         client
           .mutate({
@@ -69,8 +69,8 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
           .then(() => {
             // Do nothing
           })
-          .catch((err) => {
-            console.error(err)
+          .catch((_err) => {
+            // console.error(err)
 
             updateSolution({
               meta: {
@@ -87,13 +87,12 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       }
       case 'idle': {
         if (meta.error) {
-          // TODO: Surface meta.error
-          console.log(`🏃🏃🏃 FAILED`)
-          console.error(meta.error)
+          // console.log(`🏃🏃🏃 FAILED`)
+          // console.error(meta.error)
           break
         }
 
-        console.log(`🏃🏃🏃 SUCCEEDED ${meta.id}`)
+        // console.log(`🏃🏃🏃 SUCCEEDED ${meta.id}`)
         break
       }
     }
