@@ -31,7 +31,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   useEffect(() => {
     switch (meta.phase) {
       case 'expired': {
-        // console.log(`🏃🏃🏃 DETECTED`)
+        console.log(`🏃🏃🏃 DETECTED`)
 
         const newSolutionId = newGuid()
 
@@ -54,16 +54,14 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         client
           .mutate({
             mutation: gql`
-              mutation ScheduleSolutionFromManager($context: ScheduleSolutionInput!) {
-                scheduleSolution(context: $context)
+              mutation ScheduleSolutionFromManager($graphJson: String!, $graphId: String!, $solutionId: String!) {
+                scheduleSolution(graphJson: $graphJson, graphId: $graphId, solutionId: $solutionId)
               }
             `,
             variables: {
-              context: {
-                graphId: 'test-id',
-                solutionId: newSolutionId,
-                graphElements: elementsJson,
-              },
+              graphId: 'test-id',
+              solutionId: newSolutionId,
+              graphJson: elementsJson,
             },
           })
           .then(() => {
@@ -177,6 +175,30 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     })
 
     // Request values for all `immediate` parameters
+    console.log('Querying!')
+
+    client
+      .query({
+        query: gql`
+          query GetSolutionValue($graphId: String!, $solutionId: String!, $elementId: String!, $parameterId: String!) {
+            solution(graphId: $graphId, solutionId: $solutionId) {
+              value(elementId: $elementId, parameterId: $parameterId) {
+                type
+                value
+              }
+            }
+          }
+        `,
+        variables: {
+          graphId: 'test-id',
+          solutionId: 'solution-id',
+          elementId: 'element-id',
+          parameterId: 'parameter-id0',
+        },
+      })
+      .then((res) => {
+        console.log(res)
+      })
   }, [data])
 
   return <>{children}</>

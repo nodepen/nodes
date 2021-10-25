@@ -4,11 +4,9 @@ import { RequestContext } from '../../types'
 import { authorize } from '../../utils/authorize'
 
 type ScheduleSolutionArgs = {
-  context: {
-    solutionId: string
-    graphId: string
-    graphElements: string
-  }
+  graphJson: string
+  graphId: string
+  solutionId: string
 }
 
 export const scheduleSolution = async (
@@ -17,7 +15,7 @@ export const scheduleSolution = async (
   context: RequestContext
 ): Promise<string> => {
   const { user } = context
-  const { solutionId, graphId, graphElements } = args.context
+  const { solutionId, graphId, graphJson } = args
 
   await authorize({
     user,
@@ -31,7 +29,7 @@ export const scheduleSolution = async (
   await db.setex(
     `graph:${graphId}:solution:${solutionId}:json`,
     60 * 60,
-    graphElements
+    graphJson
   )
 
   const job = await ghq.createJob({ graphId, solutionId }).save()
