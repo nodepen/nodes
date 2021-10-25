@@ -150,7 +150,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         },
       })
 
-      console.error(exceptionMessages[0])
+      // console.error(exceptionMessages[0])
 
       return
     }
@@ -166,6 +166,8 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
       return all
     }, {})
+
+    // console.log({ duration })
 
     tryApplySolutionManifest({
       solutionId: incomingSolutionId,

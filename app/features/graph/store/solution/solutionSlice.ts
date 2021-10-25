@@ -3,7 +3,10 @@ import { RootState } from '$'
 import { Payload, SolutionState } from './types'
 
 const initialState: SolutionState = {
-  meta: {},
+  meta: {
+    phase: 'idle',
+    duration: 0,
+  },
   values: {},
   messages: {},
 }
@@ -36,7 +39,7 @@ export const solutionSlice = createSlice({
         return
       }
 
-      console.log(manifest.messages)
+      // console.log(manifest.messages)
 
       state.meta.phase = 'idle'
       state.meta.duration = manifest.duration

@@ -1,5 +1,6 @@
 // import { useState, useRef, useCallback } from 'react'
 import { useSessionManager } from '../context/session'
+import { SolutionStatusPip } from './components'
 import { UserImage } from './header'
 // import { useOutsideClick } from '@/hooks'
 // import { SignUpMenu, UserImage, UserMenu } from './header'
@@ -48,6 +49,9 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           />
         </a>
         <div className="flex-grow h-full p-1 pr-2 flex justify-end items-center">
+          <div className="w-6 h-6 mr-2 bg-red-300">
+            <SolutionStatusPip />
+          </div>
           <button
             className={`${isAnonymous ? 'border-2 border-dark' : ''} h-6 w-6 rounded-sm bg-white overflow-hidden`}
           >
