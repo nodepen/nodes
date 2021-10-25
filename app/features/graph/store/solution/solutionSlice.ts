@@ -36,6 +36,8 @@ export const solutionSlice = createSlice({
         return
       }
 
+      console.log(manifest.messages)
+
       state.meta.phase = 'idle'
       state.meta.duration = manifest.duration
       state.messages = manifest.messages ?? {}

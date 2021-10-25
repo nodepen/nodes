@@ -7,6 +7,7 @@ import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { StaticComponentParameter } from './components'
 import { StaticComponentDetails } from './details'
 import { HoverTooltip } from '../../../overlay'
+import { useElementStatusColor } from '../../hooks'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -14,6 +15,8 @@ type StaticComponentProps = {
 
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement => {
   const { template, id } = element
+
+  const statusColor = useElementStatusColor(element.id)
 
   useDebugRender(`StaticComponent | ${template.name} | ${id}`)
 
@@ -66,7 +69,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             </div>
             <div
               id="label-column"
-              className={`w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md bg-white border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
+              className={`w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
+              style={{ background: statusColor }}
               ref={longHoverTarget}
             >
               <div

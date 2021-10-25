@@ -150,18 +150,28 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         },
       })
 
-      // console.error(exceptionMessages[0])
+      console.error(exceptionMessages[0])
 
       return
     }
 
-    console.log({ duration })
+    const messages = runtimeMessages.reduce((all, current) => {
+      const { elementId, ...message } = current
+
+      if (elementId in all) {
+        all[elementId].push(message)
+      } else {
+        all[elementId] = [message]
+      }
+
+      return all
+    }, {})
 
     tryApplySolutionManifest({
       solutionId: incomingSolutionId,
       manifest: {
         duration,
-        messages: runtimeMessages,
+        messages,
       },
     })
 
