@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Nancy;
 using Nancy.Extensions;
@@ -18,6 +19,8 @@ namespace NodePen.Compute.Routes
       var ghxData = ctx.Request.Body.AsString();
       var ghxString = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(ghxData));
 
+      var timer = new Stopwatch();
+
       var archive = new GH_Archive();
       archive.Deserialize_Xml(ghxString);
 
@@ -25,7 +28,12 @@ namespace NodePen.Compute.Routes
       archive.ExtractObject(definition, "Definition");
 
       definition.Enabled = true;
+
+      timer.Start();
+
       definition.NewSolution(true, GH_SolutionMode.CommandLine);
+
+      timer.Stop();
 
       var results = new List<SolutionData>();
       var messages = new List<SolutionMessage>();
@@ -86,6 +94,7 @@ namespace NodePen.Compute.Routes
       var response = new SolutionResponse();
       response.Data = results;
       response.Messages = messages;
+      response.Duration = timer.ElapsedMilliseconds;
 
       return (Response)JsonConvert.SerializeObject(response);
     }
