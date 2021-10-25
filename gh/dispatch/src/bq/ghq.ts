@@ -32,10 +32,14 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 
     // console.log(graphGhx)
 
+    const start = Date.now()
+
     const { data: graphSolution } = await axios.post(
       'http://localhost:9900/grasshopper/solve',
       graphGhx
     )
+
+    const duration = Date.now() - start
 
     const { data, messages, timeout } = graphSolution as any
 
@@ -50,6 +54,7 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 
     return {
       ...job.data,
+      duration,
       runtimeMessages: messages ?? [],
       exceptionMessages: timeout ? ['Solution timed out.'] : undefined,
     }
@@ -64,7 +69,8 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 ghq.process(processJob)
 
 ghq.on('job succeeded', (jobId, res) => {
-  const { graphId, solutionId, runtimeMessages, exceptionMessages } = res
+  const { graphId, solutionId, duration, runtimeMessages, exceptionMessages } =
+    res
 
   const message = [
     `[ JOB ${jobId.padStart(4, '0')} ]`,
@@ -77,7 +83,13 @@ ghq.on('job succeeded', (jobId, res) => {
   db.client.publish(
     'SOLUTION_COMPLETE',
     JSON.stringify({
-      onSolution: { solutionId, graphId, runtimeMessages, exceptionMessages },
+      onSolution: {
+        solutionId,
+        duration,
+        graphId,
+        runtimeMessages,
+        exceptionMessages,
+      },
     })
   )
 

@@ -21,6 +21,7 @@ export const solutionSchema = gql`
   type SolutionManifest {
     solutionId: String!
     graphId: String!
+    duration: Int
     runtimeMessages: [SolutionRuntimeMessage] # Grasshopper failed/warned
     exceptionMessages: [String] # NodePen failed
   }
