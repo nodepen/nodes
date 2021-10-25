@@ -39,23 +39,40 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 
     const { data, messages, timeout, duration } = graphSolution as any
 
-    // for (const { elementId, parameterId, values } of data) {
-    //   console.log(`${elementId} : ${parameterId}`)
-    //   for (const value of values) {
-    //     console.log(value)
-    //   }
-    // }
+    const writeAllValues = db.multi()
 
-    // console.log(messages)
+    for (const { elementId, parameterId, values } of data) {
+      const key = `graph:${graphId}:solution:${solutionId}:${elementId}:${parameterId}`
+      writeAllValues.setex(key, 60 * 30, JSON.stringify(values))
+
+      // for (const value of values) {
+      //   console.log(value)
+      // }
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      writeAllValues.exec((err, reply) => {
+        if (err) {
+          console.log(err)
+          reject(err)
+          return
+        }
+
+        resolve()
+      })
+    })
+
+    const elementCount = data.length
 
     return {
       ...job.data,
       duration,
+      elementCount,
       runtimeMessages: messages ?? [],
       exceptionMessages: timeout ? ['Solution timed out.'] : undefined,
     }
   } catch (err) {
-    // console.error(err)
+    console.error(err)
     console.log('Error!')
 
     return { ...job.data, exceptionMessages: ['Error during job processing!'] }
@@ -65,15 +82,23 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 ghq.process(processJob)
 
 ghq.on('job succeeded', (jobId, res) => {
-  const { graphId, solutionId, duration, runtimeMessages, exceptionMessages } =
-    res
+  const {
+    graphId,
+    solutionId,
+    duration,
+    elementCount,
+    runtimeMessages,
+    exceptionMessages,
+  } = res
 
   const message = [
     `[ JOB ${jobId.padStart(4, '0')} ]`,
     '[ FINISH ]',
     `[ SOLUTION ]`,
-    `\n\tgraphId    : ${graphId}`,
-    `\n\tsolutionId : ${solutionId}`,
+    `\n  graphId    : ${graphId}`,
+    `\n  solutionId : ${solutionId}`,
+    `\n  duration   : ${duration}`,
+    `\n  elements   : ${elementCount}`,
   ].join(' ')
 
   db.client.publish(

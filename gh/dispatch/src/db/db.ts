@@ -37,6 +37,9 @@ const setex = setexAsync.bind(client) as typeof setexAsync
 const subscribeAsync = promisify(client.subscribe)
 const subscribe = subscribeAsync.bind(client) as typeof subscribeAsync
 
+const batch = client.batch.bind(client)
+const multi = client.multi.bind(client)
+
 // Export db object
 export const db = {
   client,
@@ -49,4 +52,6 @@ export const db = {
   set,
   setex,
   subscribe,
+  batch,
+  multi,
 }
