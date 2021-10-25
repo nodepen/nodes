@@ -1,5 +1,6 @@
 // import { useState, useRef, useCallback } from 'react'
-// import { useSessionManager } from 'context/session'
+import { useSessionManager } from '../context/session'
+import { UserImage } from './header'
 // import { useOutsideClick } from '@/hooks'
 // import { SignUpMenu, UserImage, UserMenu } from './header'
 
@@ -8,9 +9,9 @@ type EditorLayoutProps = {
 }
 
 export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElement => {
-  // const { user } = useSessionManager()
+  const { user } = useSessionManager()
 
-  // const isAnonymous = user?.isAnonymous ?? true
+  const isAnonymous = user?.isAnonymous ?? true
 
   // const menuRef = useRef<HTMLDivElement>(null)
 
@@ -47,39 +48,12 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           />
         </a>
         <div className="flex-grow h-full p-1 pr-2 flex justify-end items-center">
-          <div className="mr-4 flex items-center rounded-sm" title="NodePen is not currently generating solutions.">
-            <svg
-              className="mr-1 w-6 h-6"
-              fill="none"
-              stroke="#333"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                vectorEffect="non-scaling-stroke"
-                d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-              />
-            </svg>
-            <p className="text-sm font-semibold text-dark select-none">OFFLINE</p>
-          </div>
-          <a
-            className="pl-2 pr-1 flex items-center text-sm font-semibold text-dark rounded-sm border-2 border-dark hover:bg-green"
-            href="https://github.com/cdriesler/nodepen#beta"
-            target="_blank"
-            rel="noreferrer"
+          <button
+            className={`${isAnonymous ? 'border-2 border-dark' : ''} h-6 w-6 rounded-sm bg-white overflow-hidden`}
           >
-            BETA
-            <svg className="w-4 h-4 ml-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </a>
+            <UserImage />
+          </button>
+
           {/* {isAnonymous ? (
             <>
               <button className="h-full mr-1 pl-2 pr-2 flex justify-center items-center border-dark border-2 rounded-md text-sm text-dark font-semibold font-sans">
