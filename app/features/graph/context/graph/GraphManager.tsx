@@ -33,8 +33,12 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
   const { restore } = useGraphDispatch()
 
   useLayoutEffect(() => {
+    if (!token) {
+      return
+    }
+
     restore(manifest)
-  }, [])
+  }, [token])
 
   const client = useApolloClient()
 

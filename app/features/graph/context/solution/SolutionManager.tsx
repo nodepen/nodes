@@ -183,14 +183,29 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     // Request values for all `immediate` parameters
     // console.log('Querying!')
 
-    client
-      .query({
+    const immediateElements = Object.values(elements).filter(
+      (element): element is NodePen.Element<'static-component' | 'static-parameter' | 'number-slider'> =>
+        'solution' in element.current && element.current.solution.mode === 'immediate'
+    )
+
+    console.log(`Requesting values for ${immediateElements.length} immediate mode components.`)
+
+    const getSolutionValue = async (
+      graphId: string,
+      solutionId: string,
+      elementId: string,
+      parameterId: string
+    ): Promise<any> => {
+      const { data } = await client.query({
         query: gql`
           query GetSolutionValue($graphId: String!, $solutionId: String!, $elementId: String!, $parameterId: String!) {
             solution(graphId: $graphId, solutionId: $solutionId) {
               value(elementId: $elementId, parameterId: $parameterId) {
-                type
-                value
+                path
+                data {
+                  type
+                  value
+                }
               }
             }
           }
@@ -198,13 +213,38 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         variables: {
           graphId,
           solutionId,
-          elementId: 'element-id',
-          parameterId: 'parameter-id',
+          elementId,
+          parameterId,
         },
       })
-      .then((res) => {
-        console.log(res)
-      })
+
+      return data.solution.value
+    }
+
+    const getParameterInstanceIds = (
+      element: NodePen.Element<'static-component' | 'static-parameter' | 'number-slider'>
+    ): string[] => {
+      return [...Object.keys(element.current.inputs), ...Object.keys(element.current.outputs)]
+    }
+
+    const immediateValuePaths: [elementInstanceId: string, parameterInstanceId: string][] = []
+
+    for (const element of immediateElements) {
+      const { id } = element
+      const parameterInstanceIds = getParameterInstanceIds(element)
+
+      for (const parameterId of parameterInstanceIds) {
+        immediateValuePaths.push([id, parameterId])
+      }
+    }
+
+    Promise.allSettled(
+      immediateValuePaths.map(([elementId, parameterId]) =>
+        getSolutionValue(graphId, solutionId, elementId, parameterId)
+      )
+    ).then((res) => {
+      console.log(res)
+    })
   }, [data])
 
   return <>{children}</>

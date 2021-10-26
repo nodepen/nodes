@@ -14,15 +14,19 @@ export const useGraphDispatch = () => {
   return {
     undo: () => {
       dispatch(ActionCreators.undo())
+      dispatch(solutionActions.expireSolution())
     },
     redo: () => {
       dispatch(ActionCreators.redo())
+      dispatch(solutionActions.expireSolution())
     },
     reset: () => {
       dispatch(graphActions.reset())
+      dispatch(solutionActions.expireSolution())
     },
     restore: (manifest: GrasshopperGraphManifest) => {
       dispatch(graphActions.restore(manifest))
+      dispatch(solutionActions.expireSolution())
     },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.addElement(data))

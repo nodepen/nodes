@@ -43,10 +43,11 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 
     for (const { elementId, parameterId, values } of data) {
       const key = `graph:${graphId}:solution:${solutionId}:${elementId}:${parameterId}`
+      // console.log(values)
       writeAllValues.setex(key, 60 * 30, JSON.stringify(values))
 
       // for (const value of values) {
-      //   console.log(value)
+      //   console.log(value.data)
       // }
     }
 
