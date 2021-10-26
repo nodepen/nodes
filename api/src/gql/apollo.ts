@@ -6,18 +6,21 @@ import {
 import { typeDefs } from './schemas'
 import { resolvers } from './resolvers'
 // import origins from '../auth/origins.json'
-import { execute, subscribe } from 'graphql'
+import { execute, subscribe, GraphQLSchema } from 'graphql'
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { app, server } from './express'
 import { authenticate } from './utils'
+import { schema } from './schema/schema'
 
 /**
  * Attach the GraphQL server instances to the imported core server object.
  * @returns The modified core server object
  */
 export const initialize = async () => {
-  const schema = makeExecutableSchema({ typeDefs, resolvers })
+  // const schema = makeExecutableSchema({ typeDefs, resolvers })
+
+  // const t = new GraphQLSchema({ })
 
   const gqlQueryServer = new ApolloServer({
     schema,
