@@ -19,9 +19,9 @@ const GrasshopperEditor: NextPage = () => {
       <ApolloContext token={token}>
         <Layout.Editor>
           <GraphManager>
-            {/* <SolutionManager> */}
-            <Graph.Container />
-            {/* </SolutionManager> */}
+            <SolutionManager>
+              <Graph.Container />
+            </SolutionManager>
           </GraphManager>
         </Layout.Editor>
       </ApolloContext>
