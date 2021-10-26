@@ -1,26 +1,16 @@
-import {
-  ApolloServer,
-  AuthenticationError,
-  Config,
-} from 'apollo-server-express'
-// import { typeDefs } from './schemas'
-import { resolvers } from './resolvers'
-// import origins from '../auth/origins.json'
+import { ApolloServer, AuthenticationError } from 'apollo-server-express'
 import { execute, subscribe } from 'graphql'
-import { makeExecutableSchema } from '@graphql-tools/schema'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { app, server } from './express'
 import { authenticate } from './utils'
-import { typeDefs } from './schema'
-// import { schema } from './schema/schema'
+import { schema } from './schema'
 
 /**
  * Attach the GraphQL server instances to the imported core server object.
  * @returns The modified core server object
  */
 export const initialize = async () => {
-  const schema = makeExecutableSchema({ typeDefs, resolvers })
-
+  // Create the core apollo server
   const gqlQueryServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
@@ -51,6 +41,7 @@ export const initialize = async () => {
   await gqlQueryServer.start()
   gqlQueryServer.applyMiddleware({ app: app as any })
 
+  // Create and attach the additional subscription server
   const gqlSubscriptionServer = SubscriptionServer.create(
     {
       schema,
