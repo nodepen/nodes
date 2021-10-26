@@ -3,7 +3,7 @@ import {
   AuthenticationError,
   Config,
 } from 'apollo-server-express'
-import { typeDefs } from './schemas'
+// import { typeDefs } from './schemas'
 import { resolvers } from './resolvers'
 // import origins from '../auth/origins.json'
 import { execute, subscribe } from 'graphql'
@@ -11,6 +11,7 @@ import { makeExecutableSchema } from '@graphql-tools/schema'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
 import { app, server } from './express'
 import { authenticate } from './utils'
+import { typeDefs } from './schema'
 // import { schema } from './schema/schema'
 
 /**

@@ -1,0 +1,1 @@
+export { solutionSchema } from './solutionSchema'
