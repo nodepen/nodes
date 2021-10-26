@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { NodePen } from 'glib'
 import { useSubscription, gql, useApolloClient } from '@apollo/client'
-import { useGraphElements } from '../../store/graph/hooks'
+import { useGraphElements, useGraphId } from '../../store/graph/hooks'
 import { useSolutionDispatch, useSolutionMetadata } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
 import { newGuid } from '../../utils'
@@ -24,6 +24,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   const client = useApolloClient()
 
   const elements = useGraphElements()
+  const graphId = useGraphId()
 
   const { updateSolution, tryApplySolutionManifest } = useSolutionDispatch()
   const meta = useSolutionMetadata()
@@ -31,7 +32,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   useEffect(() => {
     switch (meta.phase) {
       case 'expired': {
-        console.log(`🏃🏃🏃 DETECTED`)
+        // console.log(`🏃🏃🏃 DETECTED`)
 
         const newSolutionId = newGuid()
 
@@ -59,7 +60,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
               }
             `,
             variables: {
-              graphId: 'test-id',
+              graphId: graphId,
               solutionId: newSolutionId,
               graphJson: elementsJson,
             },
@@ -115,7 +116,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     `,
     {
       variables: {
-        graphId: 'test-id',
+        graphId,
       },
       skip: !isAuthenticated,
       shouldResubscribe: true,
@@ -136,8 +137,13 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       return
     }
 
+    if (!meta.id) {
+      console.log('🐍 Received solution manifest while graph was stale.')
+      return
+    }
+
     // Data arrived from subscription
-    const { solutionId: incomingSolutionId, graphId, duration, exceptionMessages, runtimeMessages } = data.onSolution
+    const { solutionId, duration, exceptionMessages, runtimeMessages } = data.onSolution
 
     if (exceptionMessages) {
       updateSolution({
@@ -152,7 +158,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       return
     }
 
-    const messages = runtimeMessages.reduce((all, current) => {
+    const messages = runtimeMessages.reduce((all: any, current: any) => {
       const { elementId, ...message } = current
 
       if (elementId in all) {
@@ -167,7 +173,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     // console.log({ duration })
 
     tryApplySolutionManifest({
-      solutionId: incomingSolutionId,
+      solutionId,
       manifest: {
         duration,
         messages,
@@ -175,7 +181,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     })
 
     // Request values for all `immediate` parameters
-    console.log('Querying!')
+    // console.log('Querying!')
 
     client
       .query({
@@ -190,10 +196,10 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
           }
         `,
         variables: {
-          graphId: 'test-id',
-          solutionId: 'solution-id',
+          graphId,
+          solutionId,
           elementId: 'element-id',
-          parameterId: 'parameter-id0',
+          parameterId: 'parameter-id',
         },
       })
       .then((res) => {

@@ -5,6 +5,7 @@ import { solutionActions } from '../../solution/solutionSlice'
 import { Payload, WireMode } from '../types'
 import { ActionCreators } from 'redux-undo'
 import { GraphMode } from '../types/GraphMode'
+import { GrasshopperGraphManifest } from '@/features/graph/types'
 
 /* eslint-disable-next-line */
 export const useGraphDispatch = () => {
@@ -19,6 +20,9 @@ export const useGraphDispatch = () => {
     },
     reset: () => {
       dispatch(graphActions.reset())
+    },
+    restore: (manifest: GrasshopperGraphManifest) => {
+      dispatch(graphActions.restore(manifest))
     },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.addElement(data))

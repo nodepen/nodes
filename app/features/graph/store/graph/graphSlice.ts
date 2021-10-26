@@ -14,8 +14,15 @@ import {
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
 import { prepareLiveMotion } from './reducers'
+import { GrasshopperGraphManifest } from '../../types'
 
 const initialState: GraphState = {
+  manifest: {
+    id: 'unset',
+    name: 'unset',
+    author: 'unset',
+    elements: {},
+  },
   elements: {},
   selection: [],
   mode: 'idle',
@@ -45,6 +52,10 @@ export const graphSlice = createSlice({
     reset: (state: GraphState) => {
       state.elements = {}
       state.selection = []
+    },
+    restore: (state: GraphState, action: PayloadAction<GrasshopperGraphManifest>) => {
+      state.manifest = action.payload
+      state.elements = action.payload.elements
     },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
@@ -1050,6 +1061,7 @@ const selectPrimaryWire = (state: RootState): string => state.graph.present.regi
 const selectLiveWiresOrigin = (state: RootState): GraphState['registry']['wire']['origin'] =>
   state.graph.present.registry.wire.origin
 
+const selectGraphId = (state: RootState): string => state.graph.present.manifest.id
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
   return {
     canUndo: state.graph.past.length > 0,
@@ -1063,6 +1075,7 @@ export const graphSelectors = {
   selectMode,
   selectPrimaryWire,
   selectLiveWiresOrigin,
+  selectGraphId,
   selectGraphHistory,
 }
 

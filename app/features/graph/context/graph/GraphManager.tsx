@@ -1,9 +1,11 @@
-import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useState, useRef, createRef } from 'react'
 import { Grasshopper } from 'glib'
+import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { GraphStore } from './types'
 import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
+import { useGraphDispatch } from '../../store/graph/hooks'
 
 export const GraphContext = React.createContext<GraphStore>({
   register: {
@@ -21,11 +23,18 @@ export const GraphContext = React.createContext<GraphStore>({
 })
 
 type GraphManagerProps = {
+  manifest: GrasshopperGraphManifest
   children?: JSX.Element
 }
 
-export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
+export const GraphManager = ({ children, manifest }: GraphManagerProps): React.ReactElement => {
   const { token, session } = useSessionManager()
+
+  const { restore } = useGraphDispatch()
+
+  useLayoutEffect(() => {
+    restore(manifest)
+  }, [])
 
   const client = useApolloClient()
 

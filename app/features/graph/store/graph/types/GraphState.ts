@@ -1,12 +1,9 @@
+import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { NodePen } from 'glib'
 import { GraphMode } from './GraphMode'
 
 export type GraphState = {
-  meta?: {
-    id: string
-    name: string
-    author: string
-  }
+  manifest: GrasshopperGraphManifest
   elements: { [elementId: string]: NodePen.Element<NodePen.ElementType> }
   selection: string[]
   mode: GraphMode

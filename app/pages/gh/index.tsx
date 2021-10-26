@@ -7,8 +7,14 @@ import { SolutionManager } from 'features/graph/context/solution'
 import { KeyboardObserver } from 'features/common/observer'
 import { ApolloContext } from '@/features/common/context/apollo'
 import { useSessionManager } from '@/features/common/context/session'
+import { GrasshopperGraphManifest } from '@/features/graph/types'
+import { newGuid } from '@/features/graph/utils'
 
-const GrasshopperEditor: NextPage = () => {
+type NewGrasshopperEditorPageProps = {
+  manifest: GrasshopperGraphManifest
+}
+
+const NewGrasshopperEditor: NextPage<NewGrasshopperEditorPageProps> = ({ manifest }) => {
   const { token } = useSessionManager()
 
   return (
@@ -18,7 +24,7 @@ const GrasshopperEditor: NextPage = () => {
       </Head>
       <ApolloContext token={token}>
         <Layout.Editor>
-          <GraphManager>
+          <GraphManager manifest={manifest}>
             <SolutionManager>
               <Graph.Container />
             </SolutionManager>
@@ -30,12 +36,21 @@ const GrasshopperEditor: NextPage = () => {
   )
 }
 
-export default GrasshopperEditor
+export default NewGrasshopperEditor
 
 /**
  * Opt out of server-side static generation.
  * TODO: Pre-fetch graph, if it exists
  */
-export const getServerSideProps: GetServerSideProps = async () => {
-  return { props: {} }
+export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProps> = async () => {
+  return {
+    props: {
+      manifest: {
+        id: newGuid(),
+        name: 'Twisty Tower',
+        author: 'anonymous',
+        elements: {},
+      },
+    },
+  }
 }
