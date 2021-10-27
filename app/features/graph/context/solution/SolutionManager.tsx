@@ -127,6 +127,12 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   useEffect(() => {
     if (error) {
       console.error(error)
+      updateSolution({
+        meta: {
+          phase: 'idle',
+          error: 'Could not process response from subscription!',
+        },
+      })
       return
     }
 

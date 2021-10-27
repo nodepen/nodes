@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useLayoutEffect, useState, useRef, createRef } from 'react'
+import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
 import { Grasshopper } from 'glib'
 import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { GraphStore } from './types'
@@ -31,14 +31,21 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
   const { token, session } = useSessionManager()
 
   const { restore } = useGraphDispatch()
+  const sessionInitialized = useRef(false)
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!token) {
       return
     }
 
+    if (sessionInitialized.current) {
+      return
+    }
+
+    sessionInitialized.current = true
+
     restore(manifest)
-  }, [token])
+  }, [token, manifest, restore])
 
   const client = useApolloClient()
 

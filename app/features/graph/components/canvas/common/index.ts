@@ -1,3 +1,4 @@
+import DataTreeContainer from './DataTreeContainer'
 import ElementContainer from './ElementContainer'
 import GripContainer from './GripContainer'
 
@@ -6,4 +7,4 @@ export { GripIcon } from './GripIcon'
 export { ParameterIcon } from './ParameterIcon'
 export { TooltipContainer } from './TooltipContainer'
 
-export { ElementContainer, GripContainer }
+export { DataTreeContainer, ElementContainer, GripContainer }

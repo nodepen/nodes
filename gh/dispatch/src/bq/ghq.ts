@@ -95,7 +95,12 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
     console.error(err)
     console.log('Error!')
 
-    return { ...job.data, exceptionMessages: ['Error during job processing!'] }
+    return {
+      ...job.data,
+      duration: 0,
+      elementCount: 0,
+      exceptionMessages: ['Error during job processing!'],
+    }
   }
 }
 

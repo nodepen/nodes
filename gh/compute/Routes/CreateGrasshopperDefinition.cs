@@ -160,7 +160,7 @@ namespace NodePen.Compute.Routes
 
               sliderInstance.Slider.FixDomain();
 
-              var incoming = Convert.ToString(element.Current.Values["output"]["{0}"][0].data);
+              var incoming = Convert.ToString(element.Current.Values["output"]["{0}"][0].value);
               var success = decimal.TryParse(incoming, out decimal value);
 
               sliderInstance.SetSliderValue(success ? value : 5);

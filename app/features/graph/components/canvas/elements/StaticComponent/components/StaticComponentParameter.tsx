@@ -1,17 +1,24 @@
 import { Grasshopper } from 'glib'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { GripContainer, GripIcon, TooltipContainer, useGripContext } from '../../../common'
+import { DataTreeContainer, GripContainer, GripIcon, TooltipContainer, useGripContext } from '../../../common'
 import { useLongHover } from 'hooks'
 import { HoverTooltip } from '@/features/graph/components/overlay'
 import { StaticComponentParameterDetails } from '../details'
 
 type StaticComponentParameterProps = {
+  elementId: string
+  parameterId: string
   template: Grasshopper.Parameter
   mode: 'input' | 'output'
 }
 
-const StaticComponentParameter = ({ template, mode }: StaticComponentParameterProps): React.ReactElement => {
+const StaticComponentParameter = ({
+  elementId,
+  parameterId,
+  template,
+  mode,
+}: StaticComponentParameterProps): React.ReactElement => {
   const { nickname } = template
 
   const { gripRef, register } = useGripContext()
@@ -58,6 +65,7 @@ const StaticComponentParameter = ({ template, mode }: StaticComponentParameterPr
         <HoverTooltip position={tooltipPosition.current} onClose={() => setShowTooltip(false)}>
           <TooltipContainer>
             <StaticComponentParameterDetails template={template} />
+            <DataTreeContainer elementId={elementId} parameterId={parameterId} />
           </TooltipContainer>
         </HoverTooltip>
       ) : null}
@@ -93,7 +101,7 @@ export const StaticComponentParameterContainer = ({
           console.log('Static component parameter clicked!')
         }}
       >
-        <StaticComponentParameter template={template} mode={mode} />
+        <StaticComponentParameter elementId={elementId} parameterId={parameterId} template={template} mode={mode} />
       </GripContainer>
     </div>
   )
