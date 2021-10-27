@@ -72,9 +72,10 @@ export const graphSlice = createSlice({
             id,
             template,
             current: {
-              solution: {
-                id: '',
-                mode: 'deferred',
+              settings: {
+                solution: 'deferred',
+                visibility: 'visible',
+                execution: 'enabled',
               },
               values,
               sources,
@@ -128,6 +129,11 @@ export const graphSlice = createSlice({
             id,
             template,
             current: {
+              settings: {
+                solution: 'immediate',
+                visibility: 'visible',
+                execution: 'enabled',
+              },
               dimensions: {
                 width: 300,
                 height: 42,
@@ -140,7 +146,7 @@ export const graphSlice = createSlice({
                   [path]: [
                     {
                       type: 'number',
-                      data: 0.25,
+                      value: 0.25,
                     },
                   ],
                 },
@@ -148,10 +154,6 @@ export const graphSlice = createSlice({
               inputs: {},
               outputs: {
                 output: 0,
-              },
-              solution: {
-                id: 'unset',
-                mode: 'immediate',
               },
               rounding: 'rational',
               domain: [0, 1],

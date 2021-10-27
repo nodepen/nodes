@@ -40,7 +40,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const path = createDataTreePathString([0])
 
   // Keep internal value in sync with actual current value, but allow for fast-local-temporary changes.
-  const { data: currentValue } = current.values['output'][path][0]
+  const { value: currentValue } = current.values['output'][path][0]
   const [internalValue, setInternalValue] = useState(currentValue as number)
   const internalValueLabel = useRef<string>(currentValue.toString())
 
@@ -301,7 +301,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                 [path]: [
                   {
                     type: 'number',
-                    data: internalValue,
+                    value: internalValue,
                   },
                 ],
               },

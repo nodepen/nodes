@@ -89,7 +89,7 @@ const NumberSliderMenu = ({ id, initial, onClose, onCancel, focus }: NumberSlide
             [path]: [
               {
                 type: 'number',
-                data: value.value,
+                value: value.value,
               },
             ],
           },

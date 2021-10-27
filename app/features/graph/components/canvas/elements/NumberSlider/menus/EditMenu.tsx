@@ -14,7 +14,7 @@ export const EditMenu = ({ slider }: EditMenuProps): React.ReactElement => {
 
   const path = createDataTreePathString([0])
 
-  const value = values['output'][path][0].data as number
+  const value = values['output'][path][0].value as number
 
   const { onClose, onCancel } = useGenericMenuManager()
 

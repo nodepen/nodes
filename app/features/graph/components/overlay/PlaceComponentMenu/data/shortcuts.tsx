@@ -41,7 +41,7 @@ export const shortcuts: ComponentShortcut[] = [
             [path]: [
               {
                 type: 'number',
-                data: Math.min(Math.pow(10, 7), parseFloat(val)),
+                value: Math.min(Math.pow(10, 7), parseFloat(val)),
               },
             ],
           },
@@ -74,7 +74,7 @@ export const shortcuts: ComponentShortcut[] = [
             [path]: [
               {
                 type: 'number',
-                data: Math.min(Math.pow(10, 7), parseFloat(value)),
+                value: Math.min(Math.pow(10, 7), parseFloat(value)),
               },
             ],
           },

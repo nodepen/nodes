@@ -3,9 +3,10 @@ import { ParameterReference } from '../../../graph'
 
 /** An element that affects the data flow of the graph. */
 export type GraphElement = {
-    solution: {
-        id: string
-        mode: 'deferred' | 'immediate'
+    settings: {
+      solution: 'deferred' | 'immediate'
+      visibility: 'visible' | 'hidden'
+      execution: 'enabled' | 'disabled'
     }
     sources: {
         [parameterId: string]: ParameterReference[]

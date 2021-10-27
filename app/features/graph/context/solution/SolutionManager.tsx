@@ -4,7 +4,8 @@ import { useSubscription, gql, useApolloClient } from '@apollo/client'
 import { useGraphElements, useGraphId } from '../../store/graph/hooks'
 import { useSolutionDispatch, useSolutionMetadata } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
-import { newGuid, createDataTreePathString } from '../../utils'
+import { newGuid } from '../../utils'
+import { getImmediateElements } from './utils'
 
 type SolutionManagerProps = {
   children?: JSX.Element
@@ -183,10 +184,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     // Request values for all `immediate` parameters
     // console.log('Querying!')
 
-    const immediateElements = Object.values(elements).filter(
-      (element): element is NodePen.Element<'static-component' | 'static-parameter' | 'number-slider'> =>
-        'solution' in element.current && element.current.solution.mode === 'immediate'
-    )
+    const immediateElements = getImmediateElements(Object.values(elements))
 
     console.log(`Requesting values for ${immediateElements.length} immediate mode components.`)
 
