@@ -1,3 +1,4 @@
+import { NodePen } from 'glib'
 import { SolutionState } from './SolutionState'
 
 export type ExpireSolutionPayload = {
@@ -18,5 +19,9 @@ export type ApplySolutionManifestPayload = {
 
 export type ApplySolutionValuesPayload = {
   solutionId: string
-  values: any
+  values: {
+    elementId: string
+    parameterId: string
+    data: NodePen.DataTreeBranch[]
+  }[]
 }

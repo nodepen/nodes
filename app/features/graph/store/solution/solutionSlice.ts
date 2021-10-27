@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
 import { Payload, SolutionState } from './types'
+import { dataBranchesToDataTree } from './utils'
 
 const initialState: SolutionState = {
   meta: {
@@ -53,7 +54,19 @@ export const solutionSlice = createSlice({
         return
       }
 
-      console.log(values)
+      console.log(`Trying to update ${values.length} parameters.`)
+
+      for (const { elementId, parameterId, data } of values) {
+        const tree = dataBranchesToDataTree(data)
+
+        if (!(elementId in state.values)) {
+          state.values[elementId] = {}
+        }
+
+        state.values[elementId][parameterId] = tree
+      }
+
+      console.log({ tree: JSON.parse(JSON.stringify(state.values)) })
     },
   },
 })

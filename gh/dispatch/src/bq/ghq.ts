@@ -1,5 +1,6 @@
 import Queue from 'bee-queue'
 import { ClientOpts } from 'redis'
+import { NodePen } from 'glib'
 import { db } from '../db'
 import axios from 'axios'
 
@@ -40,6 +41,24 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
     const { data, messages, timeout, duration } = graphSolution as any
 
     const writeAllValues = db.multi()
+
+    // const createDataTreePathString = (path: number[]): string => {
+    //   return `{${path.join(';')}}`
+    // }
+
+    // Convert flat list of branches to NodePen DataTree object representation
+    // const dataBranchesToDataTree = (
+    //   values: { path: number[]; data: { type: any; value: any }[] }[]
+    // ): NodePen.DataTree => {
+    //   const tree: NodePen.DataTree = {}
+
+    //   for (const { path, data } of values) {
+    //     const pathKey = createDataTreePathString(path)
+    //     tree[pathKey] = data
+    //   }
+
+    //   return tree
+    // }
 
     for (const { elementId, parameterId, values } of data) {
       const key = `graph:${graphId}:solution:${solutionId}:${elementId}:${parameterId}`

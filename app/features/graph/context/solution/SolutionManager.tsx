@@ -4,7 +4,7 @@ import { useSubscription, gql, useApolloClient } from '@apollo/client'
 import { useGraphElements, useGraphId } from '../../store/graph/hooks'
 import { useSolutionDispatch, useSolutionMetadata } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
-import { newGuid } from '../../utils'
+import { newGuid, createDataTreePathString } from '../../utils'
 
 type SolutionManagerProps = {
   children?: JSX.Element
@@ -26,7 +26,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   const elements = useGraphElements()
   const graphId = useGraphId()
 
-  const { updateSolution, tryApplySolutionManifest } = useSolutionDispatch()
+  const { updateSolution, tryApplySolutionManifest, tryApplySolutionValues } = useSolutionDispatch()
   const meta = useSolutionMetadata()
 
   useEffect(() => {
@@ -242,8 +242,19 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       immediateValuePaths.map(([elementId, parameterId]) =>
         getSolutionValue(graphId, solutionId, elementId, parameterId)
       )
-    ).then((res) => {
-      console.log(res)
+    ).then((res: PromiseSettledResult<NodePen.DataTreeBranch[]>[]) => {
+      tryApplySolutionValues({
+        solutionId,
+        values: immediateValuePaths.reduce((all, [elementId, parameterId], i) => {
+          const currentResult = res[i]
+
+          if (currentResult?.status !== 'fulfilled') {
+            return all
+          }
+
+          return [...all, { elementId, parameterId, data: currentResult.value }]
+        }, [] as { elementId: string; parameterId: string; data: NodePen.DataTreeBranch[] }[]),
+      })
     })
   }, [data])
 

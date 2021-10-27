@@ -16,6 +16,7 @@
     "bee-queue": "^1.4.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "glib": "file:./glib",
     "redis": "^3.1.2"
   },
   "devDependencies": {

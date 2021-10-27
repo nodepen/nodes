@@ -17,7 +17,7 @@ const ElementsContainer = (): React.ReactElement => {
     const printElements = (e: KeyboardEvent): void => {
       switch (e.code) {
         case 'Space': {
-          console.log(elements)
+          console.log({ elements })
           expireSolution()
         }
       }
