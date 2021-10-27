@@ -6,6 +6,7 @@ import { useSolutionDispatch, useSolutionMetadata } from '../../store/solution/h
 import { useSessionManager } from '@/features/common/context/session'
 import { newGuid } from '../../utils'
 import { getImmediateElements } from './utils'
+import { firebase } from '../../../common/context/session/auth/firebase'
 
 type SolutionManagerProps = {
   children?: JSX.Element
@@ -133,6 +134,9 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
           error: 'Could not process response from subscription!',
         },
       })
+
+      // TODO: Is this the best way to force a refresh on the subscription?
+      firebase.auth().currentUser?.getIdToken(true)
       return
     }
 

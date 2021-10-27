@@ -165,7 +165,7 @@ namespace NodePen.Compute.Routes
               {
                 var circleGoo = goo as GH_Circle;
 
-                data.Type = "curve";
+                data.Type = "circle";
 
                 var beziers = BezierCurve.CreateCubicBeziers(circleGoo.Value.ToNurbsCurve(), 0.01, 0.01);
                 var curve = ToNodePenCurve(beziers);
