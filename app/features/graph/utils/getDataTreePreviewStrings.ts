@@ -1,7 +1,7 @@
 import { NodePen } from 'glib'
 import { getDataTreeValueString } from '.'
 
-export const getDataTreePreviewStrings = (tree: NodePen.DataTree, limit = 10): string[] => {
+export const getDataTreePreviewStrings = (tree: NodePen.DataTree, limit = 6): string[] => {
   const branchPaths = Object.keys(tree)
 
   if (branchPaths.length === 0) {

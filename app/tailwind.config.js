@@ -93,12 +93,22 @@ module.exports = {
           '100%': {
             'stroke-dashoffset': 0,
           }
+        },
+        'spin-inverse': {
+          'from': {
+            'transform': 'rotate(0deg)'
+          },
+          'to': {
+            'transform': 'rotate(-360deg)'
+          }
         }
       },
       animation: {
-        swell: 'swell 3200ms ease-in-out infinite',
-        scroll: 'scroll 3200ms linear infinite',
         march: 'march 500ms linear infinite',
+        scroll: 'scroll 3200ms linear infinite',
+        'spin-inv': "spin-inverse 1s linear infinite",
+        swell: 'swell 3200ms ease-in-out infinite',
+
       },
       transitionProperty: {
         height: 'height',

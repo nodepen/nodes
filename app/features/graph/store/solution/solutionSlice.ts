@@ -42,7 +42,7 @@ export const solutionSlice = createSlice({
 
       // console.log(manifest.messages)
 
-      state.meta.phase = 'idle'
+      state.meta.phase = 'downloading'
       state.meta.duration = manifest.duration
       state.messages = manifest.messages ?? {}
     },
@@ -54,7 +54,9 @@ export const solutionSlice = createSlice({
         return
       }
 
-      console.log(`Trying to update ${values.length} parameters.`)
+      state.meta.phase = 'idle'
+
+      // console.log(`Trying to update ${values.length} parameters.`)
 
       for (const { elementId, parameterId, data } of values) {
         const tree = dataBranchesToDataTree(data)
@@ -66,7 +68,7 @@ export const solutionSlice = createSlice({
         state.values[elementId][parameterId] = tree
       }
 
-      console.log({ tree: JSON.parse(JSON.stringify(state.values)) })
+      // console.log({ tree: JSON.parse(JSON.stringify(state.values)) })
     },
   },
 })

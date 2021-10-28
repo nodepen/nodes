@@ -20,6 +20,12 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
   try {
     const { graphId, solutionId } = job.data
 
+    // await new Promise<void>((resolve) => {
+    //   setTimeout(() => {
+    //     resolve()
+    //   }, 2000)
+    // })
+
     const graphJson = await db.get(
       `graph:${graphId}:solution:${solutionId}:json`
     )

@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 export type SolutionState = {
   meta: {
     id?: string
-    phase?: 'expired' | 'scheduled' | 'idle'
+    phase?: 'expired' | 'scheduled' | 'downloading' | 'idle'
     /** Store details about NodePen errors during solve. */
     error?: string
     /** Duration of the previous run */
