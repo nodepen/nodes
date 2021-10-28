@@ -23,7 +23,7 @@ export const DataTreePreview = ({
   const entries = getDataTreePreviewStrings(tree ?? {})
 
   return (
-    <div className={`w-full p-2 flex flex-col justify-start items-center`}>
+    <div className={`w-full p-2 flex flex-col justify-start items-center overflow-hidden`} style={{ maxHeight: 300 }}>
       {loading ? (
         <div className="w-full h-16 flex justify-center items-center">
           <svg
@@ -41,7 +41,7 @@ export const DataTreePreview = ({
         </div>
       ) : (
         <>
-          <div className="w-full mb-1">
+          <div className={`${entries?.length > 0 ? 'mb-1' : ''} w-full`}>
             <Typography.Data size="sm" color="dark">
               {details}
             </Typography.Data>

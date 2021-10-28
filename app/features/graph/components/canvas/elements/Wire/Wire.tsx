@@ -3,6 +3,7 @@ import { NodePen } from 'glib'
 import { useDebugRender } from '@/hooks'
 import { LiveWireElement } from '@/features/graph/store/graph/types'
 import { distance, pointBetween, bezierLength } from '@/features/graph/utils'
+import { useWireType } from './hooks'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
@@ -16,6 +17,8 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   } = current
 
   // useDebugRender(`Wire | ${id}`)
+  const { elementId, parameterId } = template?.from ?? {}
+  const wireType = useWireType(elementId, parameterId)
 
   const dist = distance([ax, ay], [bx, by])
   const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
@@ -59,8 +62,8 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
 
   const pathRef = useRef<SVGPathElement>(null)
 
-  const length = bezierLength({ a: start, b: startA1, c: startA2, d: mid }, 500) * 2
-  const offset = wire.template.mode === 'live' ? 12 - (length % 12) : 0
+  const length = wire.template.mode === 'live' ? bezierLength({ a: start, b: startA1, c: startA2, d: mid }, 500) * 2 : 0
+  const offset = 12 - (length % 12)
 
   const arrow = useMemo(() => {
     if (template.mode !== 'live') {
@@ -106,6 +109,10 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
 
   const [x, y] = [Math.min(ax, bx), Math.min(ay, by)]
 
+  const strokeWidth = template.mode === 'data' ? (wireType === 'list' || wireType === 'tree' ? '7px' : '3px') : '3px'
+  const strokeDasharray =
+    template.mode === 'provisional' || template.mode === 'live' ? '4 8' : wireType === 'tree' ? '6 10' : ''
+
   return (
     <div className={`absolute pointer-events-none overflow-visible z-0`} style={{ width, height, left: x, top: y - 2 }}>
       <svg
@@ -117,15 +124,36 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
         <path
           d={d}
           ref={pathRef}
-          strokeWidth="3px"
+          strokeWidth={strokeWidth}
           stroke="#333333"
-          strokeDasharray={template.mode === 'provisional' ? '4 8' : template.mode === 'live' ? '4 8' : ''}
+          strokeDasharray={strokeDasharray}
           strokeDashoffset={template.mode === 'live' ? offset : 0}
           strokeLinecap="round"
           fill="none"
           vectorEffect="non-scaling-stroke"
           className={`${template.mode === 'provisional' ? 'animate-march' : 'none'}`}
         />
+        {wireType === 'list' && template.mode === 'data' ? (
+          <path
+            d={d}
+            strokeWidth="3px"
+            stroke="#FFFFFF"
+            strokeLinecap="round"
+            fill="none"
+            vectorEffect="non-scaling-stroke"
+          />
+        ) : null}
+        {wireType === 'tree' && template.mode === 'data' ? (
+          <path
+            d={d}
+            strokeWidth="3px"
+            stroke="#FFFFFF"
+            strokeDasharray={strokeDasharray}
+            strokeLinecap="round"
+            fill="none"
+            vectorEffect="non-scaling-stroke"
+          />
+        ) : null}
       </svg>
       {arrow}
     </div>
