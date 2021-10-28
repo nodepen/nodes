@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { UnderlayPortal } from '../../underlay'
 import { useSolutionMessages, useSolutionPhase } from 'features/graph/store/solution/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
@@ -20,12 +20,19 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
   const [internalMessages, setInternalMessages] = useState<RuntimeMessage[]>()
   const [internalColor, setInternalColor] = useState<'bg-warn' | 'bg-error'>('bg-warn')
 
+  const [shouldExist, setShouldExist] = useState(false)
+  const cleanupTimeout = useRef<ReturnType<typeof setTimeout>>()
+
   useEffect(() => {
     if (phase === 'idle') {
       const incomingMessages = messages[elementId]
 
       if (incomingMessages && incomingMessages.length > 0) {
         const { level } = incomingMessages[0]
+
+        if (cleanupTimeout.current) {
+          clearTimeout(cleanupTimeout.current)
+        }
 
         switch (level) {
           case 'warning':
@@ -37,15 +44,28 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
           default:
             console.log(`🐍 Unhandled runtime message level '${level}'`)
         }
+
+        setShouldExist(true)
+      } else {
+        cleanupTimeout.current = setTimeout(() => {
+          setShouldExist(false)
+          setInternalMessages(undefined)
+        }, 350)
       }
 
-      setInternalMessages(incomingMessages)
+      cleanupTimeout.current = setTimeout(() => {
+        setInternalMessages(incomingMessages)
+      }, 50)
     }
   }, [phase])
 
   const visible = !!internalMessages && internalMessages.length > 0 && zoomLevel !== 'far'
 
   const { message } = internalMessages?.[0] ?? {}
+
+  if (!shouldExist) {
+    return null
+  }
 
   return (
     <UnderlayPortal parent={elementId} anchor="top">
