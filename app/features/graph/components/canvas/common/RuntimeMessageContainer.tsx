@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { UnderlayPortal } from '../../underlay'
 import { useSolutionMessages, useSolutionPhase } from 'features/graph/store/solution/hooks'
+import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 
 type RuntimeMessageContainerProps = {
   elementId: string
@@ -14,32 +15,50 @@ type RuntimeMessage = {
 const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): React.ReactElement | null => {
   const messages = useSolutionMessages()
   const phase = useSolutionPhase()
+  const zoomLevel = useCameraZoomLevel()
 
   const [internalMessages, setInternalMessages] = useState<RuntimeMessage[]>()
+  const [internalColor, setInternalColor] = useState<'bg-warn' | 'bg-error'>('bg-warn')
 
   useEffect(() => {
     if (phase === 'idle') {
-      setInternalMessages(messages[elementId])
+      const incomingMessages = messages[elementId]
+
+      if (incomingMessages && incomingMessages.length > 0) {
+        const { level } = incomingMessages[0]
+
+        switch (level) {
+          case 'warning':
+            setInternalColor('bg-warn')
+            break
+          case 'error':
+            setInternalColor('bg-error')
+            break
+          default:
+            console.log(`🐍 Unhandled runtime message level '${level}'`)
+        }
+      }
+
+      setInternalMessages(incomingMessages)
     }
   }, [phase])
 
-  if (!internalMessages || internalMessages.length === 0) {
-    return null
-  }
+  const visible = !!internalMessages && internalMessages.length > 0 && zoomLevel !== 'far'
 
-  const { level, message } = internalMessages[0]
+  const { message } = internalMessages?.[0] ?? {}
 
   return (
     <UnderlayPortal parent={elementId} anchor="top">
       <div
-        className="w-full h-128 flex flex-col justify-end items-center rounded-md overflow-visible"
+        className="w-full h-128 flex flex-col justify-end items-center rounded-md overflow-visible pointer-events-none"
         style={{ transform: `translateY(-${16 + 512}px)` }}
       >
-        <div className="w-128 h-128 flex flex-col justify-end items-center">
+        <div
+          className="w-128 h-128 flex flex-col justify-end items-center transition-transform duration-300 ease-out"
+          style={{ transform: visible ? 'translateY(0)' : 'translateY(96px)' }}
+        >
           <div
-            className={`${
-              level === 'warning' ? 'bg-warn' : 'bg-error'
-            } w-10 h-10 rounded-md flex items-center justify-center z-10 transition-width duration-300 ease-out`}
+            className={`${internalColor} w-10 h-10 rounded-md flex items-center justify-center transition-width duration-300 ease-out pointer-events-auto z-10 `}
           >
             <svg className="w-6 h-6" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
               <path
@@ -49,12 +68,8 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
               />
             </svg>
           </div>
-          {/* <div className="w-64 bg-warn rounded-md p-2 pl-4 pr-4 flex flex-col z-10">
-          <h4 className="w-full h-8 flex justify-start items-center text-sm font-semibold">WARNING</h4>
-          <p className="w-full h-8 text-md whitespace-nowrap overflow-hidden">Some detailed message goes here.</p>
-        </div> */}
           <div
-            className={`${level === 'warning' ? 'bg-warn' : 'bg-error'} w-8 h-8 rounded-md z-0`}
+            className={`${internalColor} w-8 h-8 rounded-md pointer-events-auto z-0`}
             style={{ transform: 'translateY(-20px) rotate(45deg) ' }}
           />
         </div>
