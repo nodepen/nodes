@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 import { coerceValue } from '../utils'
 import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { useNumberSliderForm, NumberSliderAction } from '../store'
-import { createDataTreePathString } from '@/features/graph/utils'
+import { getDataTreePathString } from '@/features/graph/utils'
 
 type NumberSliderMenuProps = {
   id: string
@@ -75,7 +75,7 @@ const NumberSliderMenu = ({ id, initial, onClose, onCancel, focus }: NumberSlide
   const visiblePrecision = precisionEnabled ? hoverPrecision ?? precision : 0
 
   const handleCommit = (): void => {
-    const path = createDataTreePathString([0])
+    const path = getDataTreePathString([0])
 
     updateElement({
       id,

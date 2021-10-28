@@ -1,5 +1,5 @@
 import { NodePen } from 'glib'
-import { createDataTreePathString } from '../../../utils'
+import { getDataTreePathString } from '../../../utils'
 
 /**
  * Convert flat list of branches to NodePen DataTree object representation
@@ -10,7 +10,7 @@ export const dataBranchesToDataTree = (
   const tree: NodePen.DataTree = {}
 
   for (const { path, data } of values) {
-    const pathKey = createDataTreePathString(path)
+    const pathKey = getDataTreePathString(path)
     tree[pathKey] = data
   }
 

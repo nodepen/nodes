@@ -1,4 +1,4 @@
-import { createDataTreePathString } from '@/features/graph/utils'
+import { getDataTreePathString } from '@/features/graph/utils'
 import { NodePen } from 'glib'
 import { ComponentShortcut } from '../types'
 
@@ -30,7 +30,7 @@ export const shortcuts: ComponentShortcut[] = [
       const [valueNumber, valueDecimals] = val.split('.')
 
       const precision = Math.min(6, Math.max((minDecimals ?? ''.length, (valueDecimals ?? '').length))) as 0
-      const path = createDataTreePathString([0])
+      const path = getDataTreePathString([0])
 
       const data: Partial<NodePen.Element<'number-slider'>['current']> = {
         precision,
@@ -63,7 +63,7 @@ export const shortcuts: ComponentShortcut[] = [
       const [num, decimals] = value.split('.')
 
       const precision = Math.min(6, (decimals ?? '').length) as 0 | 1 | 2 | 3 | 4 | 5 | 6
-      const path = createDataTreePathString([0])
+      const path = getDataTreePathString([0])
 
       const data: Partial<NodePen.Element<'number-slider'>['current']> = {
         precision,

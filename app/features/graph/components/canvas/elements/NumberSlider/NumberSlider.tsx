@@ -10,7 +10,7 @@ import { useGraphDispatch, useGraphSelection } from '@/features/graph/store/grap
 import { coerceValue, getSliderPosition } from './utils'
 import { NumberSliderGrip, NumberSliderMenu } from './components'
 import { useSessionManager } from '@/features/common/context/session'
-import { createDataTreePathString, distance } from '@/features/graph/utils'
+import { getDataTreePathString, distance } from '@/features/graph/utils'
 import { FullWidthMenu, GenericMenu } from 'features/graph/components/overlay'
 
 type NumberSliderProps = {
@@ -37,7 +37,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
   const { rounding, precision, domain } = current
   const [min, max] = domain
 
-  const path = createDataTreePathString([0])
+  const path = getDataTreePathString([0])
 
   // Keep internal value in sync with actual current value, but allow for fast-local-temporary changes.
   const { value: currentValue } = current.values['output'][path][0]
@@ -283,7 +283,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         return
       }
 
-      const path = createDataTreePathString([0])
+      const path = getDataTreePathString([0])
 
       setCameraMode('idle')
       setCursorOverride(false)
