@@ -2,7 +2,7 @@ import React from 'react'
 import { getSizeClass, getColorClass } from './utils'
 
 type DataTextProps = {
-  children: string
+  children?: string
   size: 'sm' | 'md'
   color: 'dark' | 'darkgreen'
 }

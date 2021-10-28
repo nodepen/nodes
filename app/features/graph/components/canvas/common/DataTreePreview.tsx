@@ -7,17 +7,23 @@ type DataTreePreviewProps = {
   elementId: string
   parameterId: string
   tree?: NodePen.DataTree
+  details?: string
 }
 
-export const DataTreePreview = ({ elementId, parameterId, tree }: DataTreePreviewProps): React.ReactElement => {
+export const DataTreePreview = ({
+  elementId,
+  parameterId,
+  tree,
+  details,
+}: DataTreePreviewProps): React.ReactElement => {
   const prefix = `${elementId}-${parameterId}-data-`
   const values = flattenDataTree(tree ?? {})
 
   return (
     <div className="w-full p-2 flex flex-col justify-start items-center">
-      <Typography.Label size="sm" color="dark">
-        10 values from something
-      </Typography.Label>
+      <Typography.Data size="sm" color="dark">
+        {details}
+      </Typography.Data>
       {values.map(({ value }, i) => (
         <Typography.Data key={`${prefix}${i}`} size="sm" color="dark">
           {value.toString()}

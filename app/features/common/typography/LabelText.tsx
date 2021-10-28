@@ -2,7 +2,7 @@ import React from 'react'
 import { getSizeClass, getColorClass } from './utils'
 
 type LabelTextProps = {
-  children: string
+  children?: string
   size: 'sm' | 'md' | 'lg'
   color: 'dark' | 'darkgreen'
 }

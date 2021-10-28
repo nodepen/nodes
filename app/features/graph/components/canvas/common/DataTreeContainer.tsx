@@ -8,11 +8,11 @@ type DataTreeContainerProps = {
 }
 
 const DataTreeContainer = ({ elementId, parameterId }: DataTreeContainerProps): React.ReactElement => {
-  const tree = useParameterValues(elementId, parameterId)
+  const [tree, details] = useParameterValues(elementId, parameterId)
 
   return (
     <div className="w-full rounded-md bg-pale">
-      <DataTreePreview tree={tree} elementId={elementId} parameterId={parameterId} />
+      <DataTreePreview tree={tree} details={details} elementId={elementId} parameterId={parameterId} />
     </div>
   )
 }
