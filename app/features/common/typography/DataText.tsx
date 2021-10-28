@@ -8,12 +8,12 @@ type DataTextProps = {
 }
 
 export const DataText = ({ children, size, color }: DataTextProps): React.ReactElement => {
-  const [divHeight, textHeight] = getSizeClass(size)
+  const [textHeight, lineHeight] = getSizeClass(size)
   const colorClass = getColorClass(color)
 
   return (
-    <div className={`w-full ${divHeight} flex justify-start items-center`}>
-      <pre className={`${colorClass} ${textHeight} font-panel font-semibold`}>{children}</pre>
+    <div className={`w-full flex justify-start items-center overflow-hidden`}>
+      <p className={`${colorClass} ${textHeight} ${lineHeight} font-panel font-semibold`}>{children}</p>
     </div>
   )
 }

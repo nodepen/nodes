@@ -1,14 +1,14 @@
 import { SizeOption } from '../types'
 
-export const getSizeClass = (size: SizeOption): [divHeight: string, textHeight: string] => {
+export const getSizeClass = (size: SizeOption): [textHeight: string, lineHeight: string] => {
   switch (size) {
     case 'lg':
-      return ['h-8', 'text-lg']
+      return ['text-lg', 'leading-3']
     case 'md':
-      return ['h-6', 'text-md']
+      return ['text-md', 'leading-4']
     case 'sm':
-      return ['h-6', 'text-sm']
+      return ['text-sm', 'leading-5']
     default:
-      return ['h-6', 'text-md']
+      return ['text-md', 'leading-4']
   }
 }
