@@ -1,5 +1,7 @@
 import React from 'react'
 import { NodePen } from 'glib'
+import { Typography } from 'features/common'
+import { flattenDataTree } from '@/features/graph/utils'
 
 type DataTreePreviewProps = {
   elementId: string
@@ -9,10 +11,20 @@ type DataTreePreviewProps = {
 
 export const DataTreePreview = ({ elementId, parameterId, tree }: DataTreePreviewProps): React.ReactElement => {
   const prefix = `${elementId}-${parameterId}-data-`
+  const values = flattenDataTree(tree ?? {})
+
   return (
     <div className="w-full p-2 flex flex-col justify-start items-center">
-      {Object.entries(tree ?? {}).map(([path, values]) => (
-        <>
+      <Typography.Label size="sm" color="dark">
+        10 values from something
+      </Typography.Label>
+      {values.map(({ value }, i) => (
+        <Typography.Data key={`${prefix}${i}`} size="sm" color="dark">
+          {value.toString()}
+        </Typography.Data>
+      ))}
+      {/* {Object.entries(tree ?? {}).map(([path, values]) => (
+        <div key={`${prefix}`} className="w-full ">
           <div key={`${prefix}${path}`} className="w-full h-8 flex items-center justify-end">
             {path}
           </div>
@@ -24,8 +36,8 @@ export const DataTreePreview = ({ elementId, parameterId, tree }: DataTreePrevie
               </div>
             </div>
           ))}
-        </>
-      ))}
+        </div>
+      ))} */}
     </div>
   )
 }
