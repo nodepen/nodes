@@ -7,9 +7,14 @@ import { createPortal } from 'react-dom'
 type UnderlayPortalProps = {
   children: JSX.Element
   parent: string
+  anchor?: 'bottom' | 'top'
 }
 
-export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React.ReactElement | null => {
+export const UnderlayPortal = ({
+  children,
+  parent,
+  anchor = 'bottom',
+}: UnderlayPortalProps): React.ReactElement | null => {
   const { register } = useGraphManager()
   const { addLiveElement, deleteLiveElements } = useGraphDispatch()
 
@@ -35,7 +40,10 @@ export const UnderlayPortal = ({ children, parent }: UnderlayPortalProps): React
 
     const margin = 27
 
-    const position: [number, number] = [x - margin, y + height - 16]
+    const tx = x - margin
+    const ty = anchor === 'bottom' ? y + height - 16 : y + 16
+
+    const position: [number, number] = [tx, ty]
 
     register.portal.add(parent, portalRef)
 

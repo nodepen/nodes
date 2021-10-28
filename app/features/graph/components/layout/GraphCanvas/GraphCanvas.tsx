@@ -242,9 +242,11 @@ const GraphCanvas = (): React.ReactElement => {
         wheel={{
           step: 0.2,
           touchPadDisabled: false,
+          disabled: zoomDisabled,
         }}
         panning={{
           velocityDisabled: true,
+          disabled: zoomDisabled,
         }}
         onPanning={() => {
           // TODO: How do we capture motion during a `setTransform` action?
@@ -255,7 +257,6 @@ const GraphCanvas = (): React.ReactElement => {
         }}
         onZoom={({ state }) => {
           // If we cross a 'zoom breakpoint' here, then update the zoom level in state.
-
           const breakpoints = {
             near: 0.5,
             default: 2,

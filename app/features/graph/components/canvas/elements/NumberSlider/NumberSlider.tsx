@@ -603,7 +603,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
         </>
       </ElementContainer>
       {showUnderlay ? (
-        <UnderlayPortal parent={id}>
+        <UnderlayPortal parent={id} anchor="bottom">
           <div className="w-full pt-8 flex flex-col items-center bg-green rounded-md">
             <div className="flex flex-col items-center" style={{ maxWidth: 300 }}>
               <NumberSliderMenu
