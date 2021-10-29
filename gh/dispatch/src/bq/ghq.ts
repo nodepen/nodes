@@ -32,16 +32,16 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 
     // console.log({ graphJson })
 
-    const { data: graphGhx } = await axios.post(
+    const { data: graphBinaries } = await axios.post(
       'http://localhost:9900/grasshopper/graph',
       graphJson
     )
 
-    // console.log(graphGhx)
+    // console.log(graphBinaries)
 
     const { data: graphSolution } = await axios.post(
       'http://localhost:9900/grasshopper/solve',
-      graphGhx
+      graphBinaries
     )
 
     const { data, messages, timeout, duration } = graphSolution as any

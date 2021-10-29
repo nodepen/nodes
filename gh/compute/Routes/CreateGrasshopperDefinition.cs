@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
@@ -114,7 +115,7 @@ namespace NodePen.Compute.Routes
               }
 
               var x = Convert.ToSingle(element.Current.Position[0]);
-              var y = Convert.ToSingle(element.Current.Position[1]) * -1;
+              var y = Convert.ToSingle(element.Current.Position[1]);
 
               component.Attributes.Pivot = new PointF(x, y);
 
@@ -317,13 +318,18 @@ namespace NodePen.Compute.Routes
       var archive = new GH_Archive();
       archive.AppendObject(ghdoc, "Definition");
       archive.Path = path;
-      archive.WriteToFile(path, true, false);
+      // archive.WriteToFile(path, true, false);
 
-      var xml = archive.Serialize_Xml();
+      // var ghx = archive.Serialize_Xml();
+      var gh = archive.Serialize_Binary();
 
-      var bytes = System.Text.Encoding.UTF8.GetBytes(xml);
+      // var ghPath = "C:\\Users\\User\\Desktop\\testing\\test.gh";
+      // File.WriteAllBytes(ghaPath, gh);
 
-      var data = Convert.ToBase64String(bytes);
+      // var bytes = System.Text.Encoding.UTF8.GetBytes(ghx);
+      // var bytes = gh;
+      
+      var data = Convert.ToBase64String(gh);
 
       var response = (Response)data;
       response.StatusCode = Nancy.HttpStatusCode.OK;

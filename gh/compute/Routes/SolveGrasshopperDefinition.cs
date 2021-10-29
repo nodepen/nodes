@@ -16,13 +16,14 @@ namespace NodePen.Compute.Routes
   {
     public static Response SolveGrasshopperDefinition(NancyContext ctx)
     {
-      var ghxData = ctx.Request.Body.AsString();
-      var ghxString = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(ghxData));
+      var ghData = ctx.Request.Body.AsString();
+      // var ghString = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(ghxData));
 
       var timer = new Stopwatch();
 
       var archive = new GH_Archive();
-      archive.Deserialize_Xml(ghxString);
+      archive.Deserialize_Binary(Convert.FromBase64String(ghData));
+      // archive.Deserialize_Xml(ghxString);
 
       var definition = new GH_Document();
       archive.ExtractObject(definition, "Definition");
