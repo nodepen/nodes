@@ -85,6 +85,9 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
     return null
   }
 
+  const visibleTy = visible ? 0 : 96
+  const hoverTy = showMessage ? -3 : 0
+
   return (
     <UnderlayPortal parent={elementId} anchor="top">
       <div
@@ -93,21 +96,21 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
       >
         <div
           className="w-128 h-128 flex flex-col justify-end items-center transition-transform duration-300 ease-out"
-          style={{ transform: visible ? 'translateY(0)' : 'translateY(96px)' }}
+          style={{ transform: `translateY(${visibleTy + hoverTy}px)` }}
         >
           <div
-            className={`${internalColor} h-10 rounded-md flex items-center justify-start transition-width duration-300 ease-out pointer-events-auto overflow-hidden z-10 `}
+            className={`${internalColor} rounded-md flex items-center justify-start overflow-hidden transition-width duration-300 ease-out pointer-events-auto z-10 `}
             style={{
               maxWidth: 296,
-              // maxHeight: showMessage ? 500 : 40,
-              transitionProperty: 'max-width max-height',
+              maxHeight: showMessage ? 80 : 40,
+              transitionProperty: 'max-height',
               transitionDuration: '300ms',
               transitionTimingFunction: 'ease-out',
             }}
             onPointerEnter={handlePointerEnter}
             onPointerLeave={handlePointerLeave}
           >
-            <div className="w-10 h-10 flex justify-center items-center">
+            <div className="w-10 h-10 flex flex-col justify-center items-center">
               <svg className="w-6 h-6" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                 <path
                   fillRule="evenodd"
@@ -116,12 +119,13 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
                 />
               </svg>
             </div>
-            <div
-              className={`${
-                showMessage ? 'w-64' : 'w-0'
-              } overflow-hidden pb-2 pt-2 whitespace-nowrap transition-width duration-300 ease-out`}
-            >
-              {message}
+            <div className={`${showMessage ? 'w-64' : 'w-0'} overflow-hidden transition-width duration-300 ease-out`}>
+              <div
+                className="block leading-5 w-64 pt-2 pb-2 pr-2 font-sans text-sm font-medium"
+                style={{ transform: 'translateY(-1px)' }}
+              >
+                {message}
+              </div>
             </div>
           </div>
           <div
