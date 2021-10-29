@@ -92,7 +92,7 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
     <UnderlayPortal parent={elementId} anchor="top">
       <div
         className="w-full h-128 flex flex-col justify-end items-center rounded-md overflow-visible pointer-events-none"
-        style={{ transform: `translateY(-${16 + 512}px)` }}
+        style={{ transform: `translateY(-${512}px)` }}
       >
         <div
           className="w-128 h-128 flex flex-col justify-end items-center transition-transform duration-300 ease-out"
@@ -129,9 +129,14 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
             </div>
           </div>
           <div
-            className={`${internalColor} w-8 h-8 rounded-md pointer-events-auto z-0`}
-            style={{ transform: 'translateY(-20px) rotate(45deg) ' }}
-          />
+            className="w-10 h-10 overflow-hidden flex flex-col justify-start items-center"
+            style={{ transform: 'translateY(-20px)' }}
+          >
+            <div
+              className={`${internalColor} w-8 h-8 rounded-md pointer-events-auto z-0`}
+              style={{ transform: 'rotate(45deg) ' }}
+            />
+          </div>
         </div>
       </div>
     </UnderlayPortal>
