@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef, useCallback } from 'react'
 import { UnderlayPortal } from '../../underlay'
 import { useSolutionMessages, useSolutionPhase } from 'features/graph/store/solution/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
@@ -61,7 +61,25 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
 
   const visible = !!internalMessages && internalMessages.length > 0 && zoomLevel !== 'far'
 
-  const { message } = internalMessages?.[0] ?? {}
+  const [showMessage, setShowMessage] = useState(false)
+
+  const handlePointerEnter = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse') {
+      return
+    }
+
+    setShowMessage(true)
+  }, [])
+
+  const handlePointerLeave = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
+    if (e.pointerType !== 'mouse') {
+      return
+    }
+
+    setShowMessage(false)
+  }, [])
+
+  const { message } = internalMessages?.[0] ?? { message: '' }
 
   if (!shouldExist) {
     return null
@@ -78,15 +96,33 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
           style={{ transform: visible ? 'translateY(0)' : 'translateY(96px)' }}
         >
           <div
-            className={`${internalColor} w-10 h-10 rounded-md flex items-center justify-center transition-width duration-300 ease-out pointer-events-auto z-10 `}
+            className={`${internalColor} h-10 rounded-md flex items-center justify-start transition-width duration-300 ease-out pointer-events-auto overflow-hidden z-10 `}
+            style={{
+              maxWidth: 296,
+              // maxHeight: showMessage ? 500 : 40,
+              transitionProperty: 'max-width max-height',
+              transitionDuration: '300ms',
+              transitionTimingFunction: 'ease-out',
+            }}
+            onPointerEnter={handlePointerEnter}
+            onPointerLeave={handlePointerLeave}
           >
-            <svg className="w-6 h-6" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path
-                fillRule="evenodd"
-                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                clipRule="evenodd"
-              />
-            </svg>
+            <div className="w-10 h-10 flex justify-center items-center">
+              <svg className="w-6 h-6" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path
+                  fillRule="evenodd"
+                  d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <div
+              className={`${
+                showMessage ? 'w-64' : 'w-0'
+              } overflow-hidden pb-2 pt-2 whitespace-nowrap transition-width duration-300 ease-out`}
+            >
+              {message}
+            </div>
           </div>
           <div
             className={`${internalColor} w-8 h-8 rounded-md pointer-events-auto z-0`}
