@@ -16,7 +16,7 @@ type HoverTooltipProps = {
  */
 const HoverTooltip = ({
   position,
-  offset = [8, 8],
+  offset = [32, 32],
   onClose,
   children,
 }: HoverTooltipProps): React.ReactElement | null => {
@@ -80,13 +80,13 @@ const HoverTooltip = ({
         return `translateX(${dx}px) translateY(${dy}px)`
       }
       case 'TR': {
-        return `translateX(calc(-100% + ${dx}px)) translateY(${dy}px)`
+        return `translateX(calc(-100% - ${dx / 2}px)) translateY(${dy}px)`
       }
       case 'BL': {
         return `translateX(${dx}px) translateY(calc(-100% - ${dy}px))`
       }
       case 'BR': {
-        return `translateX(calc(-100% + ${dx}px)) translateY(calc(-100% - ${dy}px))`
+        return `translateX(calc(-100% - ${dx / 2}px)) translateY(calc(-100% - ${dy}px))`
       }
     }
   })()

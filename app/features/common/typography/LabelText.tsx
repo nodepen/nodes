@@ -3,7 +3,7 @@ import { getSizeClass, getColorClass } from './utils'
 
 type LabelTextProps = {
   children?: string
-  size: 'sm' | 'md' | 'lg'
+  size: 'sm' | 'md'
   color: 'dark' | 'darkgreen'
 }
 
@@ -13,7 +13,7 @@ export const LabelText = ({ children, size, color }: LabelTextProps): React.Reac
 
   return (
     <div className={`w-full flex justify-start items-center`}>
-      <label className={`${colorClass} ${textHeight} ${lineHeight} font-sans`}>{children}</label>
+      <label className={`${colorClass} ${textHeight} ${lineHeight} font-sans font-medium`}>{children}</label>
     </div>
   )
 }

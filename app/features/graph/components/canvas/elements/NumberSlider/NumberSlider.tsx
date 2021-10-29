@@ -1,17 +1,17 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { DraggableData } from 'react-draggable'
-import { ElementContainer, ParameterIcon } from '../../common'
+import { ElementContainer, ParameterIcon, TooltipContainer } from '../../common'
 import { UnderlayPortal } from '../../../underlay'
 import { useCursorOverride, useNumberSliderMenuActions } from './hooks'
-import { useDebugRender } from '@/hooks'
+import { useDebugRender, useLongHover } from '@/hooks'
 import { useCameraDispatch, useCameraStaticZoom, useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { useGraphDispatch, useGraphSelection } from '@/features/graph/store/graph/hooks'
 import { coerceValue, getSliderPosition } from './utils'
-import { NumberSliderGrip, NumberSliderMenu } from './components'
+import { NumberSliderDetails, NumberSliderGrip, NumberSliderMenu } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { getDataTreePathString, distance } from '@/features/graph/utils'
-import { FullWidthMenu, GenericMenu } from 'features/graph/components/overlay'
+import { FullWidthMenu, GenericMenu, HoverTooltip } from 'features/graph/components/overlay'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -385,6 +385,18 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
     return { selection: showEditMenu }
   }, [showEditMenu])
 
+  const [showTooltip, setShowTooltip] = useState(false)
+  const tooltipPosition = useRef<[number, number]>([0, 0])
+
+  const handleLongHover = useCallback((e: PointerEvent) => {
+    const { pageX, pageY } = e
+
+    tooltipPosition.current = [pageX, pageY]
+    setShowTooltip(true)
+  }, [])
+
+  const longHoverTarget = useLongHover(handleLongHover)
+
   return (
     <>
       <ElementContainer
@@ -507,7 +519,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
             }}
             // onPointerUp={handlePointerUp}
             style={{ width: internalWidth, height: elementHeight }}
-            // ref={longPressTarget}
+            ref={longHoverTarget}
           >
             <div className="w-full h-full flex items-center pr-2 z-10">
               <div className="h-full flex mr-2 p-1 pr-2 items-center justify-center">
@@ -634,6 +646,13 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
             />
           </div>
         </FullWidthMenu>
+      ) : null}
+      {showTooltip ? (
+        <HoverTooltip onClose={() => setShowTooltip(false)} position={tooltipPosition.current}>
+          <TooltipContainer>
+            <NumberSliderDetails element={element} />
+          </TooltipContainer>
+        </HoverTooltip>
       ) : null}
     </>
   )

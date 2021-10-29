@@ -1,5 +1,5 @@
-import { Grasshopper } from 'glib'
 import React from 'react'
+import { Grasshopper } from 'glib'
 
 type StaticComponentDetailsProps = {
   template: Grasshopper.Component
