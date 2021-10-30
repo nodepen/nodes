@@ -16,7 +16,7 @@ const PanelGrip = ({ mode }: PanelGripProps): React.ReactElement => {
 
   return (
     <div className="relative w-full h-full">
-      <div className="absolute w-full h-full" style={{ left: mode === 'input' ? -8 : 8 }}>
+      <div className="absolute w-full h-full" style={{ left: mode === 'input' ? -9 : 7 }}>
         <div ref={gripRef} className="w-full h-full flex items-center">
           <GripIcon mode={mode} shadow={zoomLevel !== 'far'} />
         </div>

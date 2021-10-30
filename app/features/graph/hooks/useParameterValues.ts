@@ -16,7 +16,7 @@ export const useParameterValues = (
     return [undefined, '']
   }
 
-  const graphElements: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider']
+  const graphElements: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider', 'panel']
 
   const { template, current } = element
 
