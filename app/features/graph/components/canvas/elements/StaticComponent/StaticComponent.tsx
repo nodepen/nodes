@@ -16,9 +16,9 @@ type StaticComponentProps = {
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement => {
   const { template, id } = element
 
-  const statusColor = useElementStatusColor(element.id)
-
   useDebugRender(`StaticComponent | ${template.name} | ${id}`)
+
+  const statusColor = useElementStatusColor(element.id)
 
   const zoomLevel = useCameraZoomLevel()
 

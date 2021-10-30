@@ -29,6 +29,17 @@ export const addDefaultElement = (
           })
           break
         }
+        case '59e0b89a-e487-49f8-bab8-b5bab16be14c': {
+          addElement({
+            type: 'panel',
+            position: [x, y],
+            template: {
+              ...template,
+              type: 'panel',
+            },
+          })
+          break
+        }
         default: {
           break
         }

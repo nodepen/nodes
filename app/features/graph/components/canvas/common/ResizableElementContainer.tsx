@@ -2,7 +2,7 @@ import React, { useCallback, useState, useEffect, useRef, useContext } from 'rea
 import { useGraphDispatch, useGraphElements } from '@/features/graph/store/graph/hooks'
 
 type ResizableStore = {
-  position: [x: number, y: number]
+  transform: [tx: number, ty: number]
   dimensions: {
     width: number
     height: number
@@ -20,7 +20,7 @@ type ResizableElementContainerProps = {
 }
 
 const ResizableContext = React.createContext<ResizableStore>({
-  position: [0, 0],
+  transform: [0, 0],
   dimensions: {
     width: 0,
     height: 0,
@@ -39,7 +39,7 @@ export const ResizableElementContainer = ({
 
   const element = elements[elementId]
 
-  const [internalPosition, setInternalPosition] = useState<ResizableStore['position']>(element.current.position)
+  const [internalTransform, setInternalTransform] = useState<ResizableStore['transform']>([0, 0])
   const [internalDimensions, setInternalDimensions] = useState<ResizableStore['dimensions']>(element.current.dimensions)
 
   const MINIMUM_WIDTH = 50
@@ -48,9 +48,9 @@ export const ResizableElementContainer = ({
   const MAXIMUM_HEIGHT = 500
 
   useEffect(() => {
-    setInternalPosition(element.current.position)
+    setInternalTransform([0, 0])
     setInternalDimensions(element.current.dimensions)
-  }, [element.current.dimensions, element.current.position])
+  }, [element.current.dimensions])
 
   const internalAnchor = useRef<ResizeAnchor>('TL')
   const internalDeltaX = useRef(0)
@@ -72,7 +72,7 @@ export const ResizableElementContainer = ({
       const clampX = (value: number): number => clamp(value, MINIMUM_WIDTH, MAXIMUM_WIDTH)
       const clampY = (value: number): number => clamp(value, MINIMUM_HEIGHT, MAXIMUM_HEIGHT)
 
-      const [x, y] = internalPosition
+      const [tx, ty] = internalTransform
       const { width, height } = internalDimensions
 
       const nextWidth = clampX(width + internalDeltaX.current)
@@ -88,7 +88,7 @@ export const ResizableElementContainer = ({
 
       switch (internalAnchor.current) {
         case 'TL': {
-          setInternalPosition([x - nextDx, y - nextDy])
+          setInternalTransform([tx - nextDx, ty - nextDy])
           setInternalDimensions({
             width: nextWidth,
             height: nextHeight,
@@ -96,22 +96,25 @@ export const ResizableElementContainer = ({
         }
       }
     },
-    [internalPosition, internalDimensions]
+    [internalTransform, internalDimensions]
   )
 
   const onResizeEnd = useCallback(() => {
+    const [x, y] = element.current.position
+    const [tx, ty] = internalTransform
+
     updateElement({
       id: elementId,
       type: element.template.type,
       data: {
-        position: internalPosition,
+        position: [x + tx, y + ty],
         dimensions: internalDimensions,
       },
     })
-  }, [element, elementId, updateElement, internalPosition, internalDimensions])
+  }, [element, elementId, updateElement, internalTransform, internalDimensions])
 
   const store: ResizableStore = {
-    position: internalPosition,
+    transform: internalTransform,
     dimensions: internalDimensions,
     onResizeStart,
     onResize,

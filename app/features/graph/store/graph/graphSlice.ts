@@ -168,6 +168,46 @@ export const graphSlice = createSlice({
           state.elements[id] = element
           break
         }
+        case 'panel': {
+          const template = action.payload.template as NodePen.Element<'panel'>['template']
+
+          const path = getDataTreePathString([0])
+
+          const element: NodePen.Element<'panel'> = {
+            id,
+            template,
+            current: {
+              dimensions: {
+                width: 250,
+                height: 250,
+              },
+              position: action.payload.position,
+              anchors: {},
+              sources: {},
+              values: {
+                output: {
+                  [path]: [
+                    {
+                      type: 'string',
+                      value: '',
+                    },
+                  ],
+                },
+              },
+              inputs: {},
+              outputs: {
+                output: 0,
+              },
+            },
+          }
+
+          if (action.payload.data) {
+            element.current = { ...element.current, ...action.payload.data }
+          }
+
+          state.elements[id] = element
+          break
+        }
         default: {
           console.log(`🐍🐍🐍 Cannot handle element type ${action.payload.type} in 'addElement'.`)
           break
