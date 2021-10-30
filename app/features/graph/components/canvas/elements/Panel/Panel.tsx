@@ -6,6 +6,7 @@ import { useDebugRender } from '@/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { usePanelValues } from './hooks'
 import { getDataTreePathString } from '@/features/graph/utils'
+import { useGraphSelection } from '@/features/graph/store/graph/hooks'
 
 type PanelProps = {
   element: NodePen.Element<'panel'>
@@ -25,13 +26,16 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
   const [tx, ty] = transform
   const { width, height } = dimensions
 
+  const selection = useGraphSelection()
+  const isSelected = selection.includes(id)
+
   const value = values
 
   return (
     <div
-      className={`${
-        zoomLevel === 'far' ? '' : 'shadow-osm'
-      } flex flex-col justify-start items-center bg-white rounded-md overflow-visible`}
+      className={`${zoomLevel === 'far' ? '' : 'shadow-osm'} ${
+        isSelected ? 'bg-green' : 'bg-white'
+      } flex flex-col justify-start items-center rounded-md overflow-visible`}
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
       <div className="w-full h-full panel-container">

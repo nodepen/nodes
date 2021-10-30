@@ -14,7 +14,7 @@ export const PanelUserInput = ({ elementId, initialValue }: PanelUserInputProps)
 
   const inputRef = useRef<HTMLTextAreaElement>(null)
 
-  const { updateElement } = useGraphDispatch()
+  const { updateElement, updateSelection } = useGraphDispatch()
 
   const handleSubmit = (): void => {
     setIsEditing(false)
@@ -40,9 +40,11 @@ export const PanelUserInput = ({ elementId, initialValue }: PanelUserInputProps)
 
   const handleDoubleClick = (): void => {
     setIsEditing(true)
+    updateSelection({ mode: 'default', type: 'id', ids: [] })
 
     setTimeout(() => {
       inputRef?.current?.focus()
+      inputRef?.current?.select()
     }, 50)
   }
 
@@ -52,16 +54,20 @@ export const PanelUserInput = ({ elementId, initialValue }: PanelUserInputProps)
     <>
       <div
         className={`${
-          isEditing ? 'bg-pale justify-start' : 'bg-white justify-center'
-        } w-full h-full p-2 pt-1 rounded-sm flex flex-col items-center`}
+          isEditing ? 'justify-start' : 'justify-center'
+        } w-full h-full bg-none p-2 pt-1 rounded-sm flex flex-col items-center`}
         onDoubleClick={handleDoubleClick}
       >
         <textarea
-          className={`${isEditing ? 'pointer-events-auto' : 'select-none pointer-events-none'} w-full resize-none`}
-          style={{ height: isEditing ? '100%' : 'min-content' }}
+          className={`${
+            isEditing ? 'pointer-events-auto' : 'select-none pointer-events-none'
+          } w-full h-full resize-none font-panel font-thin text-dark text-sm text-center`}
           ref={inputRef}
           disabled={!isEditing}
           value={internalValue}
+          onScroll={(e) => {
+            e.stopPropagation()
+          }}
           onChange={(e) => setInternalValue(e.target.value)}
           onBlur={handleSubmit}
           onKeyDown={(e) => {
