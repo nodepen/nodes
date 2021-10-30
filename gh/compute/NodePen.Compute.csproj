@@ -68,6 +68,8 @@
     <Compile Include="Routes\CreateGrasshopperDefinition.cs" />
     <Compile Include="Routes\GetGrasshopperAssemblies.cs" />
     <Compile Include="Routes\SolveGrasshopperDefinition.cs" />
+    <Compile Include="Types\DataTree\DataTree.cs" />
+    <Compile Include="Types\DataTree\DataTreeValue.cs" />
     <Compile Include="Types\Geometry\NodePenLine.cs" />
     <Compile Include="Types\Geometry\NodePenCurve.cs" />
     <Compile Include="Types\Geometry\NodePenPoint.cs" />
