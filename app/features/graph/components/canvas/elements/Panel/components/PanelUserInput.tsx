@@ -62,6 +62,7 @@ export const PanelUserInput = ({ elementId, initialValue }: PanelUserInputProps)
           className={`${
             isEditing ? 'pointer-events-auto' : 'select-none pointer-events-none'
           } w-full h-full resize-none font-panel font-thin text-dark text-sm text-center`}
+          style={{ height: isEditing ? '100%' : internalValue.length < 12 ? '20px' : '100%' }}
           ref={inputRef}
           disabled={!isEditing}
           value={internalValue}

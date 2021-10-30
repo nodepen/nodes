@@ -40,7 +40,7 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
     >
       <div className="w-full h-full panel-container">
         <div className="w-full h-full panel-body overflow-hidden">
-          {source === 'self' ? (
+          {source === 'self' && zoomLevel !== 'far' ? (
             <div className="w-full h-full overflow-hidden">
               <PanelUserInput
                 elementId={id}

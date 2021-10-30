@@ -68,7 +68,7 @@ export const PlaceComponentMenu = ({
   const handlePlaceComponent = useCallback(
     (
       template: Grasshopper.Component,
-      data?: Partial<NodePen.Element<'static-component' | 'number-slider'>['current']>
+      data?: Partial<NodePen.Element<'static-component' | 'number-slider' | 'panel'>['current']>
     ): void => {
       const [x, y] = mapCoordinates(screenPosition)
 
@@ -332,11 +332,9 @@ export const PlaceComponentMenu = ({
                         value={userValue}
                         onChange={(e) => setUserValue(e.target.value)}
                         onKeyDown={(e) => {
+                          e.stopPropagation()
+
                           switch (e.key.toLowerCase()) {
-                            case 'a': {
-                              e.stopPropagation()
-                              break
-                            }
                             case 'arrowdown': {
                               e.preventDefault()
                               return
@@ -361,6 +359,9 @@ export const PlaceComponentMenu = ({
                               return
                             }
                           }
+                        }}
+                        onKeyUp={(e) => {
+                          e.stopPropagation()
                         }}
                       />
                       <input

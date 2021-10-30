@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef } from 'react'
 import { useGraphManager } from '@/features/graph/context/graph'
 import { categorize, flattenCategory } from '../../../utils'
-import { ComponentLibraryIcon } from './lib'
+import { ComponentLibraryIcon } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 
 export const GraphControls = (): React.ReactElement => {

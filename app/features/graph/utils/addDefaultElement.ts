@@ -37,6 +37,7 @@ export const addDefaultElement = (
               ...template,
               type: 'panel',
             },
+            data,
           })
           break
         }
