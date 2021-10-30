@@ -1,16 +1,19 @@
 import React from 'react'
 import { NodePen } from 'glib'
-import { ElementContainer, ResizableElementContainer, useResizableElement } from '../../common'
+import { ElementContainer, ResizableElementContainer, ResizableHandle, useResizableElement } from '../../common'
 import { useDebugRender } from '@/hooks'
+import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 
 type PanelProps = {
   element: NodePen.Element<'panel'>
 }
 
 const Panel = ({ element }: PanelProps): React.ReactElement => {
-  const { id, current } = element
+  const { id } = element
 
   useDebugRender(`Panel | ${id}`)
+
+  const zoomLevel = useCameraZoomLevel()
 
   const { transform, dimensions, onResizeStart } = useResizableElement()
 
@@ -19,17 +22,52 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
 
   return (
     <div
-      className="bg-white rounded-md flex flex-col justify-end items-center"
+      className={`${
+        zoomLevel === 'far' ? '' : 'shadow-osm'
+      } flex flex-col justify-start items-center rounded-md overflow-visible`}
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
-      <div className="w-full h-8 flex justify-start items-center">
-        <div
-          className="w-8 h-8 bg-red-500 no-drag"
-          onPointerDown={(e) => {
-            onResizeStart(e, 'BL')
-          }}
-        />
+      <div className="w-full h-full panel-container">
+        <div className="w-full h-full corner-tl">
+          <ResizableHandle anchor="TL">
+            <div className="w-full h-full bg-white rounded-tl-md border-t-2 border-l-2 border-dark hover:cursor-nwse" />
+          </ResizableHandle>
+        </div>
+        <div className="w-full h-full corner-bl">
+          <ResizableHandle anchor="BL">
+            <div className="w-full h-full bg-white rounded-bl-md border-b-2 border-l-2 border-dark hover:cursor-nesw" />
+          </ResizableHandle>
+        </div>
+        <div className="w-full h-full corner-br bg-green"></div>
+        <div className="w-full h-full corner-tr bg-yellow-500"></div>
       </div>
+      <style jsx>{`
+        .panel-container {
+          display: grid;
+          grid-template-rows: 16px 1fr 16px;
+          grid-template-columns: 16px 1fr 16px;
+        }
+
+        .corner-tl {
+          grid-row: 1 / span 1;
+          grid-column: 1 / span 1;
+        }
+
+        .corner-tr {
+          grid-row: 1 / span 1;
+          grid-column: 3 / span 1;
+        }
+
+        .corner-bl {
+          grid-row: 3 / span 1;
+          grid-column: 1 / span 1;
+        }
+
+        .corner-br {
+          grid-row: 3 / span 1;
+          grid-column: 3 / span 3;
+        }
+      `}</style>
     </div>
   )
 }

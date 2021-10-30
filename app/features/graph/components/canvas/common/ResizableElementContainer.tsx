@@ -11,7 +11,7 @@ type ResizableStore = {
   onResizeStart: (e: React.PointerEvent<HTMLDivElement>, anchor: ResizeAnchor) => void
 }
 
-type ResizeAnchor = 'T' | 'TL' | 'L' | 'BL' | 'B' | 'BR' | 'R' | 'TR'
+export type ResizeAnchor = 'T' | 'TL' | 'L' | 'BL' | 'B' | 'BR' | 'R' | 'TR'
 
 type ResizableElementContainerProps = {
   elementId: string
@@ -112,8 +112,8 @@ export const ResizableElementContainer = ({
       const widthDelta = dx * dxModifier
       const heightDelta = dy * dyModifier
 
-      internalDeltaX.current = widthDelta
-      internalDeltaY.current = heightDelta
+      internalDeltaX.current = widthDelta / zoom
+      internalDeltaY.current = heightDelta / zoom
 
       const clamp = (value: number, min: number, max: number): number => {
         return value < min ? min : value > max ? max : value
@@ -155,7 +155,7 @@ export const ResizableElementContainer = ({
 
       previousPosition.current = [x, y]
     },
-    [isResizing, internalTransform, internalDimensions]
+    [zoom, isResizing, internalTransform, internalDimensions]
   )
 
   const handlePointerUp = useCallback(() => {
@@ -187,6 +187,27 @@ export const ResizableElementContainer = ({
       window.removeEventListener('pointerup', handlePointerUp)
     }
   })
+
+  useEffect(() => {
+    const getCursor = () => {
+      switch (internalAnchor.current) {
+        case 'T':
+        case 'B':
+          return 'ns-resize'
+        case 'L':
+        case 'R':
+          return 'ew-resize'
+        case 'TL':
+        case 'BR':
+          return 'nwse-resize'
+        case 'TR':
+        case 'BL':
+          return 'nesw-resize'
+      }
+    }
+
+    document.documentElement.style['cursor'] = isResizing ? getCursor() : 'auto'
+  }, [isResizing])
 
   const store: ResizableStore = {
     transform: internalTransform,

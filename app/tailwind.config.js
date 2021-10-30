@@ -16,7 +16,10 @@ module.exports = {
     },
     extend: {
       cursor: {
-        'move-ew': 'ew-resize'
+        'ns': 'ns-resize',
+        'ew': 'ew-resize',
+        'nwse': 'nwse-resize',
+        'nesw': 'nesw-resize',
       },
       screens: {
         xs: '400px',

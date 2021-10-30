@@ -537,7 +537,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               <div className="h-full flex-grow mr-4" ref={sliderRef}>
                 <div className="w-full h-full relative overflow-visible">
                   <div
-                    className={`${zoomLevel === 'far' ? 'hidden' : 'absolute'} w-4 h-4 z-10 hover:cursor-move-ew`}
+                    className={`${zoomLevel === 'far' ? 'hidden' : 'absolute'} w-4 h-4 z-10 hover:cursor-ew`}
                     ref={sliderTargetRef}
                     style={{ top: 3, left: sliderPosition - 8 }}
                   >
@@ -604,7 +604,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               style={{ left: internalWidth - 26, top: 0 }}
               ref={resizeTargetRef}
             >
-              <div className="w-full h-full flex items-center justify-center hover:cursor-move-ew">
+              <div className="w-full h-full flex items-center justify-center hover:cursor-ew">
                 <div className="w-full h-4 border-dark border-l-2 border-r-2" />
               </div>
             </div>
