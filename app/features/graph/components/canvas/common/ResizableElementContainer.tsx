@@ -35,6 +35,7 @@ type ResizableElementContainerProps = {
 
 export const ResizableElementContainer = ({
   elementId,
+  elementAnchors,
   children,
 }: ResizableElementContainerProps): React.ReactElement => {
   const elements = useGraphElements()
@@ -246,8 +247,63 @@ export const ResizableElementContainer = ({
   const handlePointerUp = useCallback(() => {
     setIsResizing(false)
 
+    const { width: initialWidth, height: initialHeight } = element.current.dimensions
+    const { width: finalWidth, height: finalHeight } = internalDimensions
+    const [widthDelta, heightDelta] = [finalWidth - initialWidth, finalHeight - initialHeight]
+
     const [x, y] = element.current.position
     const [tx, ty] = internalTransform
+
+    // Calculate total anchor changes
+    let leftMotion: [number, number] = [0, 0]
+    let rightMotion: [number, number] = [0, 0]
+
+    switch (internalAnchor.current) {
+      case 'L':
+      case 'TL':
+      case 'BL':
+        leftMotion = [0, heightDelta / 2]
+        rightMotion = [widthDelta, heightDelta / 2]
+        break
+      case 'R':
+      case 'TR':
+      case 'BR':
+        leftMotion = [0, heightDelta / 2]
+        rightMotion = [widthDelta, heightDelta / 2]
+        break
+      case 'T':
+      case 'B':
+        leftMotion = [0, heightDelta / 2]
+        rightMotion = [0, heightDelta / 2]
+        break
+    }
+
+    const currentAnchors = 'anchors' in element.current ? { ...element.current.anchors } : {}
+
+    for (const anchorId of elementAnchors?.L ?? []) {
+      if (!currentAnchors[anchorId]) {
+        continue
+      }
+
+      const [ax, ay] = currentAnchors[anchorId]
+      const [dx, dy] = leftMotion
+
+      console.log({ ax, ay })
+      console.log({ dx, dy })
+
+      currentAnchors[anchorId] = [ax + dx, ay + dy]
+    }
+
+    for (const anchorId of elementAnchors?.R ?? []) {
+      if (!currentAnchors[anchorId]) {
+        continue
+      }
+
+      const [ax, ay] = currentAnchors[anchorId]
+      const [dx, dy] = rightMotion
+
+      currentAnchors[anchorId] = [ax + dx, ay + dy]
+    }
 
     updateElement({
       id: elementId,
@@ -255,11 +311,12 @@ export const ResizableElementContainer = ({
       data: {
         position: [x + tx, y + ty],
         dimensions: internalDimensions,
+        anchors: { ...currentAnchors },
       },
     })
 
     resizeWires.current = [[], []]
-  }, [element, elementId, updateElement, internalTransform, internalDimensions])
+  }, [element, elementId, elementAnchors, updateElement, internalTransform, internalDimensions])
 
   useEffect(() => {
     if (!isResizing) {
@@ -276,7 +333,7 @@ export const ResizableElementContainer = ({
   })
 
   useEffect(() => {
-    const getCursor = () => {
+    const getCursor = (): string => {
       switch (internalAnchor.current) {
         case 'T':
         case 'B':

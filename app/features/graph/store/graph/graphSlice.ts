@@ -183,7 +183,9 @@ export const graphSlice = createSlice({
               },
               position: action.payload.position,
               anchors: {},
-              sources: {},
+              sources: {
+                input: [],
+              },
               values: {
                 output: {
                   [path]: [

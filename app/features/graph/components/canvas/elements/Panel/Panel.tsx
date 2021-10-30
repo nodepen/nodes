@@ -103,7 +103,7 @@ const PanelContainer = ({ element }: PanelProps): React.ReactElement => {
   return (
     <>
       <ElementContainer element={element}>
-        <ResizableElementContainer elementId={id}>
+        <ResizableElementContainer elementId={id} elementAnchors={{ L: ['input'], R: ['output'] }}>
           <Panel element={element} />
         </ResizableElementContainer>
       </ElementContainer>
