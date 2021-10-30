@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useSolutionMetadata } from 'features/graph/store/solution/hooks'
+import { Typography } from '../..'
 
 const SolutionStatusPip = (): React.ReactElement => {
   const meta = useSolutionMetadata()
@@ -90,7 +91,9 @@ const SolutionStatusPip = (): React.ReactElement => {
             className="h-8 flex items-center pl-4 pr-4 bg-white rounded-md transition-transform duration-300 ease-out"
             style={{ transform: showDetails ? 'translateY(0px)' : 'translateY(-64px)' }}
           >
-            {message}
+            <Typography.Label size="sm" color="dark">
+              {message}
+            </Typography.Label>
           </div>
         </div>
       </div>

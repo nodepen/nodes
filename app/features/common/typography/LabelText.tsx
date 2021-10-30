@@ -3,7 +3,7 @@ import { getSizeClass, getColorClass } from './utils'
 
 type LabelTextProps = {
   children?: string
-  size: 'sm' | 'md'
+  size: 'sm' | 'md' | 'lg'
   color: 'dark' | 'darkgreen'
 }
 

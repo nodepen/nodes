@@ -54,9 +54,15 @@ export const NumberSliderDetails = ({ element }: NumberSliderDetailsProps): Reac
           src={`data:image/png;base64,${icon}`}
           alt={`Icon for the number slider component.`}
         />
-        <h3 className="text-lg text-darkgreen font-medium">Number Slider</h3>
+        <Typography.Label size="lg" color="darkgreen">
+          Number Slider
+        </Typography.Label>
       </div>
-      <p className="ml-12 mr-2 mb-4 text-darkgreen text-sm">Numeric slider for single values</p>
+      <div className="ml-12 mr-2 mb-5">
+        <Typography.Label size="sm" color="darkgreen">
+          Numeric slider for single values
+        </Typography.Label>
+      </div>
       <div className="w-full p-2 bg-pale rounded-md flex flex-col justify-start items-center">
         <Typography.Data size="sm" color="dark">
           {precisionLabel}

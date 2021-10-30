@@ -1,5 +1,6 @@
 import React from 'react'
 import { Grasshopper } from 'glib'
+import { Typography } from '@/features/common'
 import { ParameterIcon } from 'features/graph/components/canvas/common'
 
 type StaticComponentParameterDetailsProps = {
@@ -19,9 +20,15 @@ export const StaticComponentParameterDetails = ({
         <div className="w-12 h-full flex items-center justify-center" style={{ transform: 'translateX(-3px)' }}>
           <ParameterIcon size="sm" type={type} />
         </div>
-        <h3 className="text-lg text-darkgreen font-medium">{title}</h3>
+        <Typography.Label size="lg" color="darkgreen">
+          {title}
+        </Typography.Label>
       </div>
-      <p className="ml-12 mr-2 mb-4 text-darkgreen text-sm">{description}</p>
+      <div className="ml-10 mr-2 mb-5">
+        <Typography.Label size="sm" color="darkgreen">
+          {description}
+        </Typography.Label>
+      </div>
     </>
   )
 }
