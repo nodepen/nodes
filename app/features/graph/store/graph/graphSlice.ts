@@ -196,8 +196,8 @@ export const graphSlice = createSlice({
                 output: {
                   [path]: [
                     {
-                      type: 'string',
-                      value: '',
+                      type: 'text',
+                      value: 'Double click to edit panel content...',
                     },
                   ],
                 },

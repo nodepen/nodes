@@ -14,7 +14,7 @@ export const usePanelValues = (panel: NodePen.Element<'panel'>): PanelValues => 
   const solutionValues = useSolutionValues()
   const solutionPhase = useSolutionPhase()
 
-  const [values, setValues] = useState<NodePen.DataTree>()
+  const [values, setValues] = useState<NodePen.DataTree>(current.values['output'])
   const source = useRef<'solution' | 'self'>('self')
 
   useEffect(() => {

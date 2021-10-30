@@ -1,10 +1,11 @@
 import React from 'react'
 import { NodePen } from 'glib'
-import { PanelGrip } from './components'
+import { PanelGrip, PanelUserInput } from './components'
 import { ElementContainer, ResizableElementContainer, ResizableHandle, useResizableElement } from '../../common'
 import { useDebugRender } from '@/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { usePanelValues } from './hooks'
+import { getDataTreePathString } from '@/features/graph/utils'
 
 type PanelProps = {
   element: NodePen.Element<'panel'>
@@ -24,6 +25,8 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
   const [tx, ty] = transform
   const { width, height } = dimensions
 
+  const value = values
+
   return (
     <div
       className={`${
@@ -32,9 +35,14 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
       <div className="w-full h-full panel-container">
-        <div className="w-full h-full p-2 rounded-md panel-body overflow-hidden">
+        <div className="w-full h-full rounded-md panel-body overflow-hidden">
           {source === 'self' ? (
-            <div className="w-full h-full bg-red-500 overflow-hidden">{JSON.stringify(values)}</div>
+            <div className="w-full h-full overflow-hidden">
+              <PanelUserInput
+                elementId={id}
+                initialValue={(values?.[getDataTreePathString([0])]?.[0]?.value as string) ?? ''}
+              />
+            </div>
           ) : null}
           {source === 'solution' ? <div className="w-full h-full bg-green">{JSON.stringify(values)}</div> : null}
         </div>
