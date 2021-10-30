@@ -177,6 +177,11 @@ export const graphSlice = createSlice({
             id,
             template,
             current: {
+              settings: {
+                visibility: 'visible',
+                solution: 'immediate',
+                execution: 'enabled',
+              },
               dimensions: {
                 width: 250,
                 height: 150,
