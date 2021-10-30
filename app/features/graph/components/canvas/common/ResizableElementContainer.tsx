@@ -1,8 +1,9 @@
 import React, { useCallback, useState, useLayoutEffect, useEffect, useRef, useContext } from 'react'
-import { useGraphDispatch, useGraphElements } from '@/features/graph/store/graph/hooks'
+import { useGraphDispatch } from '@/features/graph/store/graph/hooks'
 import { useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 import { getConnectedWires } from '../../../utils'
 import { NodePen } from '@/glib/dist'
+import { useAppStore } from '$'
 
 type ResizableStore = {
   transform: [tx: number, ty: number]
@@ -25,7 +26,7 @@ const ResizableContext = React.createContext<ResizableStore>({
 })
 
 type ResizableElementContainerProps = {
-  elementId: string
+  element: NodePen.Element<'panel'>
   elementAnchors?: {
     L?: string[]
     R?: string[]
@@ -34,16 +35,14 @@ type ResizableElementContainerProps = {
 }
 
 export const ResizableElementContainer = ({
-  elementId,
+  element,
   elementAnchors,
   children,
 }: ResizableElementContainerProps): React.ReactElement => {
-  const elements = useGraphElements()
+  const graphStore = useAppStore()
   const { updateElement, batchUpdateLiveElement } = useGraphDispatch()
 
   const zoom = useCameraStaticZoom()
-
-  const element = elements[elementId]
 
   const [internalTransform, setInternalTransform] = useState<ResizableStore['transform']>([0, 0])
   const [internalDimensions, setInternalDimensions] = useState<ResizableStore['dimensions']>(element.current.dimensions)
@@ -65,6 +64,8 @@ export const ResizableElementContainer = ({
 
   const resizeStartPosition = useRef<[number, number]>([0, 0])
   const resizeWires = useRef<[from: string[], to: string[]]>([[], []])
+  const resizeWiresFromCache = useRef<{ [id: string]: [number, number] }>({})
+  const resizeWiresToCache = useRef<{ [id: string]: [number, number] }>({})
 
   const [isResizing, setIsResizing] = useState(false)
   const initialWidth = useRef(0)
@@ -92,11 +93,25 @@ export const ResizableElementContainer = ({
       initialHeight.current = internalDimensions.height
 
       // Prepare for live motion of attached elements
-      resizeWires.current = getConnectedWires(Object.values(elements), elementId)
+      const elements = graphStore.getState().graph.present.elements
+
+      const [fromWires, toWires] = getConnectedWires(Object.values(elements), element.id)
+
+      resizeWires.current = [fromWires, toWires]
+
+      for (const id of fromWires) {
+        const wire = elements[id] as NodePen.Element<'wire'>
+        resizeWiresFromCache.current[id] = wire.current.from
+      }
+
+      for (const id of toWires) {
+        const wire = elements[id] as NodePen.Element<'wire'>
+        resizeWiresToCache.current[id] = wire.current.to
+      }
 
       setIsResizing(true)
     },
-    [elements, elementId, internalDimensions]
+    [graphStore, element, internalDimensions]
   )
 
   const handlePointerMove = useCallback(
@@ -210,38 +225,40 @@ export const ResizableElementContainer = ({
       const operations: Parameters<typeof batchUpdateLiveElement>[0] = []
 
       for (const id of toWireIds) {
-        const wire = elements[id] as NodePen.Element<'wire'>
-
-        const [wx, wy] = wire.current.to
+        const [wx, wy] = resizeWiresToCache.current[id]
         const [dx, dy] = toMotion
+
+        const to: [number, number] = [wx + dx, wy + dy]
+
+        resizeWiresToCache.current[id] = to
 
         operations.push({
           id,
           type: 'wire',
           data: {
-            to: [wx + dx, wy + dy],
+            to,
           },
         })
       }
 
       for (const id of fromWireIds) {
-        const wire = elements[id] as NodePen.Element<'wire'>
-
-        const [wx, wy] = wire.current.from
+        const [wx, wy] = resizeWiresFromCache.current[id]
         const [dx, dy] = fromMotion
+
+        const from: [number, number] = [wx + dx, wy + dy]
+
+        resizeWiresFromCache.current[id] = from
 
         operations.push({
           id,
           type: 'wire',
-          data: {
-            from: [wx + dx, wy + dy],
-          },
+          data: { from },
         })
       }
 
       batchUpdateLiveElement(operations)
     },
-    [elements, zoom, isResizing, internalTransform, internalDimensions, batchUpdateLiveElement]
+    [zoom, isResizing, internalTransform, internalDimensions, batchUpdateLiveElement]
   )
 
   const handlePointerUp = useCallback(() => {
@@ -306,7 +323,7 @@ export const ResizableElementContainer = ({
     }
 
     updateElement({
-      id: elementId,
+      id: element.id,
       type: element.template.type,
       data: {
         position: [x + tx, y + ty],
@@ -316,7 +333,9 @@ export const ResizableElementContainer = ({
     })
 
     resizeWires.current = [[], []]
-  }, [element, elementId, elementAnchors, updateElement, internalTransform, internalDimensions])
+    resizeWiresFromCache.current = {}
+    resizeWiresToCache.current = {}
+  }, [element, elementAnchors, updateElement, internalTransform, internalDimensions])
 
   useEffect(() => {
     if (!isResizing) {

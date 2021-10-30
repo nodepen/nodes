@@ -35,7 +35,7 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
       <div className="w-full h-full panel-container">
-        <div className="w-full h-full rounded-md panel-body overflow-hidden">
+        <div className="w-full h-full panel-body overflow-hidden">
           {source === 'self' ? (
             <div className="w-full h-full overflow-hidden">
               <PanelUserInput
@@ -44,7 +44,9 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
               />
             </div>
           ) : null}
-          {source === 'solution' ? <div className="w-full h-full bg-green">{JSON.stringify(values)}</div> : null}
+          {source === 'solution' ? (
+            <div className="w-full h-full rounded-sm bg-green">{JSON.stringify(values)}</div>
+          ) : null}
         </div>
         <div className="w-full h-full flex flex-col" style={{ gridArea: 'edge-l' }}>
           <div className="w-full flex-grow border-l-2 border-dark hover:cursor-ew">
@@ -120,7 +122,7 @@ const PanelContainer = ({ element }: PanelProps): React.ReactElement => {
   return (
     <>
       <ElementContainer element={element}>
-        <ResizableElementContainer elementId={id} elementAnchors={{ L: ['input'], R: ['output'] }}>
+        <ResizableElementContainer element={element} elementAnchors={{ L: ['input'], R: ['output'] }}>
           <Panel element={element} />
         </ResizableElementContainer>
       </ElementContainer>

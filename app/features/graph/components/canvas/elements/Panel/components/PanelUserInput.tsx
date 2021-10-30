@@ -53,7 +53,7 @@ export const PanelUserInput = ({ elementId, initialValue }: PanelUserInputProps)
       <div
         className={`${
           isEditing ? 'bg-pale justify-start' : 'bg-white justify-center'
-        } w-full h-full p-2 pt-1 rounded-md flex flex-col items-center`}
+        } w-full h-full p-2 pt-1 rounded-sm flex flex-col items-center`}
         onDoubleClick={handleDoubleClick}
       >
         <textarea
