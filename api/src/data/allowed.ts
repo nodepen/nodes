@@ -66,7 +66,7 @@ const allowedComponents = {
       '9ab93e1a-ebdf-4090-9296-b000cff7b202', // Split List (Split)
     ],
     sequence: [
-      // '01640871-69ea-40ac-9380-4660d6d28bd2', // Char Sequence (CharSeq)
+      '01640871-69ea-40ac-9380-4660d6d28bd2', // Char Sequence (CharSeq)
       'fe99f302-3d0d-4389-8494-bd53f7935a02', // Fibonacci (Fib)
       '2ab17f9a-d852-4405-80e1-938c5e57e78d', // Random (Random)
       'e64c5fb1-845c-4ab1-8911-5f338516ba67', // Series (Series)

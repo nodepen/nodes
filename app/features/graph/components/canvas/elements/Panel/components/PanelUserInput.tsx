@@ -68,7 +68,7 @@ export const PanelUserInput = ({ elementId, initialValue }: PanelUserInputProps)
           onScroll={(e) => {
             e.stopPropagation()
           }}
-          onChange={(e) => setInternalValue(e.target.value)}
+          onChange={(e) => setInternalValue(e.target.value.substring(0, 1024))}
           onBlur={handleSubmit}
           onKeyDown={(e) => {
             e.stopPropagation()
@@ -96,6 +96,12 @@ export const PanelUserInput = ({ elementId, initialValue }: PanelUserInputProps)
                 break
               }
             }
+          }}
+          onPointerDown={(e) => {
+            e.stopPropagation()
+          }}
+          onMouseDown={(e) => {
+            e.stopPropagation()
           }}
         />
       </div>

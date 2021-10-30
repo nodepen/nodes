@@ -2,6 +2,11 @@ import { NodePen } from 'glib'
 
 export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.SolutionValueType>): string => {
   switch (data.type) {
+    case 'integer': {
+      const { value } = data as NodePen.DataTreeValue<'integer'>
+
+      return Math.round(value).toString()
+    }
     case 'number': {
       const { value } = data as NodePen.DataTreeValue<'number'>
 
