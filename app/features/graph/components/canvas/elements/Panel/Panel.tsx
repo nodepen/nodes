@@ -8,20 +8,29 @@ type PanelProps = {
 }
 
 const Panel = ({ element }: PanelProps): React.ReactElement => {
-  const { id } = element
+  const { id, current } = element
 
   useDebugRender(`Panel | ${id}`)
 
-  const { transform, dimensions, ...dispatch } = useResizableElement()
+  const { transform, dimensions, onResizeStart } = useResizableElement()
 
   const [tx, ty] = transform
   const { width, height } = dimensions
 
   return (
     <div
-      className="bg-white rounded-md flex justify-start items-center"
+      className="bg-white rounded-md flex flex-col justify-end items-center"
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
-    ></div>
+    >
+      <div className="w-full h-8 flex justify-end items-center">
+        <div
+          className="w-8 h-8 bg-red-500 no-drag"
+          onPointerDown={(e) => {
+            onResizeStart(e, 'BR')
+          }}
+        />
+      </div>
+    </div>
   )
 }
 

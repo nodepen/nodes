@@ -1,5 +1,6 @@
 import React, { useCallback, useState, useEffect, useRef, useContext } from 'react'
 import { useGraphDispatch, useGraphElements } from '@/features/graph/store/graph/hooks'
+import { useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 
 type ResizableStore = {
   transform: [tx: number, ty: number]
@@ -7,9 +8,7 @@ type ResizableStore = {
     width: number
     height: number
   }
-  onResizeStart: (anchor: ResizeAnchor) => void
-  onResize: (dx: number, dy: number) => void
-  onResizeEnd: () => void
+  onResizeStart: (e: React.PointerEvent<HTMLDivElement>, anchor: ResizeAnchor) => void
 }
 
 type ResizeAnchor = 'T' | 'TL' | 'L' | 'BL' | 'B' | 'BR' | 'R' | 'TR'
@@ -26,8 +25,6 @@ const ResizableContext = React.createContext<ResizableStore>({
     height: 0,
   },
   onResizeStart: () => '',
-  onResize: () => '',
-  onResizeEnd: () => '',
 })
 
 export const ResizableElementContainer = ({
@@ -36,6 +33,8 @@ export const ResizableElementContainer = ({
 }: ResizableElementContainerProps): React.ReactElement => {
   const elements = useGraphElements()
   const { updateElement } = useGraphDispatch()
+
+  const zoom = useCameraStaticZoom()
 
   const element = elements[elementId]
 
@@ -53,17 +52,66 @@ export const ResizableElementContainer = ({
   }, [element.current.dimensions])
 
   const internalAnchor = useRef<ResizeAnchor>('TL')
+  const internalAnchorId = useRef<number>()
   const internalDeltaX = useRef(0)
   const internalDeltaY = useRef(0)
 
-  const onResizeStart = useCallback((anchor: ResizeAnchor): void => {
-    internalAnchor.current = anchor
-  }, [])
+  const previousPosition = useRef<[number, number]>([0, 0])
 
-  const onResize = useCallback(
-    (dx: number, dy: number): void => {
-      internalDeltaX.current = internalDeltaX.current + dx
-      internalDeltaY.current = internalDeltaY.current + dy
+  const [isResizing, setIsResizing] = useState(false)
+  const initialWidth = useRef(0)
+  const initialHeight = useRef(0)
+
+  const onResizeStart = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>, anchor: ResizeAnchor): void => {
+      if (e.pointerType !== 'mouse') {
+        return
+      }
+
+      e.stopPropagation()
+
+      const { pageX, pageY } = e
+      previousPosition.current = [pageX, pageY]
+
+      internalAnchor.current = anchor
+      internalAnchorId.current = e.pointerId
+
+      internalDeltaX.current = 0
+      internalDeltaY.current = 0
+
+      initialWidth.current = internalDimensions.width
+      initialHeight.current = internalDimensions.height
+
+      setIsResizing(true)
+    },
+    [internalDimensions]
+  )
+
+  const handlePointerMove = useCallback(
+    (e: PointerEvent): void => {
+      if (!isResizing) {
+        return
+      }
+
+      if (e.pointerId !== internalAnchorId.current) {
+        return
+      }
+
+      const { pageX: x, pageY: y } = e
+
+      const [px, py] = previousPosition.current
+      const [dx, dy] = [x - px, y - py]
+
+      const anchor = internalAnchor.current
+
+      const dxModifier = anchor.includes('R') ? 1 : -1
+      const dyModifier = anchor.includes('T') ? -1 : 1
+
+      const widthDelta = dx * dxModifier
+      const heightDelta = dy * dyModifier
+
+      internalDeltaX.current = internalDeltaX.current + widthDelta
+      internalDeltaY.current = internalDeltaY.current + heightDelta
 
       const clamp = (value: number, min: number, max: number): number => {
         return value < min ? min : value > max ? max : value
@@ -75,8 +123,8 @@ export const ResizableElementContainer = ({
       const [tx, ty] = internalTransform
       const { width, height } = internalDimensions
 
-      const nextWidth = clampX(width + internalDeltaX.current)
-      const nextHeight = clampY(height + internalDeltaY.current)
+      const nextWidth = clampX(initialWidth.current + internalDeltaX.current)
+      const nextHeight = clampY(initialHeight.current + internalDeltaY.current)
 
       const nextDx = nextWidth - width
       const nextDy = nextHeight - height
@@ -87,19 +135,22 @@ export const ResizableElementContainer = ({
       }
 
       switch (internalAnchor.current) {
-        case 'TL': {
-          setInternalTransform([tx - nextDx, ty - nextDy])
+        case 'BR': {
           setInternalDimensions({
             width: nextWidth,
             height: nextHeight,
           })
         }
       }
+
+      previousPosition.current = [x, y]
     },
-    [internalTransform, internalDimensions]
+    [isResizing, internalTransform, internalDimensions]
   )
 
-  const onResizeEnd = useCallback(() => {
+  const handlePointerUp = useCallback(() => {
+    setIsResizing(false)
+
     const [x, y] = element.current.position
     const [tx, ty] = internalTransform
 
@@ -113,12 +164,24 @@ export const ResizableElementContainer = ({
     })
   }, [element, elementId, updateElement, internalTransform, internalDimensions])
 
+  useEffect(() => {
+    if (!isResizing) {
+      return
+    }
+
+    window.addEventListener('pointermove', handlePointerMove)
+    window.addEventListener('pointerup', handlePointerUp)
+
+    return () => {
+      window.removeEventListener('pointermove', handlePointerMove)
+      window.removeEventListener('pointerup', handlePointerUp)
+    }
+  })
+
   const store: ResizableStore = {
     transform: internalTransform,
     dimensions: internalDimensions,
     onResizeStart,
-    onResize,
-    onResizeEnd,
   }
 
   return <ResizableContext.Provider value={store}>{children}</ResizableContext.Provider>
