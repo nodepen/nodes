@@ -288,8 +288,8 @@ export const ResizableElementContainer = ({
       const [ax, ay] = currentAnchors[anchorId]
       const [dx, dy] = leftMotion
 
-      console.log({ ax, ay })
-      console.log({ dx, dy })
+      // console.log({ ax, ay })
+      // console.log({ dx, dy })
 
       currentAnchors[anchorId] = [ax + dx, ay + dy]
     }

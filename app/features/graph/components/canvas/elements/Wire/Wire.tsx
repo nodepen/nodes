@@ -21,7 +21,7 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
   const wireType = useWireType(elementId, parameterId)
 
   const dist = distance([ax, ay], [bx, by])
-  const [width, height] = [Math.abs(bx - ax), Math.abs(by - ay)]
+  const [width, height] = [Math.abs(bx - ax), Math.max(2, Math.abs(by - ay))]
   const lead = Math.max(width / 2, dist / 2)
 
   const invert = ax < bx ? 1 : -1
