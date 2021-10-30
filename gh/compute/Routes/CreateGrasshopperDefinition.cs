@@ -163,7 +163,7 @@ namespace NodePen.Compute.Routes
 
               Console.WriteLine(element.Current.Values.ToString());
 
-              var incoming = Convert.ToString(element.Current.Values["output"]["{0}"][0].Value);
+              var incoming = element.Current.Values.GetValue("output", new int[] { 0 }, 0).Value;
               var success = decimal.TryParse(incoming, out decimal value);
 
               sliderInstance.SetSliderValue(success ? value : 5);
@@ -172,24 +172,26 @@ namespace NodePen.Compute.Routes
 
               break;
             }
-          //case "panel":
-          //  {
-          //    var panel = template.CreateInstance() as GH_Panel;
-          //    panel.NewInstanceGuid(new Guid(element.Id));
+          case "panel":
+            {
+              var panel = template.CreateInstance() as GH_Panel;
+              panel.NewInstanceGuid(new Guid(element.Id));
 
-          //    ghdoc.AddObject(panel, false);
+              ghdoc.AddObject(panel, false);
 
-          //    var x = Convert.ToSingle(element.Current.Position[0]);
-          //    var y = Convert.ToSingle(element.Current.Position[1]);
+              var x = Convert.ToSingle(element.Current.Position[0]);
+              var y = Convert.ToSingle(element.Current.Position[1]);
 
-          //    var panelInstance = ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.Id) as GH_Panel;
+              var panelInstance = ghdoc.Objects.First(item => item.InstanceGuid.ToString() == element.Id) as GH_Panel;
 
-          //    panelInstance.Attributes.Pivot = new PointF(x, y);
+              panelInstance.Attributes.Pivot = new PointF(x, y);
 
-          //    JObject values = element.Current.Values;
-          //    var tree = new GH_Structure<GH_String>();
-          //    break;
-          //  }
+              var incoming = element.Current.Values.GetValue("output", new int[] { 0 }, 0).Value;
+
+              panelInstance.UserText = incoming;
+
+              break;
+            }
         }
       });
 
@@ -236,6 +238,7 @@ namespace NodePen.Compute.Routes
               });
               break;
             }
+          case "panel":
           case "static-parameter":
             {
               var parameterInstance = instance as IGH_Param;
@@ -267,71 +270,6 @@ namespace NodePen.Compute.Routes
             }
         }
       });
-
-      //// In third pass, assign any parameter values
-      //config.ForEach(element =>
-      //{
-      //  if (element.Template.Type.ToString() != "static-parameter")
-      //  {
-      //    // TODO: Handle component values too
-      //    return;
-      //  }
-
-      //  if (element.Template.Name.ToString() != "Number")
-      //  {
-      //    // TODO: Handle different param types
-      //    return;
-      //  }
-
-      //  var instance = ghdoc.Objects.First(obj => obj.InstanceGuid.ToString() == element.Id.ToString()) as Param_Number;
-
-      //  JObject values = element.Current.Values;
-      //  var tree = new GH_Structure<GH_Number>();
-
-      //  values.Properties().ToList().ForEach(prop =>
-      //  {
-      //    var pathString = prop.Name;
-      //    var pathCrumbs = pathString.Replace("{", "").Replace("}", "").Split(';').ToList().Where(key => key.Length > 0);
-      //    var pathIndices = pathCrumbs.Select(num => Convert.ToInt32(num)).ToArray();
-
-      //    var branch = new GH_Path(pathIndices);
-
-      //    var pathValues = (element.Current.Values as JObject).GetValue(pathString).ToObject<List<dynamic>>();
-
-      //    for (var i = 0; i < pathValues.Count; i++)
-      //    {
-      //      var pathValue = pathValues[i];
-      //      var sourceType = pathValue.from.ToString();
-
-      //      if (sourceType != "user")
-      //      {
-      //        // Value is computed, do not set as an override
-      //        // TODO: Should the api sanitize element values before sending them to rhino?
-      //        return;
-      //      }
-
-      //      switch (pathValue.type.ToString())
-      //      {
-      //        case "number":
-      //          {
-      //            var numberParam = instance as Param_Number;
-
-      //            var candidate = pathValue.data.ToString();
-
-      //            double value = Convert.ToDouble(pathValue.data.ToString());
-
-      //            var number = new GH_Number(value);
-
-      //            tree.Insert(number, branch, i);
-
-      //            break;
-      //          }
-      //      }
-      //    }
-      //  });
-
-      //  instance.SetPersistentData(tree);
-      //});
 
       var path = "C:\\Users\\User\\Desktop\\testing\\test.ghx";
 
