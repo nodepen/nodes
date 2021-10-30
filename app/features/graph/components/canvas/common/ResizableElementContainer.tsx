@@ -56,6 +56,7 @@ export const ResizableElementContainer = ({
   const internalDeltaX = useRef(0)
   const internalDeltaY = useRef(0)
 
+  const resizeStartPosition = useRef<[number, number]>([0, 0])
   const previousPosition = useRef<[number, number]>([0, 0])
 
   const [isResizing, setIsResizing] = useState(false)
@@ -71,6 +72,7 @@ export const ResizableElementContainer = ({
       e.stopPropagation()
 
       const { pageX, pageY } = e
+      resizeStartPosition.current = [pageX, pageY]
       previousPosition.current = [pageX, pageY]
 
       internalAnchor.current = anchor
@@ -99,8 +101,8 @@ export const ResizableElementContainer = ({
 
       const { pageX: x, pageY: y } = e
 
-      const [px, py] = previousPosition.current
-      const [dx, dy] = [x - px, y - py]
+      const [sx, sy] = resizeStartPosition.current
+      const [dx, dy] = [x - sx, y - sy]
 
       const anchor = internalAnchor.current
 
@@ -110,8 +112,8 @@ export const ResizableElementContainer = ({
       const widthDelta = dx * dxModifier
       const heightDelta = dy * dyModifier
 
-      internalDeltaX.current = internalDeltaX.current + widthDelta
-      internalDeltaY.current = internalDeltaY.current + heightDelta
+      internalDeltaX.current = widthDelta
+      internalDeltaY.current = heightDelta
 
       const clamp = (value: number, min: number, max: number): number => {
         return value < min ? min : value > max ? max : value
@@ -128,6 +130,8 @@ export const ResizableElementContainer = ({
 
       const nextDx = nextWidth - width
       const nextDy = nextHeight - height
+
+      console.log({ dx: internalDeltaX.current })
 
       if (nextDx === 0 && nextDy === 0) {
         // No change allowed, do no work
