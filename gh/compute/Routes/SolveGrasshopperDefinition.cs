@@ -134,34 +134,6 @@ namespace NodePen.Compute.Routes
 
           switch (goo.TypeName)
           {
-            case "Line":
-              {
-                var lineGoo = goo as GH_Line;
-
-                var start = lineGoo.Value.From;
-                var end = lineGoo.Value.To;
-
-                var output = new NodePenLine()
-                {
-                  Start = new NodePenPoint()
-                  {
-                    X = start.X,
-                    Y = start.Y,
-                    Z = start.Z
-                  },
-                  End = new NodePenPoint()
-                  {
-                    X = end.X,
-                    Y = end.Y,
-                    Z = end.Z
-                  }
-                };
-
-                data.Value = JsonConvert.SerializeObject(output);
-                data.Type = "line";
-
-                break;
-              }
             case "Circle":
               {
                 var circleGoo = goo as GH_Circle;
@@ -196,20 +168,48 @@ namespace NodePen.Compute.Routes
 
                 break;
               }
-            case "Number":
-              {
-                var numberGoo = goo as GH_Number;
-
-                data.Value = numberGoo.Value.ToString();
-                data.Type = "number";
-                break;
-              }
             case "Integer":
               {
                 var integerGoo = goo as GH_Integer;
 
                 data.Value = integerGoo.Value.ToString();
                 data.Type = "integer";
+                break;
+              }
+            case "Line":
+              {
+                var lineGoo = goo as GH_Line;
+
+                var start = lineGoo.Value.From;
+                var end = lineGoo.Value.To;
+
+                var output = new NodePenLine()
+                {
+                  Start = new NodePenPoint()
+                  {
+                    X = start.X,
+                    Y = start.Y,
+                    Z = start.Z
+                  },
+                  End = new NodePenPoint()
+                  {
+                    X = end.X,
+                    Y = end.Y,
+                    Z = end.Z
+                  }
+                };
+
+                data.Value = JsonConvert.SerializeObject(output);
+                data.Type = "line";
+
+                break;
+              }
+            case "Number":
+              {
+                var numberGoo = goo as GH_Number;
+
+                data.Value = numberGoo.Value.ToString();
+                data.Type = "number";
                 break;
               }
             case "Point":
@@ -220,6 +220,14 @@ namespace NodePen.Compute.Routes
 
                 data.Value = JsonConvert.SerializeObject(geo);
                 data.Type = "point";
+                break;
+              }
+            case "Text":
+              {
+                var textGoo = goo as GH_String;
+
+                data.Value = textGoo.Value.ToString();
+                data.Type = "text";
                 break;
               }
             default:

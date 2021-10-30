@@ -5,6 +5,6 @@ export const isNumberValue = (value: DataTreeValue<SolutionValueType>): value is
     return value.type === 'number'
 }
 
-export const isStringValue = (value: DataTreeValue<SolutionValueType>): value is DataTreeValue<'string'> => {
-    return value.type === 'string'
+export const isTextValue = (value: DataTreeValue<SolutionValueType>): value is DataTreeValue<'text'> => {
+  return value.type === 'text'
 }

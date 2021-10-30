@@ -7,8 +7,8 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
 
       return value.toString()
     }
-    case 'string': {
-      const { value } = data as NodePen.DataTreeValue<'string'>
+    case 'text': {
+      const { value } = data as NodePen.DataTreeValue<'text'>
 
       return value
     }
