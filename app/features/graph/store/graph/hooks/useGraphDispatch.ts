@@ -42,6 +42,9 @@ export const useGraphDispatch = () => {
         dispatch(solutionActions.expireSolution())
       }
     },
+    batchUpdateLiveElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>[]) => {
+      dispatch(graphActions.batchUpdateLiveElement(data))
+    },
     updateLiveElement: (data: Payload.UpdateElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.updateLiveElement(data))
     },

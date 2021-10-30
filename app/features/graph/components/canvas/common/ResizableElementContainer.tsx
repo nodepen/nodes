@@ -38,7 +38,7 @@ export const ResizableElementContainer = ({
   children,
 }: ResizableElementContainerProps): React.ReactElement => {
   const elements = useGraphElements()
-  const { updateElement, updateLiveElement } = useGraphDispatch()
+  const { updateElement, batchUpdateLiveElement } = useGraphDispatch()
 
   const zoom = useCameraStaticZoom()
 
@@ -175,39 +175,72 @@ export const ResizableElementContainer = ({
         }
       }
 
+      // Determine live wire motion
+      let fromMotion: [number, number] = [0, 0]
+      let toMotion: [number, number] = [0, 0]
+
+      switch (internalAnchor.current) {
+        case 'TL':
+        case 'BL':
+          toMotion = [nextDx, nextDy / 2]
+          fromMotion = [0, nextDy / 2]
+          break
+        case 'L':
+          toMotion = [nextDx, 0]
+          fromMotion = [0, 0]
+          break
+        case 'TR':
+        case 'BR':
+          toMotion = [0, nextDy / 2]
+          fromMotion = [nextDx, nextDy / 2]
+          break
+        case 'R':
+          toMotion = [0, 0]
+          fromMotion = [nextDx, 0]
+          break
+        case 'T':
+        case 'B':
+          toMotion = [0, nextDy / 2]
+          fromMotion = [0, nextDy / 2]
+      }
+
       const [fromWireIds, toWireIds] = resizeWires.current
 
-      if (internalAnchor.current.includes('L')) {
-        for (const id of toWireIds) {
-          const wire = elements[id] as NodePen.Element<'wire'>
+      const operations: Parameters<typeof batchUpdateLiveElement>[0] = []
 
-          const [wx, wy] = wire.current.to
+      for (const id of toWireIds) {
+        const wire = elements[id] as NodePen.Element<'wire'>
 
-          updateLiveElement({
-            id,
-            type: 'wire',
-            data: {
-              to: [wx + nextDx, wy + nextDy / 2],
-            },
-          })
-        }
+        const [wx, wy] = wire.current.to
+        const [dx, dy] = toMotion
 
-        for (const id of fromWireIds) {
-          const wire = elements[id] as NodePen.Element<'wire'>
-
-          const [wx, wy] = wire.current.from
-
-          updateLiveElement({
-            id,
-            type: 'wire',
-            data: {
-              from: [wx, wy + nextDy / 2],
-            },
-          })
-        }
+        operations.push({
+          id,
+          type: 'wire',
+          data: {
+            to: [wx + dx, wy + dy],
+          },
+        })
       }
+
+      for (const id of fromWireIds) {
+        const wire = elements[id] as NodePen.Element<'wire'>
+
+        const [wx, wy] = wire.current.from
+        const [dx, dy] = fromMotion
+
+        operations.push({
+          id,
+          type: 'wire',
+          data: {
+            from: [wx + dx, wy + dy],
+          },
+        })
+      }
+
+      batchUpdateLiveElement(operations)
     },
-    [elements, zoom, isResizing, internalTransform, internalDimensions, updateLiveElement]
+    [elements, zoom, isResizing, internalTransform, internalDimensions, batchUpdateLiveElement]
   )
 
   const handlePointerUp = useCallback(() => {

@@ -13,7 +13,7 @@ import {
 } from '../../utils'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
-import { prepareLiveMotion } from './reducers'
+import { prepareLiveMotion, updateLiveElement } from './reducers'
 import { GrasshopperGraphManifest } from '../../types'
 
 const initialState: GraphState = {
@@ -466,48 +466,19 @@ export const graphSlice = createSlice({
 
       element.current = { ...element.current, ...data }
     },
+    batchUpdateLiveElement: (
+      state: GraphState,
+      action: PayloadAction<Payload.UpdateElementPayload<NodePen.ElementType>[]>
+    ) => {
+      for (const payload of action.payload) {
+        updateLiveElement(state, payload)
+      }
+    },
     updateLiveElement: (
       state: GraphState,
       action: PayloadAction<Payload.UpdateElementPayload<NodePen.ElementType>>
     ) => {
-      const { id, type, data } = action.payload
-
-      const element = state.elements[id]
-
-      // Make sure element exists
-      if (!element) {
-        console.log(`🐍 Attempted to update an element that doesn't exist!`)
-        return
-      }
-
-      // Make sure element is of same type as incoming data
-      switch (type) {
-        case 'region': {
-          if (!assert.element.isRegion(element)) {
-            console.log(`🐍 Attempted to update a(n) ${element.template.type} with region data!`)
-            return
-          }
-
-          const current = data as NodePen.Element<'region'>['current']
-
-          element.current = { ...element.current, ...current }
-          break
-        }
-        case 'wire': {
-          if (!assert.element.isWire(element)) {
-            console.log(`🐍 Attempted to update a(n) ${element.template.type} with wire data!`)
-          }
-
-          const current = data as NodePen.Element<'wire'>['current']
-
-          element.current = { ...element.current, ...current }
-          break
-        }
-        default: {
-          console.log(`Update logic for ${type} elements not yet implemented. `)
-          return
-        }
-      }
+      updateLiveElement(state, action.payload)
     },
     startLiveWires: (state: GraphState, action: PayloadAction<Payload.StartLiveWiresPayload>) => {
       const { templates, origin } = action.payload

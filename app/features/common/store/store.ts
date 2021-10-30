@@ -11,6 +11,7 @@ export const store = configureStore({
     graph: undoable(graphReducer, {
       filter: excludeAction([
         graphActions.addLiveElement.type,
+        graphActions.batchUpdateLiveElement.type,
         graphActions.updateLiveElement.type,
         graphActions.deleteLiveElements.type,
         graphActions.updateSelection.type,
