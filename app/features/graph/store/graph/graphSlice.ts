@@ -493,6 +493,16 @@ export const graphSlice = createSlice({
           element.current = { ...element.current, ...current }
           break
         }
+        case 'wire': {
+          if (!assert.element.isWire(element)) {
+            console.log(`🐍 Attempted to update a(n) ${element.template.type} with wire data!`)
+          }
+
+          const current = data as NodePen.Element<'wire'>['current']
+
+          element.current = { ...element.current, ...current }
+          break
+        }
         default: {
           console.log(`Update logic for ${type} elements not yet implemented. `)
           return
@@ -983,7 +993,7 @@ export const graphSlice = createSlice({
       delete state.elements['provisional-wire']
     },
     prepareLiveMotion: (state: GraphState, action: PayloadAction<Payload.PrepareLiveMotionPayload>) => {
-      const { anchor, targets, filter } = action.payload
+      const { anchor, targets } = action.payload
 
       if (state.selection.includes(anchor)) {
         // Live motion is staged when selection changes. If anchor element is included, skip redundant work.
@@ -991,7 +1001,7 @@ export const graphSlice = createSlice({
         return
       }
 
-      prepareLiveMotion(state, anchor, targets, filter)
+      prepareLiveMotion(state, anchor, targets)
 
       // Given a target element that is about to move, cache information about
       // other live motion that must follow it.

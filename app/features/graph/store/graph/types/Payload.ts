@@ -47,12 +47,6 @@ export type PrepareLiveMotionPayload = {
    * @remarks This is used to identify attached elements and wires, so the anchor element must be specified here if it should be included.
    */
   targets: string[]
-  /**
-   * Optionally, limit the types of staged elements. Used in resizing operations.
-   */
-  filter?: {
-    wire?: 'to' | 'from'
-  }
 }
 
 export type ConnectElementsPayload = {
