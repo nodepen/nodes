@@ -136,36 +136,33 @@ export const ResizableElementContainer = ({
         return
       }
 
+      const isVertical = anchor.includes('T') || anchor.includes('B')
+      const isHorizontal = anchor.includes('L') || anchor.includes('R')
+
+      setInternalDimensions({
+        width: isHorizontal ? nextWidth : width,
+        height: isVertical ? nextHeight : height,
+      })
+
       switch (internalAnchor.current) {
         case 'TL': {
-          setInternalDimensions({
-            width: nextWidth,
-            height: nextHeight,
-          })
           setInternalTransform([tx + nextDx, ty + nextDy])
           break
         }
+        case 'T':
+        case 'TR': {
+          setInternalTransform([0, ty + nextDy])
+          break
+        }
+        case 'L':
         case 'BL': {
-          setInternalDimensions({
-            width: nextWidth,
-            height: nextHeight,
-          })
           setInternalTransform([tx + nextDx, 0])
           break
         }
+        case 'B':
+        case 'R':
         case 'BR': {
-          setInternalDimensions({
-            width: nextWidth,
-            height: nextHeight,
-          })
           break
-        }
-        case 'TR': {
-          setInternalDimensions({
-            width: nextWidth,
-            height: nextHeight,
-          })
-          setInternalTransform([0, ty + nextDy])
         }
       }
 

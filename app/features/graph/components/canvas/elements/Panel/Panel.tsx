@@ -28,22 +28,50 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
       <div className="w-full h-full panel-container">
-        <div className="w-full h-full corner-tl">
+        <div className="w-full h-full flex flex-col" style={{ gridArea: 'edge-l' }}>
+          <div className="w-full flex-grow border-l-2 border-dark hover:cursor-ew">
+            <ResizableHandle anchor="L" />
+          </div>
+          <div className="w-full h-8 border-l-2 border-dark bg-red-500" />
+          <div className="w-full flex-grow border-l-2 border-dark hover:cursor-ew">
+            <ResizableHandle anchor="L" />
+          </div>
+        </div>
+        <div className="w-full h-full flex flex-col" style={{ gridArea: 'edge-r' }}>
+          <div className="w-full flex-grow border-r-2 border-dark hover:cursor-ew">
+            <ResizableHandle anchor="R" />
+          </div>
+          <div className="w-full h-8 border-r-2 border-dark bg-red-500" />
+          <div className="w-full flex-grow border-r-2 border-dark hover:cursor-ew">
+            <ResizableHandle anchor="R" />
+          </div>
+        </div>
+        <div className="w-full h-full" style={{ gridArea: 'edge-t' }}>
+          <ResizableHandle anchor="T">
+            <div className="w-full h-full border-t-2 border-dark hover:cursor-ns" />
+          </ResizableHandle>
+        </div>
+        <div className="w-full h-full" style={{ gridArea: 'edge-b' }}>
+          <ResizableHandle anchor="B">
+            <div className="w-full h-full border-b-2 border-dark hover:cursor-ns" />
+          </ResizableHandle>
+        </div>
+        <div className="w-full h-full" style={{ gridArea: 'corner-tl' }}>
           <ResizableHandle anchor="TL">
             <div className="w-full h-full rounded-tl-md border-t-2 border-l-2 border-dark hover:cursor-nwse" />
           </ResizableHandle>
         </div>
-        <div className="w-full h-full corner-bl">
+        <div className="w-full h-full" style={{ gridArea: 'corner-bl' }}>
           <ResizableHandle anchor="BL">
             <div className="w-full h-full rounded-bl-md border-b-2 border-l-2 border-dark hover:cursor-nesw" />
           </ResizableHandle>
         </div>
-        <div className="w-full h-full corner-br">
+        <div className="w-full h-full" style={{ gridArea: 'corner-br' }}>
           <ResizableHandle anchor="BR">
             <div className="w-full h-full rounded-br-md border-b-2 border-r-2 border-dark hover:cursor-nwse" />
           </ResizableHandle>
         </div>
-        <div className="w-full h-full corner-tr">
+        <div className="w-full h-full" style={{ gridArea: 'corner-tr' }}>
           <ResizableHandle anchor="TR">
             <div className="w-full h-full rounded-tr-md border-t-2 border-r-2 border-dark hover:cursor-nesw" />
           </ResizableHandle>
@@ -54,26 +82,10 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
           display: grid;
           grid-template-rows: 16px 1fr 16px;
           grid-template-columns: 16px 1fr 16px;
-        }
-
-        .corner-tl {
-          grid-row: 1 / span 1;
-          grid-column: 1 / span 1;
-        }
-
-        .corner-tr {
-          grid-row: 1 / span 1;
-          grid-column: 3 / span 1;
-        }
-
-        .corner-bl {
-          grid-row: 3 / span 1;
-          grid-column: 1 / span 1;
-        }
-
-        .corner-br {
-          grid-row: 3 / span 1;
-          grid-column: 3 / span 3;
+          grid-template-areas:
+            'corner-tl  edge-t      corner-tr'
+            'edge-l     panel-body  edge-r'
+            'corner-bl  edge-b      corner-br';
         }
       `}</style>
     </div>
