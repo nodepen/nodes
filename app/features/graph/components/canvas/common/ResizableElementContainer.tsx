@@ -128,10 +128,8 @@ export const ResizableElementContainer = ({
       const nextWidth = clampX(initialWidth.current + internalDeltaX.current)
       const nextHeight = clampY(initialHeight.current + internalDeltaY.current)
 
-      const nextDx = nextWidth - width
-      const nextDy = nextHeight - height
-
-      console.log({ dx: internalDeltaX.current })
+      const nextDx = (nextWidth - width) * dxModifier
+      const nextDy = (nextHeight - height) * dyModifier
 
       if (nextDx === 0 && nextDy === 0) {
         // No change allowed, do no work
@@ -139,6 +137,14 @@ export const ResizableElementContainer = ({
       }
 
       switch (internalAnchor.current) {
+        case 'BL': {
+          setInternalDimensions({
+            width: nextWidth,
+            height: nextHeight,
+          })
+          setInternalTransform([tx + nextDx, 0])
+          break
+        }
         case 'BR': {
           setInternalDimensions({
             width: nextWidth,

@@ -22,11 +22,11 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
       className="bg-white rounded-md flex flex-col justify-end items-center"
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
-      <div className="w-full h-8 flex justify-end items-center">
+      <div className="w-full h-8 flex justify-start items-center">
         <div
           className="w-8 h-8 bg-red-500 no-drag"
           onPointerDown={(e) => {
-            onResizeStart(e, 'BR')
+            onResizeStart(e, 'BL')
           }}
         />
       </div>
