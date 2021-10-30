@@ -182,6 +182,7 @@ export const graphSlice = createSlice({
                 solution: 'immediate',
                 execution: 'enabled',
               },
+              isMultilineData: true,
               dimensions: {
                 width: 250,
                 height: 150,

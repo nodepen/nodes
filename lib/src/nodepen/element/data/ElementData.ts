@@ -6,7 +6,7 @@ export type ElementData = {
     'static-component': GraphElement & GripElement & VisibleElement
     'static-parameter': GraphElement & GripElement & VisibleElement
     'number-slider': GraphElement & GripElement & VisibleElement & NumberSliderData
-    'panel': VisibleElement & GripElement & PanelData
+    'panel': GraphElement & GripElement & VisibleElement & PanelData
     'wire': VisibleElement & DirectionalElement
     'region': VisibleElement & DirectionalElement & SelectionElement
     'annotation': VisibleElement

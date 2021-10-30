@@ -9,6 +9,10 @@ export const dataBranchesToDataTree = (
 ): NodePen.DataTree => {
   const tree: NodePen.DataTree = {}
 
+  if (!values) {
+    return tree
+  }
+
   for (const { path, data } of values) {
     const pathKey = getDataTreePathString(path)
     tree[pathKey] = data

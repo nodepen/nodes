@@ -38,7 +38,12 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
         const newSolutionId = newGuid()
 
-        const validElementTypes: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider']
+        const validElementTypes: NodePen.ElementType[] = [
+          'static-component',
+          'static-parameter',
+          'number-slider',
+          'panel',
+        ]
         const validElements = Object.values(elements).filter((element) =>
           validElementTypes.includes(element.template.type)
         )

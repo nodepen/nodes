@@ -4,6 +4,7 @@ import { PanelGrip } from './components'
 import { ElementContainer, ResizableElementContainer, ResizableHandle, useResizableElement } from '../../common'
 import { useDebugRender } from '@/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
+import { usePanelValues } from './hooks'
 
 type PanelProps = {
   element: NodePen.Element<'panel'>
@@ -13,6 +14,8 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
   const { id } = element
 
   useDebugRender(`Panel | ${id}`)
+
+  const { source, values } = usePanelValues(element)
 
   const zoomLevel = useCameraZoomLevel()
 
@@ -29,6 +32,12 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
       <div className="w-full h-full panel-container">
+        <div className="w-full h-full p-2 rounded-md panel-body overflow-hidden">
+          {source === 'self' ? (
+            <div className="w-full h-full bg-red-500 overflow-hidden">{JSON.stringify(values)}</div>
+          ) : null}
+          {source === 'solution' ? <div className="w-full h-full bg-green">{JSON.stringify(values)}</div> : null}
+        </div>
         <div className="w-full h-full flex flex-col" style={{ gridArea: 'edge-l' }}>
           <div className="w-full flex-grow border-l-2 border-dark hover:cursor-ew">
             <ResizableHandle anchor="L" />

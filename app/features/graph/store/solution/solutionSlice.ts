@@ -56,6 +56,10 @@ export const solutionSlice = createSlice({
 
       state.meta.phase = 'idle'
 
+      if (!values || values.length === 0) {
+        return
+      }
+
       // console.log(`Trying to update ${values.length} parameters.`)
 
       for (const { elementId, parameterId, data } of values) {
