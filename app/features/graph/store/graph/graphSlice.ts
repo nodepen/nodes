@@ -983,7 +983,7 @@ export const graphSlice = createSlice({
       delete state.elements['provisional-wire']
     },
     prepareLiveMotion: (state: GraphState, action: PayloadAction<Payload.PrepareLiveMotionPayload>) => {
-      const { anchor, targets } = action.payload
+      const { anchor, targets, filter } = action.payload
 
       if (state.selection.includes(anchor)) {
         // Live motion is staged when selection changes. If anchor element is included, skip redundant work.
@@ -991,7 +991,7 @@ export const graphSlice = createSlice({
         return
       }
 
-      prepareLiveMotion(state, anchor, targets)
+      prepareLiveMotion(state, anchor, targets, filter)
 
       // Given a target element that is about to move, cache information about
       // other live motion that must follow it.

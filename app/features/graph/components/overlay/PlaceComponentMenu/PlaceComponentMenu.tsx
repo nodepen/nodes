@@ -333,6 +333,10 @@ export const PlaceComponentMenu = ({
                         onChange={(e) => setUserValue(e.target.value)}
                         onKeyDown={(e) => {
                           switch (e.key.toLowerCase()) {
+                            case 'a': {
+                              e.stopPropagation()
+                              break
+                            }
                             case 'arrowdown': {
                               e.preventDefault()
                               return

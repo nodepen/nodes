@@ -13,11 +13,6 @@ type ResizableStore = {
 
 export type ResizeAnchor = 'T' | 'TL' | 'L' | 'BL' | 'B' | 'BR' | 'R' | 'TR'
 
-type ResizableElementContainerProps = {
-  elementId: string
-  children?: JSX.Element
-}
-
 const ResizableContext = React.createContext<ResizableStore>({
   transform: [0, 0],
   dimensions: {
@@ -27,12 +22,17 @@ const ResizableContext = React.createContext<ResizableStore>({
   onResizeStart: () => '',
 })
 
+type ResizableElementContainerProps = {
+  elementId: string
+  children?: JSX.Element
+}
+
 export const ResizableElementContainer = ({
   elementId,
   children,
 }: ResizableElementContainerProps): React.ReactElement => {
   const elements = useGraphElements()
-  const { updateElement } = useGraphDispatch()
+  const { updateElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
 
   const zoom = useCameraStaticZoom()
 
@@ -71,6 +71,7 @@ export const ResizableElementContainer = ({
 
       e.stopPropagation()
 
+      // Prepare internal state for resize motion
       const { pageX, pageY } = e
       resizeStartPosition.current = [pageX, pageY]
       previousPosition.current = [pageX, pageY]
@@ -83,6 +84,15 @@ export const ResizableElementContainer = ({
 
       initialWidth.current = internalDimensions.width
       initialHeight.current = internalDimensions.height
+
+      // Prepare for live motion of attached elements
+      if (anchor.includes('L')) {
+        prepareLiveMotion({ anchor: elementId, targets: [elementId], filter: { wire: 'to' } })
+      }
+
+      if (anchor.includes('R')) {
+        prepareLiveMotion({ anchor: elementId, targets: [elementId], filter: { wire: 'from' } })
+      }
 
       setIsResizing(true)
     },
@@ -164,6 +174,10 @@ export const ResizableElementContainer = ({
         case 'BR': {
           break
         }
+      }
+
+      if (internalAnchor.current.includes('L') || internalAnchor.current.includes('R')) {
+        dispatchLiveMotion(nextDx, nextDy / 2)
       }
 
       previousPosition.current = [x, y]

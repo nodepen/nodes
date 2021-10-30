@@ -1,5 +1,6 @@
 import React from 'react'
 import { NodePen } from 'glib'
+import { PanelGrip } from './components'
 import { ElementContainer, ResizableElementContainer, ResizableHandle, useResizableElement } from '../../common'
 import { useDebugRender } from '@/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
@@ -15,7 +16,7 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
 
   const zoomLevel = useCameraZoomLevel()
 
-  const { transform, dimensions, onResizeStart } = useResizableElement()
+  const { transform, dimensions } = useResizableElement()
 
   const [tx, ty] = transform
   const { width, height } = dimensions
@@ -32,7 +33,9 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
           <div className="w-full flex-grow border-l-2 border-dark hover:cursor-ew">
             <ResizableHandle anchor="L" />
           </div>
-          <div className="w-full h-8 border-l-2 border-dark bg-red-500" />
+          <div className="w-full h-8 flex flex-col justify-center items-center border-l-2 border-dark">
+            <PanelGrip elementId={id} mode="input" />
+          </div>
           <div className="w-full flex-grow border-l-2 border-dark hover:cursor-ew">
             <ResizableHandle anchor="L" />
           </div>
@@ -41,7 +44,9 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
           <div className="w-full flex-grow border-r-2 border-dark hover:cursor-ew">
             <ResizableHandle anchor="R" />
           </div>
-          <div className="w-full h-8 border-r-2 border-dark bg-red-500" />
+          <div className="w-full h-8 flex flex-col justify-center items-center border-r-2 border-dark">
+            <PanelGrip elementId={id} mode="output" />
+          </div>
           <div className="w-full flex-grow border-r-2 border-dark hover:cursor-ew">
             <ResizableHandle anchor="R" />
           </div>
