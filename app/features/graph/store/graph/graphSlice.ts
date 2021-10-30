@@ -179,7 +179,7 @@ export const graphSlice = createSlice({
             current: {
               dimensions: {
                 width: 250,
-                height: 250,
+                height: 150,
               },
               position: action.payload.position,
               anchors: {},

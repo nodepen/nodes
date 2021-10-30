@@ -24,22 +24,30 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
     <div
       className={`${
         zoomLevel === 'far' ? '' : 'shadow-osm'
-      } flex flex-col justify-start items-center rounded-md overflow-visible`}
+      } flex flex-col justify-start items-center bg-white rounded-md overflow-visible`}
       style={{ transform: `translate(${tx}px, ${ty}px)`, width, height }}
     >
       <div className="w-full h-full panel-container">
         <div className="w-full h-full corner-tl">
           <ResizableHandle anchor="TL">
-            <div className="w-full h-full bg-white rounded-tl-md border-t-2 border-l-2 border-dark hover:cursor-nwse" />
+            <div className="w-full h-full rounded-tl-md border-t-2 border-l-2 border-dark hover:cursor-nwse" />
           </ResizableHandle>
         </div>
         <div className="w-full h-full corner-bl">
           <ResizableHandle anchor="BL">
-            <div className="w-full h-full bg-white rounded-bl-md border-b-2 border-l-2 border-dark hover:cursor-nesw" />
+            <div className="w-full h-full rounded-bl-md border-b-2 border-l-2 border-dark hover:cursor-nesw" />
           </ResizableHandle>
         </div>
-        <div className="w-full h-full corner-br bg-green"></div>
-        <div className="w-full h-full corner-tr bg-yellow-500"></div>
+        <div className="w-full h-full corner-br">
+          <ResizableHandle anchor="BR">
+            <div className="w-full h-full rounded-br-md border-b-2 border-r-2 border-dark hover:cursor-nwse" />
+          </ResizableHandle>
+        </div>
+        <div className="w-full h-full corner-tr">
+          <ResizableHandle anchor="TR">
+            <div className="w-full h-full rounded-tr-md border-t-2 border-r-2 border-dark hover:cursor-nesw" />
+          </ResizableHandle>
+        </div>
       </div>
       <style jsx>{`
         .panel-container {

@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect, useRef, useContext } from 'react'
+import React, { useCallback, useState, useLayoutEffect, useEffect, useRef, useContext } from 'react'
 import { useGraphDispatch, useGraphElements } from '@/features/graph/store/graph/hooks'
 import { useCameraStaticZoom } from '@/features/graph/store/camera/hooks'
 
@@ -41,12 +41,12 @@ export const ResizableElementContainer = ({
   const [internalTransform, setInternalTransform] = useState<ResizableStore['transform']>([0, 0])
   const [internalDimensions, setInternalDimensions] = useState<ResizableStore['dimensions']>(element.current.dimensions)
 
-  const MINIMUM_WIDTH = 50
+  const MINIMUM_WIDTH = 128
   const MAXIMUM_WIDTH = 500
-  const MINIMUM_HEIGHT = 50
+  const MINIMUM_HEIGHT = 80
   const MAXIMUM_HEIGHT = 500
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     setInternalTransform([0, 0])
     setInternalDimensions(element.current.dimensions)
   }, [element.current.dimensions])
@@ -137,6 +137,14 @@ export const ResizableElementContainer = ({
       }
 
       switch (internalAnchor.current) {
+        case 'TL': {
+          setInternalDimensions({
+            width: nextWidth,
+            height: nextHeight,
+          })
+          setInternalTransform([tx + nextDx, ty + nextDy])
+          break
+        }
         case 'BL': {
           setInternalDimensions({
             width: nextWidth,
@@ -150,6 +158,14 @@ export const ResizableElementContainer = ({
             width: nextWidth,
             height: nextHeight,
           })
+          break
+        }
+        case 'TR': {
+          setInternalDimensions({
+            width: nextWidth,
+            height: nextHeight,
+          })
+          setInternalTransform([0, ty + nextDy])
         }
       }
 
