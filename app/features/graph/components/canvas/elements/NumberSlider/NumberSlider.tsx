@@ -12,6 +12,7 @@ import { NumberSliderDetails, NumberSliderGrip, NumberSliderMenu } from './compo
 import { useSessionManager } from '@/features/common/context/session'
 import { getDataTreePathString, distance } from '@/features/graph/utils'
 import { FullWidthMenu, GenericMenu, HoverTooltip } from 'features/graph/components/overlay'
+import { Typography } from '@/features/common'
 
 type NumberSliderProps = {
   element: NodePen.Element<'number-slider'>
@@ -585,12 +586,11 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
                               setShowUnderlay(true)
                             }}
                           >
-                            <p
-                              className="h-10 p-2 pl-4 pr-4 rounded-md text-lg"
-                              style={{ transform: 'translateY(-4px)' }}
-                            >
-                              {internalValueLabel.current}
-                            </p>
+                            <div className="h-10 p-2 pl-4 pr-4 rounded-md text-lg">
+                              <Typography.Label size="md" color="darkgreen">
+                                {internalValueLabel.current}
+                              </Typography.Label>
+                            </div>
                           </div>
                         </div>
                       </div>
