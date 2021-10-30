@@ -12,6 +12,13 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
 
       return value.toString()
     }
+    case 'point': {
+      const { value } = data as NodePen.DataTreeValue<'point'>
+
+      const { x, y, z } = value
+
+      return `{${x}, ${y}, ${z}}`
+    }
     case 'text': {
       const { value } = data as NodePen.DataTreeValue<'text'>
 

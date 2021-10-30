@@ -265,7 +265,39 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
             return all
           }
 
-          return [...all, { elementId, parameterId, data: currentResult.value }]
+          const data = currentResult.value.reduce((branches, current) => {
+            const currentBranch = JSON.parse(JSON.stringify(current))
+
+            for (const entry of currentBranch.data) {
+              // Results arrive as stringified json
+              const incoming = entry.value as string
+
+              switch (entry.type) {
+                case 'integer': {
+                  entry.value = Number.parseInt(incoming)
+                  break
+                }
+                case 'number': {
+                  entry.value = Number.parseFloat(incoming)
+                  break
+                }
+                case 'text': {
+                  entry.value = incoming
+                  break
+                }
+                case 'point': {
+                  entry.value = JSON.parse(incoming)
+                  break
+                }
+                default: {
+                  console.log(`🐍 Received unhandled value of type '${entry.type}''`)
+                }
+              }
+            }
+            return [...branches, currentBranch]
+          }, [] as NodePen.DataTreeBranch[])
+
+          return [...all, { elementId, parameterId, data }]
         }, [] as { elementId: string; parameterId: string; data: NodePen.DataTreeBranch[] }[]),
       })
     })

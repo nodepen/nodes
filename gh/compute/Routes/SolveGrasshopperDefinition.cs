@@ -218,7 +218,14 @@ namespace NodePen.Compute.Routes
 
                 pointGoo.CastTo<Rhino.Geometry.Point3d>(out Point3d geo);
 
-                data.Value = JsonConvert.SerializeObject(geo);
+                var pointData = new NodePenPoint()
+                {
+                  X = geo.X,
+                  Y = geo.Y,
+                  Z = geo.Z
+                };
+
+                data.Value = JsonConvert.SerializeObject(pointData);
                 data.Type = "point";
                 break;
               }
