@@ -15,10 +15,12 @@ extend({ LineMaterial, LineGeometry, Line2 })
 const SceneContainer = (): React.ReactElement => {
   const ReduxBridge = useContextBridge(ReactReduxContext)
 
+  // orthographic camera={{ up: [0, 0, 1], zoom: 15, position: [0, 0, 10], near: -50 }}
+
   return (
     <ScenePortal>
       <div className="w-full h-full bg-pale pointer-events-auto">
-        <Canvas orthographic camera={{ up: [0, 0, 1], zoom: 15, position: [0, 0, 20], near: -50 }}>
+        <Canvas camera={{ up: [0, 0, 1], position: [0, 0, 50], fov: 35 }}>
           <ReduxBridge>
             <OrbitControls />
             <SceneEnvironment />

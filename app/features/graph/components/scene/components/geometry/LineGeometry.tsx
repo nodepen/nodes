@@ -4,30 +4,13 @@ import { MeshMaterial } from '../../types'
 
 type LineGeometryProps = {
   line: NodePen.GH.Line
-  material: MeshMaterial & { width?: number }
+  material?: MeshMaterial & { width?: number }
 }
 
 export const LineGeometry = ({ line, material }: LineGeometryProps): React.ReactElement => {
-  const { color, width, opacity } = material
-
-  //   <line2
-  //   <mesh>
-  //     {/* @ts-expect-error `threejs-meshline` does not publish types */}
-  //     <meshLine attach="geometry" vertices={[new Vector3(f.x, f.y, f.z), new Vector3(t.x, t.y, t.z)]} />
-  //     {/* @ts-expect-error `threejs-meshline` does not publish types */}
-  //     <meshLineMaterial
-  //       attach="material"
-  //       depthTest={false}
-  //       lineWidth={0.05}
-  //       color={color ?? 'darkred'}
-  //       opacity={opacity ?? 1}
-  //       transparent={opacity && opacity < 1}
-  //     />
-  //   </mesh>
-  // )
+  const { color, width, opacity } = material ?? {}
 
   const lineGeometryRef = useRef<any>(null)
-  const lineMaterialRef = useRef<any>(null)
 
   useLayoutEffect(() => {
     const { from: f, to: t } = line
@@ -44,7 +27,13 @@ export const LineGeometry = ({ line, material }: LineGeometryProps): React.React
         {/* @ts-expect-error `line2` does not publish types */}
         <lineGeometry ref={lineGeometryRef} />
         {/* @ts-expect-error `line2` does not publish types */}
-        <lineMaterial color={color ?? 'darkred'} linewidth={width ?? 0.5} worldUnits={true} />
+        <lineMaterial
+          color={color ?? 'darkred'}
+          linewidth={width ?? 0.5}
+          worldUnits={true}
+          opacity={opacity ?? 1}
+          transparent={opacity && opacity < 1}
+        />
         {/* @ts-expect-error `line2` does not publish types */}
       </line2>
     </>
