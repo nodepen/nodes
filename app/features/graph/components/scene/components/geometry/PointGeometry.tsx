@@ -10,7 +10,7 @@ export const PointGeometry = ({ point }: PointGeometryProps): React.ReactElement
   const { x, y, z } = point
 
   return (
-    <Sphere args={[1, 10, 10]} position={[x, y, z]}>
+    <Sphere args={[0.5, 10, 10]} position={[x, y, z]}>
       <meshBasicMaterial attach="material" color="green" />
     </Sphere>
   )
