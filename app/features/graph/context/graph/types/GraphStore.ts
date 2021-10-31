@@ -8,6 +8,7 @@ export type GraphStore = {
     setTransform?: SetTransform
     canvasContainerRef: React.RefObject<HTMLDivElement>
     layoutContainerRef: React.RefObject<HTMLDivElement>
+    sceneContainerRef: React.RefObject<HTMLDivElement>
     portals: {
       [id: string]: React.RefObject<HTMLDivElement>
     }

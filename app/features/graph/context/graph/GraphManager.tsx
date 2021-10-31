@@ -18,6 +18,7 @@ export const GraphContext = React.createContext<GraphStore>({
   registry: {
     canvasContainerRef: createRef(),
     layoutContainerRef: createRef(),
+    sceneContainerRef: createRef(),
     portals: {},
   },
 })
@@ -51,6 +52,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
 
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const layoutContainerRef = useRef<HTMLDivElement>(null)
+  const sceneContainerRef = useRef<HTMLDivElement>(null)
 
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
@@ -143,6 +145,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
       setTransform,
       canvasContainerRef,
       layoutContainerRef,
+      sceneContainerRef,
       portals,
     },
     register: {

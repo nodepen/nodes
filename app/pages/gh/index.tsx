@@ -1,5 +1,6 @@
 import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
+import dynamic from 'next/dynamic'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
 import { GraphManager } from '@/features/graph/context/graph'
@@ -17,6 +18,8 @@ type NewGrasshopperEditorPageProps = {
 const NewGrasshopperEditor: NextPage<NewGrasshopperEditorPageProps> = ({ manifest }) => {
   const { token } = useSessionManager()
 
+  const Scene = dynamic(() => import('features/graph/components/scene/SceneContainer'))
+
   return (
     <>
       <Head>
@@ -27,6 +30,7 @@ const NewGrasshopperEditor: NextPage<NewGrasshopperEditorPageProps> = ({ manifes
           <GraphManager manifest={manifest}>
             <SolutionManager>
               <Graph.Container />
+              <Scene />
             </SolutionManager>
           </GraphManager>
         </Layout.Editor>

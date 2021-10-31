@@ -1,5 +1,4 @@
 import React from 'react'
-import dynamic from 'next/dynamic'
 import { Layout } from './components'
 import { useGraphManager } from '@/features/graph/context/graph'
 import { DeleteKeyObserver, HistoryHotkeyObserver, SelectionHotkeyObserver } from './components/observer'
@@ -7,8 +6,6 @@ import { useSceneDisplayMode } from './store/scene/hooks'
 
 export const GraphContainer = (): React.ReactElement => {
   const { registry } = useGraphManager()
-
-  const Scene = dynamic(() => import('./components/scene/SceneContainer'))
 
   const mode = useSceneDisplayMode()
 
@@ -34,10 +31,9 @@ export const GraphContainer = (): React.ReactElement => {
         </div>
         <div
           className="absolute w-full h-full top-0 z-10 transition-all duration-300 ease-out pointer-events-none"
+          ref={registry.sceneContainerRef}
           style={{ left: mode === 'show' ? '0%' : '105%' }}
-        >
-          <Scene />
-        </div>
+        />
       </div>
     </>
   )
