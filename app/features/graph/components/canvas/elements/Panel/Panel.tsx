@@ -1,7 +1,13 @@
 import React from 'react'
 import { NodePen } from 'glib'
 import { PanelGrip, PanelUserInput } from './components'
-import { ElementContainer, ResizableElementContainer, ResizableHandle, useResizableElement } from '../../common'
+import {
+  ElementContainer,
+  ResizableElementContainer,
+  ResizableHandle,
+  useResizableElement,
+  DataTreeViewer,
+} from '../../common'
 import { useDebugRender } from '@/hooks'
 import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 import { usePanelValues } from './hooks'
@@ -48,9 +54,7 @@ const Panel = ({ element }: PanelProps): React.ReactElement => {
               />
             </div>
           ) : null}
-          {source === 'solution' ? (
-            <div className="w-full h-full rounded-sm bg-green">{JSON.stringify(values)}</div>
-          ) : null}
+          {source === 'solution' ? <DataTreeViewer tree={value ?? {}} /> : null}
         </div>
         <div className="w-full h-full flex flex-col" style={{ gridArea: 'edge-l' }}>
           <div className="w-full flex-grow border-l-2 border-dark hover:cursor-ew">

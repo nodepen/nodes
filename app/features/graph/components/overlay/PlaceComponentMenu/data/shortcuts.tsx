@@ -95,22 +95,25 @@ export const shortcuts: ComponentShortcut[] = [
       const content = value.replaceAll('"', '').replaceAll('“', '').replaceAll('”', '').substring(0, 1024)
       const path = getDataTreePathString([0])
 
-      const data: Partial<NodePen.Element<'panel'>['current']> = {
-        dimensions: {
-          width: 150,
-          height: 80,
-        },
-        values: {
-          output: {
-            [path]: [
-              {
-                type: 'text',
-                value: content,
+      const data: Partial<NodePen.Element<'panel'>['current']> =
+        content.length > 0
+          ? {
+              dimensions: {
+                width: 150,
+                height: 80,
               },
-            ],
-          },
-        },
-      }
+              values: {
+                output: {
+                  [path]: [
+                    {
+                      type: 'text',
+                      value: content,
+                    },
+                  ],
+                },
+              },
+            }
+          : {}
 
       return data
     },
@@ -126,22 +129,25 @@ export const shortcuts: ComponentShortcut[] = [
       const content = value.replace('//', '').substring(0, 1024)
       const path = getDataTreePathString([0])
 
-      const data: Partial<NodePen.Element<'panel'>['current']> = {
-        dimensions: {
-          width: 150,
-          height: 80,
-        },
-        values: {
-          output: {
-            [path]: [
-              {
-                type: 'text',
-                value: content,
+      const data: Partial<NodePen.Element<'panel'>['current']> =
+        content.length > 0
+          ? {
+              dimensions: {
+                width: 150,
+                height: 80,
               },
-            ],
-          },
-        },
-      }
+              values: {
+                output: {
+                  [path]: [
+                    {
+                      type: 'text',
+                      value: content,
+                    },
+                  ],
+                },
+              },
+            }
+          : {}
 
       return data
     },

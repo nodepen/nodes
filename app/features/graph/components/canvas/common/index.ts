@@ -3,6 +3,7 @@ import ElementContainer from './ElementContainer'
 import GripContainer from './GripContainer'
 import RuntimeMessageContainer from './RuntimeMessageContainer'
 
+export { DataTreeViewer } from './DataTreeViewer'
 export { useGripContext } from './GripContext'
 export { GripIcon } from './GripIcon'
 export { ParameterIcon } from './ParameterIcon'

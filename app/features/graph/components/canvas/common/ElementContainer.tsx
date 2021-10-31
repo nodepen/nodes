@@ -145,7 +145,11 @@ const ElementContainer = ({
   }, [])
 
   return (
-    <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
+    <div
+      className={`${
+        isRegistered.current ? 'opacity-100' : 'opacity-0'
+      } w-full h-full pointer-events-none absolute left-0 top-0 z-30`}
+    >
       <div className="w-min h-full relative">
         <Draggable
           position={{ x, y }}
