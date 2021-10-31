@@ -2,6 +2,7 @@ import { configureStore } from '@reduxjs/toolkit'
 import { cameraReducer, cameraActions } from 'features/graph/store/camera'
 import { graphReducer, graphActions } from 'features/graph/store/graph'
 import { hotkeyReducer, hotkeyActions } from 'features/graph/store/hotkey'
+import { sceneReducer, sceneActions } from 'features/graph/store/scene'
 import { solutionReducer, solutionActions } from 'features/graph/store/solution'
 import undoable, { excludeAction } from 'redux-undo'
 
@@ -26,6 +27,7 @@ export const store = configureStore({
         graphActions.releaseLiveWires.type,
         ...Object.values(cameraActions).map((action) => action.type),
         ...Object.values(hotkeyActions).map((action) => action.type),
+        ...Object.values(sceneActions).map((action) => action.type),
         ...Object.values(solutionActions).map((action) => action.type),
       ]),
       groupBy: (action, current, _previous) => {
@@ -46,6 +48,7 @@ export const store = configureStore({
       limit: 10,
     }),
     hotkey: hotkeyReducer,
+    scene: sceneReducer,
     solution: solutionReducer,
   },
 })
