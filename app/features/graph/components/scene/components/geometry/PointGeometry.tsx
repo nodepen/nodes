@@ -11,12 +11,14 @@ type PointGeometryProps = {
 export const PointGeometry = ({ point, material }: PointGeometryProps): React.ReactElement => {
   const { x, y, z } = point
 
-  const color = material?.color ?? 'darkred'
-  const opacity = material?.opacity ?? 0.5
-
   return (
     <Sphere args={[0.25, 10, 10]} position={[x, y, z]}>
-      <meshBasicMaterial attach="material" color={color} opacity={opacity} transparent={opacity < 1} />
+      <meshBasicMaterial
+        attach="material"
+        color={material?.color ?? 'darkred'}
+        opacity={material?.opacity ?? 0.7}
+        transparent={true}
+      />
     </Sphere>
   )
 }
