@@ -22,13 +22,13 @@ export const solutionSchema = gql`
 
   type Solution {
     manifest: SolutionManifest!
-    graph: SolutionGraphs!
+    files: SolutionFiles!
     value(elementId: String!, parameterId: String!): [SolutionDataTreeBranch]
   }
 
-  type SolutionGraphs {
+  type SolutionFiles {
     json: String
-    ghx: String
+    gh: String
   }
 
   type SolutionDataTreeBranch {

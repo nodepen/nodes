@@ -38,6 +38,12 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
     )
 
     // console.log(graphBinaries)
+    // Save base65 .gh file
+    await db.setex(
+      `graph:${graphId}:solution:${solutionId}:gh`,
+      60 * 30,
+      graphBinaries as string
+    )
 
     const { data: graphSolution } = await axios.post(
       'http://localhost:9900/grasshopper/solve',

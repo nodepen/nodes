@@ -17,5 +17,6 @@ export type Arguments = {
       elementId: string
       parameterId: string
     }
+    files: never
   }
 }

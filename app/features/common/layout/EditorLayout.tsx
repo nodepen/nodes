@@ -1,4 +1,7 @@
 // import { useState, useRef, useCallback } from 'react'
+import { useGraphId } from '@/features/graph/store/graph/hooks'
+import { useSolutionMetadata } from '@/features/graph/store/solution/hooks'
+import { useApolloClient, gql } from '@apollo/client'
 import { useSessionManager } from '../context/session'
 import { SolutionStatusPip } from './components'
 import { UserImage } from './header'
@@ -24,6 +27,54 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
   // }, [])
 
   // useOutsideClick(menuRef, handleOutsideClick)
+
+  const client = useApolloClient()
+  const graphId = useGraphId()
+  const { id: solutionId } = useSolutionMetadata()
+
+  const handleDownload = (): void => {
+    client
+      .query({
+        query: gql`
+          query GetSolutionGrasshopperFile($graphId: String!, $solutionId: String!) {
+            solution(graphId: $graphId, solutionId: $solutionId) {
+              files {
+                gh
+              }
+            }
+          }
+        `,
+        variables: {
+          graphId,
+          solutionId,
+        },
+      })
+      .then((res) => {
+        const { gh } = res.data.solution.files
+
+        console.log({ gh })
+
+        if (gh) {
+          let fileData: any = atob(gh)
+
+          const bytes = new Array(fileData.length)
+          for (let i = 0; i < fileData.length; i++) {
+            bytes[i] = fileData.charCodeAt(i)
+          }
+          fileData = new Uint8Array(bytes)
+
+          const blob = new Blob([fileData])
+          const objectURL = window.URL.createObjectURL(blob)
+          const anchor = document.createElement('a')
+
+          anchor.href = objectURL
+          ;(anchor as any).download = 'nodepen.gh'
+          anchor.click()
+
+          URL.revokeObjectURL(objectURL)
+        }
+      })
+  }
 
   return (
     <div className="w-vw h-vh flex flex-col justify-start overflow-visible">
@@ -52,6 +103,12 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           <div className="h-6 mr-2">
             <SolutionStatusPip />
           </div>
+          <button
+            className="h-6 w-6 mr-2 border-2 border-dark rounded-sm bg-white flex items-center justify-center"
+            onClick={handleDownload}
+          >
+            ?
+          </button>
           <button
             className={`${isAnonymous ? 'border-2 border-dark' : ''} h-6 w-6 rounded-sm bg-white overflow-hidden`}
           >

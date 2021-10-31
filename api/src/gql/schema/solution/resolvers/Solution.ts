@@ -35,4 +35,7 @@ export const Solution: BaseResolverMap<ParentObject, Arguments['Solution']> = {
 
     return tree
   },
+  files: ({ graphId, solutionId }) => {
+    return { graphId, solutionId }
+  },
 }
