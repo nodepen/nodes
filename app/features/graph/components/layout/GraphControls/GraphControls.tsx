@@ -7,7 +7,7 @@ import { useSceneDispatch, useSceneDisplayMode } from '@/features/graph/store/sc
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
-  const { user } = useSessionManager()
+  const { user, device } = useSessionManager()
 
   const { setDisplayMode } = useSceneDispatch()
   const sceneDisplayMode = useSceneDisplayMode()
@@ -177,7 +177,7 @@ export const GraphControls = (): React.ReactElement => {
       >
         <div className="w-full h-full flex flex-row justify-start items-center ease-out">
           <button
-            className="w-12 h-12 flex justify-center items-center transition-colors duration-75 md:hover:bg-swampgreen"
+            className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
             onClick={() => setSidebarIsOpen((current) => !current)}
           >
             {sidebarIsOpen ? (
@@ -203,7 +203,7 @@ export const GraphControls = (): React.ReactElement => {
             )}
           </button>
           <button
-            className="w-12 h-12 flex justify-center items-center transition-colors duration-75 md:hover:bg-swampgreen"
+            className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
             onClick={() => handleScroll((sidebarWidth - 96) / -2)}
           >
             <svg
@@ -218,7 +218,7 @@ export const GraphControls = (): React.ReactElement => {
           </button>
           <div
             className="h-full w-full whitespace-nowrap overflow-x-auto no-scrollbar"
-            style={{ width: sidebarWidth - 96, touchAction: 'none' }}
+            style={{ minWidth: sidebarWidth - 96, width: sidebarWidth - 96, touchAction: 'none' }}
             ref={componentToolbarRef}
           >
             {library
@@ -237,7 +237,7 @@ export const GraphControls = (): React.ReactElement => {
                 ))}
           </div>
           <button
-            className="w-12 h-12 flex justify-center items-center transition-colors duration-75 bg-green md:hover:bg-swampgreen z-20"
+            className="w-12 h-12 flex justify-center items-center bg-green md:hover:bg-swampgreen z-20"
             onClick={() => handleScroll((sidebarWidth - 96) / 2)}
           >
             <svg
@@ -250,6 +250,31 @@ export const GraphControls = (): React.ReactElement => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>
+          {device.breakpoint !== 'sm' ? (
+            <div className="h-full flex-grow flex justify-end items-center overflow-hidden">
+              {sceneDisplayMode === 'show' ? (
+                <button
+                  className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
+                  onClick={() => setDisplayMode('hide')}
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="none"
+                    stroke="#093824"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                </button>
+              ) : null}
+            </div>
+          ) : null}
         </div>
       </div>
     </div>
