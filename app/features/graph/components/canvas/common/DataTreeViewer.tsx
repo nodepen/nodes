@@ -1,20 +1,30 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { NodePen } from 'glib'
 import { Typography } from '@/features/common'
 import { getDataTreeValueString } from '@/features/graph/utils'
+import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
 
 type DataTreeViewerProps = {
   tree: NodePen.DataTree
 }
 
 export const DataTreeViewer = ({ tree }: DataTreeViewerProps): React.ReactElement => {
+  const { setZoomLock } = useCameraDispatch()
+
   return (
-    <div className="w-full h-full p-2 flex flex-col justify-start items-center rounded-sm border-2 border-dark overflow-y-auto no-scrollbar">
+    <div
+      className="w-full h-full overflow-y-auto no-scrollbar"
+      onPointerEnter={() => setZoomLock(true)}
+      onPointerLeave={() => setZoomLock(false)}
+    >
       {Object.entries(tree).map(([path, branch]) => {
         return (
           <>
-            <div key={`data-tree-${path}-header`} className="w-full h-8 flex justify-end items-center">
-              <Typography.Data size="md" color="dark">
+            <div
+              key={`data-tree-${path}-header`}
+              className="w-full h-8 mb-1 pr-2 bg-green rounded-sm flex justify-end items-center sticky top-0"
+            >
+              <Typography.Data size="md" color="darkgreen" align="right">
                 {path}
               </Typography.Data>
             </div>
@@ -37,17 +47,14 @@ const DataTreeValue = ({ index, value }: DataTreeValueProps): React.ReactElement
   const record = getDataTreeValueString(value)
 
   return (
-    <div
-      className="w-full h-6 pl-2 pr-2 flex justify-start items-center"
-      style={{ paddingTop: '2px', paddingBottom: '2px' }}
-    >
-      <div className="w-8 h-full flex items-center justify-start border-r-2 border-dark">
-        <Typography.Data size="sm" color="dark">
+    <div className="w-full h-6 mb-1 flex justify-start items-center">
+      <div className="w-8 h-full pl-1 mr-1 flex items-center bg-green rounded-sm">
+        <Typography.Data size="sm" color="darkgreen">
           {index.toString()}
         </Typography.Data>
       </div>
-      <div className="h-full flex-grow flex justify-end items-center">
-        <Typography.Data size="sm" color="dark">
+      <div className="h-full flex-grow pr-1 bg-green rounded-sm flex justify-end items-center overflow-hidden whitespace-nowrap">
+        <Typography.Data size="sm" color="dark" align="right">
           {record}
         </Typography.Data>
       </div>
