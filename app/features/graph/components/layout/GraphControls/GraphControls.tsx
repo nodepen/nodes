@@ -3,10 +3,13 @@ import { useGraphManager } from '@/features/graph/context/graph'
 import { categorize, flattenCategory } from '../../../utils'
 import { ComponentLibraryIcon } from './components'
 import { useSessionManager } from '@/features/common/context/session'
+import { useSceneDispatch } from '@/features/graph/store/scene/hooks'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
   const { user } = useSessionManager()
+
+  const { setDisplayMode } = useSceneDispatch()
 
   const [sidebarWidth, setSidebarWidth] = useState(0)
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false)
@@ -58,6 +61,11 @@ export const GraphControls = (): React.ReactElement => {
     componentToolbarRef.current.scroll({ left: 0 })
   }
 
+  const handleShowModel = (): void => {
+    setDisplayMode('show')
+    setSidebarIsOpen(false)
+  }
+
   return (
     <div className="w-full h-12 relative bg-green overflow-visible z-40">
       <div
@@ -84,7 +92,10 @@ export const GraphControls = (): React.ReactElement => {
           {/* <div className="w-full p-2">
             <hr className="w-full border-t-2 border-swampgreen rounded-full" />
           </div> */}
-          <button className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen">
+          <button
+            className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen"
+            onClick={handleShowModel}
+          >
             <div className="w-12 h-12 flex justify-center items-center">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
