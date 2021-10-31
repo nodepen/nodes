@@ -29,7 +29,7 @@ export const GraphContainer = (): React.ReactElement => {
             </div>
           </div>
         </div>
-        <div className="absolute w-full h-full bg-pale top-0 z-10 transition-all" style={{ left: '50%' }}>
+        <div className="absolute w-full h-full bg-pale top-0 z-10 transition-all" style={{ left: '0%' }}>
           <Scene />
         </div>
       </div>
