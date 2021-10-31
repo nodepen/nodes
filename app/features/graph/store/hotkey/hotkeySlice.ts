@@ -17,6 +17,7 @@ export const hotkeySlice = createSlice({
       switch (stateKey) {
         case 'shift':
         case 'control':
+        case 'space':
         case 'a':
         case 'd':
         case 'y':
@@ -39,7 +40,7 @@ export const hotkeySlice = createSlice({
   },
 })
 
-// const selectSpace = (state: RootState): boolean => !!state.hotkey['Space']
+const selectSpace = (state: RootState): boolean => !!state.hotkey['space']
 const selectShift = (state: RootState): boolean => !!state.hotkey['shift']
 const selectControl = (state: RootState): boolean => !!state.hotkey['control']
 
@@ -98,6 +99,7 @@ export const hotkeySelectors = {
   selectSelectionHotkey,
   selectHistoryHotkey,
   selectSelectionMode,
+  selectSpace,
   selectWireMode,
 }
 

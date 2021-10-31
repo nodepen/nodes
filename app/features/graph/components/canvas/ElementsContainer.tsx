@@ -1,34 +1,14 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { assert } from 'glib'
 import { useGraphElements } from '../../store/graph/hooks'
 import { StaticComponent, LiveWire, Annotation, NumberSlider, Wire, SelectionRegion, Panel } from './elements'
 import { NodePen } from '@/glib/src'
-import { useSolutionDispatch } from '../../store/solution/hooks'
 
 const ElementsContainer = (): React.ReactElement => {
   const graph = useGraphElements()
   const elements = Object.values(graph)
 
-  const { expireSolution } = useSolutionDispatch()
-
   // useDebugRender('ElementsContainer')
-
-  useEffect(() => {
-    const printElements = (e: KeyboardEvent): void => {
-      switch (e.code) {
-        case 'Space': {
-          console.log({ elements })
-          expireSolution()
-        }
-      }
-    }
-
-    window.addEventListener('keydown', printElements)
-
-    return () => {
-      window.removeEventListener('keydown', printElements)
-    }
-  })
 
   return (
     <>

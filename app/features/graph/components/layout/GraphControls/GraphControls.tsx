@@ -3,13 +3,14 @@ import { useGraphManager } from '@/features/graph/context/graph'
 import { categorize, flattenCategory } from '../../../utils'
 import { ComponentLibraryIcon } from './components'
 import { useSessionManager } from '@/features/common/context/session'
-import { useSceneDispatch } from '@/features/graph/store/scene/hooks'
+import { useSceneDispatch, useSceneDisplayMode } from '@/features/graph/store/scene/hooks'
 
 export const GraphControls = (): React.ReactElement => {
   const { library } = useGraphManager()
   const { user } = useSessionManager()
 
   const { setDisplayMode } = useSceneDispatch()
+  const sceneDisplayMode = useSceneDisplayMode()
 
   const [sidebarWidth, setSidebarWidth] = useState(0)
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false)
@@ -62,7 +63,7 @@ export const GraphControls = (): React.ReactElement => {
   }
 
   const handleShowModel = (): void => {
-    setDisplayMode('show')
+    setDisplayMode(sceneDisplayMode === 'show' ? 'hide' : 'show')
     setSidebarIsOpen(false)
   }
 
@@ -113,7 +114,9 @@ export const GraphControls = (): React.ReactElement => {
               </svg>
             </div>
             <div className="flex-grow h-full flex justify-start items-center">
-              <p className="font-sans font-bold text-sm select-none">VIEW MODEL</p>
+              <p className="font-sans font-bold text-sm select-none">
+                {sceneDisplayMode === 'show' ? 'CLOSE' : 'SHOW'} MODEL
+              </p>
             </div>
           </button>
           <div className="w-full h-12 flex justify-start items-center">
