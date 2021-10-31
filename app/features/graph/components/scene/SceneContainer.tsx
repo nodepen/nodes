@@ -12,7 +12,7 @@ const SceneContainer = (): React.ReactElement => {
   return (
     <ScenePortal>
       <div className="w-full h-full bg-pale pointer-events-auto">
-        <Canvas orthographic camera={{ up: [0, 0, 1], zoom: 50, position: [0, 20, 0], near: -5 }}>
+        <Canvas orthographic camera={{ up: [0, 0, 1], zoom: 50, position: [0, 0, 20], near: -5 }}>
           <ReduxBridge>
             <OrbitControls />
             <ambientLight />

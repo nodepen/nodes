@@ -191,6 +191,8 @@ const NumberSliderMenu = ({ id, initial, onClose, onCancel, focus }: NumberSlide
           <input
             className={`${errors['set-domain-minimum'] ? 'text-error' : ''} w-full p-2 h-12 rounded-md bg-pale`}
             value={domain.minimum.label}
+            onKeyDown={(e) => e.stopPropagation()}
+            onKeyUp={(e) => e.stopPropagation()}
             onChange={(e) => handleChange('set-domain-minimum', e.target.value)}
             onBlur={() => handleBlur('set-domain-minimum', state.domain.minimum.value)}
           />
@@ -213,6 +215,8 @@ const NumberSliderMenu = ({ id, initial, onClose, onCancel, focus }: NumberSlide
           <input
             className={`${errors['set-domain-maximum'] ? 'text-error' : ''} w-full p-2 h-12 rounded-md bg-pale`}
             value={domain.maximum.label}
+            onKeyDown={(e) => e.stopPropagation()}
+            onKeyUp={(e) => e.stopPropagation()}
             onChange={(e) => handleChange('set-domain-maximum', e.target.value)}
             onBlur={() => handleBlur('set-domain-maximum', state.domain.maximum.value)}
           />
@@ -227,6 +231,8 @@ const NumberSliderMenu = ({ id, initial, onClose, onCancel, focus }: NumberSlide
         className={`${errors['set-value'] ? 'text-error' : ''} w-full p-2 h-12 rounded-md bg-pale`}
         value={value.label}
         ref={valueInputRef}
+        onKeyDown={(e) => e.stopPropagation()}
+        onKeyUp={(e) => e.stopPropagation()}
         onChange={(e) => handleChange('set-value', e.target.value)}
         onBlur={() => handleBlur('set-value', state.value.value)}
       />
