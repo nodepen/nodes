@@ -5,6 +5,7 @@ import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useCameraStaticPosition, useCameraStaticZoom } from 'features/graph/store/camera/hooks'
 import { ComponentLibraryDetails } from './ComponentLibraryDetails'
 import { addDefaultElement, getScreenPosition, screenSpaceToCameraSpace } from '../../../../utils'
+import { useSessionManager } from '@/features/common/context/session'
 
 type ComponentLibraryEntryProps = {
   template: Grasshopper.Component
@@ -12,6 +13,8 @@ type ComponentLibraryEntryProps = {
 
 export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): React.ReactElement => {
   const { guid, name, category, icon } = template
+
+  const { device } = useSessionManager()
 
   const { addElement } = useGraphDispatch()
   const zoom = useCameraStaticZoom()
@@ -27,6 +30,10 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
     setShowDetails(true)
 
     if (!entryRef.current) {
+      return
+    }
+
+    if (device.breakpoint !== 'sm') {
       return
     }
 

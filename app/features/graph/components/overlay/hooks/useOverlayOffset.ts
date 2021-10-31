@@ -13,7 +13,7 @@ export const useOverlayOffset = (position: [sx: number, sy: number]): [left: num
 
   const offsetPosition = useMemo(() => {
     const [sx, sy] = position
-    return [sx, sy - offsetTop + 48] as [number, number]
+    return [sx, sy - offsetTop] as [number, number]
   }, [])
 
   return offsetPosition
