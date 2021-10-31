@@ -2,9 +2,13 @@ import { useMemo } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useSetCameraPosition } from 'features/graph/hooks'
+import { useSolutionDispatch } from '@/features/graph/store/solution/hooks'
+import { useSceneDispatch } from '@/features/graph/store/scene/hooks'
 
 export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<never>[] => {
   const { undo, redo, reset } = useGraphDispatch()
+  const { expireSolution } = useSolutionDispatch()
+  const { setDisplayMode } = useSceneDispatch()
   const setCameraPosition = useSetCameraPosition()
 
   const actions: MenuAction<never>[] = useMemo(() => {
@@ -53,10 +57,10 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
             />
           </svg>
         ),
-        label: <p>Center</p>,
+        label: <p>Reset</p>,
         menu: <p></p>,
         onClick: (): void => {
-          setCameraPosition(0, 0, 'TL', 0, 0, 1)
+          setCameraPosition(0, 0, 'TL', 0, 300, 1)
         },
       },
       {
@@ -71,7 +75,7 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
             />
           </svg>
         ),
-        label: <p>Reset</p>,
+        label: <p>Clear</p>,
         menu: <p></p>,
         onClick: reset,
       },
@@ -99,15 +103,30 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth={2}
-              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
             />
           </svg>
         ),
-        label: <p>Refresh</p>,
+        label: <p>View Model</p>,
+        menu: <></>,
+        onClick: () => setDisplayMode('show'),
+      },
+      {
+        position: 0,
+        icon: (
+          <svg className="w-6 h-6" fill="none" stroke="#093824" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"
+            />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        ),
+        label: <p>Recompute</p>,
         menu: <p></p>,
-        onClick: (): void => {
-          //ok
-        },
+        onClick: expireSolution,
       },
     ]
   }, [setCameraPosition, onAddComponent])

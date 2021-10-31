@@ -27,13 +27,13 @@ export const ComponentLibraryIcon = ({ template }: ComponentLibraryEntryProps): 
   const [showDetails, setShowDetails] = useState(false)
 
   const handleShowDetails = (): void => {
-    setShowDetails(true)
-
-    if (!entryRef.current) {
+    if (device.breakpoint !== 'sm') {
       return
     }
 
-    if (device.breakpoint !== 'sm') {
+    setShowDetails(true)
+
+    if (!entryRef.current) {
       return
     }
 

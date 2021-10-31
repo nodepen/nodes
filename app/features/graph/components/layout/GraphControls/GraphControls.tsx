@@ -74,7 +74,7 @@ export const GraphControls = (): React.ReactElement => {
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
       >
         <div className="w-full h-full overflow-auto no-scrollbar">
-          <div className="w-full p-2 sticky bg-green top-0">
+          {/* <div className="w-full p-2 sticky bg-green top-0">
             <div className="w-full p-1 flex items-stretch rounded-md border-2 border-swampgreen">
               <div className="h-14 mr-2 rounded-sm bg-swampgreen" style={{ width: 74 }} />
               <div className="flex flex-col justify-start">
@@ -89,7 +89,7 @@ export const GraphControls = (): React.ReactElement => {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           {/* <div className="w-full p-2">
             <hr className="w-full border-t-2 border-swampgreen rounded-full" />
           </div> */}
