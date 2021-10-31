@@ -7,7 +7,7 @@ const SceneContainer = (): React.ReactElement => {
   return (
     <div className="w-full h-full flex flex-col justify-start items-center">
       <div className="w-full h-12 bg-green" />
-      <div className="w-full h-full bg-pale">
+      <div className="w-full flex-grow bg-pale">
         <Canvas>
           <ambientLight />
           <PointGeometry point={{ x: 0, y: 0, z: 0 }} />

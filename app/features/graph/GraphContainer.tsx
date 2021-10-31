@@ -1,10 +1,13 @@
-import { useGraphManager } from '@/features/graph/context/graph'
 import React from 'react'
+import dynamic from 'next/dynamic'
 import { Layout } from './components'
+import { useGraphManager } from '@/features/graph/context/graph'
 import { DeleteKeyObserver, HistoryHotkeyObserver, SelectionHotkeyObserver } from './components/observer'
 
 export const GraphContainer = (): React.ReactElement => {
   const { registry } = useGraphManager()
+
+  const Scene = dynamic(() => import('./components/scene/SceneContainer'))
 
   return (
     <>
@@ -26,7 +29,9 @@ export const GraphContainer = (): React.ReactElement => {
             </div>
           </div>
         </div>
-        <div className="absolute w-full h-full bg-pale top-0 z-10" style={{ left: '50%' }} />
+        <div className="absolute w-full h-full bg-pale top-0 z-10" style={{ left: '50%' }}>
+          <Scene />
+        </div>
       </div>
     </>
   )
