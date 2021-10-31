@@ -6,7 +6,7 @@ import { getFlattenedDataTreeValues, isInputOrOutput } from '@/features/graph/ut
 export const useVisibleGeometry = (
   element: NodePen.Element<'static-component' | 'static-parameter'>,
   parameterId: string
-): NodePen.SolutionValueGoo[] => {
+): NodePen.DataTreeValue<'point'>[] => {
   const { id, current } = element
 
   const visibility = current.settings.visibility
@@ -46,9 +46,9 @@ export const useVisibleGeometry = (
 
   const visibleGeometry = useMemo(
     () =>
-      getFlattenedDataTreeValues(internalTree ?? {})
-        .filter((entry) => visibleTypes.includes(entry.type))
-        .map((entry) => entry.value),
+      getFlattenedDataTreeValues(internalTree ?? {}).filter((entry): entry is NodePen.DataTreeValue<'point'> =>
+        visibleTypes.includes(entry.type)
+      ),
     [internalTree, visibleTypes]
   )
 

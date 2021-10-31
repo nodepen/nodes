@@ -3,7 +3,7 @@ import { Sphere } from '@react-three/drei'
 import { NodePen } from 'glib'
 
 type PointGeometryProps = {
-  point: NodePen.DataTreeValue<'point'>['value']
+  point: NodePen.GH.Point
 }
 
 export const PointGeometry = ({ point }: PointGeometryProps): React.ReactElement => {
