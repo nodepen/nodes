@@ -10,6 +10,9 @@ export const useSolutionDispatch = () => {
     expireSolution: () => {
       dispatch(solutionActions.expireSolution())
     },
+    restoreSolution: (id: string) => {
+      dispatch(solutionActions.restoreSolution(id))
+    },
     updateSolution: (data: Payload.UpdateSolutionPayload) => {
       dispatch(solutionActions.updateSolution(data))
     },

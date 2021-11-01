@@ -76,7 +76,7 @@ namespace NodePen.Compute.Routes
     public static Response CreateGrasshopperDefinition(NancyContext ctx)
     {
       var body = ctx.Request.Body.AsString();
-      var config = JsonConvert.DeserializeObject<List<NodePenElement>>(body);
+      var config = JsonConvert.DeserializeObject<List<NodePenElement>>(body).Where(element => element.Template.Type != "wire").ToList();
 
       var ghdoc = new GH_Document();
       var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies as List<IGH_ObjectProxy>;

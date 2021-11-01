@@ -24,9 +24,12 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.reset())
       dispatch(solutionActions.expireSolution())
     },
-    restore: (manifest: GrasshopperGraphManifest) => {
+    restore: (manifest: GrasshopperGraphManifest, expireSolution = true) => {
       dispatch(graphActions.restore(manifest))
-      dispatch(solutionActions.expireSolution())
+
+      if (expireSolution) {
+        dispatch(solutionActions.expireSolution())
+      }
     },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.addElement(data))

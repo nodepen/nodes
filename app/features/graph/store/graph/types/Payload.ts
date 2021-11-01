@@ -1,3 +1,4 @@
+import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { NodePen } from 'glib'
 
 export type AddElementPayload<T extends NodePen.ElementType> = {
@@ -99,4 +100,9 @@ export type CaptureLiveWiresPayload = {
   type: 'input' | 'output'
   elementId: string
   parameterId: string
+}
+
+export type RestoreGraphPayload = {
+  manifest: GrasshopperGraphManifest
+  expireSolution: boolean
 }

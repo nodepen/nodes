@@ -51,10 +51,66 @@ export default NewGrasshopperEditor
 const { publicRuntimeConfig } = getConfig()
 
 export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProps> = async (context) => {
-  const cookie = nookies.get(context)
+  try {
+    const cookie = nookies.get(context)
 
-  if (!cookie?.token) {
-    // User is visiting for the first time, do not attempt to restore session
+    if (!cookie?.token) {
+      // User is visiting for the first time, do not attempt to restore session
+      return {
+        props: {
+          manifest: {
+            id: newGuid(),
+            name: 'Twisty Tower',
+            author: 'anonymous',
+            elements: {},
+          },
+        },
+      }
+    }
+
+    const client = new ApolloClient({
+      ssrMode: true,
+      link: createHttpLink({
+        uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+        credentials: 'same-origin',
+        headers: {
+          authorization: cookie.token,
+        },
+      }),
+      cache: new InMemoryCache(),
+    })
+
+    const { data } = await client.query({
+      query: gql`
+        query {
+          restore {
+            graphId
+            graphJson
+          }
+        }
+      `,
+    })
+
+    const { graphJson, graphId } = data?.restore
+
+    const elementsArray = JSON.parse(graphJson ?? '[]') as NodePen.Element<NodePen.ElementType>[]
+
+    const elements = elementsArray.reduce((all, element) => {
+      all[element.id] = element
+      return all
+    }, {} as { [id: string]: NodePen.Element<NodePen.ElementType> })
+
+    return {
+      props: {
+        manifest: {
+          id: graphId ?? newGuid(),
+          name: 'Twisty Tower',
+          author: 'anonymous',
+          elements,
+        },
+      },
+    }
+  } catch {
     return {
       props: {
         manifest: {
@@ -65,43 +121,5 @@ export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProp
         },
       },
     }
-  }
-
-  const client = new ApolloClient({
-    ssrMode: true,
-    link: createHttpLink({
-      uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
-      credentials: 'same-origin',
-      headers: {
-        authorization: cookie.token,
-      },
-    }),
-    cache: new InMemoryCache(),
-  })
-
-  const { data } = await client.query({
-    query: gql`
-      query {
-        restore
-      }
-    `,
-  })
-
-  const elementsArray = JSON.parse(data?.restore ?? '[]') as NodePen.Element<NodePen.ElementType>[]
-
-  const elements = elementsArray.reduce((all, element) => {
-    all[element.id] = element
-    return all
-  }, {} as { [id: string]: NodePen.Element<NodePen.ElementType> })
-
-  return {
-    props: {
-      manifest: {
-        id: newGuid(),
-        name: 'Twisty Tower',
-        author: 'anonymous',
-        elements,
-      },
-    },
   }
 }

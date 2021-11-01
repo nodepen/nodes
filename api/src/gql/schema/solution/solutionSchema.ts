@@ -5,7 +5,7 @@ import { gql } from 'apollo-server-express'
  */
 export const solutionSchema = gql`
   extend type Query {
-    restore: String
+    restore: SolutionSnapshot
     solution(graphId: String!, solutionId: String): Solution
   }
 
@@ -18,11 +18,11 @@ export const solutionSchema = gql`
   }
 
   extend type Subscription {
-    onSolutionStart(graphId: String): SolutionScheduled
+    onSolutionStart(graphId: String): SolutionSnapshot
     onSolutionFinish(graphId: String): SolutionManifest
   }
 
-  type SolutionScheduled {
+  type SolutionSnapshot {
     graphJson: String!
     graphId: String!
     solutionId: String!

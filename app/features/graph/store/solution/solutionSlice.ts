@@ -27,6 +27,17 @@ export const solutionSlice = createSlice({
       state.values = {}
       state.messages = {}
     },
+    restoreSolution: (state: SolutionState, action: PayloadAction<string>) => {
+      // Pretend this client scheduled this solution
+      state.meta.id = action.payload
+      state.meta.phase = 'scheduled'
+      state.meta.error = undefined
+      state.meta.duration = 0
+
+      // Delete any stored values
+      state.values = {}
+      state.messages = {}
+    },
     updateSolution: (state: SolutionState, action: PayloadAction<Payload.UpdateSolutionPayload>) => {
       const { meta } = action.payload
 

@@ -9,9 +9,11 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
 
     const graphId = await db.get(`user:${user.id}:graph`)
     const solutionId = await db.get(`graph:${graphId}:solution`)
-    const json = await db.get(`graph:${graphId}:solution:${solutionId}:json`)
+    const graphJson = await db.get(
+      `graph:${graphId}:solution:${solutionId}:json`
+    )
 
-    return json
+    return { graphJson, graphId, solutionId }
   },
   solution: (_parent, args, { user }) => {
     const { graphId, solutionId } = args

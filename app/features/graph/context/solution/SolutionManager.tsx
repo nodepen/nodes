@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import { NodePen } from 'glib'
 import { useSubscription, gql, useApolloClient } from '@apollo/client'
-import { useGraphElements, useGraphId } from '../../store/graph/hooks'
+import { useGraphDispatch, useGraphElements, useGraphId } from '../../store/graph/hooks'
 import { useSolutionDispatch, useSolutionMetadata } from '../../store/solution/hooks'
 import { useSessionManager } from '@/features/common/context/session'
 import { newGuid } from '../../utils'
@@ -25,10 +25,11 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
   const client = useApolloClient()
 
+  const { restore: restoreGraph } = useGraphDispatch()
   const elements = useGraphElements()
   const graphId = useGraphId()
 
-  const { updateSolution, tryApplySolutionManifest, tryApplySolutionValues } = useSolutionDispatch()
+  const { updateSolution, tryApplySolutionManifest, tryApplySolutionValues, restoreSolution } = useSolutionDispatch()
   const meta = useSolutionMetadata()
 
   useEffect(() => {
@@ -43,6 +44,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
           'static-parameter',
           'number-slider',
           'panel',
+          'wire',
         ]
         const validElements = Object.values(elements).filter((element) =>
           validElementTypes.includes(element.template.type)
@@ -130,6 +132,24 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
         console.log(`[ GRAPH ] Current: ${graphId} | Incoming: ${incomingGraphId}`)
         console.log(`[ SOLUTION ] Current: ${meta?.id} | Incoming: ${incomingSolutionId}`)
+
+        const elements = JSON.parse(graphJson ?? '[]').reduce((all, current) => {
+          all[current.id] = current
+          return all
+        }, {})
+
+        if (incomingSolutionId !== meta.id && meta.phase === 'idle') {
+          restoreSolution(incomingSolutionId)
+          restoreGraph(
+            {
+              id: incomingGraphId,
+              name: 'Restored!',
+              author: 'Ravid Dutten',
+              elements,
+            },
+            false
+          )
+        }
       },
     }
   )
