@@ -1,6 +1,10 @@
 import { GetServerSideProps, NextPage } from 'next'
+import { NodePen } from 'glib'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import getConfig from 'next/config'
+import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client'
+import nookies from 'nookies'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
 import { GraphManager } from '@/features/graph/context/graph'
@@ -44,18 +48,59 @@ const NewGrasshopperEditor: NextPage<NewGrasshopperEditorPageProps> = ({ manifes
 
 export default NewGrasshopperEditor
 
-/**
- * Opt out of server-side static generation.
- * TODO: Pre-fetch graph, if it exists
- */
-export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProps> = async () => {
+const { publicRuntimeConfig } = getConfig()
+
+export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProps> = async (context) => {
+  const cookie = nookies.get(context)
+
+  if (!cookie?.token) {
+    // User is visiting for the first time, do not attempt to restore session
+    return {
+      props: {
+        manifest: {
+          id: newGuid(),
+          name: 'Twisty Tower',
+          author: 'anonymous',
+          elements: {},
+        },
+      },
+    }
+  }
+
+  const client = new ApolloClient({
+    ssrMode: true,
+    link: createHttpLink({
+      uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+      credentials: 'same-origin',
+      headers: {
+        authorization: cookie.token,
+      },
+    }),
+    cache: new InMemoryCache(),
+  })
+
+  const { data } = await client.query({
+    query: gql`
+      query {
+        restore
+      }
+    `,
+  })
+
+  const elementsArray = JSON.parse(data?.restore ?? '[]') as NodePen.Element<NodePen.ElementType>[]
+
+  const elements = elementsArray.reduce((all, element) => {
+    all[element.id] = element
+    return all
+  }, {} as { [id: string]: NodePen.Element<NodePen.ElementType> })
+
   return {
     props: {
       manifest: {
         id: newGuid(),
         name: 'Twisty Tower',
         author: 'anonymous',
-        elements: {},
+        elements,
       },
     },
   }

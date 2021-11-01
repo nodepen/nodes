@@ -1,5 +1,8 @@
 export type Arguments = {
   Query: {
+    restore: {
+      userId: string
+    }
     solution: {
       graphId: string
       solutionId: string

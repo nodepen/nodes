@@ -22,6 +22,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       graphJson
     )
 
+    await db.setex(`user:${user.id}:graph`, 60 * 60, graphId)
     await db.setex(`graph:${graphId}:solution`, 60 * 60, solutionId)
 
     const job = await ghq.createJob({ graphId, solutionId }).save()

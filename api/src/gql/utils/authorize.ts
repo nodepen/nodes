@@ -34,14 +34,16 @@ export const authorize = async (
     )
   }
 
-  switch (resource.type) {
-    case 'graph': {
-      const t = resource.action
-      break
-    }
-    case 'graph-reference': {
-      const t = resource.action
-      break
+  if (resource) {
+    switch (resource.type) {
+      case 'graph': {
+        const t = resource.action
+        break
+      }
+      case 'graph-reference': {
+        const t = resource.action
+        break
+      }
     }
   }
 

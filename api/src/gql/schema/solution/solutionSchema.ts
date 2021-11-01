@@ -5,6 +5,7 @@ import { gql } from 'apollo-server-express'
  */
 export const solutionSchema = gql`
   extend type Query {
+    restore: String
     solution(graphId: String!, solutionId: String): Solution
   }
 
