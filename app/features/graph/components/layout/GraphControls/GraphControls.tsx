@@ -17,7 +17,7 @@ export const GraphControls = (): React.ReactElement => {
 
   const libraryByCategory = useMemo(() => categorize(library ?? []), [library])
 
-  const [selectedCategory, setSelectedCategory] = useState('params')
+  const [selectedCategory, setSelectedCategory] = useState('vector')
 
   const selectedCategoryComponents = useMemo(
     () => flattenCategory(libraryByCategory, selectedCategory),
@@ -94,7 +94,7 @@ export const GraphControls = (): React.ReactElement => {
             <hr className="w-full border-t-2 border-swampgreen rounded-full" />
           </div> */}
           <button
-            className="w-full h-12 flex justify-start items-center transition-colors duration-75 bg-green hover:bg-swampgreen"
+            className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen"
             onClick={handleShowModel}
           >
             <div className="w-12 h-12 flex justify-center items-center">
@@ -145,7 +145,7 @@ export const GraphControls = (): React.ReactElement => {
             return (
               <button
                 key={`category-selector-${category}`}
-                className="w-full h-8 flex justify-start items-center hover:font-bold"
+                className="w-full h-8 flex justify-start items-center hover:font-bold hover:bg-swampgreen"
                 onClick={() => handleSelectCategory(category)}
               >
                 <div className="w-12 h-full flex justify-center items-center">
@@ -161,6 +161,47 @@ export const GraphControls = (): React.ReactElement => {
               </button>
             )
           })}
+          <a
+            href={'https://github.com/cdriesler/nodepen#feedback'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen"
+            onClick={handleShowModel}
+          >
+            <div className="w-12 h-12 flex justify-center items-center">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="#093824"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+                />
+              </svg>
+            </div>
+            <div className="flex-grow h-full flex justify-start items-center">
+              <p className="font-sans font-bold text-sm select-none">FEEDBACK</p>
+              <svg
+                className="w-4 h-4 ml-2"
+                fill="none"
+                stroke="#093824"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                />
+              </svg>
+            </div>
+          </a>
           <div className="w-full h-12" />
         </div>
       </div>
@@ -226,10 +267,7 @@ export const GraphControls = (): React.ReactElement => {
                   <ComponentLibraryIcon key={`library-${component.guid}`} template={component} />
                 ))
               : Array.from(Array(6)).map((_, i) => (
-                  <div
-                    key={`library-skeleton-${i}`}
-                    className="w-12 h-12 inline-block transition-colors duration-75 md:hover:bg-swampgreen"
-                  >
+                  <div key={`library-skeleton-${i}`} className="w-12 h-12 inline-block md:hover:bg-swampgreen">
                     <div className="w-full h-full flex justify-center items-center">
                       <div className="w-6 h-6 rounded-sm animate-pulse bg-swampgreen" />
                     </div>
