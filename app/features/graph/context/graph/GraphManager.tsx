@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
+import { useRouter } from 'next/router'
 import { Grasshopper } from 'glib'
 import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { GraphStore } from './types'

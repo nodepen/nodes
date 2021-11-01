@@ -50,47 +50,49 @@ export default NewGrasshopperEditor
 const { publicRuntimeConfig } = getConfig()
 
 export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProps> = async (ctx) => {
-  const { id } = ctx.query
+  return { redirect: { destination: '/gh', permanent: false } }
 
-  const cookie = nookies.get(ctx)
+  // const { id } = ctx.query
 
-  const client = new ApolloClient({
-    ssrMode: true,
-    link: createHttpLink({
-      uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
-      credentials: 'same-origin',
-      headers: {
-        authorization: cookie.token,
-      },
-    }),
-    cache: new InMemoryCache(),
-  })
+  // const cookie = nookies.get(ctx)
 
-  const { data } = await client.query({
-    query: gql`
-      query GetCurrentGraph($graphId: String!) {
-        solution(graphId: $graphId) {
-          files {
-            json
-          }
-        }
-      }
-    `,
-    variables: {
-      graphId: id,
-    },
-  })
+  // const client = new ApolloClient({
+  //   ssrMode: true,
+  //   link: createHttpLink({
+  //     uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+  //     credentials: 'same-origin',
+  //     headers: {
+  //       authorization: cookie.token,
+  //     },
+  //   }),
+  //   cache: new InMemoryCache(),
+  // })
 
-  const elements = JSON.parse(data?.solution?.files?.json ?? '{}')
+  // const { data } = await client.query({
+  //   query: gql`
+  //     query GetCurrentGraph($graphId: String!) {
+  //       solution(graphId: $graphId) {
+  //         files {
+  //           json
+  //         }
+  //       }
+  //     }
+  //   `,
+  //   variables: {
+  //     graphId: id,
+  //   },
+  // })
 
-  return {
-    props: {
-      manifest: {
-        id: newGuid(),
-        name: 'Twisty Tower',
-        author: 'anonymous',
-        elements,
-      },
-    },
-  }
+  // const elements = JSON.parse(data?.solution?.files?.json ?? '{}')
+
+  // return {
+  //   props: {
+  //     manifest: {
+  //       id: newGuid(),
+  //       name: 'Twisty Tower',
+  //       author: 'anonymous',
+  //       elements,
+  //     },
+  //   },
+  // }
 }
