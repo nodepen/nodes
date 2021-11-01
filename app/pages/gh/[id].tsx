@@ -1,6 +1,9 @@
 import { GetServerSideProps, NextPage } from 'next'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
+import getConfig from 'next/config'
+import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client'
+import nookies from 'nookies'
 import { Layout } from 'features/common'
 import { Graph } from 'features'
 import { GraphManager } from '@/features/graph/context/graph'
@@ -44,18 +47,49 @@ const NewGrasshopperEditor: NextPage<NewGrasshopperEditorPageProps> = ({ manifes
 
 export default NewGrasshopperEditor
 
-/**
- * Opt out of server-side static generation.
- * TODO: Pre-fetch graph, if it exists
- */
-export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProps> = async () => {
+const { publicRuntimeConfig } = getConfig()
+
+export const getServerSideProps: GetServerSideProps<NewGrasshopperEditorPageProps> = async (ctx) => {
+  const { id } = ctx.query
+
+  const cookie = nookies.get(ctx)
+
+  const client = new ApolloClient({
+    ssrMode: true,
+    link: createHttpLink({
+      uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+      credentials: 'same-origin',
+      headers: {
+        authorization: cookie.token,
+      },
+    }),
+    cache: new InMemoryCache(),
+  })
+
+  const { data } = await client.query({
+    query: gql`
+      query GetCurrentGraph($graphId: String!) {
+        solution(graphId: $graphId) {
+          files {
+            json
+          }
+        }
+      }
+    `,
+    variables: {
+      graphId: id,
+    },
+  })
+
+  const elements = JSON.parse(data?.solution?.files?.json ?? '{}')
+
   return {
     props: {
       manifest: {
         id: newGuid(),
         name: 'Twisty Tower',
         author: 'anonymous',
-        elements: {},
+        elements,
       },
     },
   }

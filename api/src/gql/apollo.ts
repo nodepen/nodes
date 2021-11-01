@@ -25,14 +25,14 @@ export const initialize = async () => {
         Object.assign(user, await authenticate(token))
       } catch (e) {
         // Reject all unauthorized requests
-        console.log(e)
+        // console.log(e)
       }
 
-      if (!user.id) {
-        throw new AuthenticationError(
-          'NodePen will not honor unauthenticated requests.'
-        )
-      }
+      // if (!user.id) {
+      //   throw new AuthenticationError(
+      //     'NodePen will not honor unauthenticated requests.'
+      //   )
+      // }
 
       return { user }
     },

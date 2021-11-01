@@ -5,7 +5,7 @@ import { gql } from 'apollo-server-express'
  */
 export const solutionSchema = gql`
   extend type Query {
-    solution(graphId: String!, solutionId: String!): Solution
+    solution(graphId: String!, solutionId: String): Solution
   }
 
   extend type Mutation {

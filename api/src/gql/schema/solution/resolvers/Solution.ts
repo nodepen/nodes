@@ -2,6 +2,7 @@ import { NodePen } from 'glib'
 import { db } from '../../../../redis'
 import { BaseResolverMap } from '../../base/types'
 import { Arguments } from '../types'
+import { authorize } from '../../../utils'
 
 type ParentObject = {
   graphId: string
@@ -9,7 +10,17 @@ type ParentObject = {
 }
 
 export const Solution: BaseResolverMap<ParentObject, Arguments['Solution']> = {
-  value: async ({ graphId, solutionId }, { elementId, parameterId }) => {
+  value: async (
+    { graphId, solutionId },
+    { elementId, parameterId },
+    { user }
+  ) => {
+    await authorize(user)
+
+    if (!solutionId) {
+      throw new Error('Must provide a solution id to query values!')
+    }
+
     const result = await db.get(
       `graph:${graphId}:solution:${solutionId}:${elementId}:${parameterId}`
     )
@@ -35,7 +46,9 @@ export const Solution: BaseResolverMap<ParentObject, Arguments['Solution']> = {
 
     return tree
   },
-  files: ({ graphId, solutionId }) => {
-    return { graphId, solutionId }
+  files: async ({ graphId, solutionId }) => {
+    const id = solutionId ?? (await db.get(`graph:${graphId}:solution`))
+
+    return { graphId, solutionId: id }
   },
 }

@@ -19,4 +19,8 @@ export type Arguments = {
     }
     files: never
   }
+  SolutionFiles: {
+    gh: never
+    json: never
+  }
 }

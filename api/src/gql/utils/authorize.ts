@@ -1,9 +1,10 @@
+import { AuthenticationError } from 'apollo-server-errors'
 import admin from 'firebase-admin'
 import { UserRecord } from '../types'
 
 type AuthorizationContext = {
-  user: UserRecord
-  resource: AuthorizationResource
+  user?: UserRecord
+  resource?: AuthorizationResource
 }
 
 type AuthorizationResource = {
@@ -24,11 +25,14 @@ type AuthorizationResource = {
  * @remarks Will throw an error when any checks fail.
  */
 export const authorize = async (
-  context: AuthorizationContext
+  user?: UserRecord,
+  resource?: AuthorizationResource
 ): Promise<void> => {
-  const { user, resource } = context
-
-  const { id, name } = user
+  if (!user) {
+    throw new AuthenticationError(
+      `Not authorized to access the requested resource.`
+    )
+  }
 
   switch (resource.type) {
     case 'graph': {

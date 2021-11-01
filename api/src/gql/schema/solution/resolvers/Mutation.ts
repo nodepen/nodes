@@ -10,13 +10,10 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     { graphJson, graphId, solutionId },
     { user }
   ): Promise<string> => {
-    await authorize({
-      user,
-      resource: {
-        id: graphId,
-        type: 'graph',
-        action: 'execute',
-      },
+    await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'execute',
     })
 
     await db.setex(
@@ -24,6 +21,8 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       60 * 60,
       graphJson
     )
+
+    await db.setex(`graph:${graphId}:solution`, 60 * 60, solutionId)
 
     const job = await ghq.createJob({ graphId, solutionId }).save()
 
