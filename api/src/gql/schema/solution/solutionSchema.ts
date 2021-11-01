@@ -18,7 +18,14 @@ export const solutionSchema = gql`
   }
 
   extend type Subscription {
-    onSolution(graphId: String): SolutionManifest
+    onSolutionStart(graphId: String): SolutionScheduled
+    onSolutionFinish(graphId: String): SolutionManifest
+  }
+
+  type SolutionScheduled {
+    graphJson: String!
+    graphId: String!
+    solutionId: String!
   }
 
   type Solution {

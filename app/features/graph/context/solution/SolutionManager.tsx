@@ -104,11 +104,47 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     }
   }, [meta])
 
-  // Subscribe to all solution events for session
+  // Subscribe to all solution start events for graph
+  const { error: startSubscriptionError } = useSubscription(
+    gql`
+      subscription WatchSolutionStart($graphId: String!) {
+        onSolutionStart(graphId: $graphId) {
+          solutionId
+          graphId
+          graphJson
+        }
+      }
+    `,
+    {
+      variables: { graphId },
+      skip: !isAuthenticated,
+      shouldResubscribe: true,
+      onSubscriptionData: ({ subscriptionData }) => {
+        const { data } = subscriptionData
+
+        if (!data || !data.onSolutionStart) {
+          return
+        }
+
+        const { graphJson, graphId: incomingGraphId, solutionId: incomingSolutionId } = data.onSolutionStart
+
+        console.log(`[ GRAPH ] Current: ${graphId} | Incoming: ${incomingGraphId}`)
+        console.log(`[ SOLUTION ] Current: ${meta?.id} | Incoming: ${incomingSolutionId}`)
+      },
+    }
+  )
+
+  useEffect(() => {
+    if (startSubscriptionError) {
+      firebase.auth().currentUser?.getIdToken(true)
+    }
+  }, [startSubscriptionError])
+
+  // Subscribe to all solution finish events for graph
   const { data, error } = useSubscription(
     gql`
-      subscription WatchGraphUpdates($graphId: String) {
-        onSolution(graphId: $graphId) {
+      subscription WatchSolutionFinish($graphId: String) {
+        onSolutionFinish(graphId: $graphId) {
           solutionId
           graphId
           duration
@@ -149,7 +185,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
       return
     }
 
-    if (!data.onSolution) {
+    if (!data.onSolutionFinish) {
       return
     }
 
@@ -159,7 +195,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     }
 
     // Data arrived from subscription
-    const { solutionId, duration, exceptionMessages, runtimeMessages } = data.onSolution
+    const { solutionId, duration, exceptionMessages, runtimeMessages } = data.onSolutionFinish
 
     if (exceptionMessages) {
       updateSolution({

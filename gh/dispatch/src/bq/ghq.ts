@@ -121,9 +121,9 @@ ghq.on('job succeeded', (jobId, res) => {
   ].join(' ')
 
   db.client.publish(
-    'SOLUTION_COMPLETE',
+    'SOLUTION_FINISH',
     JSON.stringify({
-      onSolution: {
+      onSolutionFinish: {
         solutionId,
         duration,
         graphId,

@@ -16,6 +16,11 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       action: 'execute',
     })
 
+    db.client.publish(
+      'SOLUTION_START',
+      JSON.stringify({ onSolutionStart: { graphJson, graphId, solutionId } })
+    )
+
     await db.setex(
       `graph:${graphId}:solution:${solutionId}:json`,
       60 * 60,
