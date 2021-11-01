@@ -120,11 +120,6 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           <div className="h-6 mr-2">
             <SolutionStatusPip />
           </div>
-          <button className="h-6 w-6 mr-2 border-2 border-dark rounded-sm bg-white flex items-center justify-center">
-            <svg className="w-4 h-4" fill="#333333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 8a3 3 0 10-2.977-2.63l-4.94 2.47a3 3 0 100 4.319l4.94 2.47a3 3 0 10.895-1.789l-4.94-2.47a3.027 3.027 0 000-.74l4.94-2.47C13.456 7.68 14.19 8 15 8z" />
-            </svg>
-          </button>
           <button
             className="h-6 w-6 mr-2 border-2 border-dark rounded-sm bg-white flex items-center justify-center"
             onClick={handleDownload}
