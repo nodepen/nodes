@@ -42,7 +42,7 @@ jobs:
       - name: Restore app secrets
         uses: jsdaniell/create-json@1.1.2
         with:
-          name: "firebase.auth.json"
+          name: "firebase.client.auth.json"
           dir: "app/features/common/context/session/auth/"
           json: ${{ secrets.NODEPEN_APP_SECRET_AUTH }}
       - uses: google-github-actions/setup-gcloud@master
