@@ -156,10 +156,10 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         console.log(`[ GRAPH ] Current: ${graphId} | Incoming: ${incomingGraphId}`)
         console.log(`[ SOLUTION ] Current: ${meta?.id} | Incoming: ${incomingSolutionId}`)
 
-        const elements = JSON.parse(graphJson ?? '[]').reduce((all, current) => {
+        const elements = JSON.parse(graphJson ?? '[]').reduce((all: any, current: any) => {
           all[current.id] = current
           return all
-        }, {})
+        }, {} as { [elementId: string]: NodePen.Element<NodePen.ElementType> })
 
         if (incomingSolutionId !== meta.id && meta.phase === 'idle') {
           restoreSolution(incomingSolutionId)

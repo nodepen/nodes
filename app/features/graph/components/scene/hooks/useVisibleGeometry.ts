@@ -48,7 +48,7 @@ export const useVisibleGeometry = <T extends 'curve' | 'point' | 'line'>(
   const visibleGeometry = useMemo(
     () =>
       getFlattenedDataTreeValues(internalTree ?? {}).filter((entry): entry is NodePen.DataTreeValue<T> =>
-        types.includes(entry.type)
+        types.includes(entry.type as T)
       ),
     [internalTree, types]
   )

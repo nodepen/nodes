@@ -42,7 +42,14 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   return (
     <>
-      <ElementContainer element={element} onStart={() => setIsMoving(true)} onStop={() => setIsMoving(false)}>
+      <ElementContainer
+        element={element}
+        onStart={() => setIsMoving(true)}
+        onStop={() => {
+          setIsMoving(false)
+          return { selection: false }
+        }}
+      >
         <div className="flex flex-col items-stretch pointer-events-auto">
           <div
             className={`${
