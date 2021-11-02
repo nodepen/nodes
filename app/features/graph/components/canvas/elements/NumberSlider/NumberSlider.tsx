@@ -485,7 +485,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
           <div
             className={`${isSelected ? 'bg-green' : 'bg-white'} ${
               zoomLevel === 'far' ? '' : 'shadow-osm'
-            } relative p-2 rounded-md border-2 border-dark transition-colors duration-150`}
+            } relative p-2 rounded-md border-2 border-dark`}
             role="presentation"
             onMouseDown={(e) => {
               const { pageX, pageY } = e

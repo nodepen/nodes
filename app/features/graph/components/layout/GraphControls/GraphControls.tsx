@@ -269,7 +269,7 @@ export const GraphControls = (): React.ReactElement => {
               : Array.from(Array(6)).map((_, i) => (
                   <div key={`library-skeleton-${i}`} className="w-12 h-12 inline-block md:hover:bg-swampgreen">
                     <div className="w-full h-full flex justify-center items-center">
-                      <div className="w-6 h-6 rounded-sm animate-pulse bg-swampgreen" />
+                      <div className="w-6 h-6 rounded-sm animate-swell bg-swampgreen" />
                     </div>
                   </div>
                 ))}
