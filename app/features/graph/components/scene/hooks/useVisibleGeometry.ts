@@ -3,10 +3,11 @@ import { NodePen } from 'glib'
 import { useSolutionValues, useSolutionPhase } from '@/features/graph/store/solution/hooks'
 import { getFlattenedDataTreeValues, isInputOrOutput } from '@/features/graph/utils'
 
-export const useVisibleGeometry = (
+export const useVisibleGeometry = <T extends 'point' | 'line'>(
   element: NodePen.Element<'static-component' | 'static-parameter'>,
-  parameterId: string
-): NodePen.DataTreeValue<'point'>[] => {
+  parameterId: string,
+  types: T[]
+): NodePen.DataTreeValue<T>[] => {
   const { id, current } = element
 
   const visibility = current.settings.visibility
@@ -42,14 +43,14 @@ export const useVisibleGeometry = (
     }
   }, [phase, visibility])
 
-  const visibleTypes: NodePen.SolutionValueType[] = useMemo(() => ['point'], [])
+  // const visibleTypes: NodePen.SolutionValueType[] = useMemo(() => ['point', 'line'], [])
 
   const visibleGeometry = useMemo(
     () =>
-      getFlattenedDataTreeValues(internalTree ?? {}).filter((entry): entry is NodePen.DataTreeValue<'point'> =>
-        visibleTypes.includes(entry.type)
+      getFlattenedDataTreeValues(internalTree ?? {}).filter((entry): entry is NodePen.DataTreeValue<T> =>
+        types.includes(entry.type)
       ),
-    [internalTree, visibleTypes]
+    [internalTree, types]
   )
 
   return visibleGeometry

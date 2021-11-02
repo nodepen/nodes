@@ -369,14 +369,15 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                   break
                 }
                 case 'domain':
-                case 'vector':
+                case 'line':
                 case 'point':
-                case 'transform': {
+                case 'transform':
+                case 'vector': {
                   entry.value = JSON.parse(incoming)
                   break
                 }
                 default: {
-                  console.log(`🐍 Received unhandled value of type '${entry.type}''`)
+                  console.log(`🐍 Received unhandled value of type '${entry.type}'`)
                 }
               }
             }

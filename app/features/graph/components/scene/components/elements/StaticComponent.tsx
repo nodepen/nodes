@@ -1,6 +1,6 @@
 import React from 'react'
 import { NodePen } from 'glib'
-import { PointParameter } from '../parameters'
+import { GeometryParameter, LineParameter, PointParameter } from '../parameters'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -27,6 +27,12 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           case 'transform':
           case 'vector': {
             return null
+          }
+          case 'geometry': {
+            return <GeometryParameter element={element} parameter={parameter} parameterId={id} />
+          }
+          case 'line': {
+            return <LineParameter element={element} parameter={parameter} parameterId={id} />
           }
           case 'point': {
             return <PointParameter element={element} parameter={parameter} parameterId={id} />

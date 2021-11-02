@@ -9,10 +9,10 @@ namespace NodePen.Compute
 {
   public class NodePenLine
   {
-    [JsonProperty("start")]
-    public NodePenPoint Start { get; set; }
+    [JsonProperty("from")]
+    public NodePenPoint From { get; set; }
 
-    [JsonProperty("end")]
-    public NodePenPoint End { get; set; }
+    [JsonProperty("to")]
+    public NodePenPoint To { get; set; }
   }
 }

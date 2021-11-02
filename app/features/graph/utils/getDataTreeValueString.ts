@@ -1,4 +1,6 @@
 import { NodePen } from 'glib'
+import { distance } from '.'
+import { distance3d } from './distance3d'
 
 export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.SolutionValueType>): string => {
   switch (data.type) {
@@ -18,6 +20,15 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       const { value } = data as NodePen.DataTreeValue<'integer'>
 
       return Math.round(value).toString()
+    }
+    case 'line': {
+      const { value } = data as NodePen.DataTreeValue<'line'>
+
+      const { from: f, to: t } = value
+
+      const d = distance3d([f.x, f.y, f.z], [t.x, t.y, t.z])
+
+      return `Line(L:${d.toFixed(2)} u)`
     }
     case 'number': {
       const { value } = data as NodePen.DataTreeValue<'number'>

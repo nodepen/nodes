@@ -132,6 +132,8 @@ namespace NodePen.Compute.Routes
 
           var data = new SolutionDataValue();
 
+          Console.WriteLine(goo.TypeName);
+
           switch (goo.TypeName)
           {
             case "Boolean":
@@ -210,13 +212,13 @@ namespace NodePen.Compute.Routes
 
                 var output = new NodePenLine()
                 {
-                  Start = new NodePenPoint()
+                  From = new NodePenPoint()
                   {
                     X = start.X,
                     Y = start.Y,
                     Z = start.Z
                   },
-                  End = new NodePenPoint()
+                  To = new NodePenPoint()
                   {
                     X = end.X,
                     Y = end.Y,

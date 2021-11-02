@@ -1,27 +1,27 @@
 import React from 'react'
 import { NodePen, Grasshopper } from 'glib'
-import { PointGeometry } from '../geometry'
+import { LineGeometry } from '../geometry'
 import { useVisibleGeometry } from '../../hooks'
 import { useGraphSelection } from '@/features/graph/store/graph/hooks'
 
-type PointParameterProps = {
+type LineParameterProps = {
   element: NodePen.Element<'static-component'>
   parameter: Grasshopper.Parameter
   parameterId: string
 }
 
-export const PointParameter = ({ element, parameterId }: PointParameterProps): React.ReactElement => {
-  const goo = useVisibleGeometry(element, parameterId, ['point'])
+export const LineParameter = ({ element, parameterId }: LineParameterProps): React.ReactElement => {
+  const goo = useVisibleGeometry(element, parameterId, ['line'])
 
   const selection = useGraphSelection()
   const isSelected = selection.includes(element.id)
 
   return (
     <>
-      {goo.map((point, i) => (
-        <PointGeometry
+      {goo.map((line, i) => (
+        <LineGeometry
           key={`scene-geometry-${element.id}-${parameterId}-${i}`}
-          point={point.value}
+          line={line.value}
           material={{ color: isSelected ? 'darkgreen' : undefined }}
         />
       ))}
