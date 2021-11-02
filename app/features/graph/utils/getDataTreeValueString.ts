@@ -7,6 +7,13 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
 
       return value ? 'True' : 'False'
     }
+    case 'domain': {
+      const { value } = data as NodePen.DataTreeValue<'domain'>
+
+      const { minimum, maximum } = value
+
+      return `${minimum} to ${maximum}`
+    }
     case 'integer': {
       const { value } = data as NodePen.DataTreeValue<'integer'>
 
@@ -28,6 +35,13 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       const { value } = data as NodePen.DataTreeValue<'text'>
 
       return value
+    }
+    case 'transform': {
+      const { value } = data as NodePen.DataTreeValue<'transform'>
+
+      const { x, y, z } = value
+
+      return `Move {${x}, ${y}, ${z}}`
     }
     case 'vector': {
       const { value } = data as NodePen.DataTreeValue<'vector'>

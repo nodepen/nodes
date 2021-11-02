@@ -177,6 +177,22 @@ namespace NodePen.Compute.Routes
 
                 break;
               }
+            case "Domain":
+              {
+                var domainGoo = goo as GH_Interval;
+
+                data.Type = "domain";
+
+                var domain = new NodePenDomain()
+                {
+                  Minimum = domainGoo.Value.Min,
+                  Maximum = domainGoo.Value.Max,
+                };
+
+                data.Value = JsonConvert.SerializeObject(domain);
+
+                break;
+              }
             case "Integer":
               {
                 var integerGoo = goo as GH_Integer;
@@ -244,6 +260,24 @@ namespace NodePen.Compute.Routes
 
                 data.Value = textGoo.Value.ToString();
                 data.Type = "text";
+                break;
+              }
+            case "Transform":
+              {
+                var transformGoo = goo as GH_Transform;
+
+                // TODO: Recursively (?) decompose these correctly
+                transformGoo.Value.DecomposeAffine(out Transform linear, out Vector3d tx);
+
+                var transform = new NodePenPoint()
+                {
+                  X = tx.X,
+                  Y = tx.Y,
+                  Z = tx.Z,
+                };
+
+                data.Type = "transform";
+                data.Value = JsonConvert.SerializeObject(transform);
                 break;
               }
             case "Vector":

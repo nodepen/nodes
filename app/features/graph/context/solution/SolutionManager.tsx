@@ -368,8 +368,10 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                   entry.value = incoming
                   break
                 }
+                case 'domain':
                 case 'vector':
-                case 'point': {
+                case 'point':
+                case 'transform': {
                   entry.value = JSON.parse(incoming)
                   break
                 }
