@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { NodePen } from 'glib'
-import { useSolutionValues, useSolutionPhase } from '@/features/graph/store/solution/hooks'
-import { getFlattenedDataTreeValues, isInputOrOutput } from '@/features/graph/utils'
+import { useSolutionValues, useSolutionPhase } from 'features/graph/store/solution/hooks'
+import { getFlattenedDataTreeValues, isInputOrOutput } from 'features/graph/utils'
 
 export const useVisibleGeometry = <T extends 'curve' | 'point' | 'line'>(
   element: NodePen.Element<'static-component' | 'static-parameter'>,
