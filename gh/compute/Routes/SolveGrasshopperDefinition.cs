@@ -134,6 +134,15 @@ namespace NodePen.Compute.Routes
 
           switch (goo.TypeName)
           {
+            case "Boolean":
+              {
+                var boolGoo = goo as GH_Boolean;
+
+                data.Type = "boolean";
+                data.Value = boolGoo.Value.ToString().ToLower();
+
+                break;
+              }
             case "Circle":
               {
                 var circleGoo = goo as GH_Circle;
@@ -235,6 +244,23 @@ namespace NodePen.Compute.Routes
 
                 data.Value = textGoo.Value.ToString();
                 data.Type = "text";
+                break;
+              }
+            case "Vector":
+              {
+                var vectorGoo = goo as GH_Vector;
+
+                var geo = vectorGoo.Value;
+
+                var vectorData = new NodePenPoint()
+                {
+                  X = geo.X,
+                  Y = geo.Y,
+                  Z = geo.Z
+                };
+
+                data.Value = JsonConvert.SerializeObject(vectorData);
+                data.Type = "vector";
                 break;
               }
             default:

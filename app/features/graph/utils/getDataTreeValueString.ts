@@ -2,6 +2,11 @@ import { NodePen } from 'glib'
 
 export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.SolutionValueType>): string => {
   switch (data.type) {
+    case 'boolean': {
+      const { value } = data as NodePen.DataTreeValue<'boolean'>
+
+      return value ? 'True' : 'False'
+    }
     case 'integer': {
       const { value } = data as NodePen.DataTreeValue<'integer'>
 
@@ -23,6 +28,13 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       const { value } = data as NodePen.DataTreeValue<'text'>
 
       return value
+    }
+    case 'vector': {
+      const { value } = data as NodePen.DataTreeValue<'vector'>
+
+      const { x, y, z } = value
+
+      return `{${x}, ${y}, ${z}}`
     }
     default: {
       console.log(`🐍 Not sure how to parse '${data.type}' value as string.`)

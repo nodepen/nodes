@@ -329,6 +329,10 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
               const incoming = entry.value as string
 
               switch (entry.type) {
+                case 'boolean': {
+                  entry.value = incoming === 'true'
+                  break
+                }
                 case 'integer': {
                   entry.value = Number.parseInt(incoming)
                   break
@@ -341,6 +345,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                   entry.value = incoming
                   break
                 }
+                case 'vector':
                 case 'point': {
                   entry.value = JSON.parse(incoming)
                   break

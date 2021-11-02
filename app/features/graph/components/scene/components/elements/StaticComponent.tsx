@@ -19,9 +19,11 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         const parameter = parameters[i]
 
         switch (parameter.type.toLowerCase()) {
+          case 'boolean':
           case 'integer':
           case 'number':
-          case 'text': {
+          case 'text':
+          case 'vector': {
             return null
           }
           case 'point': {

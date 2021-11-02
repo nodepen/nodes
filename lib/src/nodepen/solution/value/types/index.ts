@@ -1,5 +1,7 @@
+export type { BooleanValue as Boolean } from './BooleanValue'
 export type { IntegerValue as Integer } from './IntegerValue'
 export type { LineValue as Line } from './LineValue'
 export type { NumberValue as Number } from './NumberValue'
 export type { PointValue as Point } from './PointValue'
 export type { TextValue as Text } from './TextValue'
+export type { VectorValue as Vector } from './VectorValue'
