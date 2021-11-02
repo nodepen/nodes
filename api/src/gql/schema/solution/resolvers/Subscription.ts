@@ -6,6 +6,7 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('SOLUTION_START'),
       (payload, variables) => {
+        console.log({ startPayload: payload })
         return variables.graphId
           ? variables.graphId === payload.onSolutionStart.graphId
           : true
@@ -18,6 +19,18 @@ export const Subscription = {
       (payload, variables) => {
         return variables.graphId
           ? variables.graphId === payload.onSolutionFinish.graphId
+          : true
+      }
+    ),
+  },
+  onUpdateSelection: {
+    subscribe: withFilter(
+      () => pubsub.asyncIterator('UPDATE_SELECTION'),
+      (payload, variables) => {
+        console.log({ payload })
+        console.log({ variables })
+        return variables.graphId
+          ? variables.graphId === payload.onUpdateSelection.graphId
           : true
       }
     ),

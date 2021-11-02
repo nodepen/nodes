@@ -18,6 +18,7 @@ import { distance, screenSpaceToCameraSpace } from '../../../utils'
 import { useCanvasMenuActions } from './hooks'
 import { GenericMenu, PlaceComponentMenu } from '../../overlay'
 import { useAppStore } from '@/features/common/store'
+import { SelectionObserver } from '../../observer'
 
 const GraphCanvas = (): React.ReactElement => {
   const { register, registry } = useGraphManager()
@@ -152,159 +153,162 @@ const GraphCanvas = (): React.ReactElement => {
   }, [showAddComponent, zoomDisabled, cameraMode])
 
   return (
-    <div
-      className="w-full h-full relative overflow-hidden"
-      style={{ touchAction: 'none' }}
-      onContextMenu={(e) => {
-        e.preventDefault()
-      }}
-      onDoubleClick={(e) => {
-        const { pageX, pageY } = e
+    <>
+      <div
+        className="w-full h-full relative overflow-hidden"
+        style={{ touchAction: 'none' }}
+        onContextMenu={(e) => {
+          e.preventDefault()
+        }}
+        onDoubleClick={(e) => {
+          const { pageX, pageY } = e
 
-        addComponentPosition.current = [pageX, pageY]
-        setShowAddComponent(true)
-      }}
-      onPointerDown={(e) => {
-        if (e.pointerType !== 'mouse') {
-          return
-        }
-
-        switch (e.button) {
-          case 0: {
-            //setMode('locked')
-            if (showAddComponent) {
-              return
-            }
-
-            const region: NodePen.Element<'region'>['template'] = {
-              type: 'region',
-              mode: 'selection',
-              pointer: e.pointerId,
-            }
-
-            const [cx, cy] = cameraPosition
-            const { pageX: ex, pageY: ey } = e
-            const [x, y] = screenSpaceToCameraSpace(
-              { offset: [0, 48 + 36], position: [ex, ey] },
-              { zoom: cameraZoom, position: [cx, cy] }
-            )
-
-            // Add region select element, which will handle the rest
-            addLiveElement({
-              type: 'region',
-              template: region,
-              position: [x, y],
-            })
-
-            e.stopPropagation()
-            break
-          }
-          case 1: {
-            const { pageX: ex, pageY: ey } = e
-            handleOpenGraphContextMenu([ex, ey])
-            break
-          }
-        }
-      }}
-      onMouseDown={(e) => {
-        switch (e.button) {
-          case 2:
+          addComponentPosition.current = [pageX, pageY]
+          setShowAddComponent(true)
+        }}
+        onPointerDown={(e) => {
+          if (e.pointerType !== 'mouse') {
             return
-          default:
-            e.stopPropagation()
-        }
-      }}
-      role="presentation"
-      ref={registry.canvasContainerRef}
-    >
-      <TransformWrapper
-        initialScale={1}
-        initialPositionX={0}
-        initialPositionY={0}
-        disabled={cameraMode === 'locked'}
-        limitToBounds={false}
-        centerZoomedOut={false}
-        centerOnInit={false}
-        minScale={0.25}
-        maxScale={2.5}
-        velocityAnimation={{ disabled: true }}
-        zoomAnimation={{ disabled: true }}
-        onInit={(ref) => {
-          register.setTransform(ref.setTransform)
-        }}
-        doubleClick={{
-          disabled: true,
-        }}
-        pinch={{
-          step: 1,
-          disabled: zoomDisabled,
-        }}
-        wheel={{
-          step: 0.2,
-          touchPadDisabled: false,
-          disabled: zoomDisabled,
-        }}
-        panning={{
-          velocityDisabled: true,
-          disabled: zoomDisabled,
-        }}
-        onPanning={() => {
-          // TODO: How do we capture motion during a `setTransform` action?
-          // TODO: Do we *really* need to?
-        }}
-        onPanningStop={({ state }) => {
-          setStaticPosition([state.positionX, state.positionY])
-        }}
-        onZoom={({ state }) => {
-          // If we cross a 'zoom breakpoint' here, then update the zoom level in state.
-          const breakpoints = {
-            near: 0.5,
-            default: 2,
           }
 
-          const zoomLevel: typeof cameraZoomLevel =
-            state.scale < breakpoints.near ? 'far' : state.scale < breakpoints.default ? 'default' : 'near'
+          switch (e.button) {
+            case 0: {
+              //setMode('locked')
+              if (showAddComponent) {
+                return
+              }
 
-          if (cameraZoomLevel !== zoomLevel) {
-            setZoomLevel(zoomLevel)
+              const region: NodePen.Element<'region'>['template'] = {
+                type: 'region',
+                mode: 'selection',
+                pointer: e.pointerId,
+              }
+
+              const [cx, cy] = cameraPosition
+              const { pageX: ex, pageY: ey } = e
+              const [x, y] = screenSpaceToCameraSpace(
+                { offset: [0, 48 + 36], position: [ex, ey] },
+                { zoom: cameraZoom, position: [cx, cy] }
+              )
+
+              // Add region select element, which will handle the rest
+              addLiveElement({
+                type: 'region',
+                template: region,
+                position: [x, y],
+              })
+
+              e.stopPropagation()
+              break
+            }
+            case 1: {
+              const { pageX: ex, pageY: ey } = e
+              handleOpenGraphContextMenu([ex, ey])
+              break
+            }
           }
         }}
-        onZoomStop={({ state }) => {
-          setStaticZoom(state.scale)
-          setStaticPosition([state.positionX, state.positionY])
+        onMouseDown={(e) => {
+          switch (e.button) {
+            case 2:
+              return
+            default:
+              e.stopPropagation()
+          }
         }}
-        onWheelStart={() => {
-          setMode('zooming')
-        }}
-        onWheelStop={() => {
-          setMode('idle')
-        }}
-        onPinchingStart={() => {
-          setMode('zooming')
-        }}
-        onPinchingStop={() => {
-          setMode('idle')
-        }}
+        role="presentation"
+        ref={registry.canvasContainerRef}
       >
-        <TransformComponent>
-          <div className="w-vw h-vh relative overflow-visible" ref={longPressTarget}>
-            <StaticGrid />
-            <Container key="elements-container" />
-          </div>
-        </TransformComponent>
-      </TransformWrapper>
-      {showCanvasMenu ? (
-        <GenericMenu
-          context={{} as never}
-          actions={actions}
-          position={canvasMenuLocation.current}
-          onClose={handleCloseMenu}
-        />
-      ) : null}
-      {showAddComponent ? (
-        <PlaceComponentMenu position={addComponentPosition.current} onClose={() => setShowAddComponent(false)} />
-      ) : null}
-    </div>
+        <TransformWrapper
+          initialScale={1}
+          initialPositionX={0}
+          initialPositionY={0}
+          disabled={cameraMode === 'locked'}
+          limitToBounds={false}
+          centerZoomedOut={false}
+          centerOnInit={false}
+          minScale={0.25}
+          maxScale={2.5}
+          velocityAnimation={{ disabled: true }}
+          zoomAnimation={{ disabled: true }}
+          onInit={(ref) => {
+            register.setTransform(ref.setTransform)
+          }}
+          doubleClick={{
+            disabled: true,
+          }}
+          pinch={{
+            step: 1,
+            disabled: zoomDisabled,
+          }}
+          wheel={{
+            step: 0.2,
+            touchPadDisabled: false,
+            disabled: zoomDisabled,
+          }}
+          panning={{
+            velocityDisabled: true,
+            disabled: zoomDisabled,
+          }}
+          onPanning={() => {
+            // TODO: How do we capture motion during a `setTransform` action?
+            // TODO: Do we *really* need to?
+          }}
+          onPanningStop={({ state }) => {
+            setStaticPosition([state.positionX, state.positionY])
+          }}
+          onZoom={({ state }) => {
+            // If we cross a 'zoom breakpoint' here, then update the zoom level in state.
+            const breakpoints = {
+              near: 0.5,
+              default: 2,
+            }
+
+            const zoomLevel: typeof cameraZoomLevel =
+              state.scale < breakpoints.near ? 'far' : state.scale < breakpoints.default ? 'default' : 'near'
+
+            if (cameraZoomLevel !== zoomLevel) {
+              setZoomLevel(zoomLevel)
+            }
+          }}
+          onZoomStop={({ state }) => {
+            setStaticZoom(state.scale)
+            setStaticPosition([state.positionX, state.positionY])
+          }}
+          onWheelStart={() => {
+            setMode('zooming')
+          }}
+          onWheelStop={() => {
+            setMode('idle')
+          }}
+          onPinchingStart={() => {
+            setMode('zooming')
+          }}
+          onPinchingStop={() => {
+            setMode('idle')
+          }}
+        >
+          <TransformComponent>
+            <div className="w-vw h-vh relative overflow-visible" ref={longPressTarget}>
+              <StaticGrid />
+              <Container key="elements-container" />
+            </div>
+          </TransformComponent>
+        </TransformWrapper>
+        {showCanvasMenu ? (
+          <GenericMenu
+            context={{} as never}
+            actions={actions}
+            position={canvasMenuLocation.current}
+            onClose={handleCloseMenu}
+          />
+        ) : null}
+        {showAddComponent ? (
+          <PlaceComponentMenu position={addComponentPosition.current} onClose={() => setShowAddComponent(false)} />
+        ) : null}
+      </div>
+      <SelectionObserver />
+    </>
   )
 }
 

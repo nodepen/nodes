@@ -14,6 +14,10 @@ export type Arguments = {
       graphId: string
       solutionId: string
     }
+    updateSelection: {
+      graphId: string
+      selection: string[]
+    }
   }
   Solution: {
     value: {
