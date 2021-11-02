@@ -6,7 +6,6 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('SOLUTION_START'),
       (payload, variables) => {
-        console.log({ startPayload: payload })
         return variables.graphId
           ? variables.graphId === payload.onSolutionStart.graphId
           : true
@@ -27,8 +26,6 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('UPDATE_SELECTION'),
       (payload, variables) => {
-        console.log({ payload })
-        console.log({ variables })
         return variables.graphId
           ? variables.graphId === payload.onUpdateSelection.graphId
           : true

@@ -38,9 +38,11 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   const longHoverTarget = useLongHover(handleLongHover)
 
+  const [isMoving, setIsMoving] = useState(false)
+
   return (
     <>
-      <ElementContainer element={element}>
+      <ElementContainer element={element} onStart={() => setIsMoving(true)} onStop={() => setIsMoving(false)}>
         <div className="flex flex-col items-stretch pointer-events-auto">
           <div
             className={`${
@@ -108,7 +110,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           </TooltipContainer>
         </HoverTooltip>
       ) : null}
-      <RuntimeMessageContainer elementId={element.id} />
+      <RuntimeMessageContainer elementId={element.id} wait={isMoving} />
     </>
   )
 }

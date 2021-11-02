@@ -39,9 +39,6 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
   updateSelection: async (_parent, { graphId, selection }, { user }) => {
     await authorize(user)
 
-    console.log('New selection!')
-    console.log({ selection })
-
     db.client.publish(
       'UPDATE_SELECTION',
       JSON.stringify({ onUpdateSelection: { graphId, selection } })

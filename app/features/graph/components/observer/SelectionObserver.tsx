@@ -1,4 +1,4 @@
-import { useSubscription, gql, useApolloClient, useMutation } from '@apollo/client'
+import { useSubscription, gql, useMutation } from '@apollo/client'
 import React, { useEffect, useRef } from 'react'
 import { useGraphDispatch, useGraphSelection, useGraphId } from '../../store/graph/hooks'
 import { firebase } from 'features/common/context/session/auth/firebase'
@@ -30,11 +30,7 @@ const SelectionObserver = (): React.ReactElement => {
 
     if (!isSameLength || !isSameContent) {
       // Local change, broadcast to all sessions
-      console.log('Local change!')
-
       internalSelection.current = selection
-
-      console.log({ graphId })
 
       mutateSelection().then(() => console.log('@@'))
     }
@@ -65,6 +61,7 @@ const SelectionObserver = (): React.ReactElement => {
         const isSameContent = !incomingSelection.some((id) => !internalSelection.current.includes(id))
 
         if (!isSameLength || !isSameContent) {
+          // Remote change, apply locally once
           internalSelection.current = incomingSelection
           updateSelection({ type: 'id', ids: incomingSelection, mode: 'default' })
         }
@@ -74,6 +71,7 @@ const SelectionObserver = (): React.ReactElement => {
 
   useEffect(() => {
     if (error) {
+      console.log(`🐍 Error while trying to watch subscription changes!`)
       firebase.auth().currentUser?.getIdToken(true)
     }
   }, [error])

@@ -5,6 +5,7 @@ import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
 
 type RuntimeMessageContainerProps = {
   elementId: string
+  wait: boolean
 }
 
 type RuntimeMessage = {
@@ -12,7 +13,7 @@ type RuntimeMessage = {
   level: 'warning' | 'error'
 }
 
-const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): React.ReactElement | null => {
+const RuntimeMessageContainer = ({ elementId, wait }: RuntimeMessageContainerProps): React.ReactElement | null => {
   const messages = useSolutionMessages()
   const phase = useSolutionPhase()
   const zoomLevel = useCameraZoomLevel()
@@ -24,7 +25,7 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
   const cleanupTimeout = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
-    if (phase === 'idle') {
+    if (phase === 'idle' && !wait) {
       const incomingMessages = messages[elementId]
 
       if (incomingMessages && incomingMessages.length > 0) {
@@ -57,7 +58,7 @@ const RuntimeMessageContainer = ({ elementId }: RuntimeMessageContainerProps): R
         setInternalMessages(incomingMessages)
       }, 50)
     }
-  }, [phase])
+  }, [phase, wait])
 
   const visible = !!internalMessages && internalMessages.length > 0 && zoomLevel !== 'far'
 
