@@ -114,9 +114,10 @@ export const GraphControls = (): React.ReactElement => {
               </svg>
             </div>
             <div className="flex-grow h-full flex justify-start items-center">
-              <p className="font-sans font-bold text-sm select-none">
+              <p className="font-sans font-bold text-sm select-none mr-2">
                 {sceneDisplayMode === 'show' ? 'CLOSE' : 'SHOW'} MODEL
               </p>
+              <p className="font-sans font-bold text-xs select-none text-darkgreen">[ SPACE ]</p>
             </div>
           </button>
           <div className="w-full h-12 flex justify-start items-center">
@@ -166,7 +167,6 @@ export const GraphControls = (): React.ReactElement => {
             target="_blank"
             rel="noopener noreferrer"
             className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen"
-            onClick={handleShowModel}
           >
             <div className="w-12 h-12 flex justify-center items-center">
               <svg

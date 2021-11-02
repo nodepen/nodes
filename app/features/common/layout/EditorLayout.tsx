@@ -139,7 +139,36 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
       </div>
       {showUserModal ? (
         <ModalLayout onClose={() => setShowUserModal(false)}>
-          <p className="w-full">Howdy</p>
+          <div className="w-full h-full flex flex-col items-center justify-center">
+            <h2 className="text-5xl mb-4 font-sans font-semibold text-dark">Not yet!</h2>
+            <p className="text-lg mb-6 font-sans font-semibold text-dark">User profiles are still being tested.</p>
+            <div className="w-full flex flex-wrap justify-center items-center mb-3">
+              <a
+                href="https://twitter.com/cdriesler"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-48 h-12 ml-2 mr-2 mt-2 p-2 flex justify-center items-center bg-green hover:bg-swampgreen rounded-md"
+              >
+                <img className="w-6 h-6 mr-4" src="/logos/twitter.svg" />
+                <p className="text-md text-darkgreen font-medium select-none" style={{ transform: 'translateY(-1px)' }}>
+                  Follow Updates
+                </p>
+              </a>
+              <a
+                href="https://github.com/cdriesler/nodepen"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-48 h-12 ml-2 mr-2 mt-2 p-2 flex justify-center items-center bg-green hover:bg-swampgreen rounded-md"
+              >
+                <img className="w-6 h-6 mr-4" src="/logos/github.svg" />
+                <p className="text-md text-darkgreen font-medium select-none" style={{ transform: 'translateY(-1px)' }}>
+                  Watch Progress
+                </p>
+              </a>
+            </div>
+            <p className="text-sm mb-1 font-sans font-semibold text-dark">Thank you for trying NodePen.</p>
+            <p className="text-md">💚🦗</p>
+          </div>
         </ModalLayout>
       ) : null}
     </>
