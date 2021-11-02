@@ -3,9 +3,12 @@ import React, { useEffect, useRef } from 'react'
 import { useGraphDispatch, useGraphSelection, useGraphId } from '../../store/graph/hooks'
 import { firebase } from 'features/common/context/session/auth/firebase'
 import { useSessionManager } from '@/features/common/context/session'
+import { newGuid } from '../../utils'
 
 const SelectionObserver = (): React.ReactElement => {
   const { token } = useSessionManager()
+
+  const observerId = useRef<string>(newGuid())
 
   const { updateSelection } = useGraphDispatch()
   const graphId = useGraphId()
@@ -15,13 +18,13 @@ const SelectionObserver = (): React.ReactElement => {
 
   const [mutateSelection] = useMutation(
     gql`
-      mutation UpdateSelection($graphId: String!, $selection: [String]!) {
-        updateSelection(graphId: $graphId, selection: $selection) {
+      mutation UpdateSelection($observerId: String!, $graphId: String!, $selection: [String]!) {
+        updateSelection(observerId: $observerId, graphId: $graphId, selection: $selection) {
           selection
         }
       }
     `,
-    { variables: { graphId, selection } }
+    { variables: { observerId: observerId.current, graphId, selection } }
   )
 
   useEffect(() => {
@@ -40,6 +43,7 @@ const SelectionObserver = (): React.ReactElement => {
     gql`
       subscription WatchSelectionChange($graphId: String!) {
         onUpdateSelection(graphId: $graphId) {
+          observerId
           selection
         }
       }
@@ -52,6 +56,13 @@ const SelectionObserver = (): React.ReactElement => {
         const { data } = subscriptionData
 
         if (!data || !data.onUpdateSelection) {
+          return
+        }
+
+        const sourceObserverId = data.onUpdateSelection.observerId
+
+        if (sourceObserverId === observerId.current) {
+          // Do not attempt to consume updates from same client
           return
         }
 

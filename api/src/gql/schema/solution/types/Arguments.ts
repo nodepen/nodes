@@ -15,6 +15,7 @@ export type Arguments = {
       solutionId: string
     }
     updateSelection: {
+      observerId: string
       graphId: string
       selection: string[]
     }

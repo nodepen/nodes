@@ -36,14 +36,18 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
 
     return solutionId
   },
-  updateSelection: async (_parent, { graphId, selection }, { user }) => {
+  updateSelection: async (
+    _parent,
+    { observerId, graphId, selection },
+    { user }
+  ) => {
     await authorize(user)
 
     db.client.publish(
       'UPDATE_SELECTION',
-      JSON.stringify({ onUpdateSelection: { graphId, selection } })
+      JSON.stringify({ onUpdateSelection: { observerId, graphId, selection } })
     )
 
-    return { graphId, selection }
+    return { observerId, graphId, selection }
   },
 }

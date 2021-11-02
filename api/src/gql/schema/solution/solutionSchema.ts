@@ -15,7 +15,11 @@ export const solutionSchema = gql`
       graphId: String!
       solutionId: String!
     ): String!
-    updateSelection(graphId: String!, selection: [String]!): GraphSelection
+    updateSelection(
+      observerId: String!
+      graphId: String!
+      selection: [String]!
+    ): GraphSelection
   }
 
   extend type Subscription {
@@ -25,6 +29,7 @@ export const solutionSchema = gql`
   }
 
   type GraphSelection {
+    observerId: String!
     graphId: String!
     selection: [String]!
   }
