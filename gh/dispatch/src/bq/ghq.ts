@@ -78,6 +78,12 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
 
     const elementCount = data.length
 
+    // Basic usage logging - graphIds correspond to short-lived anonymous sessions
+    await db.incrby('stat:total-ms', duration)
+    await db.incrby('stat:total-runs', 1)
+    await db.hincrby('stat:per-graph-ms', graphId, duration)
+    await db.hincrby('stat:per-graph-runs', graphId, 1)
+
     return {
       ...job.data,
       duration,

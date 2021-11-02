@@ -37,6 +37,12 @@ const setex = setexAsync.bind(client) as typeof setexAsync
 const subscribeAsync = promisify(client.subscribe)
 const subscribe = subscribeAsync.bind(client) as typeof subscribeAsync
 
+const incrbyAsync = promisify(client.incrby)
+const incrby = incrbyAsync.bind(client) as typeof incrbyAsync
+
+const hincrbyAsync = promisify(client.hincrby)
+const hincrby = hincrbyAsync.bind(client) as typeof hincrbyAsync
+
 const batch = client.batch.bind(client)
 const multi = client.multi.bind(client)
 
@@ -54,4 +60,6 @@ export const db = {
   subscribe,
   batch,
   multi,
+  incrby,
+  hincrby,
 }
