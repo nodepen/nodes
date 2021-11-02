@@ -1,4 +1,5 @@
 export type { BooleanValue as Boolean } from './BooleanValue'
+export type { CurveValue as Curve } from './CurveValue'
 export type { DomainValue as Domain } from './DomainValue'
 export type { IntegerValue as Integer } from './IntegerValue'
 export type { LineValue as Line } from './LineValue'

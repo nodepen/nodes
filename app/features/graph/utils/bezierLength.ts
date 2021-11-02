@@ -39,7 +39,7 @@ export const bezierLength = (bezier: Bezier, samples = 100): number => {
 }
 
 /* eslint-disable */
-const bezierPoint = (t: number, a: number, b: number, c: number, d: number): number => {
+export const bezierPoint = (t: number, a: number, b: number, c: number, d: number): number => {
   return [
         a * (1 - t) * (1 - t) * (1 - t),
     3 * b * (1 - t) * (1 - t) * t,

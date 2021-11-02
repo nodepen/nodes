@@ -9,6 +9,9 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
 
       return value ? 'True' : 'False'
     }
+    case 'curve': {
+      return 'Curve'
+    }
     case 'domain': {
       const { value } = data as NodePen.DataTreeValue<'domain'>
 

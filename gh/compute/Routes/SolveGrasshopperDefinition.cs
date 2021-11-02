@@ -132,8 +132,6 @@ namespace NodePen.Compute.Routes
 
           var data = new SolutionDataValue();
 
-          Console.WriteLine(goo.TypeName);
-
           switch (goo.TypeName)
           {
             case "Boolean":
