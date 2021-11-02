@@ -30,6 +30,9 @@ const initialState: GraphState = {
     latest: {
       element: 'unset',
     },
+    restored: {
+      elements: [],
+    },
     move: {
       elements: [],
       fromWires: [],
@@ -56,6 +59,9 @@ export const graphSlice = createSlice({
     restore: (state: GraphState, action: PayloadAction<GrasshopperGraphManifest>) => {
       state.manifest = action.payload
       state.elements = action.payload.elements
+
+      // Flag restored objects as not needing correction
+      state.registry.restored.elements = Object.keys(action.payload.elements)
     },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
@@ -1056,7 +1062,7 @@ export const graphSlice = createSlice({
 
       state.elements[id].current.dimensions = { width, height }
 
-      if (!adjustment) {
+      if (!adjustment || state.registry.restored.elements.includes(id)) {
         return
       }
 

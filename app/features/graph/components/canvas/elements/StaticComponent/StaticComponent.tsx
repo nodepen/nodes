@@ -103,7 +103,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           />
         </div>
       </ElementContainer>
-      {showTooltip ? (
+      {showTooltip && !isMoving ? (
         <HoverTooltip position={tooltipPosition.current} onClose={() => setShowTooltip(false)}>
           <TooltipContainer>
             <StaticComponentDetails template={template} />

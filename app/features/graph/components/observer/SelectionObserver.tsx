@@ -32,7 +32,7 @@ const SelectionObserver = (): React.ReactElement => {
       // Local change, broadcast to all sessions
       internalSelection.current = selection
 
-      mutateSelection().then(() => console.log('@@'))
+      mutateSelection()
     }
   }, [selection])
 

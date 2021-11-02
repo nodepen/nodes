@@ -11,6 +11,9 @@ export type GraphState = {
     latest: {
       element: string
     }
+    restored: {
+      elements: string[]
+    }
     move: {
       elements: string[]
       fromWires: string[]
