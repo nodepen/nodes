@@ -72,6 +72,7 @@ const allowedComponents = {
       'e64c5fb1-845c-4ab1-8911-5f338516ba67', // Series (Series)
     ],
     tree: [
+      '41aa4112-9c9b-42f4-847e-503b9d90e4c7', // Flip Matrix (Flip)
       'f80cfe18-9510-4b89-8301-8e58faf423bb', // Flatten Tree (Flatten)
       '87e1d9ef-088b-4d30-9dda-8a7448a17329', // Graft Tree (Graft)
     ],

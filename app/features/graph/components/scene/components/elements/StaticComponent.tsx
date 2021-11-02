@@ -31,6 +31,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           case 'curve': {
             return <CurveParameter element={element} parameter={parameter} parameterId={id} />
           }
+          case 'data':
           case 'geometry': {
             return <GeometryParameter element={element} parameter={parameter} parameterId={id} />
           }

@@ -368,6 +368,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                   entry.value = incoming
                   break
                 }
+                case 'data':
                 case 'curve':
                 case 'domain':
                 case 'line':

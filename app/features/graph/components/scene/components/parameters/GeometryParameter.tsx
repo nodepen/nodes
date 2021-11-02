@@ -1,6 +1,6 @@
 import React from 'react'
 import { NodePen, Grasshopper } from 'glib'
-import { LineGeometry, PointGeometry } from '../geometry'
+import { CurveGeometry, LineGeometry, PointGeometry } from '../geometry'
 import { useVisibleGeometry } from '../../hooks'
 import { useGraphSelection } from '@/features/graph/store/graph/hooks'
 
@@ -11,7 +11,7 @@ type GeometryParameterProps = {
 }
 
 export const GeometryParameter = ({ element, parameterId }: GeometryParameterProps): React.ReactElement => {
-  const goo = useVisibleGeometry(element, parameterId, ['line', 'point'])
+  const goo = useVisibleGeometry(element, parameterId, ['line', 'point', 'curve'])
 
   const selection = useGraphSelection()
   const isSelected = selection.includes(element.id)
@@ -20,6 +20,17 @@ export const GeometryParameter = ({ element, parameterId }: GeometryParameterPro
     <>
       {goo.map((goo, i) => {
         switch (goo.type) {
+          case 'curve': {
+            const curve = goo.value as NodePen.GH.Curve
+
+            return (
+              <CurveGeometry
+                key={`scene-geometry-${element.id}-${parameterId}-${i}`}
+                curve={curve}
+                material={{ color: isSelected ? 'darkgreen' : undefined }}
+              />
+            )
+          }
           case 'line': {
             const line = goo.value as NodePen.GH.Line
 

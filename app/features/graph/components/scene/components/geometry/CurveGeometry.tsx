@@ -15,8 +15,6 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
   useLayoutEffect(() => {
     const { degree, segments } = curve
 
-    console.log({ degree })
-
     const positions: number[] = []
 
     for (const segment of segments) {
