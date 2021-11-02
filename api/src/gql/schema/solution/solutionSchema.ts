@@ -11,6 +11,7 @@ export const solutionSchema = gql`
 
   extend type Mutation {
     scheduleSolution(
+      observerId: String!
       graphJson: String!
       graphId: String!
       solutionId: String!
@@ -35,6 +36,7 @@ export const solutionSchema = gql`
   }
 
   type SolutionSnapshot {
+    observerId: String!
     graphJson: String!
     graphId: String!
     solutionId: String!

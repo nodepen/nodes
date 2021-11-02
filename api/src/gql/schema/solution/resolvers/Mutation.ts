@@ -7,7 +7,7 @@ import { Arguments } from '../types'
 export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
   scheduleSolution: async (
     _parent,
-    { graphJson, graphId, solutionId },
+    { observerId, graphJson, graphId, solutionId },
     { user }
   ): Promise<string> => {
     await authorize(user, {
@@ -18,7 +18,9 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
 
     db.client.publish(
       'SOLUTION_START',
-      JSON.stringify({ onSolutionStart: { graphJson, graphId, solutionId } })
+      JSON.stringify({
+        onSolutionStart: { observerId, graphJson, graphId, solutionId },
+      })
     )
 
     await db.setex(

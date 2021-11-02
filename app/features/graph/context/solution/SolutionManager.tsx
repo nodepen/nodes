@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { NodePen } from 'glib'
 import { useSubscription, gql, useApolloClient } from '@apollo/client'
 import { useGraphDispatch, useGraphElements, useGraphId } from '../../store/graph/hooks'
@@ -24,6 +24,8 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   const { isAuthenticated } = useSessionManager()
 
   const client = useApolloClient()
+
+  const observerId = useRef(newGuid())
 
   const { restore: restoreGraph } = useGraphDispatch()
   const elements = useGraphElements()
@@ -64,11 +66,22 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         client
           .mutate({
             mutation: gql`
-              mutation ScheduleSolutionFromManager($graphJson: String!, $graphId: String!, $solutionId: String!) {
-                scheduleSolution(graphJson: $graphJson, graphId: $graphId, solutionId: $solutionId)
+              mutation ScheduleSolutionFromManager(
+                $observerId: String!
+                $graphJson: String!
+                $graphId: String!
+                $solutionId: String!
+              ) {
+                scheduleSolution(
+                  observerId: $observerId
+                  graphJson: $graphJson
+                  graphId: $graphId
+                  solutionId: $solutionId
+                )
               }
             `,
             variables: {
+              observerId: observerId.current,
               graphId: graphId,
               solutionId: newSolutionId,
               graphJson: elementsJson,
@@ -111,6 +124,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     gql`
       subscription WatchSolutionStart($graphId: String!) {
         onSolutionStart(graphId: $graphId) {
+          observerId
           solutionId
           graphId
           graphJson
@@ -128,8 +142,17 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
           return
         }
 
-        const { graphJson, graphId: incomingGraphId, solutionId: incomingSolutionId } = data.onSolutionStart
+        const {
+          observerId: incomingObserverId,
+          graphJson,
+          graphId: incomingGraphId,
+          solutionId: incomingSolutionId,
+        } = data.onSolutionStart
 
+        if (incomingObserverId === observerId.current) {
+          console.log('Skipping change from self.')
+          return
+        }
         console.log(`[ GRAPH ] Current: ${graphId} | Incoming: ${incomingGraphId}`)
         console.log(`[ SOLUTION ] Current: ${meta?.id} | Incoming: ${incomingSolutionId}`)
 

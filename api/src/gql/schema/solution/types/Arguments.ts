@@ -10,6 +10,7 @@ export type Arguments = {
   }
   Mutation: {
     scheduleSolution: {
+      observerId: string
       graphJson: string
       graphId: string
       solutionId: string
