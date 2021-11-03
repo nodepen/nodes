@@ -12,6 +12,7 @@ import { getInitialWireMode } from '@/features/graph/store/hotkey/utils/getIniti
 import { WireMode } from '@/features/graph/store/graph/types'
 import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
 import { distance } from '@/features/graph/utils'
+import { useSessionManager } from '@/features/common/context/session'
 
 type GripContainerProps = {
   elementId: string
@@ -26,6 +27,8 @@ type GripContainerProps = {
  */
 const GripContainer = ({ elementId, parameterId, mode, children, onClick }: GripContainerProps): React.ReactElement => {
   const store = useAppStore()
+  const { device } = useSessionManager()
+
   const { setMode: setCameraMode } = useCameraDispatch()
   const { registerElementAnchor, captureLiveWires, startLiveWires, releaseLiveWires, endLiveWires } = useGraphDispatch()
 
@@ -177,6 +180,41 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
         resetLocalState()
       }
     }
+  }
+
+  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>): void => {
+    if (!device.iOS) {
+      return
+    }
+
+    const { pageX, pageY } = e.touches.item(0)
+
+    const d = distance(localPointerStartPosition.current, [pageX, pageY])
+
+    if (d < 20) {
+      return
+    }
+
+    startLiveWires({
+      templates: [
+        {
+          type: 'wire',
+          mode: 'live',
+          initial: {
+            pointer: localPointerId.current,
+            mode: 'default',
+          },
+          transpose: false,
+          ...map,
+        },
+      ],
+      origin: {
+        elementId,
+        parameterId,
+      },
+    })
+
+    resetLocalState()
   }
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
@@ -339,6 +377,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
           onPointerMove={handlePointerMove}
+          onTouchMove={handleTouchMove}
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
           role="presentation"
