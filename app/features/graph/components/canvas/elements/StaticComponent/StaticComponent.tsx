@@ -41,6 +41,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
 
   const [isMoving, setIsMoving] = useState(false)
 
+  const bg = isSelected ? (isVisible ? 'bg-green' : 'bg-swampgreen') : isVisible ? 'bg-white' : 'bg-gray-300'
+
   return (
     <>
       <ElementContainer
@@ -52,16 +54,8 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         }}
       >
         <div className="flex flex-col items-stretch pointer-events-auto">
-          <div
-            className={`${
-              isSelected ? 'bg-green' : !isVisible ? 'bg-gray-300' : 'bg-white'
-            } h-2 border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none`}
-          />
-          <div
-            className={`${
-              isSelected ? 'bg-green' : !isVisible ? 'bg-gray-300' : 'bg-white'
-            } flex flex-row justify-center items-stretch`}
-          >
+          <div className={`${bg} h-2 border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none`} />
+          <div className={`${bg} flex flex-row justify-center items-stretch`}>
             <div className="flex-grow flex flex-col items-stretch">
               {Object.entries(element.current.inputs).map(([id, i]) => {
                 const parameter = element.template.inputs[i]
@@ -108,11 +102,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               })}
             </div>
           </div>
-          <div
-            className={`${isSelected ? 'bg-green' : !isVisible ? 'bg-gray-300' : 'bg-white'} ${
-              zoomLevel === 'far' ? '' : 'shadow-osm'
-            } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none`}
-          />
+          <div className={`${bg} h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none`} />
         </div>
       </ElementContainer>
       {showTooltip && !isMoving ? (
