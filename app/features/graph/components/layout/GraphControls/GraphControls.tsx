@@ -254,6 +254,29 @@ export const GraphControls = (): React.ReactElement => {
               </svg>
             )}
           </button>
+          {device.breakpoint === 'sm' ? (
+            <button
+              className={`${
+                sceneDisplayMode === 'show' ? 'bg-swampgreen' : ''
+              } w-12 h-12 flex justify-center items-center`}
+              onClick={() => setDisplayMode(sceneDisplayMode === 'show' ? 'hide' : 'show')}
+            >
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="#093824"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                />
+              </svg>
+            </button>
+          ) : null}
           <button
             className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
             onClick={() => handleScroll((sidebarWidth - 96) / -2)}
@@ -270,7 +293,7 @@ export const GraphControls = (): React.ReactElement => {
           </button>
           <div
             className="h-full w-full whitespace-nowrap overflow-x-auto no-scrollbar"
-            style={{ minWidth: sidebarWidth - 96, width: sidebarWidth - 96, touchAction: 'none' }}
+            style={{ minWidth: sidebarWidth - 96 - 48, width: sidebarWidth - 96 - 48, touchAction: 'none' }}
             ref={componentToolbarRef}
           >
             {library

@@ -72,7 +72,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
           }
           fileData = new Uint8Array(bytes)
 
-          const blob = new Blob([fileData])
+          const blob = new Blob([fileData], { type: 'application/octet-stream' })
           const objectURL = window.URL.createObjectURL(blob)
           const anchor = document.createElement('a')
 
