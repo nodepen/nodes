@@ -6,6 +6,7 @@ import {
   HistoryHotkeyObserver,
   SelectionHotkeyObserver,
   SpaceBarObserver,
+  VisibilityHotkeyObserver,
 } from './components/observer'
 import { useSceneDisplayMode } from './store/scene/hooks'
 
@@ -20,6 +21,7 @@ export const GraphContainer = (): React.ReactElement => {
       <HistoryHotkeyObserver />
       <SelectionHotkeyObserver />
       <SpaceBarObserver />
+      <VisibilityHotkeyObserver />
       <div className="w-full flex-grow relative overflow-hidden">
         <div className="absolute w-full h-full left-0 top-0 z-0">
           <div className="w-full h-full flex flex-col justify-start overflow-hidden">

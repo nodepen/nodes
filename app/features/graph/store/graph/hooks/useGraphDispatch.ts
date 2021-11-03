@@ -95,6 +95,9 @@ export const useGraphDispatch = () => {
     setMode: (mode: GraphMode) => {
       dispatch(graphActions.setMode(mode))
     },
+    toggleVisibility: (ids: string[]) => {
+      dispatch(graphActions.toggleVisibility({ ids }))
+    },
     registerElement: (data: Payload.RegisterElementPayload) => {
       dispatch(graphActions.registerElement(data))
     },

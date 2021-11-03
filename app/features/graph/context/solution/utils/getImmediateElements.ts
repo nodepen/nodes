@@ -8,10 +8,12 @@ import { NodePen } from 'glib'
  */
 export const getImmediateElements = (
   elements: NodePen.Element<NodePen.ElementType>[]
-): NodePen.Element<'static-component' | 'static-parameter' | 'number-slider'>[] => {
+): NodePen.Element<'static-component' | 'static-parameter' | 'number-slider' | 'panel'>[] => {
+  const visible: NodePen.ElementType[] = ['static-component', 'static-parameter', 'number-slider', 'panel']
   return elements.filter(
-    (element): element is NodePen.Element<'static-component' | 'static-parameter' | 'number-slider'> =>
-      'settings' in element.current &&
-      (element.current.settings.solution === 'immediate' || element.current.settings.visibility === 'visible')
+    (element): element is NodePen.Element<'static-component' | 'static-parameter' | 'number-slider' | 'panel'> =>
+      visible.includes(element.template.type)
+    // 'settings' in element.current &&
+    // (element.current.settings.solution === 'immediate' || element.current.settings.visibility === 'visible')
   )
 }

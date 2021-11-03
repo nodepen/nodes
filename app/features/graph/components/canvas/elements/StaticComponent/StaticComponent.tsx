@@ -14,7 +14,7 @@ type StaticComponentProps = {
 }
 
 const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement => {
-  const { template, id } = element
+  const { template, current, id } = element
 
   useDebugRender(`StaticComponent | ${template.name} | ${id}`)
 
@@ -25,6 +25,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
   const selection = useGraphSelection()
 
   const isSelected = selection.includes(id)
+  const isVisible = current.settings.visibility === 'visible'
 
   const [showTooltip, setShowTooltip] = useState(false)
   const tooltipPosition = useRef<[number, number]>([0, 0])
@@ -53,10 +54,14 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
         <div className="flex flex-col items-stretch pointer-events-auto">
           <div
             className={`${
-              isSelected ? 'bg-green' : 'bg-white'
+              isSelected ? 'bg-green' : !isVisible ? 'bg-gray-300' : 'bg-white'
             } h-2 border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none`}
           />
-          <div className={`${isSelected ? 'bg-green' : 'bg-white'} flex flex-row justify-center items-stretch`}>
+          <div
+            className={`${
+              isSelected ? 'bg-green' : !isVisible ? 'bg-gray-300' : 'bg-white'
+            } flex flex-row justify-center items-stretch`}
+          >
             <div className="flex-grow flex flex-col items-stretch">
               {Object.entries(element.current.inputs).map(([id, i]) => {
                 const parameter = element.template.inputs[i]
@@ -104,7 +109,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             </div>
           </div>
           <div
-            className={`${isSelected ? 'bg-green' : 'bg-white'} ${
+            className={`${isSelected ? 'bg-green' : !isVisible ? 'bg-gray-300' : 'bg-white'} ${
               zoomLevel === 'far' ? '' : 'shadow-osm'
             } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none`}
           />

@@ -106,3 +106,7 @@ export type RestoreGraphPayload = {
   manifest: GrasshopperGraphManifest
   expireSolution: boolean
 }
+
+export type ToggleVisibilityPayload = {
+  ids: string[]
+}

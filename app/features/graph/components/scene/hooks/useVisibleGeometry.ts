@@ -25,6 +25,7 @@ export const useVisibleGeometry = <T extends 'curve' | 'point' | 'line'>(
     }
 
     if (visibility !== 'visible') {
+      setInternalTree(undefined)
       return
     }
 

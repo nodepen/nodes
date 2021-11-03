@@ -1051,6 +1051,22 @@ export const graphSlice = createSlice({
 
       state.mode = mode
     },
+    toggleVisibility: (state: GraphState, action: PayloadAction<Payload.ToggleVisibilityPayload>) => {
+      const { ids } = action.payload
+
+      for (const id of ids) {
+        const element = state.elements[id]
+
+        if (!element || !('settings' in element.current)) {
+          // Element does not have a visibility setting
+          return
+        }
+
+        const { visibility } = element.current.settings
+
+        element.current.settings.visibility = visibility === 'visible' ? 'hidden' : 'visible'
+      }
+    },
     registerElement: (state: GraphState, action: PayloadAction<Payload.RegisterElementPayload>) => {
       const { id, dimensions, adjustment } = action.payload
 
