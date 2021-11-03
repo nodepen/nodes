@@ -1,6 +1,7 @@
 import React from 'react'
 import { NodePen } from 'glib'
 import { CurveParameter, GeometryParameter, LineParameter, PointParameter } from '../parameters'
+import { RectangleParameter } from '../parameters/RectangleParameter'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
@@ -23,6 +24,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           case 'domain':
           case 'integer':
           case 'number':
+          case 'plane': // TODO
           case 'text':
           case 'transform':
           case 'vector': {
@@ -32,6 +34,7 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
             return <CurveParameter element={element} parameter={parameter} parameterId={id} />
           }
           case 'data':
+          case 'generic data':
           case 'geometry': {
             return <GeometryParameter element={element} parameter={parameter} parameterId={id} />
           }
@@ -40,6 +43,9 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           }
           case 'point': {
             return <PointParameter element={element} parameter={parameter} parameterId={id} />
+          }
+          case 'rectangle': {
+            return <RectangleParameter element={element} parameter={parameter} parameterId={id} />
           }
           default: {
             console.log(`🐍 Could not convert potentially visible geometry of type '${parameter.type.toLowerCase()}'`)
