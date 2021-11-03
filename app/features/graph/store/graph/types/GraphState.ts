@@ -14,6 +14,11 @@ export type GraphState = {
     restored: {
       elements: string[]
     }
+    visibility: {
+      // Elements with visibilities that just changes
+      // Consumed and reacted to by `VisibilityObserver`
+      elements: string[]
+    }
     move: {
       elements: string[]
       fromWires: string[]

@@ -6,5 +6,6 @@ export { useGraphMode } from './useGraphMode'
 export { useGraphPrimaryLiveWire } from './useGraphPrimaryLiveWire'
 export { useGraphSelection } from './useGraphSelection'
 export { useLiveWiresOrigin } from './useLiveWiresOrigin'
+export { useVisibilityRegistry } from './useVisibilityRegistry'
 
 export { useGridDimensions } from './useGridDimensions'

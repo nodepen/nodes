@@ -98,6 +98,9 @@ export const useGraphDispatch = () => {
     toggleVisibility: (ids: string[]) => {
       dispatch(graphActions.toggleVisibility({ ids }))
     },
+    setVisibility: (ids: string[], visibility: 'visible' | 'hidden') => {
+      dispatch(graphActions.setVisibility({ ids, visibility }))
+    },
     registerElement: (data: Payload.RegisterElementPayload) => {
       dispatch(graphActions.registerElement(data))
     },

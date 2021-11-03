@@ -110,3 +110,8 @@ export type RestoreGraphPayload = {
 export type ToggleVisibilityPayload = {
   ids: string[]
 }
+
+export type SetVisibilityPayload = {
+  ids: string[]
+  visibility: 'visible' | 'hidden'
+}

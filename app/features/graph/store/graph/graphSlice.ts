@@ -30,6 +30,9 @@ const initialState: GraphState = {
     latest: {
       element: 'unset',
     },
+    visibility: {
+      elements: [],
+    },
     restored: {
       elements: [],
     },
@@ -1059,12 +1062,34 @@ export const graphSlice = createSlice({
 
         if (!element || !('settings' in element.current)) {
           // Element does not have a visibility setting
-          return
+          continue
         }
 
         const { visibility } = element.current.settings
 
         element.current.settings.visibility = visibility === 'visible' ? 'hidden' : 'visible'
+      }
+    },
+    setVisibility: (state: GraphState, action: PayloadAction<Payload.SetVisibilityPayload>) => {
+      const { ids, visibility: incomingVisibility } = action.payload
+
+      state.registry.visibility.elements = []
+
+      for (const id of ids) {
+        const element = state.elements[id]
+
+        if (!element || !('settings' in element.current)) {
+          continue
+        }
+
+        const { visibility: currentVisibility } = element.current.settings
+
+        if (currentVisibility === incomingVisibility) {
+          continue
+        }
+
+        state.registry.visibility.elements.push(id)
+        element.current.settings.visibility = incomingVisibility
       }
     },
     registerElement: (state: GraphState, action: PayloadAction<Payload.RegisterElementPayload>) => {
@@ -1122,6 +1147,8 @@ const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: bool
   }
 }
 
+const selectVisibilityRegistry = (state: RootState): string[] => state.graph.present.registry.visibility.elements
+
 export const graphSelectors = {
   selectElements,
   selectSelection,
@@ -1130,6 +1157,7 @@ export const graphSelectors = {
   selectLiveWiresOrigin,
   selectGraphId,
   selectGraphHistory,
+  selectVisibilityRegistry,
 }
 
 const { actions, reducer } = graphSlice

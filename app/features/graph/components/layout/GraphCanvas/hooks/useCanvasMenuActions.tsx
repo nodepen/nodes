@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { MenuAction } from 'features/graph/types'
 import { useGraphDispatch, useGraphSelection } from 'features/graph/store/graph/hooks'
 import { useSetCameraPosition } from 'features/graph/hooks'
@@ -6,7 +5,7 @@ import { useSolutionDispatch } from '@/features/graph/store/solution/hooks'
 import { useSceneDispatch } from '@/features/graph/store/scene/hooks'
 
 export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<never>[] => {
-  const { undo, redo, reset, toggleVisibility, deleteElements } = useGraphDispatch()
+  const { undo, redo, reset, setVisibility, deleteElements } = useGraphDispatch()
   const selection = useGraphSelection()
   const { expireSolution } = useSolutionDispatch()
   const { setDisplayMode } = useSceneDispatch()
@@ -176,7 +175,7 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
     ),
     label: <p>Show</p>,
     menu: <p></p>,
-    onClick: () => toggleVisibility(selection),
+    onClick: () => setVisibility(selection, 'visible'),
   }
 
   const HideSelectionAction: MenuAction<never> = {
@@ -193,7 +192,7 @@ export const useCanvasMenuActions = (onAddComponent: () => void): MenuAction<nev
     ),
     label: <p>Hide</p>,
     menu: <p></p>,
-    onClick: () => toggleVisibility(selection),
+    onClick: () => setVisibility(selection, 'hidden'),
   }
 
   const selectionActions = [
