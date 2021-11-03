@@ -52,4 +52,26 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
 
     return { observerId, graphId, selection }
   },
+  updateVisibility: async (
+    _parent,
+    { observerId, graphId, graphJson },
+    { user }
+  ) => {
+    await authorize(user)
+
+    console.log('VIS')
+
+    db.client.publish(
+      'UPDATE_VISIBILITY',
+      JSON.stringify({
+        onUpdateVisibility: {
+          observerId,
+          graphId,
+          graphJson,
+        },
+      })
+    )
+
+    return { observerId, graphId, graphJson }
+  },
 }

@@ -21,18 +21,30 @@ export const solutionSchema = gql`
       graphId: String!
       selection: [String]!
     ): GraphSelection
+    updateVisibility(
+      observerId: String!
+      graphId: String!
+      graphJson: String!
+    ): GraphVisibility!
   }
 
   extend type Subscription {
     onSolutionStart(graphId: String): SolutionSnapshot
     onSolutionFinish(graphId: String): SolutionManifest
     onUpdateSelection(graphId: String): GraphSelection
+    onUpdateVisibility(graphId: String): GraphVisibility
   }
 
   type GraphSelection {
     observerId: String!
     graphId: String!
     selection: [String]!
+  }
+
+  type GraphVisibility {
+    observerId: String!
+    graphId: String!
+    graphJson: String!
   }
 
   type SolutionSnapshot {

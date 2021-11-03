@@ -32,4 +32,14 @@ export const Subscription = {
       }
     ),
   },
+  onUpdateVisibility: {
+    subscribe: withFilter(
+      () => pubsub.asyncIterator('UPDATE_VISIBILITY'),
+      (payload, variables) => {
+        return variables.graphId
+          ? variables.graphId === payload.onUpdateVisibility.graphId
+          : true
+      }
+    ),
+  },
 }

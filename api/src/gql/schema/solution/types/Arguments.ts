@@ -20,6 +20,11 @@ export type Arguments = {
       graphId: string
       selection: string[]
     }
+    updateVisibility: {
+      observerId: string
+      graphId: string
+      graphJson: string
+    }
   }
   Solution: {
     value: {
