@@ -129,7 +129,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
             </button>
             <button
               className={`${isAnonymous ? 'border-2 border-dark' : ''} h-6 w-6 rounded-sm bg-white overflow-hidden`}
-              onClick={() => setShowUserModal(true)}
+              onClick={() => setShowUserModal((current) => !current)}
             >
               <UserImage />
             </button>
@@ -162,7 +162,7 @@ export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElemen
               >
                 <img className="w-6 h-6 mr-4" src="/logos/github.svg" />
                 <p className="text-md text-darkgreen font-medium select-none" style={{ transform: 'translateY(-1px)' }}>
-                  Watch Progress
+                  View Code
                 </p>
               </a>
             </div>

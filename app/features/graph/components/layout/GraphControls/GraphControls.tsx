@@ -4,13 +4,24 @@ import { categorize, flattenCategory } from '../../../utils'
 import { ComponentLibraryIcon } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { useSceneDispatch, useSceneDisplayMode } from '@/features/graph/store/scene/hooks'
+import { useRouter } from 'next/router'
 
 export const GraphControls = (): React.ReactElement => {
+  const router = useRouter()
+
   const { library } = useGraphManager()
   const { user, device } = useSessionManager()
 
   const { setDisplayMode } = useSceneDispatch()
   const sceneDisplayMode = useSceneDisplayMode()
+
+  useEffect(() => {
+    const { view } = router.query
+
+    if (view === 'model') {
+      setDisplayMode('show')
+    }
+  }, [])
 
   const [sidebarWidth, setSidebarWidth] = useState(0)
   const [sidebarIsOpen, setSidebarIsOpen] = useState(false)
@@ -291,25 +302,47 @@ export const GraphControls = (): React.ReactElement => {
           {device.breakpoint !== 'sm' ? (
             <div className="h-full flex-grow flex justify-end items-center overflow-hidden">
               {sceneDisplayMode === 'show' ? (
-                <button
-                  className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
-                  onClick={() => setDisplayMode('hide')}
-                >
-                  <svg
-                    className="w-6 h-6"
-                    fill="none"
-                    stroke="#093824"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
+                <>
+                  <a
+                    href="/gh?view=model"
+                    target="_blank"
+                    className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </button>
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="#093824"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                      />
+                    </svg>
+                  </a>
+                  <button
+                    className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
+                    onClick={() => setDisplayMode('hide')}
+                  >
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="#093824"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                      />
+                    </svg>
+                  </button>
+                </>
               ) : null}
             </div>
           ) : null}

@@ -38,16 +38,16 @@ export const ModalLayout = ({ children, onClose }: ModalLayoutProps): React.Reac
       <style jsx>{`
         @keyframes march {
           from {
-            background-position: left bottom;
+            background-position: 0mm 15mm;
           }
           to {
-            background-position: right top;
+            background-position: 15mm 0mm;
           }
         }
 
         .animate-modal {
           animation-name: march;
-          animation-duration: 120s;
+          animation-duration: 5s;
           animation-timing-function: linear;
           animation-iteration-count: infinite;
         }
