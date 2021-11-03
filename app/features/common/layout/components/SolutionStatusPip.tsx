@@ -91,7 +91,7 @@ const SolutionStatusPip = (): React.ReactElement => {
             className="h-8 flex items-center pl-4 pr-4 bg-white rounded-md transition-transform duration-300 ease-out"
             style={{ transform: showDetails ? 'translateY(0px)' : 'translateY(-64px)' }}
           >
-            <Typography.Label size="sm" color="dark">
+            <Typography.Label size="sm" color="dark" select={false}>
               {message}
             </Typography.Label>
           </div>
