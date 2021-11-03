@@ -1,11 +1,20 @@
 import { useSessionManager } from '@/features/common/context/session'
 import { useMutation, gql, useSubscription } from '@apollo/client'
 import React, { useEffect, useRef } from 'react'
-import { useGraphDispatch, useGraphElements, useGraphId, useGraphSelection } from '../../store/graph/hooks'
+import {
+  useGraphDispatch,
+  useGraphElements,
+  useGraphId,
+  useGraphSelection,
+  useVisibilityRegistry,
+} from '../../store/graph/hooks'
 import { useVisibilityHotkey } from '../../store/hotkey/hooks'
 import { newGuid } from '../../utils'
 import { firebase } from 'features/common/context/session/auth/firebase'
 
+/**
+ * Watches `ctrl + q` and for `setVisibility` changes
+ */
 const VisibilityHotkeyObserver = (): React.ReactElement => {
   const { token } = useSessionManager()
 
@@ -60,7 +69,6 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
         const sourceObserverId = data.onUpdateVisibility.observerId
 
         if (sourceObserverId === observerId.current) {
-          console.log('Skipping visibility change from self!')
           return
         }
 
@@ -75,6 +83,20 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
       firebase.auth().currentUser?.getIdToken(true)
     }
   }, [error])
+
+  const registry = useVisibilityRegistry()
+  const internalRegistry = useRef<string[]>([])
+
+  useEffect(() => {
+    const isSameLength = registry.length === internalRegistry.current.length
+    const isSameContent = !registry.some((id) => !internalRegistry.current.includes(id))
+
+    if (!isSameLength || !isSameContent) {
+      // Some work needs to be emitted
+      internalRegistry.current = registry
+      mutateVisibility({ variables: { observerId: observerId.current, graphId, ids: registry } })
+    }
+  }, [registry])
 
   return <></>
 }
