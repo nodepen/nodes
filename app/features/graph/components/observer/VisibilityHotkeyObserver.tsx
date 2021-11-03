@@ -12,7 +12,7 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
   const observerId = useRef<string>(newGuid())
 
   const { toggleVisibility } = useGraphDispatch()
-  const elements = useGraphElements()
+  const graph = useGraphElements()
   const graphId = useGraphId()
   const selection = useGraphSelection()
 
@@ -25,10 +25,7 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
           graphId
         }
       }
-    `,
-    {
-      variables: { observerId: observerId.current, graphId, graphJson: JSON.stringify(elements) },
-    }
+    `
   )
 
   useEffect(() => {
@@ -36,9 +33,29 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
       return
     }
 
+    const persistElements = ['static-component', 'number-slider', 'panel', 'wire']
+
+    // TODO: React to changes in state instead of calculating it twice (or here at all)
+    const graphClone = JSON.parse(JSON.stringify(graph)) as typeof graph
+
+    for (const id of selection) {
+      const target = graphClone[id]
+
+      if (!target || !('settings' in target.current)) {
+        continue
+      }
+
+      const { visibility } = target.current.settings
+
+      target.current.settings.visibility = visibility === 'visible' ? 'hidden' : 'visible'
+    }
+
+    const graphJson = JSON.stringify(
+      Object.values(graphClone).filter((element) => persistElements.includes(element.template.type))
+    )
+
     toggleVisibility(selection)
-    mutateVisibility()
-    // Emit
+    mutateVisibility({ variables: { observerId: observerId.current, graphId, graphJson } })
   }, [shouldToggle])
 
   const { error } = useSubscription(

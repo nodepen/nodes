@@ -1,3 +1,4 @@
+import { NodePen } from 'glib'
 import { db } from '../../../../redis'
 import { ghq } from '../../../../bq'
 import { authorize } from '../../../utils/authorize'
@@ -70,6 +71,15 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           graphJson,
         },
       })
+    )
+
+    // Save visibility to graph
+    const latestSolutionId = await db.get(`graph:${graphId}:solution`)
+
+    await db.setex(
+      `graph:${graphId}:solution:${latestSolutionId}:json`,
+      60 * 60,
+      graphJson
     )
 
     return { observerId, graphId, graphJson }
