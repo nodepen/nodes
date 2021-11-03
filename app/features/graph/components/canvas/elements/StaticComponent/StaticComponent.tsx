@@ -102,7 +102,11 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
               })}
             </div>
           </div>
-          <div className={`${bg} h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none`} />
+          <div
+            className={`${bg} ${
+              zoomLevel === 'far' ? '' : 'shadow-osm'
+            } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none`}
+          />
         </div>
       </ElementContainer>
       {showTooltip && !isMoving ? (

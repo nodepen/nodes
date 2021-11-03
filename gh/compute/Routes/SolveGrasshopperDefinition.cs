@@ -237,6 +237,12 @@ namespace NodePen.Compute.Routes
                 data.Type = "number";
                 break;
               }
+            case "Path":
+              {
+                data.Value = "path";
+                data.Type = "path";
+                break;
+              }
             case "Plane":
               {
                 var planeGoo = goo as GH_Plane;
