@@ -34,5 +34,12 @@ namespace NodePen.Compute
       Y = pt.Y;
       Z = pt.Z;
     }
+
+    public NodePenPoint(Vector3d vec)
+    {
+      X = vec.X;
+      Y = vec.Y;
+      Z = vec.Z;
+    }
   }
 }

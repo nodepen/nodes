@@ -237,6 +237,22 @@ namespace NodePen.Compute.Routes
                 data.Type = "number";
                 break;
               }
+            case "Plane":
+              {
+                var planeGoo = goo as GH_Plane;
+
+                var geo = planeGoo.Value;
+
+                var plane = new NodePenPlane()
+                {
+                  Normal = new NodePenPoint(geo.Normal),
+                  Origin = new NodePenPoint(geo.Origin)
+                };
+
+                data.Value = JsonConvert.SerializeObject(plane);
+                data.Type = "plane";
+                break;
+              }
             case "Point":
               {
                 var pointGoo = goo as GH_Point;

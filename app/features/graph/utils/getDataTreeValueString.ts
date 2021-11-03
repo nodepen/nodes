@@ -9,6 +9,9 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
 
       return value ? 'True' : 'False'
     }
+    case 'circle': {
+      return 'Circle'
+    }
     case 'curve': {
       return 'Curve'
     }
@@ -37,6 +40,18 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       const { value } = data as NodePen.DataTreeValue<'number'>
 
       return value.toString()
+    }
+    case 'path': {
+      return 'Path'
+    }
+    case 'plane': {
+      const { value } = data as NodePen.DataTreeValue<'plane'>
+
+      const { origin: o, normal: z } = value
+
+      return `O(${o.x.toFixed(2)},${o.y.toFixed(2)},${o.z.toFixed(2)}) Z(${z.x.toFixed(2)},${z.y.toFixed(
+        2
+      )},${z.z.toFixed(2)})`
     }
     case 'point': {
       const { value } = data as NodePen.DataTreeValue<'point'>

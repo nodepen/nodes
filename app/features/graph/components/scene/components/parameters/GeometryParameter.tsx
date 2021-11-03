@@ -11,7 +11,7 @@ type GeometryParameterProps = {
 }
 
 export const GeometryParameter = ({ element, parameterId }: GeometryParameterProps): React.ReactElement => {
-  const goo = useVisibleGeometry(element, parameterId, ['line', 'point', 'curve', 'rectangle'])
+  const goo = useVisibleGeometry(element, parameterId, ['line', 'point', 'curve', 'circle', 'rectangle'])
 
   const selection = useGraphSelection()
   const isSelected = selection.includes(element.id)
@@ -20,6 +20,7 @@ export const GeometryParameter = ({ element, parameterId }: GeometryParameterPro
     <>
       {goo.map((goo, i) => {
         switch (goo.type) {
+          case 'circle':
           case 'curve': {
             const curve = goo.value as NodePen.GH.Curve
 

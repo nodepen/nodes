@@ -8,6 +8,7 @@ export type SolutionValueGoo =
   | GH.Integer
   | GH.Line
   | GH.Number
+  | GH.Plane
   | GH.Point
   | GH.Rectangle
   | GH.Text

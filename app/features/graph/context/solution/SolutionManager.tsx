@@ -373,6 +373,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                 case 'curve':
                 case 'domain':
                 case 'line':
+                case 'path':
                 case 'point':
                 case 'plane':
                 case 'rectangle':

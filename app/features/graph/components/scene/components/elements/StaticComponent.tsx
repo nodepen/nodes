@@ -24,12 +24,14 @@ const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement 
           case 'domain':
           case 'integer':
           case 'number':
+          case 'path':
           case 'plane': // TODO
           case 'text':
           case 'transform':
           case 'vector': {
             return null
           }
+          case 'circle':
           case 'curve': {
             return <CurveParameter element={element} parameter={parameter} parameterId={id} />
           }

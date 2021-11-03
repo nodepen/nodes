@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 import { useSolutionValues, useSolutionPhase } from 'features/graph/store/solution/hooks'
 import { getFlattenedDataTreeValues, isInputOrOutput } from 'features/graph/utils'
 
-export const useVisibleGeometry = <T extends 'curve' | 'point' | 'line' | 'rectangle'>(
+export const useVisibleGeometry = <T extends 'circle' | 'curve' | 'point' | 'line' | 'rectangle'>(
   element: NodePen.Element<'static-component' | 'static-parameter'>,
   parameterId: string,
   types: T[]

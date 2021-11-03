@@ -11,7 +11,7 @@ type CurveParameterProps = {
 }
 
 export const CurveParameter = ({ element, parameterId }: CurveParameterProps): React.ReactElement => {
-  const goo = useVisibleGeometry(element, parameterId, ['curve'])
+  const goo = useVisibleGeometry(element, parameterId, ['curve', 'circle'])
 
   const selection = useGraphSelection()
   const isSelected = selection.includes(element.id)

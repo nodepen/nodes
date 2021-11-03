@@ -8,6 +8,8 @@ export type SolutionValue = {
     'integer': GH.Integer,
     'line': GH.Line,
     'number': GH.Number,
+    'path': never,
+    'plane': GH.Plane,
     'point': GH.Point,
     'rectangle': GH.Rectangle,
     'text': GH.Text,
