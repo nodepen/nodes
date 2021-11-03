@@ -12,7 +12,6 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
   const observerId = useRef<string>(newGuid())
 
   const { toggleVisibility } = useGraphDispatch()
-  const graph = useGraphElements()
   const graphId = useGraphId()
   const selection = useGraphSelection()
 
@@ -20,12 +19,13 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
 
   const [mutateVisibility] = useMutation(
     gql`
-      mutation UpdateVisibility($observerId: String!, $graphId: String!, $graphJson: String!) {
-        updateVisibility(observerId: $observerId, graphId: $graphId, graphJson: $graphJson) {
+      mutation UpdateVisibility($observerId: String!, $graphId: String!, $ids: [String]!) {
+        updateVisibility(observerId: $observerId, graphId: $graphId, ids: $ids) {
           graphId
         }
       }
-    `
+    `,
+    { variables: { observerId: observerId.current, graphId, ids: selection } }
   )
 
   useEffect(() => {
@@ -33,29 +33,8 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
       return
     }
 
-    const persistElements = ['static-component', 'number-slider', 'panel', 'wire']
-
-    // TODO: React to changes in state instead of calculating it twice (or here at all)
-    const graphClone = JSON.parse(JSON.stringify(graph)) as typeof graph
-
-    for (const id of selection) {
-      const target = graphClone[id]
-
-      if (!target || !('settings' in target.current)) {
-        continue
-      }
-
-      const { visibility } = target.current.settings
-
-      target.current.settings.visibility = visibility === 'visible' ? 'hidden' : 'visible'
-    }
-
-    const graphJson = JSON.stringify(
-      Object.values(graphClone).filter((element) => persistElements.includes(element.template.type))
-    )
-
     toggleVisibility(selection)
-    mutateVisibility({ variables: { observerId: observerId.current, graphId, graphJson } })
+    mutateVisibility()
   }, [shouldToggle])
 
   const { error } = useSubscription(
@@ -63,7 +42,7 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
       subscription WatchVisibilityChange($graphId: String!) {
         onUpdateVisibility(graphId: $graphId) {
           observerId
-          graphJson
+          ids
         }
       }
     `,
@@ -84,6 +63,8 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
           console.log('Skipping visibility change from self!')
           return
         }
+
+        toggleVisibility(data.onUpdateVisibility.ids)
       },
     }
   )

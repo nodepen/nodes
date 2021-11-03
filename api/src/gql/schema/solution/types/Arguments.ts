@@ -23,7 +23,7 @@ export type Arguments = {
     updateVisibility: {
       observerId: string
       graphId: string
-      graphJson: string
+      ids: string[]
     }
   }
   Solution: {

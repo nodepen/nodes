@@ -24,7 +24,7 @@ export const solutionSchema = gql`
     updateVisibility(
       observerId: String!
       graphId: String!
-      graphJson: String!
+      ids: [String]!
     ): GraphVisibility!
   }
 
@@ -44,7 +44,7 @@ export const solutionSchema = gql`
   type GraphVisibility {
     observerId: String!
     graphId: String!
-    graphJson: String!
+    ids: [String]!
   }
 
   type SolutionSnapshot {

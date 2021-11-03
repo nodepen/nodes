@@ -53,14 +53,38 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
 
     return { observerId, graphId, selection }
   },
-  updateVisibility: async (
-    _parent,
-    { observerId, graphId, graphJson },
-    { user }
-  ) => {
+  updateVisibility: async (_parent, { observerId, graphId, ids }, { user }) => {
     await authorize(user)
 
-    console.log('VIS')
+    // Save visibility to graph
+    const latestSolutionId = await db.get(`graph:${graphId}:solution`)
+
+    const elementsJson = await db.get(
+      `graph:${graphId}:solution:${latestSolutionId}:json`
+    )
+
+    const elements: NodePen.Element<NodePen.ElementType>[] = JSON.parse(
+      elementsJson ?? '[]'
+    )
+
+    for (const id of ids) {
+      const target = elements.find((element) => element.id === id)
+
+      if (!target || !('settings' in target.current)) {
+        continue
+      }
+
+      const { visibility } = target.current.settings
+
+      target.current.settings.visibility =
+        visibility === 'visible' ? 'hidden' : 'visible'
+    }
+
+    await db.setex(
+      `graph:${graphId}:solution:${latestSolutionId}:json`,
+      60 * 60,
+      JSON.stringify(elements)
+    )
 
     db.client.publish(
       'UPDATE_VISIBILITY',
@@ -68,20 +92,11 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
         onUpdateVisibility: {
           observerId,
           graphId,
-          graphJson,
+          ids,
         },
       })
     )
 
-    // Save visibility to graph
-    const latestSolutionId = await db.get(`graph:${graphId}:solution`)
-
-    await db.setex(
-      `graph:${graphId}:solution:${latestSolutionId}:json`,
-      60 * 60,
-      graphJson
-    )
-
-    return { observerId, graphId, graphJson }
+    return { observerId, graphId, ids }
   },
 }
