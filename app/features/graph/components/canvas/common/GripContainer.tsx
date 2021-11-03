@@ -305,25 +305,28 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
 
     // console.log('GripContainer : handlePointerUp')
 
-    switch (e.pointerType) {
-      case 'mouse': {
-        endLiveWires(getWireMode(store.getState().hotkey))
-        break
-      }
-      case 'pen':
-      case 'touch': {
-        const now = Date.now()
-        const duration = now - localPointerStartTime.current
+    endLiveWires(getWireMode(store.getState().hotkey))
 
-        if (duration > 150) {
-          break
-        }
+    // TODO: Differentiate between 'click' and 'ending wire' when 'click' is needed on mobile.
+    // switch (e.pointerType) {
+    //   case 'mouse': {
+    //     endLiveWires(getWireMode(store.getState().hotkey))
+    //     break
+    //   }
+    //   case 'pen':
+    //   case 'touch': {
+    //     const now = Date.now()
+    //     const duration = now - localPointerStartTime.current
 
-        // Do click action
-        onClick?.()
-        break
-      }
-    }
+    //     if (duration > 150) {
+    //       break
+    //     }
+
+    //     // Do click action
+    //     onClick?.()
+    //     break
+    //   }
+    // }
 
     resetLocalState()
   }
