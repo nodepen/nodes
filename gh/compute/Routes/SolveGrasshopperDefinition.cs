@@ -254,6 +254,32 @@ namespace NodePen.Compute.Routes
                 data.Type = "point";
                 break;
               }
+            case "Rectangle":
+              {
+                var rectangleGoo = goo as GH_Rectangle;
+
+                var geo = rectangleGoo.Value;
+
+                var a = geo.Corner(0);
+                var b = geo.Corner(1);
+                var c = geo.Corner(2);
+                var d = geo.Corner(3);
+
+                var rectangle = new NodePenRectangle()
+                {
+                  Width = geo.Width,
+                  Height = geo.Height
+                };
+
+                rectangle.Corners.Add("a", new NodePenPoint(a));
+                rectangle.Corners.Add("b", new NodePenPoint(b));
+                rectangle.Corners.Add("c", new NodePenPoint(c));
+                rectangle.Corners.Add("d", new NodePenPoint(d));
+
+                data.Value = JsonConvert.SerializeObject(rectangle);
+                data.Type = "rectangle";
+                break;
+              }
             case "Text":
               {
                 var textGoo = goo as GH_String;

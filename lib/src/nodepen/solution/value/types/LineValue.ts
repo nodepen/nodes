@@ -1,12 +1,6 @@
+import { Point3d } from './shared'
+
 export type LineValue = {
-  from: {
-    x: number
-    y: number
-    z: number
-  }
-  to: {
-    x: number
-    y: number
-    z: number
-  }
+  from: Point3d
+  to: Point3d
 }

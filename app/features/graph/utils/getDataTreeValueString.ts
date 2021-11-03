@@ -45,6 +45,13 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
 
       return `{${x}, ${y}, ${z}}`
     }
+    case 'rectangle': {
+      const { value } = data as NodePen.DataTreeValue<'rectangle'>
+
+      const { width, height } = value
+
+      return `Rectangle (w=${width.toFixed(2)}, h=${height.toFixed(2)})`
+    }
     case 'text': {
       const { value } = data as NodePen.DataTreeValue<'text'>
 
@@ -66,7 +73,7 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
     }
     default: {
       console.log(`🐍 Not sure how to parse '${data.type}' value as string.`)
-      return data.value.toString()
+      return `Unknown ${data.type} value`
     }
   }
 }

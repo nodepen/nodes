@@ -1,5 +1,3 @@
-export type VectorValue = {
-  x: number
-  y: number
-  z: number
-}
+import { Point3d } from './shared'
+
+export type VectorValue = Point3d

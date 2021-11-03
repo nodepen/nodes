@@ -150,7 +150,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         } = data.onSolutionStart
 
         if (incomingObserverId === observerId.current) {
-          console.log('Skipping change from self.')
+          // console.log('Skipping change from self.')
           return
         }
         console.log(`[ GRAPH ] Current: ${graphId} | Incoming: ${incomingGraphId}`)
@@ -280,7 +280,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
     const immediateElements = getImmediateElements(Object.values(elements))
 
-    console.log(`Requesting values for ${immediateElements.length} immediate mode components.`)
+    // console.log(`Requesting values for ${immediateElements.length} immediate mode components.`)
 
     const getSolutionValue = async (
       graphId: string,
@@ -314,7 +314,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     }
 
     const getParameterInstanceIds = (
-      element: NodePen.Element<'static-component' | 'static-parameter' | 'number-slider'>
+      element: NodePen.Element<'static-component' | 'static-parameter' | 'number-slider' | 'panel'>
     ): string[] => {
       return [...Object.keys(element.current.inputs), ...Object.keys(element.current.outputs)]
     }
@@ -369,10 +369,13 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                   break
                 }
                 case 'data':
+                case 'circle':
                 case 'curve':
                 case 'domain':
                 case 'line':
                 case 'point':
+                case 'plane':
+                case 'rectangle':
                 case 'transform':
                 case 'vector': {
                   entry.value = JSON.parse(incoming)
@@ -380,6 +383,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                 }
                 default: {
                   console.log(`🐍 Received unhandled value of type '${entry.type}'`)
+                  entry.value = JSON.parse(incoming)
                 }
               }
             }

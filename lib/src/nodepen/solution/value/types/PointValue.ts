@@ -1,5 +1,3 @@
-export type PointValue = {
-  x: number
-  y: number
-  z: number
-}
+import { Point3d } from './shared'
+
+export type PointValue = Point3d
