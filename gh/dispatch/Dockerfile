@@ -19,6 +19,7 @@ RUN npm config set registry https://registry.npmjs.org/
 WORKDIR /dispatch
 
 COPY package.json /dispatch/package.json
+COPY glib /dispatch/glib
 RUN npm install
 
 COPY . /dispatch
