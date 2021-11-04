@@ -11,8 +11,6 @@ import { GripTooltip } from './GripTooltip'
 import { getInitialWireMode } from '@/features/graph/store/hotkey/utils/getInitialWireMode'
 import { WireMode } from '@/features/graph/store/graph/types'
 import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
-import { distance } from '@/features/graph/utils'
-import { useSessionManager } from '@/features/common/context/session'
 
 type GripContainerProps = {
   elementId: string
@@ -27,7 +25,6 @@ type GripContainerProps = {
  */
 const GripContainer = ({ elementId, parameterId, mode, children, onClick }: GripContainerProps): React.ReactElement => {
   const store = useAppStore()
-  const { device } = useSessionManager()
 
   const { setMode: setCameraMode } = useCameraDispatch()
   const { registerElementAnchor, captureLiveWires, startLiveWires, releaseLiveWires, endLiveWires } = useGraphDispatch()
@@ -146,7 +143,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   }
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-    const { pointerId, pageX, pageY } = e
+    const { pointerId } = e
 
     if (pointerId !== localPointerId.current) {
       return
@@ -155,12 +152,6 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
     switch (e.pointerType) {
       case 'pen':
       case 'touch': {
-        // const d = distance(localPointerStartPosition.current, [pageX, pageY])
-
-        // if (d < 3) {
-        //   break
-        // }
-
         if (gripContainerRef.current?.hasPointerCapture(pointerId)) {
           try {
             gripContainerRef.current?.releasePointerCapture(pointerId)
@@ -199,50 +190,6 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
         resetLocalState()
       }
     }
-  }
-
-  const handleTouchMove = (_e: React.TouchEvent<HTMLDivElement>): void => {
-    return
-    if (!device.iOS) {
-      return
-    }
-
-    // const { pageX, pageY } = e.touches.item(0)
-
-    // const d = distance(localPointerStartPosition.current, [pageX, pageY])
-
-    // if (d < 5) {
-    //   return
-    // }
-
-    startLiveWires({
-      templates: [
-        {
-          type: 'wire',
-          mode: 'live',
-          initial: {
-            pointer: localPointerId.current,
-            mode: 'default',
-          },
-          transpose: false,
-          ...map,
-        },
-      ],
-      origin: {
-        elementId,
-        parameterId,
-      },
-    })
-
-    if (localPointerId.current && gripContainerRef.current?.hasPointerCapture(localPointerId.current)) {
-      try {
-        gripContainerRef.current?.releasePointerCapture(localPointerId.current)
-      } catch {
-        console.log('🐍 Error releasing critical pointer capture!')
-      }
-    }
-
-    resetLocalState()
   }
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
@@ -366,11 +313,11 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
-    if (gripContainerRef.current && localPointerId.current) {
-      try {
-        gripContainerRef.current.releasePointerCapture(localPointerId.current)
-      } catch {}
-    }
+    // if (gripContainerRef.current && localPointerId.current) {
+    //   try {
+    //     gripContainerRef.current.releasePointerCapture(localPointerId.current)
+    //   } catch {}
+    // }
 
     // console.log('GripContainer : handlePointerUp')
 
@@ -410,7 +357,6 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           onPointerMove={handlePointerMove}
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
-          onTouchMove={handleTouchMove}
           ref={gripContainerRef}
           role="presentation"
         >
