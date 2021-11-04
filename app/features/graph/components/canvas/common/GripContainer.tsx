@@ -10,7 +10,8 @@ import { PointerTooltip } from '../../overlay'
 import { GripTooltip } from './GripTooltip'
 import { getInitialWireMode } from '@/features/graph/store/hotkey/utils/getInitialWireMode'
 import { WireMode } from '@/features/graph/store/graph/types'
-import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
+import { useCameraDispatch, useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
+import { useSessionManager } from '@/features/common/context/session'
 
 type GripContainerProps = {
   elementId: string
@@ -25,8 +26,10 @@ type GripContainerProps = {
  */
 const GripContainer = ({ elementId, parameterId, mode, children, onClick }: GripContainerProps): React.ReactElement => {
   const store = useAppStore()
+  const { device } = useSessionManager()
 
   const { setMode: setCameraMode } = useCameraDispatch()
+  const zoomLevel = useCameraZoomLevel()
   const { registerElementAnchor, captureLiveWires, startLiveWires, releaseLiveWires, endLiveWires } = useGraphDispatch()
 
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
@@ -85,6 +88,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   // const localPointerActive = useRef(false)
   const localPointerId = useRef<number>()
   const localTouchId = useRef<number>()
+  const localTouchActive = useRef(false)
   const localPointerStartTime = useRef(Date.now())
   const localPointerStartPosition = useRef<[number, number]>([0, 0])
 
@@ -99,7 +103,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
     localPointerId.current = undefined
     localTouchId.current = undefined
     setShowWireTooltip(false)
-    setCameraMode('idle')
+    // setCameraMode('idle')
   }
 
   const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>): void => {
@@ -107,6 +111,8 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
       // Prevent self-collision
       return
     }
+
+    // alert(`${e.pointerId} / ${localPointerId.current}`)
 
     switch (e.pointerType) {
       case 'mouse': {
@@ -145,21 +151,13 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     const { pointerId } = e
 
-    if (pointerId !== localPointerId.current) {
+    if (pointerId !== localPointerId.current || device.iOS) {
       return
     }
 
     switch (e.pointerType) {
       case 'pen':
       case 'touch': {
-        if (gripContainerRef.current?.hasPointerCapture(pointerId)) {
-          try {
-            gripContainerRef.current?.releasePointerCapture(pointerId)
-          } catch {
-            console.log('🐍 Error releasing critical pointer capture!')
-          }
-        }
-
         startLiveWires({
           templates: [
             {
@@ -192,11 +190,53 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
     }
   }
 
+  const handleTouchMove = (): void => {
+    if (!device.iOS || localTouchActive.current) {
+      return
+    }
+
+    localTouchActive.current = true
+
+    // alert(gripContainerRef.current?.hasPointerCapture(localPointerId.current))
+
+    startLiveWires({
+      templates: [
+        {
+          type: 'wire',
+          mode: 'live',
+          initial: {
+            pointer: localPointerId.current,
+            mode: 'default',
+          },
+          transpose: false,
+          ...map,
+        },
+      ],
+      origin: {
+        elementId,
+        parameterId,
+      },
+    })
+
+    // if (localPointerId.current && gripContainerRef.current?.hasPointerCapture(localPointerId.current)) {
+    //   try {
+    //     gripContainerRef.current?.releasePointerCapture(localPointerId.current)
+    //   } catch {
+    //     console.log('🐍 Error releasing critical pointer capture!')
+    //   }
+    // }
+
+    resetLocalState()
+  }
+
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
     e.preventDefault()
 
-    // console.log('GripContainer : handlePointerDown')
+    if (device.breakpoint === 'sm' && zoomLevel === 'far') {
+      // Disable zoomed-out wires on small devices
+      return
+    }
 
     const { pointerId, pageX: ex, pageY: ey } = e
 
@@ -305,6 +345,10 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           break
         }
 
+        if (device.iOS) {
+          localTouchActive.current = false
+        }
+
         gripContainerRef.current.setPointerCapture(pointerId)
       }
     }
@@ -355,6 +399,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
           onPointerMove={handlePointerMove}
+          onTouchMove={handleTouchMove}
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
           ref={gripContainerRef}
