@@ -193,18 +193,18 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
     }
   }
 
-  const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>): void => {
+  const handleTouchMove = (_e: React.TouchEvent<HTMLDivElement>): void => {
     if (!device.iOS || !localTouchId.current) {
       return
     }
 
-    const { pageX, pageY } = e.touches.item(0)
+    // const { pageX, pageY } = e.touches.item(0)
 
-    const d = distance(localPointerStartPosition.current, [pageX, pageY])
+    // const d = distance(localPointerStartPosition.current, [pageX, pageY])
 
-    if (d < 20) {
-      return
-    }
+    // if (d < 5) {
+    //   return
+    // }
 
     startLiveWires({
       templates: [
