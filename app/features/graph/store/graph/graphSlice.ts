@@ -679,11 +679,6 @@ export const graphSlice = createSlice({
       //   }
       // }
 
-      if (!state.registry.wire.capture) {
-        // We did our best and no connection was made
-        return
-      }
-
       // Remove expired connections if performing a transpose
       if (wires[0].template.transpose) {
         const { origin } = state.registry.wire

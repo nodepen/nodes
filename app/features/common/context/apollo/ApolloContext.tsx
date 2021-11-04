@@ -13,19 +13,16 @@ type ApolloContextProps = {
 
 const { publicRuntimeConfig } = getConfig()
 
-// const host = 'localhost'
-const host = '192.168.0.235'
+const host = 'localhost'
+// const host = '192.168.0.235'
 
 export const ApolloContext = ({ children, token }: ApolloContextProps): React.ReactElement => {
   // console.log({ publicRuntimeConfig })
-  // publicRuntimeConfig?.apiEndpoint?.replace('https', 'wss') ??
-
-  const endpoint = publicRuntimeConfig?.apiEndpoint
 
   const wsLink =
     process.browser && token
       ? new WebSocketLink({
-          uri: `ws://${host}:4000/graphql`,
+          uri: publicRuntimeConfig?.apiEndpoint?.replace('https', 'wss') ?? `ws://${host}:4000/graphql`,
           options: {
             reconnect: true,
             connectionParams: {

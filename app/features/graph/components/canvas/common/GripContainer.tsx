@@ -148,6 +148,14 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     const { pointerId, pageX, pageY } = e
 
+    if (gripRef.current?.hasPointerCapture(pointerId)) {
+      try {
+        gripRef.current?.releasePointerCapture(pointerId)
+      } catch {
+        console.log('🐍 Error releasing critical pointer capture!')
+      }
+    }
+
     if (pointerId !== localPointerId.current) {
       return
     }
