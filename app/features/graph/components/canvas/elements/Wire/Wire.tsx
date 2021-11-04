@@ -4,12 +4,14 @@ import { useDebugRender } from '@/hooks'
 import { LiveWireElement } from '@/features/graph/store/graph/types'
 import { distance, pointBetween, bezierLength } from '@/features/graph/utils'
 import { useWireType } from './hooks'
+import { useSessionManager } from '@/features/common/context/session'
 
 type WireProps = {
   wire: NodePen.Element<'wire'>
 }
 
 const Wire = ({ wire }: WireProps): React.ReactElement => {
+  const { device } = useSessionManager()
   const { id, current, template } = wire
   const {
     from: [ax, ay],
@@ -62,7 +64,10 @@ const Wire = ({ wire }: WireProps): React.ReactElement => {
 
   const pathRef = useRef<SVGPathElement>(null)
 
-  const length = wire.template.mode === 'live' ? bezierLength({ a: start, b: startA1, c: startA2, d: mid }, 500) * 2 : 0
+  const length =
+    wire.template.mode === 'live' && !device.iOS
+      ? bezierLength({ a: start, b: startA1, c: startA2, d: mid }, 500) * 2
+      : 0
   const offset = 12 - (length % 12)
 
   const arrow = useMemo(() => {

@@ -86,6 +86,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
 
   // const localPointerActive = useRef(false)
   const localPointerId = useRef<number>()
+  const localTouchId = useRef<number>()
   const localPointerStartTime = useRef(Date.now())
   const localPointerStartPosition = useRef<[number, number]>([0, 0])
 
@@ -98,12 +99,13 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
     }
 
     localPointerId.current = undefined
+    localTouchId.current = undefined
     setShowWireTooltip(false)
     setCameraMode('idle')
   }
 
   const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (e.pointerId === localPointerId.current) {
+    if (localPointerId.current && e.pointerId === localPointerId.current) {
       // Prevent self-collision
       return
     }
@@ -377,9 +379,9 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           onPointerDown={handlePointerDown}
           onPointerUp={handlePointerUp}
           onPointerMove={handlePointerMove}
-          onTouchMove={handleTouchMove}
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
+          onTouchMove={handleTouchMove}
           role="presentation"
         >
           {children}
