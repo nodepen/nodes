@@ -148,14 +148,6 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     const { pointerId, pageX, pageY } = e
 
-    if (gripRef.current?.hasPointerCapture(pointerId)) {
-      try {
-        gripRef.current?.releasePointerCapture(pointerId)
-      } catch {
-        console.log('🐍 Error releasing critical pointer capture!')
-      }
-    }
-
     if (pointerId !== localPointerId.current) {
       return
     }
@@ -163,10 +155,18 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
     switch (e.pointerType) {
       case 'pen':
       case 'touch': {
-        const d = distance(localPointerStartPosition.current, [pageX, pageY])
+        // const d = distance(localPointerStartPosition.current, [pageX, pageY])
 
-        if (d < 20) {
-          break
+        // if (d < 3) {
+        //   break
+        // }
+
+        if (gripContainerRef.current?.hasPointerCapture(pointerId)) {
+          try {
+            gripContainerRef.current?.releasePointerCapture(pointerId)
+          } catch {
+            console.log('🐍 Error releasing critical pointer capture!')
+          }
         }
 
         startLiveWires({
@@ -188,13 +188,22 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           },
         })
 
+        if (gripContainerRef.current?.hasPointerCapture(pointerId)) {
+          try {
+            gripContainerRef.current?.releasePointerCapture(pointerId)
+          } catch {
+            console.log('🐍 Error releasing critical pointer capture!')
+          }
+        }
+
         resetLocalState()
       }
     }
   }
 
   const handleTouchMove = (_e: React.TouchEvent<HTMLDivElement>): void => {
-    if (!device.iOS || !localTouchId.current) {
+    return
+    if (!device.iOS) {
       return
     }
 
@@ -224,6 +233,14 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
         parameterId,
       },
     })
+
+    if (localPointerId.current && gripContainerRef.current?.hasPointerCapture(localPointerId.current)) {
+      try {
+        gripContainerRef.current?.releasePointerCapture(localPointerId.current)
+      } catch {
+        console.log('🐍 Error releasing critical pointer capture!')
+      }
+    }
 
     resetLocalState()
   }
@@ -337,11 +354,11 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
       }
       case 'pen':
       case 'touch': {
-        if (!gripRef.current) {
+        if (!gripContainerRef.current) {
           break
         }
 
-        gripRef.current.setPointerCapture(pointerId)
+        gripContainerRef.current.setPointerCapture(pointerId)
       }
     }
   }
@@ -349,8 +366,10 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
 
-    if (gripRef.current && localPointerId.current) {
-      gripRef.current.releasePointerCapture(localPointerId.current)
+    if (gripContainerRef.current && localPointerId.current) {
+      try {
+        gripContainerRef.current.releasePointerCapture(localPointerId.current)
+      } catch {}
     }
 
     // console.log('GripContainer : handlePointerUp')
