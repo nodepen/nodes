@@ -10,6 +10,7 @@ import {
   regionContainsRegion,
   regionIntersectsRegion,
   getDataTreePathString,
+  distance,
 } from '../../utils'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
@@ -624,14 +625,62 @@ export const graphSlice = createSlice({
     releaseLiveWires: (state: GraphState) => {
       state.registry.wire.capture = undefined
     },
-    endLiveWires: (state: GraphState, action: PayloadAction<WireMode | 'cancel'>) => {
-      const wires = Object.values(state.elements).filter(
-        (element): element is LiveWireElement => element.template.type === 'wire' && element.template.mode === 'live'
-      )
+    endLiveWires: (state: GraphState, action: PayloadAction<Payload.EndLiveWiresPayload>) => {
+      const wires: LiveWireElement[] = []
+      const sourceElements: NodePen.Element<'static-component' | 'number-slider' | 'panel'>[] = []
 
-      if (action.payload === 'cancel' || !state.registry.wire.capture || wires.length === 0) {
+      for (const element of Object.values(state.elements)) {
+        if (element.template.type === 'wire' && element.template.mode === 'live') {
+          wires.push(element as LiveWireElement)
+        }
+
+        const graphElements: NodePen.ElementType[] = ['static-component', 'number-slider', 'panel']
+
+        if (graphElements.includes(element.template.type)) {
+          sourceElements.push(element as any)
+        }
+      }
+
+      if (action.payload.mode === 'cancel' || !state.registry.wire.capture || wires.length === 0) {
         // Connection not made, end and remove live wires
         wires.map((wire) => wire.id).forEach((id) => delete state.elements[id])
+        return
+      }
+
+      // if (!state.registry.wire.capture && action.payload.end) {
+      //   // Failed to capture, but we are being asked to try our best
+      //   const [x, y] = action.payload.end
+      //   const lookingFor = wires[0].template.from ? 'input' : 'output'
+
+      //   for (const element of sourceElements) {
+      //     if (state.registry.wire.capture) {
+      //       // Early termination
+      //       break
+      //     }
+
+      //     const relevantAnchors = Object.keys(element.current[`${lookingFor}s`])
+
+      //     for (const id of relevantAnchors) {
+      //       const [ex, ey] = element.current.position
+      //       const [dx, dy] = element.current.anchors[id]
+
+      //       // Get anchor position
+      //       const [ax, ay] = [ex + dx, ey + dy]
+
+      //       // Measure distance to final position
+      //       const dist = distance([x, y], [ax, ay])
+
+      //       if (dist < 20) {
+      //         // Set this as the capture
+      //         state.registry.wire.capture = { elementId: element.id, parameterId: id }
+      //         break
+      //       }
+      //     }
+      //   }
+      // }
+
+      if (!state.registry.wire.capture) {
+        // We did our best and no connection was made
         return
       }
 
@@ -701,7 +750,7 @@ export const graphSlice = createSlice({
           return
         }
 
-        const mode = template.transpose ? 'transpose' : action.payload
+        const mode = template.transpose ? 'transpose' : action.payload.mode
         const capture = state.registry.wire.capture
 
         // Declare incoming connection

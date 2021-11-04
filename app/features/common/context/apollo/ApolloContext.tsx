@@ -13,13 +13,19 @@ type ApolloContextProps = {
 
 const { publicRuntimeConfig } = getConfig()
 
+// const host = 'localhost'
+const host = '192.168.0.235'
+
 export const ApolloContext = ({ children, token }: ApolloContextProps): React.ReactElement => {
   // console.log({ publicRuntimeConfig })
+  // publicRuntimeConfig?.apiEndpoint?.replace('https', 'wss') ??
+
+  const endpoint = publicRuntimeConfig?.apiEndpoint
 
   const wsLink =
     process.browser && token
       ? new WebSocketLink({
-          uri: publicRuntimeConfig?.apiEndpoint?.replace('https', 'wss') ?? 'ws://localhost:4000/graphql',
+          uri: `ws://${host}:4000/graphql`,
           options: {
             reconnect: true,
             connectionParams: {
@@ -30,7 +36,7 @@ export const ApolloContext = ({ children, token }: ApolloContextProps): React.Re
       : null
 
   const batchHttpLink = new BatchHttpLink({
-    uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+    uri: publicRuntimeConfig?.apiEndpoint ?? `http://${host}:4000/graphql`,
     batchInterval: 25,
     batchMax: 50,
   })

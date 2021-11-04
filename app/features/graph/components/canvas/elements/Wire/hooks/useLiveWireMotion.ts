@@ -29,6 +29,8 @@ export const useLiveWireMotion = (
         return
       }
 
+      e.preventDefault()
+
       const { pageX: ex, pageY: ey } = e
 
       const [x, y] = screenSpaceToCameraSpace([ex, ey])

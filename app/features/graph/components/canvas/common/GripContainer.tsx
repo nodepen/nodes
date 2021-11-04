@@ -34,6 +34,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
 
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
 
+  const gripContainerRef = useRef<HTMLDivElement>(null)
   const gripRef = useRef<HTMLDivElement>(null)
 
   const map = {
@@ -105,7 +106,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   }
 
   const handlePointerEnter = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (localPointerId.current && e.pointerId === localPointerId.current) {
+    if (e.pointerId === localPointerId.current) {
       // Prevent self-collision
       return
     }
@@ -185,7 +186,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
   }
 
   const handleTouchMove = (e: React.TouchEvent<HTMLDivElement>): void => {
-    if (!device.iOS) {
+    if (!device.iOS || !localTouchId.current) {
       return
     }
 
@@ -221,6 +222,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
+    e.preventDefault()
 
     // console.log('GripContainer : handlePointerDown')
 
@@ -382,6 +384,7 @@ const GripContainer = ({ elementId, parameterId, mode, children, onClick }: Grip
           onPointerEnter={handlePointerEnter}
           onPointerLeave={handlePointerLeave}
           onTouchMove={handleTouchMove}
+          ref={gripContainerRef}
           role="presentation"
         >
           {children}

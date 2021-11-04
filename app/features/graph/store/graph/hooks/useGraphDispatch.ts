@@ -82,8 +82,8 @@ export const useGraphDispatch = () => {
     releaseLiveWires: () => {
       dispatch(graphActions.releaseLiveWires())
     },
-    endLiveWires: (mode: WireMode | 'cancel') => {
-      dispatch(graphActions.endLiveWires(mode))
+    endLiveWires: (mode: WireMode | 'cancel', end?: [number, number]) => {
+      dispatch(graphActions.endLiveWires({ mode, end }))
       dispatch(solutionActions.expireSolution())
     },
     setProvisionalWire: (data: Payload.ProvisionalWirePayload) => {

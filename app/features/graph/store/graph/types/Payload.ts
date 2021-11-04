@@ -1,5 +1,6 @@
 import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { NodePen } from 'glib'
+import { WireMode } from '.'
 
 export type AddElementPayload<T extends NodePen.ElementType> = {
   type: T
@@ -100,6 +101,11 @@ export type CaptureLiveWiresPayload = {
   type: 'input' | 'output'
   elementId: string
   parameterId: string
+}
+
+export type EndLiveWiresPayload = {
+  mode: WireMode | 'cancel'
+  end?: [x: number, y: number]
 }
 
 export type RestoreGraphPayload = {
