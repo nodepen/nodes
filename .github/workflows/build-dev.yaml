@@ -50,7 +50,9 @@ jobs:
           json: ${{ secrets.NODEPEN_APP_SECRET_AUTH }}
       - name: Build locally
         working-directory: ./app
-        run: npm run build
+        run: |
+          npm ci
+          npm run build
       - uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
@@ -89,7 +91,9 @@ jobs:
           json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
       - name: Build locally
         working-directory: ./api
-        run: npm run build
+        run: |
+          npm ci
+          npm run build
       - uses: google-github-actions/setup-gcloud@master
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
