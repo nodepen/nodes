@@ -19,9 +19,6 @@ COPY --from=builder /api/dist ./dist
 COPY --from=builder /api/node_modules ./node_modules
 COPY --from=builder /api/package.json ./package.json
 
-# RUN apk add --no-cache redis
-# RUN npm install -g concurrently
-
 EXPOSE 4000
 EXPOSE 8080
 

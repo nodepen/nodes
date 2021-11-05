@@ -487,7 +487,7 @@ const NumberSlider = ({ element }: NumberSliderProps): React.ReactElement => {
               }
             }}
             onContextMenu={() => {
-              console.log('right click')
+              // console.log('right click')
             }}
             // onPointerUp={handlePointerUp}
             style={{ width: internalWidth, height: elementHeight }}
