@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using Nancy;
 using Nancy.Extensions;
@@ -15,17 +16,25 @@ namespace NodePen.Compute.Routes
   {
     public static Response SolveGrasshopperDefinition(NancyContext ctx)
     {
-      var ghxData = ctx.Request.Body.AsString();
-      var ghxString = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(ghxData));
+      var ghData = ctx.Request.Body.AsString();
+      // var ghString = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(ghxData));
+
+      var timer = new Stopwatch();
 
       var archive = new GH_Archive();
-      archive.Deserialize_Xml(ghxString);
+      archive.Deserialize_Binary(Convert.FromBase64String(ghData));
+      // archive.Deserialize_Xml(ghxString);
 
       var definition = new GH_Document();
       archive.ExtractObject(definition, "Definition");
 
       definition.Enabled = true;
+
+      timer.Start();
+
       definition.NewSolution(true, GH_SolutionMode.CommandLine);
+
+      timer.Stop();
 
       var results = new List<SolutionData>();
       var messages = new List<SolutionMessage>();
@@ -86,6 +95,7 @@ namespace NodePen.Compute.Routes
       var response = new SolutionResponse();
       response.Data = results;
       response.Messages = messages;
+      response.Duration = timer.ElapsedMilliseconds;
 
       return (Response)JsonConvert.SerializeObject(response);
     }
@@ -97,9 +107,10 @@ namespace NodePen.Compute.Routes
 
     private static SolutionData ExtractSolutionData(IGH_Param parameter, string elementId, string parameterId)
     {
-      var result = new SolutionData();
-      result.ElementId = elementId;
-      result.ParameterId = parameterId;
+      var result = new SolutionData() {
+        ElementId = elementId,
+        ParameterId = parameterId,
+      };
 
       for (var i = 0; i < parameter.VolatileData.PathCount; i++)
       {
@@ -123,31 +134,12 @@ namespace NodePen.Compute.Routes
 
           switch (goo.TypeName)
           {
-            case "Line":
+            case "Boolean":
               {
-                var lineGoo = goo as GH_Line;
+                var boolGoo = goo as GH_Boolean;
 
-                var start = lineGoo.Value.From;
-                var end = lineGoo.Value.To;
-
-                var output = new NodePenLine()
-                {
-                  Start = new NodePenPoint()
-                  {
-                    X = start.X,
-                    Y = start.Y,
-                    Z = start.Z
-                  },
-                  End = new NodePenPoint()
-                  {
-                    X = end.X,
-                    Y = end.Y,
-                    Z = end.Z
-                  }
-                };
-
-                data.Value = JsonConvert.SerializeObject(output);
-                data.Type = "line";
+                data.Type = "boolean";
+                data.Value = boolGoo.Value.ToString().ToLower();
 
                 break;
               }
@@ -155,7 +147,7 @@ namespace NodePen.Compute.Routes
               {
                 var circleGoo = goo as GH_Circle;
 
-                data.Type = "curve";
+                data.Type = "circle";
 
                 var beziers = BezierCurve.CreateCubicBeziers(circleGoo.Value.ToNurbsCurve(), 0.01, 0.01);
                 var curve = ToNodePenCurve(beziers);
@@ -185,12 +177,20 @@ namespace NodePen.Compute.Routes
 
                 break;
               }
-            case "Number":
+            case "Domain":
               {
-                var numberGoo = goo as GH_Number;
+                var domainGoo = goo as GH_Interval;
 
-                data.Value = numberGoo.Value.ToString();
-                data.Type = "number";
+                data.Type = "domain";
+
+                var domain = new NodePenDomain()
+                {
+                  Minimum = domainGoo.Value.Min,
+                  Maximum = domainGoo.Value.Max,
+                };
+
+                data.Value = JsonConvert.SerializeObject(domain);
+
                 break;
               }
             case "Integer":
@@ -201,14 +201,148 @@ namespace NodePen.Compute.Routes
                 data.Type = "integer";
                 break;
               }
+            case "Line":
+              {
+                var lineGoo = goo as GH_Line;
+
+                var start = lineGoo.Value.From;
+                var end = lineGoo.Value.To;
+
+                var output = new NodePenLine()
+                {
+                  From = new NodePenPoint()
+                  {
+                    X = start.X,
+                    Y = start.Y,
+                    Z = start.Z
+                  },
+                  To = new NodePenPoint()
+                  {
+                    X = end.X,
+                    Y = end.Y,
+                    Z = end.Z
+                  }
+                };
+
+                data.Value = JsonConvert.SerializeObject(output);
+                data.Type = "line";
+
+                break;
+              }
+            case "Number":
+              {
+                var numberGoo = goo as GH_Number;
+
+                data.Value = numberGoo.Value.ToString();
+                data.Type = "number";
+                break;
+              }
+            case "Path":
+              {
+                data.Value = "path";
+                data.Type = "path";
+                break;
+              }
+            case "Plane":
+              {
+                var planeGoo = goo as GH_Plane;
+
+                var geo = planeGoo.Value;
+
+                var plane = new NodePenPlane()
+                {
+                  Normal = new NodePenPoint(geo.Normal),
+                  Origin = new NodePenPoint(geo.Origin)
+                };
+
+                data.Value = JsonConvert.SerializeObject(plane);
+                data.Type = "plane";
+                break;
+              }
             case "Point":
               {
                 var pointGoo = goo as GH_Point;
 
                 pointGoo.CastTo<Rhino.Geometry.Point3d>(out Point3d geo);
 
-                data.Value = JsonConvert.SerializeObject(geo);
+                var pointData = new NodePenPoint()
+                {
+                  X = geo.X,
+                  Y = geo.Y,
+                  Z = geo.Z
+                };
+
+                data.Value = JsonConvert.SerializeObject(pointData);
                 data.Type = "point";
+                break;
+              }
+            case "Rectangle":
+              {
+                var rectangleGoo = goo as GH_Rectangle;
+
+                var geo = rectangleGoo.Value;
+
+                var a = geo.Corner(0);
+                var b = geo.Corner(1);
+                var c = geo.Corner(2);
+                var d = geo.Corner(3);
+
+                var rectangle = new NodePenRectangle()
+                {
+                  Width = geo.Width,
+                  Height = geo.Height
+                };
+
+                rectangle.Corners.Add("a", new NodePenPoint(a));
+                rectangle.Corners.Add("b", new NodePenPoint(b));
+                rectangle.Corners.Add("c", new NodePenPoint(c));
+                rectangle.Corners.Add("d", new NodePenPoint(d));
+
+                data.Value = JsonConvert.SerializeObject(rectangle);
+                data.Type = "rectangle";
+                break;
+              }
+            case "Text":
+              {
+                var textGoo = goo as GH_String;
+
+                data.Value = textGoo.Value.ToString();
+                data.Type = "text";
+                break;
+              }
+            case "Transform":
+              {
+                var transformGoo = goo as GH_Transform;
+
+                // TODO: Recursively (?) decompose these correctly
+                transformGoo.Value.DecomposeAffine(out Transform linear, out Vector3d tx);
+
+                var transform = new NodePenPoint()
+                {
+                  X = tx.X,
+                  Y = tx.Y,
+                  Z = tx.Z,
+                };
+
+                data.Type = "transform";
+                data.Value = JsonConvert.SerializeObject(transform);
+                break;
+              }
+            case "Vector":
+              {
+                var vectorGoo = goo as GH_Vector;
+
+                var geo = vectorGoo.Value;
+
+                var vectorData = new NodePenPoint()
+                {
+                  X = geo.X,
+                  Y = geo.Y,
+                  Z = geo.Z
+                };
+
+                data.Value = JsonConvert.SerializeObject(vectorData);
+                data.Type = "vector";
                 break;
               }
             default:
@@ -225,6 +359,8 @@ namespace NodePen.Compute.Routes
 
         result.Values.Add(branchData);
       }
+
+      Console.WriteLine(result);
 
       return result;
     }
@@ -243,7 +379,7 @@ namespace NodePen.Compute.Routes
     {
       var message = new SolutionMessage();
       message.ElementId = elementId;
-      message.Level = component.RuntimeMessageLevel.ToString();
+      message.Level = component.RuntimeMessageLevel.ToString().ToLower();
       message.Message = component.RuntimeMessages(component.RuntimeMessageLevel)[0];
 
       return message;

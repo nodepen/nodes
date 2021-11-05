@@ -1,35 +1,16 @@
-import {
-  ApolloServer,
-  AuthenticationError,
-  Config,
-} from 'apollo-server-express'
-import { schema as typeDefs } from './schema'
-import { resolvers } from './resolvers'
-import admin from 'firebase-admin'
-import { origins } from './origins'
+import { ApolloServer, AuthenticationError } from 'apollo-server-express'
 import { execute, subscribe } from 'graphql'
-import { makeExecutableSchema } from '@graphql-tools/schema'
 import { SubscriptionServer } from 'subscriptions-transport-ws'
-import { app, server } from '../express'
+import { app, server } from './express'
+import { authenticate } from './utils'
+import { schema } from './schema'
 
-type UserRecord = {
-  id: string
-  name: string
-}
-
-const authorize = async (token: string): Promise<UserRecord> => {
-  const session = await admin.auth().verifyIdToken(token)
-  const user = await admin.auth().getUser(session.uid)
-
-  return {
-    id: user.uid,
-    name: user.displayName ?? 'anonymous',
-  }
-}
-
+/**
+ * Attach the GraphQL server instances to the imported core server object.
+ * @returns The modified core server object
+ */
 export const initialize = async () => {
-  const schema = makeExecutableSchema({ typeDefs, resolvers })
-
+  // Create the core apollo server
   const gqlQueryServer = new ApolloServer({
     schema,
     context: async ({ req, res }) => {
@@ -41,31 +22,42 @@ export const initialize = async () => {
       }
 
       try {
-        Object.assign(user, await authorize(token))
+        Object.assign(user, await authenticate(token))
       } catch (e) {
         // Reject all unauthorized requests
-        console.log(e)
+        // console.log(e)
       }
 
-      if (!user.id) {
-        throw new AuthenticationError(
-          'NodePen will not honor unauthenticated requests.'
-        )
-      }
+      // if (!user.id) {
+      //   throw new AuthenticationError(
+      //     'NodePen will not honor unauthenticated requests.'
+      //   )
+      // }
 
       return { user }
     },
   })
 
   await gqlQueryServer.start()
-  console.log('gql server started')
   gqlQueryServer.applyMiddleware({ app: app as any })
 
+  // Create and attach the additional subscription server
   const gqlSubscriptionServer = SubscriptionServer.create(
     {
       schema,
       execute,
-      subscribe,
+      subscribe: (...params) => {
+        // const [_schema, _document, _root, context, variables, operation] =
+        //   params
+
+        // console.log(context)
+        // console.log(variables)
+        // console.log(operation)
+
+        // TODO: Authorize `context.id` user for `operation` on `variables.graphId`
+
+        return subscribe(...params)
+      },
       onConnect: (params: { [key: string]: string }) => {
         const token = params?.authorization
 
@@ -73,7 +65,8 @@ export const initialize = async () => {
           throw new Error('NodePen will not honor unauthenticated requests.')
         }
 
-        return authorize(token).then((user) => {
+        return authenticate(token).then((user) => {
+          console.log(`[ CONNECT ] ${user.id} (${user.name}) `)
           return user
         })
       },

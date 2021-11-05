@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Rhino.Geometry;
 
 namespace NodePen.Compute
 {
@@ -17,5 +18,28 @@ namespace NodePen.Compute
 
     [JsonProperty("z")]
     public double Z { get; set; }
+
+    public NodePenPoint() { }
+
+    public NodePenPoint(double x, double y, double z)
+    {
+      X = x;
+      Y = y;
+      Z = z;
+    }
+
+    public NodePenPoint(Point3d pt)
+    {
+      X = pt.X;
+      Y = pt.Y;
+      Z = pt.Z;
+    }
+
+    public NodePenPoint(Vector3d vec)
+    {
+      X = vec.X;
+      Y = vec.Y;
+      Z = vec.Z;
+    }
   }
 }

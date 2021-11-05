@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { assert } from 'glib'
 import { useGraphElements } from '../../store/graph/hooks'
-import { StaticComponent, LiveWire, Annotation, NumberSlider, Wire, SelectionRegion } from './elements'
+import { StaticComponent, LiveWire, Annotation, NumberSlider, Wire, SelectionRegion, Panel } from './elements'
 import { NodePen } from '@/glib/src'
 
 const ElementsContainer = (): React.ReactElement => {
@@ -9,22 +9,6 @@ const ElementsContainer = (): React.ReactElement => {
   const elements = Object.values(graph)
 
   // useDebugRender('ElementsContainer')
-
-  useEffect(() => {
-    const printElements = (e: KeyboardEvent): void => {
-      switch (e.code) {
-        case 'Space': {
-          console.log(elements)
-        }
-      }
-    }
-
-    window.addEventListener('keydown', printElements)
-
-    return () => {
-      window.removeEventListener('keydown', printElements)
-    }
-  })
 
   return (
     <>
@@ -79,6 +63,13 @@ const ElementsContainer = (): React.ReactElement => {
             const annotation = el as NodePen.Element<'annotation'>
 
             return <Annotation key={`graph-element-annotation-${el.id}`} annotation={annotation} />
+          }
+          case 'panel': {
+            if (!assert.element.isPanel(el)) {
+              return null
+            }
+
+            return <Panel key={`graph-element-panel-${el.id}`} element={el} />
           }
           default: {
             return null

@@ -1,11 +1,12 @@
-import React, { useState, useEffect, useMemo, useRef } from 'react'
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { NextPage } from 'next'
-import Link from 'next/link'
 import Head from 'next/head'
 
 const Home: NextPage = () => {
   const [[w, h], setCircleDimensions] = useState<[number, number]>([0, 0])
   const [offset, setOffset] = useState(0)
+
+  const [isHovered, setIsHovered] = useState(false)
 
   const circleRef = useRef<HTMLDivElement>(null)
 
@@ -61,14 +62,74 @@ const Home: NextPage = () => {
 
   useEffect(() => {
     const speed = 0.25 / 45
-    const march = setInterval(() => {
-      setOffset((offset + speed) % 0.25)
-    }, 40)
+    const march = setInterval(
+      () => {
+        setOffset((offset + speed) % 0.25)
+      },
+      isHovered ? 15 : 40
+    )
     return () => clearInterval(march)
-  }, [offset])
+  }, [offset, isHovered])
+
+  const [[dx, dy], setMaskOffset] = useState<[number, number]>([0, 48 + 30])
+
+  const handlePointerDown = useCallback((e: PointerEvent): void => {
+    e.preventDefault()
+  }, [])
+
+  const handlePointerMove = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    const [w, h] = [window.innerWidth, window.innerHeight]
+    const [cx, cy] = [w / 2, h / 2]
+
+    const [x, y] = [pageX - cx, pageY - cy]
+
+    const wt = Math.abs(x) / cx
+    const ht = Math.abs(y) / cy
+
+    const min = 1
+    const max = 5
+    const r = max - min
+
+    const ox = min + r * wt
+    const oy = min + r * ht
+
+    const tx = x / ox
+    const ty = y / oy
+
+    setMaskOffset([tx, ty])
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('pointermove', handlePointerMove)
+
+    return () => {
+      window.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('pointermove', handlePointerMove)
+    }
+  })
+
+  const [mobileMargin, setMobileMargin] = useState(0)
+
+  useEffect(() => {
+    if (window.innerWidth > 1024) {
+      return
+    }
+
+    const m = (window.innerWidth - 304) / 2
+    setMobileMargin(m)
+  }, [])
+
+  const ds = 0
+  const s = mobileMargin > 0 ? 304 + ds : 512 + ds
 
   return (
-    <div className="w-vw h-vh bg-green flex flex-col justify-evenly items-center lg:flex-row">
+    <div
+      className="w-vw h-vh bg-green flex flex-col justify-start items-center lg:flex-row lg:justify-evenly"
+      style={{ touchAction: 'none' }}
+    >
       <Head>
         <title>NodePen</title>
         <meta
@@ -77,30 +138,22 @@ const Home: NextPage = () => {
           Compute."
         />
         <meta name="keywords" content="grasshopper, grasshopper online, grasshopper 3d" />
+        <meta name="theme-color" content="#98E2C6" />
       </Head>
-      <div className="w-76 flex flex-col items-center">
-        <a
-          className="rounded-sm mb-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
-          href="https://twitter.com/cdriesler"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img className="h-4 mr-2" src="/logos/twitter.svg" alt="The Twitter logo." />
-          <p className=" text-darkgreen font-semibold font-md">VIEW UPDATES</p>
-        </a>
-        <a
-          className="rounded-sm mt-1 p-2 pl-4 pr-4 flex items-center hover:bg-swampgreen"
-          href="https://github.com/cdriesler/nodepen"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <img className="h-6 mr-2" src="/logos/github.svg" alt="The GitHub logo." />
-          <p className=" text-darkgreen font-semibold font-md">VIEW CODE</p>
-        </a>
-      </div>
+      <div className="w-76 hidden lg:flex lg:flex-col lg:items-center" />
       <div
         ref={circleRef}
-        className="w-76 h-76 lg:w-128 lg:h-128 rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center"
+        className={`rounded-full bg-pale overflow-hidden flex flex-col justify-center items-center`}
+        style={{
+          transform: `translate(${dx * 0.05}px, ${dy * 0.05}px)`,
+          marginTop: mobileMargin,
+          width: s,
+          height: s,
+          transitionProperty: 'width, height',
+          transitionDuration: '150ms',
+          transitionDelay: '150ms',
+          transitionTimingFunction: 'ease-out',
+        }}
       >
         <div style={circleStyle}>
           <svg
@@ -112,46 +165,49 @@ const Home: NextPage = () => {
             {grid}
           </svg>
         </div>
-        <div className="bg-pale rounded-lg w-64 lg:w-76 p-2 flex flex-col justify-center items-center z-50">
+        <div
+          className={`bg-pale rounded-full w-full h-full p-2 pt-16 flex flex-col justify-center items-center z-50`}
+          style={{ transform: `translate(${dx}px, ${dy}px)` }}
+        >
           <img
-            className="h-16 mt-2 mb-1"
+            className={`h-16 mt-2 mb-1`}
             src="/nodepen-brand.svg"
             alt="The NodePen logo."
             title="NodePen: Same Grasshopper, New Digs"
+            style={{ transform: `translate(${dx * -0.9}px, ${dy * -0.9}px)` }}
           />
-          {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
-        </div>
-      </div>
-      <div className="w-76 flex flex-col items-center">
-        <Link href="/gh">
-          <a className="font-sans font-semibold text-sm">
-            <div className="w-48 h-10 border-2 border-solid border-dark shadow-osm bg-light rounded-md transition-all duration-150 ease-in-out hover:cursor-pointer transform translate-y-0 hover:translate-y-hov-sm flex flex-row">
-              <div className="flex-grow flex flex-row justify-center items-center">
-                <div className="font-sans font-semibold text-sm">LAUNCH NODEPEN</div>
+          <a
+            href="/gh"
+            className="w-8 h-8 mt-8 relative overflow-visible"
+            style={{ transform: `translate(${dx * -0.95}px, ${dy * -0.95}px)` }}
+            onPointerEnter={() => setIsHovered(true)}
+            onPointerLeave={() => setIsHovered(false)}
+          >
+            <svg
+              className="absolute w-8 h-8 left-0 top-0 z-10 transition-colors duration-150"
+              fill={isHovered ? '#093824' : '#333'}
+              viewBox="0 0 20 20"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"
+                clipRule="evenodd"
+              />
+            </svg>
+            <div className="absolute w-12 h-12 z-0 rounded-md overflow-hidden" style={{ left: -8, top: -8 }}>
+              <div className="w-full h-full flex items-center justify-center">
+                <div
+                  className={`w-full h-full rounded-full bg-green transition-all duration-300 ease-out`}
+                  style={{ transform: isHovered ? 'scale(1.35)' : 'scale(0)' }}
+                />
               </div>
             </div>
           </a>
-        </Link>
+          {/* <p className="mt-2 font-sans font-semibold text-md mb-2 z-50 select-none">SAME GRASSHOPPER, NEW DIGS</p> */}
+        </div>
       </div>
-
-      <style jsx>{`
-        @keyframes arrowloop {
-          from {
-            transform: translateX(-15px);
-          }
-          to {
-            transform: translateX(15px);
-          }
-        }
-
-        .arrow {
-          animation-name: arrowloop;
-          animation-duration: 800ms;
-          animation-timing-function: ease-in-out;
-          animation-iteration-count: infinite;
-          animation-direction: alternate;
-        }
-      `}</style>
+      <div className="w-76 flex flex-col items-center" />
     </div>
   )
 }

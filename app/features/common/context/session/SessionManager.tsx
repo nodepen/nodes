@@ -5,6 +5,7 @@ import { useDeviceConfiguration } from './hooks/useDeviceConfiguration'
 import { useSession } from './hooks/useSession'
 
 export const SessionContext = createContext<SessionStore>({
+  isAuthenticated: false,
   device: { iOS: false, breakpoint: 'sm' },
   session: { initialize: console.log as any },
 })
@@ -20,9 +21,12 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
 
   const { id, initialize } = useSession(user?.uid)
 
+  const isAuthenticated = !!token
+
   const session: SessionStore = {
     user,
     token,
+    isAuthenticated,
     session: {
       id,
       initialize,

@@ -9,28 +9,33 @@ import {
   getElementExtents,
   regionContainsRegion,
   regionIntersectsRegion,
+  getDataTreePathString,
+  distance,
 } from '../../utils'
-import {
-  AddElementPayload,
-  CaptureLiveWiresPayload,
-  ConnectElementsPayload,
-  MoveElementPayload,
-  ProvisionalWirePayload,
-  RegisterElementAnchorPayload,
-  UpdateElementPayload,
-} from './types/Payload'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
-import { prepareLiveMotion } from './reducers/prepareLiveMotion'
+import { prepareLiveMotion, updateLiveElement } from './reducers'
+import { GrasshopperGraphManifest } from '../../types'
 
 const initialState: GraphState = {
+  manifest: {
+    id: 'unset',
+    name: 'unset',
+    author: 'unset',
+    elements: {},
+  },
   elements: {},
-  solution: {},
   selection: [],
   mode: 'idle',
   registry: {
     latest: {
       element: 'unset',
+    },
+    visibility: {
+      elements: [],
+    },
+    restored: {
+      elements: [],
     },
     move: {
       elements: [],
@@ -55,7 +60,14 @@ export const graphSlice = createSlice({
       state.elements = {}
       state.selection = []
     },
-    addElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
+    restore: (state: GraphState, action: PayloadAction<GrasshopperGraphManifest>) => {
+      state.manifest = action.payload
+      state.elements = action.payload.elements
+
+      // Flag restored objects as not needing correction
+      state.registry.restored.elements = Object.keys(action.payload.elements)
+    },
+    addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
 
       state.registry.latest.element = id
@@ -70,9 +82,10 @@ export const graphSlice = createSlice({
             id,
             template,
             current: {
-              solution: {
-                id: '',
-                mode: 'deferred',
+              settings: {
+                solution: 'deferred',
+                visibility: 'visible',
+                execution: 'enabled',
               },
               values,
               sources,
@@ -120,10 +133,17 @@ export const graphSlice = createSlice({
         case 'number-slider': {
           const template = action.payload.template as NodePen.Element<'number-slider'>['template']
 
+          const path = getDataTreePathString([0])
+
           const element: NodePen.Element<'number-slider'> = {
             id,
             template,
             current: {
+              settings: {
+                solution: 'immediate',
+                visibility: 'visible',
+                execution: 'enabled',
+              },
               dimensions: {
                 width: 300,
                 height: 42,
@@ -133,10 +153,10 @@ export const graphSlice = createSlice({
               sources: {},
               values: {
                 output: {
-                  '{0;}': [
+                  [path]: [
                     {
                       type: 'number',
-                      data: 0.25,
+                      value: 0.25,
                     },
                   ],
                 },
@@ -145,13 +165,57 @@ export const graphSlice = createSlice({
               outputs: {
                 output: 0,
               },
-              solution: {
-                id: 'unset',
-                mode: 'immediate',
-              },
               rounding: 'rational',
               domain: [0, 1],
               precision: 3,
+            },
+          }
+
+          if (action.payload.data) {
+            element.current = { ...element.current, ...action.payload.data }
+          }
+
+          state.elements[id] = element
+          break
+        }
+        case 'panel': {
+          const template = action.payload.template as NodePen.Element<'panel'>['template']
+
+          const path = getDataTreePathString([0])
+
+          const element: NodePen.Element<'panel'> = {
+            id,
+            template,
+            current: {
+              settings: {
+                visibility: 'visible',
+                solution: 'immediate',
+                execution: 'enabled',
+              },
+              isMultilineData: true,
+              dimensions: {
+                width: 250,
+                height: 150,
+              },
+              position: action.payload.position,
+              anchors: {},
+              sources: {
+                input: [],
+              },
+              values: {
+                output: {
+                  [path]: [
+                    {
+                      type: 'text',
+                      value: 'Double click to edit panel content...',
+                    },
+                  ],
+                },
+              },
+              inputs: {},
+              outputs: {
+                output: 0,
+              },
             },
           }
 
@@ -168,7 +232,7 @@ export const graphSlice = createSlice({
         }
       }
     },
-    addLiveElement: (state: GraphState, action: PayloadAction<AddElementPayload<NodePen.ElementType>>) => {
+    addLiveElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
 
       switch (action.payload.type) {
@@ -248,7 +312,7 @@ export const graphSlice = createSlice({
         delete state.elements[id]
       })
     },
-    moveElement: (state: GraphState, action: PayloadAction<MoveElementPayload>) => {
+    moveElement: (state: GraphState, action: PayloadAction<Payload.MoveElementPayload>) => {
       const { id, position } = action.payload
 
       const element = state.elements[id]
@@ -402,7 +466,7 @@ export const graphSlice = createSlice({
 
       state.selection = nextSelection
     },
-    updateElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
+    updateElement: (state: GraphState, action: PayloadAction<Payload.UpdateElementPayload<NodePen.ElementType>>) => {
       const { id, type, data } = action.payload
 
       const element = state.elements[id]
@@ -420,97 +484,19 @@ export const graphSlice = createSlice({
 
       element.current = { ...element.current, ...data }
     },
-    updateLiveElement: (state: GraphState, action: PayloadAction<UpdateElementPayload<NodePen.ElementType>>) => {
-      const { id, type, data } = action.payload
-
-      const element = state.elements[id]
-
-      // Make sure element exists
-      if (!element) {
-        console.log(`🐍 Attempted to update an element that doesn't exist!`)
-        return
-      }
-
-      // Make sure element is of same type as incoming data
-      switch (type) {
-        case 'region': {
-          if (!assert.element.isRegion(element)) {
-            console.log(`🐍 Attempted to update a(n) ${element.template.type} with region data!`)
-            return
-          }
-
-          const current = data as NodePen.Element<'region'>['current']
-
-          element.current = { ...element.current, ...current }
-          break
-        }
-        default: {
-          console.log(`Update logic for ${type} elements not yet implemented. `)
-          return
-        }
+    batchUpdateLiveElement: (
+      state: GraphState,
+      action: PayloadAction<Payload.UpdateElementPayload<NodePen.ElementType>[]>
+    ) => {
+      for (const payload of action.payload) {
+        updateLiveElement(state, payload)
       }
     },
-    connect: (state: GraphState, action: PayloadAction<ConnectElementsPayload>) => {
-      const { from, to } = action.payload
-
-      const fromElement = state.elements[from.elementId] as NodePen.Element<'static-component'>
-      const toElement = state.elements[to.elementId] as NodePen.Element<'static-component'>
-
-      if (!fromElement) {
-        console.debug(`🐍 Element ${from.elementId} declared for connection does not exist!`)
-        return
-      }
-
-      if (!toElement) {
-        console.debug(`🐍 Element ${to.elementId} declared for connection does not exist!`)
-        return
-      }
-
-      // Check for existing connection
-      const currentSources = toElement.current.sources[to.parameterId]
-
-      if (
-        currentSources.some(
-          (source) => source.elementInstanceId === from.elementId && source.parameterInstanceId === from.parameterId
-        )
-      ) {
-        console.debug(`🐍 Attempted to create a connection that already exists!`)
-        return
-      }
-
-      currentSources.push({
-        elementInstanceId: from.elementId,
-        parameterInstanceId: from.parameterId,
-      })
-
-      const [xFrom, yFrom] = fromElement.current.position
-      const [dxFrom, dyFrom] = fromElement.current.anchors[from.parameterId]
-
-      const [xTo, yTo] = toElement.current.position
-      const [dxTo, dyTo] = toElement.current.anchors[to.parameterId]
-
-      const wireId = newGuid()
-
-      const wire: NodePen.Element<'wire'> = {
-        id: wireId,
-        template: {
-          type: 'wire',
-          mode: 'data',
-          from,
-          to,
-        },
-        current: {
-          from: [xFrom + dxFrom, yFrom + dyFrom],
-          to: [xTo + dxTo, yTo + dyTo],
-          position: [0, 0],
-          dimensions: {
-            width: 0,
-            height: 0,
-          },
-        },
-      }
-
-      state.elements[wireId] = wire
+    updateLiveElement: (
+      state: GraphState,
+      action: PayloadAction<Payload.UpdateElementPayload<NodePen.ElementType>>
+    ) => {
+      updateLiveElement(state, action.payload)
     },
     startLiveWires: (state: GraphState, action: PayloadAction<Payload.StartLiveWiresPayload>) => {
       const { templates, origin } = action.payload
@@ -585,7 +571,7 @@ export const graphSlice = createSlice({
         current[updateTarget] = position
       })
     },
-    captureLiveWires: (state: GraphState, action: PayloadAction<CaptureLiveWiresPayload>) => {
+    captureLiveWires: (state: GraphState, action: PayloadAction<Payload.CaptureLiveWiresPayload>) => {
       const { type, elementId, parameterId } = action.payload
 
       if (state.registry.wire.origin.elementId === elementId) {
@@ -639,16 +625,59 @@ export const graphSlice = createSlice({
     releaseLiveWires: (state: GraphState) => {
       state.registry.wire.capture = undefined
     },
-    endLiveWires: (state: GraphState, action: PayloadAction<WireMode | 'cancel'>) => {
-      const wires = Object.values(state.elements).filter(
-        (element): element is LiveWireElement => element.template.type === 'wire' && element.template.mode === 'live'
-      )
+    endLiveWires: (state: GraphState, action: PayloadAction<Payload.EndLiveWiresPayload>) => {
+      const wires: LiveWireElement[] = []
+      const sourceElements: NodePen.Element<'static-component' | 'number-slider' | 'panel'>[] = []
 
-      if (action.payload === 'cancel' || !state.registry.wire.capture || wires.length === 0) {
+      for (const element of Object.values(state.elements)) {
+        if (element.template.type === 'wire' && element.template.mode === 'live') {
+          wires.push(element as LiveWireElement)
+        }
+
+        const graphElements: NodePen.ElementType[] = ['static-component', 'number-slider', 'panel']
+
+        if (graphElements.includes(element.template.type)) {
+          sourceElements.push(element as any)
+        }
+      }
+
+      if (action.payload.mode === 'cancel' || !state.registry.wire.capture || wires.length === 0) {
         // Connection not made, end and remove live wires
         wires.map((wire) => wire.id).forEach((id) => delete state.elements[id])
         return
       }
+
+      // if (!state.registry.wire.capture && action.payload.end) {
+      //   // Failed to capture, but we are being asked to try our best
+      //   const [x, y] = action.payload.end
+      //   const lookingFor = wires[0].template.from ? 'input' : 'output'
+
+      //   for (const element of sourceElements) {
+      //     if (state.registry.wire.capture) {
+      //       // Early termination
+      //       break
+      //     }
+
+      //     const relevantAnchors = Object.keys(element.current[`${lookingFor}s`])
+
+      //     for (const id of relevantAnchors) {
+      //       const [ex, ey] = element.current.position
+      //       const [dx, dy] = element.current.anchors[id]
+
+      //       // Get anchor position
+      //       const [ax, ay] = [ex + dx, ey + dy]
+
+      //       // Measure distance to final position
+      //       const dist = distance([x, y], [ax, ay])
+
+      //       if (dist < 20) {
+      //         // Set this as the capture
+      //         state.registry.wire.capture = { elementId: element.id, parameterId: id }
+      //         break
+      //       }
+      //     }
+      //   }
+      // }
 
       // Remove expired connections if performing a transpose
       if (wires[0].template.transpose) {
@@ -716,7 +745,7 @@ export const graphSlice = createSlice({
           return
         }
 
-        const mode = template.transpose ? 'transpose' : action.payload
+        const mode = template.transpose ? 'transpose' : action.payload.mode
         const capture = state.registry.wire.capture
 
         // Declare incoming connection
@@ -948,7 +977,7 @@ export const graphSlice = createSlice({
         prepareLiveMotion(state, 'selection', state.selection)
       }
     },
-    setProvisionalWire: (state: GraphState, action: PayloadAction<ProvisionalWirePayload>) => {
+    setProvisionalWire: (state: GraphState, action: PayloadAction<Payload.ProvisionalWirePayload>) => {
       const { from, to } = action.payload
 
       const fromElement = state.elements[from.elementId]
@@ -1069,6 +1098,44 @@ export const graphSlice = createSlice({
 
       state.mode = mode
     },
+    toggleVisibility: (state: GraphState, action: PayloadAction<Payload.ToggleVisibilityPayload>) => {
+      const { ids } = action.payload
+
+      for (const id of ids) {
+        const element = state.elements[id]
+
+        if (!element || !('settings' in element.current)) {
+          // Element does not have a visibility setting
+          continue
+        }
+
+        const { visibility } = element.current.settings
+
+        element.current.settings.visibility = visibility === 'visible' ? 'hidden' : 'visible'
+      }
+    },
+    setVisibility: (state: GraphState, action: PayloadAction<Payload.SetVisibilityPayload>) => {
+      const { ids, visibility: incomingVisibility } = action.payload
+
+      state.registry.visibility.elements = []
+
+      for (const id of ids) {
+        const element = state.elements[id]
+
+        if (!element || !('settings' in element.current)) {
+          continue
+        }
+
+        const { visibility: currentVisibility } = element.current.settings
+
+        if (currentVisibility === incomingVisibility) {
+          continue
+        }
+
+        state.registry.visibility.elements.push(id)
+        element.current.settings.visibility = incomingVisibility
+      }
+    },
     registerElement: (state: GraphState, action: PayloadAction<Payload.RegisterElementPayload>) => {
       const { id, dimensions, adjustment } = action.payload
 
@@ -1080,7 +1147,7 @@ export const graphSlice = createSlice({
 
       state.elements[id].current.dimensions = { width, height }
 
-      if (!adjustment) {
+      if (!adjustment || state.registry.restored.elements.includes(id)) {
         return
       }
 
@@ -1089,7 +1156,7 @@ export const graphSlice = createSlice({
 
       state.elements[id].current.position = [x + dx, y + dy]
     },
-    registerElementAnchor: (state: GraphState, action: PayloadAction<RegisterElementAnchorPayload>) => {
+    registerElementAnchor: (state: GraphState, action: PayloadAction<Payload.RegisterElementAnchorPayload>) => {
       const { elementId, anchorId, position } = action.payload
 
       if (!state.elements[elementId]) {
@@ -1109,7 +1176,6 @@ export const graphSlice = createSlice({
 
 const selectElements = (state: RootState): { [id: string]: NodePen.Element<NodePen.ElementType> } =>
   state.graph.present.elements
-const selectSolution = (state: RootState): GraphState['solution'] => state.graph.present.solution
 const selectSelection = (state: RootState): string[] => state.graph.present.selection
 const selectMode = (state: RootState): GraphMode => state.graph.present.mode
 
@@ -1117,6 +1183,7 @@ const selectPrimaryWire = (state: RootState): string => state.graph.present.regi
 const selectLiveWiresOrigin = (state: RootState): GraphState['registry']['wire']['origin'] =>
   state.graph.present.registry.wire.origin
 
+const selectGraphId = (state: RootState): string => state.graph.present.manifest.id
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
   return {
     canUndo: state.graph.past.length > 0,
@@ -1124,14 +1191,17 @@ const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: bool
   }
 }
 
+const selectVisibilityRegistry = (state: RootState): string[] => state.graph.present.registry.visibility.elements
+
 export const graphSelectors = {
   selectElements,
-  selectSolution,
   selectSelection,
   selectMode,
   selectPrimaryWire,
   selectLiveWiresOrigin,
+  selectGraphId,
   selectGraphHistory,
+  selectVisibilityRegistry,
 }
 
 const { actions, reducer } = graphSlice

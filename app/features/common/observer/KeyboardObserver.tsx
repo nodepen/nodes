@@ -10,9 +10,11 @@ const KeyboardObserver = (): React.ReactElement => {
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent): void => {
-      setKey({ key: e.key, pressed: true })
+      setKey({ key: e.keyCode === 32 ? 'space' : e.key, pressed: true })
 
-      if (e.key.toLowerCase() === 'd') {
+      const prevent: string[] = []
+
+      if (prevent.includes(e.key.toLowerCase())) {
         e.preventDefault()
       }
     },
@@ -21,7 +23,7 @@ const KeyboardObserver = (): React.ReactElement => {
 
   const handleKeyUp = useCallback(
     (e: KeyboardEvent): void => {
-      setKey({ key: e.key, pressed: false })
+      setKey({ key: e.keyCode === 32 ? 'space' : e.key, pressed: false })
     },
     [setKey]
   )

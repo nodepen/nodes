@@ -10,6 +10,10 @@ type PointerTooltipProps = {
   children?: JSX.Element
 }
 
+/**
+ * A tooltip that tracks the position of the declared allowable pointer types.
+ * @remarks Removal must be handled by the parent component.
+ */
 const PointerTooltip = ({
   initialPosition,
   offset,

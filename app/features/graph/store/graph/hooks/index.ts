@@ -1,10 +1,11 @@
 export { useGraphElements } from './useGraphElements'
 export { useGraphDispatch } from './useGraphDispatch'
 export { useGraphHistory } from './useGraphHistory'
+export { useGraphId } from './useGraphId'
 export { useGraphMode } from './useGraphMode'
 export { useGraphPrimaryLiveWire } from './useGraphPrimaryLiveWire'
 export { useGraphSelection } from './useGraphSelection'
-export { useGraphSolution } from './useGraphSolution'
 export { useLiveWiresOrigin } from './useLiveWiresOrigin'
+export { useVisibilityRegistry } from './useVisibilityRegistry'
 
 export { useGridDimensions } from './useGridDimensions'

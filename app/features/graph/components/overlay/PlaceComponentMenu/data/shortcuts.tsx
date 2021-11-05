@@ -1,3 +1,4 @@
+import { getDataTreePathString } from '@/features/graph/utils'
 import { NodePen } from 'glib'
 import { ComponentShortcut } from '../types'
 
@@ -29,6 +30,7 @@ export const shortcuts: ComponentShortcut[] = [
       const [valueNumber, valueDecimals] = val.split('.')
 
       const precision = Math.min(6, Math.max((minDecimals ?? ''.length, (valueDecimals ?? '').length))) as 0
+      const path = getDataTreePathString([0])
 
       const data: Partial<NodePen.Element<'number-slider'>['current']> = {
         precision,
@@ -36,10 +38,10 @@ export const shortcuts: ComponentShortcut[] = [
         rounding: 'rational',
         values: {
           output: {
-            '{0;}': [
+            [path]: [
               {
                 type: 'number',
-                data: Math.min(Math.pow(10, 7), parseFloat(val)),
+                value: Math.min(Math.pow(10, 7), parseFloat(val)),
               },
             ],
           },
@@ -61,6 +63,7 @@ export const shortcuts: ComponentShortcut[] = [
       const [num, decimals] = value.split('.')
 
       const precision = Math.min(6, (decimals ?? '').length) as 0 | 1 | 2 | 3 | 4 | 5 | 6
+      const path = getDataTreePathString([0])
 
       const data: Partial<NodePen.Element<'number-slider'>['current']> = {
         precision,
@@ -68,10 +71,10 @@ export const shortcuts: ComponentShortcut[] = [
         rounding: 'rational',
         values: {
           output: {
-            '{0;}': [
+            [path]: [
               {
                 type: 'number',
-                data: Math.min(Math.pow(10, 7), parseFloat(value)),
+                value: Math.min(Math.pow(10, 7), parseFloat(value)),
               },
             ],
           },
@@ -81,56 +84,72 @@ export const shortcuts: ComponentShortcut[] = [
       return data
     },
   },
-  // {
-  //   test: (value: string): boolean => {
-  //     return value[0] === '"' || value[0] === '“' || value[0] === '”'
-  //   },
-  //   pattern: '"∙∙∙',
-  //   description: 'Create a text panel with the provided content. Any double quotes will be ignored.',
-  //   template: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
-  //   onCreate: (value: string): NodePen.Element<'panel'> => {
-  //     const content = value.replaceAll('"', '')
+  {
+    test: (value: string): boolean => {
+      return value[0] === '"' || value[0] === '“' || value[0] === '”'
+    },
+    pattern: '"∙∙∙',
+    description: 'Create a text panel with the provided content. Any double quotes will be ignored.',
+    template: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
+    onCreate: (value: string): Partial<NodePen.Element<'panel'>['current']> => {
+      const content = value.replaceAll('"', '').replaceAll('“', '').replaceAll('”', '').substring(0, 1024)
+      const path = getDataTreePathString([0])
 
-  //     return {
-  //       id: newGuid(),
-  //       template: {
-  //         type: 'panel',
-  //       },
-  //       current: {
-  //         position: [0, 0],
-  //         dimensions: {
-  //           width: 0,
-  //           height: 0,
-  //         },
-  //         anchors: {},
-  //       },
-  //     }
-  //   },
-  // },
-  // {
-  //   test: (value: string): boolean => {
-  //     return value[0] === '/' && value[1] === '/'
-  //   },
-  //   pattern: '//∙∙∙',
-  //   description: 'Text Panel with provided content',
-  //   template: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
-  //   onCreate: (value: string): NodePen.Element<'panel'> => {
-  //     const content = value.replace('//', '')
+      const data: Partial<NodePen.Element<'panel'>['current']> =
+        content.length > 0
+          ? {
+              dimensions: {
+                width: 150,
+                height: 80,
+              },
+              values: {
+                output: {
+                  [path]: [
+                    {
+                      type: 'text',
+                      value: content,
+                    },
+                  ],
+                },
+              },
+            }
+          : {}
 
-  //     return {
-  //       id: newGuid(),
-  //       template: {
-  //         type: 'panel',
-  //       },
-  //       current: {
-  //         position: [0, 0],
-  //         dimensions: {
-  //           width: 0,
-  //           height: 0,
-  //         },
-  //         anchors: {},
-  //       },
-  //     }
-  //   },
-  // },
+      return data
+    },
+  },
+  {
+    test: (value: string): boolean => {
+      return value[0] === '/' && value[1] === '/'
+    },
+    pattern: '//∙∙∙',
+    description: 'Create a text panel with the provided content.',
+    template: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
+    onCreate: (value: string): Partial<NodePen.Element<'panel'>['current']> => {
+      const content = value.replace('//', '').substring(0, 1024)
+      const path = getDataTreePathString([0])
+
+      const data: Partial<NodePen.Element<'panel'>['current']> =
+        content.length > 0
+          ? {
+              dimensions: {
+                width: 150,
+                height: 80,
+              },
+              values: {
+                output: {
+                  [path]: [
+                    {
+                      type: 'text',
+                      value: content,
+                    },
+                  ],
+                },
+              },
+            }
+          : {}
+
+      return data
+    },
+  },
 ]

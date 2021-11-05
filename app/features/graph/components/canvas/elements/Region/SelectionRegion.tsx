@@ -104,6 +104,8 @@ const SelectionRegion = ({ region }: SelectionRegionProps): React.ReactElement =
 
   const handlePointerUp = useCallback(
     (e: PointerEvent | React.PointerEvent<HTMLDivElement>): void => {
+      e.stopPropagation()
+
       if (e.pointerType === 'mouse' && e.button === 2) {
         lockRegion.current = false
         return

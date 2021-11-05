@@ -11,7 +11,7 @@ using Nancy.Routing;
 using Nancy.TinyIoc;
 using Serilog;
 using Topshelf;
-using Microsoft.Web.WebView2.Wpf;
+// using Microsoft.Web.WebView2.Wpf;
 
 namespace NodePen.Compute
 {
@@ -38,13 +38,13 @@ namespace NodePen.Compute
         x.SetStartTimeout(new TimeSpan(0, 1, 0));
         x.Service<NancySelfHost>(s =>
                 {
-              s.ConstructUsing(name => new NancySelfHost());
-              s.WhenStarted(tc => tc.Start(backendPort));
-              s.WhenStopped(tc => tc.Stop());
-            });
+                  s.ConstructUsing(name => new NancySelfHost());
+                  s.WhenStarted(tc => tc.Start(backendPort));
+                  s.WhenStopped(tc => tc.Stop());
+                });
         x.RunAsPrompt();
-              //x.RunAsLocalService();
-              x.SetDisplayName("compute.geometry");
+        //x.RunAsLocalService();
+        x.SetDisplayName("compute.geometry");
         x.SetServiceName("compute.geometry");
       });
 
@@ -62,6 +62,9 @@ namespace NodePen.Compute
     {
       Log.Information("Launching RhinoCore library as {User}", Environment.UserName);
       Program.RhinoCore = new Rhino.Runtime.InProcess.RhinoCore(null, Rhino.Runtime.InProcess.WindowStyle.NoWindow);
+
+      Environment.SetEnvironmentVariable("RHINO_TOKEN", null, EnvironmentVariableTarget.Process);
+
       var config = new HostConfiguration();
 
       config.RewriteLocalhost = true;

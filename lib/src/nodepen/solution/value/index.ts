@@ -6,4 +6,5 @@ import * as GH from './types'
 export type { GH }
 
 export type { SolutionValue } from './SolutionValue'
+export type { SolutionValueGoo } from './SolutionValueGoo'
 export type { SolutionValueType } from './SolutionValueType'

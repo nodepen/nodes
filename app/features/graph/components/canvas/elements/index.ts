@@ -1,5 +1,6 @@
 export { Annotation } from './Annotation'
 export { NumberSlider } from './NumberSlider'
+export { Panel } from './Panel'
 export { SelectionRegion } from './Region'
 export { StaticComponent } from './StaticComponent'
 export { Wire, LiveWire } from './Wire'

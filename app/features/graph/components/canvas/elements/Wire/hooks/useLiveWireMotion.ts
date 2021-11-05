@@ -3,6 +3,7 @@ import { WireMode } from 'features/graph/store/graph/types'
 import { useWireMode } from 'features/graph/store/hotkey/hooks'
 import { useGraphDispatch } from 'features/graph/store/graph/hooks'
 import { useScreenSpaceToCameraSpace } from 'features/graph/hooks'
+import { useCameraDispatch } from '@/features/graph/store/camera/hooks'
 
 type LiveWireMode = WireMode | 'transpose'
 
@@ -12,6 +13,7 @@ export const useLiveWireMotion = (
   isTranspose: boolean,
   isPrimary: boolean
 ): LiveWireMode => {
+  const { setMode: setCameraMode } = useCameraDispatch()
   const { updateLiveWires, endLiveWires } = useGraphDispatch()
   const screenSpaceToCameraSpace = useScreenSpaceToCameraSpace()
 
@@ -29,13 +31,17 @@ export const useLiveWireMotion = (
         return
       }
 
+      e.preventDefault()
+
+      setCameraMode('idle')
+
       const { pageX: ex, pageY: ey } = e
 
       const [x, y] = screenSpaceToCameraSpace([ex, ey])
 
       updateLiveWires(x, y)
     },
-    [screenSpaceToCameraSpace, updateLiveWires]
+    [screenSpaceToCameraSpace, updateLiveWires, setCameraMode]
   )
 
   const handlePointerDown = useCallback(

@@ -1,70 +1,16 @@
 import type { AppProps } from 'next/app'
-import { Provider } from 'react-redux'
+import { Provider as ReduxProvider } from 'react-redux'
 import { store } from '$'
 
-/* eslint-disable */
-import { ApolloProvider, ApolloClient, InMemoryCache, ApolloLink, concat, split } from '@apollo/client'
-import { WebSocketLink } from '@apollo/client/link/ws'
-import { BatchHttpLink } from '@apollo/client/link/batch-http'
-
-import nookies from 'nookies'
-
 import 'tailwindcss/tailwind.css'
-import { getMainDefinition } from '@apollo/client/utilities'
-/* eslint-enable */
+import { SessionManager } from '@/features/common/context/session'
 
 const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
-  // const wsLink = process.browser
-  //   ? new WebSocketLink({
-  //       uri: process.env.NEXT_PUBLIC_NP_API_URL?.replace('https', 'wss') ?? 'ws://localhost:4000/graphql',
-  //       options: {
-  //         reconnect: true,
-  //         connectionParams: {
-  //           authorization: nookies.get(undefined)['token'],
-  //         },
-  //       },
-  //     })
-  //   : null
-
-  const batchHttpLink = new BatchHttpLink({
-    uri: process.env.NEXT_PUBLIC_NP_API_URL ?? 'http://localhost:4000/graphql',
-    batchInterval: 25,
-    batchMax: 50,
-  })
-
-  // const splitLink = process.browser
-  //   ? split(
-  //       ({ query }) => {
-  //         const definition = getMainDefinition(query)
-  //         return definition.kind === 'OperationDefinition' && definition.operation === 'subscription'
-  //       },
-  //       wsLink ?? batchHttpLink,
-  //       batchHttpLink
-  //     )
-  //   : batchHttpLink
-
-  const authLink = new ApolloLink((operation, forward) => {
-    operation.setContext({
-      headers: {
-        authorization: nookies.get(undefined)['token'],
-      },
-    })
-
-    return forward(operation)
-  })
-
-  const client = new ApolloClient({
-    ssrMode: typeof window === 'undefined',
-    credentials: 'include',
-    link: concat(authLink, batchHttpLink),
-    cache: new InMemoryCache({ addTypename: false }),
-  })
-
   return (
-    <Provider store={store}>
-      <ApolloProvider client={client}>
+    <ReduxProvider store={store}>
+      <SessionManager>
         <Component {...pageProps} />
-      </ApolloProvider>
+      </SessionManager>
       <style global jsx>{`
         @import url('https://fonts.googleapis.com/css2?family=Nova+Mono&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&family=Nova+Mono&display=swap');
@@ -93,7 +39,7 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
           outline: none;
         }
       `}</style>
-    </Provider>
+    </ReduxProvider>
   )
 }
 

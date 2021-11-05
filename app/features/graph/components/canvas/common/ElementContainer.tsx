@@ -12,7 +12,7 @@ type ElementContainerProps = {
   disabled?: boolean
   onStart?: DraggableEventHandler
   onDrag?: DraggableEventHandler
-  onStop?: DraggableEventHandler
+  onStop?: (e: Parameters<DraggableEventHandler>[0], d: Parameters<DraggableEventHandler>[1]) => { selection: boolean }
 }
 
 /**
@@ -48,6 +48,8 @@ const ElementContainer = ({
   }, [disabled, cameraMode])
 
   const handleStopPropagation = useCallback((e: PointerEvent | MouseEvent | globalThis.MouseEvent): void => {
+    // console.log(`ElementContainer : handleStopPropagation : ${e.type}`)
+
     e.stopPropagation()
   }, [])
 
@@ -59,6 +61,8 @@ const ElementContainer = ({
   const handleDragStart: DraggableEventHandler = useCallback(
     (e, d) => {
       e.stopPropagation()
+
+      // console.log('ElementContainer : handleDragStart')
 
       // Cache initial motion data
       const { x, y } = d
@@ -89,6 +93,8 @@ const ElementContainer = ({
     (e, d) => {
       const { x, y } = d
 
+      // console.log('ElementContainer : handleDragStop')
+
       // Perform state operations
       setZoomLock(false)
       moveElement(id, [x, y])
@@ -97,16 +103,18 @@ const ElementContainer = ({
       // Recalculate staged motion in case we moved a non-selected item
       prepareLiveMotion({ anchor: 'selection', targets: selection })
 
-      // Handle click, if motion was sufficiently short
-      const dragDuration = Date.now() - dragStartTime.current
-      const dragDistance = distance(dragStartPosition.current, [x, y])
-
-      if (dragDuration < 250 && dragDistance < 15) {
-        handleClickSelection()
-      }
-
       // Run callback, if provided
-      onStop?.(e, d)
+      const stop = onStop?.(e, d)
+
+      if (!stop?.selection) {
+        // Handle click, if motion was sufficiently short
+        const dragDuration = Date.now() - dragStartTime.current
+        const dragDistance = distance(dragStartPosition.current, [x, y])
+
+        if (dragDuration < 250 && dragDistance < 15) {
+          handleClickSelection()
+        }
+      }
     },
     [id, selection, setZoomLock, moveElement, prepareLiveMotion, onStop, handleClickSelection]
   )
@@ -137,14 +145,17 @@ const ElementContainer = ({
   }, [])
 
   return (
-    <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
+    <div
+      className={`${
+        isRegistered.current ? 'opacity-100' : 'opacity-0'
+      } w-full h-full pointer-events-none absolute left-0 top-0 z-30`}
+    >
       <div className="w-min h-full relative">
         <Draggable
           position={{ x, y }}
           scale={cameraZoom}
           cancel=".no-drag"
           disabled={isDisabled}
-          onMouseDown={handleStopPropagation}
           onStart={handleDragStart}
           onDrag={handleDrag}
           onStop={handleDragStop}
@@ -154,8 +165,8 @@ const ElementContainer = ({
             role="presentation"
             ref={containerRef}
             onPointerDown={handleStopPropagation}
-            onDoubleClick={handleStopPropagation}
             onMouseDown={handleStopPropagation}
+            onDoubleClick={handleStopPropagation}
           >
             {children}
           </div>

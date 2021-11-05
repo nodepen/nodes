@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
 import { Grasshopper } from 'glib'
+import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { GraphStore } from './types'
 import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
+import { useGraphDispatch } from '../../store/graph/hooks'
 
 export const GraphContext = React.createContext<GraphStore>({
   register: {
@@ -16,21 +18,37 @@ export const GraphContext = React.createContext<GraphStore>({
   registry: {
     canvasContainerRef: createRef(),
     layoutContainerRef: createRef(),
+    sceneContainerRef: createRef(),
     portals: {},
   },
 })
 
 type GraphManagerProps = {
+  manifest: GrasshopperGraphManifest
   children?: JSX.Element
 }
 
-export const GraphManager = ({ children }: GraphManagerProps): React.ReactElement => {
+export const GraphManager = ({ children, manifest }: GraphManagerProps): React.ReactElement => {
   const { token, session } = useSessionManager()
+
+  const { restore } = useGraphDispatch()
+  const sessionInitialized = useRef(false)
+
+  useEffect(() => {
+    if (sessionInitialized.current) {
+      return
+    }
+
+    sessionInitialized.current = true
+
+    restore(manifest, false)
+  }, [manifest, restore])
 
   const client = useApolloClient()
 
   const canvasContainerRef = useRef<HTMLDivElement>(null)
   const layoutContainerRef = useRef<HTMLDivElement>(null)
+  const sceneContainerRef = useRef<HTMLDivElement>(null)
 
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
@@ -123,6 +141,7 @@ export const GraphManager = ({ children }: GraphManagerProps): React.ReactElemen
       setTransform,
       canvasContainerRef,
       layoutContainerRef,
+      sceneContainerRef,
       portals,
     },
     register: {

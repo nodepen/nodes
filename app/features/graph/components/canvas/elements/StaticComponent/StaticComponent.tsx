@@ -1,270 +1,123 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useState, useRef, useCallback } from 'react'
 import { NodePen } from 'glib'
-import { useGraphDispatch, useGraphSelection } from 'features/graph/store/graph/hooks'
-import { useCameraStaticZoom, useCameraMode, useCameraDispatch } from 'features/graph/store/camera/hooks'
-import Draggable from 'react-draggable'
-import { useElementDimensions, useCriteria, useDebugRender, useLongPress } from 'hooks'
-import { StaticComponentParameter } from './lib'
-import { useComponentMenuActions } from './lib/hooks'
-import { GenericMenu } from 'features/graph/components/overlay'
-import { useClickSelection } from 'features/graph/hooks'
+import { useDebugRender, useLongHover } from 'hooks'
+import { ElementContainer, RuntimeMessageContainer, TooltipContainer } from '../../common'
+import { useGraphSelection } from '@/features/graph/store/graph/hooks'
+import { useCameraZoomLevel } from '@/features/graph/store/camera/hooks'
+import { StaticComponentParameter } from './components'
+import { StaticComponentDetails } from './details'
+import { HoverTooltip } from '../../../overlay'
+import { useElementStatusColor } from '../../hooks'
 
 type StaticComponentProps = {
   element: NodePen.Element<'static-component'>
 }
 
-const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement | null => {
+const StaticComponent = ({ element }: StaticComponentProps): React.ReactElement => {
   const { template, current, id } = element
 
   useDebugRender(`StaticComponent | ${template.name} | ${id}`)
 
-  const [x, y] = current.position
+  const statusColor = useElementStatusColor(element.id)
 
-  const scale = useCameraStaticZoom()
-  const mode = useCameraMode()
-
-  const { moveElement, registerElement, prepareLiveMotion, dispatchLiveMotion } = useGraphDispatch()
-  const { setZoomLock } = useCameraDispatch()
-
-  const componentRef = useRef<HTMLDivElement>(null)
-
-  const { width, height } = useElementDimensions(componentRef)
-
-  const isMoved = useRef(false)
-  const isVisible = useCriteria(width, height)
+  const zoomLevel = useCameraZoomLevel()
 
   const selection = useGraphSelection()
+
   const isSelected = selection.includes(id)
-  // const isSelected = true
+  const isVisible = current.settings.visibility === 'visible'
 
-  useEffect(() => {
-    if (isMoved.current || !width || !height) {
-      return
-    }
-    isMoved.current = true
+  const [showTooltip, setShowTooltip] = useState(false)
+  const tooltipPosition = useRef<[number, number]>([0, 0])
 
-    registerElement({ id, dimensions: [width, height], adjustment: [width / -2, height / -2] })
-  }, [width, height])
-
-  const pointerDownStartTime = useRef<number>(Date.now())
-  const pointerDownStartPosition = useRef<[number, number]>([0, 0])
-
-  const componentMenuActions = useComponentMenuActions(element)
-  const [showComponentMenuOverlay, setShowComponentMenuOverlay] = useState(false)
-  const overlayPosition = useRef<[number, number]>([0, 0])
-  // const [overlayPosition, setOverlayPosition] = useState<[number, number]>([0, 0])
-
-  const handleClick = useClickSelection(id)
-
-  const longPressActive = useRef(false)
-
-  const handleLongPress = useCallback((e: PointerEvent): void => {
+  const handleLongHover = useCallback((e: PointerEvent): void => {
     const { pageX, pageY } = e
 
-    longPressActive.current = true
-
-    overlayPosition.current = [pageX, pageY]
+    tooltipPosition.current = [pageX, pageY]
+    setShowTooltip(true)
   }, [])
 
-  const longPressTarget = useLongPress(handleLongPress)
+  const longHoverTarget = useLongHover(handleLongHover)
 
-  // const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
-  //   if (e.pointerType === 'mouse') {
-  //     return
-  //   }
+  const [isMoving, setIsMoving] = useState(false)
 
-  //   const { pageX, pageY } = e
-  //   overlayPosition.current = [pageX, pageY]
-
-  //   longPressActive.current = false
-  //   longPressTarget.current?.setPointerCapture(e.pointerId)
-  // }
-
-  // const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
-  //   if (!longPressActive.current) {
-  //     return
-  //   }
-
-  //   setShowComponentMenuOverlay(true)
-  //   longPressActive.current = false
-  // }
+  const bg = isSelected ? (isVisible ? 'bg-green' : 'bg-swampgreen') : isVisible ? 'bg-white' : 'bg-gray-300'
 
   return (
-    <div className="w-full h-full pointer-events-none absolute left-0 top-0 z-30">
-      <div className="w-min h-full relative">
-        <Draggable
-          scale={scale}
-          position={{ x, y }}
-          onMouseDown={(e) => {
-            e.stopPropagation()
-          }}
-          onStart={(e) => {
-            e.stopPropagation()
-            setZoomLock(true)
-            prepareLiveMotion({ anchor: id, targets: [id] })
-          }}
-          onDrag={(_, d) => {
-            const { deltaX, deltaY } = d
-            dispatchLiveMotion(deltaX, deltaY)
-          }}
-          onStop={(_, e) => {
-            const { x, y } = e
-            moveElement(element.id, [x, y])
-            setZoomLock(false)
-            prepareLiveMotion({ anchor: 'selection', targets: selection })
-          }}
-          disabled={mode !== 'idle'}
-        >
-          <div
-            className={`${isVisible ? 'opacity-100' : 'opacity-0'} flex flex-col items-stretch pointer-events-auto`}
-            ref={componentRef}
-            onPointerDown={(e) => {
-              e.stopPropagation()
-              pointerDownStartTime.current = Date.now()
-            }}
-            onPointerUp={(e) => {
-              const duration = Date.now() - pointerDownStartTime.current
+    <>
+      <ElementContainer
+        element={element}
+        onStart={() => setIsMoving(true)}
+        onStop={() => {
+          setIsMoving(false)
+          return { selection: false }
+        }}
+      >
+        <div className="flex flex-col items-stretch pointer-events-auto">
+          <div className={`${bg} h-2 border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none`} />
+          <div className={`${bg} flex flex-row justify-center items-stretch`}>
+            <div className="flex-grow flex flex-col items-stretch">
+              {Object.entries(element.current.inputs).map(([id, i]) => {
+                const parameter = element.template.inputs[i]
 
-              if (e.button === 0 && duration < 150) {
-                handleClick()
-              }
-            }}
-          >
-            <div
-              className={`${
-                isSelected ? 'bg-green' : 'bg-white'
-              } h-2 border-2 border-b-0 border-dark rounded-md rounded-bl-none rounded-br-none transition-colors duration-150`}
-            />
-            <div
-              className={`${
-                isSelected ? 'bg-green' : 'bg-white'
-              } flex flex-row justify-center items-stretch transition-colors duration-150`}
-            >
-              <div className="flex-grow flex flex-col items-stretch">
-                {Object.entries(element.current.inputs).map(([id, i]) => {
-                  const parameter = element.template.inputs[i]
-
-                  return (
-                    <StaticComponentParameter
-                      key={`input-param-${id}`}
-                      mode={'input'}
-                      template={{ id, ...parameter }}
-                      parent={element}
-                    />
-                  )
-                })}
-              </div>
-              <div
-                id="label-column"
-                className={`${
-                  showComponentMenuOverlay ? 'bg-green' : 'bg-white'
-                } w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center transition-colors duration-150`}
-                ref={longPressTarget}
-                onPointerDown={(e) => {
-                  const { pageX, pageY } = e
-
-                  switch (e.pointerType) {
-                    case 'mouse': {
-                      pointerDownStartTime.current = Date.now()
-                      pointerDownStartPosition.current = [pageX, pageY]
-                      break
-                    }
-                    default: {
-                      break
-                    }
-                  }
-                }}
-                onPointerUp={(e) => {
-                  e.stopPropagation()
-
-                  switch (e.pointerType) {
-                    case 'mouse': {
-                      if (e.button !== 2) {
-                        return
-                      }
-
-                      const pointerDuration = Date.now() - pointerDownStartTime.current
-
-                      if (pointerDuration > 300 || showComponentMenuOverlay) {
-                        return
-                      }
-
-                      const { pageX, pageY } = e
-
-                      overlayPosition.current = [pageX, pageY]
-                      setShowComponentMenuOverlay(true)
-
-                      break
-                    }
-                    default: {
-                      if (!longPressActive.current) {
-                        return
-                      }
-
-                      setShowComponentMenuOverlay(true)
-                      longPressActive.current = false
-                      break
-                    }
-                  }
-                }}
-              >
-                <div
-                  className="font-panel text-v font-bold text-sm select-none"
-                  style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
-                >
-                  {template.nickname.toUpperCase()}
-                </div>
-              </div>
-              <div className="flex-grow flex flex-col items-stretch">
-                {Object.entries(element.current.outputs).map(([id, i]) => {
-                  const parameter = element.template.outputs[i]
-
-                  return (
-                    <StaticComponentParameter
-                      key={`output-param-${id}`}
-                      mode={'output'}
-                      template={{ id, ...parameter }}
-                      parent={element}
-                    />
-                  )
-                })}
-              </div>
+                return (
+                  <StaticComponentParameter
+                    key={`input-param-${id}`}
+                    mode={'input'}
+                    template={parameter}
+                    elementId={element.id}
+                    parameterId={id}
+                  />
+                )
+              })}
             </div>
             <div
-              className={`${
-                isSelected ? 'bg-green' : 'bg-white'
-              } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none shadow-osm transition-colors duration-150`}
-            />
-          </div>
-        </Draggable>
-      </div>
-      {showComponentMenuOverlay ? (
-        <GenericMenu
-          context={element}
-          actions={componentMenuActions}
-          position={overlayPosition.current}
-          onClose={() => setShowComponentMenuOverlay(false)}
-        />
-      ) : null}
-      <style jsx>{`
-        @keyframes activemenutarget {
-          from {
-            background: #98e2c6;
-          }
-          to {
-            background: #fff;
-          }
-        }
+              id="label-column"
+              className={`w-10 ml-1 mr-1 p-2 pt-4 pb-4 rounded-md border-2 border-dark flex flex-col justify-center items-center`}
+              style={{ background: statusColor }}
+              ref={longHoverTarget}
+            >
+              <div
+                className={`${
+                  zoomLevel === 'far' ? 'opacity-0' : 'opacity-100'
+                } font-panel text-v font-bold text-sm select-none`}
+                style={{ writingMode: 'vertical-lr', textOrientation: 'sideways', transform: 'rotate(180deg)' }}
+              >
+                {template.nickname.toUpperCase()}
+              </div>
+            </div>
+            <div className="flex-grow flex flex-col items-stretch">
+              {Object.entries(element.current.outputs).map(([id, i]) => {
+                const parameter = element.template.outputs[i]
 
-        .menu-target {
-          animation-name: activemenutarget;
-          animation-duration: 900ms;
-          animation-timing-function: ease-in-out;
-          animation-iteration-count: infinite;
-          animation-direction: alternate;
-        }
-      `}</style>
-    </div>
+                return (
+                  <StaticComponentParameter
+                    key={`output-param-${id}`}
+                    mode={'output'}
+                    template={parameter}
+                    elementId={element.id}
+                    parameterId={id}
+                  />
+                )
+              })}
+            </div>
+          </div>
+          <div
+            className={`${bg} ${
+              zoomLevel === 'far' ? '' : 'shadow-osm'
+            } h-2 border-2 border-t-0 border-dark rounded-md rounded-tl-none rounded-tr-none`}
+          />
+        </div>
+      </ElementContainer>
+      {showTooltip && !isMoving ? (
+        <HoverTooltip position={tooltipPosition.current} onClose={() => setShowTooltip(false)}>
+          <TooltipContainer>
+            <StaticComponentDetails template={template} />
+          </TooltipContainer>
+        </HoverTooltip>
+      ) : null}
+      <RuntimeMessageContainer elementId={element.id} wait={isMoving} />
+    </>
   )
 }
 

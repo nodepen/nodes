@@ -15,7 +15,7 @@ export const useSetCameraPosition = (): ((
   const {
     registry: { setTransform },
   } = useGraphManager()
-  const { setStaticPosition, setStaticZoom } = useCameraDispatch()
+  const { setStaticPosition, setStaticZoom, setZoomLevel } = useCameraDispatch()
   const startPosition = useCameraStaticPosition()
 
   const startTime = useRef<number>(0)
@@ -31,6 +31,8 @@ export const useSetCameraPosition = (): ((
           reject()
           return
         }
+
+        setZoomLevel('default')
 
         const [w, h] = [window.innerWidth, window.innerHeight - 48 - 36]
 

@@ -21,7 +21,22 @@ export const addDefaultElement = (
           addElement({
             type: 'number-slider',
             position: [x, y],
-            template: { type: 'number-slider' },
+            template: {
+              ...template,
+              type: 'number-slider',
+            },
+            data,
+          })
+          break
+        }
+        case '59e0b89a-e487-49f8-bab8-b5bab16be14c': {
+          addElement({
+            type: 'panel',
+            position: [x, y],
+            template: {
+              ...template,
+              type: 'panel',
+            },
             data,
           })
           break

@@ -30,6 +30,18 @@ export const useLongPress = (
         return
       }
 
+      if (!target.current) {
+        return
+      }
+
+      if (!e.target) {
+        return
+      }
+
+      if (!target.current.contains(e.target as any)) {
+        return
+      }
+
       if (e.pointerType === 'mouse') {
         // Ignore mouse events, long press is touch only
         return
@@ -112,16 +124,16 @@ export const useLongPress = (
       return
     }
 
-    const el = target.current
+    // const el = target.current
 
-    el.addEventListener('touchstart', handleTouchStart as any)
-    el.addEventListener('pointerdown', handlePointerDown)
+    window.addEventListener('touchstart', handleTouchStart as any)
+    window.addEventListener('pointerdown', handlePointerDown)
     window.addEventListener('pointermove', handlePointerMove)
     window.addEventListener('pointerup', handlePointerUp)
 
     return () => {
-      el.removeEventListener('touchstart', handleTouchStart as any)
-      el.removeEventListener('pointerdown', handlePointerDown)
+      window.removeEventListener('touchstart', handleTouchStart as any)
+      window.removeEventListener('pointerdown', handlePointerDown)
       window.removeEventListener('pointermove', handlePointerMove)
       window.removeEventListener('pointerup', handlePointerUp)
     }

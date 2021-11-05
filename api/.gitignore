@@ -2,6 +2,7 @@ node_modules
 dist
 
 auth.json
+origins.json
 origins.ts
 
 glib

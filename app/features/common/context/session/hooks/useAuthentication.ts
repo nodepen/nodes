@@ -47,7 +47,7 @@ export const useAuthentication = (): AuthContext => {
     const handleRefresh = setInterval(async () => {
       const u = firebase.auth().currentUser
       await u?.getIdToken(true)
-    }, 1000 * 60 * 10)
+    }, 1000 * 60 * 60)
 
     return () => clearInterval(handleRefresh)
   }, [])

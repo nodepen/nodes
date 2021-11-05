@@ -22,7 +22,7 @@ const allowedComponents = {
   params: {
     input: [
       '57da07bd-ecab-415d-9d86-af36d7073abc', // Number Slider
-      // '59e0b89a-e487-49f8-bab8-b5bab16be14c', // Panel
+      '59e0b89a-e487-49f8-bab8-b5bab16be14c', // Panel
     ],
     /* eslint-disable-next-line */
     // @ts-ignore
@@ -66,12 +66,13 @@ const allowedComponents = {
       '9ab93e1a-ebdf-4090-9296-b000cff7b202', // Split List (Split)
     ],
     sequence: [
-      // '01640871-69ea-40ac-9380-4660d6d28bd2', // Char Sequence (CharSeq)
+      '01640871-69ea-40ac-9380-4660d6d28bd2', // Char Sequence (CharSeq)
       'fe99f302-3d0d-4389-8494-bd53f7935a02', // Fibonacci (Fib)
       '2ab17f9a-d852-4405-80e1-938c5e57e78d', // Random (Random)
       'e64c5fb1-845c-4ab1-8911-5f338516ba67', // Series (Series)
     ],
     tree: [
+      '41aa4112-9c9b-42f4-847e-503b9d90e4c7', // Flip Matrix (Flip)
       'f80cfe18-9510-4b89-8301-8e58faf423bb', // Flatten Tree (Flatten)
       '87e1d9ef-088b-4d30-9dda-8a7448a17329', // Graft Tree (Graft)
     ],

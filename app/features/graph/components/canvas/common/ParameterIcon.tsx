@@ -2,7 +2,7 @@ import React from 'react'
 import { Grasshopper } from 'glib'
 
 type ParameterIconProps = {
-  type: Grasshopper.ParameterType
+  type: Grasshopper.ParameterType | 'none'
   size: 'sm' | 'md'
 }
 
@@ -20,21 +20,21 @@ export const ParameterIcon = ({ type, size }: ParameterIconProps): React.ReactEl
   const f = (Math.sqrt(3) / 2) * s
   const points = `${a},0 ${b},-${f} -${b},-${f} -${a},0 -${b},${f} ${b},${f}`
 
-  const getIcon = (type: Grasshopper.ParameterType): JSX.Element | null => {
-    switch (type) {
-      case 'number':
-        return (
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            stroke="#FFF"
-            strokeWidth={2}
-            vectorEffect="non-scaling-stroke"
-            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-            style={{ transformOrigin: '50% 50%', transform: 'scale(0.6)' }}
-          />
-        )
+  const getIcon = (type: Grasshopper.ParameterType | 'none'): JSX.Element | null => {
+    switch (type.toLowerCase()) {
+      // case 'number':
+      //   return (
+      //     <path
+      //       strokeLinecap="round"
+      //       strokeLinejoin="round"
+      //       fill="none"
+      //       stroke="#FFF"
+      //       strokeWidth={2}
+      //       vectorEffect="non-scaling-stroke"
+      //       d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+      //       style={{ transformOrigin: '50% 50%', transform: 'scale(0.6)' }}
+      //     />
+      //   )
       default:
         return null
     }

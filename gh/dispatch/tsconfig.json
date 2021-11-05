@@ -3,6 +3,9 @@
     "module": "commonjs",
     "esModuleInterop": true,
     "target": "es6",
+    "lib": [
+      "esnext"
+    ],
     "noImplicitAny": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
