@@ -1,3 +1,5 @@
+# escape=`
+
 ### Build dotnet and msbuild dependencies
 FROM mcr.microsoft.com/dotnet/framework/sdk:4.8 as builder
 
