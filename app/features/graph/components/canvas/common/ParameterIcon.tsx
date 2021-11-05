@@ -22,19 +22,19 @@ export const ParameterIcon = ({ type, size }: ParameterIconProps): React.ReactEl
 
   const getIcon = (type: Grasshopper.ParameterType | 'none'): JSX.Element | null => {
     switch (type.toLowerCase()) {
-      case 'number':
-        return (
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            fill="none"
-            stroke="#FFF"
-            strokeWidth={2}
-            vectorEffect="non-scaling-stroke"
-            d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
-            style={{ transformOrigin: '50% 50%', transform: 'scale(0.6)' }}
-          />
-        )
+      // case 'number':
+      //   return (
+      //     <path
+      //       strokeLinecap="round"
+      //       strokeLinejoin="round"
+      //       fill="none"
+      //       stroke="#FFF"
+      //       strokeWidth={2}
+      //       vectorEffect="non-scaling-stroke"
+      //       d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14"
+      //       style={{ transformOrigin: '50% 50%', transform: 'scale(0.6)' }}
+      //     />
+      //   )
       default:
         return null
     }
