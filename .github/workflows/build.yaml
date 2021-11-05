@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - consolidate-and-containerize
 
 jobs:
   lib:
