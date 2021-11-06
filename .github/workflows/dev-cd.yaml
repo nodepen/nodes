@@ -148,6 +148,7 @@ jobs:
         run: |
           gcloud run deploy np-dev-app \
             --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next \
+            --region=${{ secrets.NODEPEN_GCP_REGION }} \
             --set-env-vars=NEXT_PUBLIC_NP_API_ENDPOINT=https://api.dev.nodepen.io/graphql
   deploy-api:
     runs-on: ubuntu-latest
@@ -162,6 +163,7 @@ jobs:
         run: |
           gcloud run deploy np-dev-api \
             --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next \
+            --region=${{ secrets.NODEPEN_GCP_REGION }} \
             --set-env-vars=NP_API_PORT=8080,NP_DB_HOST=${{ secrets.NODEPEN_REDIS_HOST }},NP_DB_PORT=${{ secrets.NODEPEN_REDIS_PORT }}
   deploy-gh:
     runs-on: ubuntu-latest
