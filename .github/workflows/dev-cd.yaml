@@ -5,6 +5,10 @@ on:
     branches-ignore:
       - main
 
+env:
+  GKE_CLUSTER: ${{ secrets.NODEPEN_GKE_CLUSTER }}
+  GKE_ZONE: ${{ secrets.NODEPEN_GKE_ZONE }}
+
 jobs:
   build-lib:
     runs-on: ubuntu-latest
@@ -144,9 +148,8 @@ jobs:
         run: |
           gcloud run deploy np-dev-app \
             --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next \
-            --set-env-vars=[ \
-              NEXT_PUBLIC_NP_API_ENDPOINT=https//api.dev.nodepen.io/graphql, \
-            ]
+            --set-env-vars= \
+              NEXT_PUBLIC_NP_API_ENDPOINT=https//api.dev.nodepen.io/graphql
   deploy-api:
     runs-on: ubuntu-latest
     needs: [build-api]
@@ -160,11 +163,10 @@ jobs:
         run: |
           gcloud run deploy np-dev-api \
             --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next \
-            --set-env-vars=[ \
+            --set-env-vars= \
               NP_API_PORT=8080, \
               NP_DB_HOST=${{ secrets.NODEPEN_REDIS_HOST }}, \
-              NP_DB_PORT=${{ secrets.NODEPEN_REDIS_PORT }}, \
-            ]
+              NP_DB_PORT=${{ secrets.NODEPEN_REDIS_PORT }}
   deploy-gh:
     runs-on: ubuntu-latest
     needs: [build-gh-compute, build-gh-dispatch]
@@ -176,4 +178,4 @@ jobs:
           export_default_credentials: true
       - uses: azure/setup-helm@v1
       - run: |
-          gcloud container clusters get-credentials "${{ secrets.NODEPEN_GKE_CLUSTER }}" --zone "${{ secrets.NODEPEN_GKE_ZONE }}"
+          gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
