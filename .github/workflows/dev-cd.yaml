@@ -179,8 +179,9 @@ jobs:
       - uses: azure/setup-helm@v1
       - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
       - name: Deploy
+        working-directory: ./.charts
         run: |
-          helm upgrade np-dev ./.charts/np-dev --namespace=default \
+          helm upgrade np-dev ./np-dev --namespace=default \
             --set=app.name=np-dev \
             --set=app.version=${{ github.event.client_payload.tag }} \
             --set=redisHost=${{ secrets.NODEPEN_REDIS_HOST }} \
