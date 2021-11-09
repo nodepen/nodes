@@ -21,7 +21,7 @@ spec:
           imagePullPolicy: Always
           env:
             - name: NP_GH_PORT
-              value: { { .Values.ghPort } }
+              value: "{{ .Values.ghPort }}"
           ports:
             - containerPort: 9901
           resources:
@@ -38,7 +38,7 @@ spec:
             - name: NP_GLOBAL_PREFIX
               value: "{{ .Values.globalPrefix }}"
             - name: NP_GH_PORT
-              value: { { .Values.ghPort } }
+              value: "{{ .Values.ghPort }}"
             - name: NP_DB_HOST
               value: "{{ .Values.redisHost }}"
             - name: NP_DB_PORT
