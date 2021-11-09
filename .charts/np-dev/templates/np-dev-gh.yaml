@@ -26,11 +26,11 @@ spec:
             - containerPort: 9901
           resources:
             limits:
-              cpu: 400m
-              memory: 250m
+              cpu: 550m
+              memory: 1.1Gi
             requests:
-              cpu: 300m
-              memory: 200m
+              cpu: 500m
+              memory: 1Gi
         - name: np-dev-gh-dispatch
           image: gcr.io/{{ .Values.projectId }}/np-gh-dispatch:{{ .Values.tag }}
           imagePullPolicy: Always
