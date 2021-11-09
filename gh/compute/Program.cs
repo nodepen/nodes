@@ -29,7 +29,7 @@ namespace NodePen.Compute
 #endif
 
       Logging.Init();
-      int backendPort = 9900;
+      int backendPort = Env.GetEnvironmentInt("NP_GH_PORT", 9900);
 
       Topshelf.HostFactory.Run(x =>
       {

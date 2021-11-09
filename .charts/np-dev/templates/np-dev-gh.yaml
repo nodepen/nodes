@@ -19,8 +19,11 @@ spec:
         - name: np-dev-gh-compute
           image: gcr.io/{{ .Values.projectId }}/np-gh-compute:{{ .Values.tag }}
           imagePullPolicy: Always
+          env:
+            - name: NP_GH_PORT
+              value: { { .Values.ghPort } }
           ports:
-            - containerPort: 9900
+            - containerPort: 9901
           resources:
             limits:
               cpu: 400m
@@ -34,6 +37,8 @@ spec:
           env:
             - name: NP_GLOBAL_PREFIX
               value: "{{ .Values.globalPrefix }}"
+            - name: NP_GH_PORT
+              value: { { .Values.ghPort } }
             - name: NP_DB_HOST
               value: "{{ .Values.redisHost }}"
             - name: NP_DB_PORT

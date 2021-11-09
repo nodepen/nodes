@@ -18,6 +18,8 @@ const ghq = new Queue(`${prefix}:gh`, {
   isWorker: true,
 })
 
+const ghPort = process.env?.NP_GH_PORT ?? 9900
+
 const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
   try {
     const { graphId, solutionId } = job.data
@@ -35,7 +37,7 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
     // console.log({ graphJson })
 
     const { data: graphBinaries } = await axios.post(
-      'http://localhost:9900/grasshopper/graph',
+      `http://localhost:${ghPort}/grasshopper/graph`,
       graphJson
     )
 
@@ -48,7 +50,7 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
     )
 
     const { data: graphSolution } = await axios.post(
-      'http://localhost:9900/grasshopper/solve',
+      `http://localhost:${ghPort}/grasshopper/solve`,
       graphBinaries
     )
 
