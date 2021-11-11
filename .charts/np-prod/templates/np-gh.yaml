@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: np-gh
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: np-gh

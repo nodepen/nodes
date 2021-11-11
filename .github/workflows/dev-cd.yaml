@@ -1,5 +1,8 @@
 name: dev-cd
 
+on:
+  workflow-dispatch:
+
 env:
   GKE_CLUSTER: ${{ secrets.NODEPEN_GKE_CLUSTER }}
   GKE_ZONE: ${{ secrets.NODEPEN_GKE_ZONE }}
