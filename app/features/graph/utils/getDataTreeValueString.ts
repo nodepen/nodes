@@ -14,8 +14,10 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       console.log({ data })
       rhino3dm().then((rh) => {
         /* @ts-expect-error missing type */
-        const x = rh.CommonObject.decode(data.value)
+        const x: typeof rh.NurbsCurve['prototype'] = rh.CommonObject.decode(data.value)
         console.log(x)
+        console.log(x.degree)
+        console.log(x.isClosed)
       })
       return 'Circle'
     }

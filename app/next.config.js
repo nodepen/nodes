@@ -13,9 +13,7 @@ module.exports = withBundleAnalyzer({
         path: false,
       };
 
-      // config.output.webassemblyModuleFilename = 'static/wasm/[modulehash].wasm'
-      // config.experiments = { asyncWebAssembly: true }
-
+      // The `rhino3dm.wasm` file needs to land where the `rhino3dm.js` gets placed by webpack
       config.plugins.push(new CopyWebpackPlugin({
         patterns: [
           { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "static/chunks/pages/rhino3dm.wasm" }
