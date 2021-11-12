@@ -1,4 +1,5 @@
 import { NodePen } from 'glib'
+import rhino3dm from 'rhino3dm'
 import { distance } from '.'
 import { distance3d } from './distance3d'
 
@@ -10,6 +11,12 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       return value ? 'True' : 'False'
     }
     case 'circle': {
+      console.log({ data })
+      rhino3dm().then((rh) => {
+        /* @ts-expect-error missing type */
+        const x = rh.CommonObject.decode(data.value)
+        console.log(x)
+      })
       return 'Circle'
     }
     case 'curve': {

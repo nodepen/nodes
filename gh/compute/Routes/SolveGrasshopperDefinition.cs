@@ -149,10 +149,12 @@ namespace NodePen.Compute.Routes
 
                 data.Type = "circle";
 
+                Console.WriteLine(JsonConvert.SerializeObject(circleGoo.Value.ToNurbsCurve()));
+
                 var beziers = BezierCurve.CreateCubicBeziers(circleGoo.Value.ToNurbsCurve(), 0.01, 0.01);
                 var curve = ToNodePenCurve(beziers);
 
-                data.Value = JsonConvert.SerializeObject(curve);
+                data.Value = JsonConvert.SerializeObject(circleGoo.Value.ToNurbsCurve());
 
                 break;
               }
