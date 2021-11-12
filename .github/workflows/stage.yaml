@@ -1,7 +1,7 @@
 name: stage
 
 on:
-  workflow-dispatch:
+  workflow_dispatch:
 
 env:
   GKE_CLUSTER: ${{ secrets.NODEPEN_GKE_CLUSTER }}
