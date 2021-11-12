@@ -1,9 +1,7 @@
 name: np-dev
 
 on:
-  push:
-    branches-ignore:
-      - main
+  pull_request:
 
 env:
   GKE_CLUSTER: ${{ secrets.NODEPEN_GKE_CLUSTER }}
