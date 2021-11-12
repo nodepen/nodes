@@ -1,0 +1,194 @@
+name: np-prod
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  GKE_CLUSTER: ${{ secrets.NODEPEN_GKE_CLUSTER }}
+  GKE_ZONE: ${{ secrets.NODEPEN_GKE_ZONE }}
+  NP_PREFIX: prod
+  NP_TAG: prod-${{ github.sha }}
+
+jobs:
+  build-lib:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+      - name: Build glib
+        working-directory: ./lib
+        run: |
+          npm ci
+          npm run build
+      - name: Upload glib artifacts
+        uses: actions/upload-artifact@master
+        with:
+          name: glib
+          path: |
+            lib/
+            !lib/node_modules/
+          retention-days: 1
+  build-app:
+    runs-on: ubuntu-latest
+    needs: [build-lib]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+      - name: Download glib artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: glib
+          path: app/glib/
+      - name: Restore glib dependencies
+        working-directory: ./app/glib
+        run: npm ci
+      - name: Restore app secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "firebase.client.auth.json"
+          dir: "app/features/common/context/session/auth/"
+          json: ${{ secrets.NODEPEN_APP_SECRET_AUTH }}
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Setup GCR
+        run: gcloud auth configure-docker
+      - uses: docker/build-push-action@v2
+        with:
+          context: ./app
+          push: true
+          tags: |
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:prod-${{ github.sha }}
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:prod
+  build-api:
+    runs-on: ubuntu-latest
+    needs: [build-lib]
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+      - name: Download glib artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: glib
+          path: api/glib/
+      - name: Restore glib dependencies
+        working-directory: ./api/glib
+        run: npm ci
+      - name: Restore api secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "auth.json"
+          dir: "api/src/firebase/auth/"
+          json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Setup GCR
+        run: gcloud auth configure-docker
+      - uses: docker/build-push-action@v2
+        with:
+          context: ./api
+          push: true
+          tags: |
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:prod-${{ github.sha }}
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:prod
+  build-gh-dispatch:
+    runs-on: self-hosted
+    needs: [build-lib]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download glib artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: glib
+          path: gh/dispatch/glib/
+      - name: Restore glib dependencies
+        working-directory: ./gh/dispatch/glib
+        run: npm ci
+      - name: Build np-gh-dispatch
+        run: |
+          cd gh/dispatch
+          docker build -t gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod-${{ github.sha }} .
+          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod-${{ github.sha }}
+          docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod
+          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod
+  build-gh-compute:
+    runs-on: self-hosted
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build np-gh-compute
+        run: |
+          cd gh/compute
+          docker build -t gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod-${{ github.sha }} --build-arg NODEPEN_RHINO_TOKEN=${{ secrets.NODEPEN_RHINO_TOKEN }} .
+          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod-${{ github.sha }}
+          docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod
+          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod
+  deploy-app:
+    runs-on: ubuntu-latest
+    needs: [build-app]
+    steps:
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Deploy np-app
+        run: |
+          gcloud run deploy np-app \
+            --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:prod \
+            --region=${{ secrets.NODEPEN_GCP_REGION }} \
+            --set-env-vars=NEXT_PUBLIC_NP_API_ENDPOINT=https://api.nodepen.io/graphql \
+            --allow-unauthenticated
+  deploy-api:
+    runs-on: ubuntu-latest
+    needs: [build-api]
+    steps:
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Deploy np-api
+        run: |
+          gcloud run deploy np-api \
+            --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:prod \
+            --region=${{ secrets.NODEPEN_GCP_REGION }} \
+            --set-env-vars=NP_API_PORT=8080,NP_GLOBAL_PREFIX="$NP_PREFIX",NP_DB_HOST=${{ secrets.NODEPEN_REDIS_HOST }},NP_DB_PORT=${{ secrets.NODEPEN_REDIS_PORT }} \
+            --allow-unauthenticated
+  deploy-gh:
+    runs-on: ubuntu-latest
+    needs: [build-gh-compute, build-gh-dispatch]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - uses: azure/setup-helm@v1
+      - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+      - name: Deploy
+        run: |
+          helm upgrade np-prod ./.charts/np-prod --namespace=default \
+            --set=app.name=np-prod \
+            --set=app.version=${{ github.sha }} \
+            --set=redisHost=${{ secrets.NODEPEN_REDIS_HOST }} \
+            --set=redisPort=${{ secrets.NODEPEN_REDIS_PORT }} \
+            --set=projectId=${{ secrets.NODEPEN_GCP_PROJECT_ID }} \
+            --set=tag="$NP_TAG" \
+            --install

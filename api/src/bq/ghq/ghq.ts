@@ -8,7 +8,11 @@ const opts: ClientOpts = process.env.NP_DB_HOST
     }
   : {}
 
-const ghq = new Queue('gh', {
+const prefix = process.env?.NP_GLOBAL_PREFIX ?? 'dev'
+
+console.log(`PREFIX: ${prefix}`)
+
+const ghq = new Queue(`${prefix}:gh`, {
   redis: opts,
   isWorker: false,
 })

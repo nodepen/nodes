@@ -1,12 +1,18 @@
-name: build
+name: np-dev
 
 on:
   push:
-    branches:
+    branches-ignore:
       - main
 
+env:
+  GKE_CLUSTER: ${{ secrets.NODEPEN_GKE_CLUSTER }}
+  GKE_ZONE: ${{ secrets.NODEPEN_GKE_ZONE }}
+  NP_PREFIX: dev
+  NP_TAG: next-${{ github.sha }}
+
 jobs:
-  lib:
+  build-lib:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -26,9 +32,9 @@ jobs:
             lib/
             !lib/node_modules/
           retention-days: 1
-  app:
+  build-app:
     runs-on: ubuntu-latest
-    needs: [lib]
+    needs: [build-lib]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -62,9 +68,9 @@ jobs:
           tags: |
             gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next-${{ github.sha }}
             gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next
-  api:
+  build-api:
     runs-on: ubuntu-latest
-    needs: [lib]
+    needs: [build-lib]
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -98,9 +104,9 @@ jobs:
           tags: |
             gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next-${{ github.sha }}
             gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next
-  gh-dispatch:
+  build-gh-dispatch:
     runs-on: self-hosted
-    needs: [lib]
+    needs: [build-lib]
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -119,7 +125,7 @@ jobs:
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next-${{ github.sha }}
           docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:next
-  gh-compute:
+  build-gh-compute:
     runs-on: self-hosted
     steps:
       - name: Checkout
@@ -131,9 +137,3 @@ jobs:
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next-${{ github.sha }}
           docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next
           docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:next
-  deploy:
-    runs-on: ubuntu-latest
-    needs: [app, api, gh-compute, gh-dispatch]
-    steps:
-      - name: Trigger deployment
-        run: 'curl -X POST -H "Authorization: token ${{ secrets.NODEPEN_CICD_TOKEN }}" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/cdriesler/nodepen-admin/dispatches -d ''{"event_type": "deploy-dev", "client_payload": { "tag": "next-${{ github.sha }}" } }'''

@@ -8,6 +8,8 @@ type GlobalServerConfig = {
   port: number
 }
 
+let pingInterval: ReturnType<typeof setInterval>
+
 export const startup = async (): Promise<Server> => {
   // Initialize firebase dependencies
   const fb = admin.name
@@ -21,10 +23,18 @@ export const startup = async (): Promise<Server> => {
   const initializeRedis = new Promise<void>((resolve, reject) => {
     db.client.on('connect', () => {
       console.log(`[ STARTUP ] Redis instance connected!`)
+
+      // Ping redis instance to keep connection alive
+      pingInterval = setInterval(() => {
+        db.client.ping()
+      }, 1000)
+
       resolve()
     })
 
     db.client.on('error', (err) => {
+      clearInterval(pingInterval)
+      console.error(err)
       reject(err)
     })
   })
