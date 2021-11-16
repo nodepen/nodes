@@ -19,6 +19,9 @@ namespace NodePen.Compute
     [JsonProperty("description")]
     public string Description { get; set; }
 
+    [JsonProperty("keywords")]
+    public List<string> Keywords { get; set; }
+
     [JsonProperty("icon")]
     public string Icon { get; set; }
 
@@ -47,6 +50,8 @@ namespace NodePen.Compute
     {
       Inputs = new List<GrasshopperComponentParameter>();
       Outputs = new List<GrasshopperComponentParameter>();
+
+      Keywords = new List<string>();
     }
   }
 }
