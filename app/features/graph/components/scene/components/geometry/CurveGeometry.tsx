@@ -1,4 +1,5 @@
 import React, { useLayoutEffect, useRef } from 'react'
+import rhino3dm from 'rhino3dm'
 import { NodePen } from 'glib'
 import { MeshMaterial } from '../../types'
 
@@ -13,7 +14,14 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
   const lineGeometryRef = useRef<any>(null)
 
   useLayoutEffect(() => {
-    console.log(curve)
+    // console.log(curve)
+
+    rhino3dm().then((rhino) => {
+      /* @ts-expect-error `decode` type is incorrect */
+      const geo: typeof rhino.NurbsCurve['prototype'] = rhino.CommonObject.decode(curve)
+
+      console.log(geo.domain)
+    })
     // const { degree, segments } = curve
 
     // const positions: number[] = []

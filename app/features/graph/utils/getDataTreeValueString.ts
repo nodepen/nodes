@@ -1,5 +1,4 @@
 import { NodePen } from 'glib'
-import rhino3dm from 'rhino3dm'
 import { distance3d } from './distance3d'
 
 export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.SolutionValueType>): string => {
@@ -10,14 +9,6 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       return value ? 'True' : 'False'
     }
     case 'circle': {
-      console.log({ data })
-      // rhino3dm().then((rh) => {
-      //   /* @ts-expect-error missing type */
-      //   const x: typeof rh.NurbsCurve['prototype'] = rh.CommonObject.decode(data.value)
-      //   console.log(x)
-      //   console.log(x.degree)
-      //   console.log(x.isClosed)
-      // })
       return 'Circle'
     }
     case 'curve': {
@@ -95,8 +86,8 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       return `{${x}, ${y}, ${z}}`
     }
     default: {
-      console.log(`🐍 Not sure how to parse '${data.type}' value as string.`)
-      return `Unknown ${data.type} value`
+      console.log(`🐍 Not sure how to parse '${(data as any).type}' value as string.`)
+      return `Unknown ${(data as any).type} value`
     }
   }
 }

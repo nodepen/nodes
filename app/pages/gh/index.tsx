@@ -1,7 +1,7 @@
 import { GetServerSideProps, NextPage } from 'next'
 import { NodePen } from 'glib'
 import Head from 'next/head'
-// import dynamic from 'next/dynamic'
+import dynamic from 'next/dynamic'
 import getConfig from 'next/config'
 import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client'
 import nookies from 'nookies'
@@ -22,7 +22,7 @@ type NewGrasshopperEditorPageProps = {
 const NewGrasshopperEditor: NextPage<NewGrasshopperEditorPageProps> = ({ manifest }) => {
   const { token } = useSessionManager()
 
-  // const Scene = dynamic(() => import('features/graph/components/scene/SceneContainer'))
+  const Scene = dynamic(() => import('features/graph/components/scene/SceneContainer'))
 
   return (
     <>
@@ -35,7 +35,7 @@ const NewGrasshopperEditor: NextPage<NewGrasshopperEditorPageProps> = ({ manifes
             <SolutionManager>
               <>
                 <Graph.Container />
-                {/* <Scene /> */}
+                <Scene />
               </>
             </SolutionManager>
           </GraphManager>
