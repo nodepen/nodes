@@ -3,7 +3,7 @@ import { NodePen } from 'glib'
 import { MeshMaterial } from '../../types'
 
 type CurveGeometryProps = {
-  curve: NodePen.GH.Curve
+  curve: NodePen.DataTreeValue<'curve' | 'circle'>['geometry']
   material?: MeshMaterial & { width?: number }
 }
 
@@ -13,25 +13,26 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
   const lineGeometryRef = useRef<any>(null)
 
   useLayoutEffect(() => {
-    const { degree, segments } = curve
+    console.log(curve)
+    // const { degree, segments } = curve
 
-    const positions: number[] = []
+    // const positions: number[] = []
 
-    for (const segment of segments) {
-      const [ax, ay, az, ix, iy, iz, jx, jy, jz, bx, by, bz] = segment
+    // for (const segment of segments) {
+    //   const [ax, ay, az, ix, iy, iz, jx, jy, jz, bx, by, bz] = segment
 
-      switch (degree) {
-        case 1: {
-          positions.push(...[ax, ay, az, bx, by, bz])
-          break
-        }
-        default: {
-          positions.push(...segment)
-        }
-      }
-    }
+    //   switch (degree) {
+    //     case 1: {
+    //       positions.push(...[ax, ay, az, bx, by, bz])
+    //       break
+    //     }
+    //     default: {
+    //       positions.push(...segment)
+    //     }
+    //   }
+    // }
 
-    lineGeometryRef.current?.setPositions(positions)
+    // lineGeometryRef.current?.setPositions(positions)
   }, [curve])
 
   return (

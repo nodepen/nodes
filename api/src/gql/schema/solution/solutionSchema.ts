@@ -73,6 +73,7 @@ export const solutionSchema = gql`
   type SolutionValue {
     type: String! # goo type
     value: String! # json based on type
+    geometry: String # json from serialized rhino3dm geometry
   }
 
   type SolutionManifest {
