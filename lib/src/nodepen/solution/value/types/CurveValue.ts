@@ -1,3 +1,5 @@
 import { BezierApproximation } from "./shared"
 
-export type CurveValue = BezierApproximation
+export type CurveValue = {
+  degree: number
+}

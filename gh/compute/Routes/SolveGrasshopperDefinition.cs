@@ -9,6 +9,7 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
 using GH_IO.Serialization;
 using Rhino.Geometry;
+using Rhino.FileIO;
 
 namespace NodePen.Compute.Routes
 {
@@ -112,6 +113,8 @@ namespace NodePen.Compute.Routes
         ParameterId = parameterId,
       };
 
+      var jsonOptions = new SerializationOptions();
+
       for (var i = 0; i < parameter.VolatileData.PathCount; i++)
       {
         var currentPath = parameter.VolatileData.get_Path(i);
@@ -149,12 +152,15 @@ namespace NodePen.Compute.Routes
 
                 data.Type = "circle";
 
-                Console.WriteLine(JsonConvert.SerializeObject(circleGoo.Value.ToNurbsCurve()));
+                var circle = new NodePenCircle()
+                {
+                  Center = new NodePenPoint(circleGoo.Value.Center),
+                  Normal = new NodePenPoint(circleGoo.Value.Normal),
+                  Radius = circleGoo.Value.Radius,
+                };
 
-                var beziers = BezierCurve.CreateCubicBeziers(circleGoo.Value.ToNurbsCurve(), 0.01, 0.01);
-                var curve = ToNodePenCurve(beziers);
-
-                data.Value = JsonConvert.SerializeObject(circleGoo.Value.ToNurbsCurve());
+                data.Value = JsonConvert.SerializeObject(circle);
+                data.Geometry = circleGoo.Value.ToNurbsCurve().ToJSON(jsonOptions);
 
                 break;
               }
@@ -164,18 +170,13 @@ namespace NodePen.Compute.Routes
 
                 data.Type = "curve";
 
-                if (curveGoo.Value.Degree == 1)
+                var curve = new NodePenCurve()
                 {
-                  var curve = ToNodePenCurve(curveGoo.Value);
+                  Degree = curveGoo.Value.Degree,
+                };
 
-                  data.Value = JsonConvert.SerializeObject(curve);
-                } else
-                {
-                  var beziers = BezierCurve.CreateCubicBeziers(curveGoo.Value, 0.01, 0.01);
-                  var curve = ToNodePenCurve(beziers, curveGoo.Value.Degree);
-
-                  data.Value = JsonConvert.SerializeObject(curve);
-                }
+                data.Value = JsonConvert.SerializeObject(curve);
+                data.Geometry = curveGoo.Value.ToJSON(jsonOptions);
 
                 break;
               }
