@@ -9,6 +9,7 @@ module.exports = withBundleAnalyzer({
     },
     webpack: (config) => {
       config.resolve.fallback = {
+        crypto: false,
         fs: false,
         path: false,
       };
