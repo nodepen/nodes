@@ -73,7 +73,7 @@ Yes this project was called "glasshopper" for a long time and I don't want to ta
 
 Rhinoceros and Grasshopper are registered trademarks of [Robert McNeel & Associates](https://www.rhino3d.com).
 
-Serialized Rhino geometry is converted to three.js objects with [rhino3dm.js](https://www.npmjs.com/package/rhino3dm) and snippets from the [3DMLoader](https://github.com/mrdoob/three.js/blob/dev/examples/js/loaders/3DMLoader.js) by [Luis Fraguada](https://twitter.com/luisfraguada) and contributors.
+Serialized Rhino geometry is converted to three.js objects with [rhino3dm.js](https://www.npmjs.com/package/rhino3dm) and snippets from the [3DMLoader](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/loaders/3DMLoader.js) by [Luis Fraguada](https://twitter.com/luisfraguada) and contributors.
 
 The current `/gh/compute` Rhino compute configuration is based off of an early 2020 fork of McNeel's public implementation at [mcneel/compute.rhino3d](https://github.com/mcneel/compute.rhino3d).
 

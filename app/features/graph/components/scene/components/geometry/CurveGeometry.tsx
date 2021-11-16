@@ -18,7 +18,6 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
       /* @ts-expect-error `decode` type is incorrect */
       const geo: typeof rhino.NurbsCurve['prototype'] = rhino.CommonObject.decode(curve)
 
-      console.log(geo.domain)
       const POINT_COUNT = 100
 
       const domain = geo.domain
@@ -35,8 +34,7 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
         }
 
         const tan = geo.tangentAt(t)
-        const prevTan = geo.tangentAt(ts.slice(-1)[0]) // Duplicated from THREE.Vector3
-        // How to pass imports to worker?
+        const prevTan = geo.tangentAt(ts.slice(-1)[0])
 
         const tS = tan[0] * tan[0] + tan[1] * tan[1] + tan[2] * tan[2]
         const ptS = prevTan[0] * prevTan[0] + prevTan[1] * prevTan[1] + prevTan[2] * prevTan[2]
@@ -46,7 +44,7 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
         if (denominator === 0) {
           angle = Math.PI / 2
         } else {
-          const theta = (tan.x * prevTan.x + tan.y * prevTan.y + tan.z * prevTan.z) / denominator
+          const theta = (tan[0] * prevTan[0] + tan[1] * prevTan[1] + tan[2] * prevTan[2]) / denominator
           angle = Math.acos(Math.max(-1, Math.min(1, theta)))
         }
 
