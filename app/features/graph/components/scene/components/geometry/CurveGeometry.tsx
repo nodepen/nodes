@@ -72,8 +72,9 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
         {/* @ts-expect-error `line2` does not publish types */}
         <lineMaterial
           color={color ?? 'darkred'}
-          linewidth={width ?? 0.2}
-          worldUnits={true}
+          linewidth={3}
+          worldUnits={false}
+          resolution={[window.innerWidth, window.innerHeight]}
           opacity={opacity ?? 0.7}
           transparent={true}
         />

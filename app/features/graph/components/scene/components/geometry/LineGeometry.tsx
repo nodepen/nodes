@@ -29,8 +29,9 @@ export const LineGeometry = ({ line, material }: LineGeometryProps): React.React
         {/* @ts-expect-error `line2` does not publish types */}
         <lineMaterial
           color={color ?? 'darkred'}
-          linewidth={width ?? 0.2}
-          worldUnits={true}
+          linewidth={width ?? 3}
+          worldUnits={false}
+          resolution={[window.innerWidth, window.innerHeight]}
           opacity={opacity ?? 0.7}
           transparent={true}
         />
