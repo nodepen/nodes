@@ -12,6 +12,11 @@ export const useLibraryTextSearch = (
   query: string,
   library: Grasshopper.Component[] = []
 ): [candidates: Grasshopper.Component[], exactMatch: Grasshopper.Component | undefined] => {
+  const getSortValue = (component: Grasshopper.Component, query: string): number => {
+    const keys = [component.name, ...component.keywords]
+    return Math.min(...keys.map((key) => levenshteinDistance(key, query)))
+  }
+
   const [candidates, exactMatch] = useMemo(() => {
     if (!query || query.length <= 0) {
       return []
@@ -19,9 +24,7 @@ export const useLibraryTextSearch = (
 
     const allCandidates = [...library]
 
-    const sortedCandidates = allCandidates.sort(
-      (a, b) => levenshteinDistance(a.name, query) - levenshteinDistance(b.name, query)
-    )
+    const sortedCandidates = allCandidates.sort((a, b) => getSortValue(a, query) - getSortValue(b, query))
 
     const exactMatch = sortedCandidates.find(
       (candidate) => candidate.name.toLowerCase().indexOf(query.toLowerCase()) === 0

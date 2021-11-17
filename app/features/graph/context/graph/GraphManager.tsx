@@ -73,6 +73,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
               name
               nickname
               description
+              keywords
               icon
               libraryName
               category
