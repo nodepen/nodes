@@ -1,5 +1,4 @@
 import { NodePen } from 'glib'
-import { distance } from '.'
 import { distance3d } from './distance3d'
 
 export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.SolutionValueType>): string => {
@@ -87,8 +86,8 @@ export const getDataTreeValueString = (data: NodePen.DataTreeValue<NodePen.Solut
       return `{${x}, ${y}, ${z}}`
     }
     default: {
-      console.log(`🐍 Not sure how to parse '${data.type}' value as string.`)
-      return `Unknown ${data.type} value`
+      console.log(`🐍 Not sure how to parse '${(data as any).type}' value as string.`)
+      return `Unknown ${(data as any).type} value`
     }
   }
 }

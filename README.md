@@ -73,6 +73,8 @@ Yes this project was called "glasshopper" for a long time and I don't want to ta
 
 Rhinoceros and Grasshopper are registered trademarks of [Robert McNeel & Associates](https://www.rhino3d.com).
 
-Previous drafts of NodePen included the ["RestHopper"](https://github.com/RESThopper/resthopper.grasshopper) headless Grasshopper prototype developed at the [2018 AEC Tech Hackathon](http://core.thorntontomasetti.com/aec-tech-2018/aec-tech-2018-hackathon/2018-aec-tech-hackathon-github-repos/). The current execution model has been re-written several times in the years since then, but it's still fun to go back and see how we were abusing .ghx and component group labels.
+Serialized Rhino geometry is converted to three.js objects with [rhino3dm.js](https://www.npmjs.com/package/rhino3dm) and snippets from the [3DMLoader](https://github.com/mrdoob/three.js/blob/dev/examples/jsm/loaders/3DMLoader.js) by [Luis Fraguada](https://twitter.com/luisfraguada) and contributors.
 
-The current `/gh/compute` execution model is based off of an early 2020 fork of McNeel's public implementation at [mcneel/compute.rhino3d](https://github.com/mcneel/compute.rhino3d).
+The current `/gh/compute` Rhino compute configuration is based off of an early 2020 fork of McNeel's public implementation at [mcneel/compute.rhino3d](https://github.com/mcneel/compute.rhino3d).
+
+Previous drafts of NodePen included the ["RestHopper"](https://github.com/RESThopper/resthopper.grasshopper) headless Grasshopper prototype developed at the [2018 AEC Tech Hackathon](http://core.thorntontomasetti.com/aec-tech-2018/aec-tech-2018-hackathon/2018-aec-tech-hackathon-github-repos/). The current execution model has been re-written several times in the years since then, but it's still fun to go back and see how we were abusing .ghx and component group labels.

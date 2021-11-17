@@ -55,7 +55,10 @@ namespace NodePen.Compute.Routes
         {
           var p = obj.Params;
 
-          //p.Input.Find(y => y.Name == "test").AddSource()
+          if (obj.Keywords != null && obj.Keywords.Count() > 0)
+          {
+            rc.Keywords = obj.Keywords.ToList();
+          }
 
           p.Input.ForEach(param => {
             var input = new GrasshopperComponentParameter()

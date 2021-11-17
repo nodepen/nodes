@@ -41,11 +41,14 @@ namespace NodePen.Compute
 
   public class SolutionDataValue
   {
+    [JsonProperty("type")]
+    public string Type { get; set; }
+
     [JsonProperty("value")]
     public string Value { get; set; }
 
-    [JsonProperty("type")]
-    public string Type { get; set; }
+    [JsonProperty("geometry")]
+    public string Geometry { get; set; }
   }
 
   public class SolutionMessage

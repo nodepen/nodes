@@ -1,5 +1,8 @@
 import * as GH from './types'
 
+/**
+ * Computed or cached values exposed to NodePen as object data
+ */
 export type SolutionValue = {
     'boolean': GH.Boolean,
     'curve': GH.Curve,

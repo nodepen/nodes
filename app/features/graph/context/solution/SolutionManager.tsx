@@ -297,6 +297,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                 data {
                   type
                   value
+                  geometry
                 }
               }
             }
@@ -349,23 +350,24 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
             for (const entry of currentBranch.data) {
               // Results arrive as stringified json
-              const incoming = entry.value as string
+              const incomingValue = entry.value as string
+              const incomingGeometry = entry.geometry ?? '{}'
 
               switch (entry.type) {
                 case 'boolean': {
-                  entry.value = incoming === 'true'
+                  entry.value = incomingValue === 'true'
                   break
                 }
                 case 'integer': {
-                  entry.value = Number.parseInt(incoming)
+                  entry.value = Number.parseInt(incomingValue)
                   break
                 }
                 case 'number': {
-                  entry.value = Number.parseFloat(incoming)
+                  entry.value = Number.parseFloat(incomingValue)
                   break
                 }
                 case 'text': {
-                  entry.value = incoming
+                  entry.value = incomingValue
                   break
                 }
                 case 'data':
@@ -379,12 +381,13 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                 case 'rectangle':
                 case 'transform':
                 case 'vector': {
-                  entry.value = JSON.parse(incoming)
+                  entry.value = JSON.parse(incomingValue)
+                  entry.geometry = JSON.parse(incomingGeometry)
                   break
                 }
                 default: {
                   console.log(`🐍 Received unhandled value of type '${entry.type}'`)
-                  entry.value = JSON.parse(incoming)
+                  entry.value = JSON.parse(incomingValue)
                 }
               }
             }

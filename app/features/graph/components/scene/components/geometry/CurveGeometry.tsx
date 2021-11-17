@@ -1,9 +1,10 @@
 import React, { useLayoutEffect, useRef } from 'react'
+import rhino3dm from 'rhino3dm'
 import { NodePen } from 'glib'
 import { MeshMaterial } from '../../types'
 
 type CurveGeometryProps = {
-  curve: NodePen.GH.Curve
+  curve: NodePen.DataTreeValue<'curve' | 'circle'>['geometry']
   material?: MeshMaterial & { width?: number }
 }
 
@@ -13,25 +14,53 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
   const lineGeometryRef = useRef<any>(null)
 
   useLayoutEffect(() => {
-    const { degree, segments } = curve
+    rhino3dm().then((rhino) => {
+      /* @ts-expect-error `decode` type is incorrect */
+      const geo: typeof rhino.NurbsCurve['prototype'] = rhino.CommonObject.decode(curve)
 
-    const positions: number[] = []
+      const POINT_COUNT = 100
 
-    for (const segment of segments) {
-      const [ax, ay, az, ix, iy, iz, jx, jy, jz, bx, by, bz] = segment
+      const domain = geo.domain
+      const divisions = POINT_COUNT - 1
 
-      switch (degree) {
-        case 1: {
-          positions.push(...[ax, ay, az, bx, by, bz])
-          break
+      const ts: number[] = []
+
+      for (let j = 0; j < POINT_COUNT; j++) {
+        const t = domain[0] + (j / divisions) * (domain[1] - domain[0])
+
+        if (t === domain[0] || t === domain[1]) {
+          ts.push(t)
+          continue
         }
-        default: {
-          positions.push(...segment)
+
+        const tan = geo.tangentAt(t)
+        const prevTan = geo.tangentAt(ts.slice(-1)[0])
+
+        const tS = tan[0] * tan[0] + tan[1] * tan[1] + tan[2] * tan[2]
+        const ptS = prevTan[0] * prevTan[0] + prevTan[1] * prevTan[1] + prevTan[2] * prevTan[2]
+        const denominator = Math.sqrt(tS * ptS)
+        let angle
+
+        if (denominator === 0) {
+          angle = Math.PI / 2
+        } else {
+          const theta = (tan[0] * prevTan[0] + tan[1] * prevTan[1] + tan[2] * prevTan[2]) / denominator
+          angle = Math.acos(Math.max(-1, Math.min(1, theta)))
         }
+
+        if (angle < 0.1) continue
+        ts.push(t)
       }
-    }
 
-    lineGeometryRef.current?.setPositions(positions)
+      const positions: number[] = []
+
+      for (const t of ts) {
+        const p = geo.pointAt(t)
+        positions.push(...p)
+      }
+
+      lineGeometryRef.current?.setPositions(positions)
+    })
   }, [curve])
 
   return (
@@ -43,8 +72,9 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
         {/* @ts-expect-error `line2` does not publish types */}
         <lineMaterial
           color={color ?? 'darkred'}
-          linewidth={width ?? 0.2}
-          worldUnits={true}
+          linewidth={3}
+          worldUnits={false}
+          resolution={[window.innerWidth, window.innerHeight]}
           opacity={opacity ?? 0.7}
           transparent={true}
         />

@@ -22,12 +22,12 @@ export const GeometryParameter = ({ element, parameterId }: GeometryParameterPro
         switch (goo.type) {
           case 'circle':
           case 'curve': {
-            const curve = goo.value as NodePen.GH.Curve
+            const curve = goo as NodePen.DataTreeValue<'curve'>
 
             return (
               <CurveGeometry
                 key={`scene-geometry-${element.id}-${parameterId}-${i}`}
-                curve={curve}
+                curve={curve.geometry}
                 material={{ color: isSelected ? 'darkgreen' : undefined }}
               />
             )
@@ -66,7 +66,7 @@ export const GeometryParameter = ({ element, parameterId }: GeometryParameterPro
             )
           }
           default: {
-            console.log(`🐍 Generic geometry parameter could not visualize type '${goo.type}'`)
+            console.log(`🐍 Generic geometry parameter could not visualize type '${(goo as any).type}'`)
           }
         }
       })}

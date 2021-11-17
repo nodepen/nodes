@@ -12,6 +12,7 @@ export const configSchema = gql`
     guid: String!
     name: String!
     nickname: String!
+    keywords: [String]!
     description: String!
     icon: String
     libraryName: String!

@@ -6,6 +6,7 @@ import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
 import { useGraphDispatch } from '../../store/graph/hooks'
+import rhino3dm from 'rhino3dm'
 
 export const GraphContext = React.createContext<GraphStore>({
   register: {
@@ -41,6 +42,12 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
 
     sessionInitialized.current = true
 
+    rhino3dm().then(() => {
+      if (process?.env?.NEXT_PUBLIC_DEBUG === 'true') {
+        console.log('🟢 Loaded rhino3dm wasm.')
+      }
+    })
+
     restore(manifest, false)
   }, [manifest, restore])
 
@@ -66,6 +73,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
               name
               nickname
               description
+              keywords
               icon
               libraryName
               category

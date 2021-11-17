@@ -21,7 +21,7 @@ export const CurveParameter = ({ element, parameterId }: CurveParameterProps): R
       {goo.map((curve, i) => (
         <CurveGeometry
           key={`scene-geometry-${element.id}-${parameterId}-${i}`}
-          curve={curve.value}
+          curve={curve.geometry}
           material={{ color: isSelected ? 'darkgreen' : undefined }}
         />
       ))}

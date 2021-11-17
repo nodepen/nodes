@@ -1,3 +1,7 @@
-import { BezierApproximation } from "./shared";
+import { Point3d } from './shared'
 
-export type CircleValue = BezierApproximation
+export type CircleValue = {
+  center: Point3d
+  normal: Point3d
+  radius: number
+}

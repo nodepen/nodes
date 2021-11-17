@@ -70,6 +70,7 @@
     <Compile Include="Routes\SolveGrasshopperDefinition.cs" />
     <Compile Include="Types\DataTree\DataTree.cs" />
     <Compile Include="Types\DataTree\DataTreeValue.cs" />
+    <Compile Include="Types\Geometry\NodePenCircle.cs" />
     <Compile Include="Types\Geometry\NodePenDomain.cs" />
     <Compile Include="Types\Geometry\NodePenLine.cs" />
     <Compile Include="Types\Geometry\NodePenCurve.cs" />
