@@ -16,6 +16,7 @@ app.dev.yaml
 .gcloudignore
 
 # firebase
+.firebase
 .firebaserc
 firebase.json
 firestore.indexes.json

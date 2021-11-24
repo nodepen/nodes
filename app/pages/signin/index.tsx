@@ -27,11 +27,19 @@ const SignInPage: NextPage = () => {
       })
   }
 
+  const handleSignOut = (): void => {
+    firebase
+      .auth()
+      .signOut()
+      .then(() => router.push('/'))
+  }
+
   return (
     <div className="w-vw h-vh flex flex-col items-center justify-center">
       <input className="mb-2" ref={emailInputRef} placeholder="email"></input>
       <input className="mb-2" ref={passwordInputRef} placeholder="password" type="password"></input>
       <button onClick={handleSignIn}>Sign In</button>
+      <button onClick={handleSignOut}>Sign Out</button>
     </div>
   )
 }
