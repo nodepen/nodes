@@ -1,0 +1,1 @@
+export { QuirkyDivider } from './QuirkyDivider'
