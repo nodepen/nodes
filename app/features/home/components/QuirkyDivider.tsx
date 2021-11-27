@@ -7,6 +7,9 @@ type QuirkyDividerProps = {
   animate?: boolean
 }
 
+/**
+ * A page divider that's just a little quirky 🤪
+ */
 export const QuirkyDivider = ({ topColor, bottomColor, size, animate }: QuirkyDividerProps): React.ReactElement => {
   const s = size ?? 48
 
