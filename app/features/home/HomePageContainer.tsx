@@ -9,7 +9,10 @@ const HomePage: NextPage = () => {
       <div className="w-full h-48 flex flex-col justify-end bg-green">
         <QuirkyDivider topColor="#98E2C6" bottomColor="#eff2f2" animate />
       </div>
-      <div className="w-full bg-pale" style={{ height: 2000 }} />
+      <div className="w-full flex flex-col justify-end bg-pale" style={{ height: 1250 }}>
+        <QuirkyDivider topColor="#eff2f2" bottomColor="#ffffff" />
+      </div>
+      <div className="w-full h-24 bg-white" />
     </div>
   )
 }
