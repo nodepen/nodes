@@ -7,7 +7,12 @@ import { useSessionManager } from '../common/context/session'
 const HomePageDashboard = (): React.ReactElement => {
   const { user } = useSessionManager()
 
-  return <div>Welcome back {user?.displayName}</div>
+  return (
+    <div>
+      <h1>Welcome back {user?.displayName}</h1>
+      <a href="/gh">Launch</a>
+    </div>
+  )
 }
 
 export default React.memo(HomePageDashboard)
