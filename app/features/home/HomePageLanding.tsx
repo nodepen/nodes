@@ -2,7 +2,10 @@ import React from 'react'
 import { NextPage } from 'next'
 import { QuirkyDivider } from './components'
 
-const HomePage: NextPage = () => {
+/**
+ * Home page for unauthenticated visits.
+ */
+const HomePageLanding: NextPage = () => {
   return (
     <div className="w-vw h-vh overflow-auto">
       <div className="w-full h-10 bg-green sticky top-0 z-50" />
@@ -17,4 +20,4 @@ const HomePage: NextPage = () => {
   )
 }
 
-export default React.memo(HomePage)
+export default React.memo(HomePageLanding)

@@ -1,3 +1,4 @@
-import HomePageContainer from './HomePageContainer'
+import HomePageDashboard from './HomePageDashboard'
+import HomePageLanding from './HomePageLanding'
 
-export { HomePageContainer }
+export { HomePageDashboard, HomePageLanding }

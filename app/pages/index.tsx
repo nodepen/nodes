@@ -1,15 +1,16 @@
 import React from 'react'
 import { NextPage, GetServerSideProps } from 'next'
+import { admin } from 'features/common/context/session/auth'
 import nookies from 'nookies'
 import Head from 'next/head'
-import { HomePageContainer } from '@/features/home'
+import { HomePageLanding, HomePageDashboard } from '@/features/home'
 
 type HomePageProps = {
   isAuthenticated: boolean
 }
 
 const Home: NextPage<HomePageProps> = ({ isAuthenticated }) => {
-  const content = isAuthenticated ? null : <HomePageContainer />
+  const content = isAuthenticated ? <HomePageDashboard /> : <HomePageLanding />
 
   return (
     <>
@@ -37,6 +38,17 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (ctx)
     const cookie = nookies.get(ctx, { path: '/' })
 
     if (!cookie.token) {
+      return { props: defaultProps }
+    }
+
+    const { token } = cookie
+
+    const res = await admin.auth().verifyIdToken(token)
+
+    const user = await admin.auth().getUser(res.uid)
+
+    if (!user || user.providerData.length === 0) {
+      // User is anonymous
       return { props: defaultProps }
     }
 
