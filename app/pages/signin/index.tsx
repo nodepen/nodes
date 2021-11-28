@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { NextPage } from 'next'
+import nookies from 'nookies'
 import { useRouter } from 'next/router'
 import { firebase } from '@/features/common/context/session/auth/firebase'
 
@@ -31,7 +32,10 @@ const SignInPage: NextPage = () => {
     firebase
       .auth()
       .signOut()
-      .then(() => router.push('/'))
+      .then(() => {
+        nookies.destroy(undefined, 'token')
+        router.push('/')
+      })
   }
 
   return (
