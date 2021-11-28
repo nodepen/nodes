@@ -21,7 +21,7 @@ type SolutionManagerProps = {
  * @returns
  */
 export const SolutionManager = ({ children }: SolutionManagerProps): React.ReactElement => {
-  const { isAuthenticated } = useSessionManager()
+  const { user, isAuthenticated } = useSessionManager()
 
   const client = useApolloClient()
 
@@ -38,6 +38,16 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     switch (meta.phase) {
       case 'expired': {
         // console.log(`🏃🏃🏃 DETECTED`)
+
+        if (user?.isAnonymous || !user) {
+          // Solutions cannot be dispatched by anonymous users
+          updateSolution({
+            meta: {
+              phase: 'idle',
+            },
+          })
+          return
+        }
 
         const newSolutionId = newGuid()
 
