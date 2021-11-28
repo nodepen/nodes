@@ -1,6 +1,15 @@
 import React from 'react'
 import { firebase } from 'features/common/context/session/auth'
-import { CurrentUserButton, DownloadButton, SignInButton, SignUpButton, SolutionStatus } from './actions'
+import {
+  CurrentUserButton,
+  DownloadButton,
+  SaveButton,
+  SettingsButton,
+  ShareButton,
+  SignInButton,
+  SignUpButton,
+  SolutionStatus,
+} from './actions'
 
 type HeaderActionsProps = {
   graph: {
@@ -13,7 +22,9 @@ export const HeaderActions = ({ graph, user }: HeaderActionsProps): React.ReactE
   return user ? (
     <>
       <SolutionStatus />
+      <SaveButton />
       <DownloadButton graphId={graph.id} />
+      <ShareButton graphId={graph.id} />
       <CurrentUserButton user={user} />
     </>
   ) : (
