@@ -1,1 +1,3 @@
-export { UserImage } from './UserImage'
+import Header from './Header'
+
+export { Header }

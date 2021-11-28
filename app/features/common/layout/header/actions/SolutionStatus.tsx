@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useSolutionMetadata } from 'features/graph/store/solution/hooks'
-import { Typography } from '../..'
+import { Typography } from '../../..'
 
-const SolutionStatusPip = (): React.ReactElement => {
+const SolutionStatus = (): React.ReactElement => {
   const meta = useSolutionMetadata()
 
   const [showDetails, setShowDetails] = useState(false)
@@ -75,7 +75,7 @@ const SolutionStatusPip = (): React.ReactElement => {
   return (
     <>
       <div
-        className="w-full h-full flex items-center justify-start"
+        className="w-6 h-6 mr-1 flex items-center justify-start"
         ref={pipRef}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
@@ -101,4 +101,4 @@ const SolutionStatusPip = (): React.ReactElement => {
   )
 }
 
-export default React.memo(SolutionStatusPip)
+export default React.memo(SolutionStatus)
