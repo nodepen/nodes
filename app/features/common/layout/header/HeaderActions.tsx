@@ -4,7 +4,6 @@ import {
   CurrentUserButton,
   DownloadButton,
   SaveButton,
-  SettingsButton,
   ShareButton,
   SignInButton,
   SignUpButton,
