@@ -8,6 +8,7 @@
     "build": "tsc && copyfiles --flat ./src/data/lib.json dist/data",
     "build:glib": "cd ../.scripts && build.lib.sh",
     "start": "node dist/server.js",
+    "emulators": "firebase emulators:start --export-on-exit=./.firebase --import=./.firebase",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

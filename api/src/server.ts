@@ -1,4 +1,7 @@
+import dotenv from 'dotenv'
 import { startup } from './startup'
+
+dotenv.config()
 
 const PORT = process.env.NP_API_PORT || 4000
 
@@ -13,21 +16,3 @@ startup()
   .catch((err) => {
     console.log(err)
   })
-
-// initializeServer().then(({ server }) => {
-//   server.listen(PORT, () => {
-//     console.log('Listening!')
-//   })
-// })
-
-// console.log({ dbHost: process.env.NP_DB_HOST })
-// console.log({ dbPort: process.env.NP_DB_PORT })
-
-// // api.listen(PORT, () => {
-
-// // })
-
-// db.client.on('connect', () => {
-//   console.log('Redis connected!')
-//   // initialize(db.client)
-// })

@@ -1,3 +1,3 @@
-export { SignUpMenu } from './SignUpMenu'
-export { UserImage } from './UserImage'
-export { UserMenu } from './UserMenu'
+import Header from './Header'
+
+export { Header }

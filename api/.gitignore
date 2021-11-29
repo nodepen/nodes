@@ -14,3 +14,11 @@ app.yaml
 app.beta.yaml
 app.dev.yaml
 .gcloudignore
+
+# firebase
+.firebase
+.firebaserc
+firebase.json
+firestore.indexes.json
+*.rules
+*.log

@@ -1,8 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { useSolutionMetadata } from 'features/graph/store/solution/hooks'
-import { Typography } from '../..'
+import { Typography } from '../../..'
+import { useSessionManager } from '@/features/common/context/session'
 
-const SolutionStatusPip = (): React.ReactElement => {
+const SolutionStatus = (): React.ReactElement => {
+  const { user } = useSessionManager()
+
+  const isLocked = user?.isAnonymous || !user
+
   const meta = useSolutionMetadata()
 
   const [showDetails, setShowDetails] = useState(false)
@@ -10,6 +15,18 @@ const SolutionStatusPip = (): React.ReactElement => {
   const pipAnchor = useRef<[number, number]>([0, 0])
 
   const icon = (() => {
+    if (isLocked) {
+      return (
+        <svg className="w-5 h-5" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fillRule="evenodd"
+            d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z"
+            clipRule="evenodd"
+          ></path>
+        </svg>
+      )
+    }
+
     switch (meta.phase) {
       case 'idle': {
         return meta.error ? (
@@ -64,6 +81,14 @@ const SolutionStatusPip = (): React.ReactElement => {
   }
 
   const message = (() => {
+    if (user?.isAnonymous) {
+      return 'Please sign in to enable the solver.'
+    }
+
+    if (isLocked) {
+      return 'Grasshopper solver is locked.'
+    }
+
     switch (meta.phase) {
       case 'idle':
         return meta?.error ?? `Solution completed in ${meta.duration} ms.`
@@ -75,7 +100,7 @@ const SolutionStatusPip = (): React.ReactElement => {
   return (
     <>
       <div
-        className="w-full h-full flex items-center justify-start"
+        className="w-6 h-6 mr-1 flex items-center justify-start"
         ref={pipRef}
         onPointerEnter={handlePointerEnter}
         onPointerLeave={handlePointerLeave}
@@ -101,4 +126,4 @@ const SolutionStatusPip = (): React.ReactElement => {
   )
 }
 
-export default React.memo(SolutionStatusPip)
+export default React.memo(SolutionStatus)
