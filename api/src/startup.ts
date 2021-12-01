@@ -41,12 +41,12 @@ export const startup = async (): Promise<Server> => {
 
   // Wait for gh solution queue connection
   const initializeQueue = new Promise<void>((resolve, reject) => {
-    ghq.on('ready', () => {
+    ghq.solve.on('ready', () => {
       console.log(`[ STARTUP ] Grasshopper solution queue connected!`)
       resolve()
     })
 
-    ghq.on('error', (err) => {
+    ghq.solve.on('error', (err) => {
       reject(err)
     })
   })

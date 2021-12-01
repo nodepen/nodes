@@ -1,11 +1,13 @@
 import { makeExecutableSchema } from '@graphql-tools/schema'
 import { baseSchema } from './base'
 import { configSchema, configResolvers } from './config'
+import { graphsSchema, graphsResolvers } from './graphs'
 import { solutionSchema, solutionResolvers } from './solution'
 
-const typeDefs = [baseSchema, configSchema, solutionSchema]
+const typeDefs = [baseSchema, configSchema, graphsSchema, solutionSchema]
 
 const { Query: configQueryType, ...configTypes } = configResolvers
+const { Mutation: graphsMutationType } = graphsResolvers
 const {
   Query: solutionQueryType,
   Mutation: solutionMutationType,
@@ -19,6 +21,7 @@ const resolvers = {
     ...solutionQueryType,
   },
   Mutation: {
+    ...graphsMutationType,
     ...solutionMutationType,
   },
   Subscription: {

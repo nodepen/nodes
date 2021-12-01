@@ -15,10 +15,20 @@ const prefix = process.env?.NP_GLOBAL_PREFIX ?? 'dev'
 
 console.log(`PREFIX: ${prefix}`)
 
-const ghq = new Queue(`${prefix}:gh`, {
+const solveQueue = new Queue(`${prefix}:gh:solve`, {
   redis: opts,
   isWorker: true,
 })
+
+const saveQueue = new Queue(`${prefix}:gh:save`, {
+  redis: opts,
+  isWorker: true,
+})
+
+const ghq = {
+  save: saveQueue,
+  solve: solveQueue,
+}
 
 const ghPort = process.env?.NP_GH_PORT ?? 9900
 
@@ -110,9 +120,9 @@ const processJob = async (job: Queue.Job<any>): Promise<unknown> => {
   }
 }
 
-ghq.process(processJob)
+ghq.solve.process(processJob)
 
-ghq.on('job succeeded', (jobId, res) => {
+ghq.solve.on('job succeeded', (jobId, res) => {
   const {
     graphId,
     solutionId,
@@ -148,7 +158,7 @@ ghq.on('job succeeded', (jobId, res) => {
   console.log(message)
 })
 
-ghq.on('job failed', (jobId, err) => {
+ghq.solve.on('job failed', (jobId, err) => {
   console.log(err)
   console.log('failure')
 })

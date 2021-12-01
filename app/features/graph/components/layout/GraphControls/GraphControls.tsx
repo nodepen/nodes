@@ -85,25 +85,27 @@ export const GraphControls = (): React.ReactElement => {
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
       >
         <div className="w-full h-full overflow-auto no-scrollbar">
-          {/* <div className="w-full p-2 sticky bg-green top-0">
-            <div className="w-full p-1 flex items-stretch rounded-md border-2 border-swampgreen">
-              <div className="h-14 mr-2 rounded-sm bg-swampgreen" style={{ width: 74 }} />
-              <div className="flex flex-col justify-start">
-                <h3 className="text-xl text-darkgreen font-semibold">Twisty Tower</h3>
-                <div className="pb-1 text-darkgreen flex-grow flex flex-col justify-end">
-                  <p className="w-full flex flew-row items-center text-sm whitespace-nowrap">
-                    by&nbsp;{' '}
-                    <p className="font-semibold">
-                      {user && user.isAnonymous ? 'Anonymous' : user?.displayName ?? 'You'}
-                    </p>
-                  </p>
-                </div>
-              </div>
+          <button className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen">
+            <div className="w-12 h-12 flex justify-center items-center">
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="#093824"
+                viewBox="0 0 24 24"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
             </div>
-          </div> */}
-          {/* <div className="w-full p-2">
-            <hr className="w-full border-t-2 border-swampgreen rounded-full" />
-          </div> */}
+            <div className="flex-grow h-full flex justify-start items-center">
+              <p className="font-sans font-bold text-sm select-none mr-2">FILE</p>
+            </div>
+          </button>
           <button
             className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen"
             onClick={handleShowModel}
