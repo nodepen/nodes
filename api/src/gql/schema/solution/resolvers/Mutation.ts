@@ -35,7 +35,9 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
 
     const job = await ghq.solve.createJob({ graphId, solutionId }).save()
 
-    console.log(`[ JOB ] [ CREATE ] [ SOLUTION ${job.id.padStart(9, '0')} ]`)
+    console.log(
+      `[ JOB ] [ GH:SOLVE ] [ CREATE ] [ SOLUTION ${job.id.padStart(9, '0')} ]`
+    )
 
     return solutionId
   },

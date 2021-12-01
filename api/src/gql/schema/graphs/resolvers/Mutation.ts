@@ -8,7 +8,7 @@ import { Arguments } from '../types'
 export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
   scheduleSaveGraph: async (
     _parent,
-    { graphId, graphJson },
+    { solutionId, graphId, graphJson },
     { user }
   ): Promise<string> => {
     await authorize(user, {
@@ -17,8 +17,39 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       action: 'edit',
     })
 
-    const job = await ghq.save.createJob({ graphId, graphJson }).save()
+    const db = admin.firestore()
 
-    return job.id
+    const ref = db.collection('graphs').doc(graphId)
+    const doc = await ref.get()
+
+    let revision = 1
+
+    if (!doc.exists) {
+      ref.create({
+        name: 'Test Name',
+        author: user.name ?? 'Test User',
+        revision,
+      })
+    } else {
+      revision = (doc.get('revision') ?? 0) + 1
+      await ref.update('revision', revision)
+    }
+
+    await db
+      .collection('graphs')
+      .doc(graphId)
+      .collection('revisions')
+      .doc(revision.toString())
+      .create({ solutionId })
+
+    const job = await ghq.save
+      .createJob({ solutionId, graphId, graphJson, revision })
+      .save()
+
+    console.log(
+      `[ JOB ] [ GH:SAVE ] [ CREATE ] [ OPERATION ${job.id.padStart(9, '0')} ]`
+    )
+
+    return revision.toString()
   },
 }

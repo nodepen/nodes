@@ -10,7 +10,11 @@ export const graphsSchema = gql`
   }
 
   extend type Mutation {
-    scheduleSaveGraph(graphId: String!, graphJson: String!): String!
+    scheduleSaveGraph(
+      solutionId: String!
+      graphId: String!
+      graphJson: String!
+    ): String!
   }
 
   type GrasshopperGraph {
