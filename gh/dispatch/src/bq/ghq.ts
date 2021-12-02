@@ -1,5 +1,6 @@
 import Queue from 'bee-queue'
 import { ClientOpts } from 'redis'
+import * as saveHandlers from './save'
 import * as solveHandlers from './solve'
 
 // Configure dispatcher
@@ -31,6 +32,10 @@ const ghq = {
 }
 
 // Declare queue handlers
+ghq.save.process(saveHandlers.processJob)
+ghq.save.on('job succeeded', saveHandlers.onJobSucceeded)
+ghq.save.on('job failed', saveHandlers.onJobFailed)
+
 ghq.solve.process(solveHandlers.processJob)
 ghq.solve.on('job succeeded', solveHandlers.onJobSucceeded)
 ghq.solve.on('job failed', solveHandlers.onJobFailed)

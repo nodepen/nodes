@@ -12,8 +12,8 @@ export const onJobSucceeded = (jobId: string, result: any): void => {
 
   const message = [
     `[ JOB ${jobId.padStart(4, '0')} ]`,
-    '[ FINISH ]',
-    `[ SOLUTION ]`,
+    '[ SOLVE ]',
+    `[ FINISH ]`,
     `\n  graphId    : ${graphId}`,
     `\n  solutionId : ${solutionId}`,
     `\n  duration   : ${duration}`,
