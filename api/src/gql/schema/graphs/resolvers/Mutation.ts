@@ -48,7 +48,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       .collection('graphs')
       .doc(graphId)
       .collection('revisions')
-      .doc(revision.toString().padStart(4, '0'))
+      .doc(revision.toString())
       .create({
         time: {
           created: now,

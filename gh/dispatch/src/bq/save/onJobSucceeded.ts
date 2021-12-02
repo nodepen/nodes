@@ -1,4 +1,9 @@
-export const onJobSucceeded = (jobId: string, result: any): void => {
+import { ghq } from '../ghq'
+
+export const onJobSucceeded = async (
+  jobId: string,
+  result: any
+): Promise<void> => {
   const {
     graphId,
     solutionId,
@@ -9,4 +14,6 @@ export const onJobSucceeded = (jobId: string, result: any): void => {
   } = result
 
   console.log(`[ JOB ${jobId.padStart(4, '0')} ] [ SAVE ] [ FINISH ]`)
+
+  await ghq.store.createJob(result).save()
 }

@@ -24,6 +24,7 @@
   "dependencies": {
     "@graphql-tools/schema": "8.2.0",
     "apollo-server-express": "3.3.0",
+    "atob": "2.1.2",
     "bee-queue": "1.4.0",
     "copyfiles": "2.4.1",
     "cors": "^2.8.5",
@@ -39,6 +40,7 @@
     "uuid": "^8.3.2"
   },
   "devDependencies": {
+    "@types/atob": "^2.1.2",
     "@types/dotenv": "^8.2.0",
     "@types/ioredis": "^4.26.6",
     "@types/redis": "^2.8.28",
