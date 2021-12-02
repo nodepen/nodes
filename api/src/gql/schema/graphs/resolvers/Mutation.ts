@@ -27,25 +27,35 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
 
     if (!doc.exists) {
       ref.create({
-        name: 'Test Name',
-        author: user.name ?? 'Test User',
+        name: 'New Grasshopper Script',
+        author: {
+          name: user?.name ?? 'Unknown User',
+          id: user?.id ?? 'Unknown Id',
+        },
+        type: 'grasshopper',
+        time: {
+          created: now,
+          updated: now,
+        },
         revision,
-        lastUpdated: now,
       })
     } else {
       revision = (doc.get('revision') ?? 0) + 1
-      await ref.update('revision', revision, 'lastUpdated', now)
+      await ref.update('revision', revision, 'time.updated', now)
     }
 
     await db
       .collection('graphs')
       .doc(graphId)
       .collection('revisions')
-      .doc(revision.toString())
+      .doc(revision.toString().padStart(4, '0'))
       .create({
-        meta: {
-          solutionId,
-          createdAt: now,
+        time: {
+          created: now,
+        },
+        context: {
+          graph: graphId,
+          solution: solutionId,
         },
         files: {},
       })
