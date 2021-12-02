@@ -3,5 +3,4 @@ import credentials from './auth/auth.json'
 
 export const admin = firebase.initializeApp({
   credential: firebase.credential.cert(credentials as ServiceAccount),
-  storageBucket: 'np-graphs.appspot.com',
 })

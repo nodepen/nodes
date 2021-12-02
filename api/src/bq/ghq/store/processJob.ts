@@ -1,8 +1,6 @@
 import Queue from 'bee-queue'
 import atob from 'atob'
-import fs from 'fs'
 import { admin } from '../../../firebase'
-import { Storage } from '@google-cloud/storage'
 
 type StoreQueueJobData = {
   graphId: string
@@ -22,11 +20,7 @@ export const processJob = async (
     ` [ JOB ] [ GH:STORE ] [ START ] [ OPERATION ${job.id.padStart(9, '0')}]`
   )
 
-  console.log(graphBinaries)
-
   let fileData: any = atob(graphBinaries)
-
-  console.log(fileData)
 
   const bytes = new Array(fileData.length)
   for (let i = 0; i < fileData.length; i++) {
@@ -34,15 +28,10 @@ export const processJob = async (
   }
   fileData = new Uint8Array(bytes)
 
-  // const blob = new Blob([fileData], { type: 'application/octet-stream' })
+  const bucket = admin.storage().bucket('np-graphs')
 
-  const bucket = admin.storage().bucket()
-
-  fs.writeFileSync('test.gh', fileData)
-
-  await bucket.upload('test.gh')
-
-  fs.rmSync('test.gh')
+  const file = bucket.file('test-3.gh')
+  await file.save(fileData)
 
   return { ...job.data }
 }
