@@ -28,10 +28,10 @@ export const authorize = async (
   user?: UserRecord,
   resource?: AuthorizationResource
 ): Promise<void> => {
-  if (process.env.DEBUG === 'true') {
-    console.log('⚠️  Bypassing authorization!')
-    return
-  }
+  // if (process.env.DEBUG === 'true') {
+  //   console.log('⚠️  Bypassing authorization!')
+  //   return
+  // }
 
   if (!user || !user.id || !user.name) {
     throw new AuthenticationError(

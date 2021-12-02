@@ -1,13 +1,7 @@
 import { useSessionManager } from '@/features/common/context/session'
 import { useMutation, gql, useSubscription } from '@apollo/client'
 import React, { useEffect, useRef } from 'react'
-import {
-  useGraphDispatch,
-  useGraphElements,
-  useGraphId,
-  useGraphSelection,
-  useVisibilityRegistry,
-} from '../../store/graph/hooks'
+import { useGraphDispatch, useGraphId, useGraphSelection, useVisibilityRegistry } from '../../store/graph/hooks'
 import { useVisibilityHotkey } from '../../store/hotkey/hooks'
 import { newGuid } from '../../utils'
 import { firebase } from 'features/common/context/session/auth/firebase'

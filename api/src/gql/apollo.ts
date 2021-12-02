@@ -65,8 +65,6 @@ export const initialize = async () => {
           throw new Error('NodePen will not honor unauthenticated requests.')
         }
 
-        console.log(token)
-
         return authenticate(token).then((user) => {
           console.log(`[ CONNECT ] ${user.id} (${user.name}) `)
           return user
