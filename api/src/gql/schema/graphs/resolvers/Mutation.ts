@@ -23,16 +23,18 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     const doc = await ref.get()
 
     let revision = 1
+    const now = new Date().toISOString()
 
     if (!doc.exists) {
       ref.create({
         name: 'Test Name',
         author: user.name ?? 'Test User',
         revision,
+        lastUpdated: now,
       })
     } else {
       revision = (doc.get('revision') ?? 0) + 1
-      await ref.update('revision', revision)
+      await ref.update('revision', revision, 'lastUpdated', now)
     }
 
     await db
@@ -40,7 +42,13 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       .doc(graphId)
       .collection('revisions')
       .doc(revision.toString())
-      .create({ solutionId })
+      .create({
+        meta: {
+          solutionId,
+          createdAt: now,
+        },
+        files: {},
+      })
 
     const job = await ghq.save
       .createJob({ solutionId, graphId, graphJson, revision })
