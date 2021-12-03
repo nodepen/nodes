@@ -15,7 +15,14 @@ type StoreQueueJobData = {
 export const processJob = async (
   job: Queue.Job<StoreQueueJobData>
 ): Promise<unknown> => {
-  const { graphId, solutionId, graphBinaries, graphJson, revision } = job.data
+  const {
+    graphId,
+    solutionId,
+    graphBinaries,
+    graphJson,
+    graphSolution,
+    revision,
+  } = job.data
 
   console.log(
     ` [ JOB ] [ GH:STORE ] [ START ] [ OPERATION ${job.id.padStart(9, '0')}]`
@@ -25,11 +32,17 @@ export const processJob = async (
 
   const pathRoot = `${graphId}/${solutionId}`
 
-  // Create .json file
+  // Create graph .json file
   const jsonFilePath = `${pathRoot}/${uuid()}.json`
   const jsonFile = bucket.file(jsonFilePath)
 
   const jsonFileData = JSON.stringify(JSON.parse(graphJson), null, 2)
+
+  // Create solution .json file
+  const solutionFilePath = `${pathRoot}/${uuid()}.json`
+  const solutionFile = bucket.file(solutionFilePath)
+
+  const solutionFileData = JSON.stringify(JSON.parse(graphSolution), null, 2)
 
   // Create .gh file
   const ghFilePath = `${pathRoot}/${uuid()}.gh`
@@ -46,13 +59,14 @@ export const processJob = async (
   // Upload graph files
   const uploadResult = await Promise.allSettled([
     jsonFile.save(jsonFileData),
+    solutionFile.save(solutionFileData),
     ghFile.save(ghFileData),
   ])
 
   // Update revision record
-  const db = admin.firestore()
+  const fs = admin.firestore()
 
-  const versionRef = db
+  const versionRef = fs
     .collection('graphs')
     .doc(graphId)
     .collection('revisions')
@@ -62,6 +76,11 @@ export const processJob = async (
   if (versionDoc.exists) {
     await versionRef.update('files.json', jsonFilePath, 'files.gh', ghFilePath)
   }
+
+  // Broadcast that save has been completed
+  // db.client.publish('SAVE_FINISH')
+
+  // Begin creating thumbnails
 
   return { ...job.data }
 }
