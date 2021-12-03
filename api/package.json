@@ -9,6 +9,7 @@
     "build:glib": "cd ../.scripts && build.lib.sh",
     "start": "node dist/server.js",
     "emulators": "firebase emulators:start --export-on-exit=./.firebase --import=./.firebase",
+    "emulators:stop": "npx kill-port 9099 && npx kill-port 9199 && npx kill-port 9299 && npx kill-port 9999 && npx kill-port 4400",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

@@ -1,1 +1,1 @@
-./bin/Release/compute.geometry.exe
+./bin/Debug/compute.geometry.exe

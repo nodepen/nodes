@@ -34,6 +34,8 @@ export const processJob = async (
     // TODO: Type solution response values
     const { data, messages, timeout, duration } = graphSolution as any
 
+    console.log({ graphSolution })
+
     const writeAllValues = db.multi()
 
     for (const { elementId, parameterId, values } of data) {

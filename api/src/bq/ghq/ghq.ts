@@ -37,6 +37,7 @@ const ghq = {
 
 // Declare queue handlers
 ghq.store.process(storeHandlers.processJob)
+ghq.store.on('job failed', storeHandlers.onJobFailed)
 
 ghq.solve.checkStalledJobs(5000)
 ghq.save.checkStalledJobs(5000)
