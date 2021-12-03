@@ -1,0 +1,1 @@
+export { createThumbnailImage } from './createThumbnailImage'

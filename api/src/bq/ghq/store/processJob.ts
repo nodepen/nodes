@@ -2,6 +2,7 @@ import Queue from 'bee-queue'
 import atob from 'atob'
 import { admin } from '../../../firebase'
 import { v4 as uuid } from 'uuid'
+import { createThumbnailImage } from '../../../thumbnails'
 
 type StoreQueueJobData = {
   graphId: string
@@ -81,6 +82,13 @@ export const processJob = async (
   // db.client.publish('SAVE_FINISH')
 
   // Begin creating thumbnails
+  const img = await createThumbnailImage()
+
+  const thumbnailFilePath = `${pathRoot}/thumb.png`
+  const thumbFile = bucket.file(thumbnailFilePath)
+
+  const stream = thumbFile.createWriteStream()
+  img.pack().pipe(stream)
 
   return { ...job.data }
 }
