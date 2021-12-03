@@ -28,6 +28,10 @@ const HEIGHT = 300
 export const createThumbnailImage = async (): Promise<PNG> => {
   const scene = new Scene()
 
+  const width = WIDTH
+  const height = HEIGHT
+  const png = new PNG({ width: width, height: height })
+
   const box = new Mesh(new BoxBufferGeometry(), new MeshPhongMaterial())
   box.position.set(0, 0, 1)
   box.castShadow = true
@@ -46,11 +50,9 @@ export const createThumbnailImage = async (): Promise<PNG> => {
   camera.up.set(0, 0, 1)
   camera.position.set(-3, 3, 3)
   camera.lookAt(box.position)
+  camera.aspect = width / height
+  camera.updateProjectionMatrix()
   scene.add(camera)
-
-  const width = WIDTH
-  const height = HEIGHT
-  const png = new PNG({ width: width, height: height })
 
   const canvas = {
     width,
