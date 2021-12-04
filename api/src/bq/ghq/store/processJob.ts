@@ -1,7 +1,7 @@
 import Queue from 'bee-queue'
 import atob from 'atob'
 import fs from 'fs'
-import ffmpeg from 'fluent-ffmpeg'
+import { Converter } from 'ffmpeg-stream'
 import { admin } from '../../../firebase'
 import { v4 as uuid } from 'uuid'
 import { createThumbnailImage } from '../../../thumbnails'
@@ -92,9 +92,9 @@ export const processJob = async (
   const stream = thumbFile.createWriteStream()
   img.pack().pipe(stream)
 
-  const command = ffmpeg()
+  // command.size('400x300')
 
-  command.size('400x300')
+  const frames: string[] = []
 
   if (!fs.existsSync('./.frames')) {
     fs.mkdirSync('./.frames')
@@ -104,29 +104,60 @@ export const processJob = async (
     fs.mkdirSync(`./.frames/${solutionId}`)
   }
 
-  for (const i of [0, 1, 2, 3, 4, 5]) {
+  const conv = new Converter() // create converter
+  // const input = conv.createInputStream({
+  //   f: 'image2',
+  //   r: '30',
+  //   i: `./.frames/${solutionId}/%d.png`,
+  // }) // create input writable stream
+
+  conv.createInputFromFile(`./.frames/${solutionId}/%d.png`, {
+    f: 'image2',
+    r: '60',
+  })
+  // const input = conv.createInputFromFile()
+  // conv.createOutputToFile('./out.mkv', {})
+  conv.createOutputToFile('./out.mp4', {
+    vcodec: 'libx264',
+    pix_fmt: 'yuv420p',
+  }) // output to file
+
+  // input.on('close', () => console.log('closed!'))
+
+  // for every frame create a function that returns a promise
+
+  const writes: any[] = []
+
+  for (const i of Array(600)
+    .fill('')
+    .map((_, n) => n)) {
     const frame = await createThumbnailImage(i)
 
     const key = `./.frames/${solutionId}/${i}.png`
+    frames.push(key)
+
+    console.log(key)
+
+    // frame.pack().pipe(input, { end: false })
+    // frame.pack().pipe(input)
+
+    // writes.push(fs.writeFile(key, ))
 
     await new Promise<void>((resolve) => {
       const frameStream = fs.createWriteStream(key)
       frame.pack().pipe(frameStream)
 
-      frameStream.on('close', () => resolve())
+      frameStream.on('close', () => {
+        // fs.createReadStream(key).pipe(input, { end: false })
+        resolve()
+      })
     })
 
-    command.addInput(key)
+    // command.addInput(key)
   }
 
-  const outputStream = fs.createWriteStream('./test.mp4')
-
-  command
-    .outputFPS(1)
-    .outputFormat('.mp4')
-    .addOutput(outputStream)
-    .on('end', () => console.log('ended'))
-    .run()
+  // input.end()
+  conv.run()
 
   return { ...job.data }
 }
