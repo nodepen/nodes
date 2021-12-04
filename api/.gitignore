@@ -9,6 +9,7 @@ glib
 
 .env
 src/thumbnails/data/
+.frames
 
 # gcloud
 app.yaml

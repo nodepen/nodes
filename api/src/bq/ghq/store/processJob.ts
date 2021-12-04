@@ -1,5 +1,7 @@
 import Queue from 'bee-queue'
 import atob from 'atob'
+import fs from 'fs'
+import ffmpeg from 'fluent-ffmpeg'
 import { admin } from '../../../firebase'
 import { v4 as uuid } from 'uuid'
 import { createThumbnailImage } from '../../../thumbnails'
@@ -65,9 +67,9 @@ export const processJob = async (
   ])
 
   // Update revision record
-  const fs = admin.firestore()
+  const fb = admin.firestore()
 
-  const versionRef = fs
+  const versionRef = fb
     .collection('graphs')
     .doc(graphId)
     .collection('revisions')
@@ -89,6 +91,42 @@ export const processJob = async (
 
   const stream = thumbFile.createWriteStream()
   img.pack().pipe(stream)
+
+  const command = ffmpeg()
+
+  command.size('400x300')
+
+  if (!fs.existsSync('./.frames')) {
+    fs.mkdirSync('./.frames')
+  }
+
+  if (!fs.existsSync(`./.frames/${solutionId}`)) {
+    fs.mkdirSync(`./.frames/${solutionId}`)
+  }
+
+  for (const i of [0, 1, 2, 3, 4, 5]) {
+    const frame = await createThumbnailImage(i)
+
+    const key = `./.frames/${solutionId}/${i}.png`
+
+    await new Promise<void>((resolve) => {
+      const frameStream = fs.createWriteStream(key)
+      frame.pack().pipe(frameStream)
+
+      frameStream.on('close', () => resolve())
+    })
+
+    command.addInput(key)
+  }
+
+  const outputStream = fs.createWriteStream('./test.mp4')
+
+  command
+    .outputFPS(1)
+    .outputFormat('.mp4')
+    .addOutput(outputStream)
+    .on('end', () => console.log('ended'))
+    .run()
 
   return { ...job.data }
 }

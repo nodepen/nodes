@@ -18,6 +18,7 @@ import {
 } from 'three'
 import fs from 'fs'
 import { PNG } from 'pngjs'
+import ffmpeg from 'fluent-ffmpeg'
 
 const WIDTH = 400
 const HEIGHT = 300
@@ -25,7 +26,7 @@ const HEIGHT = 300
 // Thank you @bsergean !
 // https://gist.github.com/bsergean/08be90a2f21205062ccc
 
-export const createThumbnailImage = async (): Promise<PNG> => {
+export const createThumbnailImage = async (x = -3): Promise<PNG> => {
   const scene = new Scene()
 
   const width = WIDTH
@@ -48,7 +49,7 @@ export const createThumbnailImage = async (): Promise<PNG> => {
 
   const camera = new PerspectiveCamera()
   camera.up.set(0, 0, 1)
-  camera.position.set(-3, 3, 3)
+  camera.position.set(x, 3, 3)
   camera.lookAt(box.position)
   camera.aspect = width / height
   camera.updateProjectionMatrix()
