@@ -1,7 +1,14 @@
-import { RedisClient } from 'redis'
+import redis from 'redis'
 import * as handle from './handlers'
 
-export const initialize = async (client: RedisClient): Promise<void> => {
+export const initialize = async (): Promise<void> => {
+  const client = process.env.NP_DB_HOST
+    ? redis.createClient({
+        host: process.env.NP_DB_HOST,
+        port: Number.parseInt(process.env.NP_DB_PORT),
+      })
+    : redis.createClient()
+
   client.on('message', (channel, message) => {
     switch (channel) {
       case 'SAVE_READY': {

@@ -40,7 +40,7 @@ export const startup = async (): Promise<Server> => {
   })
 
   // Wait for redis pubsub subscriptions to start
-  await initializePubsub(db.client)
+  await initializePubsub()
 
   // Wait for gh solution queue connection
   const initializeQueue = new Promise<void>((resolve, reject) => {
