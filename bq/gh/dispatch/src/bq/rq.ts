@@ -6,11 +6,12 @@ const thumbnailQueue = new Queue(`${prefix}:render:thumbnail`, {
   isWorker: false,
 })
 
-// const videoQueue = new Queue(`${prefix}:thumbnails:video`, {
-//   redis: opts,
-//   isWorker: false,
-// })
+const videoQueue = new Queue(`${prefix}:render:thumbnail-video`, {
+  redis: opts,
+  isWorker: false,
+})
 
 export const rq = {
   thumbnail: thumbnailQueue,
+  video: videoQueue,
 }

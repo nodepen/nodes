@@ -18,7 +18,21 @@ export const onJobSucceeded = async (
 
   db.client.publish('SAVE_READY', JSON.stringify(result))
 
-  const job = await rq.thumbnail.createJob(result).save()
+  const thumbnailImageJob = await rq.thumbnail.createJob(result).save()
 
-  console.log(`[ JOB ${job.id.padStart(4, '0')} ] [ RQ:THUMBNAIL ] [ CREATE ]`)
+  console.log(
+    `[ JOB ${thumbnailImageJob.id.padStart(
+      4,
+      '0'
+    )} ] [ RQ:THUMBNAIL ] [ CREATE ]`
+  )
+
+  const thumbnailVideoJob = await rq.video.createJob(result).save()
+
+  console.log(
+    `[ JOB ${thumbnailVideoJob.id.padStart(
+      4,
+      '0'
+    )} ] [ RQ:THUMBNAIL-VID ] [ CREATE ]`
+  )
 }

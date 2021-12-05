@@ -4,4 +4,4 @@ node_modules
 .vscode
 auth.json
 .env
-.temp
+temp

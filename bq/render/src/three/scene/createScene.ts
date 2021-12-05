@@ -14,6 +14,7 @@ import {
   NearestFilter,
   RGBAFormat,
   UnsignedByteType,
+  Vector3,
 } from 'three'
 import { NodePen } from 'glib'
 
@@ -29,6 +30,9 @@ export const createScene = async (
   const { data } = solution
 
   const scene = new Scene()
+  scene.up = new Vector3(0, 0, 1)
+  scene.updateMatrix()
+  scene.updateMatrixWorld()
 
   const width = WIDTH
   const height = HEIGHT

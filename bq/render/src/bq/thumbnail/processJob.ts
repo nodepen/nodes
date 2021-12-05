@@ -2,10 +2,9 @@ import Queue from 'bee-queue'
 import { admin } from '../../firebase'
 import { scene, encoding } from '../../three'
 import { v4 as uuid } from 'uuid'
-import { firestore } from 'firebase-admin'
 import fs from 'fs'
 
-type ThumbnailImageQueueJobData = {
+type RenderThumbnailImageQueueJobData = {
   graphId: string
   solutionId: string
   revision: string
@@ -15,7 +14,7 @@ type ThumbnailImageQueueJobData = {
 }
 
 export const processJob = async (
-  job: Queue.Job<ThumbnailImageQueueJobData>
+  job: Queue.Job<RenderThumbnailImageQueueJobData>
 ): Promise<unknown> => {
   const {
     graphId,
@@ -79,7 +78,8 @@ export const processJob = async (
   }
 
   // Update firestore record with the thumbnail's location
-  const revisionRef = firestore()
+  const revisionRef = admin
+    .firestore()
     .collection('graphs')
     .doc(graphId)
     .collection('revisions')
