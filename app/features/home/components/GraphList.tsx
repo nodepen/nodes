@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import { useQuery, gql } from '@apollo/client'
 import { useSessionManager } from '../../common/context/session'
+import { CompositeThumbnail } from './CompositeThumbnail'
 
 const GraphList = (): React.ReactElement => {
   const { user } = useSessionManager()
@@ -40,8 +41,9 @@ const GraphList = (): React.ReactElement => {
         return (
           <>
             <h3>{manifest.name}</h3>
-            <img src={files.thumbnailImage} />
-            <video src={files.thumbnailVideo} autoPlay loop />
+            <div className="w-48 h-36">
+              <CompositeThumbnail imageSrc={files.thumbnailImage} videoSrc={files.thumbnailVideo} />
+            </div>
           </>
         )
       })}
