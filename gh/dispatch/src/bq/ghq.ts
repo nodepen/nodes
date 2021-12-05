@@ -1,17 +1,7 @@
 import Queue from 'bee-queue'
-import { ClientOpts } from 'redis'
+import { opts, prefix } from './config'
 import * as saveHandlers from './save'
 import * as solveHandlers from './solve'
-
-// Configure dispatcher
-const opts: ClientOpts = process.env.NP_DB_HOST
-  ? {
-      host: process.env.NP_DB_HOST,
-      port: Number.parseInt(process.env?.NP_DB_PORT),
-    }
-  : {}
-
-const prefix = process.env?.NP_GLOBAL_PREFIX ?? 'dev'
 
 console.log(`PREFIX: ${prefix}`)
 

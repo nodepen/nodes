@@ -21,8 +21,9 @@
     "firebase-admin": "9.8.0",
     "gl": "4.9.2",
     "glib": "file:./glib",
-    "pngjs": "6.0.0",
+    "pngjs": "^6.0.0",
     "redis": "3.1.2",
+    "rhino3dm": "^7.11.1",
     "three": "0.135.0",
     "uuid": "^8.3.2"
   },
@@ -31,6 +32,7 @@
     "@types/dotenv": "^8.2.0",
     "@types/express": "^4.17.6",
     "@types/gl": "4.1.0",
+    "@types/pngjs": "^6.0.1",
     "@types/redis": "^2.8.28",
     "@types/three": "0.134.0",
     "@types/uuid": "^8.3.1",

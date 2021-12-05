@@ -11,6 +11,8 @@ rm -rf api/glib/
 cp -R lib/. api/glib/
 rm -rf gh/dispatch/glib/
 cp -R lib/. gh/dispatch/glib/
+rm -rf bq/thumbnails/glib/
+cp -R lib/. bq/thumbnails/glib/
 
 # Re-install local lib
 cd app
@@ -18,4 +20,6 @@ npm install
 cd ../api
 npm install
 cd ../gh/dispatch
+npm install
+cd ../../bq/thumbnails
 npm install
