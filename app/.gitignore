@@ -43,3 +43,5 @@ glib
 # gcloud
 app.yaml
 app.dev.yaml
+
+public/temp/
