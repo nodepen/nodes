@@ -19,7 +19,7 @@ export const toPNG = (scene: Scene, camera: Camera): PNG => {
   const width = DEFAULT_WIDTH
   const height = DEFAULT_HEIGHT
 
-  const canvas = {
+  const canvas: any = {
     width,
     height,
     addEventListener: () => {

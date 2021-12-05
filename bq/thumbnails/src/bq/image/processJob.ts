@@ -23,7 +23,9 @@ export const processJob = async (
     revision,
   } = job.data
 
-  console.log(`[ JOB ${job.id.padStart(4, '0')} ] [ TQ:IMAGE ] [ START ]`)
+  const jobId = job.id.padStart(4, '0')
+
+  console.log(`[ JOB ${jobId} ] [ TQ:IMAGE ] [ START ]`)
 
   const bucket = admin.storage().bucket('np-graphs')
   const pathRoot = `${graphId}/${solutionId}`
@@ -40,7 +42,14 @@ export const processJob = async (
   const stream = thumbFile.createWriteStream()
   image.pack().pipe(stream)
 
-  // Update revision record in firestore
+  if (process.env.DEBUG === 'true') {
+    // We need to write the image to local /app dir, because it will get served from there in offline dev
+  }
 
-  return { ...job.data }
+  return new Promise<any>((resolve, reject) => {
+    stream.on('finish', () => {
+      console.log(`[ JOB ${jobId} ] [ TQ:IMAGE ] Uploaded ${thumbnailFilePath}`)
+      resolve(job.data)
+    })
+  })
 }

@@ -4,6 +4,7 @@
     "esModuleInterop": true,
     "target": "es6",
     "lib": [
+      "dom",
       "esnext"
     ],
     "noImplicitAny": true,

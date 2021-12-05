@@ -18,7 +18,7 @@ export const onJobSucceeded = async (
 
   db.client.publish('SAVE_READY', JSON.stringify(result))
 
-  const job = await tq.image.createJob(result)
+  const job = await tq.image.createJob(result).save()
 
   console.log(`[ JOB ${job.id.padStart(4, '0')} ] [ TQ:IMAGE ] [ CREATE ]`)
 }

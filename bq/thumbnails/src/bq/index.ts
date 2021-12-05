@@ -1,0 +1,1 @@
+export { tq } from './tq'

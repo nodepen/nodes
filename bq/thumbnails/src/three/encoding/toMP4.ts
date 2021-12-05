@@ -3,14 +3,14 @@ import { v4 as uuid } from 'uuid'
 
 /**
  *
- * @param path /path/to/images/%d.png
+ * @param inputPath /path/to/images/%d.png
  */
-export const toMP4 = async (path: string): Promise<string> => {
+export const toMP4 = async (inputPath: string): Promise<string> => {
   const outputPath = `./.temp/vid/${uuid()}.mp4`
 
   const conv = new Converter()
 
-  conv.createInputFromFile(path, {
+  conv.createInputFromFile(inputPath, {
     f: 'image2',
     r: '60',
   })

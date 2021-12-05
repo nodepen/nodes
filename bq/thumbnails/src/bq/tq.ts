@@ -1,14 +1,6 @@
 import Queue from 'bee-queue'
-import { ClientOpts } from 'redis'
-
-const opts: ClientOpts = process.env.NP_DB_HOST
-  ? {
-      host: process.env.NP_DB_HOST,
-      port: Number.parseInt(process.env?.NP_DB_PORT ?? '6379'),
-    }
-  : {}
-
-const prefix = process.env?.NP_GLOBAL_PREFIX ?? 'dev'
+import { opts, prefix } from './config'
+import * as imageHandlers from './image'
 
 console.log(`PREFIX: ${prefix}`)
 
@@ -26,3 +18,10 @@ const tq = {
   image: imageQueue,
   video: videoQueue,
 }
+
+// Declare queue handlers
+tq.image.process(imageHandlers.processJob)
+tq.image.on('job succeeded', imageHandlers.onJobSucceeded)
+tq.image.on('job failed', imageHandlers.onJobFailed)
+
+export { tq }
