@@ -30,7 +30,6 @@ export const processJob = async (
 
   console.log(`${jobLabel} [ START ]`)
 
-  const bucket = admin.storage().bucket('np-graphs')
   const pathRoot = `${graphId}/${solutionId}`
 
   // Generate frames
@@ -87,14 +86,54 @@ export const processJob = async (
   }
 
   // Encode frames as video
+  const videoFileName = `${uuid()}.mp4`
+
   const inputPath = `./temp/${pathRoot}/frames/%04d.png`
-  const outputPath = `./temp/${pathRoot}/${uuid()}.mp4`
+  const outputPath = `./temp/${pathRoot}/${videoFileName}`
 
   console.log(`${jobLabel} Encoding video...`)
 
   await encoding.toMP4(inputPath, outputPath, FPS)
 
-  console.log(`${jobLabel} Successfully encoded video!`)
+  console.log(`${jobLabel} Successfully encoded video ${outputPath}`)
+
+  if (process.env.DEBUG) {
+    // Write to local locations
+    fs.copyFileSync(
+      outputPath,
+      `../../app/public/temp/${pathRoot}/${videoFileName}`
+    )
+  } else {
+    // Write to storage bucket
+    const bucket = admin.storage().bucket('np-graphs')
+    const thumbnailVideoFile = bucket.file(`${pathRoot}/${videoFileName}`)
+    const videoData = fs.readFileSync(outputPath)
+    await thumbnailVideoFile.save(videoData)
+  }
+
+  // Update revision record with video path
+  const revisionRef = admin
+    .firestore()
+    .collection('graphs')
+    .doc(graphId)
+    .collection('revisions')
+    .doc(revision.toString())
+  const revisionDoc = await revisionRef.get()
+
+  if (!revisionDoc.exists) {
+    console.error(
+      `${jobLabel} [ ERROR ] Failed to update revision doc because it does not exist.`
+    )
+    return job.data
+  }
+
+  await revisionRef.update(
+    'files.thumbnailVideo',
+    `${pathRoot}/${videoFileName}`
+  )
+
+  // Delete temp files used for creating the video
+  fs.rmdirSync(`./temp/${pathRoot}`, { recursive: true })
 
   return job.data
 }
