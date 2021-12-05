@@ -1,7 +1,7 @@
 import Queue from 'bee-queue'
 import { opts, prefix } from './config'
 
-const imageQueue = new Queue(`${prefix}:thumbnails:image`, {
+const thumbnailQueue = new Queue(`${prefix}:render:thumbnail`, {
   redis: opts,
   isWorker: false,
 })
@@ -11,7 +11,6 @@ const imageQueue = new Queue(`${prefix}:thumbnails:image`, {
 //   isWorker: false,
 // })
 
-export const tq = {
-  image: imageQueue,
-  // video: videoQueue,
+export const rq = {
+  thumbnail: thumbnailQueue,
 }

@@ -1,5 +1,5 @@
 import { db } from '../../db'
-import { tq } from '../tq'
+import { rq } from '../rq'
 
 export const onJobSucceeded = async (
   jobId: string,
@@ -18,7 +18,7 @@ export const onJobSucceeded = async (
 
   db.client.publish('SAVE_READY', JSON.stringify(result))
 
-  const job = await tq.image.createJob(result).save()
+  const job = await rq.thumbnail.createJob(result).save()
 
-  console.log(`[ JOB ${job.id.padStart(4, '0')} ] [ TQ:IMAGE ] [ CREATE ]`)
+  console.log(`[ JOB ${job.id.padStart(4, '0')} ] [ RQ:THUMBNAIL ] [ CREATE ]`)
 }

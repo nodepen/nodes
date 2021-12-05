@@ -1,6 +1,6 @@
 import express, { Express } from 'express'
 import { admin } from './firebase'
-import { tq } from './bq'
+import { rq } from './bq'
 
 export const startup = async (): Promise<Express> => {
   // Initialize local healthcheck server
@@ -16,12 +16,12 @@ export const startup = async (): Promise<Express> => {
 
   // Wait for queue connections
   await new Promise<void>((resolve, reject) => {
-    tq.image.on('ready', () => {
+    rq.thumbnail.on('ready', () => {
       console.log('[ STARTUP ] Thumbnail image queue connected!')
       resolve()
     })
 
-    tq.image.on('error', (err) => {
+    rq.thumbnail.on('error', (err) => {
       reject(err)
     })
   })

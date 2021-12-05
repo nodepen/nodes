@@ -25,7 +25,7 @@ export const processJob = async (
 
   const jobId = job.id.padStart(4, '0')
 
-  console.log(`[ JOB ${jobId} ] [ TQ:IMAGE ] [ START ]`)
+  console.log(`[ JOB ${jobId} ] [ RQ:THUMBNAIL ] [ START ]`)
 
   const bucket = admin.storage().bucket('np-graphs')
   const pathRoot = `${graphId}/${solutionId}`
@@ -48,7 +48,9 @@ export const processJob = async (
 
   return new Promise<any>((resolve, reject) => {
     stream.on('finish', () => {
-      console.log(`[ JOB ${jobId} ] [ TQ:IMAGE ] Uploaded ${thumbnailFilePath}`)
+      console.log(
+        `[ JOB ${jobId} ] [ RQ:THUMBNAIL ] Uploaded ${thumbnailFilePath}`
+      )
       resolve(job.data)
     })
   })
