@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useSessionManager } from '../common/context/session'
 
 /**
@@ -6,6 +6,8 @@ import { useSessionManager } from '../common/context/session'
  */
 const HomePageDashboard = (): React.ReactElement => {
   const { user } = useSessionManager()
+
+  useEffect(() => {}, [])
 
   return (
     <div>

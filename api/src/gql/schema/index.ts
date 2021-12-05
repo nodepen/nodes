@@ -7,7 +7,7 @@ import { solutionSchema, solutionResolvers } from './solution'
 const typeDefs = [baseSchema, configSchema, graphsSchema, solutionSchema]
 
 const { Query: configQueryType, ...configTypes } = configResolvers
-const { Mutation: graphsMutationType } = graphsResolvers
+const { Query: graphsQueryType, Mutation: graphsMutationType } = graphsResolvers
 const {
   Query: solutionQueryType,
   Mutation: solutionMutationType,
@@ -18,6 +18,7 @@ const {
 const resolvers = {
   Query: {
     ...configQueryType,
+    ...graphsQueryType,
     ...solutionQueryType,
   },
   Mutation: {

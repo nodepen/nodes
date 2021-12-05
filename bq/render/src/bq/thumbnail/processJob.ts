@@ -93,7 +93,7 @@ export const processJob = async (
     return job.data
   }
 
-  await revisionRef.update('files.thumbnail', thumbnailFilePath)
+  await revisionRef.update('files.thumbnailImage', thumbnailFilePath)
 
   return job.data
 }
