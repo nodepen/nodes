@@ -1,7 +1,7 @@
 import { Server } from 'http'
 import { initialize } from './gql'
 import { admin } from './firebase'
-import { db } from './redis'
+import { db, initialize as initializePubsub } from './redis'
 import { ghq } from './bq'
 
 type GlobalServerConfig = {
@@ -38,6 +38,9 @@ export const startup = async (): Promise<Server> => {
       reject(err)
     })
   })
+
+  // Wait for redis pubsub subscriptions to start
+  await initializePubsub(db.client)
 
   // Wait for gh solution queue connection
   const initializeQueue = new Promise<void>((resolve, reject) => {

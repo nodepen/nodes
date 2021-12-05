@@ -1,6 +1,5 @@
 import Queue from 'bee-queue'
 import { ClientOpts } from 'redis'
-import * as storeHandlers from './store'
 
 const opts: ClientOpts = process.env.NP_DB_HOST
   ? {
@@ -24,23 +23,12 @@ const saveQueue = new Queue(`${prefix}:gh:save`, {
   isWorker: false,
 })
 
-const storeQueue = new Queue(`${prefix}:gh:store`, {
-  redis: opts,
-  isWorker: true,
-})
-
 const ghq = {
   save: saveQueue,
   solve: solveQueue,
-  store: storeQueue,
 }
-
-// Declare queue handlers
-ghq.store.process(storeHandlers.processJob)
-ghq.store.on('job failed', storeHandlers.onJobFailed)
 
 ghq.solve.checkStalledJobs(5000)
 ghq.save.checkStalledJobs(5000)
-ghq.store.checkStalledJobs(5000)
 
 export { ghq }

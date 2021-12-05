@@ -1,4 +1,5 @@
 import { ghq } from '../ghq'
+import { db } from '../../db'
 
 export const onJobSucceeded = async (
   jobId: string,
@@ -15,5 +16,5 @@ export const onJobSucceeded = async (
 
   console.log(`[ JOB ${jobId.padStart(4, '0')} ] [ SAVE ] [ FINISH ]`)
 
-  await ghq.store.createJob(result).save()
+  db.client.publish('SAVE_READY', JSON.stringify(result))
 }

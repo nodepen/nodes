@@ -26,15 +26,9 @@ const saveQueue = new Queue(`${prefix}:gh:save`, {
   isWorker: true,
 })
 
-const storeQueue = new Queue(`${prefix}:gh:store`, {
-  redis: opts,
-  isWorker: false,
-})
-
 const ghq = {
   save: saveQueue,
   solve: solveQueue,
-  store: storeQueue,
 }
 
 // Declare queue handlers
