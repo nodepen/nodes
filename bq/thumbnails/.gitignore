@@ -1,0 +1,6 @@
+dist
+glib
+node_modules
+.vscode
+auth.json
+.env
