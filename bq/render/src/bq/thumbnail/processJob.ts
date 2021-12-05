@@ -37,6 +37,8 @@ export const processJob = async (
   const model = await scene.createScene(JSON.parse(graphSolution))
   const camera = scene.getThumbnailCamera(model)
 
+  scene.setCameraOrbit(camera, [0, 0, 1], 5, 0)
+
   const image = encoding.toPNG(model, camera)
 
   const thumbnailFilePath = `${pathRoot}/${uuid()}.png`

@@ -1,19 +1,24 @@
-import React, { useEffect } from 'react'
+import React from 'react'
+import { ApolloContext } from '../common/context/apollo'
 import { useSessionManager } from '../common/context/session'
+import { GraphList } from './components'
 
 /**
  * Home page for authenticated visits
  */
 const HomePageDashboard = (): React.ReactElement => {
-  const { user } = useSessionManager()
-
-  useEffect(() => {}, [])
+  const { user, token } = useSessionManager()
 
   return (
-    <div>
-      <h1>Welcome back {user?.displayName}</h1>
-      <a href="/gh">Launch</a>
-    </div>
+    <ApolloContext token={token}>
+      <>
+        <div>
+          <h1>Welcome back {user?.displayName}</h1>
+          <a href="/gh">Launch</a>
+        </div>
+        <GraphList />
+      </>
+    </ApolloContext>
   )
 }
 

@@ -24,7 +24,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
   ): Promise<GraphRecord[]> => {
     const db = admin.firestore()
 
-    const query = db.collection('graphs').where('author', '==', author)
+    const query = db.collection('graphs').where('author.name', '==', author)
     const queryResults = await query.get()
 
     const hydrationRequests: Promise<GraphRecord>[] = []
@@ -46,19 +46,29 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
           .collection('graphs')
           .doc(doc.id)
           .collection('revisions')
-          .doc(currentRevision)
+          .doc(currentRevision.toString())
 
         revisionRef
           .get()
           .then((revisionDoc) => {
             record.files.json = revisionDoc.get('files.json')
-            record.files.json = revisionDoc.get('files.json')
+            record.files.gh = revisionDoc.get('files.gh')
 
             const thumbnailImagePath = revisionDoc.get('files.thumbnailImage')
             const thumbnailVideoPath = revisionDoc.get('files.thumbnailVideo')
 
-            console.log({ thumbnailImagePath })
-            console.log({ thumbnailVideoPath })
+            if (process.env.DEBUG === 'true') {
+              // Hydrate with local paths
+              if (thumbnailImagePath) {
+                record.files.thumbnailImage = `temp/${thumbnailImagePath}`
+              }
+
+              if (thumbnailVideoPath) {
+                record.files.thumbnailVideo = `temp/${thumbnailVideoPath}`
+              }
+            } else {
+              // Hydrate with signed urls
+            }
 
             resolve(record)
           })
@@ -72,6 +82,18 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
     })
 
     const hydrationResults = await Promise.allSettled(hydrationRequests)
+
+    const result = hydrationResults.reduce((all, current) => {
+      switch (current.status) {
+        case 'fulfilled': {
+          return [...all, current.value]
+        }
+        case 'rejected': {
+          console.error(current.reason)
+          return all
+        }
+      }
+    }, [] as GraphRecord[])
 
     return hydrationResults
       .filter(
