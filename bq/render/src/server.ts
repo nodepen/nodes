@@ -3,13 +3,13 @@ import { startup } from './startup'
 
 dotenv.config()
 
-const PORT = process.env.NP_BQ_THUMBNAILS_PORT || 9700
+const PORT = process.env.NP_RENDER_QUEUE_PORT || 9700
 
 startup()
   .then((app) => {
     app.listen(PORT, () => {
       console.log(
-        `[ STARTUP ] NodePen thumbnail queue initialized! | Listening on port ${PORT}`
+        `[ STARTUP ] NodePen render queue initialized! | Listening on port ${PORT}`
       )
     })
   })

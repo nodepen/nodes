@@ -1,6 +1,8 @@
 import Queue from 'bee-queue'
 import { admin } from '../../firebase'
 import { scene, encoding } from '../../three'
+import { v4 as uuid } from 'uuid'
+import { firestore } from 'firebase-admin'
 
 type ThumbnailImageQueueJobData = {
   graphId: string
@@ -24,8 +26,9 @@ export const processJob = async (
   } = job.data
 
   const jobId = job.id.padStart(4, '0')
+  const jobLabel = `[ JOB ${jobId} ] [ RQ:THUMBNAIL ]`
 
-  console.log(`[ JOB ${jobId} ] [ RQ:THUMBNAIL ] [ START ]`)
+  console.log(`${jobLabel} [ START ]`)
 
   const bucket = admin.storage().bucket('np-graphs')
   const pathRoot = `${graphId}/${solutionId}`
@@ -36,7 +39,7 @@ export const processJob = async (
 
   const image = encoding.toPNG(model, camera)
 
-  const thumbnailFilePath = `${pathRoot}/thumb.png`
+  const thumbnailFilePath = `${pathRoot}/${uuid()}.png`
   const thumbFile = bucket.file(thumbnailFilePath)
 
   const stream = thumbFile.createWriteStream()
@@ -46,12 +49,33 @@ export const processJob = async (
     // We need to write the image to local /app dir, because it will get served from there in offline dev
   }
 
-  return new Promise<any>((resolve, reject) => {
+  // Write the thumbnail to storage
+  await new Promise<void>((resolve, reject) => {
     stream.on('finish', () => {
-      console.log(
-        `[ JOB ${jobId} ] [ RQ:THUMBNAIL ] Uploaded ${thumbnailFilePath}`
-      )
-      resolve(job.data)
+      console.log(`${jobLabel} Uploaded ${thumbnailFilePath}`)
+      resolve()
+    })
+    stream.on('error', () => {
+      reject()
     })
   })
+
+  // Update firestore record with the thumbnail's location
+  const revisionRef = firestore()
+    .collection('graphs')
+    .doc(graphId)
+    .collection('revisions')
+    .doc(revision.toString())
+  const revisionDoc = await revisionRef.get()
+
+  if (!revisionDoc.exists) {
+    console.error(
+      `${jobLabel} [ ERROR ] Failed to update revision doc because it does not exist.`
+    )
+    return job.data
+  }
+
+  await revisionRef.update('files.thumbnail', thumbnailFilePath)
+
+  return job.data
 }

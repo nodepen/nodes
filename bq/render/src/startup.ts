@@ -7,7 +7,7 @@ export const startup = async (): Promise<Express> => {
   const app = express()
 
   app.get('/', (_, res) => {
-    res.send('howdy from thumbnails queue worker')
+    res.send('Howdy, from render queue worker!')
   })
 
   // Initialize firebase dependencies
@@ -17,7 +17,7 @@ export const startup = async (): Promise<Express> => {
   // Wait for queue connections
   await new Promise<void>((resolve, reject) => {
     rq.thumbnail.on('ready', () => {
-      console.log('[ STARTUP ] Thumbnail image queue connected!')
+      console.log('[ STARTUP ] Render image queue connected!')
       resolve()
     })
 
