@@ -1,7 +1,7 @@
 import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
-import { GraphState, Payload, WireMode, LiveWireElement } from './types'
+import { GraphState, Payload, LiveWireElement } from './types'
 import {
   newGuid,
   initializeParameters,
@@ -10,7 +10,6 @@ import {
   regionContainsRegion,
   regionIntersectsRegion,
   getDataTreePathString,
-  distance,
 } from '../../utils'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
@@ -64,7 +63,7 @@ export const graphSlice = createSlice({
       state.manifest = action.payload
       state.elements = action.payload.elements
 
-      // Flag restored objects as not needing correction
+      // Flag restored objects as not needing first-placement correction
       state.registry.restored.elements = Object.keys(action.payload.elements)
     },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
