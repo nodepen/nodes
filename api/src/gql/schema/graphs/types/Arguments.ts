@@ -2,6 +2,9 @@ import { GrasshopperGraphManifest } from './GrasshopperGraphManifest'
 
 export type Arguments = {
   Query: {
+    graph: {
+      graphId: string
+    }
     graphsByAuthor: {
       author: string
     }

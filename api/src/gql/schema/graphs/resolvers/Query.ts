@@ -1,4 +1,5 @@
 import { NodePen } from 'glib'
+import { authorize } from '../../../../gql/utils'
 import { admin } from '../../../../firebase'
 import { BaseResolverMap } from '../../base/types'
 import { Arguments } from '../types'
@@ -6,6 +7,63 @@ import { Arguments } from '../types'
 type GraphResponse = Omit<NodePen.GraphManifest, 'graph'>
 
 export const Query: BaseResolverMap<never, Arguments['Query']> = {
+  graph: async (
+    _parent,
+    { graphId },
+    { user }
+  ): Promise<GraphResponse | undefined> => {
+    await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'view',
+    })
+
+    const db = admin.firestore()
+
+    const graphReference = db.collection('graphs').doc(graphId)
+    const graphDocument = await graphReference.get()
+
+    if (!graphDocument.exists) {
+      return undefined
+    }
+
+    const currentRevision = graphDocument.get('revision')?.toString() as string
+
+    if (!currentRevision) {
+      return undefined
+    }
+
+    const versionReference = db
+      .collection('graphs')
+      .doc(graphId)
+      .collection('revisions')
+      .doc(currentRevision)
+    const versionDocument = await versionReference.get()
+
+    if (!versionDocument.exists) {
+      return undefined
+    }
+
+    const record: GraphResponse = {
+      id: graphId,
+      name: graphDocument.get('name'),
+      author: {
+        name: graphDocument.get('author'),
+        id: 'N/A',
+      },
+      files: {
+        graphJson: versionDocument.get('files.graphJson'),
+        graphSolutionJson: versionDocument.get('files.graphSolutionJson'),
+      },
+    }
+
+    // const bucket = admin.storage().bucket('np-graphs')
+    // const graphJsonPath = versionDocument.get('files.graphJson')
+    // const graphJsonFile = bucket.file(graphJsonPath)
+    // const [graphJson] = await graphJsonFile.download({ validation: false })
+
+    return record
+  },
   graphsByAuthor: async (
     _parent,
     { author },
