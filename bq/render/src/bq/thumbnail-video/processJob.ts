@@ -32,6 +32,21 @@ export const processJob = async (
 
   const pathRoot = `${graphId}/${solutionId}`
 
+  // Verify that we still need this thumbnail
+  const db = admin.firestore()
+
+  const graphRef = db.collection('graphs').doc(graphId)
+  const graphDoc = await graphRef.get()
+
+  const currentRevision = graphDoc.get('revision')
+
+  if (revision.toString() !== currentRevision.toString()) {
+    console.log(
+      `${jobLabel} [ SKIP ] Job data is for revision ${revision}, but latest is revision ${currentRevision}.`
+    )
+    return job.data
+  }
+
   // Generate frames
   const model = await scene.createScene(JSON.parse(graphSolution))
   const camera = scene.getThumbnailCamera(model)
@@ -104,8 +119,7 @@ export const processJob = async (
   await thumbnailVideoFile.save(videoData)
 
   // Update revision record with video path
-  const revisionRef = admin
-    .firestore()
+  const revisionRef = db
     .collection('graphs')
     .doc(graphId)
     .collection('revisions')
