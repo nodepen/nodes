@@ -5,8 +5,8 @@ import { gql } from 'apollo-server-express'
  */
 export const graphsSchema = gql`
   extend type Query {
-    graph(graphId: String!): GrasshopperGraph
-    graphsByAuthor(author: String!): [GrasshopperGraph]!
+    graph(graphId: String!): GraphManifest
+    graphsByAuthor(author: String!): [GraphManifest]!
   }
 
   extend type Mutation {
@@ -17,20 +17,17 @@ export const graphsSchema = gql`
     ): String!
   }
 
-  type GrasshopperGraph {
-    manifest: GrasshopperGraphManifest!
-    files: GrasshopperGraphFiles!
-  }
-
-  type GrasshopperGraphManifest {
+  type GraphManifest {
     id: String!
     name: String!
-    author: String!
+    author: UserReference!
+    files: GraphManifestFiles!
   }
 
-  type GrasshopperGraphFiles {
-    json: String
-    gh: String
+  type GraphManifestFiles {
+    graphBinaries: String
+    graphJson: String
+    graphSolutionJson: String
     thumbnailImage: String
     thumbnailVideo: String
   }

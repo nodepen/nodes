@@ -15,4 +15,9 @@ export const baseSchema = gql`
   type Subscription {
     _empty: String
   }
+
+  type UserReference {
+    id: String!
+    name: String!
+  }
 `

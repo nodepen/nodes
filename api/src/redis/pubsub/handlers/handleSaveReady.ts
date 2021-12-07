@@ -60,7 +60,14 @@ export const handleSaveReady = async (message: string): Promise<string> => {
   const versionDoc = await versionRef.get()
 
   if (versionDoc.exists) {
-    await versionRef.update('files.json', jsonFilePath, 'files.gh', ghFilePath)
+    await versionRef.update(
+      'files.graphBinaries',
+      ghFilePath,
+      'files.graphJson',
+      jsonFilePath,
+      'files.graphSolutionJson',
+      solutionFilePath
+    )
   }
 
   return graphId

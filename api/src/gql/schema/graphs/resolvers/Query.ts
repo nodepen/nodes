@@ -1,41 +1,31 @@
+import { NodePen } from 'glib'
 import { admin } from '../../../../firebase'
 import { BaseResolverMap } from '../../base/types'
 import { Arguments } from '../types'
 
-type GraphRecord = {
-  manifest: {
-    id: string
-    name: string
-    author: string
-  }
-  files: {
-    json?: string
-    gh?: string
-    thumbnailImage?: string
-    thumbnailVideo?: string
-  }
-}
+type GraphResponse = Omit<NodePen.GraphManifest, 'graph'>
 
 export const Query: BaseResolverMap<never, Arguments['Query']> = {
   graphsByAuthor: async (
     _parent,
     { author },
     { user }
-  ): Promise<GraphRecord[]> => {
+  ): Promise<GraphResponse[]> => {
     const db = admin.firestore()
 
     const query = db.collection('graphs').where('author.name', '==', author)
     const queryResults = await query.get()
 
-    const hydrationRequests: Promise<GraphRecord>[] = []
+    const hydrationRequests: Promise<GraphResponse>[] = []
 
     queryResults.forEach((doc) => {
-      const req = new Promise<GraphRecord>((resolve) => {
-        const record: GraphRecord = {
-          manifest: {
-            id: doc.id,
-            name: doc.get('name'),
-            author: doc.get('author'),
+      const req = new Promise<GraphResponse>((resolve) => {
+        const record: GraphResponse = {
+          id: doc.id,
+          name: doc.get('name'),
+          author: {
+            name: doc.get('author'),
+            id: 'N/A',
           },
           files: {},
         }
@@ -51,8 +41,11 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
         revisionRef
           .get()
           .then((revisionDoc) => {
-            record.files.json = revisionDoc.get('files.json')
-            record.files.gh = revisionDoc.get('files.gh')
+            record.files.graphBinaries = revisionDoc.get('files.graphBinaries')
+            record.files.graphJson = revisionDoc.get('files.graphJson')
+            record.files.graphSolutionJson = revisionDoc.get(
+              'files.graphSolutionJson'
+            )
 
             const bucket = admin.storage().bucket('np-graphs')
 
@@ -144,13 +137,8 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
           return all
         }
       }
-    }, [] as GraphRecord[])
+    }, [] as GraphResponse[])
 
-    return hydrationResults
-      .filter(
-        (res): res is PromiseFulfilledResult<GraphRecord> =>
-          res.status === 'fulfilled'
-      )
-      .map((res) => res.value)
+    return result
   },
 }

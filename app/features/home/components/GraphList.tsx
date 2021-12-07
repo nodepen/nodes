@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react'
+import { NodePen } from 'glib'
 import { useQuery, gql } from '@apollo/client'
 import { useSessionManager } from '../../common/context/session'
 import { CompositeThumbnail } from './CompositeThumbnail'
@@ -10,13 +11,9 @@ const GraphList = (): React.ReactElement => {
     gql`
       query CurrentUserGraphs($author: String!) {
         graphsByAuthor(author: $author) {
-          manifest {
-            id
-            name
-          }
+          id
+          name
           files {
-            json
-            gh
             thumbnailImage
             thumbnailVideo
           }
@@ -31,16 +28,14 @@ const GraphList = (): React.ReactElement => {
     }
   )
 
-  console.log(data)
-
   return (
     <>
-      {data?.graphsByAuthor?.map((graph) => {
-        const { manifest, files } = graph
+      {data?.graphsByAuthor?.map((graph: NodePen.GraphManifest) => {
+        const { name, files } = graph
 
         return (
           <>
-            <h3>{manifest.name}</h3>
+            <h3>{name}</h3>
             <div className="w-48 h-36">
               <CompositeThumbnail imageSrc={files.thumbnailImage} videoSrc={files.thumbnailVideo} />
             </div>
