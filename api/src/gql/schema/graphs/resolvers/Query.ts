@@ -57,10 +57,12 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       },
     }
 
-    // const bucket = admin.storage().bucket('np-graphs')
-    // const graphJsonPath = versionDocument.get('files.graphJson')
-    // const graphJsonFile = bucket.file(graphJsonPath)
-    // const [graphJson] = await graphJsonFile.download({ validation: false })
+    const bucket = admin.storage().bucket('np-graphs')
+    const validation = process?.env?.DEBUG !== 'true'
+
+    const graphJsonPath = versionDocument.get('files.graphJson')
+    const graphJsonFile = bucket.file(graphJsonPath)
+    const [graphJson] = await graphJsonFile.download({ validation })
 
     return record
   },
