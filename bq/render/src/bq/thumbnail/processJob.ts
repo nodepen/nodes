@@ -44,40 +44,19 @@ export const processJob = async (
   const thumbnailFilePath = `${pathRoot}/${uuid()}.png`
   const thumbFile = bucket.file(thumbnailFilePath)
 
-  if (process.env.DEBUG === 'true') {
-    // We need to write the image to local /app dir, because it will get served from there in offline dev
-    if (!fs.existsSync('../../app/public/temp/')) {
-      fs.mkdirSync('../../app/public/temp/')
-    }
+  // Write to storage
+  const stream = thumbFile.createWriteStream()
+  image.pack().pipe(stream)
 
-    if (!fs.existsSync(`../../app/public/temp/${graphId}/`)) {
-      fs.mkdirSync(`../../app/public/temp/${graphId}/`)
-    }
-
-    if (!fs.existsSync(`../../app/public/temp/${graphId}/${solutionId}`)) {
-      fs.mkdirSync(`../../app/public/temp/${graphId}/${solutionId}`)
-    }
-
-    const localWriteStream = fs.createWriteStream(
-      `../../app/public/temp/${thumbnailFilePath}`
-    )
-
-    image.pack().pipe(localWriteStream)
-  } else {
-    // Write to storage as usual
-    const stream = thumbFile.createWriteStream()
-    image.pack().pipe(stream)
-
-    await new Promise<void>((resolve, reject) => {
-      stream.on('finish', () => {
-        console.log(`${jobLabel} Uploaded ${thumbnailFilePath}`)
-        resolve()
-      })
-      stream.on('error', () => {
-        reject()
-      })
+  await new Promise<void>((resolve, reject) => {
+    stream.on('finish', () => {
+      console.log(`${jobLabel} Uploaded ${thumbnailFilePath}`)
+      resolve()
     })
-  }
+    stream.on('error', () => {
+      reject()
+    })
+  })
 
   // Update firestore record with the thumbnail's location
   const revisionRef = admin

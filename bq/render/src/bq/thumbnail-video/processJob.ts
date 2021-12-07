@@ -97,19 +97,11 @@ export const processJob = async (
 
   console.log(`${jobLabel} Successfully encoded video ${outputPath}`)
 
-  if (process.env.DEBUG) {
-    // Write to local locations
-    fs.copyFileSync(
-      outputPath,
-      `../../app/public/temp/${pathRoot}/${videoFileName}`
-    )
-  } else {
-    // Write to storage bucket
-    const bucket = admin.storage().bucket('np-graphs')
-    const thumbnailVideoFile = bucket.file(`${pathRoot}/${videoFileName}`)
-    const videoData = fs.readFileSync(outputPath)
-    await thumbnailVideoFile.save(videoData)
-  }
+  // Write to storage bucket
+  const bucket = admin.storage().bucket('np-graphs')
+  const thumbnailVideoFile = bucket.file(`${pathRoot}/${videoFileName}`)
+  const videoData = fs.readFileSync(outputPath)
+  await thumbnailVideoFile.save(videoData)
 
   // Update revision record with video path
   const revisionRef = admin

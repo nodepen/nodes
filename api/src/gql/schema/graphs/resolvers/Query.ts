@@ -54,23 +54,74 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
             record.files.json = revisionDoc.get('files.json')
             record.files.gh = revisionDoc.get('files.gh')
 
-            const thumbnailImagePath = revisionDoc.get('files.thumbnailImage')
-            const thumbnailVideoPath = revisionDoc.get('files.thumbnailVideo')
+            const bucket = admin.storage().bucket('np-graphs')
 
-            if (process.env.DEBUG === 'true') {
-              // Hydrate with local paths
-              if (thumbnailImagePath) {
-                record.files.thumbnailImage = `temp/${thumbnailImagePath}`
+            const getFileUrl = async (
+              path?: string
+            ): Promise<string | undefined> => {
+              if (!path) {
+                return undefined
               }
 
-              if (thumbnailVideoPath) {
-                record.files.thumbnailVideo = `temp/${thumbnailVideoPath}`
+              const fileReference = bucket.file(path)
+
+              if (process.env.DEBUG === 'true') {
+                // Use public url, since local storage emulation is public
+                const url = fileReference.publicUrl()
+
+                return url
+              } else {
+                // Use temporary signed url, since production bucket is private
+                const url = await fileReference.getSignedUrl({
+                  version: 'v4',
+                  action: 'read',
+                  expires: Date.now() + 60 * 60 * 1000,
+                })
+
+                return url[0]
               }
-            } else {
-              // Hydrate with signed urls
             }
 
-            resolve(record)
+            const thumbnailImageRequest = new Promise<void>(
+              (resolve, reject) => {
+                const thumbnailImagePath = revisionDoc.get(
+                  'files.thumbnailImage'
+                )
+                getFileUrl(thumbnailImagePath)
+                  .then((url) => {
+                    record.files.thumbnailImage = url
+                    resolve()
+                  })
+                  .catch((err) => {
+                    reject(err)
+                  })
+              }
+            )
+
+            const thumbnailVideoRequest = new Promise<void>(
+              (resolve, reject) => {
+                const thumbnailVideoPath = revisionDoc.get(
+                  'files.thumbnailVideo'
+                )
+                getFileUrl(thumbnailVideoPath)
+                  .then((url) => {
+                    record.files.thumbnailVideo = url
+                    resolve()
+                  })
+                  .catch((err) => {
+                    reject(err)
+                  })
+              }
+            )
+
+            Promise.allSettled([thumbnailImageRequest, thumbnailVideoRequest])
+              .then(() => {
+                resolve(record)
+              })
+              .catch((err) => {
+                console.error(err)
+                resolve(record)
+              })
           })
           .catch((err) => {
             console.log(err)
