@@ -27,7 +27,8 @@ export const processJob = async (
   const jobId = job.id.padStart(4, '0')
   const jobLabel = `[ JOB ${jobId} ] [ IO:SAVE ]`
 
-  console.log(`${jobLabel} [ START ] ${graphId} / ${solutionId}`)
+  console.log(`${jobLabel} [ START ]`)
+  console.log(`${jobLabel} ${graphId} / ${solutionId}`)
 
   const bucket = admin.storage().bucket('np-graphs')
 
