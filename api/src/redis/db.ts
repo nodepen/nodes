@@ -1,6 +1,5 @@
 import redis from 'redis'
 import { promisify } from 'util'
-import { initialize } from './pubsub'
 
 // Initialize client
 const client = process.env.NP_DB_HOST

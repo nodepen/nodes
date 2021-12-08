@@ -13,6 +13,8 @@ rm -rf bq/gh/dispatch/glib/
 cp -R lib/. bq/gh/dispatch/glib/
 rm -rf bq/render/glib/
 cp -R lib/. bq/render/glib/
+rm -rf bq/io/glib
+cp -R lib/. bq/io/glib/
 
 # Re-install local lib
 cd app
@@ -22,4 +24,6 @@ npm install
 cd ../bq/gh/dispatch
 npm install
 cd ../../render
+npm install
+cd ../io
 npm install
