@@ -12,7 +12,7 @@ type GrasshopperGraphPageProps = {
   solution: NodePen.SolutionManifest['data']
 }
 
-const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ manifest, graph, solution }) => {
+const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = (_props) => {
   return <></>
 }
 
@@ -21,6 +21,8 @@ export default GrasshopperGraphPage
 export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> = async (context) => {
   try {
     const cookie = nookies.get(context)
+
+    console.log(cookie)
 
     return {
       props: {
