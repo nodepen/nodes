@@ -24,7 +24,7 @@ export const QuirkyDivider = ({ topColor, bottomColor, size, animate }: QuirkyDi
 
     const { width: w } = dividerRef.current.getBoundingClientRect()
 
-    setCount(Math.round(w / s))
+    setCount(Math.round(w / s) * 20)
   }
 
   useEffect(() => {
@@ -42,9 +42,9 @@ export const QuirkyDivider = ({ topColor, bottomColor, size, animate }: QuirkyDi
   return (
     <div
       className={`w-full whitespace-nowrap overflow-visible`}
-      style={{ height: s + 8, transform: `translate(${-s}px, ${s / 2 - 4}px)` }}
+      style={{ height: s + 8, transform: `translate(${-s}px, ${s / 4}px)` }}
     >
-      <div className="w-full z-20" style={{ height: s / 2 }}>
+      <div className={`${animate ? 'marcher' : ''} z-20`} style={{ width: '200%', height: s / 2 }}>
         {Array(count)
           .fill('')
           .map((_, i) => (
@@ -55,7 +55,10 @@ export const QuirkyDivider = ({ topColor, bottomColor, size, animate }: QuirkyDi
             />
           ))}
       </div>
-      <div className="w-full z-10" style={{ height: s / 2, transform: `translate(${s / 2 + 4}px, -4px)` }}>
+      <div
+        className={`${animate ? 'marcher' : ''} z-10`}
+        style={{ width: '200%', height: s / 2, transform: `translate(${s / 2 + 4}px, -4px)` }}
+      >
         {Array(count)
           .fill('')
           .map((_, i) => (
@@ -66,6 +69,25 @@ export const QuirkyDivider = ({ topColor, bottomColor, size, animate }: QuirkyDi
             />
           ))}
       </div>
+
+      <style jsx>{`
+        @keyframes marchright {
+          from {
+            transform: translateX(-125px);
+          }
+          to {
+            transform: translateX(0px);
+          }
+        }
+
+        .marcher {
+          animation-name: marchright;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
+          animation-direction: alternate;
+          animation-duration: 5000ms;
+        }
+      `}</style>
     </div>
   )
 }
