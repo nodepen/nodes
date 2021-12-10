@@ -105,6 +105,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
       return all
     }, {} as NodePen.GraphElementsMap)
 
+    // Probably should defer this to client-side
     const graphSolutionJsonFile = bucket.file(files.graphSolutionJson)
     const [graphSolutionJson] = await graphSolutionJsonFile.download({ validation })
 

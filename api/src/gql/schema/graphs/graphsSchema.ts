@@ -17,6 +17,10 @@ export const graphsSchema = gql`
     ): String!
   }
 
+  extend type Subscription {
+    onSaveFinish(graphId: String): String!
+  }
+
   type GraphManifest {
     id: String!
     name: String!
@@ -30,5 +34,10 @@ export const graphsSchema = gql`
     graphSolutionJson: String
     thumbnailImage: String
     thumbnailVideo: String
+  }
+
+  type SaveFinishMessage {
+    graphId: String!
+    solutionId: String!
   }
 `
