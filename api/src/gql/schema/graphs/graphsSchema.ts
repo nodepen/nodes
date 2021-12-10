@@ -18,7 +18,7 @@ export const graphsSchema = gql`
   }
 
   extend type Subscription {
-    onSaveFinish(graphId: String): String!
+    onSaveFinish(graphId: String): SaveFinishMessage!
   }
 
   type GraphManifest {

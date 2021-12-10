@@ -48,7 +48,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       id: graphId,
       name: graphDocument.get('name'),
       author: {
-        name: graphDocument.get('author'),
+        name: graphDocument.get('author.name'),
         id: 'N/A',
       },
       files: {
@@ -56,13 +56,6 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
         graphSolutionJson: versionDocument.get('files.graphSolutionJson'),
       },
     }
-
-    const bucket = admin.storage().bucket('np-graphs')
-    const validation = process?.env?.DEBUG !== 'true'
-
-    const graphJsonPath = versionDocument.get('files.graphJson')
-    const graphJsonFile = bucket.file(graphJsonPath)
-    const [graphJson] = await graphJsonFile.download({ validation })
 
     return record
   },

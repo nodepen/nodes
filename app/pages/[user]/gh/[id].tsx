@@ -29,6 +29,8 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
 
     const { token } = cookie
 
+    const { id: graphId } = context.query
+
     // User id for the incoming user
     let currentUserId = 'unset'
 
@@ -56,7 +58,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
     const { data, error } = await client.query({
       query: gql`
         query GetGraphById($id: String!) {
-          graph(id: $id) {
+          graph(graphId: $id) {
             id
             name
             author {
@@ -70,6 +72,9 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
           }
         }
       `,
+      variables: {
+        id: graphId,
+      },
     })
 
     if (!data || !data.graph || !!error) {
@@ -114,7 +119,8 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
     return {
       props: { ...record, graph: { elements, solution } },
     }
-  } catch {
+  } catch (err) {
+    console.log(err)
     return { notFound: true }
   }
 }
