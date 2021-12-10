@@ -27,30 +27,43 @@ type AuthorizationResource = {
 export const authorize = async (
   user?: UserRecord,
   resource?: AuthorizationResource
-): Promise<void> => {
+): Promise<boolean> => {
   // if (process.env.DEBUG === 'true') {
   //   console.log('⚠️  Bypassing authorization!')
   //   return
   // }
 
-  if (!user || !user.id || !user.name) {
-    throw new AuthenticationError(
-      `Not authorized to access the requested resource.`
-    )
+  /**
+   * Require that the request is coming from NodePen
+   */
+  const defaultAuthorization = (user?: UserRecord): boolean => {
+    if (!user || !user.id || !user.name) {
+      throw new AuthenticationError(
+        `Not authorized to access the requested resource.`
+      )
+    }
+
+    return true
   }
 
-  if (resource) {
-    switch (resource.type) {
-      case 'graph': {
-        const t = resource.action
-        break
-      }
-      case 'graph-reference': {
-        const t = resource.action
-        break
+  if (!resource) {
+    return defaultAuthorization(user)
+  }
+
+  switch (resource.type) {
+    case 'graph': {
+      switch (resource.action) {
+        case 'view': {
+          // All graphs are currently public
+          return true
+        }
+        default: {
+          return defaultAuthorization(user)
+        }
       }
     }
+    default: {
+      return defaultAuthorization(user)
+    }
   }
-
-  return
 }
