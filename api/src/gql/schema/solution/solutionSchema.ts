@@ -29,10 +29,10 @@ export const solutionSchema = gql`
   }
 
   extend type Subscription {
-    onSolutionStart(graphId: String): SolutionSnapshot
-    onSolutionFinish(graphId: String): SolutionManifest
-    onUpdateSelection(graphId: String): GraphSelection
-    onUpdateVisibility(graphId: String): GraphVisibility
+    onSolutionStart(graphId: String!): SolutionSnapshot
+    onSolutionFinish(graphId: String!): SolutionManifest
+    onUpdateSelection(graphId: String!): GraphSelection
+    onUpdateVisibility(graphId: String!): GraphVisibility
   }
 
   type GraphSelection {

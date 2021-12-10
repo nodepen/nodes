@@ -6,9 +6,7 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('SAVE_FINISH'),
       (payload, variables) => {
-        return variables.graphId
-          ? variables.graphId === payload.onSaveFinish.graphId
-          : true
+        return variables.graphId === payload.onSaveFinish.graphId
       }
     ),
   },

@@ -19,8 +19,15 @@ const initialState: GraphState = {
   manifest: {
     id: 'unset',
     name: 'unset',
-    author: 'unset',
-    elements: {},
+    author: {
+      name: 'unset',
+      id: 'N/A',
+    },
+    graph: {
+      elements: {},
+      solution: {} as any,
+    },
+    files: {},
   },
   elements: {},
   selection: [],
@@ -59,14 +66,10 @@ export const graphSlice = createSlice({
       state.selection = []
     },
     restore: (state: GraphState, action: PayloadAction<NodePen.GraphManifest>) => {
-      const { id, name, author, graph } = action.payload
+      const { graph } = action.payload
 
-      state.manifest = {
-        id,
-        name,
-        author: author.name,
-        elements: graph.elements,
-      }
+      // Update local manifest
+      state.manifest = action.payload
 
       // Restore graph elements
       state.elements = graph.elements

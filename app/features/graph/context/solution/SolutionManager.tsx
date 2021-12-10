@@ -173,12 +173,20 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
         if (incomingSolutionId !== meta.id && meta.phase === 'idle') {
           restoreSolution(incomingSolutionId)
+          // TODO: Partial restore
           restoreGraph(
             {
               id: incomingGraphId,
               name: 'Restored!',
-              author: 'Ravid Dutten',
-              elements,
+              author: {
+                name: 'Ravid Dutten',
+                id: 'N/A',
+              },
+              graph: {
+                elements,
+                solution: {} as any,
+              },
+              files: {},
             },
             false
           )
@@ -196,7 +204,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   // Subscribe to all solution finish events for graph
   const { data, error } = useSubscription(
     gql`
-      subscription WatchSolutionFinish($graphId: String) {
+      subscription WatchSolutionFinish($graphId: String!) {
         onSolutionFinish(graphId: $graphId) {
           solutionId
           graphId

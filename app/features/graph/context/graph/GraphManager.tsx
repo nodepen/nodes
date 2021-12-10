@@ -25,7 +25,7 @@ export const GraphContext = React.createContext<GraphStore>({
 })
 
 type GraphManagerProps = {
-  manifest?: GrasshopperGraphManifest
+  manifest?: NodePen.GraphManifest
   children?: JSX.Element
 }
 
@@ -56,13 +56,14 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
       id: newGuid(),
       name: 'New Grasshopper Graph',
       author: {
-        name: user.displayName,
+        name: user.displayName ?? 'User',
         id: 'N/A',
       },
       graph: {
         elements: {},
         solution: {} as any,
       },
+      files: {},
     }
 
     restore(initialGraph, false)

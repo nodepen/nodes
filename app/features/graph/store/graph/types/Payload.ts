@@ -1,4 +1,3 @@
-import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { NodePen } from 'glib'
 import { WireMode } from '.'
 
@@ -106,11 +105,6 @@ export type CaptureLiveWiresPayload = {
 export type EndLiveWiresPayload = {
   mode: WireMode | 'cancel'
   end?: [x: number, y: number]
-}
-
-export type RestoreGraphPayload = {
-  manifest: GrasshopperGraphManifest
-  expireSolution: boolean
 }
 
 export type ToggleVisibilityPayload = {

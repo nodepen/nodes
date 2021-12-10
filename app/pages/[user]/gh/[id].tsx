@@ -8,7 +8,7 @@ import { newGuid } from '../../../features/graph/utils'
 
 type GrasshopperGraphPageProps = Omit<NodePen.GraphManifest, 'files'>
 
-const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, author, graph }) => {
+const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ name, author, graph }) => {
   return (
     <div>
       <a href="/">NodePen</a>
