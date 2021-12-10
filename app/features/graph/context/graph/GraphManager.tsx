@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
-import { Grasshopper } from 'glib'
-import { GrasshopperGraphManifest } from '@/features/graph/types'
+import { Grasshopper, NodePen } from 'glib'
 import { GraphStore } from './types'
 import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
 import { useGraphDispatch } from '../../store/graph/hooks'
 import rhino3dm from 'rhino3dm'
+import { newGuid } from '../../utils'
 
 export const GraphContext = React.createContext<GraphStore>({
   register: {
@@ -25,18 +25,22 @@ export const GraphContext = React.createContext<GraphStore>({
 })
 
 type GraphManagerProps = {
-  manifest: GrasshopperGraphManifest
+  manifest?: GrasshopperGraphManifest
   children?: JSX.Element
 }
 
 export const GraphManager = ({ children, manifest }: GraphManagerProps): React.ReactElement => {
-  const { token, session } = useSessionManager()
+  const { token, session, user } = useSessionManager()
 
   const { restore } = useGraphDispatch()
   const sessionInitialized = useRef(false)
 
   useEffect(() => {
     if (sessionInitialized.current) {
+      return
+    }
+
+    if (!user) {
       return
     }
 
@@ -48,8 +52,21 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
       }
     })
 
-    restore(manifest, false)
-  }, [manifest, restore])
+    const initialGraph: NodePen.GraphManifest = manifest ?? {
+      id: newGuid(),
+      name: 'New Grasshopper Graph',
+      author: {
+        name: user.displayName,
+        id: 'N/A',
+      },
+      graph: {
+        elements: {},
+        solution: {} as any,
+      },
+    }
+
+    restore(initialGraph, false)
+  }, [manifest, restore, user])
 
   const client = useApolloClient()
 

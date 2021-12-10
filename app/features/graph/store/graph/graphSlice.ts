@@ -14,7 +14,6 @@ import {
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
 import { prepareLiveMotion, updateLiveElement } from './reducers'
-import { GrasshopperGraphManifest } from '../../types'
 
 const initialState: GraphState = {
   manifest: {
@@ -59,12 +58,23 @@ export const graphSlice = createSlice({
       state.elements = {}
       state.selection = []
     },
-    restore: (state: GraphState, action: PayloadAction<GrasshopperGraphManifest>) => {
-      state.manifest = action.payload
-      state.elements = action.payload.elements
+    restore: (state: GraphState, action: PayloadAction<NodePen.GraphManifest>) => {
+      const { id, name, author, graph } = action.payload
+
+      state.manifest = {
+        id,
+        name,
+        author: author.name,
+        elements: graph.elements,
+      }
+
+      // Restore graph elements
+      state.elements = graph.elements
+
+      // TODO: Solution values...
 
       // Flag restored objects as not needing first-placement correction
-      state.registry.restored.elements = Object.keys(action.payload.elements)
+      state.registry.restored.elements = Object.keys(graph.elements)
     },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()

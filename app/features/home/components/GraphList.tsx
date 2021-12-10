@@ -13,6 +13,9 @@ const GraphList = (): React.ReactElement => {
         graphsByAuthor(author: $author) {
           id
           name
+          author {
+            name
+          }
           files {
             thumbnailImage
             thumbnailVideo
@@ -31,11 +34,11 @@ const GraphList = (): React.ReactElement => {
   return (
     <>
       {data?.graphsByAuthor?.map((graph: NodePen.GraphManifest) => {
-        const { name, files } = graph
+        const { id, name, author, files } = graph
 
         return (
           <>
-            <h3>{name}</h3>
+            <a href={`/${author.name}/gh/${id}`}>{name}</a>
             <div className="w-48 h-36">
               <CompositeThumbnail imageSrc={files.thumbnailImage} videoSrc={files.thumbnailVideo} />
             </div>

@@ -77,7 +77,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
           id: doc.id,
           name: doc.get('name'),
           author: {
-            name: doc.get('author'),
+            name: doc.get('author.name'),
             id: 'N/A',
           },
           files: {},

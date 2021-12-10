@@ -11,6 +11,7 @@ type GrasshopperGraphPageProps = Omit<NodePen.GraphManifest, 'files'>
 const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, author, graph }) => {
   return (
     <div>
+      <a href="/">NodePen</a>
       <h2>{name}</h2>
       <h3>{author.name}</h3>
       <pre>{JSON.stringify(graph.elements, null, 2)}</pre>

@@ -92,7 +92,9 @@ const SaveButton = (): React.ReactElement => {
           console.log('Save is complete!')
         }
 
-        router.push(`/${user?.displayName}/gh/${incomingGraphId}`)
+        if (router.pathname === '/gh') {
+          router.push(`/${user?.displayName}/gh/${incomingGraphId}`)
+        }
       },
     }
   )
