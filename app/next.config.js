@@ -9,9 +9,22 @@ module.exports = withBundleAnalyzer({
     },
     webpack: (config) => {
       config.resolve.fallback = {
+        child_process: false,
+        constants: false,
         crypto: false,
+        "fast-crc32c": false,
         fs: false,
+        http: false,
+        https: false,
+        net: false,
+        os: false,
         path: false,
+        querystring: false,
+        request: false,
+        stream: false,
+        tls: false,
+        worker_threads: false,
+        zlib: false
       };
 
       // The `rhino3dm.wasm` file needs to land where the `rhino3dm.js` gets placed by webpack

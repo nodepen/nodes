@@ -39,6 +39,8 @@ export const useAuthentication = (): AuthContext => {
 
         setUser(u)
         setToken(token)
+
+        // Get user usage/limits, which will create record on api if first visit
       }
     })
   }, [])
