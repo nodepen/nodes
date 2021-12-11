@@ -3,8 +3,15 @@ import { baseSchema } from './base'
 import { configSchema, configResolvers } from './config'
 import { graphsSchema, graphsResolvers } from './graphs'
 import { solutionSchema, solutionResolvers } from './solution'
+import { usersSchema, usersResolvers } from './users'
 
-const typeDefs = [baseSchema, configSchema, graphsSchema, solutionSchema]
+const typeDefs = [
+  baseSchema,
+  configSchema,
+  graphsSchema,
+  solutionSchema,
+  usersSchema,
+]
 
 const { Query: configQueryType, ...configTypes } = configResolvers
 const {
@@ -18,12 +25,14 @@ const {
   Subscription: solutionSubscriptionType,
   ...solutionTypes
 } = solutionResolvers
+const { Query: usersQueryType } = usersResolvers
 
 const resolvers = {
   Query: {
     ...configQueryType,
     ...graphsQueryType,
     ...solutionQueryType,
+    ...usersQueryType,
   },
   Mutation: {
     ...graphsMutationType,
