@@ -40,7 +40,15 @@ export const useAuthentication = (): AuthContext => {
         setUser(u)
         setToken(token)
 
+        if (u.isAnonymous) {
+          return
+        }
+
         // Get user usage/limits, which will create record on api if first visit
+        const userResponse = await fetch('/api/currentUser')
+        const userData = await userResponse.json()
+
+        console.log(userData)
       }
     })
   }, [])
