@@ -197,6 +197,8 @@ const SignUpForm = (): React.ReactElement => {
     setPasswordIsValid(isValid(value))
   }
 
+  const GRID_SPACING = 15
+
   return (
     <div className="w-vw h-vh relative overflow-hidden">
       <div className={` w-vw h-vh absolute left-0 top-0 z-0 bg-green`}>
@@ -205,6 +207,39 @@ const SignUpForm = (): React.ReactElement => {
         </div>
       </div>
       <div className="w-vw h-vh absolute left-0 top-0 z-10">
+        <div className="w-full h-full flex flex-col justify-center items-center">
+          <svg width="750" height="750" className="marcher" viewBox="0 0 750 750">
+            {Array(750 / GRID_SPACING)
+              .fill('')
+              .map((_, i) => {
+                const n = i * GRID_SPACING
+                return (
+                  <>
+                    <line
+                      x1={n}
+                      y1={0}
+                      x2={n}
+                      y2={750}
+                      stroke="#98E2C6"
+                      strokeWidth="1px"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                    <line
+                      x1={0}
+                      y1={n}
+                      x2={750}
+                      y2={n}
+                      stroke="#98E2C6"
+                      strokeWidth="1px"
+                      vectorEffect="non-scaling-stroke"
+                    />
+                  </>
+                )
+              })}
+          </svg>
+        </div>
+      </div>
+      <div className="w-vw h-vh absolute left-0 top-0 z-20">
         <div className="w-full h-full flex flex-col justify-center items-center">
           <div className="w-full p-4 flex flex-col" style={{ maxWidth: 250 }}>
             <div className="p-2 bg-pale rounded-md flex flex-col items-center">
@@ -406,6 +441,22 @@ const SignUpForm = (): React.ReactElement => {
           animation-name: bounce;
           animation-duration: 250ms;
           animation-timing-function: ease-out;
+        }
+
+        @keyframes march {
+          from {
+            transform: translate(0px, 0px);
+          }
+          to {
+            transform: translate(${GRID_SPACING}px, -${GRID_SPACING}px);
+          }
+        }
+
+        .marcher {
+          animation-name: march;
+          animation-duration: 1500ms;
+          animation-iteration-count: infinite;
+          animation-timing-function: linear;
         }
       `}</style>
     </div>
