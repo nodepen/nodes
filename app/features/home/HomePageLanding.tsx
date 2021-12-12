@@ -25,10 +25,7 @@ const HomePageLanding: NextPage = () => {
             </a>
           </Link>
           <Link href="/signup">
-            <a
-              href="/signup"
-              className="h-6 pl-2 pr-2 rounded-sm bg-darkgreen flex items-center leading-5 text-white font-semibold text-xs hover:text-swampgreen"
-            >
+            <a className="h-6 pl-2 pr-2 rounded-sm bg-darkgreen flex items-center leading-5 text-white font-semibold text-xs hover:text-swampgreen">
               SIGN UP
             </a>
           </Link>
