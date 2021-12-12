@@ -48,7 +48,9 @@ export const useAuthentication = (): AuthContext => {
         const userResponse = await fetch('/api/currentUser')
         const userData = await userResponse.json()
 
-        console.log(userData)
+        if (process.env.NEXT_PUBLIC_DEBUG) {
+          console.log(userData)
+        }
       }
     })
   }, [])
@@ -75,6 +77,10 @@ export const useAuthentication = (): AuthContext => {
       .then((token) => {
         if (token) {
           setToken(token)
+        }
+
+        if (window.location.toString().includes('/signup')) {
+          window.location.assign('/')
         }
       })
       .catch((err) => {

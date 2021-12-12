@@ -24,9 +24,26 @@ const SignUpForm = (): React.ReactElement => {
   const [usernameValidationErrors, setUsernameValidationErrors] = useState<string[]>([])
 
   const debounceUsernameValidation = useRef<ReturnType<typeof setTimeout>>()
-  const [showUsernameValidation, setShowUsernameValidation] = useState(false)
 
   const [showAuthOptions, setShowAuthOptions] = useState(false)
+
+  const validateUsername = (value: string): string[] => {
+    const validationErrors: string[] = []
+
+    if (value.length < 3) {
+      validationErrors.push('Must be at least 3 characters.')
+    }
+
+    if (value.length > 32) {
+      validationErrors.push('Must be fewer than 32 characters.')
+    }
+
+    if (!value.match(/^[A-Za-z]+$/)) {
+      validationErrors.push('May only contain letters (A-Z) without spaces.')
+    }
+
+    return validationErrors
+  }
 
   const handleUsernameInputChange = (value: string): void => {
     if (debounceUsernameValidation.current) {
@@ -54,27 +71,17 @@ const SignUpForm = (): React.ReactElement => {
         .then((res) => {
           const userExists = !!res.data.publicUserByUsername
 
-          const validationErrors: string[] = []
+          const validationErrors = validateUsername(value)
 
           if (userExists) {
             validationErrors.push('Username not available.')
           }
 
-          if (value.length < 3) {
-            validationErrors.push('Must be at least 3 characters.')
-          }
-
-          if (value.length > 32) {
-            validationErrors.push('Must be fewer than 32 characters.')
-          }
-
-          if (!value.match(/^[A-Za-z]+$/)) {
-            validationErrors.push('May only contain letters (A-Z) without spaces.')
-          }
-
           setUsernameValidationErrors(validationErrors)
-          setShowUsernameValidation(true)
-          setShowAuthOptions(true)
+
+          if (validationErrors.length === 0) {
+            setShowAuthOptions(true)
+          }
         })
     }, 250)
   }
@@ -132,17 +139,50 @@ const SignUpForm = (): React.ReactElement => {
   const handleThirdPartyAuth = (
     provider: firebase.auth.GoogleAuthProvider | firebase.auth.GithubAuthProvider
   ): void => {
-    if (!user || !user.isAnonymous) {
+    if (!user) {
+      console.error('No user!')
       return
     }
 
-    if (!username) {
+    if (usernameValidationErrors.length !== 0) {
+      console.log('Failed validation!')
       return
     }
 
-    user.updateProfile({ displayName: username }).then(() => {
-      user.linkWithRedirect(provider)
-    })
+    const preflight = validateUsername(username)
+
+    if (preflight.length !== 0) {
+      console.log('Failed preflight validation!')
+      return
+    }
+
+    if (!user.isAnonymous) {
+      // Someone is currently signed in. Create and link a new anonymous account.
+
+      let anon: typeof user
+
+      firebase
+        .auth()
+        .signInAnonymously()
+        .then((cred) => {
+          if (!cred.user) {
+            throw new Error('Failed to generate temporary anonymous user.')
+          }
+
+          anon = cred.user
+
+          return anon.updateProfile({ displayName: username })
+        })
+        .then(() => {
+          anon.linkWithRedirect(provider)
+        })
+    } else {
+      // Link existing anonymous account.
+
+      user.updateProfile({ displayName: username }).then(() => {
+        user.linkWithRedirect(provider)
+      })
+    }
   }
 
   return (
@@ -206,13 +246,11 @@ const SignUpForm = (): React.ReactElement => {
                   placeholder="Username"
                 />
               </div>
-              {showUsernameValidation ? (
-                <>
-                  {usernameValidationErrors.map((msg, i) => (
-                    <ValidationErrorMessage key={`username-validation-error-${i}`} message={msg} />
-                  ))}
-                </>
-              ) : null}
+              <>
+                {usernameValidationErrors.map((msg, i) => (
+                  <ValidationErrorMessage key={`username-validation-error-${i}`} message={msg} />
+                ))}
+              </>
               <div
                 className="w-full flex flex-col items-start overflow-hidden"
                 style={{
@@ -237,8 +275,58 @@ const SignUpForm = (): React.ReactElement => {
                   onBlur={(e) => handlePasswordValidation(e.target.value)}
                 ></input>
                 {passwordIsValid === false ? <p>Passwords must contain at least 6 characters.</p> : null} */}
-                <img className="mb-1" src="/auth/google-signin.png" />
-                <img src="/auth/google-signin.png" />
+                {/* <button>
+                  <img className="mb-1" src="/auth/google-signin.png" />
+                </button> */}
+                <button
+                  className="w-full mb-1"
+                  style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
+                  onClick={() => handleThirdPartyAuth(new firebase.auth.GoogleAuthProvider())}
+                >
+                  <div className="w-full h-full pr-1 rounded-sm flex items-center " style={{ background: '#4285F4' }}>
+                    <img src="/auth/google-auth-logo.svg" style={{ transform: 'translateX(-1px)' }} />
+                    <div
+                      className="h-full flex-grow flex items-center justify-center text-white font-medium font-roboto"
+                      style={{ fontSize: 15 }}
+                    >
+                      Sign up with Google
+                    </div>
+                  </div>
+                </button>
+                {/* <button className="w-full" style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}>
+                  <div className="w-full h-full rounded-sm flex items-center" style={{ background: '#24292F' }}>
+                    <div className="h-full" style={{ padding: 1, width: 42, height: 42 }}>
+                      <div className="w-full h-full rounded-sm bg-white" />
+                    </div>
+                    <div className="h-full flex-grow flex items-center justify-center text-white font-medium">
+                      Sign up with GitHub
+                    </div>
+                  </div>
+                </button> */}
+                <button className="w-full h-10" style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}>
+                  <div className="w-full h-full flex items-center rounded-sm hover:bg-green">
+                    <div className="h-10 flex items-center justify-center" style={{ width: 44 }}>
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          vectorEffect="non-scaling-stroke"
+                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                        />
+                      </svg>
+                    </div>
+                    <div className="h-full flex-grow flex items-center justify-center font-medium text-dark text-md">
+                      Sign up with Email
+                    </div>
+                  </div>
+                </button>
               </div>
             </div>
           </div>

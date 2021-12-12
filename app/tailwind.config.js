@@ -10,6 +10,7 @@ module.exports = {
       panel: ['Overpass Mono', 'monospace'],
       display: ['Nova Mono', 'NovaMono', 'monospace'],
       sans: ['Barlow Semi Condensed', 'Inter', 'sans-serif'],
+      roboto: ['Roboto', 'sans-serif']
     },
     scale: {
       '1000': '10',
