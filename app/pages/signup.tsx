@@ -1,6 +1,6 @@
 import { NextPage } from 'next'
-import { firebase } from 'features/common/context/session/auth'
-import { useEffect } from 'react'
+import { firebase } from 'features/common/context/session/auth/firebase'
+import { useState } from 'react'
 import { useSessionManager } from '@/features/common/context/session'
 import { useRouter } from 'next/router'
 
@@ -9,40 +9,55 @@ const SignUpPage: NextPage = () => {
 
   const { user } = useSessionManager()
 
-  useEffect(() => {
-    if (!user) {
+  const [username, setUsername] = useState<string>()
+  const [email, setEmail] = useState<string>()
+  const [password, setPassword] = useState<string>()
+
+  const handleFirstPartyAuth = (): void => {
+    if (!username || !email || !password) {
       return
     }
 
-    // e-mail auth
     firebase
       .auth()
-      .createUserWithEmailAndPassword('em', 'pw')
-      .then((u) => {
-        if (!u.user) {
-          return
+      .createUserWithEmailAndPassword(email, password)
+      .then((res) => {
+        if (!res.user) {
+          throw new Error('')
         }
-        // update user displayname
-        return u.user.updateProfile({ displayName: 'from-page' })
+
+        return res.user.updateProfile({ displayName: username })
       })
       .then(() => {
-        // make request to api to create user record
-
-        // redirect to home
         router.push('/')
       })
+      .catch((err) => {
+        console.error(err)
+      })
+  }
 
-    // provider auth
-    const provider = new firebase.auth.GoogleAuthProvider()
+  const handleThirdPartyAuth = (
+    provider: firebase.auth.GoogleAuthProvider | firebase.auth.GithubAuthProvider
+  ): void => {
+    if (!user || !user.isAnonymous) {
+      return
+    }
 
-    user.updateProfile({ displayName: 'from-page' }).then(() => {
+    if (!username) {
+      return
+    }
+
+    user.updateProfile({ displayName: username }).then(() => {
       user.linkWithRedirect(provider)
     })
-  }, [])
+  }
 
   return (
     <div className="w-vw h-vh flex flex-col items-center justify-center">
-      <div className="w-60 h-48"></div>
+      <input value={username} placeholder="username" onChange={(e) => setUsername(e.target.value)} />
+      <input value={email} placeholder="email" onChange={(e) => setEmail(e.target.value)} />
+      <input value={password} placeholder="password" onChange={(e) => setPassword(e.target.value)} />
+      <button onClick={handleFirstPartyAuth}>Sign Up</button>
     </div>
   )
 }
