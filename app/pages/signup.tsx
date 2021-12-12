@@ -1,15 +1,73 @@
 import { NextPage } from 'next'
 import { firebase } from 'features/common/context/session/auth/firebase'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useSessionManager } from '@/features/common/context/session'
 import { useRouter } from 'next/router'
+import { ApolloContext } from '@/features/common/context/apollo'
+import { gql, useApolloClient } from '@apollo/client'
 
 const SignUpPage: NextPage = () => {
   const router = useRouter()
+  const client = useApolloClient()
 
   const { user } = useSessionManager()
 
-  const [username, setUsername] = useState<string>()
+  const [doBounce, setDoBounce] = useState(false)
+
+  const handleToggleBounce = (): void => {
+    setDoBounce(true)
+    setTimeout(() => {
+      setDoBounce(false)
+    }, 250)
+  }
+
+  const [username, setUsername] = useState<string>('')
+  const [usernameValid, setUsernameValid] = useState<boolean>()
+  const [usernameAvailable, setUsernameAvailable] = useState<boolean>()
+
+  const debounceUsernameValidation = useRef<ReturnType<typeof setTimeout>>()
+  const [showUsernameValidation, setShowUsernameValidation] = useState(false)
+
+  const [showAuthOptions, setShowAuthOptions] = useState(false)
+
+  const handleUsernameInputChange = (value: string): void => {
+    if (debounceUsernameValidation.current) {
+      clearTimeout(debounceUsernameValidation.current)
+    }
+
+    handleToggleBounce()
+
+    setUsername(value)
+
+    const isValid = (v: string): boolean => {
+      return !!v.match(/^[a-zA-Z]{3,32}$/)
+    }
+
+    setUsernameValid(isValid(value))
+
+    debounceUsernameValidation.current = setTimeout(() => {
+      client
+        .query({
+          query: gql`
+            query IsUsernameAvailable($username: String!) {
+              publicUserByUsername(username: $username) {
+                username
+              }
+            }
+          `,
+          variables: {
+            username: value,
+          },
+        })
+        .then((res) => {
+          const userExists = !!res.data.publicUserByUsername
+          setUsernameAvailable(!userExists)
+          setShowUsernameValidation(true)
+          setShowAuthOptions(true)
+        })
+    }, 250)
+  }
+
   const [email, setEmail] = useState<string>()
   const [password, setPassword] = useState<string>()
 
@@ -52,23 +110,6 @@ const SignUpPage: NextPage = () => {
     })
   }
 
-  // return (
-  //   <div className="w-vw h-vh flex flex-col items-center justify-center">
-  //     <input value={username} placeholder="username" onChange={(e) => setUsername(e.target.value)} />
-  //     <input value={email} placeholder="email" onChange={(e) => setEmail(e.target.value)} />
-  //     <input value={password} placeholder="password" onChange={(e) => setPassword(e.target.value)} />
-  //     <button onClick={handleFirstPartyAuth}>Sign Up</button>
-  //   </div>
-  // )
-  const [doBounce, setDoBounce] = useState(false)
-
-  const handleToggleBounce = (): void => {
-    setDoBounce(true)
-    setTimeout(() => {
-      setDoBounce(false)
-    }, 250)
-  }
-
   return (
     <div className="w-vw h-vh relative overflow-hidden">
       <div className={` w-vw h-vh absolute left-0 top-0 z-0 bg-green`}>
@@ -79,9 +120,23 @@ const SignUpPage: NextPage = () => {
       <div className="w-vw h-vh absolute left-0 top-0 z-10">
         <div className="w-full h-full flex flex-col justify-center items-center">
           <div className="w-full p-4 flex flex-col" style={{ maxWidth: 450 }}>
-            <div className="w-full p-2 bg-pale rounded-md">
+            <div className="p-2 bg-pale rounded-md flex flex-col">
               <h1>Sign Up</h1>
-              <input onChange={handleToggleBounce}></input>
+              <input onChange={(e) => handleUsernameInputChange(e.target.value)} value={username}></input>
+              {showUsernameValidation ? (
+                <>
+                  {usernameValid ? null : (
+                    <p>Usernames must be between 6-32 characters and may only contain letters.</p>
+                  )}
+                  {usernameAvailable === false ? <p>Username is not available :(</p> : null}
+                </>
+              ) : null}
+              {showAuthOptions ? (
+                <>
+                  <input></input>
+                  <input></input>
+                </>
+              ) : null}
             </div>
           </div>
         </div>
@@ -112,4 +167,14 @@ const SignUpPage: NextPage = () => {
   )
 }
 
-export default SignUpPage
+const SignUpPageWrapper: NextPage = () => {
+  const { token } = useSessionManager()
+
+  return (
+    <ApolloContext token={token}>
+      <SignUpPage />
+    </ApolloContext>
+  )
+}
+
+export default SignUpPageWrapper
