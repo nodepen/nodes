@@ -45,6 +45,25 @@ const SignUpForm = (): React.ReactElement => {
     return validationErrors
   }
 
+  const verifyUsernameAvailable = async (value: string): Promise<boolean> => {
+    const res = await client.query({
+      query: gql`
+        query IsUsernameAvailable($username: String!) {
+          publicUserByUsername(username: $username) {
+            username
+          }
+        }
+      `,
+      variables: {
+        username: value,
+      },
+    })
+
+    const userExists = !!res.data.publicUserByUsername
+
+    return !userExists
+  }
+
   const handleUsernameInputChange = (value: string): void => {
     if (debounceUsernameValidation.current) {
       clearTimeout(debounceUsernameValidation.current)
@@ -55,62 +74,20 @@ const SignUpForm = (): React.ReactElement => {
     setUsername(value)
 
     debounceUsernameValidation.current = setTimeout(() => {
-      client
-        .query({
-          query: gql`
-            query IsUsernameAvailable($username: String!) {
-              publicUserByUsername(username: $username) {
-                username
-              }
-            }
-          `,
-          variables: {
-            username: value,
-          },
-        })
-        .then((res) => {
-          const userExists = !!res.data.publicUserByUsername
+      verifyUsernameAvailable(value).then((isAvailable) => {
+        const validationErrors = validateUsername(value)
 
-          const validationErrors = validateUsername(value)
+        if (!isAvailable) {
+          validationErrors.push('Username not available.')
+        }
 
-          if (userExists) {
-            validationErrors.push('Username not available.')
-          }
+        setUsernameValidationErrors(validationErrors)
 
-          setUsernameValidationErrors(validationErrors)
-
-          if (validationErrors.length === 0) {
-            setShowAuthOptions(true)
-          }
-        })
+        if (validationErrors.length === 0) {
+          setShowAuthOptions(true)
+        }
+      })
     }, 250)
-  }
-
-  const [email, setEmail] = useState<string>('')
-
-  const handleEmailChange = (value: string): void => {
-    handleToggleBounce()
-
-    setEmail(value)
-  }
-
-  const [password, setPassword] = useState<string>('')
-  const [passwordIsValid, setPasswordIsValid] = useState<boolean>()
-
-  const handlePasswordChange = (value: string): void => {
-    handleToggleBounce()
-
-    setPasswordIsValid(true)
-
-    setPassword(value)
-  }
-
-  const handlePasswordValidation = (value: string): void => {
-    const isValid = (v: string): boolean => {
-      return !!v.match(/(?=.*[0-9a-zA-Z]).{6,}/)
-    }
-
-    setPasswordIsValid(isValid(value))
   }
 
   const handleFirstPartyAuth = (): void => {
@@ -136,9 +113,9 @@ const SignUpForm = (): React.ReactElement => {
       })
   }
 
-  const handleThirdPartyAuth = (
+  const handleThirdPartyAuth = async (
     provider: firebase.auth.GoogleAuthProvider | firebase.auth.GithubAuthProvider
-  ): void => {
+  ): Promise<void> => {
     if (!user) {
       console.error('No user!')
       return
@@ -150,6 +127,12 @@ const SignUpForm = (): React.ReactElement => {
     }
 
     const preflight = validateUsername(username)
+
+    const isAvailable = await verifyUsernameAvailable(username)
+
+    if (!isAvailable) {
+      preflight.push('Username not available.')
+    }
 
     if (preflight.length !== 0) {
       console.log('Failed preflight validation!')
@@ -183,6 +166,35 @@ const SignUpForm = (): React.ReactElement => {
         user.linkWithRedirect(provider)
       })
     }
+  }
+
+  const [showEmailAuth, setShowEmailAuth] = useState(false)
+
+  const [email, setEmail] = useState<string>('')
+
+  const handleEmailChange = (value: string): void => {
+    handleToggleBounce()
+
+    setEmail(value)
+  }
+
+  const [password, setPassword] = useState<string>('')
+  const [passwordIsValid, setPasswordIsValid] = useState<boolean>()
+
+  const handlePasswordChange = (value: string): void => {
+    handleToggleBounce()
+
+    setPasswordIsValid(true)
+
+    setPassword(value)
+  }
+
+  const handlePasswordValidation = (value: string): void => {
+    const isValid = (v: string): boolean => {
+      return !!v.match(/(?=.*[0-9a-zA-Z]).{6,}/)
+    }
+
+    setPasswordIsValid(isValid(value))
   }
 
   return (
@@ -220,7 +232,7 @@ const SignUpForm = (): React.ReactElement => {
                     </svg>
                   ))}
               </div>
-              <div className="w-full h-10 mb-4 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
+              <div className="w-full h-10 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
                 <div className="w-10 h-10 absolute left-0 top-0 z-10">
                   <div className="w-full h-full flex items-center justify-center">
                     <svg
@@ -252,7 +264,7 @@ const SignUpForm = (): React.ReactElement => {
                 ))}
               </>
               <div
-                className="w-full flex flex-col items-start overflow-hidden"
+                className="w-full pt-4 flex flex-col items-start overflow-hidden"
                 style={{
                   maxHeight: showAuthOptions && usernameValidationErrors.length === 0 ? 400 : 0,
                   transition: 'max-height',
@@ -260,73 +272,115 @@ const SignUpForm = (): React.ReactElement => {
                   transitionTimingFunction: 'ease-out',
                 }}
               >
-                {/* <h3 className="ml-3 pb-1 text-dark text-sm font-semibold">EMAIL</h3>
-                <input
-                  value={email}
-                  className="w-full h-10 rounded-md pl-3 pr-3 mb-4"
-                  onChange={(e) => handleEmailChange(e.target.value)}
-                ></input>
-                <h3 className="ml-3 pb-1 text-dark text-sm font-semibold">PASSWORD</h3>
-                <input
-                  type="password"
-                  value={password}
-                  className="w-full h-10 rounded-md pl-3 pr-3 mb-4"
-                  onChange={(e) => handlePasswordChange(e.target.value)}
-                  onBlur={(e) => handlePasswordValidation(e.target.value)}
-                ></input>
-                {passwordIsValid === false ? <p>Passwords must contain at least 6 characters.</p> : null} */}
-                {/* <button>
-                  <img className="mb-1" src="/auth/google-signin.png" />
-                </button> */}
-                <button
-                  className="w-full mb-1"
-                  style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
-                  onClick={() => handleThirdPartyAuth(new firebase.auth.GoogleAuthProvider())}
-                >
-                  <div className="w-full h-full pr-1 rounded-sm flex items-center " style={{ background: '#4285F4' }}>
-                    <img src="/auth/google-auth-logo.svg" style={{ transform: 'translateX(-1px)' }} />
-                    <div
-                      className="h-full flex-grow flex items-center justify-center text-white font-medium font-roboto"
-                      style={{ fontSize: 15 }}
+                {showEmailAuth ? (
+                  <>
+                    <div className="w-full h-10 mb-2 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
+                      <div className="w-10 h-10 absolute left-0 top-0 z-10">
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="#333"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              vectorEffect="non-scaling-stroke"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      <input
+                        className="w-full h-full pl-10 pr-3 absolute left-0 top-0 z-0"
+                        onChange={(e) => handleEmailChange(e.target.value)}
+                        placeholder="Email"
+                      />
+                    </div>
+                    <div className="w-full h-10 mb-2 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
+                      <div className="w-10 h-10 absolute left-0 top-0 z-10">
+                        <div className="w-full h-full flex items-center justify-center">
+                          <svg
+                            className="w-5 h-5"
+                            fill="none"
+                            stroke="#333"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              vectorEffect="non-scaling-stroke"
+                              d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                            />
+                          </svg>
+                        </div>
+                      </div>
+                      <input
+                        className="w-full h-full pl-10 pr-3 absolute left-0 top-0 z-0"
+                        onChange={(e) => handlePasswordChange(e.target.value)}
+                        placeholder="Password"
+                        type="password"
+                      />
+                    </div>
+                    <button className="w-full h-10 pl-2 pr-2 flex items-center justify-center rounded-md bg-green hover:bg-swampgreen">
+                      <p className="font-semibold text-darkgreen">Sign Up!</p>
+                    </button>
+                  </>
+                ) : (
+                  <>
+                    <button
+                      className="w-full mb-1"
+                      style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
+                      onClick={() => handleThirdPartyAuth(new firebase.auth.GoogleAuthProvider())}
                     >
-                      Sign up with Google
-                    </div>
-                  </div>
-                </button>
-                {/* <button className="w-full" style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}>
-                  <div className="w-full h-full rounded-sm flex items-center" style={{ background: '#24292F' }}>
-                    <div className="h-full" style={{ padding: 1, width: 42, height: 42 }}>
-                      <div className="w-full h-full rounded-sm bg-white" />
-                    </div>
-                    <div className="h-full flex-grow flex items-center justify-center text-white font-medium">
-                      Sign up with GitHub
-                    </div>
-                  </div>
-                </button> */}
-                <button className="w-full h-10" style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}>
-                  <div className="w-full h-full flex items-center rounded-sm hover:bg-green">
-                    <div className="h-10 flex items-center justify-center" style={{ width: 44 }}>
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
+                      <div
+                        className="w-full h-full pr-1 rounded-sm flex items-center "
+                        style={{ background: '#4285F4' }}
                       >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          vectorEffect="non-scaling-stroke"
-                          d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                        />
-                      </svg>
-                    </div>
-                    <div className="h-full flex-grow flex items-center justify-center font-medium text-dark text-md">
-                      Sign up with Email
-                    </div>
-                  </div>
-                </button>
+                        <img src="/auth/google-auth-logo.svg" style={{ transform: 'translateX(-1px)' }} />
+                        <div
+                          className="h-full flex-grow flex items-center justify-center text-white font-medium font-roboto"
+                          style={{ fontSize: 15 }}
+                        >
+                          Sign up with Google
+                        </div>
+                      </div>
+                    </button>
+                    <button
+                      className="w-full h-10"
+                      style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
+                      onClick={() => setShowEmailAuth(true)}
+                    >
+                      <div className="w-full h-full flex items-center rounded-sm hover:bg-green">
+                        <div className="h-10 flex items-center justify-center" style={{ width: 44 }}>
+                          <svg
+                            className="w-6 h-6"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              vectorEffect="non-scaling-stroke"
+                              d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                            />
+                          </svg>
+                        </div>
+                        <div className="h-full flex-grow flex items-center justify-center font-medium text-dark text-md">
+                          Sign up with Email
+                        </div>
+                      </div>
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           </div>

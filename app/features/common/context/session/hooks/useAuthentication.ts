@@ -70,6 +70,11 @@ export const useAuthentication = (): AuthContext => {
       .getRedirectResult()
       .then((res) => {
         if (res.user) {
+          if (!res.user.isAnonymous) {
+            if (window.location.toString().includes('/signup')) {
+              window.location.assign('/')
+            }
+          }
           setUser(res.user)
           return res.user.getIdToken()
         }
@@ -77,10 +82,6 @@ export const useAuthentication = (): AuthContext => {
       .then((token) => {
         if (token) {
           setToken(token)
-        }
-
-        if (window.location.toString().includes('/signup')) {
-          window.location.assign('/')
         }
       })
       .catch((err) => {
