@@ -71,7 +71,7 @@ export const useAuthentication = (): AuthContext => {
       .then((res) => {
         if (res.user) {
           if (!res.user.isAnonymous) {
-            if (window.location.toString().includes('/signup')) {
+            if (window.location.toString().includes('/signup') || window.location.toString().includes('/signin')) {
               window.location.assign('/')
             }
           }

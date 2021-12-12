@@ -90,10 +90,101 @@ const SignUpForm = (): React.ReactElement => {
     }, 250)
   }
 
-  const handleFirstPartyAuth = (): void => {
+  const [showEmailAuth, setShowEmailAuth] = useState(false)
+
+  const [email, setEmail] = useState<string>('')
+  const [emailValidationErrors, setEmailValidationErrors] = useState<string[]>([])
+
+  const debounceEmailValidation = useRef<ReturnType<typeof setTimeout>>()
+
+  const validateEmail = (value: string): string[] => {
+    const validationErrors: string[] = []
+
+    if (!value.match(/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)) {
+      validationErrors.push('Please provide a valid e-mail address.')
+    }
+
+    return validationErrors
+  }
+
+  const handleEmailChange = (value: string): void => {
+    if (debounceEmailValidation.current) {
+      clearTimeout(debounceEmailValidation.current)
+    }
+
+    handleToggleBounce()
+
+    setEmail(value)
+
+    setTimeout(() => {
+      setEmailValidationErrors(validateEmail(value))
+    }, 250)
+  }
+
+  const [password, setPassword] = useState<string>('')
+  const [passwordValidationErrors, setPasswordValidationErrors] = useState<string[]>([])
+
+  const debouncePasswordValidation = useRef<ReturnType<typeof setTimeout>>()
+
+  const validatePassword = (value: string): string[] => {
+    const validationErrors: string[] = []
+
+    if (value.length < 6) {
+      validationErrors.push('Must be at least 6 characters long.')
+    }
+
+    return validationErrors
+  }
+
+  const handlePasswordChange = (value: string): void => {
+    if (debouncePasswordValidation.current) {
+      clearTimeout(debouncePasswordValidation.current)
+    }
+
+    handleToggleBounce()
+
+    setPassword(value)
+
+    setTimeout(() => {
+      setPasswordValidationErrors(validatePassword(value))
+    }, 250)
+  }
+
+  const handlePreflight = async (): Promise<string[]> => {
+    const preflightErrors: string[] = []
+
+    const isAvailable = await verifyUsernameAvailable(username)
+
+    if (!isAvailable) {
+      preflightErrors.push('Username not available.')
+    }
+
+    preflightErrors.push(...validateUsername(username))
+    preflightErrors.push(...validateEmail(email))
+    preflightErrors.push(...validatePassword(password))
+
+    return preflightErrors
+  }
+
+  const [signUpInProgress, setSignUpInProgress] = useState(false)
+
+  const handleFirstPartyAuth = async (): Promise<void> => {
     if (!username || !email || !password) {
       return
     }
+
+    const preflight = await handlePreflight()
+
+    if (preflight.length !== 0) {
+      console.error('Failed preflight validation!')
+      return
+    }
+
+    if (signUpInProgress) {
+      return
+    }
+
+    setSignUpInProgress(true)
 
     firebase
       .auth()
@@ -121,23 +212,18 @@ const SignUpForm = (): React.ReactElement => {
       return
     }
 
-    if (usernameValidationErrors.length !== 0) {
-      console.log('Failed validation!')
-      return
-    }
-
-    const preflight = validateUsername(username)
-
-    const isAvailable = await verifyUsernameAvailable(username)
-
-    if (!isAvailable) {
-      preflight.push('Username not available.')
-    }
+    const preflight = await handlePreflight()
 
     if (preflight.length !== 0) {
-      console.log('Failed preflight validation!')
+      console.error('Failed preflight validation!')
       return
     }
+
+    if (signUpInProgress) {
+      return
+    }
+
+    setSignUpInProgress(true)
 
     if (!user.isAnonymous) {
       // Someone is currently signed in. Create and link a new anonymous account.
@@ -168,34 +254,9 @@ const SignUpForm = (): React.ReactElement => {
     }
   }
 
-  const [showEmailAuth, setShowEmailAuth] = useState(false)
-
-  const [email, setEmail] = useState<string>('')
-
-  const handleEmailChange = (value: string): void => {
-    handleToggleBounce()
-
-    setEmail(value)
-  }
-
-  const [password, setPassword] = useState<string>('')
-  const [passwordIsValid, setPasswordIsValid] = useState<boolean>()
-
-  const handlePasswordChange = (value: string): void => {
-    handleToggleBounce()
-
-    setPasswordIsValid(true)
-
-    setPassword(value)
-  }
-
-  const handlePasswordValidation = (value: string): void => {
-    const isValid = (v: string): boolean => {
-      return !!v.match(/(?=.*[0-9a-zA-Z]).{6,}/)
-    }
-
-    setPasswordIsValid(isValid(value))
-  }
+  const signUpReady =
+    !signUpInProgress &&
+    [...usernameValidationErrors, ...emailValidationErrors, ...passwordValidationErrors].length === 0
 
   const GRID_SPACING = 15
 
@@ -299,7 +360,7 @@ const SignUpForm = (): React.ReactElement => {
                 ))}
               </>
               <div
-                className="w-full pt-4 flex flex-col items-start overflow-hidden"
+                className="w-full flex flex-col items-start overflow-hidden"
                 style={{
                   maxHeight: showAuthOptions && usernameValidationErrors.length === 0 ? 400 : 0,
                   transition: 'max-height',
@@ -309,7 +370,7 @@ const SignUpForm = (): React.ReactElement => {
               >
                 {showEmailAuth ? (
                   <>
-                    <div className="w-full h-10 mb-2 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
+                    <div className="w-full h-10 mt-4 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
                       <div className="w-10 h-10 absolute left-0 top-0 z-10">
                         <div className="w-full h-full flex items-center justify-center">
                           <svg
@@ -335,7 +396,12 @@ const SignUpForm = (): React.ReactElement => {
                         placeholder="Email"
                       />
                     </div>
-                    <div className="w-full h-10 mb-2 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
+                    <>
+                      {emailValidationErrors.map((msg, i) => (
+                        <ValidationErrorMessage key={`email-validation-error-${i}`} message={msg} />
+                      ))}
+                    </>
+                    <div className="w-full h-10 mt-2 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
                       <div className="w-10 h-10 absolute left-0 top-0 z-10">
                         <div className="w-full h-full flex items-center justify-center">
                           <svg
@@ -362,14 +428,25 @@ const SignUpForm = (): React.ReactElement => {
                         type="password"
                       />
                     </div>
-                    <button className="w-full h-10 pl-2 pr-2 flex items-center justify-center rounded-md bg-green hover:bg-swampgreen">
-                      <p className="font-semibold text-darkgreen">Sign Up!</p>
+                    <>
+                      {passwordValidationErrors.map((msg, i) => (
+                        <ValidationErrorMessage key={`password-validation-error-${i}`} message={msg} />
+                      ))}
+                    </>
+                    <button
+                      disabled={!signUpReady}
+                      onClick={handleFirstPartyAuth}
+                      className={`${
+                        signUpReady ? 'hover:bg-swampgreen' : ''
+                      } w-full h-10 mt-2 pl-2 pr-2 flex items-center justify-center rounded-md bg-green`}
+                    >
+                      <p className={`${signUpReady ? 'text-darkgreen' : 'text-swampgreen'} font-semibold`}>Sign Up!</p>
                     </button>
                   </>
                 ) : (
                   <>
                     <button
-                      className="w-full mb-1"
+                      className="w-full mt-4 mb-1"
                       style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
                       onClick={() => handleThirdPartyAuth(new firebase.auth.GoogleAuthProvider())}
                     >

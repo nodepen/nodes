@@ -6,7 +6,7 @@ type ValidationErrorProps = {
 
 export const ValidationErrorMessage = ({ message }: ValidationErrorProps): React.ReactElement => {
   return (
-    <div className="w-full container">
+    <div className="w-full pb-1 container">
       <div className="w-10 flex flex-col justify-start">
         <div className="w-full h-6 flex items-center justify-center">
           <div className="w-2 h-2 rounded-full bg-error" />
