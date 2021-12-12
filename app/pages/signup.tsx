@@ -43,8 +43,6 @@ const SignUpPage: NextPage = () => {
       return !!v.match(/^[a-zA-Z]{3,32}$/)
     }
 
-    setUsernameValid(isValid(value))
-
     debounceUsernameValidation.current = setTimeout(() => {
       client
         .query({
@@ -62,6 +60,7 @@ const SignUpPage: NextPage = () => {
         .then((res) => {
           const userExists = !!res.data.publicUserByUsername
           setUsernameAvailable(!userExists)
+          setUsernameValid(isValid(value))
           setShowUsernameValidation(true)
           setShowAuthOptions(true)
         })
@@ -69,6 +68,12 @@ const SignUpPage: NextPage = () => {
   }
 
   const [email, setEmail] = useState<string>('')
+
+  const handleEmailChange = (value: string): void => {
+    handleToggleBounce()
+
+    setEmail(value)
+  }
 
   const [password, setPassword] = useState<string>('')
   const [passwordIsValid, setPasswordIsValid] = useState<boolean>()
@@ -139,12 +144,56 @@ const SignUpPage: NextPage = () => {
         <div className="w-full h-full flex flex-col justify-center items-center">
           <div className="w-full p-4 flex flex-col" style={{ maxWidth: 250 }}>
             <div className="p-2 bg-pale rounded-md flex flex-col items-center">
-              <h1>Sign Up</h1>
-              <input
-                className="w-full mb-4"
-                onChange={(e) => handleUsernameInputChange(e.target.value)}
-                value={username}
-              ></input>
+              <h1 className="text-dark text-2xl font-semibold">Sign Up</h1>
+              <div className="w-full mb-2 flex items-center justify-center overflow-visible">
+                {Array(7)
+                  .fill('')
+                  .map((_, i) => (
+                    <svg
+                      key={`title-underline-${i}`}
+                      width="25"
+                      height="25"
+                      viewBox="0 -2.5 10 10"
+                      className="overflow-visible"
+                    >
+                      <polyline
+                        points="0,2.5 2.5,1 5,2.5 7.5,4 10,2.5"
+                        fill="none"
+                        stroke="#98E2C6"
+                        strokeWidth="3px"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </svg>
+                  ))}
+              </div>
+              <div className="w-full h-10 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
+                <div className="w-10 h-10 absolute left-0 top-0 z-10">
+                  <div className="w-full h-full flex items-center justify-center">
+                    <svg
+                      className="w-5 h-5"
+                      fill="none"
+                      stroke="#333"
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        vectorEffect="non-scaling-stroke"
+                        d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                      />
+                    </svg>
+                  </div>
+                </div>
+                <input
+                  className="w-full h-full pl-10 pr-3 absolute left-0 top-0 z-0"
+                  onChange={(e) => handleUsernameInputChange(e.target.value)}
+                  placeholder="Username"
+                />
+              </div>
               {showUsernameValidation ? (
                 <>
                   {usernameValid ? null : (
@@ -154,7 +203,7 @@ const SignUpPage: NextPage = () => {
                 </>
               ) : null}
               <div
-                className="w-full flex flex-col items-center overflow-hidden"
+                className="w-full flex flex-col items-start overflow-hidden"
                 style={{
                   maxHeight: showAuthOptions && usernameValid && usernameAvailable ? 400 : 0,
                   transition: 'max-height',
@@ -162,18 +211,23 @@ const SignUpPage: NextPage = () => {
                   transitionTimingFunction: 'ease-out',
                 }}
               >
-                <img className="mb-1" src="/auth/google-signin.png" />
-                <img src="/auth/google-signin.png" />
-                <p>OR</p>
-                <input className="w-full" value={email}></input>
+                <h3 className="ml-3 pb-1 text-dark text-sm font-semibold">EMAIL</h3>
+                <input
+                  value={email}
+                  className="w-full h-10 rounded-md pl-3 pr-3 mb-4"
+                  onChange={(e) => handleEmailChange(e.target.value)}
+                ></input>
+                <h3 className="ml-3 pb-1 text-dark text-sm font-semibold">PASSWORD</h3>
                 <input
                   type="password"
                   value={password}
-                  className="w-full"
+                  className="w-full h-10 rounded-md pl-3 pr-3 mb-4"
                   onChange={(e) => handlePasswordChange(e.target.value)}
                   onBlur={(e) => handlePasswordValidation(e.target.value)}
                 ></input>
                 {passwordIsValid === false ? <p>Passwords must contain at least 6 characters.</p> : null}
+                <img className="mb-1" src="/auth/google-signin.png" />
+                <img src="/auth/google-signin.png" />
               </div>
             </div>
           </div>
