@@ -68,8 +68,26 @@ const SignUpPage: NextPage = () => {
     }, 250)
   }
 
-  const [email, setEmail] = useState<string>()
-  const [password, setPassword] = useState<string>()
+  const [email, setEmail] = useState<string>('')
+
+  const [password, setPassword] = useState<string>('')
+  const [passwordIsValid, setPasswordIsValid] = useState<boolean>()
+
+  const handlePasswordChange = (value: string): void => {
+    handleToggleBounce()
+
+    setPasswordIsValid(true)
+
+    setPassword(value)
+  }
+
+  const handlePasswordValidation = (value: string): void => {
+    const isValid = (v: string): boolean => {
+      return !!v.match(/(?=.*[0-9a-zA-Z]).{6,}/)
+    }
+
+    setPasswordIsValid(isValid(value))
+  }
 
   const handleFirstPartyAuth = (): void => {
     if (!username || !email || !password) {
@@ -119,10 +137,14 @@ const SignUpPage: NextPage = () => {
       </div>
       <div className="w-vw h-vh absolute left-0 top-0 z-10">
         <div className="w-full h-full flex flex-col justify-center items-center">
-          <div className="w-full p-4 flex flex-col" style={{ maxWidth: 450 }}>
-            <div className="p-2 bg-pale rounded-md flex flex-col">
+          <div className="w-full p-4 flex flex-col" style={{ maxWidth: 250 }}>
+            <div className="p-2 bg-pale rounded-md flex flex-col items-center">
               <h1>Sign Up</h1>
-              <input onChange={(e) => handleUsernameInputChange(e.target.value)} value={username}></input>
+              <input
+                className="w-full mb-4"
+                onChange={(e) => handleUsernameInputChange(e.target.value)}
+                value={username}
+              ></input>
               {showUsernameValidation ? (
                 <>
                   {usernameValid ? null : (
@@ -131,12 +153,28 @@ const SignUpPage: NextPage = () => {
                   {usernameAvailable === false ? <p>Username is not available :(</p> : null}
                 </>
               ) : null}
-              {showAuthOptions ? (
-                <>
-                  <input></input>
-                  <input></input>
-                </>
-              ) : null}
+              <div
+                className="w-full flex flex-col items-center overflow-hidden"
+                style={{
+                  maxHeight: showAuthOptions && usernameValid && usernameAvailable ? 400 : 0,
+                  transition: 'max-height',
+                  transitionDuration: '300ms',
+                  transitionTimingFunction: 'ease-out',
+                }}
+              >
+                <img className="mb-1" src="/auth/google-signin.png" />
+                <img src="/auth/google-signin.png" />
+                <p>OR</p>
+                <input className="w-full" value={email}></input>
+                <input
+                  type="password"
+                  value={password}
+                  className="w-full"
+                  onChange={(e) => handlePasswordChange(e.target.value)}
+                  onBlur={(e) => handlePasswordValidation(e.target.value)}
+                ></input>
+                {passwordIsValid === false ? <p>Passwords must contain at least 6 characters.</p> : null}
+              </div>
             </div>
           </div>
         </div>
