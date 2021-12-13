@@ -104,7 +104,7 @@ const SignUpForm = (): React.ReactElement => {
 
     setEmail(value)
 
-    setTimeout(() => {
+    debounceEmailValidation.current = setTimeout(() => {
       setEmailValidationErrors(validateEmail(value))
     }, 250)
   }
@@ -131,7 +131,7 @@ const SignUpForm = (): React.ReactElement => {
 
     setPassword(value)
 
-    setTimeout(() => {
+    debouncePasswordValidation.current = setTimeout(() => {
       setPasswordValidationErrors(validatePassword(value))
     }, 250)
   }
@@ -145,9 +145,16 @@ const SignUpForm = (): React.ReactElement => {
       preflightErrors.push('Username not available.')
     }
 
-    preflightErrors.push(...validateUsername(username))
-    preflightErrors.push(...validateEmail(email))
-    preflightErrors.push(...validatePassword(password))
+    const usernameErrors = validateUsername(username)
+    setUsernameValidationErrors(usernameErrors)
+
+    const emailErrors = validateEmail(email)
+    setEmailValidationErrors(emailErrors)
+
+    const passwordErrors = validatePassword(password)
+    setPasswordValidationErrors(passwordErrors)
+
+    preflightErrors.push(...usernameErrors, ...emailErrors, ...passwordErrors)
 
     return preflightErrors
   }
@@ -198,14 +205,14 @@ const SignUpForm = (): React.ReactElement => {
       return
     }
 
-    const preflight = await handlePreflight()
-
-    if (preflight.length !== 0) {
-      console.error('Failed preflight validation!')
+    if (signUpInProgress) {
       return
     }
 
-    if (signUpInProgress) {
+    const isAvailable = await verifyUsernameAvailable(username)
+
+    if (!isAvailable) {
+      setUsernameValidationErrors(['Username not available.'])
       return
     }
 
@@ -389,32 +396,13 @@ const SignUpForm = (): React.ReactElement => {
               </>
             ) : (
               <>
-                <button
-                  className="w-full mt-4 mb-1"
-                  style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
-                  onClick={() => handleThirdPartyAuth(new firebase.auth.GoogleAuthProvider())}
-                >
-                  <div className="w-full h-full pr-1 rounded-sm flex items-center " style={{ background: '#4285F4' }}>
-                    <img src="/auth/google-auth-logo.svg" alt="Google logo" style={{ transform: 'translateX(-1px)' }} />
-                    <div
-                      className="h-full flex-grow flex items-center justify-center text-white font-medium font-roboto"
-                      style={{ fontSize: 15 }}
-                    >
-                      Sign up with Google
-                    </div>
-                  </div>
-                </button>
-                <button
-                  className="w-full h-10"
-                  style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
-                  onClick={() => setShowEmailAuth(true)}
-                >
-                  <div className="w-full h-full flex items-center rounded-sm hover:bg-green">
-                    <div className="h-10 flex items-center justify-center" style={{ width: 44 }}>
+                <button className="w-full mt-2 mb-2 h-10" onClick={() => setShowEmailAuth(true)}>
+                  <div className="w-full h-full flex items-center rounded-md bg-green hover:bg-swampgreen">
+                    <div className="h-10 w-10 flex items-center justify-center">
                       <svg
-                        className="w-6 h-6"
+                        className="w-5 h-5"
                         fill="none"
-                        stroke="currentColor"
+                        stroke="#333"
                         viewBox="0 0 24 24"
                         xmlns="http://www.w3.org/2000/svg"
                       >
@@ -427,8 +415,46 @@ const SignUpForm = (): React.ReactElement => {
                         />
                       </svg>
                     </div>
-                    <div className="h-full flex-grow flex items-center justify-center font-medium text-dark text-md">
+                    <div className="h-full pb-1 flex-grow flex items-center justify-start font-medium text-dark text-md">
                       Sign up with Email
+                    </div>
+                  </div>
+                </button>
+                <div className="w-full mb-2 flex items-center justify-center overflow-visible">
+                  {Array(7)
+                    .fill('')
+                    .map((_, i) => (
+                      <svg
+                        key={`title-underline-${i}`}
+                        width="25"
+                        height="25"
+                        viewBox="0 -2.5 10 10"
+                        className="overflow-visible"
+                      >
+                        <polyline
+                          points="0,2.5 2.5,1 5,2.5 7.5,4 10,2.5"
+                          fill="none"
+                          stroke="#98E2C6"
+                          strokeWidth="3px"
+                          strokeLinejoin="round"
+                          strokeLinecap="round"
+                          vectorEffect="non-scaling-stroke"
+                        />
+                      </svg>
+                    ))}
+                </div>
+                <button
+                  className="w-full mt-1 mb-1"
+                  style={{ paddingLeft: 3, paddingRight: 3, height: 42 }}
+                  onClick={() => handleThirdPartyAuth(new firebase.auth.GoogleAuthProvider())}
+                >
+                  <div className="w-full h-full pr-1 rounded-sm flex items-center " style={{ background: '#4285F4' }}>
+                    <img src="/auth/google-auth-logo.svg" alt="Google logo" style={{ transform: 'translateX(-1px)' }} />
+                    <div
+                      className="h-full flex-grow flex items-center justify-center text-white font-medium font-roboto"
+                      style={{ fontSize: 15 }}
+                    >
+                      Sign up with Google
                     </div>
                   </div>
                 </button>
