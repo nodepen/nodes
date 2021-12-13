@@ -1,15 +1,16 @@
 import { NextPage } from 'next'
-import { firebase } from 'features/common/context/session/auth'
-import { useEffect } from 'react'
 import { useSessionManager } from '@/features/common/context/session'
-import { useRouter } from 'next/router'
+import { ApolloContext } from '@/features/common/context/apollo'
+import { SignInForm } from '@/features/auth'
 
 const SignInPage: NextPage = () => {
-  const router = useRouter()
+  const { token } = useSessionManager()
 
-  const { user } = useSessionManager()
-
-  return <div className="w-vw h-vh flex flex-col items-center justify-center"></div>
+  return (
+    <ApolloContext token={token}>
+      <SignInForm />
+    </ApolloContext>
+  )
 }
 
 export default SignInPage

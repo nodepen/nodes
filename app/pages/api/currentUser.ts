@@ -15,7 +15,10 @@ type CurrentUserRecord = {
 
 const { publicRuntimeConfig } = getConfig()
 
-export default async (req: NextApiRequest, res: NextApiResponse<CurrentUserRecord | ApolloError | string>) => {
+export default async (
+  req: NextApiRequest,
+  res: NextApiResponse<CurrentUserRecord | ApolloError | string>
+): Promise<unknown> => {
   const { token } = nookies.get({ req })
 
   if (!token) {
