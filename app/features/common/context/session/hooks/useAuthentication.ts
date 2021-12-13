@@ -20,7 +20,7 @@ export const useAuthentication = (): AuthContext => {
 
     return firebase.auth().onIdTokenChanged(async (u) => {
       if (!u) {
-        nookies.destroy(undefined, 'token')
+        // nookies.destroy(undefined, 'token')
         // const anon = await firebase.auth().signInAnonymously()
         // if (!anon.user) {
         //   // Handle this failure gracefully

@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import React from 'react'
+import nookies from 'nookies'
 import { ApolloContext } from '../common/context/apollo'
 import { useSessionManager } from '../common/context/session'
 import { firebase } from 'features/common/context/session/auth/firebase'
@@ -18,6 +19,7 @@ const HomePageDashboard = (): React.ReactElement => {
       .auth()
       .signOut()
       .then(() => {
+        nookies.destroy(undefined, 'token')
         router.push('/')
       })
   }
