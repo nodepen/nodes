@@ -48,10 +48,6 @@ export const useAuthentication = (): AuthContext => {
         const userResponse = await fetch('/api/currentUser')
         const userData: UserRecord = await userResponse.json()
 
-        if (process.env.NEXT_PUBLIC_DEBUG) {
-          console.log(userData)
-        }
-
         setUserRecord(userData)
       }
     })

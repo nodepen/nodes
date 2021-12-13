@@ -4,13 +4,18 @@ import { admin } from 'features/common/context/session/auth'
 import nookies from 'nookies'
 import Head from 'next/head'
 import { HomePageLanding, HomePageDashboard } from '@/features/home'
+import { useSessionManager } from '@/features/common/context/session'
 
 type HomePageProps = {
   isAuthenticated: boolean
 }
 
 const Home: NextPage<HomePageProps> = ({ isAuthenticated }) => {
-  const content = isAuthenticated ? <HomePageDashboard /> : <HomePageLanding />
+  const { user } = useSessionManager()
+
+  const showDashboard = isAuthenticated || (user && !user.isAnonymous)
+
+  const content = showDashboard ? <HomePageDashboard /> : <HomePageLanding />
 
   return (
     <>
