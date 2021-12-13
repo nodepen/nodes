@@ -3,7 +3,7 @@ import { firebase } from 'features/common/context/session/auth/firebase'
 import { useSessionManager } from '@/features/common/context/session'
 import { useRouter } from 'next/router'
 import { gql, useApolloClient } from '@apollo/client'
-import { ValidationErrorMessage } from './components'
+import { ValidationErrorMessage, ZigZagDivider } from './components'
 import { AuthLayout } from './layout'
 
 const SignUpForm = (): React.ReactElement => {
@@ -257,27 +257,7 @@ const SignUpForm = (): React.ReactElement => {
         <div className="p-2 bg-pale rounded-md flex flex-col items-center">
           <h1 className="text-dark text-2xl font-semibold">Sign Up</h1>
           <div className="w-full mb-2 flex items-center justify-center overflow-visible">
-            {Array(7)
-              .fill('')
-              .map((_, i) => (
-                <svg
-                  key={`title-underline-${i}`}
-                  width="25"
-                  height="25"
-                  viewBox="0 -2.5 10 10"
-                  className="overflow-visible"
-                >
-                  <polyline
-                    points="0,2.5 2.5,1 5,2.5 7.5,4 10,2.5"
-                    fill="none"
-                    stroke="#98E2C6"
-                    strokeWidth="3px"
-                    strokeLinejoin="round"
-                    strokeLinecap="round"
-                    vectorEffect="non-scaling-stroke"
-                  />
-                </svg>
-              ))}
+            <ZigZagDivider />
           </div>
           <div className="w-full h-10 pl-2 pr-2 rounded-md bg-white relative overflow-hidden">
             <div className="w-10 h-10 absolute left-0 top-0 z-10">
@@ -421,27 +401,7 @@ const SignUpForm = (): React.ReactElement => {
                   </div>
                 </button>
                 <div className="w-full mb-2 flex items-center justify-center overflow-visible">
-                  {Array(7)
-                    .fill('')
-                    .map((_, i) => (
-                      <svg
-                        key={`title-underline-${i}`}
-                        width="25"
-                        height="25"
-                        viewBox="0 -2.5 10 10"
-                        className="overflow-visible"
-                      >
-                        <polyline
-                          points="0,2.5 2.5,1 5,2.5 7.5,4 10,2.5"
-                          fill="none"
-                          stroke="#98E2C6"
-                          strokeWidth="3px"
-                          strokeLinejoin="round"
-                          strokeLinecap="round"
-                          vectorEffect="non-scaling-stroke"
-                        />
-                      </svg>
-                    ))}
+                  <ZigZagDivider />
                 </div>
                 <button
                   className="w-full mt-1 mb-1"

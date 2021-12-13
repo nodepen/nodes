@@ -2,14 +2,17 @@ import { useState, useEffect } from 'react'
 import nookies from 'nookies'
 
 import { firebase } from '../auth/firebase'
+import { UserRecord } from '../types'
 
 type AuthContext = {
   token?: string
   user?: firebase.User
+  userRecord?: UserRecord
 }
 
 export const useAuthentication = (): AuthContext => {
   const [user, setUser] = useState<firebase.User>()
+  const [userRecord, setUserRecord] = useState<UserRecord>()
   const [token, setToken] = useState<string>()
 
   useEffect(() => {
@@ -46,11 +49,13 @@ export const useAuthentication = (): AuthContext => {
 
         // Get user usage/limits, which will create record on api if first visit
         const userResponse = await fetch('/api/currentUser')
-        const userData = await userResponse.json()
+        const userData: UserRecord = await userResponse.json()
 
         if (process.env.NEXT_PUBLIC_DEBUG) {
           console.log(userData)
         }
+
+        setUserRecord(userData)
       }
     })
   }, [])
@@ -89,5 +94,5 @@ export const useAuthentication = (): AuthContext => {
       })
   }, [])
 
-  return { user, token }
+  return { user, userRecord, token }
 }

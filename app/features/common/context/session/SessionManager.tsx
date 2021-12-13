@@ -15,7 +15,7 @@ type SessionManagerProps = {
 }
 
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
-  const { user, token } = useAuthentication()
+  const { user, userRecord, token } = useAuthentication()
 
   const { iOS, breakpoint } = useDeviceConfiguration()
 
@@ -25,6 +25,7 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
 
   const session: SessionStore = {
     user,
+    userRecord,
     token,
     isAuthenticated,
     session: {

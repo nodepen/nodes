@@ -63,7 +63,6 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
             id
             name
             author {
-              id
               name
             }
             files {

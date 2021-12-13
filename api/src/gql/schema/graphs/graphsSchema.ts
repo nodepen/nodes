@@ -24,8 +24,12 @@ export const graphsSchema = gql`
   type GraphManifest {
     id: String!
     name: String!
-    author: UserReference!
+    author: GraphManifestAuthor!
     files: GraphManifestFiles!
+  }
+
+  type GraphManifestAuthor {
+    name: String!
   }
 
   type GraphManifestFiles {

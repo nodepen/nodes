@@ -5,6 +5,7 @@ import getConfig from 'next/config'
 import nookies from 'nookies'
 
 type CurrentUserRecord = {
+  username: string
   limits: {
     ms: number
   }
@@ -50,6 +51,7 @@ export default async (
     query: gql`
       query GetCurrentUser {
         currentUser {
+          username
           usage {
             ms
           }
