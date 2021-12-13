@@ -38,6 +38,10 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (ctx)
     const cookie = nookies.get(ctx, { path: '/' })
 
     if (!cookie.token) {
+      if (process?.env?.NEXT_PUBLIC_DEBUG) {
+        console.log('Incoming user has no token.')
+      }
+
       return { props: defaultProps }
     }
 
@@ -49,6 +53,10 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (ctx)
 
     if (!user || user.providerData.length === 0) {
       // User is anonymous
+      if (process?.env?.NEXT_PUBLIC_DEBUG) {
+        console.log('Incoming user is anonymous.')
+      }
+
       return { props: defaultProps }
     }
 

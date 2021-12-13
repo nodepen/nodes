@@ -16,25 +16,22 @@ export const useAuthentication = (): AuthContext => {
   const [token, setToken] = useState<string>()
 
   useEffect(() => {
+    firebase.auth().setPersistence('local')
+
     return firebase.auth().onIdTokenChanged(async (u) => {
-      nookies.destroy(undefined, 'token')
-
       if (!u) {
-        const anon = await firebase.auth().signInAnonymously()
-
-        if (!anon.user) {
-          // Handle this failure gracefully
-          nookies.set(undefined, 'token', '', { path: '/' })
-          setToken(undefined)
-          return
-        }
-
-        const token = await anon.user.getIdToken()
-
-        nookies.set(undefined, 'token', token, { path: '/' })
-
-        setUser(anon.user)
-        setToken(token)
+        nookies.destroy(undefined, 'token')
+        // const anon = await firebase.auth().signInAnonymously()
+        // if (!anon.user) {
+        //   // Handle this failure gracefully
+        //   nookies.set(undefined, 'token', '', { path: '/' })
+        //   setToken(undefined)
+        //   return
+        // }
+        // const token = await anon.user.getIdToken()
+        // nookies.set(undefined, 'token', token, { path: '/' })
+        // setUser(anon.user)
+        // setToken(token)
       } else {
         const token = await u.getIdToken()
 

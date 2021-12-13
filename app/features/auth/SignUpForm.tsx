@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { firebase } from 'features/common/context/session/auth/firebase'
 import { useSessionManager } from '@/features/common/context/session'
 import { useRouter } from 'next/router'
@@ -11,6 +11,10 @@ const SignUpForm = (): React.ReactElement => {
   const client = useApolloClient()
 
   const { user } = useSessionManager()
+
+  useEffect(() => {
+    firebase.auth().signInAnonymously()
+  }, [])
 
   const [username, setUsername] = useState<string>('')
   const [usernameValidationErrors, setUsernameValidationErrors] = useState<string[]>([])

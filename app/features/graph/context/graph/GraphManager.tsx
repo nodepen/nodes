@@ -30,17 +30,13 @@ type GraphManagerProps = {
 }
 
 export const GraphManager = ({ children, manifest }: GraphManagerProps): React.ReactElement => {
-  const { token, session, user } = useSessionManager()
+  const { token, user } = useSessionManager()
 
   const { restore } = useGraphDispatch()
   const sessionInitialized = useRef(false)
 
   useEffect(() => {
     if (sessionInitialized.current) {
-      return
-    }
-
-    if (!user) {
       return
     }
 
@@ -56,7 +52,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
       id: newGuid(),
       name: 'New Grasshopper Graph',
       author: {
-        name: user.displayName ?? 'User',
+        name: user?.displayName ?? 'User',
         id: 'N/A',
       },
       graph: {
@@ -78,7 +74,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
   useEffect(() => {
-    if (!token || !!library) {
+    if (library) {
       return
     }
 
@@ -140,8 +136,6 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
     setSetTransform(() => setTransform)
   }, [])
 
-  const libraryValue = session.id ? library : undefined
-
   const [portals, setPortals] = useState<GraphStore['registry']['portals']>({})
 
   const handleAddPortal = useCallback((id: string, ref: React.RefObject<HTMLDivElement>): void => {
@@ -162,7 +156,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
   }, [])
 
   const store: GraphStore = {
-    library: libraryValue,
+    library,
     registry: {
       setTransform,
       canvasContainerRef,
