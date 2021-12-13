@@ -1,6 +1,6 @@
 import React, { useMemo, useRef } from 'react'
 import { NodePen } from 'glib'
-import { useGraphElements, useGraphId } from '@/features/graph/store/graph/hooks'
+import { useGraphAuthor, useGraphElements, useGraphId } from '@/features/graph/store/graph/hooks'
 import { newGuid } from '@/features/graph/utils'
 import { useMutation, useSubscription, gql } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
@@ -8,9 +8,10 @@ import { useRouter } from 'next/router'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()
-  const { token, user } = useSessionManager()
+  const { token, user, userRecord } = useSessionManager()
 
   const graphElements = useGraphElements()
+  const graphAuthor = useGraphAuthor()
   const graphId = useGraphId()
 
   // The elements that we want to save and load with a graph
@@ -93,7 +94,13 @@ const SaveButton = (): React.ReactElement => {
         }
 
         if (router.pathname === '/gh') {
-          router.push(`/${user?.displayName}/gh/${incomingGraphId}`)
+          router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined)
+          return
+        }
+
+        if (userRecord?.username !== graphAuthor) {
+          // User has saved their own copy of another user's graph
+          router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined)
         }
       },
     }

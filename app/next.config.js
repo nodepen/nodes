@@ -30,7 +30,9 @@ module.exports = withBundleAnalyzer({
       // The `rhino3dm.wasm` file needs to land where the `rhino3dm.js` gets placed by webpack
       config.plugins.push(new CopyWebpackPlugin({
         patterns: [
-          { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "static/chunks/pages/rhino3dm.wasm" }
+          { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "static/chunks/pages/rhino3dm.wasm" },
+          { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "static/chunks/pages/[user]/gh/rhino3dm.wasm" }
+
         ],
       }))
 

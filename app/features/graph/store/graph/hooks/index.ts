@@ -1,3 +1,4 @@
+export { useGraphAuthor } from './useGraphAuthor'
 export { useGraphElements } from './useGraphElements'
 export { useGraphDispatch } from './useGraphDispatch'
 export { useGraphHistory } from './useGraphHistory'
