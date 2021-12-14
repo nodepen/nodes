@@ -11,7 +11,7 @@ export const useAuthRedirectResult = (redirectTo: string): void => {
       .auth()
       .getRedirectResult()
       .then((res) => {
-        if (res.user) {
+        if (res?.user) {
           return res.user.getIdToken()
         }
       })

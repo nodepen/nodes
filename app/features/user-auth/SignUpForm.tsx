@@ -1,8 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import nookies from 'nookies'
 import { firebase } from 'features/common/context/session/auth/firebase'
-import { useSessionManager } from '@/features/common/context/session'
 import { useRouter } from 'next/router'
+import { useAuthRedirectResult } from './hooks'
 import { gql, useApolloClient } from '@apollo/client'
 import { ValidationErrorMessage, ZigZagDivider } from './components'
 import { AuthLayout } from './layout'
@@ -11,11 +11,7 @@ const SignUpForm = (): React.ReactElement => {
   const router = useRouter()
   const client = useApolloClient()
 
-  const { user } = useSessionManager()
-
-  useEffect(() => {
-    firebase.auth().signInAnonymously()
-  }, [])
+  useAuthRedirectResult('/')
 
   const [username, setUsername] = useState<string>('')
   const [usernameValidationErrors, setUsernameValidationErrors] = useState<string[]>([])
@@ -209,11 +205,6 @@ const SignUpForm = (): React.ReactElement => {
   const handleThirdPartyAuth = async (
     provider: firebase.auth.GoogleAuthProvider | firebase.auth.GithubAuthProvider
   ): Promise<void> => {
-    if (!user) {
-      console.error('No user!')
-      return
-    }
-
     if (signUpInProgress) {
       return
     }
@@ -227,33 +218,27 @@ const SignUpForm = (): React.ReactElement => {
 
     setSignUpInProgress(true)
 
-    if (!user.isAnonymous) {
-      // Someone is currently signed in. Create and link a new anonymous account.
+    const createThirdPartyUser = async (): Promise<void> => {
+      const auth = firebase.auth()
 
-      let anon: typeof user
+      const cred = await auth.signInAnonymously()
 
-      firebase
-        .auth()
-        .signInAnonymously()
-        .then((cred) => {
-          if (!cred.user) {
-            throw new Error('Failed to generate temporary anonymous user.')
-          }
+      if (!cred.user) {
+        return
+      }
 
-          anon = cred.user
+      await cred.user.updateProfile({ displayName: username })
 
-          return anon.updateProfile({ displayName: username })
-        })
-        .then(() => {
-          anon.linkWithRedirect(provider)
-        })
-    } else {
-      // Link existing anonymous account.
-
-      user.updateProfile({ displayName: username }).then(() => {
-        user.linkWithRedirect(provider)
-      })
+      cred.user.linkWithRedirect(provider)
     }
+
+    createThirdPartyUser()
+      .then(() => {
+        // Do nothing
+      })
+      .catch((err) => {
+        console.log(err)
+      })
   }
 
   const signUpReady =
