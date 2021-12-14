@@ -1,5 +1,6 @@
 import { NodePen } from 'glib'
 import { db } from '../../../../redis'
+import { admin } from '../../../../firebase'
 import { ghq } from '../../../../bq'
 import { authorize } from '../../../utils/authorize'
 import { BaseResolverMap } from '../../base/types'
@@ -38,6 +39,20 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     console.log(
       `[ JOB ] [ GH:SOLVE ] [ CREATE ] [ SOLUTION ${job.id.padStart(9, '0')} ]`
     )
+
+    // Handle stats for component usage, etc, here
+    await admin
+      .firestore()
+      .collection('solutions')
+      .doc(solutionId)
+      .create({
+        graph: {
+          id: graphId,
+        },
+        time: {
+          scheduled: new Date().toISOString(),
+        },
+      })
 
     return solutionId
   },

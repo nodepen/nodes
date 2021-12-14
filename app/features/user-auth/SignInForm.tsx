@@ -1,12 +1,16 @@
 import React, { useRef, useState } from 'react'
+import nookies from 'nookies'
 import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { firebase } from 'features/common/context/session/auth/firebase'
+import { useAuthRedirectResult } from './hooks'
 import { AuthLayout } from './layout'
 import { ValidationErrorMessage, ZigZagDivider } from './components'
-import Link from 'next/link'
 
 const SignInForm = (): React.ReactElement => {
   const router = useRouter()
+
+  useAuthRedirectResult('/')
 
   const emailInputRef = useRef<HTMLInputElement>(null)
   const passwordInputRef = useRef<HTMLInputElement>(null)
@@ -32,8 +36,16 @@ const SignInForm = (): React.ReactElement => {
     firebase
       .auth()
       .signInWithEmailAndPassword(emailValue, passwordValue)
-      .then(() => {
-        router.push('/')
+      .then((u) => {
+        if (u.user) {
+          return u.user.getIdToken()
+        }
+      })
+      .then((token) => {
+        if (token) {
+          nookies.set(undefined, 'token', token)
+          router.push('/')
+        }
       })
       .catch((err) => {
         console.error(err)

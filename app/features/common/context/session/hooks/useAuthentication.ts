@@ -20,18 +20,11 @@ export const useAuthentication = (): AuthContext => {
 
     return firebase.auth().onIdTokenChanged(async (u) => {
       if (!u) {
-        // nookies.destroy(undefined, 'token')
-        // const anon = await firebase.auth().signInAnonymously()
-        // if (!anon.user) {
-        //   // Handle this failure gracefully
-        //   nookies.set(undefined, 'token', '', { path: '/' })
-        //   setToken(undefined)
-        //   return
-        // }
-        // const token = await anon.user.getIdToken()
-        // nookies.set(undefined, 'token', token, { path: '/' })
-        // setUser(anon.user)
-        // setToken(token)
+        nookies.destroy(undefined, 'token')
+
+        setUser(undefined)
+        setUserRecord(undefined)
+        setToken(undefined)
       } else {
         const token = await u.getIdToken()
 
@@ -60,31 +53,6 @@ export const useAuthentication = (): AuthContext => {
     }, 1000 * 60 * 60)
 
     return () => clearInterval(handleRefresh)
-  }, [])
-
-  useEffect(() => {
-    firebase
-      .auth()
-      .getRedirectResult()
-      .then((res) => {
-        if (res.user) {
-          if (!res.user.isAnonymous) {
-            if (window.location.toString().includes('/signup') || window.location.toString().includes('/signin')) {
-              window.location.assign('/')
-            }
-          }
-          setUser(res.user)
-          return res.user.getIdToken()
-        }
-      })
-      .then((token) => {
-        if (token) {
-          setToken(token)
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
   }, [])
 
   return { user, userRecord, token }

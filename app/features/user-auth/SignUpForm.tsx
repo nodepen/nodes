@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
+import nookies from 'nookies'
 import { firebase } from 'features/common/context/session/auth/firebase'
 import { useSessionManager } from '@/features/common/context/session'
 import { useRouter } from 'next/router'
@@ -191,9 +192,13 @@ const SignUpForm = (): React.ReactElement => {
           throw new Error('')
         }
 
-        return res.user.updateProfile({ displayName: username })
+        const updateProfileResult = res.user.updateProfile({ displayName: username })
+        const getTokenResult = res.user.getIdToken()
+
+        return Promise.all([getTokenResult, updateProfileResult])
       })
-      .then(() => {
+      .then(([token]) => {
+        nookies.set(undefined, 'token', token)
         router.push('/')
       })
       .catch((err) => {
