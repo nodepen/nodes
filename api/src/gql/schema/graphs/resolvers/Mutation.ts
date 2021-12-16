@@ -27,7 +27,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
 
     if (!doc.exists) {
       ref.create({
-        name: 'New Grasshopper Script',
+        name: 'Untitled Grasshopper Script',
         author: {
           name: user?.name ?? 'Unknown User',
           id: user?.id ?? 'Unknown Id',

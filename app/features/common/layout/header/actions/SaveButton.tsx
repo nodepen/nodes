@@ -14,6 +14,9 @@ const SaveButton = (): React.ReactElement => {
   const graphAuthor = useGraphAuthor()
   const graphId = useGraphId()
 
+  const isGraphAuthor = userRecord?.username && userRecord.username == graphAuthor
+  const isNewGraph = router.pathname === '/gh'
+
   // The elements that we want to save and load with a graph
   const persistedGraphElements = useMemo(() => {
     const persistedTypes: NodePen.ElementType[] = [
@@ -98,7 +101,7 @@ const SaveButton = (): React.ReactElement => {
           return
         }
 
-        if (userRecord?.username !== graphAuthor) {
+        if (!isGraphAuthor) {
           // User has saved their own copy of another user's graph
           router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined)
         }
@@ -114,7 +117,7 @@ const SaveButton = (): React.ReactElement => {
       <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
         <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path>
       </svg>
-      <p>Save</p>
+      <p>{isGraphAuthor || isNewGraph ? 'Save' : 'Save Copy'}</p>
     </button>
   )
 }

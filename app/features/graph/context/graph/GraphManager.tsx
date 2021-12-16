@@ -50,7 +50,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
 
     const initialGraph: NodePen.GraphManifest = manifest ?? {
       id: newGuid(),
-      name: 'New Grasshopper Graph',
+      name: 'Untitled Grasshopper Script',
       author: {
         name: user?.displayName ?? 'User',
         id: 'N/A',
