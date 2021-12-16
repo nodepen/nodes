@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import nookies from 'nookies'
 import { firebase } from 'features/common/context/session/auth/firebase'
 import { useRouter } from 'next/router'
@@ -56,6 +56,10 @@ const SignUpForm = (): React.ReactElement => {
 
     return !userExists
   }
+
+  useEffect(() => {
+    verifyUsernameAvailable('')
+  }, [])
 
   const handleUsernameInputChange = (value: string): void => {
     if (debounceUsernameValidation.current) {

@@ -9,6 +9,7 @@ import {
   SignUpButton,
   SolutionStatus,
 } from './actions'
+import { useSessionManager } from '../../context/session'
 
 type HeaderActionsProps = {
   graph: {
@@ -18,20 +19,34 @@ type HeaderActionsProps = {
 }
 
 export const HeaderActions = ({ graph, user }: HeaderActionsProps): React.ReactElement => {
-  return user ? (
-    <>
-      <SolutionStatus />
-      <SaveButton />
-      <DownloadButton graphId={graph.id} />
-      <ShareButton graphId={graph.id} />
-      <CurrentUserButton user={user} />
-    </>
-  ) : (
-    <>
-      <SolutionStatus />
-      <DownloadButton graphId={graph.id} />
-      <SignInButton />
-      <SignUpButton />
-    </>
-  )
+  const { device } = useSessionManager()
+
+  switch (device.breakpoint) {
+    case 'sm': {
+      return (
+        <>
+          <SolutionStatus />
+          {/* <CurrentUserButton user={user} /> */}
+        </>
+      )
+    }
+    default: {
+      return user ? (
+        <>
+          <SolutionStatus />
+          <SaveButton />
+          <DownloadButton graphId={graph.id} />
+          <ShareButton graphId={graph.id} />
+          <CurrentUserButton user={user} />
+        </>
+      ) : (
+        <>
+          <SolutionStatus />
+          <DownloadButton graphId={graph.id} />
+          <SignInButton />
+          <SignUpButton />
+        </>
+      )
+    }
+  }
 }

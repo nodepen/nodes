@@ -30,16 +30,16 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
         <script defer src="https://unpkg.com/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script>
       </Head>
       <ApolloContext token={token}>
-        <Layout.Editor>
-          <GraphManager manifest={{ id, name, author, graph, files: {} }}>
+        <GraphManager manifest={{ id, name, author, graph, files: {} }}>
+          <Layout.Editor>
             <SolutionManager>
               <>
                 <Graph.Container />
                 <Scene />
               </>
             </SolutionManager>
-          </GraphManager>
-        </Layout.Editor>
+          </Layout.Editor>
+        </GraphManager>
       </ApolloContext>
       <KeyboardObserver />
     </>

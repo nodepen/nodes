@@ -1195,6 +1195,7 @@ const selectPrimaryWire = (state: RootState): string => state.graph.present.regi
 const selectLiveWiresOrigin = (state: RootState): GraphState['registry']['wire']['origin'] =>
   state.graph.present.registry.wire.origin
 
+const selectGraphManifest = (state: RootState): GraphState['manifest'] => state.graph.present.manifest
 const selectGraphId = (state: RootState): string => state.graph.present.manifest.id
 const selectGraphAuthor = (state: RootState): string => state.graph.present.manifest.author.name
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
@@ -1212,6 +1213,7 @@ export const graphSelectors = {
   selectMode,
   selectPrimaryWire,
   selectLiveWiresOrigin,
+  selectGraphManifest,
   selectGraphId,
   selectGraphAuthor,
   selectGraphHistory,
