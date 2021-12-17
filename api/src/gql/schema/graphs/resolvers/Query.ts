@@ -27,6 +27,16 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       return undefined
     }
 
+    // Determine user relationship to graph
+    const isAuthor = user.id === graphDocument.get('author.id')
+
+    // Update view count
+    const currentViewCount = graphDocument.get('stats.views') ?? 0
+    const nextViewCount = isAuthor ? currentViewCount : currentViewCount + 1
+
+    await graphReference.update('stats.views', nextViewCount)
+
+    // Get current version information
     const currentRevision = graphDocument.get('revision')?.toString() as string
 
     if (!currentRevision) {
@@ -55,6 +65,9 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
         graphJson: versionDocument.get('files.graphJson'),
         graphSolutionJson: versionDocument.get('files.graphSolutionJson'),
       },
+      stats: {
+        views: nextViewCount,
+      },
     }
 
     return record
@@ -81,6 +94,9 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
             id: 'N/A',
           },
           files: {},
+          stats: {
+            views: doc.get('stats.views') ?? 0,
+          },
         }
 
         const currentRevision = doc.get('revision')

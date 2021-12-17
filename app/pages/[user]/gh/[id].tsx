@@ -18,7 +18,7 @@ import { KeyboardObserver } from 'features/common/observer'
 
 type GrasshopperGraphPageProps = Omit<NodePen.GraphManifest, 'files'>
 
-const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, author, graph }) => {
+const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, author, graph, stats }) => {
   const { token } = useSessionManager()
 
   const Scene = dynamic(() => import('features/graph/components/scene/SceneContainer'))
@@ -30,7 +30,7 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
         <script defer src="https://unpkg.com/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script>
       </Head>
       <ApolloContext token={token}>
-        <GraphManager manifest={{ id, name, author, graph, files: {} }}>
+        <GraphManager manifest={{ id, name, author, graph, files: {}, stats }}>
           <Layout.Editor>
             <SolutionManager>
               <>
@@ -65,7 +65,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
       if (token) {
         const session = await admin.auth().verifyIdToken(token)
         const user = await admin.auth().getUser(session.uid)
-        currentUserName = user.displayName
+        currentUserName = user.displayName ?? ''
       }
     } catch {
       // Invalid token
@@ -96,6 +96,9 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
               graphJson
               graphSolutionJson
             }
+            stats {
+              views
+            }
           }
         }
       `,
@@ -108,7 +111,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
       return { notFound: true }
     }
 
-    const { id, name, author, files } = data.graph as NodePen.GraphManifest
+    const { id, name, author, files, stats } = data.graph as NodePen.GraphManifest
 
     if (!files.graphJson || !files.graphSolutionJson) {
       return { notFound: true }
@@ -123,6 +126,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
         id: 'N/A',
         name: author.name,
       },
+      stats,
     }
 
     const bucket = admin.storage().bucket('np-graphs')

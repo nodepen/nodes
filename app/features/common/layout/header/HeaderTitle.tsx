@@ -6,7 +6,7 @@ import { useSessionManager } from '../../context/session'
 export const HeaderTitle = (): React.ReactElement => {
   const { device } = useSessionManager()
 
-  const { name, author } = useGraphManifest()
+  const { name, author, stats } = useGraphManifest()
 
   return (
     <div className="h-full flex flex-grow items-center justify-start">
@@ -43,7 +43,9 @@ export const HeaderTitle = (): React.ReactElement => {
             d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
           />
         </svg>
-        <p className="leading-4 text-xs font-semibold select-none">1.2k</p>
+        <p title={`${stats.views} views`} className="leading-4 text-xs font-semibold select-none">
+          {stats.views}
+        </p>
       </div>
     </div>
   )

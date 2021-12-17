@@ -81,7 +81,7 @@ const SolutionStatus = (): React.ReactElement => {
   }
 
   const message = (() => {
-    if (user?.isAnonymous) {
+    if (!user || user?.isAnonymous) {
       return 'Please sign in to enable the solver.'
     }
 

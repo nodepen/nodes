@@ -20,6 +20,9 @@ const GraphList = (): React.ReactElement => {
             thumbnailImage
             thumbnailVideo
           }
+          stats {
+            views
+          }
         }
       }
     `,

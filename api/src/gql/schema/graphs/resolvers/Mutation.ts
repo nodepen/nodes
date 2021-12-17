@@ -38,6 +38,9 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           updated: now,
         },
         revision,
+        stats: {
+          views: 0,
+        },
       })
     } else {
       revision = (doc.get('revision') ?? 0) + 1

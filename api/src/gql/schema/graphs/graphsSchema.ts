@@ -26,6 +26,7 @@ export const graphsSchema = gql`
     name: String!
     author: GraphManifestAuthor!
     files: GraphManifestFiles!
+    stats: GraphManifestStats!
   }
 
   type GraphManifestAuthor {
@@ -38,6 +39,10 @@ export const graphsSchema = gql`
     graphSolutionJson: String
     thumbnailImage: String
     thumbnailVideo: String
+  }
+
+  type GraphManifestStats {
+    views: Int!
   }
 
   type SaveFinishMessage {

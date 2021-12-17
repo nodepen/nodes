@@ -19,4 +19,7 @@ export type GraphManifest = {
     thumbnailImage?: string
     thumbnailVideo?: string
   }
+  stats: {
+    views: number
+  }
 }

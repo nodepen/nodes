@@ -28,6 +28,9 @@ const initialState: GraphState = {
       solution: {} as any,
     },
     files: {},
+    stats: {
+      views: 0,
+    },
   },
   elements: {},
   selection: [],
