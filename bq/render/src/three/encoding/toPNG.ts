@@ -8,6 +8,7 @@ import {
   NearestFilter,
   RGBAFormat,
   UnsignedByteType,
+  Color,
 } from 'three'
 import { PNG } from 'pngjs'
 import gl from 'gl'

@@ -42,7 +42,7 @@ const GraphList = (): React.ReactElement => {
         return (
           <>
             <a href={`/${author.name}/gh/${id}`}>{name}</a>
-            <div className="w-48 h-36">
+            <div className="w-48 h-36 bg-pale rounded-md overflow-hidden">
               <CompositeThumbnail imageSrc={files.thumbnailImage} videoSrc={files.thumbnailVideo} />
             </div>
           </>

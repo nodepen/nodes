@@ -15,6 +15,7 @@ import {
   RGBAFormat,
   UnsignedByteType,
   Vector3,
+  Color,
 } from 'three'
 import { NodePen } from 'glib'
 
@@ -33,6 +34,7 @@ export const createScene = async (
   scene.up = new Vector3(0, 0, 1)
   scene.updateMatrix()
   scene.updateMatrixWorld()
+  scene.background = new Color(0xeff2f2)
 
   const width = WIDTH
   const height = HEIGHT
@@ -41,10 +43,6 @@ export const createScene = async (
   box.position.set(0, 0, 1)
   box.castShadow = true
   scene.add(box)
-
-  const ground = new Mesh(new PlaneGeometry(100, 100), new MeshPhongMaterial())
-  ground.receiveShadow = true
-  scene.add(ground)
 
   const light = new PointLight()
   light.position.set(3, 3, 5)
