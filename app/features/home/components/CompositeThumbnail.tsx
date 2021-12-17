@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 type CompositeThumbnailProps = {
   imageSrc?: string
@@ -7,14 +7,16 @@ type CompositeThumbnailProps = {
 
 export const CompositeThumbnail = ({ imageSrc, videoSrc }: CompositeThumbnailProps): React.ReactElement => {
   const [showVideo, setShowVideo] = useState(false)
-  const startAutoPlay = useRef(false)
+  const videoRef = useRef<HTMLVideoElement>(null)
 
   return (
     <div
       className="w-full h-full relative"
       style={{ transform: 'translateY(-1px)' }}
       onPointerEnter={() => {
-        startAutoPlay.current = true
+        if (videoRef.current) {
+          videoRef.current.currentTime = 0
+        }
         setShowVideo(true)
       }}
       onPointerLeave={() => {
@@ -23,10 +25,11 @@ export const CompositeThumbnail = ({ imageSrc, videoSrc }: CompositeThumbnailPro
     >
       <video
         src={videoSrc}
+        ref={videoRef}
         className={`${
           showVideo ? 'opacity-100' : 'opacity-0'
-        } absolute object-cover left-0 top-0 z-20 transition-opacity duration-150 ease-out bg-pale`}
-        autoPlay={startAutoPlay.current}
+        } absolute object-cover left-0 top-0 z-20 transition-opacity duration-150 ease-out`}
+        autoPlay
         loop
       />
       <img src={imageSrc} className="absolute object-cover left-0 top-0 z-10" />
