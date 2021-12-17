@@ -1,7 +1,7 @@
 import { useGraphManifest } from '@/features/graph/store/graph/hooks'
 import Link from 'next/link'
 import React from 'react'
-import { useSessionManager } from '../../context/session'
+import { useSessionManager } from 'features/common/context/session'
 
 export const HeaderTitle = (): React.ReactElement => {
   const { device } = useSessionManager()

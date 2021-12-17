@@ -1,6 +1,6 @@
 import { useGraphId } from '@/features/graph/store/graph/hooks'
 import React from 'react'
-import { useSessionManager } from '../../context/session'
+import { useSessionManager } from 'features/common/context/session'
 import { HeaderActions } from './HeaderActions'
 import { HeaderTitle } from './HeaderTitle'
 

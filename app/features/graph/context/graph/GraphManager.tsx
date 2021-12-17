@@ -60,6 +60,9 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
         solution: {} as any,
       },
       files: {},
+      stats: {
+        views: 0,
+      },
     }
 
     restore(initialGraph, false)

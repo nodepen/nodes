@@ -1,5 +1,5 @@
 import React from 'react'
-import { Layout } from './components'
+import { Layout } from '..'
 import { useGraphManager } from '@/features/graph/context/graph'
 import {
   DeleteKeyObserver,
@@ -7,8 +7,8 @@ import {
   SelectionHotkeyObserver,
   SpaceBarObserver,
   VisibilityObserver,
-} from './components/observer'
-import { useSceneDisplayMode } from './store/scene/hooks'
+} from '../observer'
+import { useSceneDisplayMode } from '../../store/scene/hooks'
 
 export const GraphContainer = (): React.ReactElement => {
   const { registry } = useGraphManager()

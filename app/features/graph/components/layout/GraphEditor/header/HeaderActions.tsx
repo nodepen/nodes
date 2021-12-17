@@ -9,7 +9,7 @@ import {
   SignUpButton,
   SolutionStatus,
 } from './actions'
-import { useSessionManager } from '../../context/session'
+import { useSessionManager } from 'features/common/context/session'
 
 type HeaderActionsProps = {
   graph: {

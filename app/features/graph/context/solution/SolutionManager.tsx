@@ -187,6 +187,9 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
                 solution: {} as any,
               },
               files: {},
+              stats: {
+                views: 0,
+              },
             },
             false
           )

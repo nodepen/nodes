@@ -2,7 +2,6 @@ import { GetServerSideProps, NextPage } from 'next'
 import { NodePen } from 'glib'
 import nookies from 'nookies'
 import dynamic from 'next/dynamic'
-import { Layout } from 'features/common'
 import { Graph } from 'features'
 import { GraphManager } from '@/features/graph/context/graph'
 import { SolutionManager } from 'features/graph/context/solution'
@@ -31,14 +30,14 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
       </Head>
       <ApolloContext token={token}>
         <GraphManager manifest={{ id, name, author, graph, files: {}, stats }}>
-          <Layout.Editor>
+          <Graph.Editor>
             <SolutionManager>
               <>
                 <Graph.Container />
                 <Scene />
               </>
             </SolutionManager>
-          </Layout.Editor>
+          </Graph.Editor>
         </GraphManager>
       </ApolloContext>
       <KeyboardObserver />

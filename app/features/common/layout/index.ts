@@ -1,1 +1,1 @@
-export { EditorLayout as Editor } from './EditorLayout'
+export { ModalLayout as Modal } from './ModalLayout'

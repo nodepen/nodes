@@ -5,7 +5,7 @@ type EditorLayoutProps = {
   children?: JSX.Element
 }
 
-export const EditorLayout = ({ children }: EditorLayoutProps): React.ReactElement => {
+export const GraphEditor = ({ children }: EditorLayoutProps): React.ReactElement => {
   return (
     <div className="w-vw h-vh flex flex-col justify-start overflow-visible" id="layout-root">
       <Header />

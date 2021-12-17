@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { useSolutionMetadata } from 'features/graph/store/solution/hooks'
-import { Typography } from '../../..'
+import { Typography } from 'features/common'
 import { useSessionManager } from '@/features/common/context/session'
 
 const SolutionStatus = (): React.ReactElement => {

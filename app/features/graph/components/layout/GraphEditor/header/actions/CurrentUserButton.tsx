@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { firebase } from 'features/common/context/session/auth'
-import { ModalLayout } from '../../ModalLayout'
+import { Layout } from 'features/common'
 
 type CurrentUserButtonProps = {
   user: firebase.User
@@ -45,7 +45,7 @@ const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement
         {icon}
       </button>
       {showModal ? (
-        <ModalLayout onClose={() => setShowModal(false)}>
+        <Layout.Modal onClose={() => setShowModal(false)}>
           <div className="w-full h-full flex flex-col items-center justify-center">
             <h2 className="text-5xl mb-4 font-sans font-semibold text-dark">Not yet!</h2>
             <p className="text-lg mb-6 font-sans font-semibold text-dark">User profiles are still being tested.</p>
@@ -76,7 +76,7 @@ const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement
             <p className="text-sm mb-1 font-sans font-semibold text-dark">Thank you for trying NodePen.</p>
             <p className="text-md">💚🦗</p>
           </div>
-        </ModalLayout>
+        </Layout.Modal>
       ) : null}
     </>
   )
