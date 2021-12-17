@@ -12,6 +12,7 @@ export const CompositeThumbnail = ({ imageSrc, videoSrc }: CompositeThumbnailPro
   return (
     <div
       className="w-full h-full relative"
+      style={{ transform: 'translateY(-1px)' }}
       onPointerEnter={() => {
         startAutoPlay.current = true
         setShowVideo(true)
@@ -24,11 +25,11 @@ export const CompositeThumbnail = ({ imageSrc, videoSrc }: CompositeThumbnailPro
         src={videoSrc}
         className={`${
           showVideo ? 'opacity-100' : 'opacity-0'
-        } absolute left-0 top-0 z-20 transition-opacity duration-150 ease-out`}
+        } absolute object-cover left-0 top-0 z-20 transition-opacity duration-150 ease-out bg-pale`}
         autoPlay={startAutoPlay.current}
         loop
       />
-      <img src={imageSrc} className="absolute left-0 top-0 z-10" />
+      <img src={imageSrc} className="absolute object-cover left-0 top-0 z-10" />
     </div>
   )
 }

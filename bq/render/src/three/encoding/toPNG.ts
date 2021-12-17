@@ -33,6 +33,7 @@ export const toPNG = (scene: Scene, camera: Camera): PNG => {
 
   const renderer = new WebGL1Renderer({
     canvas,
+    alpha: true,
     antialias: false,
     powerPreference: 'high-performance',
     context: gl(width, height, {
@@ -54,6 +55,7 @@ export const toPNG = (scene: Scene, camera: Camera): PNG => {
   })
 
   renderer.setRenderTarget(renderTarget)
+  renderer.setClearColor(new Color(0xeff2f2))
 
   renderer.render(scene, camera)
 
