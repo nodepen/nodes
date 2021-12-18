@@ -19,6 +19,7 @@ import {
   Sphere,
   SphereGeometry,
   MeshBasicMaterial,
+  Box3,
 } from 'three'
 import { NodePen, assert } from 'glib'
 
@@ -34,6 +35,13 @@ export const createScene = async (
 ): Promise<Scene> => {
   const { data } = solution
 
+  // Create defaults
+  const defaultMaterial = new MeshPhongMaterial()
+
+  const defaultLight = new PointLight()
+  defaultLight.position.set(3, 3, 5)
+  defaultLight.castShadow = true
+
   // First, create a scene with all geometry in true coordinate space
   const defaultScene = new Scene()
   defaultScene.up = new Vector3(0, 0, 1)
@@ -41,12 +49,7 @@ export const createScene = async (
   defaultScene.updateMatrixWorld()
   defaultScene.background = new Color(0xeff2f2)
 
-  const light = new PointLight()
-  light.position.set(3, 3, 5)
-  light.castShadow = true
-  defaultScene.add(light)
-
-  const defaultMaterial = new MeshPhongMaterial()
+  defaultScene.add(defaultLight)
 
   for (const elementSolutionData of data) {
     const { elementId, parameterId, values } = elementSolutionData
@@ -107,10 +110,50 @@ export const createScene = async (
   }
 
   // Calculate the bounding box of all visible geometry
+  const sceneBoundingBox = new Box3()
+
+  defaultScene.traverse((obj) => {
+    sceneBoundingBox.expandByObject(obj)
+  })
+
+  const { min, max } = sceneBoundingBox
 
   // Determine how values will be remapped to a 1 x 1 x 1 cube
+  const remap = (
+    n: number,
+    sourceDomain: [min: number, max: number],
+    targetDomain: [min: number, max: number] = [0, 1]
+  ): number => {
+    const [sourceMin, sourceMax] = sourceDomain
+    const sourceRange = Math.abs(sourceMax - sourceMin)
+
+    const [targetMin, targetMax] = targetDomain
+    const targetRange = Math.abs(targetMax - targetMin)
+
+    const t = (n - sourceMin) / sourceRange
+
+    const targetValue = targetRange * t + targetMin
+
+    return targetValue
+  }
+
+  const remapper = {
+    x: (n: number) => remap(n, [min.x, max.x]),
+    y: (n: number) => remap(n, [min.y, max.y]),
+    z: (n: number) => remap(n, [min.z, max.z]),
+  }
+
+  console.log(`${min.x},${min.y},${min.z}`)
+  console.log(`${max.x},${max.y},${max.z}`)
 
   // Second, create a scene with all geometry mapped to normalized coordinate space
+  const normalizedScene = new Scene()
+  normalizedScene.up = new Vector3(0, 0, 1)
+  normalizedScene.updateMatrix()
+  normalizedScene.updateMatrixWorld()
+  normalizedScene.background = new Color(0xeff2f2)
+
+  normalizedScene.add(defaultLight)
 
   return defaultScene
 }
