@@ -34,7 +34,10 @@ export const processJob = async (
   const pathRoot = `${graphId}/${solutionId}`
 
   // Begin creating thumbnails
-  const model = await scene.createScene(JSON.parse(graphSolution))
+  const model = await scene.createScene(
+    JSON.parse(graphJson),
+    JSON.parse(graphSolution)
+  )
   const camera = scene.getThumbnailCamera(model)
 
   scene.setCameraOrbit(camera, [0, 0, 1], 5, 0)

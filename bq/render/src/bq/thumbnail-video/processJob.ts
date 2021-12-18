@@ -48,7 +48,10 @@ export const processJob = async (
   }
 
   // Generate frames
-  const model = await scene.createScene(JSON.parse(graphSolution))
+  const model = await scene.createScene(
+    JSON.parse(graphJson),
+    JSON.parse(graphSolution)
+  )
   const camera = scene.getThumbnailCamera(model)
 
   const ROTATION = 360

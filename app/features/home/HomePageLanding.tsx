@@ -37,7 +37,7 @@ const HomePageLanding: NextPage = () => {
             <img src="/nodepen-brand-green.svg" width="128" />
           </div>
         </CommonSection>
-        <QuirkyDivider topColor="#98E2C6" bottomColor="#eff2f2" animate />
+        <QuirkyDivider topColor="#98E2C6" bottomColor="#eff2f2" />
       </div>
       <div className="w-full pt-12 flex flex-col justify-end bg-pale overflow-hidden">
         <CommonSection>
