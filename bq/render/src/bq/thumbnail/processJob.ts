@@ -38,9 +38,9 @@ export const processJob = async (
     JSON.parse(graphJson),
     JSON.parse(graphSolution)
   )
-  const camera = scene.getThumbnailCamera(model)
+  const camera = scene.getThumbnailCamera()
 
-  scene.setCameraOrbit(camera, [0, 0, 0], 5, 0)
+  // scene.setCameraOrbit(camera, [0, 0, 0], 5, 0)
 
   const image = encoding.toPNG(model, camera)
 

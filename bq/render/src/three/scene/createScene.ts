@@ -20,8 +20,12 @@ import {
   SphereGeometry,
   MeshBasicMaterial,
   Box3,
+  Line,
 } from 'three'
 import { NodePen, assert } from 'glib'
+import { isVisible } from '../geometry/utils'
+import { Remapper } from '../geometry/types'
+import * as convert from '../geometry/converters'
 
 const WIDTH = 400
 const HEIGHT = 300
@@ -36,8 +40,6 @@ export const createScene = async (
   const { data } = solution
 
   // Create defaults
-  const defaultMaterial = new MeshPhongMaterial()
-
   const defaultLight = new PointLight()
   defaultLight.position.set(3, 3, 5)
   defaultLight.castShadow = true
@@ -55,29 +57,7 @@ export const createScene = async (
     const { elementId, parameterId, values } = elementSolutionData
 
     // Check element visibility
-    const element = graph.find((el) => el.id === elementId)
-
-    if (!element || !assert.element.isGraphElement(element.current)) {
-      console.log('🐍 Element does not exist!')
-      continue
-    }
-
-    const { current: elementState } = element
-
-    if (!assert.element.isGraphElement(elementState)) {
-      console.log('🐍 Element does not contain data!')
-      continue
-    }
-
-    const { settings, outputs } = elementState
-
-    if (settings.visibility !== 'visible') {
-      console.log('🐍 Element is not visible!')
-      continue
-    }
-
-    if (!Object.keys(outputs).includes(parameterId)) {
-      console.log('🐍 Element is an input!')
+    if (!isVisible(elementId, parameterId, graph)) {
       continue
     }
 
@@ -88,14 +68,7 @@ export const createScene = async (
         switch (entry.type) {
           // Convert rhino geometry to threejs geometry
           case 'point': {
-            const { x, y, z } = JSON.parse(entry.value as unknown as string)
-
-            const pointGeometry = new SphereGeometry(0.5, 100, 100)
-            const point = new Mesh(pointGeometry, defaultMaterial)
-
-            point.position.set(x, y, z)
-            point.castShadow = true
-
+            const point = convert.point(JSON.parse(entry.value as any))
             defaultScene.add(point)
             break
           }
@@ -122,7 +95,7 @@ export const createScene = async (
   const remap = (
     n: number,
     sourceDomain: [min: number, max: number],
-    targetDomain: [min: number, max: number] = [0, 1]
+    targetDomain: [min: number, max: number] = [-0.5, 0.5]
   ): number => {
     const [sourceMin, sourceMax] = sourceDomain
     const sourceRange = Math.abs(sourceMax - sourceMin)
@@ -155,5 +128,37 @@ export const createScene = async (
 
   normalizedScene.add(defaultLight)
 
-  return defaultScene
+  for (const elementSolutionData of data) {
+    const { elementId, parameterId, values } = elementSolutionData
+
+    // Check element visibility
+    if (!isVisible(elementId, parameterId, graph)) {
+      continue
+    }
+
+    for (const parameter of values) {
+      const { data: branch } = parameter
+
+      for (const entry of branch) {
+        switch (entry.type) {
+          // Convert rhino geometry to threejs geometry
+          case 'point': {
+            const point = convert.point(
+              JSON.parse(entry.value as any),
+              remapper
+            )
+            normalizedScene.add(point)
+            break
+          }
+          default: {
+            // Value is not visible geometry
+            // console.log(`Cannot visualize value of type ${entry.type}.`)
+            break
+          }
+        }
+      }
+    }
+  }
+
+  return normalizedScene
 }
