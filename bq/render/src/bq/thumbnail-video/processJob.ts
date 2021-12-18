@@ -86,7 +86,7 @@ export const processJob = async (
     }
 
     const deg = i * step
-    scene.setCameraOrbit(camera, [0, 0, 1], 5, deg)
+    scene.setCameraOrbit(camera, [0, 0, 0], 5, deg)
 
     const frame = encoding.toPNG(model, camera)
     const framePath = `./temp/${pathRoot}/frames/${i

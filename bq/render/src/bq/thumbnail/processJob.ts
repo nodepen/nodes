@@ -40,7 +40,7 @@ export const processJob = async (
   )
   const camera = scene.getThumbnailCamera(model)
 
-  scene.setCameraOrbit(camera, [0, 0, 1], 5, 0)
+  scene.setCameraOrbit(camera, [0, 0, 0], 5, 0)
 
   const image = encoding.toPNG(model, camera)
 

@@ -27,7 +27,7 @@ export const startup = async (): Promise<Server> => {
       // Ping redis instance to keep connection alive
       pingInterval = setInterval(() => {
         db.client.ping()
-      }, 1000)
+      }, 1000 * 15)
 
       resolve()
     })
