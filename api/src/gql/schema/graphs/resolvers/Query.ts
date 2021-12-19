@@ -12,12 +12,6 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
     { graphId },
     { user }
   ): Promise<GraphResponse | undefined> => {
-    await authorize(user, {
-      id: graphId,
-      type: 'graph',
-      action: 'view',
-    })
-
     const db = admin.firestore()
 
     const graphReference = db.collection('graphs').doc(graphId)

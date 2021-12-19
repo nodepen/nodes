@@ -11,16 +11,13 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     { solutionId, graphId, graphJson },
     { user }
   ): Promise<string> => {
-    await authorize(user, {
+    const [ref, doc] = await authorize(user, {
       id: graphId,
       type: 'graph',
       action: 'edit',
     })
 
     const db = admin.firestore()
-
-    const ref = db.collection('graphs').doc(graphId)
-    const doc = await ref.get()
 
     let revision = 1
     const now = new Date().toISOString()
