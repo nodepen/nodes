@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
 import { Grasshopper, NodePen } from 'glib'
 import { GraphStore } from './types'
+import rhino3dm from 'rhino3dm'
 import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
 import { useGraphDispatch } from '../../store/graph/hooks'
-import rhino3dm from 'rhino3dm'
 import { newGuid } from '../../utils'
 
 export const GraphContext = React.createContext<GraphStore>({

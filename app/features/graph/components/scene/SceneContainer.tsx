@@ -16,8 +16,6 @@ extend({ LineMaterial, LineGeometry, Line2 })
 const SceneContainer = (): React.ReactElement => {
   const ReduxBridge = useContextBridge(ReactReduxContext)
 
-  // orthographic camera={{ up: [0, 0, 1], zoom: 15, position: [0, 0, 10], near: -50 }}
-
   useDebugRender('SceneContainer')
 
   return (
