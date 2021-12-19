@@ -1,36 +1,10 @@
 import gl from 'gl'
-import {
-  Scene,
-  Mesh,
-  BoxBufferGeometry,
-  MeshPhongMaterial,
-  PlaneGeometry,
-  PointLight,
-  PerspectiveCamera,
-  WebGL1Renderer,
-  WebGLRenderTarget,
-  PCFSoftShadowMap,
-  LinearFilter,
-  NearestFilter,
-  RGBAFormat,
-  UnsignedByteType,
-  Vector3,
-  Color,
-  Sphere,
-  SphereGeometry,
-  MeshBasicMaterial,
-  Box3,
-  Line,
-  BufferGeometry,
-  LineBasicMaterial,
-} from 'three'
+import { Scene, PointLight, Vector3, Color, Box3 } from 'three'
 import { NodePen, assert } from 'glib'
 import { isVisible } from '../geometry/utils'
 import { Remapper } from '../geometry/types'
 import * as convert from '../geometry/converters'
-
-const WIDTH = 400
-const HEIGHT = 300
+import rhino3dm from 'rhino3dm'
 
 // Thank you @bsergean !
 // https://gist.github.com/bsergean/08be90a2f21205062ccc
@@ -52,49 +26,59 @@ export const createScene = async (
     solutionData: NodePen.SolutionManifest['data'],
     remap?: Remapper
   ): Promise<void> => {
-    for (const elementSolutionData of solutionData) {
-      const { elementId, parameterId, values } = elementSolutionData
+    return new Promise<void>((resolve, reject) => {
+      rhino3dm().then((rhino) => {
+        for (const elementSolutionData of solutionData) {
+          const { elementId, parameterId, values } = elementSolutionData
 
-      // Check element visibility
-      if (!isVisible(elementId, parameterId, graph)) {
-        continue
-      }
+          // Check element visibility
+          if (!isVisible(elementId, parameterId, graph)) {
+            continue
+          }
 
-      for (const parameter of values) {
-        const { data: branch } = parameter
+          for (const parameter of values) {
+            const { data: branch } = parameter
 
-        for (const entry of branch) {
-          switch (entry.type) {
-            // Convert rhino geometry to threejs geometry
-            case 'circle':
-            case 'curve': {
-              const curve = await convert.curve(
-                JSON.parse(entry.geometry as any),
-                remap
-              )
-              scene.add(curve)
-              break
-            }
-            case 'line': {
-              break
-            }
-            case 'point': {
-              const point = convert.point(JSON.parse(entry.value as any), remap)
-              scene.add(point)
-              break
-            }
-            case 'rectangle': {
-              break
-            }
-            default: {
-              // Value is not visible geometry
-              // console.log(`Cannot visualize value of type ${entry.type}.`)
-              break
+            for (const entry of branch) {
+              switch (entry.type) {
+                // Convert rhino geometry to threejs geometry
+                case 'circle':
+                case 'curve': {
+                  const curve = convert.curve(
+                    rhino,
+                    JSON.parse(entry.geometry as any),
+                    remap
+                  )
+                  scene.add(curve)
+                  break
+                }
+                case 'line': {
+                  break
+                }
+                case 'point': {
+                  const point = convert.point(
+                    JSON.parse(entry.value as any),
+                    remap
+                  )
+                  scene.add(point)
+                  break
+                }
+                case 'rectangle': {
+                  break
+                }
+                default: {
+                  // Value is not visible geometry
+                  // console.log(`Cannot visualize value of type ${entry.type}.`)
+                  break
+                }
+              }
             }
           }
         }
-      }
-    }
+
+        resolve()
+      })
+    })
   }
 
   // First, create a scene with all geometry in true coordinate space
