@@ -10,6 +10,8 @@ export const graphsSchema = gql`
   }
 
   extend type Mutation {
+    deleteGraph(graphId: String!): String!
+    renameGraph(graphId: String!, name: String!): GraphManifest
     scheduleSaveGraph(
       solutionId: String!
       graphId: String!

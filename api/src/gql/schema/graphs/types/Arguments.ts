@@ -10,6 +10,13 @@ export type Arguments = {
     }
   }
   Mutation: {
+    deleteGraph: {
+      graphId: string
+    }
+    renameGraph: {
+      graphId: string
+      name: string
+    }
     scheduleSaveGraph: {
       solutionId: string
       graphId: string

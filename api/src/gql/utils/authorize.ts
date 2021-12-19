@@ -53,7 +53,18 @@ export const authorize = async <T extends ResourceType>(
       const graphDoc = await graphRef.get()
 
       if (!graphDoc.exists) {
-        throw new AuthenticationError('Not authorized.')
+        switch (resource.action) {
+          case 'edit':
+          case 'execute': {
+            // Editing a graph for the first time will create a record.
+            // We allow the execution of graphs that haven't been saved yet.
+            defaultAuthorization(user)
+            return [graphRef, graphDoc]
+          }
+          default: {
+            throw new AuthenticationError('Not found.')
+          }
+        }
       }
 
       const record = graphDoc.data() as NodePen.GraphManifest
@@ -65,28 +76,10 @@ export const authorize = async <T extends ResourceType>(
           // All graphs are currently public
           return [graphRef, graphDoc]
         }
-        case 'edit': {
-          // Only authors may edit their graphs
-          if (!isAuthor) {
-            throw new AuthenticationError(
-              'Not authorized to edit the given resource.'
-            )
-          }
-
-          return [graphRef, graphDoc]
-        }
-        case 'execute': {
-          // Only authors may execute their graphs
-          if (!isAuthor) {
-            throw new AuthenticationError(
-              'Not authorized to execute the given resource.'
-            )
-          }
-
-          return [graphRef, graphDoc]
-        }
+        case 'edit':
+        case 'execute':
         case 'delete': {
-          // Only authors may execute their graphs
+          // Only authors may edit, execute, or delete their graphs
           if (!isAuthor) {
             throw new AuthenticationError(
               'Not authorized to delete the given resource.'

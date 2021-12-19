@@ -6,6 +6,45 @@ import { BaseResolverMap } from '../../base/types'
 import { Arguments } from '../types'
 
 export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
+  deleteGraph: async (_parent, { graphId }, { user }): Promise<string> => {
+    const [ref, doc] = await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'delete',
+    })
+
+    // Delete graph record
+    await ref.delete()
+
+    // Delete folder from np-graphs bucket
+    const bucket = admin.storage().bucket('np-graphs')
+
+    await bucket.deleteFiles({ prefix: `${graphId}/` })
+
+    return graphId
+  },
+  renameGraph: async (
+    _parent,
+    { graphId, name },
+    { user }
+  ): Promise<NodePen.GraphManifest> => {
+    const [ref, doc] = await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'edit',
+    })
+
+    // Validate name
+    if (name.length === 0 || name.length > 100) {
+      throw new Error('Graph name must be between 0 and 100 characters.')
+    }
+
+    await ref.update('name', name)
+
+    const record = doc.data() as NodePen.GraphManifest
+
+    return { ...record, name }
+  },
   scheduleSaveGraph: async (
     _parent,
     { solutionId, graphId, graphJson },
