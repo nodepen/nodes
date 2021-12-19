@@ -53,6 +53,12 @@ export const createScene = async (
                   break
                 }
                 case 'line': {
+                  const { from, to } = JSON.parse(entry.value as any)
+
+                  const points = [from, to]
+                  const line = convert.points(points, remap)
+
+                  scene.add(line)
                   break
                 }
                 case 'point': {
@@ -64,6 +70,18 @@ export const createScene = async (
                   break
                 }
                 case 'rectangle': {
+                  const { corners } = JSON.parse(entry.value as any)
+
+                  const points = [
+                    corners.a,
+                    corners.b,
+                    corners.c,
+                    corners.d,
+                    corners.a,
+                  ]
+                  const line = convert.points(points, remap)
+
+                  scene.add(line)
                   break
                 }
                 default: {
