@@ -1,20 +1,18 @@
-import { PerspectiveCamera } from 'three'
+import { OrthographicCamera } from 'three'
 
 export const setCameraOrbit = (
-  camera: PerspectiveCamera,
-  target: [number, number, number],
-  distance: number,
+  camera: OrthographicCamera,
   degrees: number
 ): void => {
   const rad = degrees * (Math.PI / 180)
 
+  const distance = 3
   const x = distance * Math.cos(rad)
   const y = distance * Math.sin(rad)
 
-  camera.position.set(x, y, 3)
+  camera.position.set(x, y, distance * 0.75)
 
-  const [tx, ty, tz] = target
-  camera.lookAt(tx, ty, tz)
+  camera.lookAt(0, 0, 0)
 
   camera.updateProjectionMatrix()
 }

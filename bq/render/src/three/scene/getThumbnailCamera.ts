@@ -1,35 +1,22 @@
-import { Scene, PerspectiveCamera } from 'three'
+import { OrthographicCamera, Vector3 } from 'three'
 
-export const getThumbnailCamera = (): PerspectiveCamera => {
-  const camera = new PerspectiveCamera()
+export const getThumbnailCamera = (): OrthographicCamera => {
+  const aspect = 400 / 300
+
+  const left = -aspect
+  const right = aspect
+  const top = 1
+  const bottom = -1
+  const near = -5
+  const far = 50
+  const camera = new OrthographicCamera(left, right, top, bottom, near, far)
+  camera.zoom = 1
+
   camera.up.set(0, 0, 1)
-  camera.position.set(-10, 10, 10)
-  camera.lookAt(0, 0, 0)
-  camera.aspect = 400 / 300
+  camera.position.set(-2, -2, 2)
+  camera.lookAt(new Vector3(0, 0, 0))
+
   camera.updateProjectionMatrix()
 
   return camera
 }
-
-// export const getThumbnailCamera = (): OrthographicCamera => {
-//   const aspect = 400 / 300
-//   const frustumSize = 10
-
-//   const camera = new OrthographicCamera(
-//     (0.5 * frustumSize * aspect) / -2,
-//     (0.5 * frustumSize * aspect) / 2,
-//     frustumSize / 2,
-//     frustumSize / -2,
-//     10,
-//     100
-//   )
-
-//   camera.up.set(0, 0, 1)
-
-//   camera.position.set(1, 1, 1)
-//   camera.lookAt(0, 0, 0)
-
-//   camera.updateProjectionMatrix()
-
-//   return camera
-// }

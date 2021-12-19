@@ -85,8 +85,8 @@ export const processJob = async (
       fs.mkdirSync(`./temp/${graphId}/${solutionId}/frames`)
     }
 
-    const deg = i * step
-    // scene.setCameraOrbit(camera, [0, 0, 0], 5, deg)
+    const deg = i * step - 135
+    scene.setCameraOrbit(camera, deg)
 
     const frame = encoding.toPNG(model, camera)
     const framePath = `./temp/${pathRoot}/frames/${i
