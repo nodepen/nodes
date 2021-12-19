@@ -46,6 +46,57 @@ export const createScene = async (
   defaultLight.position.set(-3, 3, 5)
   defaultLight.castShadow = true
 
+  // Map solution data to converters
+  const addSolutionToScene = async (
+    scene: Scene,
+    solutionData: NodePen.SolutionManifest['data'],
+    remap?: Remapper
+  ): Promise<void> => {
+    for (const elementSolutionData of solutionData) {
+      const { elementId, parameterId, values } = elementSolutionData
+
+      // Check element visibility
+      if (!isVisible(elementId, parameterId, graph)) {
+        continue
+      }
+
+      for (const parameter of values) {
+        const { data: branch } = parameter
+
+        for (const entry of branch) {
+          switch (entry.type) {
+            // Convert rhino geometry to threejs geometry
+            case 'circle':
+            case 'curve': {
+              const curve = await convert.curve(
+                JSON.parse(entry.geometry as any),
+                remap
+              )
+              scene.add(curve)
+              break
+            }
+            case 'line': {
+              break
+            }
+            case 'point': {
+              const point = convert.point(JSON.parse(entry.value as any), remap)
+              scene.add(point)
+              break
+            }
+            case 'rectangle': {
+              break
+            }
+            default: {
+              // Value is not visible geometry
+              // console.log(`Cannot visualize value of type ${entry.type}.`)
+              break
+            }
+          }
+        }
+      }
+    }
+  }
+
   // First, create a scene with all geometry in true coordinate space
   const defaultScene = new Scene()
   defaultScene.up = new Vector3(0, 0, 1)
@@ -55,34 +106,7 @@ export const createScene = async (
 
   defaultScene.add(defaultLight)
 
-  for (const elementSolutionData of data) {
-    const { elementId, parameterId, values } = elementSolutionData
-
-    // Check element visibility
-    if (!isVisible(elementId, parameterId, graph)) {
-      continue
-    }
-
-    for (const parameter of values) {
-      const { data: branch } = parameter
-
-      for (const entry of branch) {
-        switch (entry.type) {
-          // Convert rhino geometry to threejs geometry
-          case 'point': {
-            const point = convert.point(JSON.parse(entry.value as any))
-            defaultScene.add(point)
-            break
-          }
-          default: {
-            // Value is not visible geometry
-            // console.log(`Cannot visualize value of type ${entry.type}.`)
-            break
-          }
-        }
-      }
-    }
-  }
+  await addSolutionToScene(defaultScene, data)
 
   // Calculate the bounding box of all visible geometry
   const sceneBoundingBox = new Box3()
@@ -138,63 +162,7 @@ export const createScene = async (
 
   normalizedScene.add(defaultLight)
 
-  for (const elementSolutionData of data) {
-    const { elementId, parameterId, values } = elementSolutionData
-
-    // Check element visibility
-    if (!isVisible(elementId, parameterId, graph)) {
-      continue
-    }
-
-    for (const parameter of values) {
-      const { data: branch } = parameter
-
-      for (const entry of branch) {
-        switch (entry.type) {
-          // Convert rhino geometry to threejs geometry
-          case 'point': {
-            const point = convert.point(
-              JSON.parse(entry.value as any),
-              remapper
-            )
-            normalizedScene.add(point)
-            break
-          }
-          default: {
-            // Value is not visible geometry
-            // console.log(`Cannot visualize value of type ${entry.type}.`)
-            break
-          }
-        }
-      }
-    }
-  }
-
-  // const xAxisGeo = new BufferGeometry()
-  // xAxisGeo.setFromPoints([
-  //   new Vector3(remapper.x(0), remapper.y(0), remapper.z(0)),
-  //   new Vector3(remapper.x(1), remapper.y(0), remapper.z(0)),
-  // ])
-
-  // const xAxis = new Line(
-  //   xAxisGeo,
-  //   new LineBasicMaterial({ color: new Color(0x000000) })
-  // )
-
-  // normalizedScene.add(xAxis)
-
-  // const yAxisGeo = new BufferGeometry()
-  // yAxisGeo.setFromPoints([
-  //   new Vector3(remapper.x(0), remapper.y(0), remapper.z(0)),
-  //   new Vector3(remapper.x(0), remapper.y(1), remapper.z(0)),
-  // ])
-
-  // const yAxis = new Line(
-  //   yAxisGeo,
-  //   new LineBasicMaterial({ color: new Color(0x000000) })
-  // )
-
-  // normalizedScene.add(yAxis)
+  await addSolutionToScene(normalizedScene, data, remapper)
 
   return normalizedScene
 }
