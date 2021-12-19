@@ -61,29 +61,29 @@ export const processJob = async (
   const step = ROTATION / (DURATION * FPS)
   const stepCount = Math.round(ROTATION / step)
 
+  // Initialize directories
+  if (!fs.existsSync('./temp/')) {
+    fs.mkdirSync('./temp/')
+  }
+
+  if (!fs.existsSync(`./temp/${graphId}/`)) {
+    fs.mkdirSync(`./temp/${graphId}/`)
+  }
+
+  if (!fs.existsSync(`./temp/${graphId}/${solutionId}`)) {
+    fs.mkdirSync(`./temp/${graphId}/${solutionId}`)
+  }
+
+  if (!fs.existsSync(`./temp/${graphId}/${solutionId}/frames`)) {
+    fs.mkdirSync(`./temp/${graphId}/${solutionId}/frames`)
+  }
+
   for (let i = 0; i < stepCount; i++) {
     console.log(
       `${jobLabel} Rendering frame ${i
         .toString()
         .padStart(4, '0')} / ${stepCount.toString().padStart(4, '0')}`
     )
-
-    // Initialize directories
-    if (!fs.existsSync('./temp/')) {
-      fs.mkdirSync('./temp/')
-    }
-
-    if (!fs.existsSync(`./temp/${graphId}/`)) {
-      fs.mkdirSync(`./temp/${graphId}/`)
-    }
-
-    if (!fs.existsSync(`./temp/${graphId}/${solutionId}`)) {
-      fs.mkdirSync(`./temp/${graphId}/${solutionId}`)
-    }
-
-    if (!fs.existsSync(`./temp/${graphId}/${solutionId}/frames`)) {
-      fs.mkdirSync(`./temp/${graphId}/${solutionId}/frames`)
-    }
 
     const deg = i * step - 135
     scene.setCameraOrbit(camera, deg)
@@ -97,9 +97,13 @@ export const processJob = async (
     frame.pack().pipe(frameStream, { end: true })
 
     await new Promise<void>((resolve) => {
-      frameStream.on('finish', resolve)
-      frameStream.on('close', resolve)
-      frameStream.on('error', resolve)
+      const handleResolve = () => {
+        resolve()
+      }
+
+      frameStream.on('finish', handleResolve)
+      frameStream.on('close', handleResolve)
+      frameStream.on('error', handleResolve)
     })
   }
 

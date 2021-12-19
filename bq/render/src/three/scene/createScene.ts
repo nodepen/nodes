@@ -112,14 +112,22 @@ export const createScene = async (
     return targetValue
   }
 
-  const remapper = {
-    x: (n: number) => remap(n, [min.x, max.x]),
-    y: (n: number) => remap(n, [min.y, max.y]),
-    z: (n: number) => remap(n, [min.z, max.z]),
-  }
+  // Preserve aspect ratio during remapping
+  const rangeX = Math.abs(max.x - min.x)
+  const rangeY = Math.abs(max.y - min.y)
+  const rangeZ = Math.abs(max.z - min.z)
 
-  console.log(`${min.x},${min.y},${min.z}`)
-  console.log(`${max.x},${max.y},${max.z}`)
+  const maxRange = Math.max(rangeX, rangeY, rangeZ)
+
+  const dx = (maxRange - rangeX) / 2
+  const dy = (maxRange - rangeY) / 2
+  const dz = (maxRange - rangeZ) / 2
+
+  const remapper = {
+    x: (n: number) => remap(n, [min.x - dx, max.x + dx]),
+    y: (n: number) => remap(n, [min.y - dy, max.y + dy]),
+    z: (n: number) => remap(n, [min.z - dz, max.z + dz]),
+  }
 
   // Second, create a scene with all geometry mapped to normalized coordinate space
   const normalizedScene = new Scene()

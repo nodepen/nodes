@@ -16,53 +16,48 @@ import gl from 'gl'
 const DEFAULT_WIDTH = 400
 const DEFAULT_HEIGHT = 300
 
+const width = DEFAULT_WIDTH
+const height = DEFAULT_HEIGHT
+
+const canvas: any = {
+  width,
+  height,
+  addEventListener: () => {
+    /* ok */
+  },
+  removeEventListener: () => {
+    /* ok */
+  },
+}
+
+const renderer = new WebGL1Renderer({
+  canvas,
+  alpha: true,
+  antialias: false,
+  powerPreference: 'high-performance',
+  context: gl(width, height, {
+    preserveDrawingBuffer: true,
+  }),
+})
+
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = PCFSoftShadowMap
+
+const renderTarget = new WebGLRenderTarget(width, height, {
+  minFilter: LinearFilter,
+  magFilter: NearestFilter,
+  format: RGBAFormat,
+  type: UnsignedByteType,
+})
+
+renderer.setRenderTarget(renderTarget)
+renderer.setClearColor(new Color(0xeff2f2))
+
 export const toPNG = (scene: Scene, camera: Camera): PNG => {
-  const width = DEFAULT_WIDTH
-  const height = DEFAULT_HEIGHT
-
-  const canvas: any = {
-    width,
-    height,
-    addEventListener: () => {
-      /* ok */
-    },
-    removeEventListener: () => {
-      /* ok */
-    },
-  }
-
-  const renderer = new WebGL1Renderer({
-    canvas,
-    alpha: true,
-    antialias: false,
-    powerPreference: 'high-performance',
-    context: gl(width, height, {
-      preserveDrawingBuffer: true,
-    }),
-  })
-
-  renderer.shadowMap.enabled = true
-  renderer.shadowMap.type = PCFSoftShadowMap // default PCFShadowMap
-
-  // This is important to enable shadow mapping. For more see:
-  // https://threejsfundamentals.org/threejs/lessons/threejs-rendertargets.html and
-  // https://threejsfundamentals.org/threejs/lessons/threejs-shadows.html
-  const renderTarget = new WebGLRenderTarget(width, height, {
-    minFilter: LinearFilter,
-    magFilter: NearestFilter,
-    format: RGBAFormat,
-    type: UnsignedByteType,
-  })
-
-  renderer.setRenderTarget(renderTarget)
-  renderer.setClearColor(new Color(0xeff2f2))
-
   renderer.render(scene, camera)
 
   const context = renderer.getContext()
 
-  // width = context.drawingBufferWidth
-  // height = context.drawingBufferHeight
   const frameBufferPixels = new Uint8Array(width * height * 4)
   context.readPixels(
     0,
