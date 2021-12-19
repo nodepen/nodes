@@ -42,7 +42,7 @@ export const createScene = async (
   const { data } = solution
 
   // Create defaults
-  const defaultLight = new PointLight()
+  const defaultLight = new PointLight(new Color(0xffffff), 0.4)
   defaultLight.position.set(-3, 3, 5)
   defaultLight.castShadow = true
 
@@ -170,31 +170,31 @@ export const createScene = async (
     }
   }
 
-  const xAxisGeo = new BufferGeometry()
-  xAxisGeo.setFromPoints([
-    new Vector3(remapper.x(0), remapper.y(0), remapper.z(0)),
-    new Vector3(remapper.x(1), remapper.y(0), remapper.z(0)),
-  ])
+  // const xAxisGeo = new BufferGeometry()
+  // xAxisGeo.setFromPoints([
+  //   new Vector3(remapper.x(0), remapper.y(0), remapper.z(0)),
+  //   new Vector3(remapper.x(1), remapper.y(0), remapper.z(0)),
+  // ])
 
-  const xAxis = new Line(
-    xAxisGeo,
-    new LineBasicMaterial({ color: new Color(0x000000) })
-  )
+  // const xAxis = new Line(
+  //   xAxisGeo,
+  //   new LineBasicMaterial({ color: new Color(0x000000) })
+  // )
 
-  normalizedScene.add(xAxis)
+  // normalizedScene.add(xAxis)
 
-  const yAxisGeo = new BufferGeometry()
-  yAxisGeo.setFromPoints([
-    new Vector3(remapper.x(0), remapper.y(0), remapper.z(0)),
-    new Vector3(remapper.x(0), remapper.y(1), remapper.z(0)),
-  ])
+  // const yAxisGeo = new BufferGeometry()
+  // yAxisGeo.setFromPoints([
+  //   new Vector3(remapper.x(0), remapper.y(0), remapper.z(0)),
+  //   new Vector3(remapper.x(0), remapper.y(1), remapper.z(0)),
+  // ])
 
-  const yAxis = new Line(
-    yAxisGeo,
-    new LineBasicMaterial({ color: new Color(0x000000) })
-  )
+  // const yAxis = new Line(
+  //   yAxisGeo,
+  //   new LineBasicMaterial({ color: new Color(0x000000) })
+  // )
 
-  normalizedScene.add(yAxis)
+  // normalizedScene.add(yAxis)
 
   return normalizedScene
 }

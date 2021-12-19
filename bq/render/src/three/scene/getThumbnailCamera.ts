@@ -10,7 +10,7 @@ export const getThumbnailCamera = (): OrthographicCamera => {
   const near = -5
   const far = 50
   const camera = new OrthographicCamera(left, right, top, bottom, near, far)
-  camera.zoom = 1.5
+  camera.zoom = 2
 
   camera.up.set(0, 0, 1)
   camera.position.set(-2, -2, 2)
