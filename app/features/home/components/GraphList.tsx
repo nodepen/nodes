@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useRef, useState } from 'react'
 import { NodePen } from 'glib'
 import { useQuery, gql, useApolloClient } from '@apollo/client'
-import { query } from '@reduxjs/toolkit'
 import { useSessionManager } from '../../common/context/session'
 import { CompositeThumbnail } from './CompositeThumbnail'
+import { ModalLayout } from '@/features/common/layout/ModalLayout'
 
 const GraphList = (): React.ReactElement => {
   const { user } = useSessionManager()
@@ -37,7 +37,20 @@ const GraphList = (): React.ReactElement => {
     }
   )
 
-  const handleDelete = (id: string): void => {
+  const [showModal, setShowModal] = useState(false)
+  const graphStagedForDeletion = useRef<NodePen.GraphManifest>()
+
+  const confirmDelete = (graph: NodePen.GraphManifest): void => {
+    graphStagedForDeletion.current = graph
+
+    setShowModal(true)
+  }
+
+  const handleDelete = (id?: string): void => {
+    if (!id) {
+      return
+    }
+
     client
       .mutate({
         mutation: gql`
@@ -49,12 +62,15 @@ const GraphList = (): React.ReactElement => {
           graphId: id,
         },
       })
-      .then((res) => {
-        console.log(res)
+      .then((_res) => {
         return refetch()
       })
-      .then((res) => {
-        console.log(res)
+      .then((_res) => {
+        // Do nothing
+      })
+      .catch((err) => {
+        console.log(`🐍 Failed to delete graph!`)
+        console.error(err)
       })
   }
 
@@ -66,10 +82,26 @@ const GraphList = (): React.ReactElement => {
         return (
           <>
             <a href={`/${author.name}/gh/${id}`}>{name}</a>
-            <button onClick={() => handleDelete(id)}>Delete</button>
+            <button onClick={() => confirmDelete(graph)}>Delete</button>
             <div className="rounded-md overflow-hidden bg-pale" style={{ width: 200, height: 150 }}>
               <CompositeThumbnail imageSrc={files.thumbnailImage} videoSrc={files.thumbnailVideo} />
             </div>
+            {showModal ? (
+              <ModalLayout onClose={() => setShowModal(false)}>
+                <>
+                  <h1>Are you sure you want to delete {graphStagedForDeletion.current?.name}?</h1>
+                  <button
+                    onClick={() => {
+                      handleDelete(graphStagedForDeletion.current?.id)
+                      setShowModal(false)
+                    }}
+                  >
+                    YES
+                  </button>
+                  <button onClick={() => setShowModal(false)}>NO!</button>
+                </>
+              </ModalLayout>
+            ) : null}
           </>
         )
       })}

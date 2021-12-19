@@ -30,7 +30,7 @@ const HomePageDashboard = (): React.ReactElement => {
   return (
     <ApolloContext token={token}>
       <>
-        <div>
+        <div id="layout-root">
           <h1>Welcome back {user?.displayName}</h1>
           <a href="/gh">Launch</a>
           <button onClick={handleSignOut}>Sign Out</button>

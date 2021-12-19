@@ -53,11 +53,11 @@ export const ModalLayout = ({ children, onClose }: ModalLayoutProps): React.Reac
         }
 
         @keyframes appear {
-          from {
-            transform: translateY(-100%);
+          0% {
+            transform: translate(-15%, 15%);
           }
-          to {
-            transform: translateY(0);
+          100% {
+            transform: translate(0%, 0%);
           }
         }
 

@@ -22,11 +22,11 @@ export const convertNurbsCurveToMeshLine = (
   const POINT_COUNT = 100
 
   const domain = geo.domain
-  const divisions = POINT_COUNT - 1
+  const divisions = Math.max(POINT_COUNT - 1, Math.round(domain?.[1] * 5 ?? 0))
 
   const ts: number[] = []
 
-  for (let j = 0; j < POINT_COUNT; j++) {
+  for (let j = 0; j < divisions; j++) {
     const t = domain[0] + (j / divisions) * (domain[1] - domain[0])
 
     if (t === domain[0] || t === domain[1]) {
