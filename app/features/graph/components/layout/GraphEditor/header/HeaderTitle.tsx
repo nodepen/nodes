@@ -46,7 +46,7 @@ export const HeaderTitle = (): React.ReactElement => {
             <EditGraphMenu graphId={id} initialValue={name} onClose={() => setShowEditMenu(false)} />
           </ModalLayout>
         ) : (
-          <Popover position={editButtonPosition.current} anchor="TL">
+          <Popover position={editButtonPosition.current} anchor="TL" onClose={() => setShowEditMenu(false)}>
             <EditGraphMenu graphId={id} initialValue={name} onClose={() => setShowEditMenu(false)} />
           </Popover>
         )

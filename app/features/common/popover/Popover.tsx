@@ -4,25 +4,30 @@ import { createPortal } from 'react-dom'
 type PopoverProps = {
   position: [left: number, top: number]
   anchor: 'TL' | 'TR'
+  onClose: () => void
   children: JSX.Element
 }
 
-export const Popover = ({ position, anchor, children }: PopoverProps): React.ReactElement => {
+export const Popover = ({ position, anchor, onClose, children }: PopoverProps): React.ReactElement => {
   const [left, top] = position
 
   return (
     <PopoverPortal>
       <>
-        <div className="w-full h-full relative pointer-events-none">
+        <div
+          className="w-full h-full relative pointer-events-auto"
+          id="popover-container"
+          onPointerDownCapture={(e) => {
+            if ((e.target as Element).id === 'popover-container') {
+              onClose()
+            }
+          }}
+        >
           <div
             className="absolute"
             style={{ left: anchor === 'TL' ? left : 0, top, width: anchor === 'TL' ? undefined : left }}
           >
-            <div
-              className={`${
-                anchor === 'TL' ? 'justify-start' : 'justify-end'
-              } w-full flex items-start pointer-events-auto dropper`}
-            >
+            <div className={`${anchor === 'TL' ? 'justify-start' : 'justify-end'} w-full flex items-start dropper`}>
               {children}
             </div>
           </div>

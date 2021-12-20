@@ -90,13 +90,6 @@ export const EditGraphMenu = ({ graphId, initialValue, onClose }: EditGraphMenuP
         >
           K
         </button>
-        <button
-          className="w-10 h-10 rounded-md bg-swampgreen flex items-center justify-center"
-          style={{ minWidth: 40 }}
-          onClick={onClose}
-        >
-          X
-        </button>
       </div>
     </div>
   )
