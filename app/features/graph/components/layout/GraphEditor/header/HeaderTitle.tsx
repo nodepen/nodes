@@ -1,16 +1,35 @@
-import { useGraphManifest } from '@/features/graph/store/graph/hooks'
+import React, { useState, useRef } from 'react'
 import Link from 'next/link'
-import React from 'react'
+import { useGraphManifest } from '@/features/graph/store/graph/hooks'
 import { useSessionManager } from 'features/common/context/session'
+import { Popover } from '@/features/common/popover'
+import { ModalLayout } from '@/features/common/layout/ModalLayout'
 
 export const HeaderTitle = (): React.ReactElement => {
   const { device } = useSessionManager()
 
   const { name, author, stats } = useGraphManifest()
 
+  const [showEditMenu, setShowEditMenu] = useState(false)
+  const editButtonRef = useRef<HTMLButtonElement>(null)
+  const editButtonPosition = useRef<[number, number]>([0, 0])
+
   return (
     <div className="h-full flex flex-grow items-center justify-start">
-      <button className="h-6 pl-2 pr-1 mr-2 flex items-center justify-start rounded-sm hover:bg-green">
+      <button
+        ref={editButtonRef}
+        className="h-6 pl-2 pr-1 mr-2 flex items-center justify-start rounded-sm hover:bg-green"
+        onClick={() => {
+          if (!editButtonRef.current) {
+            return
+          }
+
+          const { left, top, height } = editButtonRef.current.getBoundingClientRect()
+
+          editButtonPosition.current = [left, top + height + 16]
+          setShowEditMenu(true)
+        }}
+      >
         <p className="leading-4 text-sm text-dark font-semibold">{name}</p>
         <svg className="w-4 h-4" fill="#333" viewBox="0 -2 20 20" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -20,6 +39,23 @@ export const HeaderTitle = (): React.ReactElement => {
           />
         </svg>
       </button>
+      {showEditMenu ? (
+        device.breakpoint === 'sm' ? (
+          <ModalLayout onClose={() => setShowEditMenu(false)}>
+            <div className="p-2 rounded-md bg-green flex flex-col">
+              {name}
+              <button onClick={() => setShowEditMenu(false)}>OK</button>
+            </div>
+          </ModalLayout>
+        ) : (
+          <Popover position={editButtonPosition.current} anchor="TL">
+            <div className="p-2 rounded-md bg-green flex flex-col">
+              {name}
+              <button onClick={() => setShowEditMenu(false)}>OK</button>
+            </div>
+          </Popover>
+        )
+      ) : null}
       <div className="h-6 mr-3 flex items-center justify-start">
         <svg className="w-5 h-5 mr-1" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path

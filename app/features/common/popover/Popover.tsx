@@ -12,16 +12,39 @@ export const Popover = ({ position, anchor, children }: PopoverProps): React.Rea
 
   return (
     <PopoverPortal>
-      <div className="w-full h-full relative pointer-events-none">
-        <div
-          className="absolute"
-          style={{ left: anchor === 'TL' ? left : 0, top, width: anchor === 'TL' ? undefined : left }}
-        >
-          <div className={`${anchor === 'TL' ? 'justify-start' : 'justify-end'} w-full flex items-start`}>
-            {children}
+      <>
+        <div className="w-full h-full relative pointer-events-none">
+          <div
+            className="absolute"
+            style={{ left: anchor === 'TL' ? left : 0, top, width: anchor === 'TL' ? undefined : left }}
+          >
+            <div
+              className={`${
+                anchor === 'TL' ? 'justify-start' : 'justify-end'
+              } w-full flex items-start pointer-events-auto dropper`}
+            >
+              {children}
+            </div>
           </div>
         </div>
-      </div>
+        <style jsx>{`
+          @keyframes drop-in {
+            from {
+              transform: translateY(-150%);
+            }
+            to {
+              transform: translateY(0%);
+            }
+          }
+
+          .dropper {
+            animation-name: drop-in;
+            animation-duration: 250ms;
+            animation-timing-function: ease-out;
+            animation-fill-mode: forwards;
+          }
+        `}</style>
+      </>
     </PopoverPortal>
   )
 }
@@ -30,7 +53,7 @@ type PopoverPortalProps = {
   children: JSX.Element
 }
 
-export const PopoverPortal = ({ children }: PopoverPortalProps): React.ReactElement => {
+const PopoverPortal = ({ children }: PopoverPortalProps): React.ReactElement => {
   const [container] = useState(() => {
     const el = document.createElement('div')
 
@@ -47,10 +70,16 @@ export const PopoverPortal = ({ children }: PopoverPortalProps): React.ReactElem
   })
 
   useEffect(() => {
-    document.appendChild(container)
+    const parent = document.getElementById('layout-root')
+
+    if (!parent) {
+      return
+    }
+
+    parent.appendChild(container)
 
     return () => {
-      document.removeChild(container)
+      parent.removeChild(container)
     }
   }, [container])
 

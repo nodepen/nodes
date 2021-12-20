@@ -9,7 +9,7 @@ type CurveGeometryProps = {
 }
 
 export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.ReactElement => {
-  const { color, width, opacity } = material ?? {}
+  const { color, opacity } = material ?? {}
 
   const { module: rhino } = useContext(RhinoContext)
 
