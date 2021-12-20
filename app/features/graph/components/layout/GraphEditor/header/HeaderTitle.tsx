@@ -4,11 +4,12 @@ import { useGraphManifest } from '@/features/graph/store/graph/hooks'
 import { useSessionManager } from 'features/common/context/session'
 import { Popover } from '@/features/common/popover'
 import { ModalLayout } from '@/features/common/layout/ModalLayout'
+import { EditGraphMenu } from './menus'
 
 export const HeaderTitle = (): React.ReactElement => {
   const { device } = useSessionManager()
 
-  const { name, author, stats } = useGraphManifest()
+  const { name, author, stats, id } = useGraphManifest()
 
   const [showEditMenu, setShowEditMenu] = useState(false)
   const editButtonRef = useRef<HTMLButtonElement>(null)
@@ -26,7 +27,7 @@ export const HeaderTitle = (): React.ReactElement => {
 
           const { left, top, height } = editButtonRef.current.getBoundingClientRect()
 
-          editButtonPosition.current = [left, top + height + 16]
+          editButtonPosition.current = [left, top + height + 8]
           setShowEditMenu(true)
         }}
       >
@@ -42,17 +43,11 @@ export const HeaderTitle = (): React.ReactElement => {
       {showEditMenu ? (
         device.breakpoint === 'sm' ? (
           <ModalLayout onClose={() => setShowEditMenu(false)}>
-            <div className="p-2 rounded-md bg-green flex flex-col">
-              {name}
-              <button onClick={() => setShowEditMenu(false)}>OK</button>
-            </div>
+            <EditGraphMenu graphId={id} initialValue={name} onClose={() => setShowEditMenu(false)} />
           </ModalLayout>
         ) : (
           <Popover position={editButtonPosition.current} anchor="TL">
-            <div className="p-2 rounded-md bg-green flex flex-col">
-              {name}
-              <button onClick={() => setShowEditMenu(false)}>OK</button>
-            </div>
+            <EditGraphMenu graphId={id} initialValue={name} onClose={() => setShowEditMenu(false)} />
           </Popover>
         )
       ) : null}

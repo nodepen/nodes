@@ -82,6 +82,9 @@ export const graphSlice = createSlice({
       // Flag restored objects as not needing first-placement correction
       state.registry.restored.elements = Object.keys(graph.elements)
     },
+    rename: (state: GraphState, action: PayloadAction<string>) => {
+      state.manifest.name = action.payload
+    },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
 

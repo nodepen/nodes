@@ -30,6 +30,9 @@ export const useGraphDispatch = () => {
         dispatch(solutionActions.expireSolution())
       }
     },
+    rename: (name: string) => {
+      dispatch(graphActions.rename(name))
+    },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.addElement(data))
       dispatch(solutionActions.expireSolution())
