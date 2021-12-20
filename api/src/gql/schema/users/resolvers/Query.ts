@@ -16,8 +16,30 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
 
     if (!userDocument.exists) {
       // First visit, create record
+
+      // Validate requested username is not taken
+      let requestedUsername = user.name
+      let isAvailable = false
+      let iterations = 0
+
+      while (!isAvailable && iterations++ < 5) {
+        console.log(requestedUsername)
+
+        const result = await db
+          .collection('users')
+          .where('username', '==', requestedUsername)
+          .limit(1)
+          .get()
+
+        if (result.empty) {
+          isAvailable = true
+        } else {
+          requestedUsername = requestedUsername + 'x'
+        }
+      }
+
       const currentUserRecord: UserRecord = {
-        username: user.name,
+        username: requestedUsername,
         usage: {
           ms: 0,
         },

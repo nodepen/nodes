@@ -13,8 +13,10 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       action: 'delete',
     })
 
+    const db = admin.firestore()
+
     // Delete graph record
-    await ref.delete()
+    await db.recursiveDelete(ref)
 
     // Delete folder from np-graphs bucket
     const bucket = admin.storage().bucket('np-graphs')

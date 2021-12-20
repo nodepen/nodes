@@ -42,6 +42,12 @@ export const useAuthentication = (): AuthContext => {
         const userData: UserRecord = await userResponse.json()
 
         setUserRecord(userData)
+
+        // Update displayName, if somehow they don't match
+        // Example: First third-party auth through 'sign in' instead of 'sign up' accidentally
+        if (!u.displayName || u.displayName !== userData.username) {
+          await u.updateProfile({ displayName: userData.username })
+        }
       }
     })
   }, [])
