@@ -1,16 +1,15 @@
-import React, { useMemo, useRef } from 'react'
-import { NodePen } from 'glib'
-import { useGraphAuthor, useGraphElements, useGraphId } from '@/features/graph/store/graph/hooks'
+import React, { useRef } from 'react'
+import { useGraphAuthor, useGraphId } from '@/features/graph/store/graph/hooks'
 import { newGuid } from '@/features/graph/utils'
 import { useMutation, useSubscription, gql } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
 import { useRouter } from 'next/router'
+import { usePersistedGraphElements } from '@/features/graph/hooks'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()
   const { token, user, userRecord } = useSessionManager()
 
-  const graphElements = useGraphElements()
   const graphAuthor = useGraphAuthor()
   const graphId = useGraphId()
 
@@ -18,16 +17,7 @@ const SaveButton = (): React.ReactElement => {
   const isNewGraph = router.pathname === '/gh'
 
   // The elements that we want to save and load with a graph
-  const persistedGraphElements = useMemo(() => {
-    const persistedTypes: NodePen.ElementType[] = [
-      'static-component',
-      'static-parameter',
-      'number-slider',
-      'panel',
-      'wire',
-    ]
-    return Object.values(graphElements).filter((element) => persistedTypes.includes(element.template.type))
-  }, [graphElements])
+  const persistedGraphElements = usePersistedGraphElements()
 
   // The solution id associated with saving this graph revision
   const saveSolutionId = useRef(newGuid())

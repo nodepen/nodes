@@ -13,6 +13,9 @@ export type Arguments = {
     deleteGraph: {
       graphId: string
     }
+    duplicateGraph: {
+      graphId: string
+    }
     renameGraph: {
       graphId: string
       name: string

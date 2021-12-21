@@ -1,4 +1,5 @@
 import { NodePen } from 'glib'
+import { v4 as uuid } from 'uuid'
 import { admin } from '../../../../firebase'
 import { ghq } from '../../../../bq'
 import { authorize } from '../../../utils/authorize'
@@ -24,6 +25,103 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     await bucket.deleteFiles({ prefix: `${graphId}/` })
 
     return graphId
+  },
+  duplicateGraph: async (_parent, { graphId }, { user }): Promise<string> => {
+    const [ref, doc] = await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'view',
+    })
+
+    console.log('!')
+
+    const db = admin.firestore()
+    const bucket = admin.storage().bucket('np-graphs')
+
+    // Graph record information from current graph revision
+    const currentName: string = doc.get('name')
+    const currentRevision: number | undefined = doc.get('revision')
+
+    if (!currentRevision) {
+      throw new Error('No revision found!')
+    }
+
+    const currentRevisionKey = currentRevision.toString()
+
+    const currentRevisionRef = db
+      .collection('graphs')
+      .doc(graphId)
+      .collection('revisions')
+      .doc(currentRevisionKey)
+    const currentRevisionDoc = await currentRevisionRef.get()
+
+    if (!currentRevisionDoc.exists) {
+      throw new Error('Could not find revision!')
+    }
+
+    // Create new graph record
+    const now = new Date().toISOString()
+    const duplicateId = uuid()
+    const duplicateName = `${currentName} (Copy)`
+    const duplicateManifest = {
+      name: duplicateName.length < 100 ? duplicateName : currentName,
+      author: {
+        name: user.name,
+        id: user.id,
+      },
+      type: 'grasshopper',
+      time: {
+        created: now,
+        updated: now,
+      },
+      revision: 1,
+      stats: {
+        views: 0,
+      },
+    }
+
+    await db.collection('graphs').doc(duplicateId).create(duplicateManifest)
+
+    // Copy revision information and files from current graph
+    const duplicateRevision: any = {
+      files: {},
+      time: {
+        created: now,
+      },
+    }
+
+    for (const [fileType, filePath] of Object.entries<string>(
+      currentRevisionDoc.get('files') ?? {}
+    )) {
+      if (process?.env?.DEBUG === 'true') {
+        // Emulator does not have `copy` implemented
+        duplicateRevision.files[fileType] = filePath
+        continue
+      }
+
+      const duplicatePath = filePath.replace(graphId, duplicateId)
+
+      const currentFile = bucket.file(filePath)
+      const currentFileExists = await currentFile.exists()
+
+      if (!currentFileExists) {
+        continue
+      }
+
+      await currentFile.copy(duplicatePath)
+
+      duplicateRevision.files[fileType] = duplicatePath
+    }
+
+    await db
+      .collection('graphs')
+      .doc(duplicateId)
+      .collection('revisions')
+      .doc('1')
+      .create(duplicateRevision)
+
+    // Return new graph's id
+    return duplicateId
   },
   renameGraph: async (
     _parent,

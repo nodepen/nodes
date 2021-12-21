@@ -1,1 +1,3 @@
-export { EditGraphMenu } from './EditGraphMenu'
+import EditGraphMenu from './EditGraphMenu'
+
+export { EditGraphMenu }
