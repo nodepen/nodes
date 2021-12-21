@@ -27,6 +27,10 @@ const NodePen = ({ Component, pageProps }: AppProps): React.ReactElement => {
           outline: none;
         }
 
+        input:focus:not(:focus-visible) {
+          outline: none;
+        }
+
         .no-scrollbar::-webkit-scrollbar {
           display: none;
         }

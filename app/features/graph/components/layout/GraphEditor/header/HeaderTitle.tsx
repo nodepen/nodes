@@ -15,6 +15,8 @@ export const HeaderTitle = (): React.ReactElement => {
   const editButtonRef = useRef<HTMLButtonElement>(null)
   const editButtonPosition = useRef<[number, number]>([0, 0])
 
+  const graphNameLabel = name.length > 50 ? `${name.substring(0, 45)}...` : name
+
   return (
     <div className="h-full flex flex-grow items-center justify-start">
       <button
@@ -31,7 +33,7 @@ export const HeaderTitle = (): React.ReactElement => {
           setShowEditMenu(true)
         }}
       >
-        <p className="leading-4 text-sm text-dark font-semibold">{name}</p>
+        <p className="leading-4 text-sm text-dark font-semibold">{graphNameLabel}</p>
         <svg className="w-4 h-4" fill="#333" viewBox="0 -2 20 20" xmlns="http://www.w3.org/2000/svg">
           <path
             fillRule="evenodd"
