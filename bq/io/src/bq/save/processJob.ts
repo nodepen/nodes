@@ -65,6 +65,17 @@ export const processJob = async (
     ghFile.save(ghFileData),
   ])
 
+  // Get url for response
+  const graphBinariesUrl = process?.env?.DEBUG
+    ? ghFile.publicUrl()
+    : (
+        await ghFile.getSignedUrl({
+          version: 'v4',
+          action: 'read',
+          expires: Date.now() + 60 * 60 * 1000,
+        })
+      )[0]
+
   // Update revision record
   const fb = admin.firestore()
 
@@ -86,5 +97,5 @@ export const processJob = async (
     )
   }
 
-  return job.data
+  return { ...job.data, graphBinariesUrl }
 }

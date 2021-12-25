@@ -115,3 +115,8 @@ export type SetVisibilityPayload = {
   ids: string[]
   visibility: 'visible' | 'hidden'
 }
+
+export type SetGraphFileUrlPayload = {
+  file: keyof NodePen.GraphManifest['files']
+  url: string
+}

@@ -15,9 +15,9 @@ import { useSessionManager } from '@/features/common/context/session'
 
 import { KeyboardObserver } from 'features/common/observer'
 
-type GrasshopperGraphPageProps = Omit<NodePen.GraphManifest, 'files'>
+type GrasshopperGraphPageProps = NodePen.GraphManifest
 
-const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, author, graph, stats }) => {
+const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, author, files, graph, stats }) => {
   const { token } = useSessionManager()
 
   const Scene = dynamic(() => import('features/graph/components/scene/SceneContainer'))
@@ -29,7 +29,7 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
         <script defer src="https://unpkg.com/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script>
       </Head>
       <ApolloContext token={token}>
-        <GraphManager manifest={{ id, name, author, graph, files: {}, stats }}>
+        <GraphManager manifest={{ id, name, author, graph, files, stats }}>
           <Graph.Editor>
             <SolutionManager>
               <>
@@ -94,6 +94,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
             files {
               graphJson
               graphSolutionJson
+              graphBinaries
             }
             stats {
               views
@@ -112,7 +113,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
 
     const { id, name, author, files, stats } = data.graph as NodePen.GraphManifest
 
-    if (!files.graphJson || !files.graphSolutionJson) {
+    if (!files.graphJson || !files.graphSolutionJson || !files.graphBinaries) {
       return { notFound: true }
     }
 
@@ -125,12 +126,27 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
         id: 'N/A',
         name: author.name,
       },
+      files: {},
       stats,
     }
 
     const bucket = admin.storage().bucket('np-graphs')
     const validation = process?.env?.NEXT_PUBLIC_DEBUG !== 'true'
 
+    // Set graphBinaries url in response
+    const graphBinariesFile = bucket.file(files.graphBinaries)
+    record.files.graphBinaries =
+      process?.env?.NEXT_PUBLIC_DEBUG === 'true'
+        ? graphBinariesFile.publicUrl()
+        : (
+            await graphBinariesFile.getSignedUrl({
+              version: 'v4',
+              action: 'read',
+              expires: Date.now() + 60 * 60 * 1000,
+            })
+          )[0]
+
+    // Download and hydrate graph json
     const graphJsonFile = bucket.file(files.graphJson)
     const [graphJson] = await graphJsonFile.download({ validation })
 

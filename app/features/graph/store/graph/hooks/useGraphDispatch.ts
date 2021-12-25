@@ -30,8 +30,11 @@ export const useGraphDispatch = () => {
         dispatch(solutionActions.expireSolution())
       }
     },
-    rename: (name: string) => {
-      dispatch(graphActions.rename(name))
+    setGraphName: (name: string) => {
+      dispatch(graphActions.setGraphName(name))
+    },
+    setGraphFileUrl: (file: keyof NodePen.GraphManifest['files'], url: string) => {
+      dispatch(graphActions.setGraphFileUrl({ file, url }))
     },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.addElement(data))

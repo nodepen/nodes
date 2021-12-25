@@ -4,7 +4,7 @@ export const onJobSucceeded = async (
   jobId: string,
   result: any
 ): Promise<void> => {
-  const { graphId, solutionId } = result
+  const { graphId, solutionId, graphBinariesUrl } = result
 
   console.log(`[ JOB ${jobId.padStart(4, '0')} ] [ IO:SAVE ] [ SUCCEEDED ]`)
 
@@ -16,6 +16,7 @@ export const onJobSucceeded = async (
       onSaveFinish: {
         solutionId,
         graphId,
+        graphBinariesUrl,
       },
     })
   )

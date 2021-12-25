@@ -50,6 +50,7 @@ export const graphsSchema = gql`
 
   type SaveFinishMessage {
     graphId: String!
+    graphBinariesUrl: String!
     solutionId: String!
   }
 `

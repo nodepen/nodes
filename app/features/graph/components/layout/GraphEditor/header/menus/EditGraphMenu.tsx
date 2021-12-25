@@ -15,7 +15,7 @@ type EditGraphMenuProps = {
 const EditGraphMenu = ({ graphId, initialValue, onClose }: EditGraphMenuProps): React.ReactElement => {
   const router = useRouter()
   const { userRecord } = useSessionManager()
-  const { rename } = useGraphDispatch()
+  const { setGraphName } = useGraphDispatch()
 
   const isNewGraph = router.pathname === '/gh'
 
@@ -57,7 +57,7 @@ const EditGraphMenu = ({ graphId, initialValue, onClose }: EditGraphMenuProps): 
 
     onClose()
 
-    rename(nextName)
+    setGraphName(nextName)
 
     renameGraph({
       variables: {
@@ -70,7 +70,7 @@ const EditGraphMenu = ({ graphId, initialValue, onClose }: EditGraphMenuProps): 
       })
       .catch((err) => {
         console.error(err)
-        rename(currentName)
+        setGraphName(currentName)
       })
   }
 

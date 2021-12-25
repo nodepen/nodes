@@ -1,74 +1,21 @@
-import React, { useState } from 'react'
-import { gql, useApolloClient } from '@apollo/client'
-import { useSolutionDispatch, useSolutionMetadata } from 'features/graph/store/solution/hooks'
+import React from 'react'
+import { useGraphFiles } from '@/features/graph/store/graph/hooks'
 
-type DownloadButtonProps = {
-  graphId: string
-}
-
-const DownloadButton = ({ graphId }: DownloadButtonProps): React.ReactElement => {
-  const client = useApolloClient()
-
-  const { expireSolution } = useSolutionDispatch()
-  const { id: solutionId } = useSolutionMetadata()
-
-  const [isDownloading, setIsDownloading] = useState(false)
+const DownloadButton = (): React.ReactElement => {
+  const { graphBinaries } = useGraphFiles()
 
   const handleDownload = (): void => {
-    if (isDownloading) {
+    if (!graphBinaries) {
+      console.log('🐍 No graph url available!')
       return
     }
 
-    setIsDownloading(true)
+    const anchor = document.createElement('a')
 
-    client
-      .query({
-        query: gql`
-          query GetSolutionGrasshopperFile($graphId: String!, $solutionId: String!) {
-            solution(graphId: $graphId, solutionId: $solutionId) {
-              files {
-                gh
-              }
-            }
-          }
-        `,
-        variables: {
-          graphId,
-          solutionId,
-        },
-      })
-      .then((res) => {
-        const { gh } = res.data.solution.files
+    anchor.href = graphBinaries
+    anchor.click()
 
-        if (gh) {
-          let fileData: any = atob(gh)
-
-          const bytes = new Array(fileData.length)
-          for (let i = 0; i < fileData.length; i++) {
-            bytes[i] = fileData.charCodeAt(i)
-          }
-          fileData = new Uint8Array(bytes)
-
-          const blob = new Blob([fileData], { type: 'application/octet-stream' })
-          const objectURL = window.URL.createObjectURL(blob)
-          const anchor = document.createElement('a')
-
-          anchor.href = objectURL
-          anchor.download = 'nodepen.gh'
-          anchor.click()
-
-          URL.revokeObjectURL(objectURL)
-        } else {
-          console.error('🐍 Failed to download grasshopper file for current solution.')
-          expireSolution()
-        }
-      })
-      .catch(() => {
-        console.error('🐍 Failed to download grasshopper file for current solution.')
-      })
-      .finally(() => {
-        setIsDownloading(false)
-      })
+    anchor.remove()
   }
 
   return (

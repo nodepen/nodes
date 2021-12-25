@@ -56,6 +56,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
         id: 'N/A',
       },
       files: {
+        graphBinaries: versionDocument.get('files.graphBinaries'),
         graphJson: versionDocument.get('files.graphJson'),
         graphSolutionJson: versionDocument.get('files.graphSolutionJson'),
       },

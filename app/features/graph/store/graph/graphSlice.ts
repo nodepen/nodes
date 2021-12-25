@@ -82,8 +82,13 @@ export const graphSlice = createSlice({
       // Flag restored objects as not needing first-placement correction
       state.registry.restored.elements = Object.keys(graph.elements)
     },
-    rename: (state: GraphState, action: PayloadAction<string>) => {
+    setGraphName: (state: GraphState, action: PayloadAction<string>) => {
       state.manifest.name = action.payload
+    },
+    setGraphFileUrl: (state: GraphState, action: PayloadAction<Payload.SetGraphFileUrlPayload>) => {
+      const { file, url } = action.payload
+
+      state.manifest.files[file] = url
     },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
@@ -1204,6 +1209,7 @@ const selectLiveWiresOrigin = (state: RootState): GraphState['registry']['wire']
 const selectGraphManifest = (state: RootState): GraphState['manifest'] => state.graph.present.manifest
 const selectGraphId = (state: RootState): string => state.graph.present.manifest.id
 const selectGraphAuthor = (state: RootState): string => state.graph.present.manifest.author.name
+const selectGraphFiles = (state: RootState): GraphState['manifest']['files'] => state.graph.present.manifest.files
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
   return {
     canUndo: state.graph.past.length > 0,
@@ -1222,6 +1228,7 @@ export const graphSelectors = {
   selectGraphManifest,
   selectGraphId,
   selectGraphAuthor,
+  selectGraphFiles,
   selectGraphHistory,
   selectVisibilityRegistry,
 }

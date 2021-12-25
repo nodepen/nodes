@@ -35,14 +35,14 @@ export const HeaderActions = ({ graph, user }: HeaderActionsProps): React.ReactE
         <>
           <SolutionStatus />
           <SaveButton />
-          <DownloadButton graphId={graph.id} />
+          <DownloadButton />
           <ShareButton graphId={graph.id} />
           <CurrentUserButton user={user} />
         </>
       ) : (
         <>
           <SolutionStatus />
-          <DownloadButton graphId={graph.id} />
+          <DownloadButton />
           <SignInButton />
           <SignUpButton />
         </>

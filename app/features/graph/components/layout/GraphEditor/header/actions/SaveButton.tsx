@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import { useGraphAuthor, useGraphId } from '@/features/graph/store/graph/hooks'
+import { useGraphAuthor, useGraphDispatch, useGraphId } from '@/features/graph/store/graph/hooks'
 import { newGuid } from '@/features/graph/utils'
 import { useMutation, useSubscription, gql } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
@@ -8,8 +8,9 @@ import { usePersistedGraphElements } from '@/features/graph/hooks'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()
-  const { token, user, userRecord } = useSessionManager()
+  const { token, userRecord } = useSessionManager()
 
+  const { setGraphFileUrl } = useGraphDispatch()
   const graphAuthor = useGraphAuthor()
   const graphId = useGraphId()
 
@@ -55,6 +56,7 @@ const SaveButton = (): React.ReactElement => {
         onSaveFinish(graphId: $graphId) {
           solutionId
           graphId
+          graphBinariesUrl
         }
       }
     `,
@@ -68,7 +70,7 @@ const SaveButton = (): React.ReactElement => {
           return
         }
 
-        const { solutionId: incomingSolutionId, graphId: incomingGraphId } = data.onSaveFinish
+        const { solutionId: incomingSolutionId, graphId: incomingGraphId, graphBinariesUrl } = data.onSaveFinish
 
         if (incomingGraphId !== graphId) {
           console.log('🐍 Received save event data for a different graph!')
@@ -82,7 +84,7 @@ const SaveButton = (): React.ReactElement => {
           return
         }
 
-        if (process.env.NEXT_PUBLIC_DEBUG) {
+        if (process?.env?.NEXT_PUBLIC_DEBUG === 'true') {
           console.log('Save is complete!')
         }
 
@@ -94,7 +96,11 @@ const SaveButton = (): React.ReactElement => {
         if (!isGraphAuthor) {
           // User has saved their own copy of another user's graph
           router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined)
+          return
         }
+
+        // If a save does not require navigation, then set the .gh link in state
+        setGraphFileUrl('graphBinaries', graphBinariesUrl)
       },
     }
   )
