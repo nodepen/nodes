@@ -1,3 +1,4 @@
 import EditGraphMenu from './EditGraphMenu'
+import { SaveProgressMenu } from './SaveProgressMenu'
 
-export { EditGraphMenu }
+export { EditGraphMenu, SaveProgressMenu }

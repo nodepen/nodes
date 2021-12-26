@@ -183,6 +183,11 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       await ref.update('revision', revision, 'time.updated', now)
     }
 
+    // Copy thumbnail information from previous revision, if it exists
+    // if (revision > 1) {
+    //   const previousRevisionRef = await db.collection('graphs').doc(graphId).collection('revisions').doc(revision.toString())
+    // }
+
     await db
       .collection('graphs')
       .doc(graphId)

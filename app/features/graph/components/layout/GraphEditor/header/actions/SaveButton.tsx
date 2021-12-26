@@ -1,14 +1,19 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { useGraphAuthor, useGraphDispatch, useGraphId } from '@/features/graph/store/graph/hooks'
 import { newGuid } from '@/features/graph/utils'
 import { useMutation, useSubscription, gql } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
+import { Popover } from '@/features/common/popover'
 import { useRouter } from 'next/router'
 import { usePersistedGraphElements } from '@/features/graph/hooks'
+import { SaveProgressMenu } from '../menus'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()
   const { token, userRecord } = useSessionManager()
+
+  const buttonRef = useRef<HTMLButtonElement>(null)
+  const buttonPosition = useRef<[number, number]>([0, 0])
 
   const { setGraphFileUrl } = useGraphDispatch()
   const graphAuthor = useGraphAuthor()
@@ -23,6 +28,10 @@ const SaveButton = (): React.ReactElement => {
   // The solution id associated with saving this graph revision
   const saveSolutionId = useRef(newGuid())
 
+  const saveProgress = useRef(0)
+  const [saveProgressMessage, setSaveProgressMessage] = useState('Saving...')
+  const [showSaveProgress, setShowSaveProgress] = useState(false)
+
   const [scheduleSaveGraph] = useMutation(
     gql`
       mutation ScheduleSaveGraph($solutionId: String!, $graphId: String!, $graphJson: String!) {
@@ -32,19 +41,41 @@ const SaveButton = (): React.ReactElement => {
   )
 
   const handleSaveGraph = (): void => {
-    const nextSolutionId = newGuid()
+    const button = buttonRef.current
 
+    if (button) {
+      const { top, left, width, height } = button.getBoundingClientRect()
+
+      buttonPosition.current = [left + width, top + height + 8]
+    }
+
+    saveProgress.current = 5
+    setSaveProgressMessage('Requesting save')
+    setShowSaveProgress(true)
+
+    const nextSolutionId = newGuid()
     saveSolutionId.current = nextSolutionId
+
     scheduleSaveGraph({
       variables: {
         solutionId: nextSolutionId,
         graphId,
         graphJson: JSON.stringify(persistedGraphElements),
       },
-    }).then((res) => {
-      const revision = res.data.scheduleSaveGraph
-      console.log(`Scheduled save for revision ${revision}. ${saveSolutionId.current}`)
     })
+      .then((res) => {
+        saveProgress.current = 33
+        setSaveProgressMessage('Processing save')
+        const revision = res.data.scheduleSaveGraph
+        console.log(`Scheduled save for revision ${revision}. ${saveSolutionId.current}`)
+      })
+      .catch(() => {
+        saveProgress.current = 0
+        setSaveProgressMessage('Error saving!')
+        setTimeout(() => {
+          setShowSaveProgress(false)
+        }, 1000 * 3)
+      })
   }
 
   // Watching for save events to know the latest save is complete
@@ -101,19 +132,45 @@ const SaveButton = (): React.ReactElement => {
 
         // If a save does not require navigation, then set the .gh link in state
         setGraphFileUrl('graphBinaries', graphBinariesUrl)
+
+        saveProgress.current = 100
+        setSaveProgressMessage('Save successful')
+        setTimeout(() => {
+          setShowSaveProgress(false)
+        }, 1000 * 3)
       },
     }
   )
 
+  useEffect(() => {
+    if (!error) {
+      return
+    }
+
+    console.error(error)
+
+    saveProgress.current = 0
+    setSaveProgressMessage('Error saving!')
+    setTimeout(() => {
+      setShowSaveProgress(false)
+    }, 1000 * 3)
+  }, [error])
+
   return (
     <button
-      className="h-6 mr-2 pl-1 pr-2 rounded-sm border-2 border-dark flex items-center leading-5 text-dark font-semibold text-xs"
+      className="h-6 mr-2 pl-1 pr-2 rounded-sm border-2 border-dark flex items-center leading-5 text-dark font-semibold text-xs hover:bg-green"
       onClick={handleSaveGraph}
+      ref={buttonRef}
     >
       <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
         <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path>
       </svg>
       <p>{isGraphAuthor || isNewGraph ? 'Save' : 'Save Copy'}</p>
+      {showSaveProgress ? (
+        <Popover position={buttonPosition.current} anchor="TR" onClose={() => setShowSaveProgress(false)}>
+          <SaveProgressMenu progress={saveProgress.current} message={saveProgressMessage} />
+        </Popover>
+      ) : null}
     </button>
   )
 }
