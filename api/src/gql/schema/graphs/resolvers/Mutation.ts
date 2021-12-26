@@ -184,9 +184,16 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     }
 
     // Copy thumbnail information from previous revision, if it exists
-    // if (revision > 1) {
-    //   const previousRevisionRef = await db.collection('graphs').doc(graphId).collection('revisions').doc(revision.toString())
-    // }
+    const previousRevisionRef = await db
+      .collection('graphs')
+      .doc(graphId)
+      .collection('revisions')
+      .doc((revision - 1).toString())
+    const previousRevisionDoc = await previousRevisionRef.get()
+
+    const thumbnailImage: string = previousRevisionDoc.exists
+      ? previousRevisionDoc.get('files.thumbnailImage')
+      : undefined
 
     await db
       .collection('graphs')
@@ -201,7 +208,9 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           graph: graphId,
           solution: solutionId,
         },
-        files: {},
+        files: {
+          thumbnailImage,
+        },
       })
 
     const job = await ghq.save
