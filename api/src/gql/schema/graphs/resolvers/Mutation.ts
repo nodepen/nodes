@@ -191,10 +191,6 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       .doc((revision - 1).toString())
     const previousRevisionDoc = await previousRevisionRef.get()
 
-    const thumbnailImage: string = previousRevisionDoc.exists
-      ? previousRevisionDoc.get('files.thumbnailImage')
-      : undefined
-
     await db
       .collection('graphs')
       .doc(graphId)
@@ -209,7 +205,11 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           solution: solutionId,
         },
         files: {
-          thumbnailImage,
+          graphJson: previousRevisionDoc.get('files.graphJson') ?? '',
+          graphSolutionJson:
+            previousRevisionDoc.get('files.graphSolutionJson') ?? '',
+          graphBinaries: previousRevisionDoc.get('files.graphBinaries') ?? '',
+          thumbnailImage: previousRevisionDoc.get('files.thumbnailImage') ?? '',
         },
       })
 
