@@ -39,7 +39,7 @@ const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement
   return (
     <>
       <button
-        className="h-6 w-6 rounded-sm border-2 border-dark bg-white overflow-hidden"
+        className="h-6 w-6 rounded-sm border-2 border-dark bg-white overflow-hidden hover:bg-green"
         onClick={() => setShowModal((current) => !current)}
       >
         {icon}

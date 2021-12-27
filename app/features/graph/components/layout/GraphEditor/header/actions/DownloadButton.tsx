@@ -20,7 +20,7 @@ const DownloadButton = (): React.ReactElement => {
 
   return (
     <button
-      className="h-6 w-6 mr-2 border-2 border-dark rounded-sm bg-white flex items-center justify-center"
+      className="h-6 w-6 mr-2 border-2 border-dark rounded-sm bg-white flex items-center justify-center hover:bg-green"
       onClick={handleDownload}
     >
       <svg className="w-4 h-4" fill="#333333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
