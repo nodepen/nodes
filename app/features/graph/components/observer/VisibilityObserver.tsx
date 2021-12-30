@@ -52,7 +52,6 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
     {
       variables: { graphId },
       skip: !token,
-      shouldResubscribe: true,
       onSubscriptionData: ({ subscriptionData }) => {
         const { data } = subscriptionData
 

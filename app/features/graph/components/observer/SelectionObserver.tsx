@@ -51,7 +51,6 @@ const SelectionObserver = (): React.ReactElement => {
     {
       variables: { graphId },
       skip: !token,
-      shouldResubscribe: true,
       onSubscriptionData: ({ subscriptionData }) => {
         const { data } = subscriptionData
 

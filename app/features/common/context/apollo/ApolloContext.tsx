@@ -24,7 +24,9 @@ export const ApolloContext = ({ children, token }: ApolloContextProps): React.Re
       ? new WebSocketLink({
           uri: publicRuntimeConfig?.apiEndpoint?.replace('https', 'wss') ?? `ws://${host}:4000/graphql`,
           options: {
+            lazy: true,
             reconnect: true,
+            reconnectionAttempts: 3,
             connectionParams: {
               authorization: token,
             },

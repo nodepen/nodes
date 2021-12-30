@@ -144,7 +144,6 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     {
       variables: { graphId },
       skip: !isAuthenticated,
-      shouldResubscribe: true,
       onSubscriptionData: ({ subscriptionData }) => {
         const { data } = subscriptionData
 
@@ -226,7 +225,6 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         graphId,
       },
       skip: !isAuthenticated,
-      shouldResubscribe: true,
     }
   )
 
