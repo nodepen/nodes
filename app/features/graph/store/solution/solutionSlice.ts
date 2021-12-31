@@ -73,8 +73,10 @@ export const solutionSlice = createSlice({
 
       // console.log(`Trying to update ${values.length} parameters.`)
 
-      for (const { elementId, parameterId, data } of values) {
-        const tree = dataBranchesToDataTree(data)
+      for (const value of values) {
+        const { elementId, parameterId } = value
+
+        const tree = 'data' in value ? dataBranchesToDataTree(value.data) : dataBranchesToDataTree(value.values)
 
         if (!(elementId in state.values)) {
           state.values[elementId] = {}

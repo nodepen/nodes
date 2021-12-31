@@ -31,7 +31,7 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
       <ApolloContext token={token}>
         <GraphManager manifest={{ id, name, author, graph, files, stats }}>
           <Graph.Editor>
-            <SolutionManager>
+            <SolutionManager initialSolution={files.graphSolutionJson}>
               <>
                 <Graph.Container />
                 <Scene />
@@ -133,18 +133,22 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
     const bucket = admin.storage().bucket('np-graphs')
     const validation = process?.env?.NEXT_PUBLIC_DEBUG !== 'true'
 
-    // Set graphBinaries url in response
-    const graphBinariesFile = bucket.file(files.graphBinaries)
-    record.files.graphBinaries =
-      process?.env?.NEXT_PUBLIC_DEBUG === 'true'
-        ? graphBinariesFile.publicUrl()
+    const getFileUrl = async (bucketLocation: string): Promise<string> => {
+      const file = bucket.file(bucketLocation)
+      return process?.env?.NEXT_PUBLIC_DEBUG === 'true'
+        ? file.publicUrl()
         : (
-            await graphBinariesFile.getSignedUrl({
+            await file.getSignedUrl({
               version: 'v4',
               action: 'read',
               expires: Date.now() + 60 * 60 * 1000,
             })
           )[0]
+    }
+
+    // Set graphBinaries and graphSolutionJson url in response
+    record.files.graphBinaries = await getFileUrl(files.graphBinaries)
+    record.files.graphSolutionJson = await getFileUrl(files.graphSolutionJson)
 
     // Download and hydrate graph json
     const graphJsonFile = bucket.file(files.graphJson)

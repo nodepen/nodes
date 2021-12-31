@@ -30,6 +30,9 @@ export const useGraphDispatch = () => {
         dispatch(solutionActions.expireSolution())
       }
     },
+    setGraphElements: (elements: NodePen.GraphElementsMap) => {
+      dispatch(graphActions.setGraphElements(elements))
+    },
     setGraphName: (name: string) => {
       dispatch(graphActions.setGraphName(name))
     },

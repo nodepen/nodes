@@ -19,9 +19,16 @@ export type ApplySolutionManifestPayload = {
 
 export type ApplySolutionValuesPayload = {
   solutionId: string
-  values: {
-    elementId: string
-    parameterId: string
-    data: NodePen.DataTreeBranch[]
-  }[]
+  values: (
+    | {
+        elementId: string
+        parameterId: string
+        data: NodePen.DataTreeBranch[]
+      }
+    | {
+        elementId: string
+        parameterId: string
+        values: NodePen.DataTreeBranch[]
+      }
+  )[]
 }

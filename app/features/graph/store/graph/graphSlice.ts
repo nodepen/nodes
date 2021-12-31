@@ -85,6 +85,11 @@ export const graphSlice = createSlice({
     setGraphName: (state: GraphState, action: PayloadAction<string>) => {
       state.manifest.name = action.payload
     },
+    setGraphElements: (state: GraphState, action: PayloadAction<NodePen.GraphElementsMap>) => {
+      state.elements = action.payload
+
+      state.registry.restored.elements = Object.keys(action.payload)
+    },
     setGraphFileUrl: (state: GraphState, action: PayloadAction<Payload.SetGraphFileUrlPayload>) => {
       const { file, url } = action.payload
 
