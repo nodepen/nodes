@@ -72,6 +72,7 @@ const SaveButton = (): React.ReactElement => {
       .catch(() => {
         saveProgress.current = 0
         setSaveProgressMessage('Error saving!')
+        button?.blur()
         setTimeout(() => {
           setShowSaveProgress(false)
         }, 1000 * 3)
@@ -135,6 +136,7 @@ const SaveButton = (): React.ReactElement => {
 
         saveProgress.current = 100
         setSaveProgressMessage('Save successful')
+        buttonRef.current?.blur()
         setTimeout(() => {
           setShowSaveProgress(false)
         }, 1000 * 3)
