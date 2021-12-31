@@ -48,7 +48,7 @@ const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement
       </button>
       {showPopover ? (
         <Popover position={popoverPosition.current} anchor="TR" onClose={() => setShowPopover(false)}>
-          <CurrentUserMenu />
+          <CurrentUserMenu user={{ name: user?.displayName, photoUrl: user.photoURL }} />
         </Popover>
       ) : null}
     </>

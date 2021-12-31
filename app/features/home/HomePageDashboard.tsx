@@ -19,7 +19,7 @@ const HomePageDashboard = (): React.ReactElement => {
       .auth()
       .signOut()
       .then(() => {
-        nookies.destroy(undefined, 'token')
+        nookies.destroy(undefined, 'token', { path: '/' })
         router.reload()
       })
       .catch((err) => {

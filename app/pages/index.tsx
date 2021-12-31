@@ -13,7 +13,7 @@ type HomePageProps = {
 const Home: NextPage<HomePageProps> = ({ isAuthenticated }) => {
   const { user } = useSessionManager()
 
-  const showDashboard = isAuthenticated || (user && !user.isAnonymous)
+  const showDashboard = isAuthenticated || (user && !user.isAnonymous && user.displayName)
 
   const content = showDashboard ? <HomePageDashboard /> : <HomePageLanding />
 
@@ -47,7 +47,7 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (ctx)
         console.log('Incoming user has no token.')
       }
 
-      return { props: defaultProps }
+      return { props: { ...defaultProps } }
     }
 
     const { token } = cookie
@@ -62,12 +62,12 @@ export const getServerSideProps: GetServerSideProps<HomePageProps> = async (ctx)
         console.log('Incoming user is anonymous.')
       }
 
-      return { props: defaultProps }
+      return { props: { ...defaultProps } }
     }
 
     return { props: { isAuthenticated: true } }
   } catch (e) {
     console.log(e)
-    return { props: defaultProps }
+    return { props: { ...defaultProps } }
   }
 }

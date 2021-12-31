@@ -1,1 +1,1 @@
-export type SizeOption = 'lg' | 'md' | 'sm'
+export type SizeOption = 'xs' | 'lg' | 'md' | 'sm'

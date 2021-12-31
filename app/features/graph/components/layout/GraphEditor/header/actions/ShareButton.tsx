@@ -1,11 +1,8 @@
 import React, { useState, useRef } from 'react'
-import { useRouter } from 'next/router'
 import { Popover } from '@/features/common/popover'
 import { ShareGraphMenu } from '../menus'
 
 const ShareButton = (): React.ReactElement => {
-  const router = useRouter()
-
   const buttonRef = useRef<HTMLButtonElement>(null)
   const buttonPosition = useRef<[number, number]>([0, 0])
   const [showPopover, setShowPopover] = useState(false)
