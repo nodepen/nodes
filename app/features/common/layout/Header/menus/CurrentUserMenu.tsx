@@ -23,7 +23,7 @@ export const CurrentUserMenu = ({ user }: CurrentUserMenuProps): React.ReactElem
       .signOut()
       .then(() => {
         nookies.destroy(undefined, 'token', { path: '/' })
-        router.push('/')
+        router.push('/', undefined, { shallow: false })
       })
   }
 

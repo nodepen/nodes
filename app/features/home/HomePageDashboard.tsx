@@ -1,42 +1,40 @@
-import { useRouter } from 'next/router'
 import React from 'react'
-import nookies from 'nookies'
 import { ApolloContext } from '../common/context/apollo'
 import { useSessionManager } from '../common/context/session'
-import { firebase } from 'features/common/context/session/auth/firebase'
 import { GraphList } from './components'
+import { Layout } from 'features/common'
+import { QuirkyDivider } from './components/layout'
 
 /**
  * Home page for authenticated visits
  */
 const HomePageDashboard = (): React.ReactElement => {
-  const router = useRouter()
-
   const { user, token } = useSessionManager()
-
-  const handleSignOut = (): void => {
-    firebase
-      .auth()
-      .signOut()
-      .then(() => {
-        nookies.destroy(undefined, 'token', { path: '/' })
-        router.reload()
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }
 
   return (
     <ApolloContext token={token}>
-      <>
-        <div id="layout-root">
-          <h1>Welcome back {user?.displayName}</h1>
-          <a href="/gh">Launch</a>
-          <button onClick={handleSignOut}>Sign Out</button>
-        </div>
-        <GraphList />
-      </>
+      <div className="w-vw h-vh flex flex-col overflow-x-hidden" id="layout-root">
+        <Layout.Header>
+          {user ? <Layout.HeaderActions.CurrentUserButton user={user} color="darkgreen" /> : <></>}
+        </Layout.Header>
+        <Layout.Section id="popular-scripts" color="green">
+          <h2>Popular Scripts</h2>
+        </Layout.Section>
+        <Layout.Section
+          id="user-scripts"
+          color="pale"
+          after={<QuirkyDivider topColor="#eff2f2" bottomColor="#ffffff" />}
+          flex
+        >
+          <>
+            <h2>Your Scripts</h2>
+            <GraphList />
+          </>
+        </Layout.Section>
+        <hr className="opacity-0 mb-6" />
+        <Layout.Footer />
+        <hr className="opacity-0 mb-6" />
+      </div>
     </ApolloContext>
   )
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
-import { SectionLayout } from '../SectionLayout'
+import { SectionInnerLayout as SectionBody } from '../SectionLayout'
 import { FooterSection } from './components'
 import { FooterLink } from './types'
 
@@ -25,7 +25,7 @@ export const FooterLayout = (): React.ReactElement => {
 
   return (
     <>
-      <SectionLayout>
+      <SectionBody>
         <footer>
           <div className="w-full flex flex-col justify-start items-start">
             <FooterSection title="NodePen" links={mainLinks} />
@@ -49,7 +49,7 @@ export const FooterLayout = (): React.ReactElement => {
             </Link>
           </div>
         </footer>
-      </SectionLayout>
+      </SectionBody>
       <style jsx>{`
         footer {
           display: grid;

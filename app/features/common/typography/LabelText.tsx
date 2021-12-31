@@ -22,7 +22,9 @@ export const LabelText = ({
   return (
     <div className={`${justify === 'start' ? 'justify-start' : 'justify-end'} w-full flex items-center`}>
       <label
-        className={`${colorClass} ${textHeight} ${lineHeight} ${select ? '' : 'select-none'} font-sans font-medium`}
+        className={`${colorClass} ${textHeight} ${lineHeight} ${
+          select ? '' : 'select-none pointer-events-none'
+        } font-sans font-medium`}
       >
         {children}
       </label>

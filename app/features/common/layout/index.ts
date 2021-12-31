@@ -1,4 +1,6 @@
 export { FooterLayout as Footer } from './FooterLayout'
 export { HeaderLayout as Header } from './Header'
+export { Actions as HeaderActions } from './Header'
 export { ModalLayout as Modal } from './ModalLayout'
-export { SectionLayout as Section } from './SectionLayout'
+export { SectionOuterLayout as Section } from './SectionLayout'
+export { SectionInnerLayout as SectionBody } from './SectionLayout'

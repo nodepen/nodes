@@ -25,17 +25,17 @@ const HomePageLanding: NextPage = () => {
         </>
       </Layout.Header>
       <div className="w-full pt-4 flex flex-col justify-end bg-green overflow-hidden">
-        <Layout.Section>
+        <Layout.SectionBody>
           <div className="w-full h-48 bg-swampgreen">
             <img src="/nodepen-brand-green.svg" width="128" />
           </div>
-        </Layout.Section>
+        </Layout.SectionBody>
         <QuirkyDivider topColor="#98E2C6" bottomColor="#eff2f2" />
       </div>
       <div className="w-full pt-12 flex flex-col justify-end bg-pale overflow-hidden">
-        <Layout.Section>
+        <Layout.SectionBody>
           <div className="w-full h-128 bg-swampgreen" />
-        </Layout.Section>
+        </Layout.SectionBody>
         <QuirkyDivider topColor="#eff2f2" bottomColor="#ffffff" />
       </div>
       <div className="w-full pt-4 pb-2 bg-white">

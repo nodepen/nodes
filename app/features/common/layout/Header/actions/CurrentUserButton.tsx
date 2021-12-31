@@ -5,14 +5,19 @@ import { Popover } from 'features/common/popover'
 
 type CurrentUserButtonProps = {
   user: firebase.User
+  color: 'dark' | 'darkgreen'
 }
 
-const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement => {
+const CurrentUserButton = ({ user, color }: CurrentUserButtonProps): React.ReactElement => {
   const { displayName, photoURL } = user
+
+  const borderColor = color === 'dark' ? 'border-dark' : 'border-darkgreen'
+  const hoverColor = color === 'dark' ? 'hover:bg-green' : 'hover:bg-swampgreen'
+  const fillColor = color === 'dark' ? '#333333' : '#093824'
 
   const icon = (
     <div className="w-full h-full flex items-center justify-center">
-      <svg className="w-4 h-4" fill="#333333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+      <svg className="w-4 h-4" fill={fillColor} viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
       </svg>
     </div>
@@ -40,7 +45,7 @@ const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement
     <>
       <button
         ref={buttonRef}
-        className="h-6 w-6 rounded-sm border-2 border-dark bg-white overflow-hidden hover:bg-green"
+        className={`${borderColor} ${hoverColor} h-6 w-6 rounded-sm border-2 overflow-hidden`}
         onClick={handleShowPopover}
       >
         {icon}

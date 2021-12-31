@@ -1,7 +1,6 @@
 import React from 'react'
 import { firebase } from 'features/common/context/session/auth'
 import {
-  CurrentUserButton,
   DownloadButton,
   SaveButton,
   ShareButton,
@@ -11,15 +10,13 @@ import {
   SolutionStatus,
 } from './actions'
 import { useSessionManager } from 'features/common/context/session'
+import { Layout } from 'features/common'
 
 type HeaderActionsProps = {
-  graph: {
-    id: string
-  }
   user?: firebase.User
 }
 
-export const HeaderActions = ({ graph, user }: HeaderActionsProps): React.ReactElement => {
+export const HeaderActions = ({ user }: HeaderActionsProps): React.ReactElement => {
   const { device } = useSessionManager()
 
   switch (device.breakpoint) {
@@ -46,7 +43,7 @@ export const HeaderActions = ({ graph, user }: HeaderActionsProps): React.ReactE
           <SaveButton />
           <DownloadButton />
           <ShareButton />
-          <CurrentUserButton user={user} />
+          <Layout.HeaderActions.CurrentUserButton user={user} color="dark" />
         </>
       ) : (
         <>

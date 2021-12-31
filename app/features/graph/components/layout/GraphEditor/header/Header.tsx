@@ -1,4 +1,3 @@
-import { useGraphId } from '@/features/graph/store/graph/hooks'
 import React from 'react'
 import { useSessionManager } from 'features/common/context/session'
 import { HeaderActions } from './HeaderActions'
@@ -7,9 +6,6 @@ import { HeaderTitle } from './HeaderTitle'
 const Header = (): React.ReactElement => {
   const { user: currentUser } = useSessionManager()
 
-  const graphId = useGraphId()
-
-  const graph = { id: graphId }
   const user = currentUser && !currentUser.isAnonymous ? currentUser : undefined
 
   return (
@@ -27,7 +23,7 @@ const Header = (): React.ReactElement => {
       </a>
       <div className="flex-grow h-full p-1 pr-2 pl-0 flex justify-end items-center">
         <HeaderTitle />
-        <HeaderActions graph={graph} user={user} />
+        <HeaderActions user={user} />
       </div>
     </div>
   )

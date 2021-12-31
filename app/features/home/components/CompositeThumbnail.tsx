@@ -27,8 +27,8 @@ export const CompositeThumbnail = ({ imageSrc, videoSrc }: CompositeThumbnailPro
         src={videoSrc}
         ref={videoRef}
         className={`${
-          showVideo ? 'opacity-100' : 'opacity-0'
-        } absolute object-cover left-0 top-0 z-20 transition-opacity duration-150 ease-out`}
+          showVideo ? 'opacity-100' : 'opacity-0 transition-opacity duration-150 ease-out'
+        } absolute object-cover left-0 top-0 z-20`}
         autoPlay
         loop
       />

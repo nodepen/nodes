@@ -1,0 +1,1 @@
+export { getBackgroundColor } from './getBackgroundColor'
