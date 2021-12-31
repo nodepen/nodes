@@ -7,6 +7,7 @@ import {
   ShareButton,
   SignInButton,
   SignUpButton,
+  SmallDeviceButton,
   SolutionStatus,
 } from './actions'
 import { useSessionManager } from 'features/common/context/session'
@@ -23,10 +24,18 @@ export const HeaderActions = ({ graph, user }: HeaderActionsProps): React.ReactE
 
   switch (device.breakpoint) {
     case 'sm': {
-      return (
+      return user ? (
         <>
           <SolutionStatus />
-          {/* <CurrentUserButton user={user} /> */}
+          <SaveButton />
+          <SmallDeviceButton user={user} />
+        </>
+      ) : (
+        <>
+          <SolutionStatus />
+          <DownloadButton />
+          <SignInButton />
+          <SignUpButton />
         </>
       )
     }

@@ -7,8 +7,8 @@ import { useRouter } from 'next/router'
 
 type CurrentUserMenuProps = {
   user: {
-    name?: string
-    photoUrl?: string
+    name: string | null
+    photoUrl: string | null
   }
 }
 
@@ -33,7 +33,9 @@ export const CurrentUserMenu = ({ user }: CurrentUserMenuProps): React.ReactElem
         <a className="w-full flex items-stretch p-2 rounded-md hover:bg-swampgreen">
           <div className="mr-2 flex flex-col items-center justify-center">
             <div className="w-10 h-10 rounded-full bg-swampgreen">
-              {useImageFallback ? null : <img src={user.photoUrl} onError={() => setUseImageFallback(true)} />}
+              {useImageFallback ? null : (
+                <img src={user.photoUrl ?? undefined} onError={() => setUseImageFallback(true)} alt="" />
+              )}
             </div>
           </div>
           <div className="w-full flex flex-col justify-start pointer-events-none">
@@ -41,7 +43,7 @@ export const CurrentUserMenu = ({ user }: CurrentUserMenuProps): React.ReactElem
               Currently signed in as
             </Typography.Label>
             <Typography.Label color="darkgreen" size="md">
-              {user.name}
+              {user.name ?? 'User'}
             </Typography.Label>
           </div>
         </a>

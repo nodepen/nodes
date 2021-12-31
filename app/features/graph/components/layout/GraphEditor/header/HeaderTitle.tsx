@@ -15,7 +15,9 @@ export const HeaderTitle = (): React.ReactElement => {
   const editButtonRef = useRef<HTMLButtonElement>(null)
   const editButtonPosition = useRef<[number, number]>([0, 0])
 
-  const graphNameLabel = name.length > 50 ? `${name.substring(0, 45)}...` : name
+  const graphNameCharacterLimit = device.breakpoint === 'sm' ? 20 : 50
+  const graphNameLabel =
+    name.length > graphNameCharacterLimit ? `${name.substring(0, graphNameCharacterLimit - 5)}...` : name
 
   const isAuthor = userRecord && author.name === userRecord.username
 
@@ -36,7 +38,7 @@ export const HeaderTitle = (): React.ReactElement => {
           setShowEditMenu(true)
         }}
       >
-        <p className="leading-4 text-sm text-dark font-semibold">{graphNameLabel}</p>
+        <p className="leading-4 text-sm text-dark font-semibold whitespace-nowrap overflow-hidden">{graphNameLabel}</p>
         <svg className="w-4 h-4" fill="#333" viewBox="0 -2 20 20" xmlns="http://www.w3.org/2000/svg">
           <path
             fillRule="evenodd"
@@ -56,33 +58,49 @@ export const HeaderTitle = (): React.ReactElement => {
           </Popover>
         )
       ) : null}
-      <div className="h-6 mr-3 flex items-center justify-start">
-        <svg className="w-5 h-5 mr-1" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-          />
-        </svg>
-        <Link href={`/${author.name}`}>
-          <a className="leading-4 text-xs font-semibold hover:underline">{author.name}</a>
-        </Link>
-      </div>
-      <div className="h-6 flex items-center justify-start">
-        <svg className="w-5 h-5 mr-1" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            strokeWidth={2}
-            d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-          />
-        </svg>
-        <p title={`${stats.views} views`} className="leading-4 text-xs font-semibold select-none">
-          {stats.views}
-        </p>
-      </div>
+      {device.breakpoint === 'sm' ? null : (
+        <>
+          <div className="h-6 mr-3 flex items-center justify-start">
+            <svg
+              className="w-5 h-5 mr-1"
+              fill="none"
+              stroke="#333"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+              />
+            </svg>
+            <Link href={`/${author.name}`}>
+              <a className="leading-4 text-xs font-semibold hover:underline">{author.name}</a>
+            </Link>
+          </div>
+          <div className="h-6 flex items-center justify-start">
+            <svg
+              className="w-5 h-5 mr-1"
+              fill="none"
+              stroke="#333"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+              />
+            </svg>
+            <p title={`${stats.views} views`} className="leading-4 text-xs font-semibold select-none">
+              {stats.views}
+            </p>
+          </div>
+        </>
+      )}
     </div>
   )
 }

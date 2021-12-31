@@ -1,6 +1,5 @@
 import React, { useRef, useState } from 'react'
 import { firebase } from 'features/common/context/session/auth'
-import { Layout } from 'features/common'
 import { CurrentUserMenu } from '../menus'
 import { Popover } from 'features/common/popover'
 
@@ -9,7 +8,7 @@ type CurrentUserButtonProps = {
 }
 
 const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement => {
-  const { displayName, photoURL, isAnonymous } = user
+  const { displayName, photoURL } = user
 
   const icon = (
     <div className="w-full h-full flex items-center justify-center">
@@ -48,7 +47,7 @@ const CurrentUserButton = ({ user }: CurrentUserButtonProps): React.ReactElement
       </button>
       {showPopover ? (
         <Popover position={popoverPosition.current} anchor="TR" onClose={() => setShowPopover(false)}>
-          <CurrentUserMenu user={{ name: user?.displayName, photoUrl: user.photoURL }} />
+          <CurrentUserMenu user={{ name: displayName, photoUrl: photoURL }} />
         </Popover>
       ) : null}
     </>
