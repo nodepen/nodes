@@ -1,3 +1,4 @@
+export { ColumnsLayout as Columns } from './ColumnsLayout'
 export { FooterLayout as Footer } from './FooterLayout'
 export { HeaderLayout as Header } from './Header'
 export { Actions as HeaderActions } from './Header'
