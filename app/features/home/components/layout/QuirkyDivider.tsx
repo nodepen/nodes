@@ -24,7 +24,7 @@ export const QuirkyDivider = ({ topColor, bottomColor, size, animate }: QuirkyDi
 
     const { width: w } = dividerRef.current.getBoundingClientRect()
 
-    setCount(Math.round(w / s) * 20)
+    setCount(Math.round(w / s))
   }
 
   useEffect(() => {
@@ -43,6 +43,7 @@ export const QuirkyDivider = ({ topColor, bottomColor, size, animate }: QuirkyDi
     <div
       className={`w-full whitespace-nowrap overflow-visible`}
       style={{ height: s + 8, transform: `translate(${-s}px, ${s / 4}px)` }}
+      ref={dividerRef}
     >
       <div className={`${animate ? 'marcher' : ''} z-20`} style={{ width: '200%', height: s / 2 }}>
         {Array(count)

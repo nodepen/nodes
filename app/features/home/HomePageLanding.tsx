@@ -8,54 +8,27 @@ import { QuirkyDivider } from './components/layout'
  * Home page for unauthenticated visits.
  */
 const HomePageLanding: NextPage = () => {
-  const containerRef = useRef<HTMLDivElement>(null)
-  const [showHeader, setShowHeader] = useState(false)
-
   return (
-    <div
-      ref={containerRef}
-      className="w-vw h-vh overflow-x-hidden"
-      onScroll={(e) => {
-        const el = containerRef.current
-
-        if (!el) {
-          return
-        }
-
-        const position = el.scrollTop
-
-        if (position < 48) {
-          setShowHeader(false)
-          return
-        }
-
-        if (position > 48 && !showHeader) {
-          setShowHeader(true)
-        }
-      }}
-    >
-      <div className="w-full h-10 bg-green z-50 sticky top-0">
-        <div
-          className="w-full transition-all duration-300 ease-out"
-          style={{ transform: showHeader ? 'translateY(0px)' : 'translateY(-48px)' }}
-        >
-          <Layout.Header>
-            <>
-              <Link href="/signin">
-                <a className="h-6 mr-2 pl-2 pr-2 rounded-sm flex items-center leading-5 text-darkgreen font-semibold text-xs hover:bg-swampgreen">
-                  SIGN IN
-                </a>
-              </Link>
-              <Link href="/signup">
-                <a className="h-6 pl-2 pr-2 rounded-sm bg-darkgreen flex items-center leading-5 text-white font-semibold text-xs hover:text-swampgreen">
-                  SIGN UP
-                </a>
-              </Link>
-            </>
-          </Layout.Header>
-        </div>
-      </div>
-      <Layout.Section color="green" after={<QuirkyDivider topColor="#98E2C6" bottomColor="#eff2f2" />}>
+    <div className="w-vw h-vh overflow-x-hidden">
+      <Layout.Header>
+        <>
+          <Link href="/signin">
+            <a className="h-6 mr-2 pl-2 pr-2 rounded-sm flex items-center leading-5 text-darkgreen font-semibold text-xs hover:bg-swampgreen">
+              SIGN IN
+            </a>
+          </Link>
+          <Link href="/signup">
+            <a className="h-6 pl-2 pr-2 rounded-sm bg-darkgreen flex items-center leading-5 text-white font-semibold text-xs hover:text-swampgreen">
+              SIGN UP
+            </a>
+          </Link>
+        </>
+      </Layout.Header>
+      <Layout.Section
+        color="green"
+        before={<hr className="pt-6 opacity-0 bg-green" />}
+        after={<QuirkyDivider topColor="#98E2C6" bottomColor="#eff2f2" />}
+      >
         <Layout.Columns>
           <div className="w-full flex flex-col items-start">
             <img src="/nodepen-brand-green.svg" width="300" className="mb-2" />
