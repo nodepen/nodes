@@ -43,7 +43,7 @@ export const useVisibleGeometry = <T extends 'circle' | 'curve' | 'point' | 'lin
         break
       }
     }
-  }, [phase, visibility])
+  }, [phase, visibility, values])
 
   // const visibleTypes: NodePen.SolutionValueType[] = useMemo(() => ['point', 'line'], [])
 

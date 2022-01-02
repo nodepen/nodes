@@ -89,10 +89,8 @@ export const SolutionManager = ({ children, initialSolution }: SolutionManagerPr
         return res.json()
       })
       .then((res) => {
-        console.log(res)
-
         if (meta.id) {
-          // User has scheduled a solution before download cmpleted, do nothing
+          // User has scheduled a solution before download completed, do nothing
           return
         }
 
@@ -114,6 +112,9 @@ export const SolutionManager = ({ children, initialSolution }: SolutionManagerPr
         }
 
         tryApplySolutionValues({ solutionId: 'initial', values: data })
+      })
+      .catch((err) => {
+        console.log(err)
       })
   }, [])
 

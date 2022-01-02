@@ -68,6 +68,7 @@ export const solutionSlice = createSlice({
       state.meta.phase = 'idle'
 
       if (!values || values.length === 0) {
+        console.log('No values!')
         return
       }
 
@@ -85,7 +86,7 @@ export const solutionSlice = createSlice({
         state.values[elementId][parameterId] = tree
       }
 
-      // console.log({ tree: JSON.parse(JSON.stringify(state.values)) })
+      // console.log({ loaded: JSON.parse(JSON.stringify(state.values)) })
     },
   },
 })
