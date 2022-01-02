@@ -1,8 +1,9 @@
-import React, { useRef, useState } from 'react'
+import React from 'react'
 import Link from 'next/link'
 import { NextPage } from 'next'
 import { Layout } from 'features/common'
 import { QuirkyDivider } from './components/layout'
+import { LandingSection } from './components'
 
 /**
  * Home page for unauthenticated visits.
@@ -66,7 +67,9 @@ const HomePageLanding: NextPage = () => {
         before={<hr className="mt-6 opacity-0" />}
         after={<QuirkyDivider topColor="#eff2f2" bottomColor="#ffffff" />}
       >
-        <div className="w-full h-128" />
+        <div className="w-full pt-12 h-128">
+          <LandingSection content={{} as any} />
+        </div>
       </Layout.Section>
       <div className="w-full pt-4 pb-2 bg-white">
         <Layout.Footer />
