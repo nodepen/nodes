@@ -4,30 +4,48 @@ import { LandingSectionContent } from '../types'
 
 type LandingSectionProps = {
   content: LandingSectionContent
-  shape: 'circle' | 'square' | 'triangle' | 'plus'
 }
 
-export const LandingSection = ({ content, shape }: LandingSectionProps): React.ReactElement => {
-  const { title, copy, icon, graphic } = content
+export const LandingSection = ({ content }: LandingSectionProps): React.ReactElement => {
+  const { title, copy, icon, graphic, shape } = content
 
-  const GRID_COUNT = 100
+  const GRID_COUNT = 50
+  const GRID_SPEED = 25 + Math.random() * 10
 
   const shapes: { [key in typeof shape]: JSX.Element } = {
     circle: <circle cx="5" cy="5" r="5" fill="white" />,
-    square: <></>,
-    triangle: <></>,
-    plus: <></>,
+    square: (
+      <rect
+        x="1"
+        y="1"
+        width="8"
+        height="8"
+        rx="0.5"
+        ry="0.5"
+        fill="white"
+        style={{ transformOrigin: '50% 50%', transform: 'rotate(33deg)' }}
+      />
+    ),
+    plus: (
+      <g style={{ transformOrigin: '50% 50%', transform: 'rotate(-20deg)' }}>
+        <line x1="5" y1="1" x2="5" y2="9" stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+        <line x1="1" y1="5" x2="9" y2="5" stroke="white" strokeWidth={2.5} strokeLinecap="round" />
+      </g>
+    ),
+    triangle: (
+      <polygon points="0,1 10,1 5,10" fill="white" style={{ transformOrigin: '50% 50%', transform: 'rotate(-9deg)' }} />
+    ),
   }
 
   const backgroundGraphic = (
-    <svg width="300" height="300" viewBox="0 0 10 10" className="overflow-visible mask">
+    <svg width="300" height="300" viewBox="0 0 10 10" className="overflow-visible">
       <defs>
-        <mask id="mask" maskUnits="userSpaceOnUse">
-          <rect x="-1" y="-1" width="12" height="12" fill="black" />
+        <mask id={`mask-${shape}`} maskUnits="userSpaceOnUse">
+          <rect x="-10" y="-10" width="30" height="30" fill="black" />
           {shapes[shape]}
         </mask>
       </defs>
-      <g mask="url(#mask)">
+      <g mask={`url(#mask-${shape})`}>
         {Array(GRID_COUNT)
           .fill('')
           .map((_, n) => {
@@ -72,13 +90,13 @@ export const LandingSection = ({ content, shape }: LandingSectionProps): React.R
             transform: translate(0px, 0px);
           }
           to {
-            transform: translate(6px, -6px);
+            transform: translate(12px, -12px);
           }
         }
 
         .grid {
           animation-name: march;
-          animation-duration: 15s;
+          animation-duration: ${GRID_SPEED}s;
           animation-timing-function: linear;
           animation-iteration-count: infinite;
         }
@@ -87,39 +105,30 @@ export const LandingSection = ({ content, shape }: LandingSectionProps): React.R
   )
 
   return (
-    <div className="relative w-full">
-      <div className="absolute left-0 top-0 w-full z-10">
-        <div className="w-full flex flex-col">
-          <div className="w-full mb-1 flex items-center justify-start">
-            <div className="w-12 h-12 flex items-center justify-center">
-              <svg className="w-8 h-8" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={3}
-                  vectorEffect="non-scaling-stroke"
-                  d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"
-                />
-              </svg>
+    <div className="w-full mb-48 h-48">
+      <div className="relative w-full">
+        <div className="absolute left-0 top-0 w-full z-10">
+          <div className="w-full flex flex-col">
+            <div className="w-full mb-1 flex items-center justify-start">
+              <div className="w-12 h-12 mr-2 flex items-center justify-center" style={{ minWidth: 48 }}>
+                {icon}
+              </div>
+              <h3 className="text-2xl font-semibold text-dark">{title}</h3>
             </div>
-            <h3 className="text-2xl font-semibold text-dark">Test Title Here</h3>
           </div>
+          <Layout.Columns>
+            <div className="w-full pl-14">
+              <p className="text-lg font-medium text-dark">{copy}</p>
+            </div>
+            <div className="w-full">{graphic}</div>
+          </Layout.Columns>
         </div>
-        <Layout.Columns>
-          <div className="w-full pl-12">
-            <p className="text-lg font-medium text-dark">
-              NodePen is a platform for creating, sharing, and exploring Grasshopper scripts online. Try something out,
-              learn something new, and share it with the world — all from the comfort of your favorite web browser.
-            </p>
-          </div>
-          <div id="section-graphic" className="w-full" />
-        </Layout.Columns>
-      </div>
-      <div
-        className="absolute left-0 top-0 rounded-md z-0"
-        style={{ width: 300, height: 300, transform: `translate(calc(-50% + 24px), calc(-25% + 24px))` }}
-      >
-        {backgroundGraphic}
+        <div
+          className="absolute left-0 top-0 rounded-md z-0"
+          style={{ width: 300, height: 300, transform: `translate(calc(-50% + 24px), calc(-25% + 24px))` }}
+        >
+          {backgroundGraphic}
+        </div>
       </div>
     </div>
   )
