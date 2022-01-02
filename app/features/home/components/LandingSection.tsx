@@ -4,10 +4,87 @@ import { LandingSectionContent } from '../types'
 
 type LandingSectionProps = {
   content: LandingSectionContent
+  shape: 'circle' | 'square' | 'triangle' | 'plus'
 }
 
-export const LandingSection = ({ content }: LandingSectionProps): React.ReactElement => {
-  const { title, copy, icon, backgroundGraphic, featureGraphic } = content
+export const LandingSection = ({ content, shape }: LandingSectionProps): React.ReactElement => {
+  const { title, copy, icon, graphic } = content
+
+  const GRID_COUNT = 100
+
+  const shapes: { [key in typeof shape]: JSX.Element } = {
+    circle: <circle cx="5" cy="5" r="5" fill="white" />,
+    square: <></>,
+    triangle: <></>,
+    plus: <></>,
+  }
+
+  const backgroundGraphic = (
+    <svg width="300" height="300" viewBox="0 0 10 10" className="overflow-visible mask">
+      <defs>
+        <mask id="mask" maskUnits="userSpaceOnUse">
+          <rect x="-1" y="-1" width="12" height="12" fill="black" />
+          {shapes[shape]}
+        </mask>
+      </defs>
+      <g mask="url(#mask)">
+        {Array(GRID_COUNT)
+          .fill('')
+          .map((_, n) => {
+            const pct = n / GRID_COUNT
+
+            const min = -15
+            const max = 25
+
+            const w = max - min
+
+            const i = pct * w + min
+
+            return (
+              <>
+                <line
+                  className="grid"
+                  x1={i}
+                  y1={min}
+                  x2={i}
+                  y2={max}
+                  stroke="#98E2C6"
+                  strokeWidth={1}
+                  vectorEffect="non-scaling-stroke"
+                />
+                <line
+                  className="grid"
+                  x1={min}
+                  y1={i}
+                  x2={max}
+                  y2={i}
+                  stroke="#98E2C6"
+                  strokeWidth={1}
+                  vectorEffect="non-scaling-stroke"
+                />
+              </>
+            )
+          })}
+      </g>
+      <style jsx>{`
+        @keyframes march {
+          from {
+            transform: translate(0px, 0px);
+          }
+          to {
+            transform: translate(6px, -6px);
+          }
+        }
+
+        .grid {
+          animation-name: march;
+          animation-duration: 15s;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+      `}</style>
+    </svg>
+  )
 
   return (
     <div className="relative w-full">
@@ -39,9 +116,11 @@ export const LandingSection = ({ content }: LandingSectionProps): React.ReactEle
         </Layout.Columns>
       </div>
       <div
-        className="absolute left-0 top-0 rounded-md bg-swampgreen z-0"
+        className="absolute left-0 top-0 rounded-md z-0"
         style={{ width: 300, height: 300, transform: `translate(calc(-50% + 24px), calc(-25% + 24px))` }}
-      ></div>
+      >
+        {backgroundGraphic}
+      </div>
     </div>
   )
 }
