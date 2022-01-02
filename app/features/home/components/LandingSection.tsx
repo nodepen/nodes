@@ -37,73 +37,6 @@ export const LandingSection = ({ content }: LandingSectionProps): React.ReactEle
     ),
   }
 
-  const backgroundGraphic = (
-    <svg width="300" height="300" viewBox="0 0 10 10" className="overflow-visible">
-      <defs>
-        <mask id={`mask-${shape}`} maskUnits="userSpaceOnUse">
-          <rect x="-10" y="-10" width="30" height="30" fill="black" />
-          {shapes[shape]}
-        </mask>
-      </defs>
-      <g mask={`url(#mask-${shape})`}>
-        {Array(GRID_COUNT)
-          .fill('')
-          .map((_, n) => {
-            const pct = n / GRID_COUNT
-
-            const min = -15
-            const max = 25
-
-            const w = max - min
-
-            const i = pct * w + min
-
-            return (
-              <>
-                <line
-                  className="grid"
-                  x1={i}
-                  y1={min}
-                  x2={i}
-                  y2={max}
-                  stroke="#98E2C6"
-                  strokeWidth={1}
-                  vectorEffect="non-scaling-stroke"
-                />
-                <line
-                  className="grid"
-                  x1={min}
-                  y1={i}
-                  x2={max}
-                  y2={i}
-                  stroke="#98E2C6"
-                  strokeWidth={1}
-                  vectorEffect="non-scaling-stroke"
-                />
-              </>
-            )
-          })}
-      </g>
-      <style jsx>{`
-        @keyframes march {
-          from {
-            transform: translate(0px, 0px);
-          }
-          to {
-            transform: translate(12px, -12px);
-          }
-        }
-
-        .grid {
-          animation-name: march;
-          animation-duration: ${GRID_SPEED}s;
-          animation-timing-function: linear;
-          animation-iteration-count: infinite;
-        }
-      `}</style>
-    </svg>
-  )
-
   return (
     <div className="w-full mb-48 h-48">
       <div className="relative w-full">
@@ -121,7 +54,7 @@ export const LandingSection = ({ content }: LandingSectionProps): React.ReactEle
               <p className="text-lg font-medium text-dark">{copy}</p>
             </div>
             <div className="w-full">
-              <img src={graphic} />
+              <img src={graphic} alt="" />
             </div>
           </Layout.Columns>
         </div>
@@ -129,9 +62,72 @@ export const LandingSection = ({ content }: LandingSectionProps): React.ReactEle
           className="absolute left-0 top-0 rounded-md z-0"
           style={{ width: 300, height: 300, transform: `translate(calc(-50% + 24px), calc(-25% + 24px))` }}
         >
-          {backgroundGraphic}
+          <svg width="300" height="300" viewBox="0 0 10 10" className="overflow-visible">
+            <defs>
+              <mask id={`mask-${shape}`} maskUnits="userSpaceOnUse">
+                <rect x="-10" y="-10" width="30" height="30" fill="black" />
+                {shapes[shape]}
+              </mask>
+            </defs>
+            <g mask={`url(#mask-${shape})`}>
+              {Array(GRID_COUNT)
+                .fill('')
+                .map((_, n) => {
+                  const pct = n / GRID_COUNT
+
+                  const min = -15
+                  const max = 25
+
+                  const w = max - min
+
+                  const i = pct * w + min
+
+                  return (
+                    <g key={`grid-lines-${n}`}>
+                      <line
+                        className="grid"
+                        x1={i}
+                        y1={min}
+                        x2={i}
+                        y2={max}
+                        stroke="#98E2C6"
+                        strokeWidth={1}
+                        vectorEffect="non-scaling-stroke"
+                      />
+                      <line
+                        className="grid"
+                        x1={min}
+                        y1={i}
+                        x2={max}
+                        y2={i}
+                        stroke="#98E2C6"
+                        strokeWidth={1}
+                        vectorEffect="non-scaling-stroke"
+                      />
+                    </g>
+                  )
+                })}
+            </g>
+          </svg>
         </div>
       </div>
+      <style jsx>{`
+        @keyframes march {
+          from {
+            transform: translate(0px, 0px);
+          }
+          to {
+            transform: translate(12px, -12px);
+          }
+        }
+
+        .grid {
+          animation-name: march;
+          animation-duration: ${GRID_SPEED}s;
+          animation-timing-function: linear;
+          animation-iteration-count: infinite;
+        }
+      `}</style>
     </div>
   )
 }
