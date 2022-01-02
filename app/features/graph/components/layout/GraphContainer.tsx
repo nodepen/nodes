@@ -8,7 +8,6 @@ import {
   SpaceBarObserver,
   VisibilityObserver,
 } from '../observer'
-import { LockedSolverMask } from '../overlay'
 import { useSceneDisplayMode } from '../../store/scene/hooks'
 
 export const GraphContainer = (): React.ReactElement => {
@@ -27,7 +26,6 @@ export const GraphContainer = (): React.ReactElement => {
         <div className="absolute w-full h-full left-0 top-0 z-0">
           <div className="w-full h-full flex flex-col justify-start overflow-hidden">
             <Layout.Controls />
-            <LockedSolverMask />
             <div
               className="w-full flex-grow relative bg-pale"
               style={{ WebkitUserSelect: 'none' }}

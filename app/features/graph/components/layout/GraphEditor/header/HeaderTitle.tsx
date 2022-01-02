@@ -25,7 +25,9 @@ export const HeaderTitle = (): React.ReactElement => {
     <div className="h-full flex flex-grow items-center justify-start">
       <button
         ref={editButtonRef}
-        className={`${isAuthor ? 'hover:bg-green' : ''} h-6 pl-2 pr-1 mr-2 flex items-center justify-start rounded-sm`}
+        className={`${
+          isAuthor ? 'hover:bg-green' : 'hover:cursor-default'
+        } h-6 pl-2 pr-1 mr-2 flex items-center justify-start rounded-sm`}
         disabled={!isAuthor}
         onClick={() => {
           if (!editButtonRef.current) {

@@ -5,6 +5,7 @@ import { ComponentLibraryIcon } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { useSceneDispatch, useSceneDisplayMode } from '@/features/graph/store/scene/hooks'
 import { useRouter } from 'next/router'
+import { LockedSolverMask } from '../../overlay'
 
 export const GraphControls = (): React.ReactElement => {
   const router = useRouter()
@@ -85,27 +86,6 @@ export const GraphControls = (): React.ReactElement => {
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
       >
         <div className="w-full h-full overflow-auto no-scrollbar">
-          <button className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen">
-            <div className="w-12 h-12 flex justify-center items-center">
-              <svg
-                className="w-6 h-6"
-                fill="none"
-                stroke="#093824"
-                viewBox="0 0 24 24"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                />
-              </svg>
-            </div>
-            <div className="flex-grow h-full flex justify-start items-center">
-              <p className="font-sans font-bold text-sm select-none mr-2">FILE</p>
-            </div>
-          </button>
           <button
             className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen"
             onClick={handleShowModel}
@@ -377,6 +357,7 @@ export const GraphControls = (): React.ReactElement => {
           ) : null}
         </div>
       </div>
+      <LockedSolverMask dx={sidebarIsOpen ? sidebarWidth : 0} />
     </div>
   )
 }
