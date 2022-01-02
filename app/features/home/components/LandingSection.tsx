@@ -120,7 +120,9 @@ export const LandingSection = ({ content }: LandingSectionProps): React.ReactEle
             <div className="w-full pl-14">
               <p className="text-lg font-medium text-dark">{copy}</p>
             </div>
-            <div className="w-full">{graphic}</div>
+            <div className="w-full">
+              <img src={graphic} />
+            </div>
           </Layout.Columns>
         </div>
         <div

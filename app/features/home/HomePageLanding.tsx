@@ -26,7 +26,7 @@ const HomePageLanding: NextPage = () => {
         </svg>
       ),
       shape: 'circle',
-      graphic: <svg></svg>,
+      graphic: 'graphics/landing-01.svg',
     },
     {
       title: 'View Geometric Results',
@@ -43,7 +43,7 @@ const HomePageLanding: NextPage = () => {
         </svg>
       ),
       shape: 'square',
-      graphic: <svg></svg>,
+      graphic: 'graphics/landing-02.svg',
     },
     {
       title: 'Share With the World',
@@ -60,7 +60,7 @@ const HomePageLanding: NextPage = () => {
         </svg>
       ),
       shape: 'plus',
-      graphic: <svg></svg>,
+      graphic: 'graphics/landing-03.svg',
     },
     {
       title: 'Download For Later',
@@ -77,7 +77,7 @@ const HomePageLanding: NextPage = () => {
         </svg>
       ),
       shape: 'triangle',
-      graphic: <svg></svg>,
+      graphic: 'graphics/landing-04.svg',
     },
   ]
 
