@@ -2,8 +2,11 @@ import React from 'react'
 import { NodePen } from 'glib'
 import { gql, useQuery } from '@apollo/client'
 import { GraphCard } from '@/features/common/gallery'
+import { useSessionManager } from '@/features/common/context/session'
 
 const DashboardFeaturedGraphs = (): React.ReactElement => {
+  const { token } = useSessionManager()
+
   const { data, error } = useQuery(
     gql`
       query DashboardPopularGraphs {
@@ -22,7 +25,10 @@ const DashboardFeaturedGraphs = (): React.ReactElement => {
           }
         }
       }
-    `
+    `,
+    {
+      skip: !token,
+    }
   )
 
   if (error) {

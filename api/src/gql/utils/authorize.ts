@@ -52,6 +52,7 @@ export const authorize = async <T extends ResourceType>(
         .doc(resource.id)
       const graphDoc = await graphRef.get()
 
+      // Handle cases where the requested resource does not exist
       if (!graphDoc.exists) {
         switch (resource.action) {
           case 'edit':
@@ -67,6 +68,7 @@ export const authorize = async <T extends ResourceType>(
         }
       }
 
+      // Handle cases where the requested resource does exist
       const record = graphDoc.data() as NodePen.GraphManifest
 
       const isAuthor = user?.id && user?.id === record?.author?.id
@@ -82,7 +84,7 @@ export const authorize = async <T extends ResourceType>(
           // Only authors may edit, execute, or delete their graphs
           if (!isAuthor) {
             throw new AuthenticationError(
-              'Not authorized to delete the given resource.'
+              `Not authorized to ${resource.action} the given resource.`
             )
           }
 
