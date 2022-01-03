@@ -25,9 +25,13 @@ export const Popover = ({ position, anchor, onClose, children }: PopoverProps): 
         >
           <div
             className="absolute"
+            id="popover-container"
             style={{ left: anchor === 'TL' ? left : 0, top, width: anchor === 'TL' ? undefined : left }}
           >
-            <div className={`${anchor === 'TL' ? 'justify-start' : 'justify-end'} w-full flex items-start dropper`}>
+            <div
+              id="popover-container"
+              className={`${anchor === 'TL' ? 'justify-start' : 'justify-end'} w-full flex items-start dropper`}
+            >
               {children}
             </div>
           </div>
@@ -47,6 +51,10 @@ export const Popover = ({ position, anchor, onClose, children }: PopoverProps): 
             animation-duration: 250ms;
             animation-timing-function: ease-out;
             animation-fill-mode: forwards;
+          }
+
+          .dropper:first-child() {
+            pointer-events: auto;
           }
         `}</style>
       </>
