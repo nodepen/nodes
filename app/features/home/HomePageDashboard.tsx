@@ -1,7 +1,7 @@
 import React from 'react'
 import { ApolloContext } from '../common/context/apollo'
 import { useSessionManager } from '../common/context/session'
-import { GraphList } from './components'
+import { DashboardUserGraphs } from './components'
 import { Layout } from 'features/common'
 import { QuirkyDivider } from './components/layout'
 
@@ -28,7 +28,7 @@ const HomePageDashboard = (): React.ReactElement => {
         >
           <>
             <h2>Your Scripts</h2>
-            <GraphList />
+            <DashboardUserGraphs />
           </>
         </Layout.Section>
         <hr className="opacity-0 mb-6" />

@@ -1,6 +1,6 @@
-import GraphList from './GraphList'
+import DashboardUserGraphs from './DashboardUserGraphs'
 
-export { GraphList }
+export { DashboardUserGraphs }
 
 export { LandingFeaturedCards } from './LandingFeaturedCards'
 export { LandingSection } from './LandingSection'

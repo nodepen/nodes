@@ -3,6 +3,7 @@ import { NodePen } from 'glib'
 import { GraphThumbnail } from './GraphThumbnail'
 import Link from 'next/link'
 import { Popover } from '../popover'
+import { Modal } from '../layout'
 
 type GraphCardProps = {
   graph: NodePen.GraphManifest
@@ -10,7 +11,7 @@ type GraphCardProps = {
   onDelete: () => void | Promise<void>
 }
 
-export const GraphCard = ({ graph, orientation }: GraphCardProps): React.ReactElement => {
+export const GraphCard = ({ graph, orientation, onDelete }: GraphCardProps): React.ReactElement => {
   const { id, name, author, files, stats } = graph
 
   const [hover, setHover] = useState(false)
@@ -18,6 +19,8 @@ export const GraphCard = ({ graph, orientation }: GraphCardProps): React.ReactEl
   const [showPopover, setShowPopover] = useState(false)
   const popoverPosition = useRef<[number, number]>([0, 0])
   const buttonRef = useRef<HTMLButtonElement>(null)
+
+  const [showModal, setShowModal] = useState(false)
 
   return (
     <div
@@ -115,7 +118,14 @@ export const GraphCard = ({ graph, orientation }: GraphCardProps): React.ReactEl
           }}
         >
           <div className="p-2 rounded-md bg-green flex flex-col">
-            <button className="hover:bg-swampgreen p-1 pl-2 pr-2 flex items-center rounded-md text-darkgreen font-medium text-lg">
+            <button
+              className="hover:bg-swampgreen p-1 pl-2 pr-2 flex items-center rounded-md text-darkgreen font-medium text-lg"
+              onClick={() => {
+                setShowPopover(false)
+                setShowModal(true)
+                setHover(false)
+              }}
+            >
               <svg
                 className="w-5 h-5 mr-2"
                 fill="none"
@@ -134,6 +144,27 @@ export const GraphCard = ({ graph, orientation }: GraphCardProps): React.ReactEl
             </button>
           </div>
         </Popover>
+      ) : null}
+      {showModal ? (
+        <Modal
+          onClose={() => {
+            setShowModal(false)
+            setHover(false)
+          }}
+        >
+          <>
+            <h1>Are you sure you want to delete {name}?</h1>
+            <button
+              onClick={() => {
+                onDelete()
+                setShowModal(false)
+              }}
+            >
+              YES
+            </button>
+            <button onClick={() => setShowModal(false)}>NO!</button>
+          </>
+        </Modal>
       ) : null}
     </div>
   )
