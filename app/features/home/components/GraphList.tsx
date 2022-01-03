@@ -3,6 +3,7 @@ import { NodePen } from 'glib'
 import { useQuery, gql, useApolloClient } from '@apollo/client'
 import { useSessionManager } from '../../common/context/session'
 import { CompositeThumbnail } from './CompositeThumbnail'
+import { GraphCard } from '@/features/common/gallery'
 import { ModalLayout } from '@/features/common/layout/ModalLayout'
 
 const GraphList = (): React.ReactElement => {
@@ -73,6 +74,21 @@ const GraphList = (): React.ReactElement => {
         console.error(err)
       })
   }
+
+  return (
+    <div className="w-full container">
+      {data?.graphsByAuthor?.map((graph: NodePen.GraphManifest) => (
+        <GraphCard key={`graph-list-card-${graph.id}`} graph={graph} orientation="vertical" />
+      ))}
+      <style jsx>{`
+        .container {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+          grid-gap: 16px;
+        }
+      `}</style>
+    </div>
+  )
 
   return (
     <>
