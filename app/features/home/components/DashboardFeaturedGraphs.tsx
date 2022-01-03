@@ -25,8 +25,6 @@ const DashboardFeaturedGraphs = (): React.ReactElement => {
     `
   )
 
-  console.log({ data })
-
   if (error) {
     console.log(error)
   }
@@ -36,8 +34,11 @@ const DashboardFeaturedGraphs = (): React.ReactElement => {
 
   return (
     <div className="w-full pt-4 mb-4 no-scrollbar whitespace-nowrap overflow-hidden">
-      {visibleCards.map((graph: NodePen.GraphManifest) => (
-        <div key={`featured-graph-list-card-${graph.id}`} className="w-76 mr-4 inline-block whitespace-normal card">
+      {visibleCards.map((graph: NodePen.GraphManifest, i) => (
+        <div
+          key={`featured-graph-list-card-${i}-${graph.id}`}
+          className="w-76 mr-4 inline-block whitespace-normal card"
+        >
           <GraphCard graph={graph} orientation="horizontal" color="green" />
         </div>
       ))}

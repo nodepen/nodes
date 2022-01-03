@@ -6,7 +6,7 @@ import { useSession } from './hooks/useSession'
 
 export const SessionContext = createContext<SessionStore>({
   isAuthenticated: false,
-  device: { iOS: false, breakpoint: 'sm' },
+  device: { iOS: false, breakpoint: 'sm', width: 1920 },
 })
 
 type SessionManagerProps = {
@@ -16,7 +16,7 @@ type SessionManagerProps = {
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
   const { user, userRecord, token } = useAuthentication()
 
-  const { iOS, breakpoint } = useDeviceConfiguration()
+  const { iOS, breakpoint, width } = useDeviceConfiguration()
 
   // const { id, initialize } = useSession(user?.uid)
 
@@ -30,6 +30,7 @@ export const SessionManager = ({ children }: SessionManagerProps): React.ReactEl
     device: {
       breakpoint,
       iOS,
+      width,
     },
   }
 

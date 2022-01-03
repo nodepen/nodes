@@ -9,5 +9,6 @@ export type SessionStore = {
   device: {
     breakpoint: 'sm' | 'md'
     iOS: boolean
+    width: number
   }
 }
