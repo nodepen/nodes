@@ -7,6 +7,7 @@ export const graphsSchema = gql`
   extend type Query {
     graph(graphId: String!): GraphManifest
     graphsByAuthor(author: String!): [GraphManifest]!
+    graphsByPopularity: [GraphManifest]!
   }
 
   extend type Mutation {

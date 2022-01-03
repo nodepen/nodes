@@ -8,6 +8,7 @@ export type Arguments = {
     graphsByAuthor: {
       author: string
     }
+    graphsByPopularity: never
   }
   Mutation: {
     deleteGraph: {
