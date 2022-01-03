@@ -71,6 +71,8 @@ const DashboardUserGraphs = (): React.ReactElement => {
           key={`graph-list-card-${graph.id}`}
           graph={graph}
           orientation="vertical"
+          color="swampgreen"
+          actionable
           onDelete={() => handleDelete(graph.id)}
         />
       ))}

@@ -1,7 +1,7 @@
 import React from 'react'
 import { ApolloContext } from '../common/context/apollo'
 import { useSessionManager } from '../common/context/session'
-import { DashboardUserGraphs } from './components'
+import { DashboardFeaturedGraphs, DashboardUserGraphs } from './components'
 import { Layout } from 'features/common'
 import { QuirkyDivider } from './components/layout'
 
@@ -18,11 +18,15 @@ const HomePageDashboard = (): React.ReactElement => {
           {user ? <Layout.HeaderActions.CurrentUserButton user={user} color="darkgreen" /> : <></>}
         </Layout.Header>
         <Layout.Section id="popular-scripts" color="green">
-          <h2>Popular Scripts</h2>
+          <>
+            <h2>Popular Scripts</h2>
+            <DashboardFeaturedGraphs />
+          </>
         </Layout.Section>
         <Layout.Section
           id="user-scripts"
           color="pale"
+          before={<hr className="mt-8 opacity-0" />}
           after={<QuirkyDivider topColor="#eff2f2" bottomColor="#ffffff" />}
           flex
         >
