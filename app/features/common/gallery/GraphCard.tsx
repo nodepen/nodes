@@ -8,8 +8,9 @@ import { Modal } from '../layout'
 type GraphCardProps = {
   graph: NodePen.GraphManifest
   orientation: 'vertical' | 'horizontal'
-  color: 'green' | 'swampgreen'
+  color: 'green' | 'swampgreen' | 'white'
   actionable?: boolean
+  views?: boolean
   onDelete?: () => void | Promise<void>
 }
 
@@ -18,6 +19,7 @@ export const GraphCard = ({
   orientation,
   color,
   actionable = false,
+  views = true,
   onDelete,
 }: GraphCardProps): React.ReactElement => {
   const { id, name, author, files, stats } = graph
@@ -30,15 +32,33 @@ export const GraphCard = ({
 
   const [showModal, setShowModal] = useState(false)
 
+  const backgroundColors: { [key in typeof color]: string } = {
+    green: 'bg-green',
+    swampgreen: 'bg-swampgreen',
+    white: 'bg-white',
+  }
+
+  const textColors: { [key in typeof color]: string } = {
+    green: 'text-darkgreen',
+    swampgreen: 'text-darkgreen',
+    white: 'text-dark',
+  }
+
+  const graphicColors: { [key in typeof color]: string } = {
+    green: '#093824',
+    swampgreen: '#093824',
+    white: '#333333',
+  }
+
   return (
     <div
-      className={`${
-        color === 'green' ? 'bg-green' : 'bg-swampgreen'
+      className={`${backgroundColors[color]} ${
+        color === 'white' ? 'border-2 border-dark shadow-osm' : ''
       } w-12 h-12 rounded-md relative transition-transform duration-150 ease-out`}
       style={{
         width: '100%',
         paddingBottom: orientation === 'vertical' ? '133%' : '50%',
-        transform: hover ? 'translateY(-3px) scale(102%)' : 'translateY(0px) scale(100%)',
+        transform: hover ? 'translateY(-3px)' : 'translateY(0px)',
       }}
       onPointerEnter={() => {
         setHover(true)
@@ -60,9 +80,10 @@ export const GraphCard = ({
             <div className="w-full pl-1 flex items-start overflow-hidden">
               <Link href={`/${author.name}/gh/${id}`}>
                 <a
-                  className={`${
-                    orientation === 'vertical' ? 'mt-1 text-lg' : 'text-md'
-                  } flex-grow text-darkgreen font-medium  hover:underline`}
+                  className={`${textColors[color]} ${
+                    orientation === 'vertical' ? 'mt-1 text-lg leading-6' : 'text-md'
+                  } flex-grow font-medium hover:underline overflow-hidden`}
+                  style={{ maxHeight: 55, transform: orientation === 'vertical' ? 'translateY(2px)' : '' }}
                 >
                   {name}
                 </a>
@@ -83,7 +104,12 @@ export const GraphCard = ({
                     setShowPopover(true)
                   }}
                 >
-                  <svg className="w-6 h-6" fill="#093824" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                  <svg
+                    className="w-6 h-6"
+                    fill={graphicColors[color]}
+                    viewBox="0 0 20 20"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
                     <path d="M10 6a2 2 0 110-4 2 2 0 010 4zM10 12a2 2 0 110-4 2 2 0 010 4zM10 18a2 2 0 110-4 2 2 0 010 4z" />
                   </svg>
                 </button>
@@ -99,7 +125,7 @@ export const GraphCard = ({
                   <svg
                     className="w-5 h-5 mr-1"
                     fill="none"
-                    stroke="#093824"
+                    stroke={graphicColors[color]}
                     viewBox="0 0 24 24"
                     xmlns="http://www.w3.org/2000/svg"
                   >
@@ -111,32 +137,34 @@ export const GraphCard = ({
                     />
                   </svg>
                   <Link href={`/${author.name}`}>
-                    <a className="mr-2 text-xs text-darkgreen font-semibold hover:underline">{author.name}</a>
+                    <a className={`${textColors[color]} mr-2 text-xs font-semibold hover:underline`}>{author.name}</a>
                   </Link>
                 </div>
-                <div className={`${orientation === 'vertical' ? '' : 'mb-1'} flex items-center`}>
-                  <svg
-                    className="w-5 h-5 mr-1"
-                    fill="none"
-                    stroke="#093824"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
-                    />
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
-                    />
-                  </svg>
-                  <p className="mr-3 text-xs text-darkgreen font-semibold select-none">{stats.views}</p>
-                </div>
+                {views ? (
+                  <div className={`${orientation === 'vertical' ? '' : 'mb-1'} flex items-center`}>
+                    <svg
+                      className="w-5 h-5 mr-1"
+                      fill="none"
+                      stroke={graphicColors[color]}
+                      viewBox="0 0 24 24"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                      />
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"
+                      />
+                    </svg>
+                    <p className={`${textColors[color]} mr-3 text-xs font-semibold select-none`}>{stats.views}</p>
+                  </div>
+                ) : null}
               </div>
             </div>
           </div>
@@ -190,7 +218,7 @@ export const GraphCard = ({
             <h1>Are you sure you want to delete {name}?</h1>
             <button
               onClick={() => {
-                onDelete()
+                onDelete?.()
                 setShowModal(false)
               }}
             >

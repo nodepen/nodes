@@ -116,7 +116,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
   ): Promise<GraphResponse[]> => {
     const db = admin.firestore()
 
-    const query = db.collection('graphs').orderBy('stats.viewsIndex').limit(5)
+    const query = db.collection('graphs').orderBy('stats.viewsIndex').limit(6)
     const queryResults = await query.get()
 
     const hydrationResults = await Promise.allSettled(

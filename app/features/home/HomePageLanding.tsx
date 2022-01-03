@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { NextPage } from 'next'
 import { Layout } from 'features/common'
 import { QuirkyDivider } from './components/layout'
-import { LandingSection, LandingFeaturedCards } from './components'
+import { LandingSection, LandingFeaturedGraphs } from './components'
 import { LandingSectionContent } from './types'
 
 /**
@@ -123,7 +123,7 @@ const HomePageLanding: NextPage = () => {
               </Link>
             </div>
           </div>
-          <LandingFeaturedCards />
+          <LandingFeaturedGraphs />
         </Layout.Columns>
       </Layout.Section>
       <Layout.Section flex color="pale" after={<QuirkyDivider topColor="#eff2f2" bottomColor="#ffffff" />}>

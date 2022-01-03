@@ -5,13 +5,14 @@ import nookies from 'nookies'
 import Head from 'next/head'
 import { HomePageLanding, HomePageDashboard } from '@/features/home'
 import { useSessionManager } from '@/features/common/context/session'
+import { ApolloContext } from '@/features/common/context/apollo'
 
 type HomePageProps = {
   isAuthenticated: boolean
 }
 
 const Home: NextPage<HomePageProps> = ({ isAuthenticated }) => {
-  const { user } = useSessionManager()
+  const { user, token } = useSessionManager()
 
   const showDashboard = isAuthenticated || (user && !user.isAnonymous && user.displayName)
 
@@ -29,7 +30,7 @@ const Home: NextPage<HomePageProps> = ({ isAuthenticated }) => {
         <meta name="keywords" content="grasshopper, grasshopper online, grasshopper 3d" />
         <meta name="theme-color" content="#98E2C6" />
       </Head>
-      {content}
+      <ApolloContext token={token}>{content}</ApolloContext>
     </>
   )
 }

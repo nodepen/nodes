@@ -3,5 +3,5 @@ import DashboardUserGraphs from './DashboardUserGraphs'
 
 export { DashboardFeaturedGraphs, DashboardUserGraphs }
 
-export { LandingFeaturedCards } from './LandingFeaturedCards'
+export { LandingFeaturedGraphs } from './LandingFeaturedGraphs'
 export { LandingSection } from './LandingSection'
