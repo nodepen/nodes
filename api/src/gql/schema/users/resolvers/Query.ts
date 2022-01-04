@@ -82,7 +82,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
     _parent,
     { username },
     { user }
-  ): Promise<UserReference | undefined> => {
+  ): Promise<{ username: string; photoUrl: string }> => {
     const db = admin.firestore()
 
     const userQuery = db
@@ -95,9 +95,13 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       // User does exist, return public reference
       const userRecord = userQueryResult.docs[0]
 
+      const userId = userRecord.id
+
+      const user = await admin.auth().getUser(userId)
+
       return {
         username: userRecord.get('username'),
-        graphs: [],
+        photoUrl: user?.photoURL,
       }
     } else {
       // User does not exist

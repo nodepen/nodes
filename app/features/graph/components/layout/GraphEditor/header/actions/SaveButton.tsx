@@ -131,7 +131,8 @@ const SaveButton = (): React.ReactElement => {
 
         if (!isGraphAuthor) {
           // User has saved their own copy of another user's graph
-          router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined)
+          router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined, { shallow: false })
+          router.reload()
           return
         }
 

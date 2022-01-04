@@ -15,7 +15,7 @@ export const usersSchema = gql`
 
   type UserReference {
     username: String!
-    graphs: [String]!
+    photoUrl: String
   }
 
   type UserRecord {
