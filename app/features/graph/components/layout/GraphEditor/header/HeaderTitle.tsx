@@ -5,9 +5,11 @@ import { useSessionManager } from 'features/common/context/session'
 import { Popover } from '@/features/common/popover'
 import { ModalLayout } from '@/features/common/layout/ModalLayout'
 import { EditGraphMenu } from './menus'
+import { useRouter } from 'next/router'
 
 export const HeaderTitle = (): React.ReactElement => {
-  const { device, userRecord } = useSessionManager()
+  const router = useRouter()
+  const { device, user, userRecord } = useSessionManager()
 
   const { name, author, stats, id } = useGraphManifest()
 
@@ -20,6 +22,9 @@ export const HeaderTitle = (): React.ReactElement => {
     name.length > graphNameCharacterLimit ? `${name.substring(0, graphNameCharacterLimit - 5)}...` : name
 
   const isAuthor = userRecord && author.name === userRecord.username
+  const isNewGraph = router.pathname === '/gh'
+
+  const hideManifestData = isNewGraph && !user
 
   return (
     <div className="h-full flex flex-grow items-center justify-start">
@@ -60,7 +65,7 @@ export const HeaderTitle = (): React.ReactElement => {
           </Popover>
         )
       ) : null}
-      {device.breakpoint === 'sm' ? null : (
+      {device.breakpoint === 'sm' || hideManifestData ? null : (
         <>
           <div className="h-6 mr-3 flex items-center justify-start">
             <svg

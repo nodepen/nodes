@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useSessionManager } from '../common/context/session'
 import { DashboardFeaturedGraphs, DashboardUserGraphs } from './components'
 import { Layout } from 'features/common'
@@ -9,10 +9,28 @@ import Link from 'next/link'
  * Home page for authenticated visits
  */
 const HomePageDashboard = (): React.ReactElement => {
-  const { user, device } = useSessionManager()
+  const { user } = useSessionManager()
+
+  const [width, setWidth] = useState(1920)
+
+  const handleResize = (): void => {
+    setWidth(window.innerWidth)
+  }
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  })
+
+  useEffect(() => {
+    handleResize()
+  }, [])
 
   const PIXEL_PER_SECOND = 13.33
-  const duration = device.width / PIXEL_PER_SECOND
+  const duration = width / PIXEL_PER_SECOND
 
   return (
     <div className="w-vw h-vh flex flex-col overflow-x-hidden" id="layout-root">

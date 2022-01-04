@@ -3,13 +3,11 @@ import { useState, useEffect, useCallback } from 'react'
 type DeviceContext = {
   breakpoint: 'sm' | 'md'
   iOS: boolean
-  width: number
 }
 
 export const useDeviceConfiguration = (): DeviceContext => {
   const [iOS, setIOS] = useState(false)
   const [breakpoint, setBreakpoint] = useState<DeviceContext['breakpoint']>('sm')
-  const [width, setWidth] = useState(1920)
 
   useEffect(() => {
     if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {
@@ -23,8 +21,6 @@ export const useDeviceConfiguration = (): DeviceContext => {
     if (breakpoint !== size) {
       setBreakpoint(size)
     }
-
-    setWidth(window.innerWidth)
   }, [breakpoint])
 
   useEffect(() => {
@@ -40,5 +36,5 @@ export const useDeviceConfiguration = (): DeviceContext => {
     handleResize()
   }, [])
 
-  return { iOS, breakpoint, width }
+  return { iOS, breakpoint }
 }
