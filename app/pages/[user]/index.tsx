@@ -4,6 +4,8 @@ import { NextPage, GetServerSideProps } from 'next'
 import { UserProfile } from '@/features/user-profile'
 import getConfig from 'next/config'
 import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client'
+import { useSessionManager } from '@/features/common/context/session'
+import { ApolloContext } from '@/features/common/context/apollo'
 
 type UserProfilePageProps = {
   username: string
@@ -11,7 +13,13 @@ type UserProfilePageProps = {
 }
 
 const UserProfilePage: NextPage<UserProfilePageProps> = (user) => {
-  return <UserProfile photoUrl={user.photoUrl} />
+  const { token } = useSessionManager()
+
+  return (
+    <ApolloContext token={token}>
+      <UserProfile username={user.username} photoUrl={user.photoUrl} />
+    </ApolloContext>
+  )
 }
 
 const { publicRuntimeConfig } = getConfig()
