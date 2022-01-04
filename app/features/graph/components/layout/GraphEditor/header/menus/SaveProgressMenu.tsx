@@ -37,7 +37,7 @@ export const SaveProgressMenu = ({ progress, message }: SaveProgressMenuProps): 
       </div>
       <div className="w-full pl-1 pr-1 flex items-center justify-between">
         <div className="w-6 h-6 flex items-center justify-center">
-          <div className="w-4 h-4 bg-swampgreen rounded-full" />
+          {/* <div className="w-4 h-4 bg-swampgreen rounded-full" /> */}
         </div>
         <Typography.Label size="sm" color="darkgreen" justify="end">
           {message}

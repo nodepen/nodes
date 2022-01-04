@@ -13,7 +13,7 @@ const HomePageLanding: NextPage = () => {
   const content: LandingSectionContent[] = [
     {
       title: 'Create Grasshopper Scripts (Literally)',
-      copy: 'NodePen is a platform for creating, sharing, and exploring Grasshopper scripts online. Try something out, learn something new, and share it with the world - all from the comfort of your favorite web browser.',
+      copy: 'When you build on NodePen, you build with the exact same Grasshopper components and geometry you know and love. For now, a limited selection of components are available, but more are being added all the time.',
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -30,7 +30,7 @@ const HomePageLanding: NextPage = () => {
     },
     {
       title: 'View Geometric Results',
-      copy: 'NodePen is a platform for creating, sharing, and exploring Grasshopper scripts online. Try something out, learn something new, and share it with the world - all from the comfort of your favorite web browser.',
+      copy: 'Results and changes are synced between all open windows for your script! So you can continue to work on your logic in one window while watching the live results in another.',
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -47,7 +47,7 @@ const HomePageLanding: NextPage = () => {
     },
     {
       title: 'Share With the World',
-      copy: 'NodePen is a platform for creating, sharing, and exploring Grasshopper scripts online. Try something out, learn something new, and share it with the world - all from the comfort of your favorite web browser.',
+      copy: 'NodePen brings Grasshopper to the web so we can easily share and explore the interesting things people make with it every day. Show off your work to the world! Or casually browse on your phone.',
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path
@@ -64,7 +64,7 @@ const HomePageLanding: NextPage = () => {
     },
     {
       title: 'Download For Later',
-      copy: 'NodePen is a platform for creating, sharing, and exploring Grasshopper scripts online. Try something out, learn something new, and share it with the world - all from the comfort of your favorite web browser.',
+      copy: "Nothing will ever compete with the instant and gratifying experience of working with your Grasshopper scripts with Rhino offline. That's why NodePen will always let you download your scripts for later, even if you're not signed in.",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path
