@@ -1,14 +1,6 @@
 import React from 'react'
 import { firebase } from 'features/common/context/session/auth'
-import {
-  DownloadButton,
-  SaveButton,
-  ShareButton,
-  SignInButton,
-  SignUpButton,
-  SmallDeviceButton,
-  SolutionStatus,
-} from './actions'
+import { DownloadButton, SaveButton, ShareButton, SmallDeviceButton, SolutionStatus } from './actions'
 import { useSessionManager } from 'features/common/context/session'
 import { Layout } from 'features/common'
 
@@ -31,8 +23,8 @@ export const HeaderActions = ({ user }: HeaderActionsProps): React.ReactElement 
         <>
           <SolutionStatus />
           <DownloadButton />
-          <SignInButton />
-          <SignUpButton />
+          <Layout.HeaderActions.SignInButton />
+          <Layout.HeaderActions.SignUpButton />
         </>
       )
     }
@@ -49,8 +41,8 @@ export const HeaderActions = ({ user }: HeaderActionsProps): React.ReactElement 
         <>
           <SolutionStatus />
           <DownloadButton />
-          <SignInButton />
-          <SignUpButton />
+          <Layout.HeaderActions.SignInButton />
+          <Layout.HeaderActions.SignUpButton />
         </>
       )
     }

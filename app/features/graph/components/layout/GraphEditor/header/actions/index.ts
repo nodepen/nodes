@@ -5,6 +5,3 @@ import SmallDeviceButton from './SmallDeviceButton'
 import SolutionStatus from './SolutionStatus'
 
 export { DownloadButton, SaveButton, ShareButton, SmallDeviceButton, SolutionStatus }
-
-export { SignInButton } from './SignInButton'
-export { SignUpButton } from './SignUpButton'

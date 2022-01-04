@@ -1,8 +1,9 @@
 import React from 'react'
 import { NextPage } from 'next'
+import { UserProfile } from '@/features/user-profile'
 
 const UserProfilePage: NextPage = () => {
-  return <div>user (:</div>
+  return <UserProfile />
 }
 
 export default UserProfilePage
