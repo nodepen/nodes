@@ -64,7 +64,7 @@ const HomePageLanding: NextPage = () => {
     },
     {
       title: 'Download For Later',
-      copy: "Nothing will ever compete with the instant and gratifying experience of working with your Grasshopper scripts with Rhino offline. That's why NodePen will always let you download your scripts for later, even if you're not signed in.",
+      copy: "Few things can compete with the instant and gratifying experience of working with your Grasshopper scripts in Rhino offline. That's why NodePen will always let you download your scripts for later, even if you're not signed in.",
       icon: (
         <svg className="w-8 h-8" fill="none" stroke="#333" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path

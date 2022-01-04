@@ -4,9 +4,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = withBundleAnalyzer({
     distDir: 'build',
-    publicRuntimeConfig: {
-      apiEndpoint: process.env.NEXT_PUBLIC_NP_API_ENDPOINT
-    },
     webpack: (config) => {
       config.resolve.fallback = {
         child_process: false,

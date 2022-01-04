@@ -7,7 +7,6 @@ import { GraphManager } from '@/features/graph/context/graph'
 import { SolutionManager } from 'features/graph/context/solution'
 import Head from 'next/head'
 import { ApolloClient, createHttpLink, InMemoryCache, gql } from '@apollo/client'
-import getConfig from 'next/config'
 import { admin } from '@/features/common/context/session/auth'
 import { newGuid } from '../../../features/graph/utils'
 import { ApolloContext } from '@/features/common/context/apollo'
@@ -47,8 +46,6 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
 
 export default GrasshopperGraphPage
 
-const { publicRuntimeConfig } = getConfig()
-
 export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> = async (context) => {
   try {
     const cookie = nookies.get(context)
@@ -73,7 +70,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
     const client = new ApolloClient({
       ssrMode: true,
       link: createHttpLink({
-        uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+        uri: process?.env?.NEXT_PUBLIC_NP_API_ENDPOINT ?? 'http://localhost:4000/graphql',
         credentials: 'same-origin',
         headers: {
           authorization: cookie.token,

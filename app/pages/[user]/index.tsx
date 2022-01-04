@@ -2,7 +2,6 @@ import React from 'react'
 import nookies from 'nookies'
 import { NextPage, GetServerSideProps } from 'next'
 import { UserProfile } from '@/features/user-profile'
-import getConfig from 'next/config'
 import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
 import { ApolloContext } from '@/features/common/context/apollo'
@@ -22,8 +21,6 @@ const UserProfilePage: NextPage<UserProfilePageProps> = (user) => {
   )
 }
 
-const { publicRuntimeConfig } = getConfig()
-
 export const getServerSideProps: GetServerSideProps<UserProfilePageProps> = async (context) => {
   try {
     const { user: username } = context.query
@@ -33,7 +30,7 @@ export const getServerSideProps: GetServerSideProps<UserProfilePageProps> = asyn
     const client = new ApolloClient({
       ssrMode: true,
       link: createHttpLink({
-        uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+        uri: process?.env?.NEXT_PUBLIC_NP_API_ENDPOINT ?? 'http://localhost:4000/graphql',
         credentials: 'same-origin',
         headers: {
           authorization: cookie.token,

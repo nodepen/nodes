@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { ApolloClient, createHttpLink, InMemoryCache, gql, ApolloError } from '@apollo/client'
 import { admin } from 'features/common/context/session/auth'
-import getConfig from 'next/config'
 import nookies from 'nookies'
 
 type CurrentUserRecord = {
@@ -13,8 +12,6 @@ type CurrentUserRecord = {
     ms: number
   }
 }
-
-const { publicRuntimeConfig } = getConfig()
 
 export default async (
   req: NextApiRequest,
@@ -38,7 +35,7 @@ export default async (
   const client = new ApolloClient({
     ssrMode: true,
     link: createHttpLink({
-      uri: publicRuntimeConfig?.apiEndpoint ?? 'http://localhost:4000/graphql',
+      uri: process?.env?.NEXT_PUBLIC_NP_API_ENDPOINT ?? 'http://localhost:4000/graphql',
       credentials: 'same-origin',
       headers: {
         authorization: token,
