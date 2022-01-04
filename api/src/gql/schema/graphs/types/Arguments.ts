@@ -25,6 +25,7 @@ export type Arguments = {
       solutionId: string
       graphId: string
       graphJson: string
+      graphName?: string
     }
   }
 }

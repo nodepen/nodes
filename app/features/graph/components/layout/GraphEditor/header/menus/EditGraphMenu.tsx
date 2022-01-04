@@ -59,6 +59,11 @@ const EditGraphMenu = ({ graphId, initialValue, onClose }: EditGraphMenuProps): 
 
     setGraphName(nextName)
 
+    if (isNewGraph) {
+      // Do not persist graph until user hits save
+      return
+    }
+
     renameGraph({
       variables: {
         graphId,

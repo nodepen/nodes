@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useGraphAuthor, useGraphDispatch, useGraphId } from '@/features/graph/store/graph/hooks'
+import { useGraphAuthor, useGraphDispatch, useGraphId, useGraphManifest } from '@/features/graph/store/graph/hooks'
 import { newGuid } from '@/features/graph/utils'
 import { useMutation, useSubscription, gql } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
@@ -16,8 +16,11 @@ const SaveButton = (): React.ReactElement => {
   const buttonPosition = useRef<[number, number]>([0, 0])
 
   const { setGraphFileUrl } = useGraphDispatch()
-  const graphAuthor = useGraphAuthor()
-  const graphId = useGraphId()
+  const {
+    name: graphName,
+    author: { name: graphAuthor },
+    id: graphId,
+  } = useGraphManifest()
 
   const isGraphAuthor = userRecord?.username && userRecord.username == graphAuthor
   const isNewGraph = router.pathname === '/gh'
@@ -34,8 +37,8 @@ const SaveButton = (): React.ReactElement => {
 
   const [scheduleSaveGraph] = useMutation(
     gql`
-      mutation ScheduleSaveGraph($solutionId: String!, $graphId: String!, $graphJson: String!) {
-        scheduleSaveGraph(solutionId: $solutionId, graphId: $graphId, graphJson: $graphJson)
+      mutation ScheduleSaveGraph($solutionId: String!, $graphId: String!, $graphJson: String!, $graphName: String!) {
+        scheduleSaveGraph(solutionId: $solutionId, graphId: $graphId, graphJson: $graphJson, graphName: $graphName)
       }
     `
   )
@@ -61,6 +64,7 @@ const SaveButton = (): React.ReactElement => {
         solutionId: nextSolutionId,
         graphId,
         graphJson: JSON.stringify(persistedGraphElements),
+        graphName,
       },
     })
       .then((res) => {

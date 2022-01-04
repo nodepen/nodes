@@ -134,6 +134,10 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       action: 'edit',
     })
 
+    if (!doc.exists) {
+      throw new Error('Graph does not exist.')
+    }
+
     // Validate name
     if (name.length === 0 || name.length > 100) {
       throw new Error('Graph name must be between 0 and 100 characters.')
@@ -147,7 +151,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
   },
   scheduleSaveGraph: async (
     _parent,
-    { solutionId, graphId, graphJson },
+    { solutionId, graphId, graphJson, graphName },
     { user }
   ): Promise<string> => {
     const [ref, doc] = await authorize(user, {
@@ -162,8 +166,8 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     const now = new Date().toISOString()
 
     if (!doc.exists) {
-      ref.create({
-        name: 'Untitled Grasshopper Script',
+      await ref.create({
+        name: graphName ?? 'Untitled Grasshopper Script',
         author: {
           name: user?.name ?? 'Unknown User',
           id: user?.id ?? 'Unknown Id',
@@ -176,6 +180,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
         revision,
         stats: {
           views: 0,
+          viewsIndex: 0,
         },
       })
     } else {
