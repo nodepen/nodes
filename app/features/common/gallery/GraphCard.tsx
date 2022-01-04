@@ -4,6 +4,7 @@ import { GraphThumbnail } from './GraphThumbnail'
 import Link from 'next/link'
 import { Popover } from '../popover'
 import { Modal } from '../layout'
+import * as Typography from '../typography'
 
 type GraphCardProps = {
   graph: NodePen.GraphManifest
@@ -214,18 +215,70 @@ export const GraphCard = ({
             setHover(false)
           }}
         >
-          <>
-            <h1>Are you sure you want to delete {name}?</h1>
-            <button
-              onClick={() => {
-                onDelete?.()
-                setShowModal(false)
-              }}
-            >
-              YES
-            </button>
-            <button onClick={() => setShowModal(false)}>NO!</button>
-          </>
+          <div className="w-full flex flex-col items-center">
+            <div className="flex flex-col items-center" style={{ maxWidth: 350 }}>
+              <Typography.Label size="md" color="dark">
+                {`Are you sure you want to delete ${name}?`}
+              </Typography.Label>
+              <div className="buttons-container mt-2">
+                <button
+                  className="w-full h-8 pl-2 pr-2 flex items-center justify-center rounded-md hover:bg-green"
+                  onClick={() => {
+                    onDelete?.()
+                    setShowModal(false)
+                    setHover(false)
+                  }}
+                >
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="#333"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+                    />
+                  </svg>
+                  <div className="w-min pointer-events-none">
+                    <Typography.Label size="sm" color="dark">
+                      Delete
+                    </Typography.Label>
+                  </div>
+                </button>
+                <button
+                  className="w-full h-8 pl-2 pr-2 flex items-center justify-center rounded-md hover:bg-green"
+                  onClick={() => {
+                    setShowModal(false)
+                    setHover(false)
+                  }}
+                >
+                  <svg
+                    className="w-5 h-5 mr-2"
+                    fill="none"
+                    stroke="#333"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    />
+                  </svg>
+                  <div className="w-min pointer-events-none">
+                    <Typography.Label size="sm" color="dark">
+                      Cancel
+                    </Typography.Label>
+                  </div>
+                </button>
+              </div>
+            </div>
+          </div>
         </Modal>
       ) : null}
     </div>
