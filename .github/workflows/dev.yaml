@@ -42,13 +42,14 @@ jobs:
     steps:
       - name: Assert success
         run: echo 🎉
-  test-app:
+  build-app:
     runs-on: ubuntu-latest
-    needs:
-      - dependencies-gate
+    needs: dependencies-gate
 
     env:
-      NEXT_PUBLIC_NP_API_ENDPOINT: https://api.dev.nodepen.io/graphql
+      DOCKER_TAG: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next
+      DOCKER_TAG_VERBOSE: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:next-${{ github.sha }}
+      NODEPEN_API_ENDPOINT: https://api.dev.nodepen.io/graphql
 
     steps:
       - uses: actions/checkout@v2
@@ -90,7 +91,123 @@ jobs:
       - name: Build app
         working-directory: ./app
         run: |
-          npm run build:ci
+          npm run build
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Setup GCR
+        run: gcloud auth configure-docker
+      - uses: docker/build-push-action@v2
+        with:
+          context: ./app
+          build-args: |
+            NODEPEN_API_ENDPOINT=$NODEPEN_API_ENDPOINT
+          push: true
+          tags: |
+            $DOCKER_TAG
+            $DOCKER_TAG_VERBOSE
+  build-api:
+    runs-on: ubuntu-latest
+    needs: dependencies-gate
+
+    env:
+      DOCKER_TAG: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next
+      DOCKER_TAG_VERBOSE: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:next-${{ github.sha }}
+      NODEPEN_API_ENDPOINT: https://api.dev.nodepen.io/graphql
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "14"
+          cache: "npm"
+          cache-dependency-path: api/package-lock.json
+      - name: Download glib artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: glib
+          path: api/glib/
+      - name: Restore glib dependencies
+        working-directory: ./api/glib
+        run: npm ci
+      - name: Restore api secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "auth.json"
+          dir: "api/src/firebase/auth/"
+          json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
+      - uses: google-github-actions/setup-gcloud@master
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Setup GCR
+        run: gcloud auth configure-docker
+      - uses: docker/build-push-action@v2
+        with:
+          context: ./api
+          push: true
+          tags: |
+            $DOCKER_TAG
+            $DOCKER_TAG_VERBOSE
+  build-bq-gh-dispatch:
+    runs-on: self-hosted
+    needs: dependencies-gate
+
+    env:
+      DOCKER_TAG: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-bq-gh-dispatch:next
+      DOCKER_TAG_VERBOSE: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-bq-gh-dispatch:next-${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download glib artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: glib
+          path: gh/dispatch/glib/
+      - name: Restore glib dependencies
+        working-directory: ./gh/dispatch/glib
+        run: npm ci
+      - name: Build np-gh-dispatch
+        run: |
+          cd gh/dispatch
+          docker build -t $DOCKER_TAG .
+          docker push $DOCKER_TAG
+          docker tag $DOCKER_TAG $DOCKER_TAG_VERBOSE
+          docker push $DOCKER_TAG_VERBOSE
+  build-bq-gh-compute:
+    runs-on: self-hosted
+    needs: dependencies-gate
+
+    env:
+      DOCKER_TAG: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-bq-gh-compute:next
+      DOCKER_TAG_VERBOSE: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-bq-gh-compute:next-${{ github.sha }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Build np-gh-compute
+        run: |
+          cd gh/compute
+          docker build -t $DOCKER_TAG .
+          docker push $DOCKER_TAG
+          docker tag $DOCKER_TAG $DOCKER_TAG_VERBOSE
+          docker push $DOCKER_TAG_VERBOSE
+  build-gate:
+    runs-on: ubuntu-latest
+    needs:
+      - build-app
+      - build-api
+      - build-bq-gh-compute
+      - build-bq-gh-dispatch
+
+    steps:
+      - name: Assert success
+        run: echo 🎉
+
   # test-gate:
   #   runs-on: ubuntu-latest
   #   needs:
@@ -107,7 +224,6 @@ jobs:
   #     DOCKER_TAG:
   #     DOCKET_TAG_VERBOSE:
   #   steps:
-
 # jobs:
 #   build-lib:
 #     runs-on: ubuntu-latest
