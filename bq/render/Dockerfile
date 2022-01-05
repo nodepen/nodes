@@ -10,14 +10,22 @@ RUN apt-get install -y \
   libglu1-mesa-dev \
   libglew-dev \
   pkg-config \
+  xvfb \
   ffmpeg
 
-COPY . .
+COPY package.json package-lock.json ./
 
 RUN npm install
+
+COPY . .
 
 RUN npm run build
 
 EXPOSE 9700
 
-CMD ["npm", "run", "start"]
+ENV DISPLAY :99.0
+
+ADD start.sh /start.sh
+RUN chmod a+x /start.sh
+
+CMD /start.sh

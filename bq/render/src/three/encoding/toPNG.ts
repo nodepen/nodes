@@ -1,8 +1,9 @@
 import {
   Scene,
   Camera,
-  WebGL1Renderer,
+  WebGLRenderer,
   WebGLRenderTarget,
+  WebGL1Renderer,
   PCFSoftShadowMap,
   LinearFilter,
   NearestFilter,
@@ -30,7 +31,9 @@ const canvas: any = {
   },
 }
 
-const renderer = new WebGL1Renderer({
+// const canvas = new Object() as any
+
+const renderer = new WebGLRenderer({
   canvas,
   alpha: true,
   antialias: false,
