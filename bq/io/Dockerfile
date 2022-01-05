@@ -13,13 +13,11 @@ FROM node:12-alpine AS runner
 WORKDIR /bq/io
 
 ENV NODE_ENV production
-ENV PORT 4000
 
 COPY --from=builder /bq/io/dist ./dist
 COPY --from=builder /bq/io/node_modules ./node_modules
 COPY --from=builder /bq/io/package.json ./package.json
 
-EXPOSE 4000
-EXPOSE 8080
+EXPOSE 9600
 
 CMD ["npm", "run", "start"]
