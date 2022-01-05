@@ -65,14 +65,14 @@ jobs:
         run: npm ci
       - name: Restore app secrets
         working-directory: ./app/features/common/context/session/auth
-        runs: |
+        run: |
           touch firebase.client.auth.json
           echo ${{ secrets.NODEPEN_APP_SECRET_AUTH }} >> firebase.client.auth.json
           touch firebase.server.auth.json
           echo ${{ secrets.NODEPEN_API_SECRET_AUTH }} >> firebase.client.auth.json
       - name: Build app
         working-directory: ./app
-        runs: |
+        run: |
           npm run build
   # test-gate:
   #   runs-on: ubuntu-latest
