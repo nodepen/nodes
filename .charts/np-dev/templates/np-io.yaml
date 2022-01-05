@@ -24,6 +24,14 @@ spec:
             limits:
               cpu: 150m
               memory: 150m
+              ephemeral-storage: 1Gi
             requests:
               cpu: 100m
               memory: 100m
+              ephemeral-storage: 750m
+          volumeMounts:
+            - mountPath: /temp-i
+              name: io-temp
+      volumes:
+        - name: io-temp
+          emptyDir: {}
