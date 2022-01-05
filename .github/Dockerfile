@@ -1,7 +1,4 @@
-FROM gcr.io/nodepen-io/np-builder:latest
-WORKDIR /bq/render
-
-COPY . .
+FROM jrottenberg/ffmpeg:4.1
 
 RUN apt-get update && \
   apt-get -y install curl && \
@@ -16,10 +13,3 @@ RUN apt-get install -y \
   libglu1-mesa-dev \
   libglew-dev \
   pkg-config
-
-RUN npm install && \
-  npm run build
-
-EXPOSE 9700
-
-CMD ["npm", "run", "start"]

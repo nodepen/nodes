@@ -27,7 +27,7 @@ spec:
               memory: 1Gi
             requests:
               cpu: 500m
-              memory: 750Gi
+              memory: 750m
         - name: np-bq-gh-dispatch
           image: gcr.io/{{ .Values.projectId }}/np-bq-gh-dispatch:{{ .Values.tag }}
           imagePullPolicy: Always

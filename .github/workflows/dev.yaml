@@ -91,7 +91,7 @@ jobs:
         working-directory: ./app
         run: |
           npm run build
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -135,7 +135,7 @@ jobs:
           name: "auth.json"
           dir: "api/src/firebase/auth/"
           json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -177,7 +177,7 @@ jobs:
           name: "auth.json"
           dir: "bq/io/src/firebase/auth/"
           json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -219,7 +219,7 @@ jobs:
           name: "auth.json"
           dir: "bq/render/src/firebase/auth/"
           json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -299,7 +299,7 @@ jobs:
     needs: build-gate
 
     steps:
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -315,7 +315,7 @@ jobs:
     needs: build-gate
 
     steps:
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -337,7 +337,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
