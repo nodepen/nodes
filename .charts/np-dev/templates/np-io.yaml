@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: np-bq-io
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: np-bq-io
+  template:
+    metadata:
+      labels:
+        app: np-bq-io
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: np-bq-io
+          image: gcr.io/{{ .Values.projectId }}/np-bq-io:{{ .Values.tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9600
+          resources:
+            limits:
+              cpu: 150m
+              memory: 100m
+            requests:
+              cpu: 50m
+              memory: 50m

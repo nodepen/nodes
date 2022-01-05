@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: np-bq-render
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: np-bq-render
+  template:
+    metadata:
+      labels:
+        app: np-bq-render
+    spec:
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: np-bq-render
+          image: gcr.io/{{ .Values.projectId }}/np-bq-render:{{ .Values.tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9700
+          resources:
+            limits:
+              cpu: 500m
+              memory: 500m
+            requests:
+              cpu: 350m
+              memory: 350m
