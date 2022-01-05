@@ -7,6 +7,7 @@ type SolveQueueJobData = {
   solutionId: string
 }
 
+const GH_HOST = process.env?.NP_GH_HOST ?? 'localhost'
 const GH_PORT = process.env?.NP_GH_PORT ?? 9900
 
 export const processJob = async (
@@ -20,14 +21,14 @@ export const processJob = async (
     const graphJson = await db.get(`${key}:json`)
 
     const { data: graphBinaries } = await axios.post<string>(
-      `http://localhost:${GH_PORT}/grasshopper/graph`,
+      `http://${GH_HOST}:${GH_PORT}/grasshopper/graph`,
       graphJson
     )
 
     await db.setex(`${key}:gh`, 60 * 15, graphBinaries)
 
     const { data: graphSolution } = await axios.post(
-      `http://localhost:${GH_PORT}/grasshopper/solve`,
+      `http://${GH_HOST}:${GH_PORT}/grasshopper/solve`,
       graphBinaries
     )
 
