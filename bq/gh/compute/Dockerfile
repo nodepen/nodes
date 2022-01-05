@@ -28,7 +28,7 @@ RUN ["powershell", "& \"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\
 FROM mcr.microsoft.com/windows:10.0.19042.1110
 
 # Install rhino (with “-package -quiet” args)
-RUN curl -fSLo rhino_installer.exe https://files.mcneel.com/dujour/exe/20211214/rhino_en-us_7.13.21348.13001.exe `
+RUN curl -fSLo rhino_installer.exe https://files.mcneel.com/dujour/exe/20210810/rhino_en-us_7.9.21222.15001.exe `
     && .\rhino_installer.exe -package -quiet `
     && del .\rhino_installer.exe
 

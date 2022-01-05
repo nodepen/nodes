@@ -273,7 +273,7 @@ jobs:
           DOCKER_TAG_VERBOSE: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:next-${{ github.sha }}
         run: |
           cd bq/gh/compute
-          docker build -t ${{ env.DOCKER_TAG }} .
+          docker build -t ${{ env.DOCKER_TAG }} --build-arg NODEPEN_RHINO_TOKEN=${{ secrets.NODEPEN_RHINO_TOKEN }} .
           docker push ${{ env.DOCKER_TAG }}
           docker tag ${{ env.DOCKER_TAG }} ${{ env.DOCKER_TAG_VERBOSE }}
           docker push ${{ env.DOCKER_TAG_VERBOSE }}
