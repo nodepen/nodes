@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "build:ci": "next build --quiet",
+    "build:ci": "next build",
     "start": "next start -p 8080"
   },
   "dependencies": {
