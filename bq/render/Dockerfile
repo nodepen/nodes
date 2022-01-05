@@ -4,9 +4,9 @@ WORKDIR /bq/render
 COPY . .
 
 RUN apt-get update && \
-  apt-get install curl && \
+  apt-get -y install curl && \
   curl -sL https://deb.nodesource.com/setup_12.x | bash && \
-  apt-get install nodejs && \
+  apt-get -y install nodejs && \
   node -v && \
   npm -v
 
