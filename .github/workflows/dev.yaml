@@ -87,10 +87,6 @@ jobs:
           name: "firebase.server.auth.json"
           dir: "app/features/common/context/session/auth/"
           json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
-      - name: Build app
-        working-directory: ./app
-        run: |
-          npm run build
       - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
