@@ -7,7 +7,7 @@ export const startup = async (): Promise<Express> => {
   const app = express()
 
   app.get('/', (_, res) => {
-    res.send('Howdy, from render queue worker!')
+    res.send('Howdy, from I/O queue worker!')
   })
 
   // Initialize firebase dependencies

@@ -13,18 +13,12 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "atob": "^2.1.2",
     "bee-queue": "1.4.0",
     "dotenv": "10.0.0",
     "express": "4.17.1",
-    "ffmpeg-stream": "0.7.0",
     "firebase-admin": "9.8.0",
-    "gl": "4.9.2",
     "glib": "file:./glib",
-    "pngjs": "^6.0.0",
     "redis": "3.1.2",
-    "rhino3dm": "^7.11.1",
-    "three": "0.135.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
