@@ -20,6 +20,7 @@ jobs:
         with:
           node-version: "14"
           cache: "npm"
+          cache-dependency-path: lib/package-lock.json
       - name: Build glib
         working-directory: ./lib
         run: |
@@ -55,6 +56,7 @@ jobs:
         with:
           node-version: "14"
           cache: "npm"
+          cache-dependency-path: app/package-lock.json
       - name: Download glib artifacts
         uses: actions/download-artifact@v2
         with:
