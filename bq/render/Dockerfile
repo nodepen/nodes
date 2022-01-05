@@ -17,8 +17,6 @@ RUN apt-get install -y \
   libglew-dev \
   pkg-config
 
-ENV NODE_ENV production
-
 RUN npm install && \
   npm run build
 
