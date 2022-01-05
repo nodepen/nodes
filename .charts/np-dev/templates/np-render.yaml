@@ -13,7 +13,7 @@ spec:
         app: np-bq-render
     spec:
       nodeSelector:
-        cloud.google.com/gke-nodepool: np-prod-pool-core
+        kubernetes.io/os: linux
       containers:
         - name: np-bq-render
           image: gcr.io/{{ .Values.projectId }}/np-bq-render:{{ .Values.tag }}
