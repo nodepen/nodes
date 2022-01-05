@@ -1,8 +1,3 @@
-FROM node:12-alpine AS dependencies
-WORKDIR /bq/render
-COPY package.json package-lock.json ./
-RUN npm install
-
 FROM node:12-alpine AS builder
 WORKDIR /bq/render
 COPY . .
