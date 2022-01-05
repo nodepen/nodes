@@ -68,6 +68,13 @@ jobs:
       - name: Restore app dependencies
         working-directory: ./app
         run: npm ci
+      - name: Restore app build cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/app/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/app/package-lock.json') }}-${{ hashFiles('**/app/**.[jt]s', '**/app/**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/app/package-lock.json') }}-
       - name: Restore client secrets
         uses: jsdaniell/create-json@1.1.2
         with:

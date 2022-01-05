@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { firebase } from 'features/common/context/session/auth'
 import { Layout } from '@/features/common'
-import { CurrentUserMenu } from '../menus'
 
 type SmallDeviceButtonProps = {
   user: firebase.User
@@ -30,7 +29,7 @@ const SmallDeviceButton = ({ user }: SmallDeviceButtonProps): React.ReactElement
       </button>
       {showModal ? (
         <Layout.Modal onClose={() => setShowModal(false)}>
-          <CurrentUserMenu user={{ name: user.displayName, photoUrl: user.photoURL }} />
+          <Layout.HeaderMenus.CurrentUserMenu user={{ name: user.displayName, photoUrl: user.photoURL }} />
         </Layout.Modal>
       ) : null}
     </>
