@@ -30,7 +30,7 @@ spec:
           resources:
             limits:
               cpu: 300m
-              memory: 1.25Mi
+              memory: 1.25Gi
               ephemeral-storage: 1Gi
             requests:
               cpu: 250m
