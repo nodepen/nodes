@@ -20,6 +20,13 @@ spec:
           imagePullPolicy: Always
           ports:
             - containerPort: 9700
+          env:
+            - name: NP_GLOBAL_PREFIX
+              value: "{{ .Values.globalPrefix }}"
+            - name: NP_DB_HOST
+              value: "{{ .Values.redisHost }}"
+            - name: NP_DB_PORT
+              value: "{{ .Values.redisPort }}"
           resources:
             limits:
               cpu: 500m

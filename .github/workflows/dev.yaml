@@ -343,7 +343,7 @@ jobs:
       - name: Deploy
         run: |
           helm upgrade np-dev ./.charts/np-dev --namespace=default \
-            --set=app.name=np-prod \
+            --set=app.name=np-dev \
             --set=app.version=${{ github.sha }} \
             --set=redisHost=${{ secrets.NODEPEN_REDIS_HOST }} \
             --set=redisPort=${{ secrets.NODEPEN_REDIS_PORT }} \
