@@ -23,11 +23,11 @@ spec:
             - containerPort: 9900
           resources:
             limits:
-              cpu: 750m
-              memory: 1.25Gi
+              cpu: 125Mi
+              memory: 125Mi
             requests:
-              cpu: 500m
-              memory: 1Gi
+              cpu: 100Mi
+              memory: 100Mi
         - name: np-bq-gh-dispatch
           image: gcr.io/{{ .Values.projectId }}/np-bq-gh-dispatch:{{ .Values.tag }}
           imagePullPolicy: Always

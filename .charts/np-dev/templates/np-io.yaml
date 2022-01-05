@@ -30,12 +30,12 @@ spec:
           resources:
             limits:
               cpu: 150m
-              memory: 150m
+              memory: 150Mi
               ephemeral-storage: 1Gi
             requests:
               cpu: 100m
-              memory: 100m
-              ephemeral-storage: 750m
+              memory: 100Mi
+              ephemeral-storage: 750Mi
           volumeMounts:
             - mountPath: /temp-i
               name: io-temp

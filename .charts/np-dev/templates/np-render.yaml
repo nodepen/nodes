@@ -30,12 +30,12 @@ spec:
           resources:
             limits:
               cpu: 500m
-              memory: 500m
+              memory: 500Mi
               ephemeral-storage: 1Gi
             requests:
               cpu: 350m
-              memory: 350m
-              ephemeral-storage: 750m
+              memory: 350Mi
+              ephemeral-storage: 750Mi
           volumeMounts:
             - mountPath: /temp-r
               name: render-temp
