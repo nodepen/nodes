@@ -17,10 +17,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        working-directory: ./lib
         with:
           node-version: "14"
           cache: "npm"
-          cache-dependency-path: lib/package-lock.json
       - name: Build glib
         working-directory: ./lib
         run: |
@@ -53,6 +53,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
+        working-directory: ./app
         with:
           node-version: "14"
           cache: "npm"
@@ -64,6 +65,9 @@ jobs:
           path: app/glib/
       - name: Restore glib dependencies
         working-directory: ./app/glib
+        run: npm ci
+      - name: Restore app dependencies
+        working-directory: ./app
         run: npm ci
       - name: Restore app secrets
         working-directory: ./app/features/common/context/session/auth
