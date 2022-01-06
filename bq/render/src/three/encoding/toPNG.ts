@@ -1,4 +1,4 @@
-import { Scene, Camera, WebGLRenderer } from 'three'
+import { Scene, Camera, WebGLRenderer } from 'three-universal/build/three.node'
 import { PNG } from 'pngjs'
 
 const DEFAULT_WIDTH = 400

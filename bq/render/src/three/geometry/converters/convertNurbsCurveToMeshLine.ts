@@ -1,6 +1,12 @@
 import { RhinoModule } from 'rhino3dm'
 import { NodePen } from 'glib'
-import { Color, BufferGeometry, LineBasicMaterial, Vector3, Line } from 'three'
+import {
+  Color,
+  BufferGeometry,
+  LineBasicMaterial,
+  Vector3,
+  Line,
+} from 'three-universal/build/three.node'
 import { Remapper } from '../types'
 
 export const convertNurbsCurveToMeshLine = (

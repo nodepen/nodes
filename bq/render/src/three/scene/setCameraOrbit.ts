@@ -1,4 +1,4 @@
-import { OrthographicCamera } from 'three'
+import { OrthographicCamera } from 'three-universal/build/three.node'
 
 export const setCameraOrbit = (
   camera: OrthographicCamera,

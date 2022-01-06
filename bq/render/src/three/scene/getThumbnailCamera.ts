@@ -1,4 +1,4 @@
-import { OrthographicCamera, Vector3 } from 'three'
+import { OrthographicCamera, Vector3 } from 'three-universal/build/three.node'
 
 export const getThumbnailCamera = (): OrthographicCamera => {
   const aspect = 400 / 300

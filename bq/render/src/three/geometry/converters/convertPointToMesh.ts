@@ -1,5 +1,5 @@
 import { NodePen } from 'glib'
-import { Mesh, SphereGeometry } from 'three'
+import { Mesh, SphereGeometry } from 'three-universal/build/three.node'
 import { Remapper } from '../types'
 import { defaultMaterial } from '../materials'
 
