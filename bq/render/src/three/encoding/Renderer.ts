@@ -9,7 +9,7 @@ import {
   RGBAFormat,
   UnsignedByteType,
   Color,
-} from 'three-universal/build/three.node'
+} from 'three'
 
 export class Renderer {
   private _renderer: WebGLRenderer | undefined

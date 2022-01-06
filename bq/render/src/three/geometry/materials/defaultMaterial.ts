@@ -1,3 +1,3 @@
-import { MeshPhongMaterial } from 'three-universal/build/three.node'
+import { MeshPhongMaterial } from 'three'
 
 export const defaultMaterial = new MeshPhongMaterial()

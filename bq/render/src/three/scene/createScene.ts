@@ -1,11 +1,4 @@
-import gl from 'gl'
-import {
-  Scene,
-  PointLight,
-  Vector3,
-  Color,
-  Box3,
-} from 'three-universal/build/three.node'
+import { Scene, PointLight, Vector3, Color, Box3 } from 'three'
 import { NodePen, assert } from 'glib'
 import { isVisible } from '../geometry/utils'
 import { Remapper } from '../geometry/types'

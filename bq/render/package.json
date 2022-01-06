@@ -16,6 +16,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
+    "@types/three": "^0.136.1",
     "atob": "^2.1.2",
     "bee-queue": "1.4.0",
     "dotenv": "10.0.0",
@@ -24,12 +25,11 @@
     "firebase-admin": "9.8.0",
     "gl": "4.9.0",
     "glib": "file:./glib",
-    "jsdom": "^19.0.0",
     "lodash": "^4.17.21",
     "pngjs": "^6.0.0",
     "redis": "3.1.2",
     "rhino3dm": "^7.11.1",
-    "three-universal": "^0.125.2",
+    "three": "^0.124.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {

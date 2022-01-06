@@ -1,11 +1,5 @@
 import { NodePen } from 'glib'
-import {
-  Color,
-  BufferGeometry,
-  LineBasicMaterial,
-  Vector3,
-  Line,
-} from 'three-universal/build/three.node'
+import { Color, BufferGeometry, LineBasicMaterial, Vector3, Line } from 'three'
 import { Remapper } from '../types'
 
 export const convertPointsToMeshLine = (
