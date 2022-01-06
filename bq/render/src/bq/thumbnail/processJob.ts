@@ -2,7 +2,6 @@ import Queue from 'bee-queue'
 import { admin } from '../../firebase'
 import { scene, encoding } from '../../three'
 import { v4 as uuid } from 'uuid'
-import fs from 'fs'
 
 type RenderThumbnailImageQueueJobData = {
   graphId: string
@@ -42,7 +41,8 @@ export const processJob = async (
 
   scene.setCameraOrbit(camera, -135)
 
-  const image = encoding.toPNG(model, camera)
+  const renderer = new encoding.Renderer()
+  const image = encoding.toPNG(model, camera, renderer.getRenderer())
 
   const thumbnailFilePath = `${pathRoot}/${uuid()}.png`
   const thumbFile = bucket.file(thumbnailFilePath)
@@ -60,6 +60,8 @@ export const processJob = async (
       reject()
     })
   })
+
+  renderer.destroy()
 
   // Update firestore record with the thumbnail's location
   const revisionRef = admin

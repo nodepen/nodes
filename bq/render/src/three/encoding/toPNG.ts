@@ -1,18 +1,5 @@
-import {
-  Scene,
-  Camera,
-  WebGLRenderer,
-  WebGLRenderTarget,
-  WebGL1Renderer,
-  PCFSoftShadowMap,
-  LinearFilter,
-  NearestFilter,
-  RGBAFormat,
-  UnsignedByteType,
-  Color,
-} from 'three'
+import { Scene, Camera, WebGLRenderer } from 'three'
 import { PNG } from 'pngjs'
-import gl from 'gl'
 
 const DEFAULT_WIDTH = 400
 const DEFAULT_HEIGHT = 300
@@ -20,43 +7,11 @@ const DEFAULT_HEIGHT = 300
 const width = DEFAULT_WIDTH
 const height = DEFAULT_HEIGHT
 
-const canvas: any = {
-  width,
-  height,
-  addEventListener: () => {
-    /* ok */
-  },
-  removeEventListener: () => {
-    /* ok */
-  },
-}
-
-// const canvas = new Object() as any
-
-const renderer = new WebGLRenderer({
-  canvas,
-  alpha: true,
-  antialias: false,
-  powerPreference: 'high-performance',
-  context: gl(width, height, {
-    preserveDrawingBuffer: true,
-  }),
-})
-
-renderer.shadowMap.enabled = true
-renderer.shadowMap.type = PCFSoftShadowMap
-
-const renderTarget = new WebGLRenderTarget(width, height, {
-  minFilter: LinearFilter,
-  magFilter: NearestFilter,
-  format: RGBAFormat,
-  type: UnsignedByteType,
-})
-
-renderer.setRenderTarget(renderTarget)
-renderer.setClearColor(new Color(0xeff2f2))
-
-export const toPNG = (scene: Scene, camera: Camera): PNG => {
+export const toPNG = (
+  scene: Scene,
+  camera: Camera,
+  renderer: WebGLRenderer
+): PNG => {
   renderer.render(scene, camera)
 
   const context = renderer.getContext()

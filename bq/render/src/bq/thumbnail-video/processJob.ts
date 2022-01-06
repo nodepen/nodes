@@ -78,6 +78,8 @@ export const processJob = async (
     fs.mkdirSync(`./temp/${graphId}/${solutionId}/frames`)
   }
 
+  const renderer = new encoding.Renderer()
+
   for (let i = 0; i < stepCount; i++) {
     console.log(
       `${jobLabel} Rendering frame ${i
@@ -88,7 +90,7 @@ export const processJob = async (
     const deg = i * step - 135
     scene.setCameraOrbit(camera, deg)
 
-    const frame = encoding.toPNG(model, camera)
+    const frame = encoding.toPNG(model, camera, renderer.getRenderer())
     const framePath = `./temp/${pathRoot}/frames/${i
       .toString()
       .padStart(4, '0')}.png`
@@ -106,6 +108,8 @@ export const processJob = async (
       frameStream.on('error', handleResolve)
     })
   }
+
+  renderer.destroy()
 
   // Encode frames as video
   const videoFileName = `${uuid()}.mp4`
