@@ -1,4 +1,4 @@
-import { Scene, Camera, WebGLRenderer } from 'three'
+import { Scene, Camera, WebGL1Renderer } from 'three'
 import { PNG } from 'pngjs'
 
 const DEFAULT_WIDTH = 400
@@ -10,7 +10,7 @@ const height = DEFAULT_HEIGHT
 export const toPNG = (
   scene: Scene,
   camera: Camera,
-  renderer: WebGLRenderer
+  renderer: WebGL1Renderer
 ): PNG => {
   renderer.render(scene, camera)
 

@@ -1,7 +1,7 @@
 import { getOr } from 'lodash/fp'
 import gl from 'gl'
 import {
-  WebGLRenderer,
+  WebGL1Renderer,
   PCFSoftShadowMap,
   WebGLRenderTarget,
   LinearFilter,
@@ -12,7 +12,7 @@ import {
 } from 'three'
 
 export class Renderer {
-  private _renderer: WebGLRenderer | undefined
+  private _renderer: WebGL1Renderer | undefined
   private _renderTarget: WebGLRenderTarget | undefined
 
   private _canvas: HTMLCanvasElement | undefined
@@ -30,14 +30,13 @@ export class Renderer {
       getContext: (contextType: any, attributes: any) => {
         return getOr(null, contextType, {
           webgl: gl(width, height, {
-            ...attributes,
             preserveDrawingBuffer: true,
           }),
         })
       },
     } as unknown as HTMLCanvasElement
 
-    this._renderer = new WebGLRenderer({
+    this._renderer = new WebGL1Renderer({
       canvas: this._canvas,
       alpha: true,
       antialias: false,
@@ -58,7 +57,7 @@ export class Renderer {
     this._renderer.setClearColor(new Color(0xeff2f2))
   }
 
-  public getRenderer = (): WebGLRenderer => {
+  public getRenderer = (): WebGL1Renderer => {
     if (!this._renderer) {
       throw new Error('No renderer!')
     }

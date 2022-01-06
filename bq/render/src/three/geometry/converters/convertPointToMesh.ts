@@ -13,7 +13,7 @@ export const convertPointToMesh = (
   const py = remap?.y(y) ?? y
   const pz = remap?.z(z) ?? z
 
-  const pointGeometry = new SphereGeometry(0.01, 100, 100)
+  const pointGeometry = new SphereGeometry(0.01, 5, 5)
   const point = new Mesh(pointGeometry, defaultMaterial)
 
   point.position.set(px, py, pz)
