@@ -39,7 +39,7 @@ const DashboardFeaturedGraphs = (): React.ReactElement => {
   const visibleCards = [...cards, ...cards]
 
   return (
-    <div className="w-full pt-4 mb-4 no-scrollbar whitespace-nowrap overflow-hidden">
+    <div className="w-full pt-4 mb-4 no-scrollbar whitespace-nowrap overflow-hidden" style={{ minHeight: 175 }}>
       {visibleCards.map((graph: NodePen.GraphManifest, i) => (
         <div
           key={`featured-graph-list-card-${i}-${graph.id}`}

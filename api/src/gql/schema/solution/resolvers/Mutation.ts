@@ -34,7 +34,19 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     await db.setex(`user:${user.id}:graph`, 60 * 15, graphId)
     await db.setex(`graph:${graphId}:solution`, 60 * 15, solutionId)
 
-    const job = await ghq.solve.createJob({ graphId, solutionId }).save()
+    const solutionJobData = {
+      graphId,
+      solutionId,
+      user: {
+        name: user.name,
+        id: user.id,
+      },
+      time: {
+        scheduled: new Date().toISOString(),
+      },
+    }
+
+    const job = await ghq.solve.createJob(solutionJobData).save()
 
     console.log(
       `[ JOB ] [ GH:SOLVE ] [ CREATE ] [ SOLUTION ${job.id.padStart(9, '0')} ]`
@@ -46,8 +58,10 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       .collection('solutions')
       .doc(solutionId)
       .create({
-        graph: {
-          id: graphId,
+        graphId,
+        user: {
+          name: user.name,
+          id: user.id,
         },
         time: {
           scheduled: new Date().toISOString(),

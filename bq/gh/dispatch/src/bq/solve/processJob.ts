@@ -5,6 +5,13 @@ import { db } from '../../db'
 type SolveQueueJobData = {
   graphId: string
   solutionId: string
+  user: {
+    name: string
+    id: string
+  }
+  time: {
+    scheduled: string
+  }
 }
 
 const GH_HOST = process.env?.NP_GH_HOST ?? 'localhost'
@@ -13,6 +20,8 @@ const GH_PORT = process.env?.NP_GH_PORT ?? 9900
 export const processJob = async (
   job: Queue.Job<SolveQueueJobData>
 ): Promise<unknown> => {
+  const started = new Date().toISOString()
+
   try {
     const { graphId, solutionId } = job.data
 
@@ -73,6 +82,8 @@ export const processJob = async (
       ...job.data,
       duration,
       elementCount,
+      started,
+      finished: new Date().toISOString(),
       runtimeMessages: messages ?? [],
       exceptionMessages: timeout ? ['Solution timed out.'] : undefined,
     }
@@ -84,6 +95,8 @@ export const processJob = async (
       ...job.data,
       duration: 0,
       elementCount: 0,
+      started,
+      finished: new Date().toISOString(),
       exceptionMessages: ['Error during job processing!'],
     }
   }

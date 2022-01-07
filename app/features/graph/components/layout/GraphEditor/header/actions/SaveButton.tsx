@@ -54,7 +54,7 @@ const SaveButton = (): React.ReactElement => {
     }
 
     saveProgress.current = 5
-    setSaveProgressMessage('Requesting save')
+    setSaveProgressMessage('Saving...')
     setShowSaveProgress(true)
 
     const nextSolutionId = newGuid()

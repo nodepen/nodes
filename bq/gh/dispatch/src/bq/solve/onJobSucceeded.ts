@@ -1,6 +1,10 @@
 import { db } from '../../db'
+import { io } from '../io'
 
-export const onJobSucceeded = (jobId: string, result: any): void => {
+export const onJobSucceeded = async (
+  jobId: string,
+  result: any
+): Promise<void> => {
   const {
     graphId,
     solutionId,
@@ -34,4 +38,15 @@ export const onJobSucceeded = (jobId: string, result: any): void => {
   )
 
   console.log(message)
+
+  console.log(result)
+
+  const metricsJob = await io.solutionMetrics.createJob(result).save()
+
+  console.log(
+    `[ JOB ${metricsJob.id.padStart(
+      4,
+      '0'
+    )} ] [ METRIC:SOLUTION ] [ SCHEDULED ]`
+  )
 }

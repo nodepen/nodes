@@ -42,3 +42,29 @@ spec:
       volumes:
         - name: render-temp
           emptyDir: {}
+---
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: np-rq-restart
+spec:
+  concurrencyPolicy: Forbid
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 600
+      template:
+        metadata:
+          annotations:
+            sidecar.istio.io/inject: "false"
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: kubectl
+              image: bitnami/kubectl
+              command:
+                - "kubectl"
+                - "rollout"
+                - "restart"
+                - "deployment/np-bq-render"
