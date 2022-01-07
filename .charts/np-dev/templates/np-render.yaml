@@ -68,3 +68,27 @@ spec:
                 - "rollout"
                 - "restart"
                 - "deployment/np-bq-render"
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  namespace: default
+  name: np-render-restart
+rules:
+  - apiGroups: ["extensions", "apps"] # "" indicates the core API group
+    resources: ["deployments"]
+    verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: restart-deployments
+  namespace: default
+subjects:
+  - kind: Group
+    name: system:serviceaccount
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: np-render-restart
+  apiGroup: rbac.authorization.k8s.io
