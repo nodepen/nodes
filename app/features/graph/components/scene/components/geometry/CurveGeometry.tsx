@@ -58,6 +58,8 @@ export const CurveGeometry = ({ curve, material }: CurveGeometryProps): React.Re
       ts.push(t)
     }
 
+    ts.push(domain[1])
+
     const positions: number[] = []
 
     for (const t of ts) {
