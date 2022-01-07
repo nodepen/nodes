@@ -198,7 +198,7 @@ const SignUpForm = (): React.ReactElement => {
         return Promise.all([getTokenResult, updateProfileResult])
       })
       .then(([token]) => {
-        nookies.set(undefined, 'token', token)
+        nookies.set(undefined, 'token', token, { path: '/' })
         router.push('/')
       })
       .catch((err) => {

@@ -43,7 +43,7 @@ const SignInForm = (): React.ReactElement => {
       })
       .then((token) => {
         if (token) {
-          nookies.set(undefined, 'token', token)
+          nookies.set(undefined, 'token', token, { path: '/' })
           router.push('/')
         }
       })

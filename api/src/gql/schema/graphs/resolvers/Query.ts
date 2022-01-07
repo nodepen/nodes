@@ -25,6 +25,11 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
     // Determine user relationship to graph
     const isAuthor = user.id === graphDocument.get('author.id')
 
+    if (!isAuthor) {
+      console.log({ user: user.id })
+      console.log({ author: graphDocument.get('author.id') })
+    }
+
     // Update view count
     const currentViewCount = graphDocument.get('stats.views') ?? 0
     const nextViewCount = isAuthor ? currentViewCount : currentViewCount + 1

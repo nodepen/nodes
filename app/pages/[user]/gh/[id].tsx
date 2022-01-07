@@ -48,7 +48,7 @@ export default GrasshopperGraphPage
 
 export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> = async (context) => {
   try {
-    const cookie = nookies.get(context)
+    const cookie = nookies.get(context, { path: '/' })
 
     const { token } = cookie
 

@@ -25,7 +25,7 @@ export const getServerSideProps: GetServerSideProps<UserProfilePageProps> = asyn
   try {
     const { user: username } = context.query
 
-    const cookie = nookies.get(context)
+    const cookie = nookies.get(context, { path: '/' })
 
     const client = new ApolloClient({
       ssrMode: true,

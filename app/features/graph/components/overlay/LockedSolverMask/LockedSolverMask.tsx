@@ -18,7 +18,7 @@ export const LockedSolverMask = ({ dx }: LockedSolverMaskProps): React.ReactElem
   const MASK_INSET_INVERSE = `calc(100% - ${MASK_INSET})`
 
   useEffect(() => {
-    const userIsExpected = !!nookies.get(undefined, 'token').token
+    const userIsExpected = !!nookies.get(undefined, { path: '/' }).token
     setShowMask(userIsExpected ? false : !userRecord)
   }, [userRecord])
 

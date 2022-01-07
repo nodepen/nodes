@@ -18,11 +18,11 @@ export const CurrentUserMenu = ({ user }: CurrentUserMenuProps): React.ReactElem
   const [useImageFallback, setUseImageFallback] = useState(false)
 
   const handleSignOut = (): void => {
+    nookies.destroy(undefined, 'token', { path: '/' })
     firebase
       .auth()
       .signOut()
       .then(() => {
-        nookies.destroy(undefined, 'token', { path: '/' })
         router.push('/', undefined, { shallow: false })
       })
   }

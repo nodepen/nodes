@@ -26,5 +26,7 @@ io.save.on('job succeeded', saveHandlers.onJobSucceeded)
 io.save.on('job failed', saveHandlers.onJobFailed)
 
 io.solutionMetrics.process(solutionMetricsHandlers.processJob)
+io.solutionMetrics.on('job succeeded', solutionMetricsHandlers.onJobSucceeded)
+io.solutionMetrics.on('job failed', solutionMetricsHandlers.onJobFailed)
 
 export { io }

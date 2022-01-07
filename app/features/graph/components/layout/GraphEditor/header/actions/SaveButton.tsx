@@ -148,6 +148,7 @@ const SaveButton = (): React.ReactElement => {
           }, 1000 * 2)
 
           router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined)
+          router.reload()
           return
         }
 

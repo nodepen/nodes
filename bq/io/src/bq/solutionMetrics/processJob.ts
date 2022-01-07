@@ -63,8 +63,11 @@ export const processJob = async (
       'usage.ms',
       (userDoc.get('usage.ms') ?? 0) + duration,
       'usage.n',
-      (userDoc.get('usage.ms') ?? 0) + 1
+      (userDoc.get('usage.n') ?? 0) + 1
     )
+  } else {
+    console.log(user.name)
+    console.log(user.id)
   }
 
   return {}

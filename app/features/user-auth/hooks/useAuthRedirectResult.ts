@@ -17,7 +17,7 @@ export const useAuthRedirectResult = (redirectTo: string): void => {
       })
       .then((token) => {
         if (token) {
-          nookies.set(undefined, 'token', token)
+          nookies.set(undefined, 'token', token, { path: '/' })
           router.push(redirectTo)
         }
       })

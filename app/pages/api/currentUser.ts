@@ -17,7 +17,7 @@ export default async (
   req: NextApiRequest,
   res: NextApiResponse<CurrentUserRecord | ApolloError | string>
 ): Promise<unknown> => {
-  const { token } = nookies.get({ req })
+  const { token } = nookies.get({ req }, { path: '/' })
 
   if (!token) {
     res.status(401).send('This is not a public endpoint.')
