@@ -2,15 +2,20 @@ import { Grasshopper } from 'glib'
 import { useGenericMenuManager } from 'features/graph/components/overlay/GenericMenu/hooks'
 import React from 'react'
 import { useDebugRender } from 'hooks'
+import { useGraphManager } from '@/features/graph/context/graph'
 
 type AboutMenuProps = {
   component: Grasshopper.Component
 }
 
 const AboutMenu = ({ component }: AboutMenuProps): React.ReactElement => {
-  const { name, nickname, description, icon } = component
+  const { library } = useGraphManager()
+
+  const { name, nickname, description } = component
 
   const { onCancel } = useGenericMenuManager()
+
+  const icon = library?.find((template) => template.guid === component.guid)?.icon ?? ''
 
   useDebugRender('About Menu')
 

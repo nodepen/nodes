@@ -7,6 +7,7 @@ import { Popover } from '@/features/common/popover'
 import { useRouter } from 'next/router'
 import { usePersistedGraphElements } from '@/features/graph/hooks'
 import { SaveProgressMenu } from '../menus'
+import { NodePen } from '@/glib/dist'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()
@@ -60,11 +61,19 @@ const SaveButton = (): React.ReactElement => {
     const nextSolutionId = newGuid()
     saveSolutionId.current = nextSolutionId
 
+    const persisted = JSON.parse(JSON.stringify(persistedGraphElements)) as typeof persistedGraphElements
+
+    for (const el of persisted) {
+      if ('icon' in el.template) {
+        el.template.icon = ''
+      }
+    }
+
     scheduleSaveGraph({
       variables: {
         solutionId: nextSolutionId,
         graphId,
-        graphJson: JSON.stringify(persistedGraphElements),
+        graphJson: JSON.stringify(persisted),
         graphName,
       },
     })

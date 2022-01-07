@@ -100,6 +100,11 @@ export const graphSlice = createSlice({
 
       state.registry.latest.element = id
 
+      if ('icon' in action.payload.template) {
+        // Instances do not need their icon information
+        action.payload.template.icon = ''
+      }
+
       switch (action.payload.type) {
         case 'static-component': {
           const template = action.payload.template as NodePen.Element<'static-component'>['template']
