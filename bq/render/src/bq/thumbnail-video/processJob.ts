@@ -110,6 +110,7 @@ export const processJob = async (
   }
 
   renderer.destroy()
+  model.clear()
 
   // Encode frames as video
   const videoFileName = `${uuid()}.mp4`

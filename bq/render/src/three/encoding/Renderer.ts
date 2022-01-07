@@ -1,4 +1,3 @@
-import { getOr } from 'lodash/fp'
 import gl from 'gl'
 import {
   WebGL1Renderer,
@@ -27,13 +26,6 @@ export class Renderer {
       removeEventListener: (event: any) => {
         // ok
       },
-      getContext: (contextType: any, attributes: any) => {
-        return getOr(null, contextType, {
-          webgl: gl(width, height, {
-            preserveDrawingBuffer: true,
-          }),
-        })
-      },
     } as unknown as HTMLCanvasElement
 
     this._renderer = new WebGL1Renderer({
@@ -41,6 +33,9 @@ export class Renderer {
       alpha: true,
       antialias: false,
       powerPreference: 'high-performance',
+      context: gl(width, height, {
+        preserveDrawingBuffer: true,
+      }),
     })
 
     this._renderer.shadowMap.enabled = true

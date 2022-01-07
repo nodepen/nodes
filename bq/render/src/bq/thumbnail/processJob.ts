@@ -62,6 +62,7 @@ export const processJob = async (
   })
 
   renderer.destroy()
+  model.clear()
 
   // Update firestore record with the thumbnail's location
   const revisionRef = admin

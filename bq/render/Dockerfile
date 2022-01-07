@@ -1,29 +1,33 @@
-FROM node:14
-WORKDIR /bq/render
+FROM gcr.io/nodepen-io/np-builder:rq
 
-# Get ffmpeg and node-gyp dependencies
-RUN apt-get update
+# Build headless-gl
+RUN git clone https://github.com/stackgl/headless-gl.git && \
+    cd headless-gl && \
+    git checkout ed592e346c142c5312bcc10e8f27a7d362b40ef6 && \
+    git submodule init && \
+    git submodule update && \
+    npm install && \
+    npm run rebuild && \
+    npm link && \
+    cd ..
 
-RUN apt-get install -y \
-  build-essential \
-  libxi-dev \
-  libglu1-mesa-dev \
-  libglew-dev \
-  pkg-config \
-  xvfb \
-  ffmpeg
-
+# Build np-render
 COPY package.json package-lock.json ./
 
-RUN npm install
+RUN npm config set python /usr/local/bin/python3 && \
+    npm link gl && \
+    npm install
 
-COPY . .
+COPY src ./src
+COPY glib ./glib
+COPY tsconfig.json ./tsconfig.json
 
 RUN npm run build
 
-EXPOSE 9700
-
+# Run np-render
 ENV DISPLAY :99.0
+
+EXPOSE 9700
 
 ADD start.sh /start.sh
 RUN chmod a+x /start.sh

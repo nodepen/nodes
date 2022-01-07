@@ -1,4 +1,6 @@
 #!/bin/bash
 
-Xvfb :99 -screen 0 400x300x8 &
-DISPLAY=:99.0 node --max-old-space-size=6000 dist/server.js
+Xvfb :99 -screen 0 400x300x16 &
+# ps a | grep Xorg | grep -v grep | awk '{print $6}'
+# DISPLAY=:99 glxinfo | grep "OpenGL version"
+DISPLAY=:99.0 node dist/server.js
