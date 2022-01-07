@@ -24,6 +24,7 @@ const SaveButton = (): React.ReactElement => {
 
   const isGraphAuthor = userRecord?.username && userRecord.username == graphAuthor
   const isNewGraph = router.pathname === '/gh'
+  const isQuickSave = isGraphAuthor && !isNewGraph
 
   // The elements that we want to save and load with a graph
   const persistedGraphElements = usePersistedGraphElements()
@@ -68,10 +69,24 @@ const SaveButton = (): React.ReactElement => {
       },
     })
       .then((res) => {
-        saveProgress.current = 33
-        setSaveProgressMessage('Processing save')
-        const revision = res.data.scheduleSaveGraph
-        console.log(`Scheduled save for revision ${revision}. ${saveSolutionId.current}`)
+        if (process?.env?.NEXT_PUBLIC_DEBUG === 'true') {
+          const revision = res.data.scheduleSaveGraph
+          console.log(`Scheduled save for revision ${revision}. ${saveSolutionId.current}`)
+        }
+
+        if (isQuickSave) {
+          // Do not wait for further processing, show success immediately
+          saveProgress.current = 100
+          setSaveProgressMessage('Save successful')
+          buttonRef.current?.blur()
+          setTimeout(() => {
+            setShowSaveProgress(false)
+          }, 1000 * 1.5)
+        } else {
+          // Wait for full processing, so we know when to navigate to the new graph
+          saveProgress.current = 33
+          setSaveProgressMessage('Creating new graph')
+        }
       })
       .catch(() => {
         saveProgress.current = 0
@@ -124,13 +139,27 @@ const SaveButton = (): React.ReactElement => {
           console.log('Save is complete!')
         }
 
-        if (router.pathname === '/gh') {
+        if (isNewGraph) {
+          saveProgress.current = 100
+          setSaveProgressMessage('Save successful')
+          buttonRef.current?.blur()
+          setTimeout(() => {
+            setShowSaveProgress(false)
+          }, 1000 * 2)
+
           router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined)
           return
         }
 
         if (!isGraphAuthor) {
           // User has saved their own copy of another user's graph
+          saveProgress.current = 100
+          setSaveProgressMessage('Save successful')
+          buttonRef.current?.blur()
+          setTimeout(() => {
+            setShowSaveProgress(false)
+          }, 1000 * 2)
+
           router.push(`/${userRecord?.username}/gh/${incomingGraphId}`, undefined, { shallow: false })
           router.reload()
           return
@@ -138,13 +167,6 @@ const SaveButton = (): React.ReactElement => {
 
         // If a save does not require navigation, then set the .gh link in state
         setGraphFileUrl('graphBinaries', graphBinariesUrl)
-
-        saveProgress.current = 100
-        setSaveProgressMessage('Save successful')
-        buttonRef.current?.blur()
-        setTimeout(() => {
-          setShowSaveProgress(false)
-        }, 1000 * 3)
       },
     }
   )

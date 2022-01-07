@@ -188,7 +188,17 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       await ref.update('revision', revision, 'time.updated', now)
     }
 
-    // Copy thumbnail information from previous revision, if it exists
+    const bucket = admin.storage().bucket('np-graphs')
+    const pathRoot = `${graphId}/${solutionId}`
+
+    // Save graph .json file
+    const jsonFilePath = `${pathRoot}/${uuid()}.json`
+    const jsonFile = bucket.file(jsonFilePath)
+    const jsonFileData = JSON.stringify(JSON.parse(graphJson), null, 2)
+
+    await jsonFile.save(jsonFileData)
+
+    // Copy information from previous revision, if it exists
     const previousRevisionRef = await db
       .collection('graphs')
       .doc(graphId)
@@ -210,7 +220,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           solution: solutionId,
         },
         files: {
-          graphJson: previousRevisionDoc.get('files.graphJson') ?? '',
+          graphJson: jsonFilePath,
           graphSolutionJson:
             previousRevisionDoc.get('files.graphSolutionJson') ?? '',
           graphBinaries: previousRevisionDoc.get('files.graphBinaries') ?? '',

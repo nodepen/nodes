@@ -34,12 +34,6 @@ export const processJob = async (
 
   const pathRoot = `${graphId}/${solutionId}`
 
-  // Create graph .json file
-  const jsonFilePath = `${pathRoot}/${uuid()}.json`
-  const jsonFile = bucket.file(jsonFilePath)
-
-  const jsonFileData = JSON.stringify(JSON.parse(graphJson), null, 2)
-
   // Create solution .json file
   const solutionFilePath = `${pathRoot}/${uuid()}.json`
   const solutionFile = bucket.file(solutionFilePath)
@@ -60,7 +54,6 @@ export const processJob = async (
 
   // Upload graph files
   const uploadResult = await Promise.allSettled([
-    jsonFile.save(jsonFileData),
     solutionFile.save(solutionFileData),
     ghFile.save(ghFileData),
   ])
@@ -90,8 +83,6 @@ export const processJob = async (
     await versionRef.update(
       'files.graphBinaries',
       ghFilePath,
-      'files.graphJson',
-      jsonFilePath,
       'files.graphSolutionJson',
       solutionFilePath
     )

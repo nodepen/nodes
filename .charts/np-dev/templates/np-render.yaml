@@ -29,12 +29,12 @@ spec:
               value: "{{ .Values.redisPort }}"
           resources:
             limits:
-              cpu: 1500m
-              memory: 5Gi
+              cpu: 300m
+              memory: 1.25Gi
               ephemeral-storage: 1Gi
             requests:
-              cpu: 1000m
-              memory: 4Gi
+              cpu: 200m
+              memory: 1Gi
               ephemeral-storage: 750Mi
           volumeMounts:
             - mountPath: /render/temp
