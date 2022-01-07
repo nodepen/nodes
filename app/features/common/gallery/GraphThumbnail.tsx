@@ -36,14 +36,14 @@ export const GraphThumbnail = ({ imageSrc, videoSrc, hover }: GraphThumbnailProp
           autoPlay
           loop
           muted
-          style={{ transform: 'translateY(-2px)' }}
+          style={{ transform: 'scale(102%)' }}
         />
       )}
       <img
         src={imageSrc}
         className="absolute object-cover left-0 top-0 z-10"
         alt=""
-        style={{ transform: 'translateY(-2px)' }}
+        style={{ transform: 'scale(102%)' }}
       />
     </div>
   )
