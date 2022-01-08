@@ -44,6 +44,7 @@ export const graphsSchema = gql`
     graphSolutionJson: String
     thumbnailImage: String
     thumbnailVideo: String
+    twitterThumbnailImage: String
   }
 
   type GraphManifestStats {

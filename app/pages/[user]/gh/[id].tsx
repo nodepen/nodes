@@ -96,6 +96,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
               graphJson
               graphSolutionJson
               graphBinaries
+              twitterThumbnailImage
             }
             stats {
               views
@@ -108,7 +109,12 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
       },
     })
 
-    if (!data || !data.graph || !!error) {
+    if (error) {
+      console.log(JSON.stringify(error.clientErrors, null, 3))
+      return { notFound: true }
+    }
+
+    if (!data || !data.graph) {
       return { notFound: true }
     }
 
@@ -128,7 +134,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
         name: author.name,
       },
       files: {
-        twitterThumbnailImage: files.twitterThumbnailImage,
+        twitterThumbnailImage: files?.twitterThumbnailImage ?? '',
       },
       stats,
     }

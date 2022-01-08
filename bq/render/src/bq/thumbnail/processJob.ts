@@ -127,21 +127,17 @@ export const processJob = async (
   base.blit(thumb, 37, 37)
   base.blit(card, 0, 0)
 
-  base.write(`./temp/social/${solutionId}/twitter.png`)
+  const socialImageBuffer = await base.getBufferAsync('image/png')
 
   const socialsBucket = admin.storage().bucket('np-thumbnails')
   const socialThumbnailFile = socialsBucket.file(`${graphId}/twitter.png`)
-  const socialThumbnailData = fs.readFileSync(
-    `./temp/social/${solutionId}/twitter.png`
-  )
-  await socialThumbnailFile.save(socialThumbnailData)
-
-  fs.rmSync(`./temp/social/${solutionId}/twitter-frame.png`)
-  fs.rmSync(`./temp/social/${solutionId}/twitter.png`)
+  await socialThumbnailFile.save(socialImageBuffer)
 
   // Cleanup
   renderer.destroy()
   model.clear()
+
+  fs.rmSync(`./temp/social/${solutionId}/twitter-frame.png`)
 
   return job.data
 }
