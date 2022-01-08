@@ -20,6 +20,8 @@ RUN npm config set python /usr/local/bin/python3 && \
 
 COPY src ./src
 COPY glib ./glib
+COPY fonts ./fonts
+COPY img ./img
 COPY tsconfig.json ./tsconfig.json
 
 RUN npm run build
