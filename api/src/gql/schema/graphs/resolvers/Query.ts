@@ -64,6 +64,10 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       return undefined
     }
 
+    const socialBucket = admin.storage().bucket('np-thumbnails')
+    const twitterThumbnail = socialBucket.file(`${graphId}/twitter.png`)
+    const twitterThumbnailImage = twitterThumbnail.publicUrl()
+
     const record: GraphResponse = {
       id: graphId,
       name: graphDocument.get('name'),
@@ -75,6 +79,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
         graphBinaries: versionDocument.get('files.graphBinaries'),
         graphJson: versionDocument.get('files.graphJson'),
         graphSolutionJson: versionDocument.get('files.graphSolutionJson'),
+        twitterThumbnailImage,
       },
       stats: {
         views: nextViewCount,

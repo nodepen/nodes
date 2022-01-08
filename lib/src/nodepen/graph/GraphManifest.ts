@@ -18,6 +18,7 @@ export type GraphManifest = {
     graphSolutionJson?: string
     thumbnailImage?: string
     thumbnailVideo?: string
+    twitterThumbnailImage?: string
   }
   stats: {
     views: number
