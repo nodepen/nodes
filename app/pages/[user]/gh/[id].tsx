@@ -30,6 +30,8 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
         <meta name="twitter:site" content="@cdriesler" />
         <meta name="twitter:title" content={`${name} by ${author.name}`}></meta>
         <meta name="twitter:image" content={files.twitterThumbnailImage}></meta>
+        <meta name="og:title" content={`${name} by ${author.name}`}></meta>
+        <meta name="og:image" content={files.twitterThumbnailImage}></meta>
       </Head>
       <ApolloContext token={token}>
         <GraphManager manifest={{ id, name, author, graph, files, stats }}>
