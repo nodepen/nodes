@@ -28,6 +28,10 @@ const SelectionObserver = (): React.ReactElement => {
   )
 
   useEffect(() => {
+    if (!token) {
+      return
+    }
+
     const isSameLength = selection.length === internalSelection.current.length
     const isSameContent = !selection.some((id) => !internalSelection.current.includes(id))
 

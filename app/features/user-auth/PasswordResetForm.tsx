@@ -20,7 +20,8 @@ export const PasswordResetForm = (): React.ReactElement => {
         userEmail.current = email
         setIsValidRequest(true)
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e)
         setIsValidRequest(false)
       })
   }, [])

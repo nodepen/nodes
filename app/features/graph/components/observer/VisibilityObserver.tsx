@@ -32,6 +32,10 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
   )
 
   useEffect(() => {
+    if (!token) {
+      return
+    }
+
     if (!shouldToggle || selection.length === 0) {
       return
     }

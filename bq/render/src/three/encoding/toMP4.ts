@@ -19,6 +19,7 @@ export const toMP4 = async (
   conv.createOutputToFile(outputPath, {
     vcodec: 'libx264',
     pix_fmt: 'yuv420p',
+    crf: 32,
   })
 
   await conv.run()

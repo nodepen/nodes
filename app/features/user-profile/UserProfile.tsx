@@ -78,7 +78,7 @@ export const UserProfile = ({ username, photoUrl }: UserProfileProps): React.Rea
   )
 
   return (
-    <div className="w-vw h-vw flex flex-col overflow-auto" id="layout-root">
+    <div className="w-vw h-vw flex flex-col overflow-auto overflow-x-hidden" id="layout-root">
       <Layout.Header>
         {user ? (
           <Layout.HeaderActions.CurrentUserButton user={user} color="darkgreen" />
