@@ -5,7 +5,9 @@ type SaveQueueJobData = {
   solutionId: string
   graphId: string
   graphJson: string
+  graphName: string
   revision: string
+  authorName: string
 }
 
 const GH_HOST = process.env?.NP_GH_HOST ?? 'localhost'

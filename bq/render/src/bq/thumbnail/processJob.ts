@@ -13,6 +13,8 @@ type RenderThumbnailImageQueueJobData = {
   graphJson: string // json string of nodepen graph elements
   graphBinaries: string // base64 string of bytearray
   graphSolution: string // json string of solution geometry and messages
+  graphName: string
+  authorName: string
 }
 
 export const processJob = async (
@@ -25,6 +27,8 @@ export const processJob = async (
     graphJson,
     graphSolution,
     revision,
+    graphName,
+    authorName,
   } = job.data
 
   const jobId = job.id.padStart(4, '0')
@@ -111,13 +115,11 @@ export const processJob = async (
   const barlowBold = await jimp.loadFont('./fonts/Barlow-Bold.fnt')
   const barlowMedium = await jimp.loadFont('./fonts/Barlow-Medium.fnt')
 
-  const title = 'Twisty Tower'
-
   const card = await jimp.read('./img/np-thumb-bg.png')
-  card.print(barlowBold, 509, 35, title, 225)
+  card.print(barlowBold, 509, 35, graphName, 225)
 
-  const h = jimp.measureTextHeight(barlowBold, title, 225)
-  card.print(barlowMedium, 509, 35 + h + 6, 'by chuck', 225)
+  const h = jimp.measureTextHeight(barlowBold, graphName, 225)
+  card.print(barlowMedium, 509, 35 + h + 6, `by ${authorName}`, 225)
 
   const thumb = await jimp.read(`./temp/social/${solutionId}/twitter-frame.png`)
 
@@ -133,6 +135,9 @@ export const processJob = async (
     `./temp/social/${solutionId}/twitter.png`
   )
   await socialThumbnailFile.save(socialThumbnailData)
+
+  fs.rmSync(`./temp/social/${solutionId}/twitter-frame.png`)
+  fs.rmSync(`./temp/social/${solutionId}/twitter.png`)
 
   // Cleanup
   renderer.destroy()

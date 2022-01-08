@@ -18,7 +18,7 @@ export const graphsSchema = gql`
       solutionId: String!
       graphId: String!
       graphJson: String!
-      graphName: String
+      graphName: String!
     ): String!
   }
 

@@ -229,7 +229,14 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       })
 
     const job = await ghq.save
-      .createJob({ solutionId, graphId, graphJson, revision })
+      .createJob({
+        solutionId,
+        graphId,
+        graphJson,
+        revision,
+        graphName,
+        authorName: user.name,
+      })
       .save()
 
     console.log(

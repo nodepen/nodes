@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { useGraphAuthor, useGraphDispatch, useGraphId, useGraphManifest } from '@/features/graph/store/graph/hooks'
+import { useGraphDispatch, useGraphManifest } from '@/features/graph/store/graph/hooks'
 import { newGuid } from '@/features/graph/utils'
 import { useMutation, useSubscription, gql } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
@@ -7,7 +7,6 @@ import { Popover } from '@/features/common/popover'
 import { useRouter } from 'next/router'
 import { usePersistedGraphElements } from '@/features/graph/hooks'
 import { SaveProgressMenu } from '../menus'
-import { NodePen } from '@/glib/dist'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()

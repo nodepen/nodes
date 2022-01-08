@@ -13,6 +13,8 @@ export const onJobSucceeded = async (
     graphJson,
     graphBinaries,
     graphSolution,
+    graphName,
+    authorName,
   } = result
 
   console.log(`[ JOB ${jobId.padStart(4, '0')} ] [ SAVE ] [ FINISH ]`)
