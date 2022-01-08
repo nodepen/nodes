@@ -5,14 +5,10 @@ import { BaseResolverMap } from '../../base/types'
 import { Arguments } from '../types'
 import { hydrateGraphRecord } from '../utils'
 
-type GraphResponse = Omit<NodePen.GraphManifest, 'graph'>
+type GraphResponse = Omit<NodePen.GraphManifest, 'graph' | 'files'>
 
 export const Query: BaseResolverMap<never, Arguments['Query']> = {
-  graph: async (
-    _parent,
-    { graphId },
-    { user }
-  ): Promise<GraphResponse | undefined> => {
+  graph: async (_parent, { graphId }, { user }): Promise<unknown> => {
     const db = admin.firestore()
 
     const graphReference = db.collection('graphs').doc(graphId)
@@ -53,20 +49,20 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       return undefined
     }
 
-    const versionReference = db
-      .collection('graphs')
-      .doc(graphId)
-      .collection('revisions')
-      .doc(currentRevision)
-    const versionDocument = await versionReference.get()
+    // const versionReference = db
+    //   .collection('graphs')
+    //   .doc(graphId)
+    //   .collection('revisions')
+    //   .doc(currentRevision)
+    // const versionDocument = await versionReference.get()
 
-    if (!versionDocument.exists) {
-      return undefined
-    }
+    // if (!versionDocument.exists) {
+    //   return undefined
+    // }
 
-    const socialBucket = admin.storage().bucket('np-thumbnails')
-    const twitterThumbnail = socialBucket.file(`${graphId}/twitter.png`)
-    const twitterThumbnailImage = twitterThumbnail.publicUrl()
+    // const socialBucket = admin.storage().bucket('np-thumbnails')
+    // const twitterThumbnail = socialBucket.file(`${graphId}/twitter.png`)
+    // const twitterThumbnailImage = twitterThumbnail.publicUrl()
 
     const record: GraphResponse = {
       id: graphId,
@@ -75,18 +71,12 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
         name: graphDocument.get('author.name'),
         id: 'N/A',
       },
-      files: {
-        graphBinaries: versionDocument.get('files.graphBinaries'),
-        graphJson: versionDocument.get('files.graphJson'),
-        graphSolutionJson: versionDocument.get('files.graphSolutionJson'),
-        twitterThumbnailImage,
-      },
       stats: {
         views: nextViewCount,
       },
     }
 
-    return record
+    return { ...record, revision: currentRevision }
   },
   graphsByAuthor: async (
     _parent,

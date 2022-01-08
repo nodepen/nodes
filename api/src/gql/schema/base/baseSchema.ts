@@ -15,4 +15,12 @@ export const baseSchema = gql`
   type Subscription {
     _empty: String
   }
+
+  type FileReference {
+    bucket: String!
+    path: String!
+    url: String!
+    ttl: Int!
+    updated: String!
+  }
 `

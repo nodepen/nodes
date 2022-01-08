@@ -56,13 +56,7 @@ export const solutionSchema = gql`
 
   type Solution {
     manifest: SolutionManifest!
-    files: SolutionFiles!
     value(elementId: String!, parameterId: String!): [SolutionDataTreeBranch]
-  }
-
-  type SolutionFiles {
-    json: String
-    gh: String
   }
 
   type SolutionDataTreeBranch {

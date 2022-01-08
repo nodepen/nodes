@@ -46,9 +46,4 @@ export const Solution: BaseResolverMap<ParentObject, Arguments['Solution']> = {
 
     return tree
   },
-  files: async ({ graphId, solutionId }) => {
-    const id = solutionId ?? (await db.get(`graph:${graphId}:solution`))
-
-    return { graphId, solutionId: id }
-  },
 }

@@ -31,10 +31,5 @@ export type Arguments = {
       elementId: string
       parameterId: string
     }
-    files: never
-  }
-  SolutionFiles: {
-    gh: never
-    json: never
   }
 }

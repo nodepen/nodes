@@ -73,7 +73,7 @@ export const hydrateGraphRecord = async (
     const thumbnailImagePath = revisionDoc.get('files.thumbnailImage')
     getFileUrl(thumbnailImagePath)
       .then((url) => {
-        record.files.thumbnailImage = url
+        // record.files.thumbnailImage = url
         resolve()
       })
       .catch((err) => {
@@ -85,7 +85,7 @@ export const hydrateGraphRecord = async (
     const thumbnailVideoPath = revisionDoc.get('files.thumbnailVideo')
     getFileUrl(thumbnailVideoPath)
       .then((url) => {
-        record.files.thumbnailVideo = url
+        // record.files.thumbnailVideo = url
         resolve()
       })
       .catch((err) => {

@@ -39,12 +39,12 @@ export const graphsSchema = gql`
   }
 
   type GraphManifestFiles {
-    graphBinaries: String
-    graphJson: String
-    graphSolutionJson: String
-    thumbnailImage: String
-    thumbnailVideo: String
-    twitterThumbnailImage: String
+    graphBinaries: FileReference
+    graphJson: FileReference
+    graphSolutionJson: FileReference
+    thumbnailImage: FileReference
+    thumbnailVideo: FileReference
+    twitterThumbnailImage: FileReference
   }
 
   type GraphManifestStats {

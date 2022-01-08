@@ -28,4 +28,7 @@ export type Arguments = {
       graphName: string
     }
   }
+  GraphManifest: {
+    files: never
+  }
 }

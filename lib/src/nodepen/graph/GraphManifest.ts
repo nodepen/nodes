@@ -1,5 +1,6 @@
 import { SolutionManifest } from '../solution'
 import { GraphElementsMap } from './GraphElementsMap'
+import { FileReference } from '../../gcp/Storage'
 
 export type GraphManifest = {
   id: string
@@ -13,12 +14,12 @@ export type GraphManifest = {
     solution: SolutionManifest
   }
   files: {
-    graphBinaries?: string
-    graphJson?: string
-    graphSolutionJson?: string
-    thumbnailImage?: string
-    thumbnailVideo?: string
-    twitterThumbnailImage?: string
+    graphBinaries?: FileReference
+    graphJson?: FileReference
+    graphSolutionJson?: FileReference
+    thumbnailImage?: FileReference
+    thumbnailVideo?: FileReference
+    twitterThumbnailImage?: FileReference
   }
   stats: {
     views: number
