@@ -48,6 +48,14 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
       }
     })
 
+    if (manifest) {
+      for (const el of Object.values(manifest.graph.elements)) {
+        if ('icon' in el.template) {
+          el.template.icon = ''
+        }
+      }
+    }
+
     const initialGraph: NodePen.GraphManifest = manifest ?? {
       id: newGuid(),
       name: 'Untitled Grasshopper Script',
