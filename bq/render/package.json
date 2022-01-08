@@ -24,9 +24,11 @@
     "firebase-admin": "9.8.0",
     "gl": "4.9.0",
     "glib": "file:./glib",
+    "jimp": "^0.16.1",
     "pngjs": "^6.0.0",
     "redis": "3.1.2",
     "rhino3dm": "^7.11.1",
+    "sharp": "^0.29.3",
     "three": "0.136.0",
     "uuid": "^8.3.2"
   },

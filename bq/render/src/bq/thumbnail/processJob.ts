@@ -2,6 +2,8 @@ import Queue from 'bee-queue'
 import { admin } from '../../firebase'
 import { scene, encoding } from '../../three'
 import { v4 as uuid } from 'uuid'
+import jimp from 'jimp'
+import fs from 'fs'
 
 type RenderThumbnailImageQueueJobData = {
   graphId: string
@@ -61,9 +63,6 @@ export const processJob = async (
     })
   })
 
-  renderer.destroy()
-  model.clear()
-
   // Update firestore record with the thumbnail's location
   const revisionRef = admin
     .firestore()
@@ -77,10 +76,61 @@ export const processJob = async (
     console.error(
       `${jobLabel} [ ERROR ] Failed to update revision doc because it does not exist.`
     )
-    return job.data
+  } else {
+    await revisionRef.update('files.thumbnailImage', thumbnailFilePath)
   }
 
-  await revisionRef.update('files.thumbnailImage', thumbnailFilePath)
+  // Create socials thumbnail
+  fs.mkdirSync(`./temp/social/${solutionId}`, { recursive: true })
+
+  const frame = encoding.toPNG(model, camera, renderer.getRenderer())
+  const frameStream = fs.createWriteStream(
+    `./temp/social/${solutionId}/twitter-frame.png`
+  )
+  frame.pack().pipe(frameStream, { end: true })
+
+  await new Promise<void>((resolve) => {
+    const handleResolve = () => {
+      resolve()
+    }
+
+    frameStream.on('finish', handleResolve)
+    frameStream.on('close', handleResolve)
+    frameStream.on('error', (e) => {
+      console.log(e)
+      handleResolve()
+    })
+  })
+
+  const barlowBold = await jimp.loadFont('./fonts/Barlow-Bold.fnt')
+  const barlowMedium = await jimp.loadFont('./fonts/Barlow-Medium.fnt')
+
+  const title = 'Twisty Tower'
+
+  const card = await jimp.read('./img/np-thumb-bg.png')
+  card.print(barlowBold, 509, 35, title, 225)
+
+  const h = jimp.measureTextHeight(barlowBold, title, 225)
+  card.print(barlowMedium, 509, 35 + h + 6, 'by chuck', 225)
+
+  const thumb = await jimp.read(`./temp/social/${solutionId}/twitter-frame.png`)
+
+  const base = new jimp(750, 375, '#EFF2F2')
+  base.blit(thumb, 37, 37)
+  base.blit(card, 0, 0)
+
+  base.write(`./temp/social/${solutionId}/twitter.png`)
+
+  const socialsBucket = admin.storage().bucket('np-thumbnails')
+  const socialThumbnailFile = socialsBucket.file(`${graphId}/twitter.png`)
+  const socialThumbnailData = fs.readFileSync(
+    `./temp/social/${solutionId}/twitter.png`
+  )
+  await socialThumbnailFile.save(socialThumbnailData)
+
+  // Cleanup
+  renderer.destroy()
+  model.clear()
 
   return job.data
 }
