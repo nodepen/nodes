@@ -4,6 +4,7 @@ import { scene, encoding } from '../../three'
 import { v4 as uuid } from 'uuid'
 import jimp from 'jimp'
 import fs from 'fs'
+import { NodePen } from 'glib'
 
 type RenderThumbnailImageQueueJobData = {
   graphId: string
@@ -34,11 +35,16 @@ export const processJob = async (
   const bucket = admin.storage().bucket('np-graphs')
   const pathRoot = `${graphId}/${solutionId}`
 
+  const graph: NodePen.GraphElementsArray = JSON.parse(graphJson ?? '[]')
+  const solution: NodePen.SolutionManifest = JSON.parse(graphSolution ?? '{}')
+
+  if (graph.length === 0 || !solution.data) {
+    console.log(`${jobLabel} [ SKIP ] No data available for render.`)
+    return job.data
+  }
+
   // Begin creating thumbnails
-  const model = await scene.createScene(
-    JSON.parse(graphJson),
-    JSON.parse(graphSolution)
-  )
+  const model = await scene.createScene(graph, solution)
   const camera = scene.getThumbnailCamera()
 
   scene.setCameraOrbit(camera, -135)

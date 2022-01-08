@@ -3,6 +3,7 @@ import { admin } from '../../firebase'
 import { scene, encoding } from '../../three'
 import { v4 as uuid } from 'uuid'
 import fs from 'fs'
+import { NodePen } from 'glib'
 
 type RenderThumbnailVideoQueueJobData = {
   graphId: string
@@ -47,11 +48,16 @@ export const processJob = async (
     return job.data
   }
 
+  const graph: NodePen.GraphElementsArray = JSON.parse(graphJson ?? '[]')
+  const solution: NodePen.SolutionManifest = JSON.parse(graphSolution ?? '{}')
+
+  if (graph.length === 0 || !solution.data) {
+    console.log(`${jobLabel} [ SKIP ] No data available for render.`)
+    return job.data
+  }
+
   // Generate frames
-  const model = await scene.createScene(
-    JSON.parse(graphJson),
-    JSON.parse(graphSolution)
-  )
+  const model = await scene.createScene(graph, solution)
   const camera = scene.getThumbnailCamera()
 
   const ROTATION = 360
