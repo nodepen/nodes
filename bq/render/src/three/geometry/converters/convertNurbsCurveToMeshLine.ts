@@ -58,7 +58,7 @@ export const convertNurbsCurveToMeshLine = (
     ts.push(t)
   }
 
-  ts.push(domain[0])
+  ts.push(domain[1])
 
   const positions: Vector3[] = []
 
