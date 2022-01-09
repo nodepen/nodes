@@ -1,15 +1,11 @@
 import { BaseResolverMap } from '../../base/types'
 import { Arguments } from '../types'
-import { NodePen } from 'glib'
+import { NodePen, GCP } from 'glib'
 import { admin } from '../../../../firebase'
-
-type ParentObject = {
-  id: string
-  revision: string
-}
+import { GraphResponse } from '../types'
 
 export const GraphManifest: BaseResolverMap<
-  ParentObject,
+  GraphResponse,
   Arguments['GraphManifest']
 > = {
   files: async ({ id, revision }): Promise<NodePen.GraphManifest['files']> => {
@@ -19,15 +15,19 @@ export const GraphManifest: BaseResolverMap<
       .doc(id)
       .collection('revisions')
 
-    const revisionRef = db.doc(revision)
+    const revisionRef = db.doc(revision.toString())
     const revisionDoc = await revisionRef.get()
 
     if (!revisionDoc) {
       return {}
     }
 
-    // console.log(revisionDoc.data())
+    const files = revisionDoc.data()?.files ?? {}
 
-    return revisionDoc.data().files ?? {}
+    for (const [fileType, file] of Object.entries(files)) {
+      ;(file as any).context = { id, revision, fileType }
+    }
+
+    return { ...files }
   },
 }

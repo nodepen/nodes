@@ -20,8 +20,12 @@ const DashboardUserGraphs = (): React.ReactElement => {
             name
           }
           files {
-            thumbnailImage
-            thumbnailVideo
+            thumbnailImage {
+              url
+            }
+            thumbnailVideo {
+              url
+            }
           }
           stats {
             views

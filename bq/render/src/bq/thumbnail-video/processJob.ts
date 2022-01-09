@@ -1,5 +1,6 @@
 import Queue from 'bee-queue'
 import { admin } from '../../firebase'
+import { uploadFile } from '../../firebase/utils'
 import { scene, encoding } from '../../three'
 import { v4 as uuid } from 'uuid'
 import fs from 'fs'
@@ -132,9 +133,14 @@ export const processJob = async (
 
   // Write to storage bucket
   const bucket = admin.storage().bucket('np-graphs')
-  const thumbnailVideoFile = bucket.file(`${pathRoot}/${videoFileName}`)
-  const videoData = fs.readFileSync(outputPath)
-  await thumbnailVideoFile.save(videoData)
+  const thumbnailVideoPath = `${pathRoot}/${videoFileName}`
+  const thumbnailVideoData = fs.readFileSync(outputPath)
+
+  const thumbnailVideoRef = await uploadFile(
+    bucket,
+    thumbnailVideoPath,
+    thumbnailVideoData
+  )
 
   // Update revision record with video path
   const revisionRef = db
@@ -151,10 +157,7 @@ export const processJob = async (
     return job.data
   }
 
-  await revisionRef.update(
-    'files.thumbnailVideo',
-    `${pathRoot}/${videoFileName}`
-  )
+  await revisionRef.update('files.thumbnailVideo', thumbnailVideoRef)
 
   // Delete temp files used for creating the video
   fs.rmdirSync(`./temp/${pathRoot}`, { recursive: true })

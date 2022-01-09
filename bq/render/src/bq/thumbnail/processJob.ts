@@ -1,5 +1,6 @@
 import Queue from 'bee-queue'
 import { admin } from '../../firebase'
+import { uploadFile } from '../../firebase/utils'
 import { scene, encoding } from '../../three'
 import { v4 as uuid } from 'uuid'
 import jimp from 'jimp'
@@ -36,6 +37,8 @@ export const processJob = async (
 
   console.log(`${jobLabel} [ START ]`)
 
+  fs.mkdirSync(`./temp/social/${solutionId}`, { recursive: true })
+
   const bucket = admin.storage().bucket('np-graphs')
   const pathRoot = `${graphId}/${solutionId}`
 
@@ -57,61 +60,36 @@ export const processJob = async (
   const image = encoding.toPNG(model, camera, renderer.getRenderer())
 
   const thumbnailFilePath = `${pathRoot}/${uuid()}.png`
-  const thumbFile = bucket.file(thumbnailFilePath)
 
   // Write to storage
-  const stream = thumbFile.createWriteStream()
-  image.pack().pipe(stream)
-
-  await new Promise<void>((resolve, reject) => {
-    stream.on('finish', () => {
-      console.log(`${jobLabel} Uploaded ${thumbnailFilePath}`)
-      resolve()
-    })
-    stream.on('error', () => {
-      reject()
-    })
-  })
-
-  // Update firestore record with the thumbnail's location
-  const revisionRef = admin
-    .firestore()
-    .collection('graphs')
-    .doc(graphId)
-    .collection('revisions')
-    .doc(revision.toString())
-  const revisionDoc = await revisionRef.get()
-
-  if (!revisionDoc.exists) {
-    console.error(
-      `${jobLabel} [ ERROR ] Failed to update revision doc because it does not exist.`
-    )
-  } else {
-    await revisionRef.update('files.thumbnailImage', thumbnailFilePath)
-  }
-
-  // Create socials thumbnail
-  fs.mkdirSync(`./temp/social/${solutionId}`, { recursive: true })
-
-  const frame = encoding.toPNG(model, camera, renderer.getRenderer())
-  const frameStream = fs.createWriteStream(
+  const imageStream = fs.createWriteStream(
     `./temp/social/${solutionId}/twitter-frame.png`
   )
-  frame.pack().pipe(frameStream, { end: true })
+  image.pack().pipe(imageStream, { end: true })
 
   await new Promise<void>((resolve) => {
     const handleResolve = () => {
       resolve()
     }
 
-    frameStream.on('finish', handleResolve)
-    frameStream.on('close', handleResolve)
-    frameStream.on('error', (e) => {
+    imageStream.on('finish', handleResolve)
+    imageStream.on('close', handleResolve)
+    imageStream.on('error', (e) => {
       console.log(e)
       handleResolve()
     })
   })
 
+  const thumbnailFileData = fs.readFileSync(
+    `./temp/social/${solutionId}/twitter-frame.png`
+  )
+  const thumbnailRef = await uploadFile(
+    bucket,
+    thumbnailFilePath,
+    thumbnailFileData
+  )
+
+  // Create og link preview
   const barlowBold = await jimp.loadFont('./fonts/Barlow-Bold.fnt')
   const barlowMedium = await jimp.loadFont('./fonts/Barlow-Medium.fnt')
 
@@ -127,11 +105,38 @@ export const processJob = async (
   base.blit(thumb, 37, 37)
   base.blit(card, 0, 0)
 
-  const socialImageBuffer = await base.getBufferAsync('image/png')
-
   const socialsBucket = admin.storage().bucket('np-thumbnails')
-  const socialThumbnailFile = socialsBucket.file(`${graphId}/twitter.png`)
-  await socialThumbnailFile.save(socialImageBuffer)
+  const twitterThumbnailImagePath = `${graphId}/twitter.png`
+  const twitterThumbnailImageData = await base.getBufferAsync('image/png')
+
+  const twitterThumbnailImagRef = await uploadFile(
+    socialsBucket,
+    twitterThumbnailImagePath,
+    twitterThumbnailImageData,
+    -1
+  )
+
+  // Update firestore record with the thumbnail's location
+  const revisionRef = admin
+    .firestore()
+    .collection('graphs')
+    .doc(graphId)
+    .collection('revisions')
+    .doc(revision.toString())
+  const revisionDoc = await revisionRef.get()
+
+  if (!revisionDoc.exists) {
+    console.error(
+      `${jobLabel} [ ERROR ] Failed to update revision doc because it does not exist.`
+    )
+  } else {
+    await revisionRef.update(
+      'files.thumbnailImage',
+      thumbnailRef,
+      'files.twitterThumbnailImage',
+      twitterThumbnailImagRef
+    )
+  }
 
   // Cleanup
   renderer.destroy()

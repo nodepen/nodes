@@ -71,7 +71,7 @@ export const GraphCard = ({
       <div className="w-full h-full absolute top-0 left-0">
         <div className={`${orientation === 'vertical' ? 'flex-col' : 'flex-row'} w-full h-full p-2 flex`}>
           <div style={{ minWidth: orientation === 'vertical' ? '100%' : 'calc(66% - 12px)' }}>
-            <GraphThumbnail imageSrc={files.thumbnailImage} videoSrc={files.thumbnailVideo} hover={hover} />
+            <GraphThumbnail imageSrc={files.thumbnailImage?.url} videoSrc={files.thumbnailVideo?.url} hover={hover} />
           </div>
           <div
             className={`${

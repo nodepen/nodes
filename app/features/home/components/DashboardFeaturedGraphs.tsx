@@ -17,8 +17,12 @@ const DashboardFeaturedGraphs = (): React.ReactElement => {
             name
           }
           files {
-            thumbnailImage
-            thumbnailVideo
+            thumbnailImage {
+              url
+            }
+            thumbnailVideo {
+              url
+            }
           }
           stats {
             views

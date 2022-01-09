@@ -29,14 +29,14 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@cdriesler" />
         <meta name="twitter:title" content={`${name} by ${author.name}`}></meta>
-        <meta name="twitter:image" content={files.twitterThumbnailImage}></meta>
+        <meta name="twitter:image" content={files.twitterThumbnailImage?.url}></meta>
         <meta name="og:title" content={`${name} by ${author.name}`}></meta>
-        <meta name="og:image" content={files.twitterThumbnailImage}></meta>
+        <meta name="og:image" content={files.twitterThumbnailImage?.url}></meta>
       </Head>
       <ApolloContext token={token}>
         <GraphManager manifest={{ id, name, author, graph, files, stats }}>
           <Graph.Editor>
-            <SolutionManager initialSolution={files.graphSolutionJson}>
+            <SolutionManager initialSolution={files.graphSolutionJson?.url}>
               <>
                 <Graph.Container />
                 <Scene />
@@ -95,10 +95,19 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
               name
             }
             files {
-              graphJson
-              graphSolutionJson
-              graphBinaries
-              twitterThumbnailImage
+              graphJson {
+                path
+                url
+              }
+              graphSolutionJson {
+                url
+              }
+              graphBinaries {
+                url
+              }
+              twitterThumbnailImage {
+                url
+              }
             }
             stats {
               views
@@ -122,7 +131,7 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
 
     const { id, name, author, files, stats } = data.graph as NodePen.GraphManifest
 
-    if (!files.graphJson || !files.graphSolutionJson || !files.graphBinaries) {
+    if (!files.graphJson) {
       return { notFound: true }
     }
 
@@ -135,34 +144,16 @@ export const getServerSideProps: GetServerSideProps<GrasshopperGraphPageProps> =
         id: 'N/A',
         name: author.name,
       },
-      files: {
-        twitterThumbnailImage: files?.twitterThumbnailImage ?? '',
-      },
+      files,
       stats,
     }
 
+    // Download graph json (should be client-side ?)
     const bucket = admin.storage().bucket('np-graphs')
     const validation = process?.env?.NEXT_PUBLIC_DEBUG !== 'true'
 
-    const getFileUrl = async (bucketLocation: string): Promise<string> => {
-      const file = bucket.file(bucketLocation)
-      return process?.env?.NEXT_PUBLIC_DEBUG === 'true'
-        ? file.publicUrl()
-        : (
-            await file.getSignedUrl({
-              version: 'v4',
-              action: 'read',
-              expires: Date.now() + 60 * 60 * 1000,
-            })
-          )[0]
-    }
-
-    // Set graphBinaries and graphSolutionJson url in response
-    record.files.graphBinaries = await getFileUrl(files.graphBinaries)
-    record.files.graphSolutionJson = await getFileUrl(files.graphSolutionJson)
-
     // Download and hydrate graph json
-    const graphJsonFile = bucket.file(files.graphJson)
+    const graphJsonFile = bucket.file(files.graphJson.path)
     const [graphJson] = await graphJsonFile.download({ validation })
 
     const graphElements: NodePen.GraphElementsArray = JSON.parse(graphJson.toString())

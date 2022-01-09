@@ -1,5 +1,7 @@
 import Queue from 'bee-queue'
+import { GCP } from 'glib'
 import { admin } from '../../firebase'
+import { uploadFile } from '../../firebase/utils'
 import { v4 as uuid } from 'uuid'
 import atob from 'atob'
 
@@ -36,38 +38,26 @@ export const processJob = async (
 
   // Create solution .json file
   const solutionFilePath = `${pathRoot}/${uuid()}.json`
-  const solutionFile = bucket.file(solutionFilePath)
-
   const solutionFileData = JSON.stringify(JSON.parse(graphSolution), null, 2)
+  const solutionFileReference = await uploadFile(
+    bucket,
+    solutionFilePath,
+    solutionFileData
+  )
 
   // Create .gh file
   const ghFilePath = `${pathRoot}/${uuid()}.gh`
-  const ghFile = bucket.file(ghFilePath)
 
   let ghFileData: any = atob(graphBinaries)
-
   const bytes = new Array(ghFileData.length)
   for (let i = 0; i < ghFileData.length; i++) {
     bytes[i] = ghFileData.charCodeAt(i)
   }
   ghFileData = new Uint8Array(bytes)
 
-  // Upload graph files
-  const uploadResult = await Promise.allSettled([
-    solutionFile.save(solutionFileData),
-    ghFile.save(ghFileData),
-  ])
+  const ghFileReference = await uploadFile(bucket, ghFilePath, ghFileData)
 
-  // Get url for response
-  const graphBinariesUrl = process?.env?.DEBUG
-    ? ghFile.publicUrl()
-    : (
-        await ghFile.getSignedUrl({
-          version: 'v4',
-          action: 'read',
-          expires: Date.now() + 60 * 60 * 1000,
-        })
-      )[0]
+  // Upload graph files
 
   // Update revision record
   const fb = admin.firestore()
@@ -82,11 +72,11 @@ export const processJob = async (
   if (versionDoc.exists) {
     await versionRef.update(
       'files.graphBinaries',
-      ghFilePath,
+      ghFileReference,
       'files.graphSolutionJson',
-      solutionFilePath
+      solutionFileReference
     )
   }
 
-  return { ...job.data, graphBinariesUrl }
+  return { ...job.data, graphBinariesUrl: ghFileReference.url }
 }

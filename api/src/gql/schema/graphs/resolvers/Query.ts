@@ -3,12 +3,11 @@ import { authorize } from '../../../../gql/utils'
 import { admin } from '../../../../firebase'
 import { BaseResolverMap } from '../../base/types'
 import { Arguments } from '../types'
-import { hydrateGraphRecord } from '../utils'
-
-type GraphResponse = Omit<NodePen.GraphManifest, 'graph' | 'files'>
+import { hydrateGraphRecords } from '../utils'
+import { GraphResponse } from '../types'
 
 export const Query: BaseResolverMap<never, Arguments['Query']> = {
-  graph: async (_parent, { graphId }, { user }): Promise<unknown> => {
+  graph: async (_parent, { graphId }, { user }): Promise<GraphResponse> => {
     const db = admin.firestore()
 
     const graphReference = db.collection('graphs').doc(graphId)
@@ -42,28 +41,6 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       nextViewIndexerCount
     )
 
-    // Get current version information
-    const currentRevision = graphDocument.get('revision')?.toString() as string
-
-    if (!currentRevision) {
-      return undefined
-    }
-
-    // const versionReference = db
-    //   .collection('graphs')
-    //   .doc(graphId)
-    //   .collection('revisions')
-    //   .doc(currentRevision)
-    // const versionDocument = await versionReference.get()
-
-    // if (!versionDocument.exists) {
-    //   return undefined
-    // }
-
-    // const socialBucket = admin.storage().bucket('np-thumbnails')
-    // const twitterThumbnail = socialBucket.file(`${graphId}/twitter.png`)
-    // const twitterThumbnailImage = twitterThumbnail.publicUrl()
-
     const record: GraphResponse = {
       id: graphId,
       name: graphDocument.get('name'),
@@ -71,12 +48,14 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
         name: graphDocument.get('author.name'),
         id: 'N/A',
       },
+      files: {},
       stats: {
         views: nextViewCount,
       },
+      revision: graphDocument.get('revision'),
     }
 
-    return { ...record, revision: currentRevision }
+    return record
   },
   graphsByAuthor: async (
     _parent,
@@ -91,23 +70,7 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
       .orderBy('name')
     const queryResults = await query.get()
 
-    const hydrationResults = await Promise.allSettled(
-      queryResults.docs.map((doc) => hydrateGraphRecord(doc))
-    )
-
-    const result = hydrationResults.reduce((all, current) => {
-      switch (current.status) {
-        case 'fulfilled': {
-          return [...all, current.value]
-        }
-        case 'rejected': {
-          console.error(current.reason)
-          return all
-        }
-      }
-    }, [] as GraphResponse[])
-
-    return result
+    return hydrateGraphRecords(queryResults)
   },
   graphsByPopularity: async (
     _parent,
@@ -119,22 +82,6 @@ export const Query: BaseResolverMap<never, Arguments['Query']> = {
     const query = db.collection('graphs').orderBy('stats.viewsIndex').limit(6)
     const queryResults = await query.get()
 
-    const hydrationResults = await Promise.allSettled(
-      queryResults.docs.map((doc) => hydrateGraphRecord(doc))
-    )
-
-    const result = hydrationResults.reduce((all, current) => {
-      switch (current.status) {
-        case 'fulfilled': {
-          return [...all, current.value]
-        }
-        case 'rejected': {
-          console.error(current.reason)
-          return all
-        }
-      }
-    }, [] as GraphResponse[])
-
-    return result
+    return hydrateGraphRecords(queryResults)
   },
 }

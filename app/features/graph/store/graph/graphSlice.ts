@@ -93,7 +93,13 @@ export const graphSlice = createSlice({
     setGraphFileUrl: (state: GraphState, action: PayloadAction<Payload.SetGraphFileUrlPayload>) => {
       const { file, url } = action.payload
 
-      state.manifest.files[file] = url
+      const ref = state.manifest.files[file]
+
+      if (!ref) {
+        return
+      }
+
+      ref.url = url
     },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()

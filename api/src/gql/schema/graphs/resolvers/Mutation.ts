@@ -1,6 +1,7 @@
-import { NodePen } from 'glib'
+import { NodePen, GCP } from 'glib'
 import { v4 as uuid } from 'uuid'
 import { admin } from '../../../../firebase'
+import { uploadFile } from '../../../../firebase/utils'
 import { ghq } from '../../../../bq'
 import { authorize } from '../../../utils/authorize'
 import { BaseResolverMap } from '../../base/types'
@@ -32,8 +33,6 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       type: 'graph',
       action: 'view',
     })
-
-    console.log('!')
 
     const db = admin.firestore()
     const bucket = admin.storage().bucket('np-graphs')
@@ -188,15 +187,17 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       await ref.update('revision', revision, 'time.updated', now)
     }
 
+    // Save graph .json file
     const bucket = admin.storage().bucket('np-graphs')
     const pathRoot = `${graphId}/${solutionId}`
 
-    // Save graph .json file
     const jsonFilePath = `${pathRoot}/${uuid()}.json`
-    const jsonFile = bucket.file(jsonFilePath)
     const jsonFileData = JSON.stringify(JSON.parse(graphJson), null, 2)
-
-    await jsonFile.save(jsonFileData)
+    const jsonFileReference = await uploadFile(
+      bucket,
+      jsonFilePath,
+      jsonFileData
+    )
 
     // Copy information from previous revision, if it exists
     const previousRevisionRef = await db
@@ -205,6 +206,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       .collection('revisions')
       .doc((revision - 1).toString())
     const previousRevisionDoc = await previousRevisionRef.get()
+    const previousRevisionFiles = previousRevisionDoc.data()?.files ?? {}
 
     await db
       .collection('graphs')
@@ -220,11 +222,8 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           solution: solutionId,
         },
         files: {
-          graphJson: jsonFilePath,
-          graphSolutionJson:
-            previousRevisionDoc.get('files.graphSolutionJson') ?? '',
-          graphBinaries: previousRevisionDoc.get('files.graphBinaries') ?? '',
-          thumbnailImage: previousRevisionDoc.get('files.thumbnailImage') ?? '',
+          graphJson: jsonFileReference,
+          ...previousRevisionFiles,
         },
       })
 

@@ -5,14 +5,14 @@ const DownloadButton = (): React.ReactElement => {
   const { graphBinaries } = useGraphFiles()
 
   const handleDownload = (): void => {
-    if (!graphBinaries) {
+    if (!graphBinaries?.url) {
       console.log('🐍 No graph url available!')
       return
     }
 
     const anchor = document.createElement('a')
 
-    anchor.href = graphBinaries
+    anchor.href = graphBinaries.url
     anchor.click()
 
     anchor.remove()
