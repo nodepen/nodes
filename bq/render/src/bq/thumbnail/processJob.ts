@@ -59,8 +59,6 @@ export const processJob = async (
   const renderer = new encoding.Renderer()
   const image = encoding.toPNG(model, camera, renderer.getRenderer())
 
-  const thumbnailFilePath = `${pathRoot}/${uuid()}.png`
-
   // Write to storage
   const imageStream = fs.createWriteStream(
     `./temp/social/${solutionId}/twitter-frame.png`
@@ -80,6 +78,7 @@ export const processJob = async (
     })
   })
 
+  const thumbnailFilePath = `${pathRoot}/${uuid()}.png`
   const thumbnailFileData = fs.readFileSync(
     `./temp/social/${solutionId}/twitter-frame.png`
   )
@@ -89,7 +88,7 @@ export const processJob = async (
     thumbnailFileData
   )
 
-  // Create og link preview
+  // Create opengraph link preview
   const barlowBold = await jimp.loadFont('./fonts/Barlow-Bold.fnt')
   const barlowMedium = await jimp.loadFont('./fonts/Barlow-Medium.fnt')
 

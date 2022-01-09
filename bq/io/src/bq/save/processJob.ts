@@ -57,8 +57,6 @@ export const processJob = async (
 
   const ghFileReference = await uploadFile(bucket, ghFilePath, ghFileData)
 
-  // Upload graph files
-
   // Update revision record
   const fb = admin.firestore()
 

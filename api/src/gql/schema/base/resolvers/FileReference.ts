@@ -23,17 +23,11 @@ export const FileReference = {
       return url
     }
 
-    console.log(updated)
-    console.log(new Date().toISOString())
-
     const updatedMs = new Date(updated).getTime()
     const nowMs = new Date().getTime() + 1000 * 60 * 60 * 12
 
     const diff = nowMs - updatedMs
     const allowed = 1000 * 60 * 60 * 24 * ttl
-
-    console.log(diff)
-    console.log(allowed)
 
     // url has not expired
     if (diff < allowed) {
@@ -46,13 +40,16 @@ export const FileReference = {
     const bucket = admin.storage().bucket(bucketName)
     const file = bucket.file(path)
 
-    const newUrl = (
-      await file.getSignedUrl({
-        version: 'v4',
-        action: 'read',
-        expires: Date.now() + 1000 * 60 * 60 * 24 * ttl,
-      })
-    )[0]
+    const newUrl =
+      process?.env?.DEBUG === 'true'
+        ? file.publicUrl()
+        : (
+            await file.getSignedUrl({
+              version: 'v4',
+              action: 'read',
+              expires: Date.now() + 1000 * 60 * 60 * 24 * ttl,
+            })
+          )[0]
 
     const db = admin
       .firestore()

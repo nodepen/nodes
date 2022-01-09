@@ -1,7 +1,7 @@
 import { Server } from 'http'
 import { initialize } from './gql'
 import { admin } from './firebase'
-import { db, initialize as initializePubsub } from './redis'
+import { db } from './redis'
 import { ghq } from './bq'
 
 type GlobalServerConfig = {

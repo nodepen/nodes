@@ -26,8 +26,12 @@ export const UserProfile = ({ username, photoUrl }: UserProfileProps): React.Rea
             name
           }
           files {
-            thumbnailImage
-            thumbnailVideo
+            thumbnailImage {
+              url
+            }
+            thumbnailVideo {
+              url
+            }
           }
           stats {
             views
