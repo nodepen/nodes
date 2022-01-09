@@ -4,7 +4,7 @@ import { SectionInnerLayout } from './SectionInnerLayout'
 
 type SectionOuterLayoutProps = {
   id?: string
-  color?: 'dark' | 'green' | 'pale' | 'white'
+  color?: 'dark' | 'green' | 'pale' | 'white' | 'none'
   flex?: boolean
   before?: JSX.Element
   after?: JSX.Element

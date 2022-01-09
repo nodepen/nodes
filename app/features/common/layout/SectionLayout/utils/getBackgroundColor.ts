@@ -1,4 +1,4 @@
-export const getBackgroundColor = (colorName: 'dark' | 'green' | 'pale' | 'white'): string => {
+export const getBackgroundColor = (colorName: 'dark' | 'green' | 'pale' | 'white' | 'none'): string => {
   switch (colorName) {
     case 'dark':
       return 'bg-dark'
@@ -8,6 +8,8 @@ export const getBackgroundColor = (colorName: 'dark' | 'green' | 'pale' | 'white
       return 'bg-pale'
     case 'white':
       return 'bg-white'
+    case 'none':
+      return 'bg-none'
     default:
       return 'bg-pale'
   }
