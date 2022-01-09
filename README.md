@@ -17,47 +17,17 @@ Thank you for trying NodePen! This project continues to be a place where I impro
 
 If you found a bug, felt a common Grasshopper feature was blatantly missing, or just have some thoughts you'd like to share, please open an issue or reach out (@cdriesler) on twitter! I'm currently working on a number of features related to hosting and sharing scripts (like the project's namesake) but am much more interested in how people want to use this thing.
 
-## Project Architecture
-
-NodePen is a next.js web application that must shuttle information to and from a Grasshopper instance that may:
-
-- (1) take an inexplicably long time to execute because of accidental tree management errors
-- (2) generate an unreasonably large amount of geometry because of accidental tree management errors
-
-Even further, long running processes _can't be stopped gracefully_. Grasshopper completes or Grasshopper dies. The main architectural problem that NodePen tackles is the requirement to recover from these highly likely failure modes. This is further complicated by Rhino Compute's hard dependency on Windows machines.
-
-The project folder structure represents the three core services of the application (and a shared libraries folder):
-
-- `app` is the next.js client-side application that provides the editor experience
-- `gh` is the Rhino Compute project that runs NodePen json structures as Grasshopper scripts
-- `api` is a GraphQL service that, along with a redis instance for messages, mediates communication between them
-
-The ideal solution loop goes something like:
-
-- User makes some change to their graph that requires a new solution
-- The client makes a request to the api, and a new solution is scheduled via redis (using the bee-queue library)
-- A `gh/dispatch` service, associated with a `gh/compute` service, consumes and sends the job to Rhino Compute
-- Compute creates a Grasshopper graph from NodePen json data
-- Compute executes the entire graph and returns the results to `gh/dispatch`
-- The `gh/dispatch` service writes _each parameter's results_ to an ephemeral redis key
-- The `gh/dispatch` service broadcasts to all clients that the graph is done
-- Out-of-date clients request parameter data as-needed
-
-Communication _towards_ Rhino Compute is via these redis queue messages. Communication _away_ from Rhino Compute is via broadcasts to GraphQL subscriptions, also mediated by redis. The subscription-based structure allows multiple windows to watch the same graph. This means that you can have one open for editing and one open for watching the model. Try opening 10 at once, it's fun.
-
-Each service is containerized and deployed to a kubernetes cluster on GKE. The cluster will auto-heal blocked or broken services while maintaining communication pathways between them. It also promises the ability to scale compute with queue depth, but I'm monitoring NodePen to see if this might be overkill. Because it's very expensive.
-
 ## Running Locally
 
-Running the entire project locally is unnecessarily difficult at the moment because of recently-added dependencies on GCP for authentication. As the project stabilizes, I'm sketching out what a useful "local slice" of features would look like.
-
-Each service (listed above) includes the `Dockerfile` used for build and deploy. If you are trying something that requires locally running NodePen, please reach out.
+NodePen has grown well beyond its early days as an single page app. It's currently not possible to run the entire app locally without also including shims for dependencies on Google Cloud products or a locally running instance of Redis. I'm actively working on what to do about this.
 
 ## Release History
 
 ### Current Release
 
-The current version began with a release of the editor only (no solutions) on August 8, 2021. The Rhino Compute backend was brought back online and solutions were re-enabled on November 5, 2021.
+After about two and a half years of development, NodePen released with user accounts, sharing, and script persistence on January 10, 2022. This marked a symbolic "1.0" release, but there was still a lot to do! Most of the native Grasshopper library was not yet supported, and there was no way to browse scripts on the platform.
+
+The 1.0 editor (no solutions or profiles or sharing) was released on August 8, 2021. The Rhino Compute backend was brought back online and solutions were re-enabled on November 5, 2021.
 
 ### Public Test
 

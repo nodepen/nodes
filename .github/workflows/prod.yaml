@@ -6,19 +6,23 @@ on:
       - main
 
 env:
+  NP_PREFIX: prod
   GKE_CLUSTER: ${{ secrets.NODEPEN_GKE_CLUSTER }}
   GKE_ZONE: ${{ secrets.NODEPEN_GKE_ZONE }}
-  NP_PREFIX: prod
-  NP_TAG: prod-${{ github.sha }}
+  DOCKER_TAG_PREFIX: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/
+  DOCKER_TAG_SUFFIX: :prod-${{ github.sha }}
 
 jobs:
-  build-lib:
+  build-glib:
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: "12"
+          cache: "npm"
+          cache-dependency-path: lib/package-lock.json
       - name: Build glib
         working-directory: ./lib
         run: |
@@ -32,14 +36,45 @@ jobs:
             lib/
             !lib/node_modules/
           retention-days: 1
+  close-dev:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - uses: azure/setup-helm@v1
+      - run: gcloud container clusters get-credentials "$GKE_CLUSTER" --zone "$GKE_ZONE"
+      - name: Close dev
+        run: helm uninstall np-dev
+  dependencies-gate:
+    runs-on: ubuntu-latest
+    needs:
+      - build-glib
+      - close-dev
+
+    steps:
+      - name: Assert success
+        run: echo 🎉
   build-app:
     runs-on: ubuntu-latest
-    needs: [build-lib]
+    needs: dependencies-gate
+
+    env:
+      SERVICE_NAME: np-app
+      NODEPEN_API_ENDPOINT: https://api.nodepen.io/graphql
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: "12"
+          cache: "npm"
+          cache-dependency-path: app/package-lock.json
       - name: Download glib artifacts
         uses: actions/download-artifact@v2
         with:
@@ -48,13 +83,29 @@ jobs:
       - name: Restore glib dependencies
         working-directory: ./app/glib
         run: npm ci
-      - name: Restore app secrets
+      - name: Restore app dependencies
+        working-directory: ./app
+        run: npm ci
+      - name: Restore app build cache
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/app/.next/cache
+          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/app/package-lock.json') }}-${{ hashFiles('**/app/**.[jt]s', '**/app/**.[jt]sx') }}
+          restore-keys: |
+            ${{ runner.os }}-nextjs-${{ hashFiles('**/app/package-lock.json') }}-
+      - name: Restore client secrets
         uses: jsdaniell/create-json@1.1.2
         with:
           name: "firebase.client.auth.json"
           dir: "app/features/common/context/session/auth/"
           json: ${{ secrets.NODEPEN_APP_SECRET_AUTH }}
-      - uses: google-github-actions/setup-gcloud@master
+      - name: Restore server secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "firebase.server.auth.json"
+          dir: "app/features/common/context/session/auth/"
+          json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -64,18 +115,26 @@ jobs:
       - uses: docker/build-push-action@v2
         with:
           context: ./app
+          build-args: |
+            NODEPEN_API_ENDPOINT=${{ env.NODEPEN_API_ENDPOINT }}
           push: true
           tags: |
-            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:prod-${{ github.sha }}
-            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:prod
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod-${{ github.sha }}
   build-api:
     runs-on: ubuntu-latest
-    needs: [build-lib]
+    needs: dependencies-gate
+
+    env:
+      SERVICE_NAME: np-api
+
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
           node-version: "12"
+          cache: "npm"
+          cache-dependency-path: api/package-lock.json
       - name: Download glib artifacts
         uses: actions/download-artifact@v2
         with:
@@ -90,7 +149,7 @@ jobs:
           name: "auth.json"
           dir: "api/src/firebase/auth/"
           json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -102,11 +161,99 @@ jobs:
           context: ./api
           push: true
           tags: |
-            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:prod-${{ github.sha }}
-            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:prod
-  build-gh-dispatch:
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod-${{ github.sha }}
+  build-bq-io:
+    runs-on: ubuntu-latest
+    needs: dependencies-gate
+
+    env:
+      SERVICE_NAME: np-bq-io
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+          cache: "npm"
+          cache-dependency-path: bq/io/package-lock.json
+      - name: Download glib artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: glib
+          path: bq/io/glib/
+      - name: Restore glib dependencies
+        working-directory: ./bq/io/glib
+        run: npm ci
+      - name: Restore server secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "auth.json"
+          dir: "bq/io/src/firebase/auth/"
+          json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
+      - uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Setup GCR
+        run: gcloud auth configure-docker
+      - uses: docker/build-push-action@v2
+        with:
+          context: ./bq/io
+          push: true
+          tags: |
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod-${{ github.sha }}
+  build-bq-render:
+    runs-on: ubuntu-latest
+    needs: dependencies-gate
+
+    env:
+      SERVICE_NAME: np-bq-render
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "12"
+          cache: "npm"
+          cache-dependency-path: bq/render/package-lock.json
+      - name: Download glib artifacts
+        uses: actions/download-artifact@v2
+        with:
+          name: glib
+          path: bq/render/glib/
+      - name: Restore glib dependencies
+        working-directory: ./bq/render/glib
+        run: npm ci
+      - name: Restore server secrets
+        uses: jsdaniell/create-json@1.1.2
+        with:
+          name: "auth.json"
+          dir: "bq/render/src/firebase/auth/"
+          json: ${{ secrets.NODEPEN_API_SECRET_AUTH }}
+      - uses: google-github-actions/setup-gcloud@v0.3.0
+        with:
+          project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
+          export_default_credentials: true
+      - name: Setup GCR
+        run: gcloud auth configure-docker
+      - uses: docker/build-push-action@v2
+        with:
+          context: ./bq/render
+          push: true
+          tags: |
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod
+            gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod-${{ github.sha }}
+  build-bq-gh-dispatch:
     runs-on: self-hosted
-    needs: [build-lib]
+    needs: dependencies-gate
+
+    env:
+      SERVICE_NAME: np-bq-gh-dispatch
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -114,34 +261,59 @@ jobs:
         uses: actions/download-artifact@v2
         with:
           name: glib
-          path: gh/dispatch/glib/
+          path: bq/gh/dispatch/glib/
       - name: Restore glib dependencies
-        working-directory: ./gh/dispatch/glib
+        working-directory: ./bq/gh/dispatch/glib
         run: npm ci
-      - name: Build np-gh-dispatch
+      - name: Build ${{ env.SERVICE_NAME }}
+        env:
+          DOCKER_TAG: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod
+          DOCKER_TAG_VERBOSE: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod-${{ github.sha }}
         run: |
-          cd gh/dispatch
-          docker build -t gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod-${{ github.sha }} .
-          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod-${{ github.sha }}
-          docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod
-          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-dispatch:prod
-  build-gh-compute:
+          cd bq/gh/dispatch
+          docker build -t ${{ env.DOCKER_TAG }} .
+          docker push ${{ env.DOCKER_TAG }}
+          docker tag ${{ env.DOCKER_TAG }} ${{ env.DOCKER_TAG_VERBOSE }}
+          docker push ${{ env.DOCKER_TAG_VERBOSE }}
+  build-bq-gh-compute:
     runs-on: self-hosted
+    needs: dependencies-gate
+
+    env:
+      SERVICE_NAME: np-bq-gh-compute
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Build np-gh-compute
+      - name: Build ${{ env.SERVICE_NAME }}
+        env:
+          DOCKER_TAG: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod
+          DOCKER_TAG_VERBOSE: gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/${{ env.SERVICE_NAME }}:prod-${{ github.sha }}
         run: |
-          cd gh/compute
-          docker build -t gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod-${{ github.sha }} --build-arg NODEPEN_RHINO_TOKEN=${{ secrets.NODEPEN_RHINO_TOKEN }} .
-          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod-${{ github.sha }}
-          docker tag gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod-${{ github.sha }} gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod
-          docker push gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-gh-compute:prod
+          cd bq/gh/compute
+          docker build -t ${{ env.DOCKER_TAG }} --build-arg NODEPEN_RHINO_TOKEN=${{ secrets.NODEPEN_RHINO_TOKEN }} .
+          docker push ${{ env.DOCKER_TAG }}
+          docker tag ${{ env.DOCKER_TAG }} ${{ env.DOCKER_TAG_VERBOSE }}
+          docker push ${{ env.DOCKER_TAG_VERBOSE }}
+  build-gate:
+    runs-on: ubuntu-latest
+    needs:
+      - build-app
+      - build-api
+      - build-bq-io
+      - build-bq-render
+      - build-bq-gh-compute
+      - build-bq-gh-dispatch
+
+    steps:
+      - name: Assert success
+        run: echo 🎉
   deploy-app:
     runs-on: ubuntu-latest
-    needs: [build-app]
+    needs: build-gate
+
     steps:
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -151,13 +323,13 @@ jobs:
           gcloud run deploy np-app \
             --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-app:prod \
             --region=${{ secrets.NODEPEN_GCP_REGION }} \
-            --set-env-vars=NEXT_PUBLIC_NP_API_ENDPOINT=https://api.nodepen.io/graphql \
             --allow-unauthenticated
   deploy-api:
     runs-on: ubuntu-latest
-    needs: [build-api]
+    needs: build-gate
+
     steps:
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
@@ -167,15 +339,19 @@ jobs:
           gcloud run deploy np-api \
             --image=gcr.io/${{ secrets.NODEPEN_GCP_PROJECT_ID }}/np-api:prod \
             --region=${{ secrets.NODEPEN_GCP_REGION }} \
-            --set-env-vars=NP_API_PORT=8080,NP_GLOBAL_PREFIX="$NP_PREFIX",NP_DB_HOST=${{ secrets.NODEPEN_REDIS_HOST }},NP_DB_PORT=${{ secrets.NODEPEN_REDIS_PORT }} \
+            --set-env-vars=NP_API_PORT=8080,NP_GLOBAL_PREFIX=${{ env.NP_PREFIX }},NP_DB_HOST=${{ secrets.NODEPEN_REDIS_HOST }},NP_DB_PORT=${{ secrets.NODEPEN_REDIS_PORT }} \
             --allow-unauthenticated
-  deploy-gh:
+  deploy-bq:
     runs-on: ubuntu-latest
-    needs: [build-gh-compute, build-gh-dispatch]
+    needs: build-gate
+
+    env:
+      NP_TAG: prod-${{ github.sha }}
+
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - uses: google-github-actions/setup-gcloud@master
+      - uses: google-github-actions/setup-gcloud@v0.3.0
         with:
           project_id: ${{ secrets.NODEPEN_GCP_PROJECT_ID }}
           service_account_key: ${{ secrets.NODEPEN_GCP_TOKEN }}
