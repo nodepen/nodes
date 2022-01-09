@@ -61,12 +61,14 @@ export const LegalDocument = ({ doc }: LegalDocumentProps): React.ReactElement =
       <div className="w-vw h-10 pl-2 absolute top-0 left-0 bg-none z-50">
         <div className="w-full h-full flex items-center">
           <Link href="/">
-            <img
-              src="/nodepen-pale.svg"
-              width="30"
-              height="28"
-              alt="The NodePen logo: an 'N' followed by a 'P', both fit into narrow rounded-rectangle geometry. A hollow circle punctuates the space left over under the P. This shape is a reference to the grip geometry used to connect graph nodes."
-            />
+            <a>
+              <img
+                src="/nodepen-pale.svg"
+                width="30"
+                height="28"
+                alt="The NodePen logo: an 'N' followed by a 'P', both fit into narrow rounded-rectangle geometry. A hollow circle punctuates the space left over under the P. This shape is a reference to the grip geometry used to connect graph nodes."
+              />
+            </a>
           </Link>
         </div>
       </div>
@@ -107,13 +109,22 @@ export const LegalDocument = ({ doc }: LegalDocumentProps): React.ReactElement =
         }
 
         p {
-          font-size: 1.15rem;
-          line-height: 1.75rem;
+          font-size: 1rem;
+          font-weight: 500;
+          line-height: 1.6rem;
           margin-bottom: 8px;
         }
 
         li {
           padding-left: 9px;
+        }
+
+        a {
+          text-decoration: underline;
+        }
+
+        a:hover {
+          color: #777;
         }
       `}</style>
     </div>
