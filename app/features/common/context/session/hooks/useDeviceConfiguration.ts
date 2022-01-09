@@ -7,7 +7,7 @@ type DeviceContext = {
 
 export const useDeviceConfiguration = (): DeviceContext => {
   const [iOS, setIOS] = useState(false)
-  const [breakpoint, setBreakpoint] = useState<DeviceContext['breakpoint']>('sm')
+  const [breakpoint, setBreakpoint] = useState<DeviceContext['breakpoint']>('md')
 
   useEffect(() => {
     if (['iPhone', 'iPod', 'iPad'].includes(process.browser ? navigator.platform : '')) {

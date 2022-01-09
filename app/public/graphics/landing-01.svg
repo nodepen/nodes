@@ -1,0 +1,13 @@
+<svg width="525" height="225" viewBox="0 0 525 225" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="510" y="103" width="110" height="148" rx="4" transform="rotate(90 510 103)" fill="#98E2C6" stroke="#98E2C6" stroke-width="4"/>
+<rect x="452" y="117" width="82" height="34" rx="6" transform="rotate(90 452 117)" fill="#EFF2F2" stroke="#98E2C6" stroke-width="4"/>
+<rect x="503" y="96" width="110" height="148" rx="4" transform="rotate(90 503 96)" stroke="#7BBFA5" stroke-width="4"/>
+<rect x="166" y="19" width="110" height="148" rx="4" transform="rotate(90 166 19)" fill="#98E2C6" stroke="#98E2C6" stroke-width="4"/>
+<rect x="108" y="33" width="82" height="34" rx="6" transform="rotate(90 108 33)" fill="#EFF2F2" stroke="#98E2C6" stroke-width="4"/>
+<rect x="100" y="29" width="78" height="30" rx="4" transform="rotate(90 100 29)" stroke="#7BBFA5" stroke-width="4"/>
+<rect x="444" y="112" width="78" height="30" rx="4" transform="rotate(90 444 112)" stroke="#7BBFA5" stroke-width="4"/>
+<rect x="160" y="13" width="110" height="148" rx="4" transform="rotate(90 160 13)" stroke="#7BBFA5" stroke-width="4"/>
+<path d="M162 78C167.523 78 172 73.5228 172 68C172 62.4772 167.523 58 162 58" stroke="#7BBFA5" stroke-width="4"/>
+<path d="M353 141C347.477 141 343 145.477 343 151C343 156.523 347.477 161 353 161" stroke="#7BBFA5" stroke-width="4"/>
+<path d="M175 69H273.651C284.463 69 289.761 82.1767 281.957 89.6607L239.543 130.339C231.739 137.823 237.037 151 247.849 151H340.5" stroke="#7BBFA5" stroke-width="4" stroke-dasharray="8 8"/>
+</svg>

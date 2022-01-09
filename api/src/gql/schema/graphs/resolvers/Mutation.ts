@@ -1,0 +1,276 @@
+import { NodePen, GCP } from 'glib'
+import { v4 as uuid } from 'uuid'
+import { admin } from '../../../../firebase'
+import { uploadFile } from '../../../../firebase/utils'
+import { ghq } from '../../../../bq'
+import { authorize } from '../../../utils/authorize'
+import { BaseResolverMap } from '../../base/types'
+import { Arguments } from '../types'
+
+export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
+  deleteGraph: async (_parent, { graphId }, { user }): Promise<string> => {
+    const [ref, doc] = await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'delete',
+    })
+
+    const db = admin.firestore()
+
+    // Delete graph record
+    await db.recursiveDelete(ref)
+
+    // Delete folder from np-graphs bucket
+    const bucket = admin.storage().bucket('np-graphs')
+
+    await bucket.deleteFiles({ prefix: `${graphId}/` })
+
+    return graphId
+  },
+  duplicateGraph: async (_parent, { graphId }, { user }): Promise<string> => {
+    const [ref, doc] = await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'view',
+    })
+
+    const db = admin.firestore()
+    const bucket = admin.storage().bucket('np-graphs')
+
+    // Graph record information from current graph revision
+    const currentName: string = doc.get('name')
+    const currentRevision: number | undefined = doc.get('revision')
+
+    if (!currentRevision) {
+      throw new Error('No revision found!')
+    }
+
+    const currentRevisionKey = currentRevision.toString()
+
+    const currentRevisionRef = db
+      .collection('graphs')
+      .doc(graphId)
+      .collection('revisions')
+      .doc(currentRevisionKey)
+    const currentRevisionDoc = await currentRevisionRef.get()
+
+    if (!currentRevisionDoc.exists) {
+      throw new Error('Could not find revision!')
+    }
+
+    // Create new graph record
+    const now = new Date().toISOString()
+    const duplicateId = uuid()
+    const duplicateName = `${currentName} (Copy)`
+    const duplicateManifest = {
+      name: duplicateName.length < 100 ? duplicateName : currentName,
+      author: {
+        name: user.name,
+        id: user.id,
+      },
+      type: 'grasshopper',
+      time: {
+        created: now,
+        updated: now,
+      },
+      revision: 1,
+      stats: {
+        views: 0,
+      },
+    }
+
+    await db.collection('graphs').doc(duplicateId).create(duplicateManifest)
+
+    // Copy revision information and files from current graph
+    const duplicateRevision: any = {
+      files: {},
+      time: {
+        created: now,
+      },
+    }
+
+    for (const [fileType, fileRef] of Object.entries<GCP.Storage.FileReference>(
+      currentRevisionDoc.get('files') ?? {}
+    )) {
+      const doNotCopy = ['thumbnailVideo', 'twitterThumbnailImage']
+
+      if (doNotCopy.includes(fileType)) {
+        continue
+      }
+
+      if (process?.env?.DEBUG === 'true') {
+        // Emulator does not have `copy` implemented
+        // Local development is not protected from source deletion before copy is saved
+        duplicateRevision.files[fileType] = fileRef
+        continue
+      }
+
+      const { bucket: bucketName, path, ttl } = fileRef
+
+      const duplicatePath = path.replace(graphId, duplicateId)
+
+      const currentFile = bucket.file(path)
+      const currentFileExists = await currentFile.exists()
+
+      if (!currentFileExists) {
+        continue
+      }
+
+      const duplicateFile = await currentFile.copy(duplicatePath)
+
+      duplicateRevision.files[fileType] = {
+        bucket: bucketName,
+        path: duplicatePath,
+        ttl,
+        updated: new Date().toISOString(),
+        url: (
+          await duplicateFile[0].getSignedUrl({
+            version: 'v4',
+            action: 'read',
+            expires: Date.now() + 1000 * 60 * 60 * 24 * ttl,
+          })
+        )[0],
+      }
+    }
+
+    await db
+      .collection('graphs')
+      .doc(duplicateId)
+      .collection('revisions')
+      .doc('1')
+      .create(duplicateRevision)
+
+    // Return new graph's id
+    return duplicateId
+  },
+  renameGraph: async (
+    _parent,
+    { graphId, name },
+    { user }
+  ): Promise<NodePen.GraphManifest> => {
+    const [ref, doc] = await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'edit',
+    })
+
+    if (!doc.exists) {
+      throw new Error('Graph does not exist.')
+    }
+
+    // Validate name
+    if (name.length === 0 || name.length > 100) {
+      throw new Error('Graph name must be between 0 and 100 characters.')
+    }
+
+    await ref.update('name', name)
+
+    const record = doc.data() as NodePen.GraphManifest
+
+    return { ...record, name }
+  },
+  scheduleSaveGraph: async (
+    _parent,
+    { solutionId, graphId, graphJson, graphName },
+    { user }
+  ): Promise<string> => {
+    const [ref, doc] = await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'edit',
+    })
+
+    const db = admin.firestore()
+
+    let revision = 1
+    const now = new Date().toISOString()
+
+    if (!doc.exists) {
+      await ref.create({
+        name: graphName ?? 'Untitled Grasshopper Script',
+        author: {
+          name: user?.name ?? 'Unknown User',
+          id: user?.id ?? 'Unknown Id',
+        },
+        type: 'grasshopper',
+        time: {
+          created: now,
+          updated: now,
+        },
+        revision,
+        stats: {
+          views: 0,
+          viewsIndex: 0,
+        },
+      })
+    } else {
+      revision = (doc.get('revision') ?? 0) + 1
+      await ref.update('revision', revision, 'time.updated', now)
+    }
+
+    // Save graph .json file
+    const bucket = admin.storage().bucket('np-graphs')
+    const pathRoot = `${graphId}/${solutionId}`
+
+    const jsonFilePath = `${pathRoot}/${uuid()}.json`
+    const jsonFileData = JSON.stringify(JSON.parse(graphJson), null, 2)
+    const jsonFileReference = await uploadFile(
+      bucket,
+      jsonFilePath,
+      jsonFileData
+    )
+
+    // Copy information from previous revision, if it exists
+    const previousRevisionRef = await db
+      .collection('graphs')
+      .doc(graphId)
+      .collection('revisions')
+      .doc((revision - 1).toString())
+    const previousRevisionDoc = await previousRevisionRef.get()
+    const previousRevisionFiles = previousRevisionDoc.data()?.files ?? {}
+
+    const doNotCopy = ['thumbnailVideo', 'twitterThumbnailImage']
+
+    for (const key of doNotCopy) {
+      if (key in previousRevisionFiles) {
+        delete previousRevisionFiles[key]
+      }
+    }
+
+    await db
+      .collection('graphs')
+      .doc(graphId)
+      .collection('revisions')
+      .doc(revision.toString())
+      .create({
+        time: {
+          created: now,
+        },
+        context: {
+          graph: graphId,
+          solution: solutionId,
+        },
+        files: {
+          ...previousRevisionFiles,
+          graphJson: jsonFileReference,
+        },
+      })
+
+    const job = await ghq.save
+      .createJob({
+        solutionId,
+        graphId,
+        graphJson,
+        revision,
+        graphName,
+        authorName: user.name,
+      })
+      .save()
+
+    console.log(
+      `[ JOB ] [ GH:SAVE ] [ CREATE ] [ OPERATION ${job.id.padStart(9, '0')} ]`
+    )
+
+    return revision.toString()
+  },
+}

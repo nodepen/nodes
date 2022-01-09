@@ -9,13 +9,14 @@ import { SceneEnvironment } from './SceneEnvironment'
 import { LineMaterial } from 'three/examples/jsm/lines/LineMaterial'
 import { LineGeometry } from 'three/examples/jsm/lines/LineGeometry'
 import { Line2 } from 'three/examples/jsm/lines/Line2'
+import { useDebugRender } from '@/hooks'
 
 extend({ LineMaterial, LineGeometry, Line2 })
 
 const SceneContainer = (): React.ReactElement => {
   const ReduxBridge = useContextBridge(ReactReduxContext)
 
-  // orthographic camera={{ up: [0, 0, 1], zoom: 15, position: [0, 0, 10], near: -50 }}
+  useDebugRender('SceneContainer')
 
   return (
     <ScenePortal>

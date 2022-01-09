@@ -5,6 +5,7 @@ import { ComponentLibraryIcon } from './components'
 import { useSessionManager } from '@/features/common/context/session'
 import { useSceneDispatch, useSceneDisplayMode } from '@/features/graph/store/scene/hooks'
 import { useRouter } from 'next/router'
+import { LockedSolverMask } from '../../overlay'
 
 export const GraphControls = (): React.ReactElement => {
   const router = useRouter()
@@ -85,25 +86,6 @@ export const GraphControls = (): React.ReactElement => {
         style={{ left: sidebarIsOpen ? 0 : -sidebarWidth, top: 0, height: '100vh', width: sidebarWidth }}
       >
         <div className="w-full h-full overflow-auto no-scrollbar">
-          {/* <div className="w-full p-2 sticky bg-green top-0">
-            <div className="w-full p-1 flex items-stretch rounded-md border-2 border-swampgreen">
-              <div className="h-14 mr-2 rounded-sm bg-swampgreen" style={{ width: 74 }} />
-              <div className="flex flex-col justify-start">
-                <h3 className="text-xl text-darkgreen font-semibold">Twisty Tower</h3>
-                <div className="pb-1 text-darkgreen flex-grow flex flex-col justify-end">
-                  <p className="w-full flex flew-row items-center text-sm whitespace-nowrap">
-                    by&nbsp;{' '}
-                    <p className="font-semibold">
-                      {user && user.isAnonymous ? 'Anonymous' : user?.displayName ?? 'You'}
-                    </p>
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div> */}
-          {/* <div className="w-full p-2">
-            <hr className="w-full border-t-2 border-swampgreen rounded-full" />
-          </div> */}
           <button
             className="w-full h-12 flex justify-start items-center bg-green hover:bg-swampgreen"
             onClick={handleShowModel}
@@ -375,6 +357,7 @@ export const GraphControls = (): React.ReactElement => {
           ) : null}
         </div>
       </div>
+      <LockedSolverMask dx={sidebarIsOpen ? sidebarWidth : 0} />
     </div>
   )
 }

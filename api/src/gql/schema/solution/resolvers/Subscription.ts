@@ -6,9 +6,7 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('SOLUTION_START'),
       (payload, variables) => {
-        return variables.graphId
-          ? variables.graphId === payload.onSolutionStart.graphId
-          : true
+        return variables.graphId === payload.onSolutionStart.graphId
       }
     ),
   },
@@ -16,9 +14,7 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('SOLUTION_FINISH'),
       (payload, variables) => {
-        return variables.graphId
-          ? variables.graphId === payload.onSolutionFinish.graphId
-          : true
+        return variables.graphId === payload.onSolutionFinish.graphId
       }
     ),
   },
@@ -26,9 +22,7 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('UPDATE_SELECTION'),
       (payload, variables) => {
-        return variables.graphId
-          ? variables.graphId === payload.onUpdateSelection.graphId
-          : true
+        return variables.graphId === payload.onUpdateSelection.graphId
       }
     ),
   },
@@ -36,9 +30,7 @@ export const Subscription = {
     subscribe: withFilter(
       () => pubsub.asyncIterator('UPDATE_VISIBILITY'),
       (payload, variables) => {
-        return variables.graphId
-          ? variables.graphId === payload.onUpdateVisibility.graphId
-          : true
+        return variables.graphId === payload.onUpdateVisibility.graphId
       }
     ),
   },

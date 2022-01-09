@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState, useRef, createRef } from 'react'
-import { Grasshopper } from 'glib'
-import { GrasshopperGraphManifest } from '@/features/graph/types'
+import { Grasshopper, NodePen } from 'glib'
 import { GraphStore } from './types'
+import rhino3dm from 'rhino3dm'
 import { useSessionManager } from 'features/common/context/session'
 import { useApolloClient, gql } from '@apollo/client'
 import { SetTransform } from '@/features/graph/types'
 import { useGraphDispatch } from '../../store/graph/hooks'
-import rhino3dm from 'rhino3dm'
+import { newGuid } from '../../utils'
 
 export const GraphContext = React.createContext<GraphStore>({
   register: {
@@ -25,12 +25,12 @@ export const GraphContext = React.createContext<GraphStore>({
 })
 
 type GraphManagerProps = {
-  manifest: GrasshopperGraphManifest
+  manifest?: NodePen.GraphManifest
   children?: JSX.Element
 }
 
 export const GraphManager = ({ children, manifest }: GraphManagerProps): React.ReactElement => {
-  const { token, session } = useSessionManager()
+  const { token, user } = useSessionManager()
 
   const { restore } = useGraphDispatch()
   const sessionInitialized = useRef(false)
@@ -48,8 +48,33 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
       }
     })
 
-    restore(manifest, false)
-  }, [manifest, restore])
+    if (manifest) {
+      for (const el of Object.values(manifest.graph.elements)) {
+        if ('icon' in el.template) {
+          el.template.icon = ''
+        }
+      }
+    }
+
+    const initialGraph: NodePen.GraphManifest = manifest ?? {
+      id: newGuid(),
+      name: 'Untitled Grasshopper Script',
+      author: {
+        name: user?.displayName ?? 'User',
+        id: 'N/A',
+      },
+      graph: {
+        elements: {},
+        solution: {} as any,
+      },
+      files: {},
+      stats: {
+        views: 0,
+      },
+    }
+
+    restore(initialGraph, false)
+  }, [manifest, restore, user])
 
   const client = useApolloClient()
 
@@ -60,7 +85,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
   const [library, setLibrary] = useState<Grasshopper.Component[]>()
 
   useEffect(() => {
-    if (!token || !!library) {
+    if (library) {
       return
     }
 
@@ -122,8 +147,6 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
     setSetTransform(() => setTransform)
   }, [])
 
-  const libraryValue = session.id ? library : undefined
-
   const [portals, setPortals] = useState<GraphStore['registry']['portals']>({})
 
   const handleAddPortal = useCallback((id: string, ref: React.RefObject<HTMLDivElement>): void => {
@@ -144,7 +167,7 @@ export const GraphManager = ({ children, manifest }: GraphManagerProps): React.R
   }, [])
 
   const store: GraphStore = {
-    library: libraryValue,
+    library,
     registry: {
       setTransform,
       canvasContainerRef,

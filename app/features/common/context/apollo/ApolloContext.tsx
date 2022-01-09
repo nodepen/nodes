@@ -1,5 +1,4 @@
 import React from 'react'
-import getConfig from 'next/config'
 
 import { ApolloProvider, ApolloClient, InMemoryCache, ApolloLink, concat, split } from '@apollo/client'
 import { WebSocketLink } from '@apollo/client/link/ws'
@@ -11,20 +10,19 @@ type ApolloContextProps = {
   token?: string
 }
 
-const { publicRuntimeConfig } = getConfig()
-
 const host = 'localhost'
-// const host = '192.168.0.235'
 
 export const ApolloContext = ({ children, token }: ApolloContextProps): React.ReactElement => {
-  // console.log({ publicRuntimeConfig })
+  const endpoint = process?.env?.NEXT_PUBLIC_NP_API_ENDPOINT
 
   const wsLink =
     process.browser && token
       ? new WebSocketLink({
-          uri: publicRuntimeConfig?.apiEndpoint?.replace('https', 'wss') ?? `ws://${host}:4000/graphql`,
+          uri: endpoint?.replace('https', 'wss') ?? `ws://${host}:4000/graphql`,
           options: {
+            lazy: true,
             reconnect: true,
+            reconnectionAttempts: 3,
             connectionParams: {
               authorization: token,
             },
@@ -33,7 +31,7 @@ export const ApolloContext = ({ children, token }: ApolloContextProps): React.Re
       : null
 
   const batchHttpLink = new BatchHttpLink({
-    uri: publicRuntimeConfig?.apiEndpoint ?? `http://${host}:4000/graphql`,
+    uri: endpoint ?? `http://${host}:4000/graphql`,
     batchInterval: 25,
     batchMax: 50,
   })

@@ -68,13 +68,16 @@ export const solutionSlice = createSlice({
       state.meta.phase = 'idle'
 
       if (!values || values.length === 0) {
+        console.log('No values!')
         return
       }
 
       // console.log(`Trying to update ${values.length} parameters.`)
 
-      for (const { elementId, parameterId, data } of values) {
-        const tree = dataBranchesToDataTree(data)
+      for (const value of values) {
+        const { elementId, parameterId } = value
+
+        const tree = 'data' in value ? dataBranchesToDataTree(value.data) : dataBranchesToDataTree(value.values)
 
         if (!(elementId in state.values)) {
           state.values[elementId] = {}
@@ -83,7 +86,7 @@ export const solutionSlice = createSlice({
         state.values[elementId][parameterId] = tree
       }
 
-      // console.log({ tree: JSON.parse(JSON.stringify(state.values)) })
+      // console.log({ loaded: JSON.parse(JSON.stringify(state.values)) })
     },
   },
 })

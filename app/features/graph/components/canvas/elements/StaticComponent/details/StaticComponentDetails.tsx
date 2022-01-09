@@ -1,13 +1,18 @@
 import React from 'react'
 import { Grasshopper } from 'glib'
 import { Typography } from '@/features/common'
+import { useGraphManager } from '@/features/graph/context/graph'
 
 type StaticComponentDetailsProps = {
   template: Grasshopper.Component
 }
 
 export const StaticComponentDetails = ({ template }: StaticComponentDetailsProps): React.ReactElement => {
-  const { icon, nickname, description } = template
+  const { library } = useGraphManager()
+
+  const { nickname, description } = template
+
+  const icon = library?.find((lib) => lib.guid === template.guid)?.icon ?? ''
 
   return (
     <>

@@ -8,6 +8,11 @@ FROM node:12-alpine AS builder
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
+
+# Pass in api endpoint
+ARG NODEPEN_API_ENDPOINT
+ENV NEXT_PUBLIC_NP_API_ENDPOINT $NODEPEN_API_ENDPOINT
+
 RUN npm install && npm run build
 
 FROM node:12-alpine AS runner

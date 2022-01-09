@@ -2,43 +2,49 @@ import { useState, useEffect } from 'react'
 import nookies from 'nookies'
 
 import { firebase } from '../auth/firebase'
+import { UserRecord } from '../types'
 
 type AuthContext = {
   token?: string
   user?: firebase.User
+  userRecord?: UserRecord
 }
 
-export const useAuthentication = (): AuthContext => {
-  const [user, setUser] = useState<firebase.User>()
-  const [token, setToken] = useState<string>()
+export const useAuthentication = (initialToken?: string): AuthContext => {
+  const [context, setContext] = useState<AuthContext>({ token: initialToken })
+
+  // const [user, setUser] = useState<firebase.User>()
+  // const [userRecord, setUserRecord] = useState<UserRecord>()
+  // const [token, setToken] = useState<string | undefined>(initialToken)
 
   useEffect(() => {
-    return firebase.auth().onIdTokenChanged(async (u) => {
-      nookies.destroy(undefined, 'token')
+    firebase.auth().setPersistence('local')
 
-      if (!u) {
-        const anon = await firebase.auth().signInAnonymously()
-
-        if (!anon.user) {
-          // Handle this failure gracefully
-          nookies.set(undefined, 'token', '', { path: '/' })
-          setToken(undefined)
+    return firebase.auth().onIdTokenChanged(async (user) => {
+      if (!user) {
+        if (initialToken) {
           return
         }
 
-        const token = await anon.user.getIdToken()
+        nookies.destroy(undefined, 'token', { path: '/' })
 
-        nookies.set(undefined, 'token', token, { path: '/' })
-
-        setUser(anon.user)
-        setToken(token)
+        setContext({})
       } else {
-        const token = await u.getIdToken()
+        const token = await user.getIdToken()
 
         nookies.set(undefined, 'token', token, { path: '/' })
 
-        setUser(u)
-        setToken(token)
+        // Get user usage/limits, which will create record on api if first visit
+        const userResponse = await fetch('/api/currentUser')
+        const userRecord: UserRecord = await userResponse.json()
+
+        setContext({ token, user, userRecord })
+
+        // Update displayName, if somehow they don't match
+        // Example: First third-party auth through 'sign in' instead of 'sign up' accidentally
+        if (!user.displayName || user.displayName !== userRecord.username) {
+          await user.updateProfile({ displayName: userRecord.username })
+        }
       }
     })
   }, [])
@@ -52,25 +58,5 @@ export const useAuthentication = (): AuthContext => {
     return () => clearInterval(handleRefresh)
   }, [])
 
-  useEffect(() => {
-    firebase
-      .auth()
-      .getRedirectResult()
-      .then((res) => {
-        if (res.user) {
-          setUser(res.user)
-          return res.user.getIdToken()
-        }
-      })
-      .then((token) => {
-        if (token) {
-          setToken(token)
-        }
-      })
-      .catch((err) => {
-        console.log(err)
-      })
-  }, [])
-
-  return { user, token }
+  return context
 }

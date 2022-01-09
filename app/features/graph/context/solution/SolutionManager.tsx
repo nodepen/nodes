@@ -9,6 +9,8 @@ import { getImmediateElements } from './utils'
 import { firebase } from '../../../common/context/session/auth/firebase'
 
 type SolutionManagerProps = {
+  // Url to download initial solution data
+  initialSolution?: string
   children?: JSX.Element
 }
 
@@ -20,24 +22,116 @@ type SolutionManagerProps = {
  * @param param0
  * @returns
  */
-export const SolutionManager = ({ children }: SolutionManagerProps): React.ReactElement => {
-  const { isAuthenticated } = useSessionManager()
+export const SolutionManager = ({ children, initialSolution }: SolutionManagerProps): React.ReactElement => {
+  const { user, isAuthenticated } = useSessionManager()
 
   const client = useApolloClient()
 
   const observerId = useRef(newGuid())
 
-  const { restore: restoreGraph } = useGraphDispatch()
+  const { setGraphElements } = useGraphDispatch()
   const elements = useGraphElements()
   const graphId = useGraphId()
 
   const { updateSolution, tryApplySolutionManifest, tryApplySolutionValues, restoreSolution } = useSolutionDispatch()
   const meta = useSolutionMetadata()
 
+  const hydrateSolutionValue = (entry: any): void => {
+    const incomingValue = entry.value as string
+    const incomingGeometry = entry.geometry ?? '{}'
+
+    switch (entry.type) {
+      case 'boolean': {
+        entry.value = incomingValue === 'true'
+        break
+      }
+      case 'integer': {
+        entry.value = Number.parseInt(incomingValue)
+        break
+      }
+      case 'number': {
+        entry.value = Number.parseFloat(incomingValue)
+        break
+      }
+      case 'text': {
+        entry.value = incomingValue
+        break
+      }
+      case 'data':
+      case 'circle':
+      case 'curve':
+      case 'domain':
+      case 'line':
+      case 'path':
+      case 'point':
+      case 'plane':
+      case 'rectangle':
+      case 'transform':
+      case 'vector': {
+        entry.value = JSON.parse(incomingValue)
+        entry.geometry = JSON.parse(incomingGeometry)
+        break
+      }
+      default: {
+        console.log(`🐍 Received unhandled value of type '${entry.type}'`)
+        entry.value = JSON.parse(incomingValue)
+      }
+    }
+  }
+
+  useEffect(() => {
+    if (!initialSolution) {
+      return
+    }
+
+    fetch(initialSolution)
+      .then((res) => {
+        return res.json()
+      })
+      .then((res) => {
+        if (meta.id) {
+          // User has scheduled a solution before download completed, do nothing
+          return
+        }
+
+        const { data, messages, duration } = res as NodePen.SolutionManifest
+
+        updateSolution({ meta: { id: 'initial' } })
+        tryApplySolutionManifest({ solutionId: 'initial', manifest: { duration, messages } })
+
+        for (const parameter of data) {
+          const { values } = parameter
+
+          for (const branch of values) {
+            const { data: branchData } = branch
+
+            for (const entry of branchData) {
+              hydrateSolutionValue(entry)
+            }
+          }
+        }
+
+        tryApplySolutionValues({ solutionId: 'initial', values: data })
+      })
+      .catch((err) => {
+        console.log(err)
+      })
+  }, [])
+
   useEffect(() => {
     switch (meta.phase) {
       case 'expired': {
         // console.log(`🏃🏃🏃 DETECTED`)
+
+        if (user?.isAnonymous || !user) {
+          // Solutions cannot be dispatched by anonymous users
+          updateSolution({
+            meta: {
+              phase: 'idle',
+            },
+          })
+          return
+        }
 
         const newSolutionId = newGuid()
 
@@ -134,7 +228,6 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
     {
       variables: { graphId },
       skip: !isAuthenticated,
-      shouldResubscribe: true,
       onSubscriptionData: ({ subscriptionData }) => {
         const { data } = subscriptionData
 
@@ -162,16 +255,9 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         }, {} as { [elementId: string]: NodePen.Element<NodePen.ElementType> })
 
         if (incomingSolutionId !== meta.id && meta.phase === 'idle') {
+          // Load latest elements and begin fetching solution values
           restoreSolution(incomingSolutionId)
-          restoreGraph(
-            {
-              id: incomingGraphId,
-              name: 'Restored!',
-              author: 'Ravid Dutten',
-              elements,
-            },
-            false
-          )
+          setGraphElements(elements)
         }
       },
     }
@@ -186,7 +272,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
   // Subscribe to all solution finish events for graph
   const { data, error } = useSubscription(
     gql`
-      subscription WatchSolutionFinish($graphId: String) {
+      subscription WatchSolutionFinish($graphId: String!) {
         onSolutionFinish(graphId: $graphId) {
           solutionId
           graphId
@@ -205,7 +291,6 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
         graphId,
       },
       skip: !isAuthenticated,
-      shouldResubscribe: true,
     }
   )
 
@@ -350,46 +435,7 @@ export const SolutionManager = ({ children }: SolutionManagerProps): React.React
 
             for (const entry of currentBranch.data) {
               // Results arrive as stringified json
-              const incomingValue = entry.value as string
-              const incomingGeometry = entry.geometry ?? '{}'
-
-              switch (entry.type) {
-                case 'boolean': {
-                  entry.value = incomingValue === 'true'
-                  break
-                }
-                case 'integer': {
-                  entry.value = Number.parseInt(incomingValue)
-                  break
-                }
-                case 'number': {
-                  entry.value = Number.parseFloat(incomingValue)
-                  break
-                }
-                case 'text': {
-                  entry.value = incomingValue
-                  break
-                }
-                case 'data':
-                case 'circle':
-                case 'curve':
-                case 'domain':
-                case 'line':
-                case 'path':
-                case 'point':
-                case 'plane':
-                case 'rectangle':
-                case 'transform':
-                case 'vector': {
-                  entry.value = JSON.parse(incomingValue)
-                  entry.geometry = JSON.parse(incomingGeometry)
-                  break
-                }
-                default: {
-                  console.log(`🐍 Received unhandled value of type '${entry.type}'`)
-                  entry.value = JSON.parse(incomingValue)
-                }
-              }
+              hydrateSolutionValue(entry)
             }
             return [...branches, currentBranch]
           }, [] as NodePen.DataTreeBranch[])

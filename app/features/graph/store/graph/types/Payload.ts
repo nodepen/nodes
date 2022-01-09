@@ -1,4 +1,3 @@
-import { GrasshopperGraphManifest } from '@/features/graph/types'
 import { NodePen } from 'glib'
 import { WireMode } from '.'
 
@@ -108,11 +107,6 @@ export type EndLiveWiresPayload = {
   end?: [x: number, y: number]
 }
 
-export type RestoreGraphPayload = {
-  manifest: GrasshopperGraphManifest
-  expireSolution: boolean
-}
-
 export type ToggleVisibilityPayload = {
   ids: string[]
 }
@@ -120,4 +114,9 @@ export type ToggleVisibilityPayload = {
 export type SetVisibilityPayload = {
   ids: string[]
   visibility: 'visible' | 'hidden'
+}
+
+export type SetGraphFileUrlPayload = {
+  file: keyof NodePen.GraphManifest['files']
+  url: string
 }

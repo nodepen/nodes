@@ -2,6 +2,7 @@ import { useState, useEffect, useMemo } from 'react'
 import { NodePen } from 'glib'
 import { useSolutionValues, useSolutionPhase } from 'features/graph/store/solution/hooks'
 import { getFlattenedDataTreeValues, isInputOrOutput } from 'features/graph/utils'
+import { useSceneDisplayMode } from '@/features/graph/store/scene/hooks'
 
 export const useVisibleGeometry = <T extends 'circle' | 'curve' | 'point' | 'line' | 'rectangle'>(
   element: NodePen.Element<'static-component' | 'static-parameter'>,
@@ -42,16 +43,20 @@ export const useVisibleGeometry = <T extends 'circle' | 'curve' | 'point' | 'lin
         break
       }
     }
-  }, [phase, visibility])
+  }, [phase, visibility, values])
 
   // const visibleTypes: NodePen.SolutionValueType[] = useMemo(() => ['point', 'line'], [])
 
+  const displayMode = useSceneDisplayMode()
+
   const visibleGeometry = useMemo(
     () =>
-      getFlattenedDataTreeValues(internalTree ?? {}).filter((entry): entry is NodePen.DataTreeValue<T> =>
-        types.includes(entry.type as T)
-      ),
-    [internalTree, types]
+      displayMode === 'show'
+        ? getFlattenedDataTreeValues(internalTree ?? {}).filter((entry): entry is NodePen.DataTreeValue<T> =>
+            types.includes(entry.type as T)
+          )
+        : [],
+    [internalTree, types, displayMode]
   )
 
   return visibleGeometry

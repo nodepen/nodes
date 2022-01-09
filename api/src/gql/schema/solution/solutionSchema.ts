@@ -29,10 +29,10 @@ export const solutionSchema = gql`
   }
 
   extend type Subscription {
-    onSolutionStart(graphId: String): SolutionSnapshot
-    onSolutionFinish(graphId: String): SolutionManifest
-    onUpdateSelection(graphId: String): GraphSelection
-    onUpdateVisibility(graphId: String): GraphVisibility
+    onSolutionStart(graphId: String!): SolutionSnapshot
+    onSolutionFinish(graphId: String!): SolutionManifest
+    onUpdateSelection(graphId: String!): GraphSelection
+    onUpdateVisibility(graphId: String!): GraphVisibility
   }
 
   type GraphSelection {
@@ -56,13 +56,7 @@ export const solutionSchema = gql`
 
   type Solution {
     manifest: SolutionManifest!
-    files: SolutionFiles!
     value(elementId: String!, parameterId: String!): [SolutionDataTreeBranch]
-  }
-
-  type SolutionFiles {
-    json: String
-    gh: String
   }
 
   type SolutionDataTreeBranch {

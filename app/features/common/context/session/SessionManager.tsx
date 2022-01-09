@@ -2,12 +2,10 @@ import React, { createContext } from 'react'
 import { SessionStore } from './types'
 import { useAuthentication } from './hooks/useAuthentication'
 import { useDeviceConfiguration } from './hooks/useDeviceConfiguration'
-import { useSession } from './hooks/useSession'
 
 export const SessionContext = createContext<SessionStore>({
   isAuthenticated: false,
   device: { iOS: false, breakpoint: 'sm' },
-  session: { initialize: console.log as any },
 })
 
 type SessionManagerProps = {
@@ -15,22 +13,19 @@ type SessionManagerProps = {
 }
 
 export const SessionManager = ({ children }: SessionManagerProps): React.ReactElement => {
-  const { user, token } = useAuthentication()
+  const { user, userRecord, token } = useAuthentication()
 
   const { iOS, breakpoint } = useDeviceConfiguration()
 
-  const { id, initialize } = useSession(user?.uid)
+  // const { id, initialize } = useSession(user?.uid)
 
   const isAuthenticated = !!token
 
   const session: SessionStore = {
     user,
+    userRecord,
     token,
     isAuthenticated,
-    session: {
-      id,
-      initialize,
-    },
     device: {
       breakpoint,
       iOS,

@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: np-bq-render
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: np-bq-render
+  template:
+    metadata:
+      labels:
+        app: np-bq-render
+    spec:
+      nodeSelector:
+        cloud.google.com/gke-nodepool: np-prod-pool-rq
+      containers:
+        - name: np-bq-render
+          image: gcr.io/{{ .Values.projectId }}/np-bq-render:{{ .Values.tag }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9700
+          env:
+            - name: NP_GLOBAL_PREFIX
+              value: "{{ .Values.globalPrefix }}"
+            - name: NP_DB_HOST
+              value: "{{ .Values.redisHost }}"
+            - name: NP_DB_PORT
+              value: "{{ .Values.redisPort }}"
+          resources:
+            limits:
+              cpu: 300m
+              memory: 1.25Gi
+              ephemeral-storage: 1Gi
+            requests:
+              cpu: 200m
+              memory: 1Gi
+              ephemeral-storage: 750Mi
+          volumeMounts:
+            - mountPath: /render/temp
+              name: render-temp
+      volumes:
+        - name: render-temp
+          emptyDir: {}

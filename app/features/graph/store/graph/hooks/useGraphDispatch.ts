@@ -5,7 +5,6 @@ import { solutionActions } from '../../solution/solutionSlice'
 import { Payload, WireMode } from '../types'
 import { ActionCreators } from 'redux-undo'
 import { GraphMode } from '../types/GraphMode'
-import { GrasshopperGraphManifest } from '@/features/graph/types'
 
 /* eslint-disable-next-line */
 export const useGraphDispatch = () => {
@@ -24,12 +23,21 @@ export const useGraphDispatch = () => {
       dispatch(graphActions.reset())
       dispatch(solutionActions.expireSolution())
     },
-    restore: (manifest: GrasshopperGraphManifest, expireSolution = true) => {
+    restore: (manifest: NodePen.GraphManifest, expireSolution = true) => {
       dispatch(graphActions.restore(manifest))
 
       if (expireSolution) {
         dispatch(solutionActions.expireSolution())
       }
+    },
+    setGraphElements: (elements: NodePen.GraphElementsMap) => {
+      dispatch(graphActions.setGraphElements(elements))
+    },
+    setGraphName: (name: string) => {
+      dispatch(graphActions.setGraphName(name))
+    },
+    setGraphFileUrl: (file: keyof NodePen.GraphManifest['files'], url: string) => {
+      dispatch(graphActions.setGraphFileUrl({ file, url }))
     },
     addElement: (data: Payload.AddElementPayload<NodePen.ElementType>) => {
       dispatch(graphActions.addElement(data))

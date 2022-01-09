@@ -1,7 +1,7 @@
 import { NodePen, assert } from 'glib'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from '$'
-import { GraphState, Payload, WireMode, LiveWireElement } from './types'
+import { GraphState, Payload, LiveWireElement } from './types'
 import {
   newGuid,
   initializeParameters,
@@ -10,19 +10,27 @@ import {
   regionContainsRegion,
   regionIntersectsRegion,
   getDataTreePathString,
-  distance,
 } from '../../utils'
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
 import { prepareLiveMotion, updateLiveElement } from './reducers'
-import { GrasshopperGraphManifest } from '../../types'
 
 const initialState: GraphState = {
   manifest: {
     id: 'unset',
     name: 'unset',
-    author: 'unset',
-    elements: {},
+    author: {
+      name: 'unset',
+      id: 'N/A',
+    },
+    graph: {
+      elements: {},
+      solution: {} as any,
+    },
+    files: {},
+    stats: {
+      views: 0,
+    },
   },
   elements: {},
   selection: [],
@@ -60,17 +68,48 @@ export const graphSlice = createSlice({
       state.elements = {}
       state.selection = []
     },
-    restore: (state: GraphState, action: PayloadAction<GrasshopperGraphManifest>) => {
-      state.manifest = action.payload
-      state.elements = action.payload.elements
+    restore: (state: GraphState, action: PayloadAction<NodePen.GraphManifest>) => {
+      const { graph } = action.payload
 
-      // Flag restored objects as not needing correction
-      state.registry.restored.elements = Object.keys(action.payload.elements)
+      // Update local manifest
+      state.manifest = action.payload
+
+      // Restore graph elements
+      state.elements = graph.elements
+
+      // TODO: Solution values...
+
+      // Flag restored objects as not needing first-placement correction
+      state.registry.restored.elements = Object.keys(graph.elements)
+    },
+    setGraphName: (state: GraphState, action: PayloadAction<string>) => {
+      state.manifest.name = action.payload
+    },
+    setGraphElements: (state: GraphState, action: PayloadAction<NodePen.GraphElementsMap>) => {
+      state.elements = action.payload
+
+      state.registry.restored.elements = Object.keys(action.payload)
+    },
+    setGraphFileUrl: (state: GraphState, action: PayloadAction<Payload.SetGraphFileUrlPayload>) => {
+      const { file, url } = action.payload
+
+      const ref = state.manifest.files[file]
+
+      if (!ref) {
+        return
+      }
+
+      ref.url = url
     },
     addElement: (state: GraphState, action: PayloadAction<Payload.AddElementPayload<NodePen.ElementType>>) => {
       const id = newGuid()
 
       state.registry.latest.element = id
+
+      if ('icon' in action.payload.template) {
+        // Instances do not need their icon information
+        action.payload.template.icon = ''
+      }
 
       switch (action.payload.type) {
         case 'static-component': {
@@ -1183,7 +1222,10 @@ const selectPrimaryWire = (state: RootState): string => state.graph.present.regi
 const selectLiveWiresOrigin = (state: RootState): GraphState['registry']['wire']['origin'] =>
   state.graph.present.registry.wire.origin
 
+const selectGraphManifest = (state: RootState): GraphState['manifest'] => state.graph.present.manifest
 const selectGraphId = (state: RootState): string => state.graph.present.manifest.id
+const selectGraphAuthor = (state: RootState): string => state.graph.present.manifest.author.name
+const selectGraphFiles = (state: RootState): GraphState['manifest']['files'] => state.graph.present.manifest.files
 const selectGraphHistory = (state: RootState): { canUndo: boolean; canRedo: boolean } => {
   return {
     canUndo: state.graph.past.length > 0,
@@ -1199,7 +1241,10 @@ export const graphSelectors = {
   selectMode,
   selectPrimaryWire,
   selectLiveWiresOrigin,
+  selectGraphManifest,
   selectGraphId,
+  selectGraphAuthor,
+  selectGraphFiles,
   selectGraphHistory,
   selectVisibilityRegistry,
 }

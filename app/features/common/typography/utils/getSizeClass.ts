@@ -8,6 +8,8 @@ export const getSizeClass = (size: SizeOption): [textHeight: string, lineHeight:
       return ['text-md', 'leading-6']
     case 'sm':
       return ['text-sm', 'leading-5']
+    case 'xs':
+      return ['text-xs', 'leading-4']
     default:
       return ['text-md', 'leading-5']
   }

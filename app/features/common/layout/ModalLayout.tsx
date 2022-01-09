@@ -26,7 +26,7 @@ export const ModalLayout = ({ children, onClose }: ModalLayoutProps): React.Reac
             />
             <div className="absolute w-full h-full p-10 flex justify-center items-center left-0 top-0 z-20 pointer-events-none">
               <div
-                className="w-full h-full flex flex-col p-4 bg-white rounded-md pointer-events-auto"
+                className="w-full flex flex-col p-4 bg-white rounded-md pointer-events-auto"
                 style={{ maxWidth: '750px', maxHeight: '500px' }}
               >
                 {children}
@@ -53,11 +53,11 @@ export const ModalLayout = ({ children, onClose }: ModalLayoutProps): React.Reac
         }
 
         @keyframes appear {
-          from {
-            transform: translateY(-100%);
+          0% {
+            transform: translate(-15%, 15%);
           }
-          to {
-            transform: translateY(0);
+          100% {
+            transform: translate(0%, 0%);
           }
         }
 

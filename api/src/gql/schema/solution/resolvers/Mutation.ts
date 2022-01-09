@@ -1,5 +1,6 @@
 import { NodePen } from 'glib'
 import { db } from '../../../../redis'
+import { admin } from '../../../../firebase'
 import { ghq } from '../../../../bq'
 import { authorize } from '../../../utils/authorize'
 import { BaseResolverMap } from '../../base/types'
@@ -33,9 +34,39 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     await db.setex(`user:${user.id}:graph`, 60 * 15, graphId)
     await db.setex(`graph:${graphId}:solution`, 60 * 15, solutionId)
 
-    const job = await ghq.createJob({ graphId, solutionId }).save()
+    const solutionJobData = {
+      graphId,
+      solutionId,
+      user: {
+        name: user.name,
+        id: user.id,
+      },
+      time: {
+        scheduled: new Date().toISOString(),
+      },
+    }
 
-    console.log(`[ JOB ] [ CREATE ] [ SOLUTION ${job.id.padStart(9, '0')} ]`)
+    const job = await ghq.solve.createJob(solutionJobData).save()
+
+    console.log(
+      `[ JOB ] [ GH:SOLVE ] [ CREATE ] [ SOLUTION ${job.id.padStart(9, '0')} ]`
+    )
+
+    // Handle stats for component usage, etc, here
+    await admin
+      .firestore()
+      .collection('solutions')
+      .doc(solutionId)
+      .create({
+        graphId,
+        user: {
+          name: user.name,
+          id: user.id,
+        },
+        time: {
+          scheduled: new Date().toISOString(),
+        },
+      })
 
     return solutionId
   },

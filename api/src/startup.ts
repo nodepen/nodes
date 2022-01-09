@@ -27,7 +27,7 @@ export const startup = async (): Promise<Server> => {
       // Ping redis instance to keep connection alive
       pingInterval = setInterval(() => {
         db.client.ping()
-      }, 1000)
+      }, 1000 * 15)
 
       resolve()
     })
@@ -39,14 +39,17 @@ export const startup = async (): Promise<Server> => {
     })
   })
 
+  // // Wait for redis pubsub subscriptions to start
+  // await initializePubsub()
+
   // Wait for gh solution queue connection
   const initializeQueue = new Promise<void>((resolve, reject) => {
-    ghq.on('ready', () => {
+    ghq.solve.on('ready', () => {
       console.log(`[ STARTUP ] Grasshopper solution queue connected!`)
       resolve()
     })
 
-    ghq.on('error', (err) => {
+    ghq.solve.on('error', (err) => {
       reject(err)
     })
   })

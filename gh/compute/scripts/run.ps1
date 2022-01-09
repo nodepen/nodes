@@ -1,1 +1,0 @@
-./bin/Release/compute.geometry.exe
