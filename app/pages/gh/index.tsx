@@ -1,4 +1,4 @@
-import { GetServerSideProps, NextPage } from 'next'
+import { NextPage } from 'next'
 import Head from 'next/head'
 import dynamic from 'next/dynamic'
 import { Graph } from 'features'
@@ -36,10 +36,3 @@ const NewGrasshopperEditor: NextPage = () => {
 }
 
 export default NewGrasshopperEditor
-
-// Opt out of static generation
-export const getServerSideProps: GetServerSideProps = async () => {
-  return {
-    props: {},
-  }
-}

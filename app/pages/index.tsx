@@ -1,6 +1,5 @@
 import React from 'react'
-import { NextPage, GetServerSideProps } from 'next'
-import { admin } from 'features/common/context/session/auth'
+import { GetServerSideProps, NextPage } from 'next'
 import nookies from 'nookies'
 import Head from 'next/head'
 import { HomePageLanding, HomePageDashboard } from '@/features/home'
@@ -8,13 +7,13 @@ import { useSessionManager } from '@/features/common/context/session'
 import { ApolloContext } from '@/features/common/context/apollo'
 
 type HomePageProps = {
-  isAuthenticated: boolean
+  userExpected: boolean
 }
 
-const Home: NextPage<HomePageProps> = ({ isAuthenticated }) => {
-  const { user, token } = useSessionManager()
+const Home: NextPage<HomePageProps> = ({ userExpected }) => {
+  const { token } = useSessionManager()
 
-  const showDashboard = isAuthenticated || (user && !user.isAnonymous && user.displayName)
+  const showDashboard = !!token || userExpected
 
   const content = showDashboard ? <HomePageDashboard /> : <HomePageLanding />
 
@@ -38,37 +37,11 @@ const Home: NextPage<HomePageProps> = ({ isAuthenticated }) => {
 export default Home
 
 export const getServerSideProps: GetServerSideProps<HomePageProps> = async (ctx) => {
-  const defaultProps: HomePageProps = { isAuthenticated: false }
+  const { token } = nookies.get(ctx, { path: '/' })
 
-  try {
-    const cookie = nookies.get(ctx, { path: '/' })
-
-    if (!cookie.token) {
-      if (process?.env?.NEXT_PUBLIC_DEBUG) {
-        console.log('Incoming user has no token.')
-      }
-
-      return { props: { ...defaultProps } }
-    }
-
-    const { token } = cookie
-
-    const res = await admin.auth().verifyIdToken(token)
-
-    const user = await admin.auth().getUser(res.uid)
-
-    if (!user || user.providerData.length === 0) {
-      // User is anonymous
-      if (process?.env?.NEXT_PUBLIC_DEBUG) {
-        console.log('Incoming user is anonymous.')
-      }
-
-      return { props: { ...defaultProps } }
-    }
-
-    return { props: { isAuthenticated: true } }
-  } catch (e) {
-    console.log(e)
-    return { props: { ...defaultProps } }
+  return {
+    props: {
+      userExpected: !!token,
+    },
   }
 }

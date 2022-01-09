@@ -10,43 +10,40 @@ type AuthContext = {
   userRecord?: UserRecord
 }
 
-export const useAuthentication = (): AuthContext => {
-  const [user, setUser] = useState<firebase.User>()
-  const [userRecord, setUserRecord] = useState<UserRecord>()
-  const [token, setToken] = useState<string>()
+export const useAuthentication = (initialToken?: string): AuthContext => {
+  const [context, setContext] = useState<AuthContext>({ token: initialToken })
+
+  // const [user, setUser] = useState<firebase.User>()
+  // const [userRecord, setUserRecord] = useState<UserRecord>()
+  // const [token, setToken] = useState<string | undefined>(initialToken)
 
   useEffect(() => {
     firebase.auth().setPersistence('local')
 
-    return firebase.auth().onIdTokenChanged(async (u) => {
-      if (!u) {
-        nookies.destroy(undefined, 'token', { path: '/' })
-
-        setUser(undefined)
-        setUserRecord(undefined)
-        setToken(undefined)
-      } else {
-        const token = await u.getIdToken()
-
-        nookies.set(undefined, 'token', token, { path: '/' })
-
-        setUser(u)
-        setToken(token)
-
-        if (u.isAnonymous) {
+    return firebase.auth().onIdTokenChanged(async (user) => {
+      if (!user) {
+        if (initialToken) {
           return
         }
 
+        nookies.destroy(undefined, 'token', { path: '/' })
+
+        setContext({})
+      } else {
+        const token = await user.getIdToken()
+
+        nookies.set(undefined, 'token', token, { path: '/' })
+
         // Get user usage/limits, which will create record on api if first visit
         const userResponse = await fetch('/api/currentUser')
-        const userData: UserRecord = await userResponse.json()
+        const userRecord: UserRecord = await userResponse.json()
 
-        setUserRecord(userData)
+        setContext({ token, user, userRecord })
 
         // Update displayName, if somehow they don't match
         // Example: First third-party auth through 'sign in' instead of 'sign up' accidentally
-        if (!u.displayName || u.displayName !== userData.username) {
-          await u.updateProfile({ displayName: userData.username })
+        if (!user.displayName || user.displayName !== userRecord.username) {
+          await user.updateProfile({ displayName: userRecord.username })
         }
       }
     })
@@ -61,5 +58,5 @@ export const useAuthentication = (): AuthContext => {
     return () => clearInterval(handleRefresh)
   }, [])
 
-  return { user, userRecord, token }
+  return context
 }

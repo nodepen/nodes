@@ -5,6 +5,7 @@ import { UserProfile } from '@/features/user-profile'
 import { ApolloClient, createHttpLink, gql, InMemoryCache } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
 import { ApolloContext } from '@/features/common/context/apollo'
+import Head from 'next/head'
 
 type UserProfilePageProps = {
   username: string
@@ -16,7 +17,12 @@ const UserProfilePage: NextPage<UserProfilePageProps> = (user) => {
 
   return (
     <ApolloContext token={token}>
-      <UserProfile username={user.username} photoUrl={user.photoUrl} />
+      <>
+        <Head>
+          <title>{user.username}</title>
+        </Head>
+        <UserProfile username={user.username} photoUrl={user.photoUrl} />
+      </>
     </ApolloContext>
   )
 }
