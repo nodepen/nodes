@@ -9,7 +9,7 @@ export const LandingFeaturedGraphs = (): React.ReactElement => {
 
   const { data } = useQuery(
     gql`
-      query DashboardPopularGraphs {
+      query LandingFeaturedGraphs {
         graphsByPopularity {
           id
           name
@@ -17,8 +17,12 @@ export const LandingFeaturedGraphs = (): React.ReactElement => {
             name
           }
           files {
-            thumbnailImage
-            thumbnailVideo
+            thumbnailImage {
+              url
+            }
+            thumbnailVideo {
+              url
+            }
           }
           stats {
             views

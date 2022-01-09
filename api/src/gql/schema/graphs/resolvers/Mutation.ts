@@ -89,26 +89,48 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       },
     }
 
-    for (const [fileType, filePath] of Object.entries<string>(
+    for (const [fileType, fileRef] of Object.entries<GCP.Storage.FileReference>(
       currentRevisionDoc.get('files') ?? {}
     )) {
-      if (process?.env?.DEBUG === 'true') {
-        // Emulator does not have `copy` implemented
-        duplicateRevision.files[fileType] = filePath
+      const doNotCopy = ['thumbnailVideo', 'twitterThumbnailImage']
+
+      if (doNotCopy.includes(fileType)) {
         continue
       }
 
-      const duplicatePath = filePath.replace(graphId, duplicateId)
+      if (process?.env?.DEBUG === 'true') {
+        // Emulator does not have `copy` implemented
+        // Local development is not protected from source deletion before copy is saved
+        duplicateRevision.files[fileType] = fileRef
+        continue
+      }
 
-      const currentFile = bucket.file(filePath)
+      const { bucket: bucketName, path, ttl } = fileRef
+
+      const duplicatePath = path.replace(graphId, duplicateId)
+
+      const currentFile = bucket.file(path)
       const currentFileExists = await currentFile.exists()
 
       if (!currentFileExists) {
         continue
       }
 
-      await currentFile.copy(duplicatePath)
+      const duplicateFile = await currentFile.copy(duplicatePath)
 
+      duplicateRevision.files[fileType] = {
+        bucket: bucketName,
+        path: duplicatePath,
+        ttl,
+        updated: new Date().toISOString(),
+        url: (
+          await duplicateFile[0].getSignedUrl({
+            version: 'v4',
+            action: 'read',
+            expires: Date.now() + 1000 * 60 * 60 * 24 * ttl,
+          })
+        )[0],
+      }
       duplicateRevision.files[fileType] = duplicatePath
     }
 
@@ -208,6 +230,14 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
     const previousRevisionDoc = await previousRevisionRef.get()
     const previousRevisionFiles = previousRevisionDoc.data()?.files ?? {}
 
+    const doNotCopy = ['thumbnailVideo', 'twitterThumbnailImage']
+
+    for (const key of doNotCopy) {
+      if (key in previousRevisionFiles) {
+        delete previousRevisionFiles[key]
+      }
+    }
+
     await db
       .collection('graphs')
       .doc(graphId)
@@ -222,8 +252,8 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           solution: solutionId,
         },
         files: {
-          graphJson: jsonFileReference,
           ...previousRevisionFiles,
+          graphJson: jsonFileReference,
         },
       })
 
