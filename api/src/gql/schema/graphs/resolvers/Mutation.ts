@@ -131,7 +131,6 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
           })
         )[0],
       }
-      duplicateRevision.files[fileType] = duplicatePath
     }
 
     await db
