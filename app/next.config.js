@@ -30,9 +30,13 @@ module.exports = withBundleAnalyzer({
           { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "static/chunks/rhino3dm.wasm" },
           { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "static/chunks/pages/rhino3dm.wasm" },
           { from: "node_modules/rhino3dm/rhino3dm.wasm", to: "static/chunks/pages/[user]/gh/rhino3dm.wasm" }
-
         ],
       }))
+
+      config.module.rules.push({
+        test: /\.md$/,
+        use: 'raw-loader',
+      })
 
       return config;
     },

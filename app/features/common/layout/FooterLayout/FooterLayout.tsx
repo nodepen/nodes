@@ -43,7 +43,7 @@ export const FooterLayout = (): React.ReactElement => {
             />
             <p className="text-xs font-medium text-dark">&copy; Chuck 2022</p>
             <Link href="/legal/terms-and-conditions">
-              <a className="text-xs font-medium text-dark hover:underline">Terms and Conditions</a>
+              <a className="text-xs font-medium text-dark hover:underline">Terms of Service</a>
             </Link>
             <Link href="/legal/privacy-policy">
               <a className="text-xs font-medium text-dark hover:underline">Privacy Policy</a>

@@ -1,5 +1,7 @@
+import TermsAndConditions from '@/pages/legal/terms-and-conditions'
 import Link from 'next/link'
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
+import ReactMarkdown from 'react-markdown'
 import { Layout } from '../common'
 
 type LegalDocumentProps = {
@@ -25,6 +27,23 @@ export const LegalDocument = ({ doc }: LegalDocumentProps): React.ReactElement =
 
     bg.scrollTo(0, pct * range)
   }
+
+  const [content, setContent] = useState('')
+
+  useEffect(() => {
+    const paths = {
+      TOS: '/docs/Terms of Service.md',
+      P: '/docs/Privacy Policy.md',
+    }
+
+    fetch(paths[doc])
+      .then((res) => {
+        return res.text()
+      })
+      .then((text) => {
+        setContent(text)
+      })
+  }, [doc])
 
   return (
     <div className="w-vw h-vh relative overflow-hidden">
@@ -57,13 +76,46 @@ export const LegalDocument = ({ doc }: LegalDocumentProps): React.ReactElement =
         className="w-vw h-vh absolute top-0 left-0 z-30 overflow-auto bg-none"
       >
         <Layout.Section color="none">
-          <div className="w-full bg-pale rounded-md mt-12 mb-12">
-            {new Array(100).fill('').map((_, i) => (
-              <p key={i}>OK</p>
-            ))}
+          <div className="w-full bg-pale rounded-md p-4 mt-12 mb-12">
+            <ReactMarkdown>{content}</ReactMarkdown>
           </div>
         </Layout.Section>
       </div>
+      <style global jsx>{`
+        * {
+          font-family: 'Barlow', 'Inter', sans-serif;
+          color: #333;
+        }
+
+        h1 {
+          font-size: 3rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+        }
+
+        h2 {
+          font-size: 2.25rem;
+          font-weight: 600;
+          margin-top: 1.25rem;
+        }
+
+        h3 {
+          font-size: 1.25rem;
+          font-weight: 600;
+          margin-top: 1rem;
+          margin-bottom: 0.5rem;
+        }
+
+        p {
+          font-size: 1.15rem;
+          line-height: 1.75rem;
+          margin-bottom: 8px;
+        }
+
+        li {
+          padding-left: 9px;
+        }
+      `}</style>
     </div>
   )
 }

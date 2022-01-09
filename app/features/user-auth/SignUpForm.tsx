@@ -6,6 +6,7 @@ import { useAuthRedirectResult } from './hooks'
 import { gql, useApolloClient } from '@apollo/client'
 import { ValidationErrorMessage, ZigZagDivider } from './components'
 import { AuthLayout } from './layout'
+import Link from 'next/link'
 
 const SignUpForm = (): React.ReactElement => {
   const router = useRouter()
@@ -398,6 +399,17 @@ const SignUpForm = (): React.ReactElement => {
                     </div>
                   </div>
                 </button>
+                <div className="w-full text-xs pl-2 mb-1 text-center font-semibold text-swampgreen">
+                  By signing up, you agree to NodePen&apos;s{' '}
+                  <Link href="/legal/terms-and-conditions">
+                    <a className="underline hover:text-darkgreen">Terms of Service</a>
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="/legal/privacy-policy">
+                    <a className="underline hover:text-darkgreen">Privacy Policy</a>
+                  </Link>
+                  .
+                </div>
                 <div className="w-full mb-2 flex items-center justify-center overflow-visible">
                   <ZigZagDivider />
                 </div>
