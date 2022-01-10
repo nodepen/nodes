@@ -104,7 +104,7 @@ const HomePageLanding: NextPage = () => {
       >
         <Layout.Columns>
           <div className="w-full flex flex-col items-start">
-            <img src="/nodepen-brand-green.svg" width="300" className="mb-2" />
+            <img src="/nodepen-brand-green.svg" width="300" className="mb-2" alt="" />
             <h2 className="mb-3 text-4xl font-bold text-dark">SAME GRASSHOPPER, NEW DIGS</h2>
             <p className="mb-8 text-xl leading-8 font-medium text-dark">
               NodePen is a platform for creating, sharing, and exploring Grasshopper scripts online. Try something out,
