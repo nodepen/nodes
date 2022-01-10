@@ -6,6 +6,8 @@ import { useSessionManager } from '@/features/common/context/session'
 import { useSceneDispatch, useSceneDisplayMode } from '@/features/graph/store/scene/hooks'
 import { useRouter } from 'next/router'
 import { LockedSolverMask } from '../../overlay'
+import Link from 'next/link'
+import { Modal } from '@/features/common/layout'
 
 export const GraphControls = (): React.ReactElement => {
   const router = useRouter()
@@ -78,6 +80,8 @@ export const GraphControls = (): React.ReactElement => {
     setDisplayMode(sceneDisplayMode === 'show' ? 'hide' : 'show')
     setSidebarIsOpen(false)
   }
+
+  const [showModal, setShowModal] = useState(false)
 
   return (
     <div className="w-full h-12 relative bg-green overflow-visible z-40">
@@ -312,26 +316,49 @@ export const GraphControls = (): React.ReactElement => {
             <div className="h-full flex-grow flex justify-end items-center overflow-hidden">
               {sceneDisplayMode === 'show' ? (
                 <>
-                  <a
-                    href="/gh?view=model"
-                    target="_blank"
-                    className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
-                  >
-                    <svg
-                      className="w-6 h-6"
-                      fill="none"
-                      stroke="#093824"
-                      viewBox="0 0 24 24"
-                      xmlns="http://www.w3.org/2000/svg"
+                  {user?.isAnonymous ? (
+                    <button
+                      className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
+                      onClick={() => setShowModal(true)}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                      />
-                    </svg>
-                  </a>
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="#093824"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </button>
+                  ) : (
+                    <a
+                      href="/gh?view=model"
+                      target="_blank"
+                      className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
+                    >
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="#093824"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
+                        />
+                      </svg>
+                    </a>
+                  )}
+
                   <button
                     className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
                     onClick={() => setDisplayMode('hide')}
@@ -357,6 +384,26 @@ export const GraphControls = (): React.ReactElement => {
           ) : null}
         </div>
       </div>
+      {showModal ? (
+        <Modal
+          onClose={() => {
+            setShowModal(false)
+          }}
+        >
+          <div className="w-full flex flex-col items-center" style={{ minWidth: 250 }}>
+            <h3 className="mb-1 text-2xl font-bold text-dark">Sorry!</h3>
+            <p className="text-lg mb-4 font-semibold text-dark">Multi-screen scripts require a NodePen account.</p>
+            <Link href="/signup">
+              <a className="p-2 pl-4 pr-4 rounded-md bg-green hover:bg-swampgreen text-darkgreen font-semibold">
+                Sign up for free
+              </a>
+            </Link>
+            <Link href="/signin">
+              <a className="p-2 pl-4 pr-4 rounded-md text-swampgreen hover:text-darkgreen font-semibold">Sign in</a>
+            </Link>
+          </div>
+        </Modal>
+      ) : null}
       {/* <LockedSolverMask dx={sidebarIsOpen ? sidebarWidth : 0} /> */}
     </div>
   )

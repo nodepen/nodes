@@ -3,10 +3,12 @@ import { useGraphDispatch, useGraphManifest } from '@/features/graph/store/graph
 import { newGuid } from '@/features/graph/utils'
 import { useMutation, useSubscription, gql } from '@apollo/client'
 import { useSessionManager } from '@/features/common/context/session'
+import { Modal } from '@/features/common/layout'
 import { Popover } from '@/features/common/popover'
 import { useRouter } from 'next/router'
 import { usePersistedGraphElements } from '@/features/graph/hooks'
 import { SaveProgressMenu } from '../menus'
+import Link from 'next/link'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()
@@ -44,7 +46,15 @@ const SaveButton = (): React.ReactElement => {
     `
   )
 
+  const [showModal, setShowModal] = useState(false)
+
   const handleSaveGraph = (): void => {
+    if (!user || user.isAnonymous) {
+      // Block save, show modal
+      setShowModal(true)
+      return
+    }
+
     const button = buttonRef.current
 
     if (button) {
@@ -200,14 +210,44 @@ const SaveButton = (): React.ReactElement => {
       onClick={handleSaveGraph}
       ref={buttonRef}
     >
-      <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path>
-      </svg>
-      <p>{isGraphAuthor || isNewGraph ? 'Save' : 'Save Copy'}</p>
+      {user?.isAnonymous ? (
+        <svg className="w-4 h-4 mr-1" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path
+            fillRule="evenodd"
+            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+            clipRule="evenodd"
+          />
+        </svg>
+      ) : (
+        <svg className="w-4 h-4 mr-1" fill="#333" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+          <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path>
+        </svg>
+      )}
+      <p>{isGraphAuthor || isNewGraph ? 'Save' : user?.isAnonymous ? 'Save Disabled' : 'Save Copy'}</p>
       {showSaveProgress ? (
         <Popover position={buttonPosition.current} anchor="TR" onClose={() => setShowSaveProgress(false)}>
           <SaveProgressMenu progress={saveProgress.current} message={saveProgressMessage} />
         </Popover>
+      ) : null}
+      {showModal ? (
+        <Modal
+          onClose={() => {
+            setShowModal(false)
+          }}
+        >
+          <div className="w-full flex flex-col items-center" style={{ minWidth: 250 }}>
+            <h3 className="mb-1 text-2xl font-bold text-dark">Sorry!</h3>
+            <p className="text-lg mb-4 font-semibold text-dark">Saving scripts requires a NodePen account.</p>
+            <Link href="/signup">
+              <a className="p-2 pl-4 pr-4 rounded-md bg-green hover:bg-swampgreen text-darkgreen font-semibold">
+                Sign up for free
+              </a>
+            </Link>
+            <Link href="/signin">
+              <a className="p-2 pl-4 pr-4 rounded-md text-swampgreen hover:text-darkgreen font-semibold">Sign in</a>
+            </Link>
+          </div>
+        </Modal>
       ) : null}
     </button>
   )

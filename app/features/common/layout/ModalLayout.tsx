@@ -22,7 +22,10 @@ export const ModalLayout = ({ children, onClose }: ModalLayoutProps): React.Reac
                 backgroundSize: `15mm 15mm`,
                 backgroundImage: `linear-gradient(to right, #98e2c6 5mm, transparent 1px, transparent 10px), linear-gradient(to bottom, #98e2c6 5mm, transparent 1px, transparent 10px)`,
               }}
-              onClick={onClose}
+              onClick={(e) => {
+                e.stopPropagation()
+                onClose()
+              }}
             />
             <div className="absolute w-full h-full p-10 flex justify-center items-center left-0 top-0 z-20 pointer-events-none">
               <div
