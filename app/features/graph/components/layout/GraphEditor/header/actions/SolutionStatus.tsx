@@ -6,7 +6,8 @@ import { useSessionManager } from '@/features/common/context/session'
 const SolutionStatus = (): React.ReactElement => {
   const { user } = useSessionManager()
 
-  const isLocked = user?.isAnonymous || !user
+  // const isLocked = user?.isAnonymous || !user
+  const isLocked = false
 
   const meta = useSolutionMetadata()
 
@@ -81,13 +82,13 @@ const SolutionStatus = (): React.ReactElement => {
   }
 
   const message = (() => {
-    if (!user || user?.isAnonymous) {
-      return 'Please sign in to enable the solver.'
-    }
+    // if (!user || user?.isAnonymous) {
+    //   return 'Please sign in to enable the solver.'
+    // }
 
-    if (isLocked) {
-      return 'Grasshopper solver is locked.'
-    }
+    // if (isLocked) {
+    //   return 'Grasshopper solver is locked.'
+    // }
 
     switch (meta.phase) {
       case 'idle':

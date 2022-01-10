@@ -28,9 +28,15 @@ export const useAuthentication = (initialToken?: string): AuthContext => {
 
         nookies.destroy(undefined, 'token', { path: '/' })
 
-        setContext({})
+        firebase.auth().signInAnonymously()
       } else {
         const token = await user.getIdToken()
+
+        if (user.isAnonymous) {
+          // Set token in memory but not in cookies
+          setContext({ token, user })
+          return
+        }
 
         nookies.set(undefined, 'token', token, { path: '/' })
 

@@ -357,7 +357,7 @@ export const GraphControls = (): React.ReactElement => {
           ) : null}
         </div>
       </div>
-      <LockedSolverMask dx={sidebarIsOpen ? sidebarWidth : 0} />
+      {/* <LockedSolverMask dx={sidebarIsOpen ? sidebarWidth : 0} /> */}
     </div>
   )
 }

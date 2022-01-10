@@ -38,7 +38,7 @@ export const Mutation: BaseResolverMap<never, Arguments['Mutation']> = {
       graphId,
       solutionId,
       user: {
-        name: user.name,
+        name: user.isAnonymous ? 'anonymous' : user.name,
         id: user.id,
       },
       time: {

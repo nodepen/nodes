@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { firebase } from 'features/common/context/session/auth'
-import { CurrentUserMenu } from '../menus'
+import { CurrentUserMenu, NoUserMenu } from '../menus'
 import { Popover } from 'features/common/popover'
 
 type CurrentUserButtonProps = {
@@ -52,7 +52,7 @@ const CurrentUserButton = ({ user, color }: CurrentUserButtonProps): React.React
       </button>
       {showPopover ? (
         <Popover position={popoverPosition.current} anchor="TR" onClose={() => setShowPopover(false)}>
-          <CurrentUserMenu user={{ name: displayName, photoUrl: photoURL }} />
+          {user.isAnonymous ? <NoUserMenu /> : <CurrentUserMenu user={{ name: displayName, photoUrl: photoURL }} />}
         </Popover>
       ) : null}
     </>

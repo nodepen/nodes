@@ -11,9 +11,9 @@ type HomePageProps = {
 }
 
 const Home: NextPage<HomePageProps> = ({ userExpected }) => {
-  const { token } = useSessionManager()
+  const { token, user } = useSessionManager()
 
-  const showDashboard = !!token || userExpected
+  const showDashboard = (user && !user.isAnonymous) || userExpected
 
   const content = showDashboard ? <HomePageDashboard /> : <HomePageLanding />
 

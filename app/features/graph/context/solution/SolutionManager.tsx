@@ -123,15 +123,15 @@ export const SolutionManager = ({ children, initialSolution }: SolutionManagerPr
       case 'expired': {
         // console.log(`🏃🏃🏃 DETECTED`)
 
-        if (user?.isAnonymous || !user) {
-          // Solutions cannot be dispatched by anonymous users
-          updateSolution({
-            meta: {
-              phase: 'idle',
-            },
-          })
-          return
-        }
+        // if (user?.isAnonymous || !user) {
+        //   // Solutions cannot be dispatched by anonymous users
+        //   updateSolution({
+        //     meta: {
+        //       phase: 'idle',
+        //     },
+        //   })
+        //   return
+        // }
 
         const newSolutionId = newGuid()
 

@@ -7,7 +7,7 @@ type ResourceType = 'none' | 'graph'
 
 type ResourceActions = {
   none: 'none'
-  graph: 'view' | 'execute' | 'edit' | 'delete'
+  graph: 'view' | 'view-solution' | 'execute' | 'edit' | 'delete'
 }
 
 type ResourceRequest<T extends ResourceType> = {
@@ -38,6 +38,14 @@ export const authorize = async <T extends ResourceType>(
     }
   }
 
+  const allowAnonymous = (user?: UserRecord): void => {
+    if (!user || !user.id || (!user.name && !user.isAnonymous)) {
+      throw new AuthenticationError(
+        `Not authorized to access the requested resource.`
+      )
+    }
+  }
+
   if (!resource) {
     defaultAuthorization(user)
     return undefined
@@ -55,10 +63,16 @@ export const authorize = async <T extends ResourceType>(
       // Handle cases where the requested resource does not exist
       if (!graphDoc.exists) {
         switch (resource.action) {
-          case 'edit':
+          case 'view-solution':
           case 'execute': {
+            // Valid execution cases for graphs that don't exist:
+            // - New graph never saved
+            // - Public graph (shallow copy) run by anonymous user
+            allowAnonymous(user)
+            return [graphRef, graphDoc]
+          }
+          case 'edit': {
             // Editing a graph for the first time will create a record.
-            // We allow the execution of graphs that haven't been saved yet.
             defaultAuthorization(user)
             return [graphRef, graphDoc]
           }

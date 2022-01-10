@@ -10,7 +10,7 @@ import { SaveProgressMenu } from '../menus'
 
 const SaveButton = (): React.ReactElement => {
   const router = useRouter()
-  const { token, userRecord } = useSessionManager()
+  const { token, user, userRecord } = useSessionManager()
 
   const buttonRef = useRef<HTMLButtonElement>(null)
   const buttonPosition = useRef<[number, number]>([0, 0])

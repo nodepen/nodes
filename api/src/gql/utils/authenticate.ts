@@ -21,5 +21,6 @@ export const authenticate = async (token: string): Promise<UserRecord> => {
   return {
     id: user.uid,
     name: username,
+    isAnonymous: user.providerData.length === 0,
   }
 }

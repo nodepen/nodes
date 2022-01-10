@@ -4,9 +4,7 @@ import { HeaderActions } from './HeaderActions'
 import { HeaderTitle } from './HeaderTitle'
 
 const Header = (): React.ReactElement => {
-  const { user: currentUser } = useSessionManager()
-
-  const user = currentUser && !currentUser.isAnonymous ? currentUser : undefined
+  const { user } = useSessionManager()
 
   return (
     <div

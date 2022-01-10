@@ -15,7 +15,11 @@ export const Solution: BaseResolverMap<ParentObject, Arguments['Solution']> = {
     { elementId, parameterId },
     { user }
   ) => {
-    await authorize(user)
+    await authorize(user, {
+      id: graphId,
+      type: 'graph',
+      action: 'view-solution',
+    })
 
     if (!solutionId) {
       throw new Error('Must provide a solution id to query values!')
