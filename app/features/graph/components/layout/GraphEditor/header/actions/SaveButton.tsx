@@ -223,7 +223,7 @@ const SaveButton = (): React.ReactElement => {
           <path d="M5.5 16a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 16h-8z"></path>
         </svg>
       )}
-      <p>{isGraphAuthor || isNewGraph ? 'Save' : user?.isAnonymous ? 'Save Disabled' : 'Save Copy'}</p>
+      <p>{user?.isAnonymous ? 'Save Disabled' : isGraphAuthor || isNewGraph ? 'Save' : 'Save Copy'}</p>
       {showSaveProgress ? (
         <Popover position={buttonPosition.current} anchor="TR" onClose={() => setShowSaveProgress(false)}>
           <SaveProgressMenu progress={saveProgress.current} message={saveProgressMessage} />
