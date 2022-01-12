@@ -24,7 +24,7 @@ export const HeaderTitle = (): React.ReactElement => {
   const isAuthor = userRecord && author.name === userRecord.username
   const isNewGraph = router.pathname === '/gh'
 
-  const hideManifestData = isNewGraph && !user
+  const hideManifestData = (isNewGraph && user?.isAnonymous) || device.breakpoint === 'sm'
 
   return (
     <div className="h-full flex flex-grow items-center justify-start">
@@ -65,7 +65,7 @@ export const HeaderTitle = (): React.ReactElement => {
           </Popover>
         )
       ) : null}
-      {device.breakpoint === 'sm' || hideManifestData ? null : (
+      {hideManifestData ? null : (
         <>
           <div className="h-6 mr-3 flex items-center justify-start">
             <svg

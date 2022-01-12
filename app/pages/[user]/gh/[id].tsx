@@ -25,13 +25,13 @@ const GrasshopperGraphPage: NextPage<GrasshopperGraphPageProps> = ({ id, name, a
     <>
       <Head>
         <title>{`${name} by ${author.name}`}</title>
-        <script defer src="https://unpkg.com/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script>
+        <meta name="og:title" property="og:title" content={`${name} by ${author.name}`}></meta>
+        <meta name="og:image" property="og:image" content={files.twitterThumbnailImage?.url}></meta>
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:site" content="@cdriesler" />
         <meta name="twitter:title" content={`${name} by ${author.name}`}></meta>
         <meta name="twitter:image" content={files.twitterThumbnailImage?.url}></meta>
-        <meta name="og:title" content={`${name} by ${author.name}`}></meta>
-        <meta name="og:image" content={files.twitterThumbnailImage?.url}></meta>
+        <script defer src="https://unpkg.com/smoothscroll-polyfill@0.4.4/dist/smoothscroll.min.js"></script>
       </Head>
       <ApolloContext token={token}>
         <GraphManager manifest={{ id, name, author, graph, files, stats }}>

@@ -29,7 +29,11 @@ const SmallDeviceButton = ({ user }: SmallDeviceButtonProps): React.ReactElement
       </button>
       {showModal ? (
         <Layout.Modal onClose={() => setShowModal(false)}>
-          <Layout.HeaderMenus.CurrentUserMenu user={{ name: user.displayName, photoUrl: user.photoURL }} />
+          {user?.isAnonymous ? (
+            <Layout.HeaderMenus.NoUserMenu />
+          ) : (
+            <Layout.HeaderMenus.CurrentUserMenu user={{ name: user.displayName, photoUrl: user.photoURL }} />
+          )}
         </Layout.Modal>
       ) : null}
     </>
