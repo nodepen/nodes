@@ -338,9 +338,10 @@ export const GraphControls = (): React.ReactElement => {
                     </button>
                   ) : (
                     <a
-                      href="/gh?view=model"
+                      href={`${router.asPath}?view=model`}
                       target="_blank"
                       className="w-12 h-12 flex justify-center items-center md:hover:bg-swampgreen"
+                      rel="noreferrer"
                     >
                       <svg
                         className="w-6 h-6"
