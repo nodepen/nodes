@@ -39,6 +39,9 @@ const initialState: GraphState = {
     latest: {
       element: 'unset',
     },
+    copy: {
+      elements: [],
+    },
     visibility: {
       elements: [],
     },
@@ -1209,6 +1212,10 @@ export const graphSlice = createSlice({
       }
 
       current.anchors[anchorId] = position
+    },
+    copySelection: (state: GraphState) => {
+      state.registry.copy.elements = [...state.selection]
+      state.registry.copy.pasteCount = 0
     },
   },
 })

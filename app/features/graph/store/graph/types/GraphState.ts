@@ -10,6 +10,10 @@ export type GraphState = {
     latest: {
       element: string
     }
+    copy: {
+      pasteCount: number
+      elements: string[]
+    }
     restored: {
       elements: string[]
     }
