@@ -12,7 +12,7 @@ export type GraphState = {
     }
     copy: {
       pasteCount: number
-      elements: string[]
+      elements: NodePen.Element<'static-component' | 'number-slider' | 'panel'>[]
     }
     restored: {
       elements: string[]

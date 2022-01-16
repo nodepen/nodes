@@ -25,6 +25,7 @@ export const store = configureStore({
         graphActions.updateLiveWires.type,
         graphActions.captureLiveWires.type,
         graphActions.releaseLiveWires.type,
+        graphActions.copySelection.type,
         ...Object.values(cameraActions).map((action) => action.type),
         ...Object.values(hotkeyActions).map((action) => action.type),
         ...Object.values(sceneActions).map((action) => action.type),

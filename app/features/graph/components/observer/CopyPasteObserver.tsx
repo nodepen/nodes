@@ -5,13 +5,17 @@ import { useCopyPasteHotkey } from '../../store/hotkey/hooks'
 const CopyPasteObserver = (): React.ReactElement => {
   const action = useCopyPasteHotkey()
 
+  const { copySelection, paste } = useGraphDispatch()
+
   useEffect(() => {
     switch (action) {
       case 'copy':
         console.log('Copy!')
+        copySelection()
         return
       case 'paste':
         console.log('Paste!')
+        paste()
         return
     }
   }, [action])

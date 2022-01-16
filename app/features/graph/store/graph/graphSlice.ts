@@ -40,6 +40,7 @@ const initialState: GraphState = {
       element: 'unset',
     },
     copy: {
+      pasteCount: 0,
       elements: [],
     },
     visibility: {
@@ -1214,8 +1215,42 @@ export const graphSlice = createSlice({
       current.anchors[anchorId] = position
     },
     copySelection: (state: GraphState) => {
-      state.registry.copy.elements = [...state.selection]
+      state.registry.copy.elements = []
+
+      for (const id of state.selection) {
+        const currentElement = state.elements[id]
+
+        if (!currentElement) {
+          continue
+        }
+
+        const { current } = currentElement
+
+        if (!assert.element.isGraphElement(current)) {
+          continue
+        }
+
+        state.registry.copy.elements.push(JSON.parse(JSON.stringify(currentElement)))
+      }
+
       state.registry.copy.pasteCount = 0
+    },
+    paste: (state: GraphState) => {
+      const newIdMap: { [key: string]: string } = {}
+
+      // Create a map of current element ids to new ids
+
+      // Flag all new ids as restored
+
+      // Copy all elements, slightly moved based on `pasteCount`
+
+      // Attempt to re-apply all sources
+      //  If id in newIdMap, mutate
+      //  If id not in newIdMap
+      //    If element still exists, use same id
+      //    If element does not exist, do not apply
+
+      // If source applied, re-create wires
     },
   },
 })
