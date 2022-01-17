@@ -14,6 +14,7 @@ import {
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
 import { prepareLiveMotion, updateLiveElement } from './reducers'
+import { ParameterReference } from '@/glib/dist/nodepen/graph'
 
 const initialState: GraphState = {
   manifest: {
@@ -1237,20 +1238,65 @@ export const graphSlice = createSlice({
     },
     paste: (state: GraphState) => {
       const newIdMap: { [key: string]: string } = {}
+      const newIds: string[] = []
+
+      state.registry.copy.pasteCount = state.registry.copy.pasteCount + 1
 
       // Create a map of current element ids to new ids
+      for (const el of state.registry.copy.elements) {
+        const newId = newGuid()
+
+        newIdMap[el.id] = newId
+        newIds.push(newId)
+      }
 
       // Flag all new ids as restored
+      state.registry.restored.elements = newIds
 
-      // Copy all elements, slightly moved based on `pasteCount`
+      // Copy all elements
+      for (const el of state.registry.copy.elements) {
+        const newId = newIdMap[el.id]
 
-      // Attempt to re-apply all sources
-      //  If id in newIdMap, mutate
-      //  If id not in newIdMap
-      //    If element still exists, use same id
-      //    If element does not exist, do not apply
+        const newElement: NodePen.Element<'static-component'> = JSON.parse(JSON.stringify(el))
 
-      // If source applied, re-create wires
+        // Shift copied element slightly  based on `pasteCount`
+        const [x, y] = newElement.current.position
+        const t = state.registry.copy.pasteCount * 15
+
+        newElement.current.position = [x + t, y + t]
+
+        // Attempt to re-apply all sources
+        for (const [elementParameterId, sources] of Object.entries(newElement.current.sources)) {
+          const validSources: ParameterReference[] = []
+
+          for (const source of sources) {
+            const { elementInstanceId: sourceElementId, parameterInstanceId: sourceParameterId } = source
+
+            // If id is included in copied elements, mutate to new element id
+            if (newIdMap[sourceElementId]) {
+              validSources.push({
+                elementInstanceId: newIdMap[sourceElementId],
+                parameterInstanceId: sourceParameterId,
+              })
+            } else {
+              // If element still exists, use same id
+              if (state.elements[sourceElementId]) {
+                validSources.push(source)
+              } else {
+                // If element does not exist, do not apply
+              }
+            }
+          }
+
+          newElement.current.sources[elementParameterId] = validSources
+        }
+
+        // Re-create wires for all valid sources
+
+        // Finally, add new element to elements array
+        newElement.id = newId
+        state.elements[newId] = newElement
+      }
     },
   },
 })

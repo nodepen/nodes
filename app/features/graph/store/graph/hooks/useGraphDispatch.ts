@@ -120,6 +120,7 @@ export const useGraphDispatch = () => {
     },
     paste: () => {
       dispatch(graphActions.paste())
+      dispatch(solutionActions.expireSolution())
     },
   }
 }

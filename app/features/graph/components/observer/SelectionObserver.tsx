@@ -6,7 +6,7 @@ import { useSessionManager } from '@/features/common/context/session'
 import { newGuid } from '../../utils'
 
 const SelectionObserver = (): React.ReactElement => {
-  const { token } = useSessionManager()
+  const { token, user } = useSessionManager()
 
   const observerId = useRef<string>(newGuid())
 
@@ -28,7 +28,7 @@ const SelectionObserver = (): React.ReactElement => {
   )
 
   useEffect(() => {
-    if (!token) {
+    if (!token || user?.isAnonymous) {
       return
     }
 
