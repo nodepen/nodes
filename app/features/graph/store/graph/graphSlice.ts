@@ -1265,6 +1265,12 @@ export const graphSlice = createSlice({
 
         newElement.current.position = [x + t, y + t]
 
+        // Mutate new element id
+
+        // Mutate new element parameters
+
+        // Somehow map source parameters back to new parameters
+
         // Attempt to re-apply all sources
         for (const [elementParameterId, sources] of Object.entries(newElement.current.sources)) {
           const validSources: ParameterReference[] = []
