@@ -234,6 +234,13 @@ const SignUpForm = (): React.ReactElement => {
 
       await cred.user.updateProfile({ displayName: username })
 
+      // Create user before link to prevent displayName override
+      try {
+        await fetch('/api/currentUser')
+      } catch {
+        // Do nothing
+      }
+
       cred.user.linkWithRedirect(provider)
     }
 
