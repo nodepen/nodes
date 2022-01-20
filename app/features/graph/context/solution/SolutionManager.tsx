@@ -187,12 +187,21 @@ export const SolutionManager = ({ children, initialSolution }: SolutionManagerPr
           .catch((_err) => {
             // console.error(err)
 
-            updateSolution({
-              meta: {
-                phase: 'idle',
-                error: 'Failed to schedule a new solution.',
-              },
-            })
+            if (validElements.length >= 50) {
+              updateSolution({
+                meta: {
+                  phase: 'idle',
+                  error: 'Too many components!',
+                },
+              })
+            } else {
+              updateSolution({
+                meta: {
+                  phase: 'idle',
+                  error: 'Failed to schedule a new solution.',
+                },
+              })
+            }
           })
         break
       }
