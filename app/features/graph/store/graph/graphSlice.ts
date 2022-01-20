@@ -1243,6 +1243,9 @@ export const graphSlice = createSlice({
       state.registry.copy.pasteCount = state.registry.copy.pasteCount + 1
       const pasteDelta = state.registry.copy.pasteCount * 15
 
+      // Set key used by undo/redo
+      state.registry.latest.element = `PASTE_${state.registry.copy.pasteCount}`
+
       // Create a map of current element ids to new ids
       for (const element of state.registry.copy.elements) {
         const { id, current } = element
@@ -1407,6 +1410,12 @@ export const graphSlice = createSlice({
           }
         }
       }
+
+      // Assign selection to newly-copied elements because that's the kind thing to do
+      const nextSelection = Object.values(newElementIds)
+
+      prepareLiveMotion(state, 'unset', nextSelection)
+      state.selection = nextSelection
     },
   },
 })

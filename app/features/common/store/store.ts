@@ -33,6 +33,7 @@ export const store = configureStore({
       ]),
       groupBy: (action, current, _previous) => {
         const ELEMENT_PLACEMENT = [
+          graphActions.paste.type,
           graphActions.addElement.type,
           graphActions.registerElement.type,
           graphActions.registerElementAnchor.type,
