@@ -1237,71 +1237,101 @@ export const graphSlice = createSlice({
       state.registry.copy.pasteCount = 0
     },
     paste: (state: GraphState) => {
-      const newIdMap: { [key: string]: string } = {}
-      const newIds: string[] = []
+      const newElementIds: { [key: string]: string } = {}
+      const newParameterIds: { [key: string]: string } = {}
 
       state.registry.copy.pasteCount = state.registry.copy.pasteCount + 1
+      const pasteDelta = state.registry.copy.pasteCount * 15
 
       // Create a map of current element ids to new ids
-      for (const el of state.registry.copy.elements) {
-        const newId = newGuid()
+      for (const element of state.registry.copy.elements) {
+        const { id, current } = element
 
-        newIdMap[el.id] = newId
-        newIds.push(newId)
+        newElementIds[id] = newGuid()
+
+        for (const inputId of Object.keys(current.inputs)) {
+          newParameterIds[inputId] = newGuid()
+        }
+
+        for (const outputId of Object.keys(current.outputs)) {
+          newParameterIds[outputId] = newGuid()
+        }
       }
 
-      // Flag all new ids as restored
-      state.registry.restored.elements = newIds
+      // Flag all new element ids as restored
+      state.registry.restored.elements = Object.values(newElementIds)
 
       // Copy all elements
-      for (const el of state.registry.copy.elements) {
-        const newId = newIdMap[el.id]
+      for (const element of state.registry.copy.elements) {
+        // Get relevant current values
+        const [currentX, currentY] = element.current.position
 
-        const newElement: NodePen.Element<'static-component'> = JSON.parse(JSON.stringify(el))
+        // Prepare element copy
+        const elementCopy: NodePen.Element<'static-component'> = JSON.parse(JSON.stringify(element))
 
-        // Shift copied element slightly  based on `pasteCount`
-        const [x, y] = newElement.current.position
-        const t = state.registry.copy.pasteCount * 15
+        // Mutate id
+        elementCopy.id = newElementIds[element.id]
 
-        newElement.current.position = [x + t, y + t]
+        // Mutate position
+        elementCopy.current.position = [currentX + pasteDelta, currentY + pasteDelta]
 
-        // Mutate new element id
+        // Mutate parameter instance ids
+        for (const [currentInputId, currentInputIndex] of Object.entries(elementCopy.current.inputs)) {
+          elementCopy.current.inputs[newParameterIds[currentInputId]] = currentInputIndex
+          delete elementCopy.current.inputs[currentInputId]
+        }
 
-        // Mutate new element parameters
+        for (const [currentOutputId, currentOutputIndex] of Object.entries(elementCopy.current.outputs)) {
+          elementCopy.current.outputs[newParameterIds[currentOutputId]] = currentOutputIndex
+          delete elementCopy.current.outputs[currentOutputId]
+        }
 
-        // Somehow map source parameters back to new parameters
+        // Mutate current persisted values
+        for (const [currentParameterId, values] of Object.entries(elementCopy.current.values)) {
+          elementCopy.current.values[newParameterIds[currentParameterId]] = JSON.parse(JSON.stringify(values))
+          delete elementCopy.current.values[currentParameterId]
+        }
 
         // Attempt to re-apply all sources
-        for (const [elementParameterId, sources] of Object.entries(newElement.current.sources)) {
+        for (const [currentParameterId, sources] of Object.entries(elementCopy.current.sources)) {
           const validSources: ParameterReference[] = []
 
           for (const source of sources) {
             const { elementInstanceId: sourceElementId, parameterInstanceId: sourceParameterId } = source
 
             // If id is included in copied elements, mutate to new element id
-            if (newIdMap[sourceElementId]) {
+            if (newElementIds[sourceElementId]) {
+              console.log('source is part of copy operation!')
               validSources.push({
-                elementInstanceId: newIdMap[sourceElementId],
+                elementInstanceId: newElementIds[sourceElementId],
                 parameterInstanceId: sourceParameterId,
               })
             } else {
               // If element still exists, use same id
               if (state.elements[sourceElementId]) {
+                console.log('source is still in graph!')
                 validSources.push(source)
               } else {
                 // If element does not exist, do not apply
+                console.log('source has been deleted!')
               }
             }
           }
 
-          newElement.current.sources[elementParameterId] = validSources
+          elementCopy.current.sources[newParameterIds[currentParameterId]] = validSources
+          delete elementCopy.current.sources[currentParameterId]
         }
 
-        // Re-create wires for all valid sources
+        // Add new element to state
+        state.elements[elementCopy.id] = elementCopy
+      }
 
-        // Finally, add new element to elements array
-        newElement.id = newId
-        state.elements[newId] = newElement
+      // Re-create all wires for valid sources somehow
+      for (const copiedElementId of Object.values(newElementIds)) {
+        // Fetch element
+        const element = state.elements[copiedElementId]
+
+        console.log(element.id)
       }
     },
   },
