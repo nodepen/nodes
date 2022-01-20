@@ -187,12 +187,21 @@ export const SolutionManager = ({ children, initialSolution }: SolutionManagerPr
           .catch((_err) => {
             // console.error(err)
 
-            updateSolution({
-              meta: {
-                phase: 'idle',
-                error: 'Failed to schedule a new solution.',
-              },
-            })
+            if (validElements.length >= 50) {
+              updateSolution({
+                meta: {
+                  phase: 'idle',
+                  error: 'Too many components!',
+                },
+              })
+            } else {
+              updateSolution({
+                meta: {
+                  phase: 'idle',
+                  error: 'Failed to schedule a new solution.',
+                },
+              })
+            }
           })
         break
       }
@@ -430,7 +439,7 @@ export const SolutionManager = ({ children, initialSolution }: SolutionManagerPr
             return all
           }
 
-          const data = currentResult.value.reduce((branches, current) => {
+          const data = currentResult?.value?.reduce((branches, current) => {
             const currentBranch = JSON.parse(JSON.stringify(current))
 
             for (const entry of currentBranch.data) {
@@ -439,6 +448,10 @@ export const SolutionManager = ({ children, initialSolution }: SolutionManagerPr
             }
             return [...branches, currentBranch]
           }, [] as NodePen.DataTreeBranch[])
+
+          if (!data) {
+            return all
+          }
 
           return [...all, { elementId, parameterId, data }]
         }, [] as { elementId: string; parameterId: string; data: NodePen.DataTreeBranch[] }[]),

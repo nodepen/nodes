@@ -25,6 +25,7 @@ export const store = configureStore({
         graphActions.updateLiveWires.type,
         graphActions.captureLiveWires.type,
         graphActions.releaseLiveWires.type,
+        graphActions.copySelection.type,
         ...Object.values(cameraActions).map((action) => action.type),
         ...Object.values(hotkeyActions).map((action) => action.type),
         ...Object.values(sceneActions).map((action) => action.type),
@@ -32,6 +33,7 @@ export const store = configureStore({
       ]),
       groupBy: (action, current, _previous) => {
         const ELEMENT_PLACEMENT = [
+          graphActions.paste.type,
           graphActions.addElement.type,
           graphActions.registerElement.type,
           graphActions.registerElementAnchor.type,

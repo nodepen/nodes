@@ -14,6 +14,7 @@ import {
 import { GraphMode } from './types/GraphMode'
 import { deleteWire, getAnchorCoordinates, getConnectedWires } from './utils'
 import { prepareLiveMotion, updateLiveElement } from './reducers'
+import { ParameterReference } from '@/glib/dist/nodepen/graph'
 
 const initialState: GraphState = {
   manifest: {
@@ -38,6 +39,10 @@ const initialState: GraphState = {
   registry: {
     latest: {
       element: 'unset',
+    },
+    copy: {
+      pasteCount: 0,
+      elements: [],
     },
     visibility: {
       elements: [],
@@ -1209,6 +1214,208 @@ export const graphSlice = createSlice({
       }
 
       current.anchors[anchorId] = position
+    },
+    copySelection: (state: GraphState) => {
+      state.registry.copy.elements = []
+
+      for (const id of state.selection) {
+        const currentElement = state.elements[id]
+
+        if (!currentElement) {
+          continue
+        }
+
+        const { current } = currentElement
+
+        if (!assert.element.isGraphElement(current)) {
+          continue
+        }
+
+        state.registry.copy.elements.push(JSON.parse(JSON.stringify(currentElement)))
+      }
+
+      state.registry.copy.pasteCount = 0
+    },
+    paste: (state: GraphState) => {
+      const newElementIds: { [key: string]: string } = {}
+      const newParameterIds: { [key: string]: string } = {}
+
+      state.registry.copy.pasteCount = state.registry.copy.pasteCount + 1
+      const pasteDelta = state.registry.copy.pasteCount * 15
+
+      // Set key used by undo/redo
+      state.registry.latest.element = `PASTE_${state.registry.copy.pasteCount}`
+
+      // Create a map of current element ids to new ids
+      for (const element of state.registry.copy.elements) {
+        const { id, current } = element
+
+        newElementIds[id] = newGuid()
+
+        if (element.template.type !== 'static-component') {
+          // Floating parameters do not need sub-parameters mutated
+          continue
+        }
+
+        for (const inputId of Object.keys(current.inputs)) {
+          newParameterIds[inputId] = newGuid()
+        }
+
+        for (const outputId of Object.keys(current.outputs)) {
+          newParameterIds[outputId] = newGuid()
+        }
+      }
+
+      // Flag all new element ids as restored
+      state.registry.restored.elements = Object.values(newElementIds)
+
+      // Copy all elements
+      for (const element of state.registry.copy.elements) {
+        // Get relevant current values
+        const [currentX, currentY] = element.current.position
+
+        // Prepare element copy
+        const elementCopy: NodePen.Element<'static-component'> = JSON.parse(JSON.stringify(element))
+
+        // Mutate id
+        elementCopy.id = newElementIds[element.id]
+
+        // Mutate position
+        elementCopy.current.position = [currentX + pasteDelta, currentY + pasteDelta]
+
+        // Mutate values based on parameter id for static components
+        // Floating parameters can continue to use special `input` and `output` keys
+        if (element.template.type === 'static-component') {
+          // Mutate parameter instance ids
+          for (const [currentInputId, currentInputIndex] of Object.entries(elementCopy.current.inputs)) {
+            elementCopy.current.inputs[newParameterIds[currentInputId]] = currentInputIndex
+            delete elementCopy.current.inputs[currentInputId]
+          }
+
+          for (const [currentOutputId, currentOutputIndex] of Object.entries(elementCopy.current.outputs)) {
+            elementCopy.current.outputs[newParameterIds[currentOutputId]] = currentOutputIndex
+            delete elementCopy.current.outputs[currentOutputId]
+          }
+
+          // Mutate current persisted values
+          for (const [currentParameterId, values] of Object.entries(elementCopy.current.values)) {
+            elementCopy.current.values[newParameterIds[currentParameterId]] = JSON.parse(JSON.stringify(values))
+            delete elementCopy.current.values[currentParameterId]
+          }
+
+          // Mutate parameter-based anchors
+          for (const [anchorId, anchor] of Object.entries(elementCopy.current.anchors)) {
+            const newAnchorId = newParameterIds[anchorId]
+
+            if (!newAnchorId) {
+              // Anchor does not need to be renamed
+              continue
+            }
+
+            elementCopy.current.anchors[newAnchorId] = anchor
+            delete elementCopy.current.anchors[anchorId]
+          }
+        }
+
+        // Attempt to re-apply all sources
+        for (const [currentParameterId, sources] of Object.entries(elementCopy.current.sources)) {
+          const validSources: ParameterReference[] = []
+
+          for (const source of sources) {
+            const { elementInstanceId: sourceElementId, parameterInstanceId: sourceParameterId } = source
+
+            // If id is included in copied elements, mutate to new element id
+            if (newElementIds[sourceElementId]) {
+              console.log('source is part of copy operation!')
+              validSources.push({
+                elementInstanceId: newElementIds[sourceElementId],
+                parameterInstanceId: newParameterIds[sourceParameterId],
+              })
+            } else {
+              // If element still exists, use same id
+              if (state.elements[sourceElementId]) {
+                console.log('source is still in graph!')
+                validSources.push(source)
+              } else {
+                // If element does not exist, do not apply
+                console.log('source has been deleted!')
+              }
+            }
+          }
+
+          elementCopy.current.sources[newParameterIds[currentParameterId]] = validSources
+          delete elementCopy.current.sources[currentParameterId]
+        }
+
+        // Add new element to state
+        state.elements[elementCopy.id] = elementCopy
+      }
+
+      // Re-create all wires for valid sources somehow
+      for (const copiedElementId of Object.values(newElementIds)) {
+        // Fetch element
+        const currentElement = state.elements[copiedElementId] as NodePen.Element<'static-component'>
+
+        if (!currentElement) {
+          console.log('🐍 Failed to find element after attempted copy!')
+          continue
+        }
+
+        for (const [currentParameterId, sources] of Object.entries(currentElement.current.sources)) {
+          for (const { elementInstanceId: sourceElementId, parameterInstanceId: sourceParameterId } of sources) {
+            const sourceElement = state.elements[sourceElementId] as NodePen.Element<'static-component'>
+
+            if (!sourceElement) {
+              console.log('🐍 Failed to find source element declared by recently copied element!')
+              continue
+            }
+
+            // Calculate `from` position in graph space
+            const [ax, ay] = sourceElement.current.position
+            const [adx, ady] = sourceElement.current.anchors[sourceParameterId] ?? [0, 0]
+            const [fx, fy] = [ax + adx, ay + ady]
+
+            // Calculate `to` position in graph space
+            const [bx, by] = currentElement.current.position
+            const [bdx, bdy] = currentElement.current.anchors[currentParameterId] ?? [0, 0]
+            const [tx, ty] = [bx + bdx, by + bdy]
+
+            const wire: NodePen.Element<'wire'> = {
+              id: newGuid(),
+              template: {
+                type: 'wire',
+                mode: 'data',
+                from: {
+                  elementId: sourceElementId,
+                  parameterId: sourceParameterId,
+                },
+                to: {
+                  elementId: currentElement.id,
+                  parameterId: currentParameterId,
+                },
+              },
+              current: {
+                from: [fx, fy],
+                to: [tx, ty],
+                position: [0, 0],
+                dimensions: {
+                  width: 0,
+                  height: 0,
+                },
+              },
+            }
+
+            // Add wire to graph
+            state.elements[wire.id] = wire
+          }
+        }
+      }
+
+      // Assign selection to newly-copied elements because that's the kind thing to do
+      const nextSelection = Object.values(newElementIds)
+
+      prepareLiveMotion(state, 'unset', nextSelection)
+      state.selection = nextSelection
     },
   },
 })

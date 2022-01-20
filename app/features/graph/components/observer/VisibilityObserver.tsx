@@ -10,7 +10,7 @@ import { firebase } from 'features/common/context/session/auth/firebase'
  * Watches `ctrl + q` and for `setVisibility` changes
  */
 const VisibilityHotkeyObserver = (): React.ReactElement => {
-  const { token } = useSessionManager()
+  const { token, user } = useSessionManager()
 
   const observerId = useRef<string>(newGuid())
 
@@ -32,7 +32,7 @@ const VisibilityHotkeyObserver = (): React.ReactElement => {
   )
 
   useEffect(() => {
-    if (!token) {
+    if (!token || user?.isAnonymous) {
       return
     }
 

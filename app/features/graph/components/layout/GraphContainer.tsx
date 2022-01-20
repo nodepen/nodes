@@ -2,6 +2,7 @@ import React from 'react'
 import { Layout } from '..'
 import { useGraphManager } from '@/features/graph/context/graph'
 import {
+  CopyPasteObserver,
   DeleteKeyObserver,
   HistoryHotkeyObserver,
   SelectionHotkeyObserver,
@@ -17,6 +18,7 @@ export const GraphContainer = (): React.ReactElement => {
 
   return (
     <>
+      <CopyPasteObserver />
       <DeleteKeyObserver />
       <HistoryHotkeyObserver />
       <SelectionHotkeyObserver />

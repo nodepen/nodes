@@ -115,5 +115,12 @@ export const useGraphDispatch = () => {
     registerElementAnchor: (data: Payload.RegisterElementAnchorPayload) => {
       dispatch(graphActions.registerElementAnchor(data))
     },
+    copySelection: () => {
+      dispatch(graphActions.copySelection())
+    },
+    paste: () => {
+      dispatch(graphActions.paste())
+      dispatch(solutionActions.expireSolution())
+    },
   }
 }

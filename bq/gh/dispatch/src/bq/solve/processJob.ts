@@ -79,7 +79,9 @@ export const processJob = async (
       started,
       finished: new Date().toISOString(),
       runtimeMessages: messages ?? [],
-      exceptionMessages: timeout ? ['Solution timed out.'] : undefined,
+      exceptionMessages: timeout
+        ? ['Solution timed out after 750ms.']
+        : undefined,
     }
   } catch (err) {
     console.error(err)

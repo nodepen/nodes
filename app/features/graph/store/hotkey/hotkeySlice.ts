@@ -19,8 +19,10 @@ export const hotkeySlice = createSlice({
         case 'control':
         case 'space':
         case 'a':
+        case 'c':
         case 'd':
         case 'q':
+        case 'v':
         case 'y':
         case 'z':
           state[stateKey] = pressed
@@ -46,10 +48,32 @@ const selectShift = (state: RootState): boolean => !!state.hotkey['shift']
 const selectControl = (state: RootState): boolean => !!state.hotkey['control']
 
 const selectA = (state: RootState): boolean => !!state.hotkey['a']
+const selectC = (state: RootState): boolean => !!state.hotkey['c']
 const selectD = (state: RootState): boolean => !!state.hotkey['d']
 const selectQ = (state: RootState): boolean => !!state.hotkey['q']
+const selectV = (state: RootState): boolean => !!state.hotkey['v']
 const selectY = (state: RootState): boolean => !!state.hotkey['y']
 const selectZed = (state: RootState): boolean => !!state.hotkey['z']
+
+const selectCopyPasteHotkey = createSelector(selectControl, selectC, selectV, (control, c, v) => {
+  if (!control) {
+    return undefined
+  }
+
+  if ([control, c, v].every((key) => key)) {
+    return undefined
+  }
+
+  if (control && c) {
+    return 'copy'
+  }
+
+  if (control && v) {
+    return 'paste'
+  }
+
+  return undefined
+})
 
 const selectHistoryHotkey = createSelector(selectControl, selectY, selectZed, (control, y, z) => {
   if (!control) {
@@ -103,6 +127,7 @@ const selectWireMode = createSelector(selectShift, selectControl, (shift, contro
 )
 
 export const hotkeySelectors = {
+  selectCopyPasteHotkey,
   selectSelectionHotkey,
   selectHistoryHotkey,
   selectSelectionMode,
