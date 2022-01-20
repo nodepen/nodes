@@ -1249,6 +1249,11 @@ export const graphSlice = createSlice({
 
         newElementIds[id] = newGuid()
 
+        if (element.template.type !== 'static-component') {
+          // Floating parameters do not need sub-parameters mutated
+          continue
+        }
+
         for (const inputId of Object.keys(current.inputs)) {
           newParameterIds[inputId] = newGuid()
         }
@@ -1275,21 +1280,38 @@ export const graphSlice = createSlice({
         // Mutate position
         elementCopy.current.position = [currentX + pasteDelta, currentY + pasteDelta]
 
-        // Mutate parameter instance ids
-        for (const [currentInputId, currentInputIndex] of Object.entries(elementCopy.current.inputs)) {
-          elementCopy.current.inputs[newParameterIds[currentInputId]] = currentInputIndex
-          delete elementCopy.current.inputs[currentInputId]
-        }
+        // Mutate values based on parameter id for static components
+        // Floating parameters can continue to use special `input` and `output` keys
+        if (element.template.type === 'static-component') {
+          // Mutate parameter instance ids
+          for (const [currentInputId, currentInputIndex] of Object.entries(elementCopy.current.inputs)) {
+            elementCopy.current.inputs[newParameterIds[currentInputId]] = currentInputIndex
+            delete elementCopy.current.inputs[currentInputId]
+          }
 
-        for (const [currentOutputId, currentOutputIndex] of Object.entries(elementCopy.current.outputs)) {
-          elementCopy.current.outputs[newParameterIds[currentOutputId]] = currentOutputIndex
-          delete elementCopy.current.outputs[currentOutputId]
-        }
+          for (const [currentOutputId, currentOutputIndex] of Object.entries(elementCopy.current.outputs)) {
+            elementCopy.current.outputs[newParameterIds[currentOutputId]] = currentOutputIndex
+            delete elementCopy.current.outputs[currentOutputId]
+          }
 
-        // Mutate current persisted values
-        for (const [currentParameterId, values] of Object.entries(elementCopy.current.values)) {
-          elementCopy.current.values[newParameterIds[currentParameterId]] = JSON.parse(JSON.stringify(values))
-          delete elementCopy.current.values[currentParameterId]
+          // Mutate current persisted values
+          for (const [currentParameterId, values] of Object.entries(elementCopy.current.values)) {
+            elementCopy.current.values[newParameterIds[currentParameterId]] = JSON.parse(JSON.stringify(values))
+            delete elementCopy.current.values[currentParameterId]
+          }
+
+          // Mutate parameter-based anchors
+          for (const [anchorId, anchor] of Object.entries(elementCopy.current.anchors)) {
+            const newAnchorId = newParameterIds[anchorId]
+
+            if (!newAnchorId) {
+              // Anchor does not need to be renamed
+              continue
+            }
+
+            elementCopy.current.anchors[newAnchorId] = anchor
+            delete elementCopy.current.anchors[anchorId]
+          }
         }
 
         // Attempt to re-apply all sources
@@ -1304,7 +1326,7 @@ export const graphSlice = createSlice({
               console.log('source is part of copy operation!')
               validSources.push({
                 elementInstanceId: newElementIds[sourceElementId],
-                parameterInstanceId: sourceParameterId,
+                parameterInstanceId: newParameterIds[sourceParameterId],
               })
             } else {
               // If element still exists, use same id
@@ -1329,9 +1351,61 @@ export const graphSlice = createSlice({
       // Re-create all wires for valid sources somehow
       for (const copiedElementId of Object.values(newElementIds)) {
         // Fetch element
-        const element = state.elements[copiedElementId]
+        const currentElement = state.elements[copiedElementId] as NodePen.Element<'static-component'>
 
-        console.log(element.id)
+        if (!currentElement) {
+          console.log('🐍 Failed to find element after attempted copy!')
+          continue
+        }
+
+        for (const [currentParameterId, sources] of Object.entries(currentElement.current.sources)) {
+          for (const { elementInstanceId: sourceElementId, parameterInstanceId: sourceParameterId } of sources) {
+            const sourceElement = state.elements[sourceElementId] as NodePen.Element<'static-component'>
+
+            if (!sourceElement) {
+              console.log('🐍 Failed to find source element declared by recently copied element!')
+              continue
+            }
+
+            // Calculate `from` position in graph space
+            const [ax, ay] = sourceElement.current.position
+            const [adx, ady] = sourceElement.current.anchors[sourceParameterId] ?? [0, 0]
+            const [fx, fy] = [ax + adx, ay + ady]
+
+            // Calculate `to` position in graph space
+            const [bx, by] = currentElement.current.position
+            const [bdx, bdy] = currentElement.current.anchors[currentParameterId] ?? [0, 0]
+            const [tx, ty] = [bx + bdx, by + bdy]
+
+            const wire: NodePen.Element<'wire'> = {
+              id: newGuid(),
+              template: {
+                type: 'wire',
+                mode: 'data',
+                from: {
+                  elementId: sourceElementId,
+                  parameterId: sourceParameterId,
+                },
+                to: {
+                  elementId: currentElement.id,
+                  parameterId: currentParameterId,
+                },
+              },
+              current: {
+                from: [fx, fy],
+                to: [tx, ty],
+                position: [0, 0],
+                dimensions: {
+                  width: 0,
+                  height: 0,
+                },
+              },
+            }
+
+            // Add wire to graph
+            state.elements[wire.id] = wire
+          }
+        }
       }
     },
   },
