@@ -13,9 +13,9 @@ The project is under active development, but you can tinker with the latest buil
 
 ## Feedback
 
-Thank you for trying NodePen! This project continues to be a place where I improve my craft as a software developer with the serious veneer of "product" considerations. As NodePen approaches a moment where it will support user accounts, these considerations are things like "this product should work" and "this product should not break" and so on.
+Thank you for trying NodePen! This project continues to be a place where I improve my craft as a software developer with the serious veneer of product considerations.
 
-If you found a bug, felt a common Grasshopper feature was blatantly missing, or just have some thoughts you'd like to share, please open an issue or reach out (@cdriesler) on twitter! I'm currently working on a number of features related to hosting and sharing scripts (like the project's namesake) but am much more interested in how people want to use this thing.
+If you found a bug, felt a common Grasshopper feature was blatantly missing, or just have some thoughts you'd like to share, please open an issue or reach out (@cdriesler) on twitter!
 
 ## Running Locally
 
@@ -23,19 +23,19 @@ NodePen has grown well beyond its early days as an single page app. It's current
 
 ## Release History
 
-### Current Release
+### Third Iteration
 
 After about two and a half years of development, NodePen released with user accounts, sharing, and script persistence on January 10, 2022. This marked a symbolic "1.0" release, but there was still a lot to do! Most of the native Grasshopper library was not yet supported, and there was no way to browse scripts on the platform.
 
 The 1.0 editor (no solutions or profiles or sharing) was released on August 8, 2021. The Rhino Compute backend was brought back online and solutions were re-enabled on November 5, 2021.
 
-### Public Test
+### Second Iteration
 
-The public test ([0.5.0](https://github.com/cdriesler/nodepen/releases/tag/0.5.0)) was online between May 7, 2021 and August 8, 2021. Over three months, it delivered 24,765 solutions to 2,501 unique users. It validated the queue-based backend solution infrastructure, but the editor experience left a lot to be desired (especially on mobile devices, which accounted for >70% (!) of all visits).
+The public test ([release](https://github.com/cdriesler/nodepen/releases/tag/0.5.0)) was online between May 7, 2021 and August 8, 2021. Over three months, it delivered 24,765 solutions to 2,501 unique users. It validated the queue-based backend solution infrastructure, but the editor experience left a lot to be desired (especially on mobile devices, which accounted for >70% (!) of all visits).
 
-### Proof of Concept
+### First Iteration
 
-The first release on this repo ([0.4.1](https://github.com/cdriesler/nodepen/releases/tag/0.4.1)) was the end of an initial [proof-of-concept](https://twitter.com/cdriesler/status/1216726073473490946?s=20) phase that started with isolated viability tests and sketches in Winter 2019.
+The first release on this repo ([release](https://github.com/cdriesler/nodepen/releases/tag/0.4.1)) was the end of an initial [proof-of-concept](https://twitter.com/cdriesler/status/1216726073473490946?s=20) phase that started with isolated viability tests and sketches in Winter 2019.
 
 Yes this project was called "glasshopper" for a long time and I don't want to talk about it.
 
