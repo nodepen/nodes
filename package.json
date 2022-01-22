@@ -1,0 +1,33 @@
+{
+  "name": "@nodepen/monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "same grasshopper, new digs",
+  "author": "@cdriesler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodepen/nodes.git"
+  },
+  "license": "MIT",
+  "workspaces": [
+    "packages/core",
+    "packages/nodes",
+    "apps/gh"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "link": "npm run link --workspaces && npm run link:packages --workspaces"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^12.0.0",
+    "@types/react": "^17.0.33",
+    "@types/react-dom": "^17.0.10",
+    "@typescript-eslint/eslint-plugin": "^4.19.0",
+    "@typescript-eslint/parser": "^4.19.0",
+    "eslint": "^7.32.0",
+    "jest": "^27.3.1",
+    "prettier": "^2.4.1",
+    "typescript": "4.5.5"
+  }
+}

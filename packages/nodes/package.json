@@ -1,0 +1,27 @@
+{
+  "name": "@nodepen/nodes",
+  "version": "1.1.0",
+  "description": "node editor component library for nodepen",
+  "author": "@cdriesler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodepen/nodes.git"
+  },
+  "license": "MIT",
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "link": "npm link",
+    "link:packages": "npm link @nodepen/core && npm install"
+  },
+  "dependencies": {
+    "@nodepen/core": "^1.1.0"
+  },
+  "peerDependencies": {
+    "react": "^17.0",
+    "react-dom": "^17.0"
+  }
+}
