@@ -29,7 +29,7 @@
     "redis": "3.1.2",
     "rhino3dm": "^7.11.1",
     "sharp": "^0.29.3",
-    "three": "0.136.0",
+    "three": "0.137.0",
     "uuid": "^8.3.2"
   },
   "devDependencies": {
