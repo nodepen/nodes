@@ -28,7 +28,7 @@
     "reselect": "4.0.0",
     "rhino3dm": "7.7.0",
     "subscriptions-transport-ws": "0.9.19",
-    "three": "0.134.0"
+    "three": "0.137.0"
   },
   "devDependencies": {
     "@next/bundle-analyzer": "^10.2.3",
