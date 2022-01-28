@@ -12,10 +12,10 @@
     "dist/**/*"
   ],
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "link": "npm link",
-    "link:packages": "npm link @nodepen/core && npm install"
+    "dev": "tsc -w"
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0"

@@ -14,7 +14,6 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "link": "npm link",
-    "link:packages": "npm install"
+    "dev": "tsc -w"
   }
 }
