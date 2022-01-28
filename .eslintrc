@@ -7,24 +7,11 @@
   },
   "extends": [
     "eslint:recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/recommended",
-    "plugin:react-hooks/recommended",
-    "plugin:jsx-a11y/recommended"
+    "plugin:@typescript-eslint/recommended"
   ],
   "plugins": [
-    "@typescript-eslint",
-    "react-hooks"
+    "@typescript-eslint"
   ],
-  "rules": {
-    "react-hooks/rules-of-hooks": "error",
-    "@typescript-eslint/no-unused-vars": [
-      "error",
-      {
-        "argsIgnorePattern": "^_"
-      }
-    ]
-  },
   "overrides": [
     {
       "files": ["*.ts", "*.tsx"],
