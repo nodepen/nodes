@@ -1,6 +1,8 @@
 {
   "packages": [
-    "packages/*"
+    "packages/*",
+    "apps/docs/*",
+    "apps/speckle/*"
   ],
   "version": "0.0.0"
 }

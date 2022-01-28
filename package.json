@@ -12,7 +12,8 @@
   "workspaces": [
     "packages/core",
     "packages/nodes",
-    "apps/gh"
+    "apps/docs",
+    "apps/speckle/www"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
