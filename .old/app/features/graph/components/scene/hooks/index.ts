@@ -1,1 +1,0 @@
-export { useVisibleGeometry } from './useVisibleGeometry'

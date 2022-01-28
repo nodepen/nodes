@@ -1,1 +1,0 @@
-export { FooterSection } from './FooterSection'

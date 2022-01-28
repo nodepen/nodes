@@ -1,1 +1,0 @@
-export { LiveWireTooltip } from './LiveWireTooltip'

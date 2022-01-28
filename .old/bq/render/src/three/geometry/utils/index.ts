@@ -1,1 +1,0 @@
-export { isVisible } from './isVisible'

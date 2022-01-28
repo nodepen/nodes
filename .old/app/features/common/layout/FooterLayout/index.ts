@@ -1,1 +1,0 @@
-export { FooterLayout } from './FooterLayout'
