@@ -13,7 +13,7 @@
     "packages/core",
     "packages/nodes",
     "apps/docs",
-    "apps/speckle/www"
+    "apps/gh/nodepen-client"
   ],
   "scripts": {
     "build": "npm run build --workspaces",
