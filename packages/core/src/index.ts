@@ -1,1 +1,1 @@
-export const core = 2
+export const core = 8

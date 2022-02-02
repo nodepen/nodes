@@ -16,8 +16,9 @@
     "apps/gh/nodepen-client"
   ],
   "scripts": {
-    "build": "npm run build --workspaces",
-    "link": "npm run link --workspaces && npm run link:packages --workspaces"
+    "build": "npx lerna run build --stream",
+    "dev": "npm run clear && npx lerna run dev --parallel",
+    "clear": "kill-port 4000,4100"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",

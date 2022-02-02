@@ -1,4 +1,5 @@
 import React from 'react'
+import { core } from '@nodepen/core'
 
 type GenericComponentProps = {
   id: string
@@ -15,5 +16,5 @@ type GenericComponentProps = {
 }
 
 export const GenericComponent = (): React.ReactElement => {
-  return <div className="w-6 h-6 bg-red-50"></div>
+  return <div className="w-6 h-6 bg-red-400">{core}</div>
 }

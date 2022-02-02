@@ -14,10 +14,9 @@
   "main": "dist/index.js",
   "module": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "prebuild": "npm run build:styles",
+    "build": "npm run build:styles && tsc",
     "build:styles": "tailwindcss build -i tailwind.css -o dist/tailwind.css",
-    "dev": "tsc -w"
+    "dev": "tsc -w --preserveWatchOutput"
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0"
