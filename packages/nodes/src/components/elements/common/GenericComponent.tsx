@@ -14,6 +14,6 @@ type GenericComponentProps = {
   }
 }
 
-export const GenericComponent = ({ id, template, callbacks }): React.ReactElement => {
-  return <></>
+export const GenericComponent = (): React.ReactElement => {
+  return <div className="w-6 h-6 bg-red-50"></div>
 }

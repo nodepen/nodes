@@ -1,6 +1,3 @@
-import { core } from '@nodepen/core'
+import './tailwind.css'
 
-console.log(core)
-
-export const nodes = core * 2
-export { Component as NodePen } from './Component'
+export { GenericComponent } from './components/elements/common/GenericComponent'
