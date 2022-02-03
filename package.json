@@ -18,6 +18,7 @@
   "scripts": {
     "build": "npx lerna run build --stream",
     "dev": "npm run clear && npx lerna run dev --parallel",
+    "dev:packages": "npx lerna run dev --parallel --scope @nodepen/core --scope @nodepen/nodes",
     "clear": "kill-port 4000,4100"
   },
   "devDependencies": {
