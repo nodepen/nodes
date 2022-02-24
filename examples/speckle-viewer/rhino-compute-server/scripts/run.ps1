@@ -1,0 +1,1 @@
+./bin/Debug/compute.geometry.exe
