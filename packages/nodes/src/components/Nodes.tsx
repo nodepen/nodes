@@ -6,7 +6,7 @@ type NodesProps = {
   graph: unknown
   solution: unknown
   onSave?: (graph: unknown) => void
-  children?: JSX.Element
+  children?: React.ReactNode
 }
 
 export const Nodes = (): React.ReactElement => {
