@@ -1,5 +1,5 @@
 {
-  "name": "@nodepen/app",
+  "name": "speckle-viewer-example",
   "private": true,
   "scripts": {
     "dev": "next dev -p 4000",

@@ -1,8 +1,8 @@
 {
   "packages": [
     "packages/*",
-    "apps/docs/*",
-    "apps/gh/nodepen-client"
+    "examples/nodepen-viewer/nodepen-client",
+    "examples/speckle-viewer/nodepen-client"
   ],
   "version": "0.0.0"
 }
