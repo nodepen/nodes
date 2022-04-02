@@ -12,6 +12,7 @@
   "scripts": {
     "build": "npx lerna run build --stream",
     "dev": "npm run clear && npx lerna run dev --parallel",
+    "dev:local": "npm run clear && npx lerna run dev --parallel --scope @nodepen/core --scope @nodepen/nodes --scope nodepen-viewer-example",
     "dev:packages": "npx lerna run dev --parallel --scope @nodepen/core --scope @nodepen/nodes",
     "clear": "kill-port 4000,4100"
   },
@@ -24,6 +25,7 @@
     "@typescript-eslint/parser": "^4.19.0",
     "eslint": "^7.32.0",
     "jest": "^27.3.1",
+    "kill-port": "^1.6.1",
     "lerna": "^4.0.0",
     "prettier": "^2.4.1",
     "typescript": "4.5.5"

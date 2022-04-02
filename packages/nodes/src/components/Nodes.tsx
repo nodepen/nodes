@@ -1,5 +1,5 @@
 import type React from 'react'
-import { TransformComponent, TransformWrapper } from 'react-zoom-pan-pinch'
+import { COLORS } from '@/constants'
 
 type NodesProps = {
   library: []
@@ -10,9 +10,5 @@ type NodesProps = {
 }
 
 export const Nodes = (): React.ReactElement => {
-  return (
-    <TransformWrapper initialScale={1}>
-      <div className="?" />
-    </TransformWrapper>
-  )
+  return <div>{COLORS.GREEN}</div>
 }

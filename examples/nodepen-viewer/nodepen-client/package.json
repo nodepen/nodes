@@ -1,5 +1,5 @@
 {
-  "name": "nodepen-viewer-examples",
+  "name": "nodepen-viewer-example",
   "private": true,
   "scripts": {
     "dev": "next dev -p 4000",

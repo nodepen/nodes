@@ -1,12 +1,11 @@
 import type { NextPage } from 'next'
-import { GenericComponent } from '@nodepen/nodes'
+import { Nodes } from '@nodepen/nodes'
 
 const Home: NextPage = () => {
-  console.log('???')
   return (
-    <>
-      <GenericComponent />
-    </>
+    <div className="w-vw h-vh overflow-hidden">
+      <Nodes />
+    </div>
   )
 }
 

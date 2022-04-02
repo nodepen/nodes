@@ -5,7 +5,16 @@ module.exports = {
     './node_modules/@nodepen/nodes/dist/**/*.tsx',
   ],
   theme: {
-    extend: {},
+    extend: {
+      height: {
+        vh: '100vh',
+        vw: '100vw',
+      },
+      width: {
+        vh: '100vh',
+        vw: '100vw',
+      },
+    },
   },
   plugins: [],
 }
