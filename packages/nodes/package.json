@@ -17,7 +17,7 @@
     "prebuild": "tailwindcss build -i tailwind.css -o dist/tailwind.css",
 		"build": "tsc",
     "postbuild": "tsc-alias",
-		"dev": "tsc -w --preserveWatchOutput & tsc-alias -w"
+		"dev": "concurrently \"tsc -w --preserveWatchOutput\" \"tsc-alias -w\""
 	},
 	"dependencies": {
 		"@nodepen/core": "^1.1.0",
