@@ -1,4 +1,5 @@
 import type React from 'react'
+import '@/styles.css'
 import { COLORS } from '@/constants'
 
 type NodesProps = {
@@ -10,5 +11,5 @@ type NodesProps = {
 }
 
 export const Nodes = (): React.ReactElement => {
-  return <div>{COLORS.GREEN}</div>
+  return <div className="np-bg-red-400">{COLORS.GREEN}</div>
 }

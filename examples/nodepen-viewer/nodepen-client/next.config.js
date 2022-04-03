@@ -2,6 +2,7 @@
 const withTM = require('next-transpile-modules')(['@nodepen/nodes', '@nodepen/core'])
 
 const nextConfig = {
+  distDir: 'build',
   reactStrictMode: true,
 }
 
