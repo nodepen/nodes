@@ -1,7 +1,6 @@
-import type React from 'react'
+import React, { useRef } from 'react'
 import '@/styles.css'
 import { COLORS } from '@/constants'
-import { Layers } from './layout'
 
 type NodesProps = {
   library: []
@@ -12,11 +11,11 @@ type NodesProps = {
 }
 
 export const Nodes = (): React.ReactElement => {
+  const rootRef = useRef<HTMLDivElement>(null)
+
   return (
-    <div className="np-w-full np-h-full np-bg-red-200">
-      <Layers.LayerManager>
-        <div>{COLORS.DARK}</div>
-      </Layers.LayerManager>
+    <div className="np-w-full np-h-full np-bg-red-200" ref={rootRef}>
+      <div>{COLORS.DARK}</div>
     </div>
   )
 }
