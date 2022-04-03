@@ -11,5 +11,5 @@ type NodesProps = {
 }
 
 export const Nodes = (): React.ReactElement => {
-  return <div className="np-bg-red-400">{COLORS.GREEN}</div>
+  return <div className="np-w-full np-h-full np-bg-red-200">{COLORS.GREEN}</div>
 }
