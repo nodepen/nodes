@@ -1,6 +1,7 @@
 import type React from 'react'
 import '@/styles.css'
 import { COLORS } from '@/constants'
+import { Layers } from './layout'
 
 type NodesProps = {
   library: []
@@ -11,5 +12,11 @@ type NodesProps = {
 }
 
 export const Nodes = (): React.ReactElement => {
-  return <div className="np-w-full np-h-full np-bg-red-200">{COLORS.GREEN}</div>
+  return (
+    <div className="np-w-full np-h-full np-bg-red-200">
+      <Layers.LayerManager>
+        <div>{COLORS.DARK}</div>
+      </Layers.LayerManager>
+    </div>
+  )
 }
