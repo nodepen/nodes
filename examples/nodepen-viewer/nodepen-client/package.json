@@ -5,7 +5,8 @@
     "dev": "next dev -p 4000",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "link:react": "npm link ../../../node_modules/react"
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0",

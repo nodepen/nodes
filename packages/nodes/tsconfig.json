@@ -12,6 +12,15 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"],
-    }
+    },
+    "types": [
+      "react/next",
+      "react-dom/next"
+    ],
+    "module": "esnext",
+    "target": "esnext",
+    "declaration": true,
+    "moduleResolution": "node",
+    "jsx": "react"
   }
 }
