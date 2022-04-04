@@ -14,8 +14,8 @@ export const Nodes = (): React.ReactElement => {
   const rootRef = useRef<HTMLDivElement>(null)
 
   return (
-    <div className="np-w-full np-h-full np-bg-red-200" ref={rootRef}>
-      <div>{COLORS.DARK}</div>
+    <div className="np-w-full np-h-full np-bg-blue-200" ref={rootRef}>
+      <div>{COLORS.GREEN}</div>
     </div>
   )
 }

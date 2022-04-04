@@ -14,6 +14,7 @@
     "dev": "npm run clear && npx lerna run dev --parallel",
     "dev:local": "npm run clear && npx lerna run dev --parallel --scope @nodepen/core --scope @nodepen/nodes --scope nodepen-viewer-example",
     "dev:packages": "npx lerna run dev --parallel --scope @nodepen/core --scope @nodepen/nodes",
+    "bootstrap": "npm i && npx lerna bootstrap -- --legacy-peer-deps",
     "clear": "kill-port 4000,4100"
   },
   "devDependencies": {

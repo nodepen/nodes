@@ -1,5 +1,5 @@
 /** @type {import('next').NextConfig} */
-const withTM = require('next-transpile-modules')(['@nodepen/nodes', '@nodepen/core'])
+const withTM = require('next-transpile-modules')(['@nodepen/nodes', '@nodepen/core'], { resolveSymlinks: false })
 
 const nextConfig = {
   distDir: 'build',
