@@ -7,6 +7,7 @@ import create, {
 } from 'zustand'
 import { produce } from 'immer'
 import type { Draft } from 'immer'
+import { startTransition } from 'react'
 
 
 const immer =
@@ -60,11 +61,15 @@ export const useStore = create<RootStore>(
       state.camera.aspect = aspect
     }),
     setCameraPosition: (x: number, y: number) => set((state) => {
-      state.camera.position.x = x
-      state.camera.position.y = y
+      startTransition(() => {
+        state.camera.position.x = x
+        state.camera.position.y = y
+      })
     }),
     setCameraZoom: (zoom: number) => set((state) => {
-      state.camera.zoom = zoom
+      startTransition(() => {
+        state.camera.zoom = zoom
+      })
     })
   }))
 )
