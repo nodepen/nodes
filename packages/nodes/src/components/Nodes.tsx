@@ -1,4 +1,4 @@
-import React, { useRef, useState, useLayoutEffect } from 'react'
+import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
@@ -15,6 +15,8 @@ export const Nodes = (): React.ReactElement => {
   const rootRef = useRef<HTMLDivElement>(null)
 
   const cameraProps = useCameraProps(rootRef)
+
+  console.log(cameraProps)
 
   return (
     <div className="np-w-full np-h-full" ref={rootRef}>

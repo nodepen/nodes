@@ -37,7 +37,7 @@ const immer =
       api
     )
 
-type RootStore = typeof initialState
+type RootStore = typeof initialState & { setCameraPosition: (x: number, y: number) => void }
 
 const initialState = {
   elements: {},
