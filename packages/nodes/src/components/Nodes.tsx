@@ -21,7 +21,8 @@ export const Nodes = (): React.ReactElement => {
   return (
     <div className="np-w-full np-h-full" ref={rootRef}>
       <svg {...cameraProps}>
-        <line x1={0} y1={0} x2={5} y2={5} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
+        <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
+        <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
       </svg>
     </div>
   )
@@ -41,6 +42,8 @@ type CameraProps = {
 const useCameraProps = (containerRef: React.RefObject<HTMLDivElement>): CameraProps => {
   const { aspect, position, zoom } = useStore((state) => state.camera)
 
+  console.log(zoom)
+
   const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
     width: 1920,
     height: 1080,
@@ -56,9 +59,13 @@ const useCameraProps = (containerRef: React.RefObject<HTMLDivElement>): CameraPr
     setContainerDimensions({ width, height })
   }, [])
 
-  const { width, height } = containerDimensions
+  const { width: w, height: h } = containerDimensions
+  const { x, y } = position
 
-  const viewBox = [].join(' ')
+  const viewBox = [(w / 2 - x) / -zoom, (h / 2 + y) / -zoom, w / zoom, h / zoom].join(' ')
 
-  return { width: `${width}px`, height: `${height}px`, viewBox }
+  const width = `${w}px`
+  const height = `${h}px`
+
+  return { width, height, viewBox }
 }
