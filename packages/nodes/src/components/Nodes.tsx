@@ -17,10 +17,12 @@ export const Nodes = (): React.ReactElement => {
 
   const cameraProps = useCameraProps(rootRef)
 
+  // TODO: Contextually disable pointer events on root svg (i.e. during pan)
+
   return (
     <div className="np-w-full np-h-full" ref={rootRef}>
       <CameraManager>
-        <svg {...cameraProps} className="np-overflow-visible">
+        <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
           <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
         </svg>
