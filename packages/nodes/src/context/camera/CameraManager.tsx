@@ -83,7 +83,7 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
     resetLocalState()
   }
 
-  const handlePointerLeave = (_e: React.PointerEvent<HTMLDivElement>): void => {
+  const handlePointerOut = (_e: React.PointerEvent<HTMLDivElement>): void => {
     resetLocalState()
   }
 
@@ -120,7 +120,7 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      onPointerLeave={handlePointerLeave}
+      onPointerOut={handlePointerOut}
     >
       {children}
     </div>
