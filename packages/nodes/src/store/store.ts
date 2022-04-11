@@ -37,7 +37,7 @@ const immer =
       api
     )
 
-type RootStore = typeof initialState & { setCameraPosition: (x: number, y: number) => void }
+type RootStore = typeof initialState & { setCameraPosition: (x: number, y: number) => void, setCameraZoom: (zoom: number) => void }
 
 const initialState = {
   elements: {},
@@ -50,7 +50,7 @@ const initialState = {
       y: 0,
     },
     /** ratio of screen space pixel to graph space unit */
-    zoom: 1,
+    zoom: 0.5,
   }
 }
 

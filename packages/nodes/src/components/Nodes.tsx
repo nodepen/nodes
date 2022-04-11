@@ -2,6 +2,7 @@ import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
+import { CameraManager } from '@/context'
 
 type NodesProps = {
   library: []
@@ -16,14 +17,14 @@ export const Nodes = (): React.ReactElement => {
 
   const cameraProps = useCameraProps(rootRef)
 
-  console.log(cameraProps)
-
   return (
     <div className="np-w-full np-h-full" ref={rootRef}>
-      <svg {...cameraProps}>
-        <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
-        <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
-      </svg>
+      <CameraManager>
+        <svg {...cameraProps} className="np-overflow-visible">
+          <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
+          <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
+        </svg>
+      </CameraManager>
     </div>
   )
 }
@@ -41,8 +42,6 @@ type CameraProps = {
  */
 const useCameraProps = (containerRef: React.RefObject<HTMLDivElement>): CameraProps => {
   const { aspect, position, zoom } = useStore((state) => state.camera)
-
-  console.log(zoom)
 
   const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
     width: 1920,
