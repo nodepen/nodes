@@ -38,8 +38,8 @@ export const usePageSpaceToWorldSpace = (): (pageX: number, pageY: number) => [x
 
         // cursor position in world units
         const mappedPosition = {
-            x: pos.x + (position.x / zoom),
-            y: pos.y + (position.y / zoom)
+            x: pos.x + position.x,
+            y: pos.y + position.y
         }
 
         return [mappedPosition.x, mappedPosition.y]
