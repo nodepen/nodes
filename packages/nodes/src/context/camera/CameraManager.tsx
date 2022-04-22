@@ -1,12 +1,14 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { useStore } from '$'
+import { CAMERA } from '@/constants'
+import { clamp } from '@/utils'
 
 type CameraManagerProps = {
   children?: React.ReactNode
 }
 
 const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => {
-  const cameraScreenRef = useRef<HTMLDivElement>(null)
+  const cameraOverlayRef = useRef<HTMLDivElement>(null)
 
   const zoom = useRef<number>(useStore.getState().camera.zoom)
   useEffect(
@@ -95,12 +97,12 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
 
     const step = 0.1 * (isIncreasing ? -1 : 1)
 
-    // TODO: CLamp
-    setCameraZoom(zoom.current + step)
+    const nextZoom = clamp(zoom.current + step, CAMERA.MINIMUM_ZOOM, CAMERA.MAXIMUM_ZOOM)
+    setCameraZoom(nextZoom)
   }
 
   useEffect(() => {
-    const container = cameraScreenRef.current
+    const container = cameraOverlayRef.current
 
     if (!container) {
       return
@@ -116,7 +118,7 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
   return (
     <div
       className="np-w-full np-h-full np-overflow-y-auto"
-      ref={cameraScreenRef}
+      ref={cameraOverlayRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}

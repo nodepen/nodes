@@ -1,3 +1,8 @@
+export const CAMERA = {
+  MINIMUM_ZOOM: 0.25,
+  MAXIMUM_ZOOM: 4
+}
+
 export const COLORS = {
   /* Grayscale */
   DARK: "#414141",
