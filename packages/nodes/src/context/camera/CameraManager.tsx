@@ -124,27 +124,20 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
     const [cursorWorldX, cursorWorldY] = pageSpaceToWorldSpace(pageX, pageY)
     const { x: cameraWorldX, y: cameraWorldY } = useStore.getState().camera.position
 
-    console.log({ cameraWorldX })
-    console.log({ cursorWorldX })
-
     const vec = {
-      x: cursorWorldX - cameraWorldX,
-      y: cursorWorldY - cameraWorldY,
+      x: cameraWorldX - cursorWorldX,
+      y: cameraWorldY - cursorWorldY,
     }
-
-    // console.log(vec)
 
     const zoomDelta = nextZoom - zoom.current
 
-    // console.log(`${zoom.current} => ${nextZoom}`)
-
     const transform = {
-      x: vec.x * nextZoom * -zoomDelta,
-      y: vec.y * nextZoom * -zoomDelta,
+      x: (vec.x / nextZoom) * -zoomDelta,
+      y: (vec.y / nextZoom) * -zoomDelta,
     }
 
     setCameraZoom(nextZoom)
-    setCameraPosition(cameraWorldX - transform.x, cameraWorldY - transform.y)
+    setCameraPosition(cameraWorldX + transform.x, cameraWorldY + transform.y)
   }
 
   useEffect(() => {
