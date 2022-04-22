@@ -115,12 +115,36 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
 
     const { pageX, pageY, deltaY } = e
 
+    // Calculate next zoom
     const isIncreasing = deltaY > 0
-
     const step = 0.1 * (isIncreasing ? -1 : 1)
-
     const nextZoom = clamp(zoom.current + step, CAMERA.MINIMUM_ZOOM, CAMERA.MAXIMUM_ZOOM)
+
+    // Calculate next position, based on cursor position
+    const [cursorWorldX, cursorWorldY] = pageSpaceToWorldSpace(pageX, pageY)
+    const { x: cameraWorldX, y: cameraWorldY } = useStore.getState().camera.position
+
+    console.log({ cameraWorldX })
+    console.log({ cursorWorldX })
+
+    const vec = {
+      x: cursorWorldX - cameraWorldX,
+      y: cursorWorldY - cameraWorldY,
+    }
+
+    // console.log(vec)
+
+    const zoomDelta = nextZoom - zoom.current
+
+    // console.log(`${zoom.current} => ${nextZoom}`)
+
+    const transform = {
+      x: vec.x * nextZoom * -zoomDelta,
+      y: vec.y * nextZoom * -zoomDelta,
+    }
+
     setCameraZoom(nextZoom)
+    setCameraPosition(cameraWorldX - transform.x, cameraWorldY - transform.y)
   }
 
   useEffect(() => {
