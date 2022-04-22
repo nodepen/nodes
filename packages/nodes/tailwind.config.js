@@ -2,6 +2,9 @@ module.exports = {
   prefix: "np-",
   content: ["./src/**/*.tsx"],
   theme: {
+    colors: {
+      "pale": "#EFF2F2"
+    },
     extend: {
       height: {
         vh: '100vh',

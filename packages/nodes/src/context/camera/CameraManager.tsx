@@ -28,18 +28,29 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
   const isPanActive = useRef(false)
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
-    // Initialize move
-    isPanActive.current = true
-
     e.stopPropagation()
 
     switch (e.pointerType) {
       case 'mouse': {
-        const { pageX, pageY } = e
-        initialScreenPosition.current = { x: pageX, y: pageY }
+        switch (e.button) {
+          case 0:
+          case 1: {
+            // Only start pan if using right click
+            break
+          }
+          case 2: {
+            // Initialize move
+            isPanActive.current = true
 
-        const { x, y } = useStore.getState().camera.position
-        initialCameraPosition.current = { x, y }
+            const { pageX, pageY } = e
+            initialScreenPosition.current = { x: pageX, y: pageY }
+
+            const { x, y } = useStore.getState().camera.position
+            initialCameraPosition.current = { x, y }
+            break
+          }
+        }
+
         break
       }
       case 'pen':
@@ -115,14 +126,19 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
     }
   })
 
+  const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>): void => {
+    e.preventDefault()
+  }
+
   return (
     <div
-      className="np-w-full np-h-full np-overflow-y-auto"
+      className="np-w-full np-h-full np-overflow-visible"
       ref={cameraOverlayRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerOut={handlePointerOut}
+      onContextMenu={handleContextMenu}
     >
       {children}
     </div>
