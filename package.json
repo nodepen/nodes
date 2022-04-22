@@ -12,7 +12,7 @@
   "scripts": {
     "build": "npx lerna run build --stream",
     "dev": "npm run clear && npx lerna run dev --parallel --scope @nodepen/core --scope @nodepen/nodes --scope nodepen-viewer-example",
-    "bootstrap": "npm i && npx lerna bootstrap -- --legacy-peer-deps",
+    "bootstrap": "npm i && npx lerna bootstrap -- --legacy-peer-deps && npx lerna run build",
     "clear": "kill-port 4000,4100"
   },
   "devDependencies": {
