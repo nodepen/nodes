@@ -18,27 +18,28 @@ export const usePageSpaceToWorldSpace = (): (pageX: number, pageY: number) => [x
 
         const { width, height, left, top } = (canvas.current ?? document.documentElement).getBoundingClientRect()
 
+        // camera position, in screen pixels
         const center = {
             x: left + width / 2,
             y: top + height / 2
         }
 
-        // position, relative to camera position, in screen pixels
+        // cursor position, relative to camera position, in screen pixels
         const vec = {
             x: pageX - center.x,
             y: pageY - center.y
         }
 
-        // position, relative to camera position, in world units
+        // cursor position, relative to camera position, in world units
         const pos = {
             x: vec.x / zoom,
             y: vec.y / -zoom
         }
 
-        // position in world units
+        // cursor position in world units
         const mappedPosition = {
-            x: pos.x + position.x,
-            y: pos.y + position.y
+            x: pos.x + (position.x / zoom),
+            y: pos.y + (position.y / zoom)
         }
 
         return [mappedPosition.x, mappedPosition.y]
