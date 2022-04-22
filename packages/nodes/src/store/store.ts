@@ -7,7 +7,7 @@ import create, {
 } from 'zustand'
 import { produce } from 'immer'
 import type { Draft } from 'immer'
-import { startTransition } from 'react'
+import React, { startTransition } from 'react'
 
 
 const immer =
@@ -51,6 +51,10 @@ const initialState = {
     },
     /** ratio of screen space pixel to graph space unit */
     zoom: 0.5,
+  },
+  /** Collection of client-only references to meaningful dom elements */
+  registry: {
+    canvasRoot: React.createRef<HTMLDivElement>()
   }
 }
 

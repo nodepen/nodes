@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { useStore } from '$'
 import { CAMERA } from '@/constants'
 import { clamp } from '@/utils'
+import { usePageSpaceToWorldSpace } from '@/hooks'
 
 type CameraManagerProps = {
   children?: React.ReactNode
@@ -9,6 +10,8 @@ type CameraManagerProps = {
 
 const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => {
   const cameraOverlayRef = useRef<HTMLDivElement>(null)
+
+  const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
   const zoom = useRef<number>(useStore.getState().camera.zoom)
   useEffect(
@@ -32,8 +35,15 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
 
     switch (e.pointerType) {
       case 'mouse': {
+        const { pageX, pageY } = e
+
         switch (e.button) {
-          case 0:
+          case 0: {
+            const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+            console.log({ x, y })
+
+            break
+          }
           case 1: {
             // Only start pan if using right click
             break
@@ -42,7 +52,6 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
             // Initialize move
             isPanActive.current = true
 
-            const { pageX, pageY } = e
             initialScreenPosition.current = { x: pageX, y: pageY }
 
             const { x, y } = useStore.getState().camera.position
@@ -104,7 +113,9 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
     e.stopPropagation()
     e.preventDefault()
 
-    const isIncreasing = e.deltaY > 0
+    const { pageX, pageY, deltaY } = e
+
+    const isIncreasing = deltaY > 0
 
     const step = 0.1 * (isIncreasing ? -1 : 1)
 
