@@ -63,7 +63,7 @@ const useCameraProps = (containerRef: React.RefObject<HTMLDivElement>): CameraPr
   const { width: w, height: h } = containerDimensions
   const { x, y } = position
 
-  const viewBox = [(w / 2 - x) / -zoom, (h / 2 + y) / -zoom, w / zoom, h / zoom].join(' ')
+  const viewBox = [w / 2 / -zoom + x, h / 2 / -zoom - y, w / zoom, h / zoom].join(' ')
 
   const width = `${w}px`
   const height = `${h}px`

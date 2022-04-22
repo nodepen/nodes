@@ -84,8 +84,8 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
 
         const { x, y } = initialCameraPosition.current
 
-        const dx = -totalDeltaX
-        const dy = totalDeltaY
+        const dx = -totalDeltaX / zoom.current
+        const dy = totalDeltaY / zoom.current
 
         setCameraPosition(x + dx, y + dy)
         break

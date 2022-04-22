@@ -46,8 +46,8 @@ const initialState = {
     aspect: 1.5,
     /** coordinates of center pixel in container div in graph space */
     position: {
-      x: 0,
-      y: 0,
+      x: 250,
+      y: 250,
     },
     /** ratio of screen space pixel to graph space unit */
     zoom: 0.5,
