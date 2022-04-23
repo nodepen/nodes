@@ -24,18 +24,18 @@ const immer =
       CustomStoreApi
     >
   ): StateCreator<T, CustomSetState, CustomGetState, CustomStoreApi> =>
-  (set, get, api) =>
-    config(
-      (partial, replace) => {
-        const nextState =
-          typeof partial === 'function'
-            ? produce(partial as (state: Draft<T>) => T)
-            : (partial as T)
-        return set(nextState, replace)
-      },
-      get,
-      api
-    )
+    (set, get, api) =>
+      config(
+        (partial, replace) => {
+          const nextState =
+            typeof partial === 'function'
+              ? produce(partial as (state: Draft<T>) => T)
+              : (partial as T)
+          return set(nextState, replace)
+        },
+        get,
+        api
+      )
 
 type RootStore = typeof initialState & { setCameraPosition: (x: number, y: number) => void, setCameraZoom: (zoom: number) => void }
 
@@ -46,11 +46,11 @@ const initialState = {
     aspect: 1.5,
     /** coordinates of center pixel in container div in graph space */
     position: {
-      x: 125,
+      x: 250,
       y: 0,
     },
     /** ratio of screen space pixel to graph space unit */
-    zoom: 0.5,
+    zoom: 1,
   },
   /** Collection of client-only references to meaningful dom elements */
   registry: {

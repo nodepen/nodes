@@ -3,6 +3,7 @@ import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
 import { CameraManager } from '@/context'
+import { CanvasGrid } from './layout'
 
 type NodesProps = {
   library: []
@@ -25,6 +26,7 @@ export const Nodes = (): React.ReactElement => {
         <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale">
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
           <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
+          <CanvasGrid />
         </svg>
       </CameraManager>
     </div>
