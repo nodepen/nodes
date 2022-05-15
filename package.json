@@ -10,9 +10,8 @@
   },
   "license": "MIT",
   "scripts": {
-    "build": "npx lerna run build --stream",
-    "dev": "npm run clear && npx lerna run dev --parallel --scope @nodepen/core --scope @nodepen/nodes --scope nodepen-viewer-example",
-    "bootstrap": "npm i && npx lerna bootstrap -- --legacy-peer-deps && npx lerna run build",
+    "build": "npx turbo run build",
+    "dev": "npm run clear &&npx turbo run dev",
     "clear": "kill-port 4000,4100"
   },
   "devDependencies": {
@@ -33,7 +32,8 @@
     "typescript": "4.6.3"
   },
   "workspaces": [
-    "packages/*",
+    "packages/core",
+    "packages/nodes",
     "examples/nodepen-viewer/nodepen-client"
   ]
 }
