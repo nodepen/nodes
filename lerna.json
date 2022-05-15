@@ -1,7 +1,0 @@
-{
-  "packages": [
-    "packages/*",
-    "examples/nodepen-viewer/nodepen-client"
-  ],
-  "version": "0.0.0"
-}
