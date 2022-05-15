@@ -14,8 +14,9 @@
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"scripts": {
+    "prebuild": "tailwindcss build -i tailwind.css -o dist/styles.css",
 		"build": "tsc",
-		"postbuild": "tsc-alias && tailwindcss build -i tailwind.css -o dist/styles.css",
+		"postbuild": "tsc-alias",
 		"dev": "concurrently \"tsc-watch --noClear --onSuccess \\\"npm run postbuild\\\"\" \"tsc-alias -w\"",
     "link:react": "npm link ../../node_modules/react"
 	},

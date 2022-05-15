@@ -11,8 +11,7 @@
   "license": "MIT",
   "scripts": {
     "build": "npx turbo run build",
-    "dev": "npm run clear &&npx turbo run dev",
-    "clear": "kill-port 4000,4100"
+    "dev": "npx turbo run dev"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",
