@@ -32,8 +32,36 @@ const CanvasGrid = (): React.ReactElement | null => {
     []
   )
 
-  const GRID_SPACING = 100
-  const GRID_COUNT = 100
+  const getGridSpacing = (detail: GridDetailLevel): number => {
+    switch (detail) {
+      case 'low': {
+        return 200
+      }
+      case 'medium': {
+        return 100
+      }
+      case 'high': {
+        return 50
+      }
+    }
+  }
+
+  const getGridCount = (detail: GridDetailLevel): number => {
+    switch (detail) {
+      case 'low': {
+        return 50
+      }
+      case 'medium': {
+        return 100
+      }
+      case 'high': {
+        return 200
+      }
+    }
+  }
+
+  const GRID_SPACING = getGridSpacing(detailLevel)
+  const GRID_COUNT = getGridCount(detailLevel)
 
   const lineProps: Partial<React.SVGProps<SVGLineElement>> = {
     fill: 'none',
