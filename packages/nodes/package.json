@@ -22,8 +22,8 @@
 	},
 	"dependencies": {
 		"@nodepen/core": "^1.1.0",
-		"immer": "9.0.12",
-		"zustand": "3.6.9"
+		"immer": "9.0.14",
+		"zustand": "3.7.2"
 	},
 	"peerDependencies": {
 		"react": "^18.0",
