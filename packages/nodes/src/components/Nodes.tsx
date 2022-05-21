@@ -1,4 +1,5 @@
 import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
+import type { Element } from '@nodepen/core'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
@@ -6,14 +7,16 @@ import { CameraManager } from '@/context'
 import { CanvasGrid } from './layout'
 
 type NodesProps = {
-  library: []
-  graph: unknown
-  solution: unknown
-  onSave?: (graph: unknown) => void
-  children?: React.ReactNode
+  graph: {
+    elements: { [elementId: string]: Element }
+  }
+  library: unknown[]
+  onChange?: () => void
 }
 
-export const Nodes = (): React.ReactElement => {
+export const Nodes = (props: NodesProps): React.ReactElement => {
+  const { graph } = props
+
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
   const cameraProps = useCameraProps(canvasRootRef)
