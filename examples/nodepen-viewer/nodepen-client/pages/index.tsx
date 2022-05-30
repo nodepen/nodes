@@ -14,7 +14,7 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="absolute" style={{ width: 1000, height: 750, top: 0, left: 0, zIndex: 10 }}>
-          <Nodes graph={{ elements: {} }} library={[]} />
+          <Nodes document={{ id: '', elements: {}, library: {}, version: 1 }} />
         </div>
       </div>
     </div>

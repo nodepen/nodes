@@ -22,8 +22,8 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
     []
   )
 
-  const setCameraPosition = useStore((store) => store.setCameraPosition)
-  const setCameraZoom = useStore((store) => store.setCameraZoom)
+  const setCameraPosition = useStore((store) => store.dispatch.setCameraPosition)
+  const setCameraZoom = useStore((store) => store.dispatch.setCameraZoom)
 
   const initialCameraPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const initialScreenPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })

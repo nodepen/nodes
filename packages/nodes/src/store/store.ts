@@ -1,58 +1,67 @@
-import create, {
+import create from 'zustand'
+import type {
   GetState,
   SetState,
   State,
   StateCreator,
   StoreApi,
 } from 'zustand'
+import React, { startTransition } from 'react'
+import type * as NodePen from '@nodepen/core'
 import { produce } from 'immer'
 import type { Draft } from 'immer'
-import React, { startTransition } from 'react'
+import * as camera from './camera'
+import type { CameraDispatch, CameraState } from './camera'
 
+export const immer = <
+  T extends State,
+  CustomSetState extends SetState<T>,
+  CustomGetState extends GetState<T>,
+  CustomStoreApi extends StoreApi<T>
+>(
+  config: StateCreator<
+  T,
+  (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void,
+  CustomGetState,
+  CustomStoreApi
+  >
+): StateCreator<T, CustomSetState, CustomGetState, CustomStoreApi> =>
+  (set, get, api) =>
+  config(
+      (partial, replace) => {
+      const nextState =
+          typeof partial === 'function'
+          ? produce(partial as (state: Draft<T>) => T)
+          : (partial as T)
+      return set(nextState, replace)
+      },
+      get,
+      api
+  )
 
-const immer =
-  <
-    T extends State,
-    CustomSetState extends SetState<T>,
-    CustomGetState extends GetState<T>,
-    CustomStoreApi extends StoreApi<T>
-  >(
-    config: StateCreator<
-      T,
-      (partial: ((draft: Draft<T>) => void) | T, replace?: boolean) => void,
-      CustomGetState,
-      CustomStoreApi
-    >
-  ): StateCreator<T, CustomSetState, CustomGetState, CustomStoreApi> =>
-    (set, get, api) =>
-      config(
-        (partial, replace) => {
-          const nextState =
-            typeof partial === 'function'
-              ? produce(partial as (state: Draft<T>) => T)
-              : (partial as T)
-          return set(nextState, replace)
-        },
-        get,
-        api
-      )
+export type BaseSetter =  (callback: (state: RootState) => void) => void
+export type BaseGetter = () => RootState
 
-type RootStore = typeof initialState & { setCameraPosition: (x: number, y: number) => void, setCameraZoom: (zoom: number) => void }
+export type RootState = {
+  document: NodePen.Document,
+  camera: CameraState
+  registry: {
+    canvasRoot: React.RefObject<HTMLDivElement>
+  }
+}
 
-const initialState = {
+type RootDispatch = {
+  dispatch: CameraDispatch
+}
+
+type RootStore = RootState & RootDispatch
+
+const initialState: Pick<RootState, 'document' | 'registry'> = {
   document: {
-    elements: {}
-  },
-  camera: {
-    /** container div innerWidth / innerHeight in screen space */
-    aspect: 1.5,
-    /** coordinates of center pixel in container div in graph space */
-    position: {
-      x: 250,
-      y: 0,
-    },
-    /** ratio of screen space pixel to graph space unit */
-    zoom: 1,
+    id: 'id',
+    elements: {},
+    library: {},
+    version: 1
   },
   /** Collection of client-only references to meaningful dom elements */
   registry: {
@@ -63,19 +72,9 @@ const initialState = {
 export const useStore = create<RootStore>(
   immer((set, get) => ({
     ...initialState,
-    setCameraAspect: (aspect: number) => set((state) => {
-      state.camera.aspect = aspect
-    }),
-    setCameraPosition: (x: number, y: number) => set((state) => {
-      startTransition(() => {
-        state.camera.position.x = x
-        state.camera.position.y = y
-      })
-    }),
-    setCameraZoom: (zoom: number) => set((state) => {
-      startTransition(() => {
-        state.camera.zoom = zoom
-      })
-    })
+    [camera.key]: camera.initialState,
+    dispatch: {
+      ...camera.createDispatch(set, get)
+    }
   }))
 )
