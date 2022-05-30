@@ -40,7 +40,9 @@ const immer =
 type RootStore = typeof initialState & { setCameraPosition: (x: number, y: number) => void, setCameraZoom: (zoom: number) => void }
 
 const initialState = {
-  elements: {},
+  document: {
+    elements: {}
+  },
   camera: {
     /** container div innerWidth / innerHeight in screen space */
     aspect: 1.5,

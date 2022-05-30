@@ -1,22 +1,18 @@
 import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
-import type { Element } from '@nodepen/core'
+import type { Document, Element } from '@nodepen/core'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
 import { CameraManager } from '@/context'
 import { CanvasGrid } from './layout'
+import { ElementsContainer } from './elements'
 
 type NodesProps = {
-  graph: {
-    elements: { [elementId: string]: Element }
-  }
-  library: unknown[]
+  document: Document
   onChange?: () => void
 }
 
-export const Nodes = (props: NodesProps): React.ReactElement => {
-  const { graph } = props
-
+export const Nodes = ({ document }: NodesProps): React.ReactElement => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
   const cameraProps = useCameraProps(canvasRootRef)
@@ -27,20 +23,17 @@ export const Nodes = (props: NodesProps): React.ReactElement => {
     <div className="np-w-full np-h-full np-overflow-visible" ref={canvasRootRef}>
       <CameraManager>
         <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale">
+          <CanvasGrid />
+          <ElementsContainer />
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
           <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
-          <CanvasGrid />
         </svg>
       </CameraManager>
     </div>
   )
 }
 
-type CameraProps = {
-  viewBox: string
-  width: string
-  height: string
-}
+type CameraProps = Pick<React.SVGProps<SVGElement>, 'viewBox' | 'width' | 'height'>
 
 /**
  * Given the current camera and dimensions of the container in screen space, produce root svg props.
