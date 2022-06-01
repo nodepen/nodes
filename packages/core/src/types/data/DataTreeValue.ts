@@ -1,6 +1,10 @@
-import type { Point3D } from './geometry'
+import type * as GH from './geometry'
 
 export type DataTreeValue =
+| {
+    type: 'boolean'
+    value: boolean
+}
 | {
     type: 'number'
     value: number
@@ -11,12 +15,16 @@ export type DataTreeValue =
 }
 | {
     type: 'circle'
-    geometry: {
-
+    value: {
+        center: GH.Point
+        circumference: number
+        diameter: number
+        plane: GH.Plane
+        radius: number
     }
     boundingBox: {
-        min: Point3D
-        max: Point3D
+        min: GH.Point
+        max: GH.Point
     }
 }
 | {

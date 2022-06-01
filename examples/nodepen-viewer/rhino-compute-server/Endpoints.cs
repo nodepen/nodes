@@ -17,6 +17,8 @@ using System.Drawing;
 using Nancy.Extensions;
 using NodePen.Compute.Routes;
 using System.Threading;
+using Rhino;
+using Rhino.Geometry;
 
 namespace NodePen.Compute
 {
@@ -30,6 +32,13 @@ namespace NodePen.Compute
       Post["/grasshopper/solve", true] = async (_, token) => await TrySolveGrasshopperDefinition(Context, token);
 
       Get["/health"] = _ => (Response)"Feeling swell.";
+    }
+
+    static Response DoDebug(NancyContext ctx)
+    {
+      var val = new GH_Circle(new Circle(5));
+
+      return val.Value.Normal.X
     }
 
     static Response TryCreateGrasshopperDefinition(NancyContext ctx)
