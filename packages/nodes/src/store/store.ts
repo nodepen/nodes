@@ -55,11 +55,28 @@ type RootDispatch = {
 }
 
 type RootStore = RootState & RootDispatch
+  // const elements: Element[] = [
+  //   {
 
+  //   }
+  // ]
 const initialState: Pick<RootState, 'document' | 'registry'> = {
   document: {
     id: 'id',
-    elements: {},
+    elements: {
+      'test-element-id': {
+        id: 'test-element-id',
+        template: 'test-template-id',
+        position: {
+          x: 5,
+          y: -5
+        },
+        dimensions: {
+          width: 20,
+          height: 20,
+        }
+      }
+    },
     library: {},
     version: 1
   },
