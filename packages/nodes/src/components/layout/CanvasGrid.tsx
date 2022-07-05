@@ -71,7 +71,7 @@ const CanvasGrid = (): React.ReactElement | null => {
   }
 
   return (
-    <>
+    <g id="np-grid">
       {Array(GRID_COUNT)
         .fill('')
         .map((_, i) => {
@@ -85,7 +85,7 @@ const CanvasGrid = (): React.ReactElement | null => {
             </React.Fragment>
           )
         })}
-    </>
+    </g>
   )
 }
 
