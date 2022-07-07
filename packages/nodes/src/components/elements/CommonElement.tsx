@@ -8,6 +8,9 @@ type CommonElementProps = {
 
 const CommonElement = ({ id }: CommonElementProps): React.ReactElement => {
   const element = useStore((store) => store.document.elements[id])
+  const translate = useStore((store) => store.dispatch.test)
+
+  console.log(`Rendered ${id}`)
 
   const ref = useRef<SVGRectElement>(null)
 
@@ -24,7 +27,7 @@ const CommonElement = ({ id }: CommonElementProps): React.ReactElement => {
             // Consume event
             e.stopPropagation()
 
-            console.log('!')
+            translate(id)
 
             // Immediately select
 

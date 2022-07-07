@@ -64,12 +64,24 @@ const initialState: Pick<RootState, 'document' | 'registry'> = {
   document: {
     id: 'id',
     elements: {
-      'test-element-id': {
-        id: 'test-element-id',
+      'test-element-id-a': {
+        id: 'test-element-id-a',
         template: 'test-template-id',
         position: {
           x: 5,
           y: -5
+        },
+        dimensions: {
+          width: 20,
+          height: 20,
+        }
+      },
+      'test-element-id-b': {
+        id: 'test-element-id-b',
+        template: 'test-template-id',
+        position: {
+          x: 5,
+          y: -200
         },
         dimensions: {
           width: 20,

@@ -14,7 +14,7 @@
 	"main": "dist/index.js",
 	"module": "dist/index.js",
 	"scripts": {
-    	"prebuild": "tailwindcss build -i tailwind.css -o dist/styles.css",
+    "prebuild": "tailwindcss build -i tailwind.css -o dist/styles.css",
 		"build": "tsc",
 		"postbuild": "tsc-alias",
 		"dev": "concurrently \"tsc-watch --noClear --onSuccess \\\"npm run prebuild\\\"\" \"tsc-alias -w\"",
