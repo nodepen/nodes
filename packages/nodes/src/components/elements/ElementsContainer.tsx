@@ -9,7 +9,7 @@ const ElementsContainer = (): React.ReactElement => {
   const elements = useStore((store) => store.document.elements)
 
   return (
-    <g id="np-elements">
+    <g id="np-elements" className="np-pointer-events-auto">
       {Object.entries(elements).map(([elementId, element], i) => {
         // Handle special templates (number slider, panel, etc)
         const { template } = element
