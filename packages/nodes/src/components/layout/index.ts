@@ -1,3 +1,3 @@
-import CanvasGrid from './CanvasGrid'
+import LayoutContainer from './LayoutContainer'
 
-export { CanvasGrid }
+export { LayoutContainer }

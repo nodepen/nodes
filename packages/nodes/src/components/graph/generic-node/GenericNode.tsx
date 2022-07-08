@@ -2,11 +2,11 @@ import React, { useRef, useCallback } from 'react'
 import { useStore } from '$'
 import { COLORS } from '@/constants'
 
-type CommonElementProps = {
+type GenericNodeProps = {
   id: string
 }
 
-const CommonElement = ({ id }: CommonElementProps): React.ReactElement => {
+const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
   const element = useStore((store) => store.document.elements[id])
   const translate = useStore((store) => store.dispatch.test)
 
@@ -50,7 +50,7 @@ const CommonElement = ({ id }: CommonElementProps): React.ReactElement => {
   const { position } = element
 
   return (
-    <g id={`common-element-${id}`}>
+    <g id={`generic-node-${id}`}>
       <rect
         ref={ref}
         x={position.x}
@@ -69,8 +69,8 @@ const CommonElement = ({ id }: CommonElementProps): React.ReactElement => {
   )
 }
 
-const propsAreEqual = (prevProps: Readonly<CommonElementProps>, nextProps: Readonly<CommonElementProps>): boolean => {
+const propsAreEqual = (prevProps: Readonly<GenericNodeProps>, nextProps: Readonly<GenericNodeProps>): boolean => {
   return prevProps.id === nextProps.id
 }
 
-export default React.memo(CommonElement, propsAreEqual)
+export default React.memo(GenericNode, propsAreEqual)

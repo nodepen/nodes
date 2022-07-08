@@ -4,8 +4,7 @@ import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
 import { CameraManager } from '@/context'
-import { CanvasGrid } from '@/components/layout'
-import { NodesContainer } from '@/components/nodes'
+import { LayoutContainer, NodesContainer } from '@/components'
 
 type NodesProps = {
   document: Document
@@ -23,7 +22,7 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
     <div className="np-w-full np-h-full np-overflow-visible" ref={canvasRootRef}>
       <CameraManager>
         <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale">
-          <CanvasGrid />
+          <LayoutContainer />
           <NodesContainer />
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
           <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
