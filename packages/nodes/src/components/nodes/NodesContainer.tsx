@@ -4,7 +4,7 @@ import { useStore } from '$'
 import { COLORS } from '@/constants'
 import CommonElement from './CommonElement'
 
-const ElementsContainer = (): React.ReactElement => {
+const NodesContainer = (): React.ReactElement => {
   // TODO: Pull from state in a smart way
   const elements = useStore((store) => store.document.elements)
 
@@ -20,4 +20,4 @@ const ElementsContainer = (): React.ReactElement => {
   )
 }
 
-export default React.memo(ElementsContainer)
+export default React.memo(NodesContainer)

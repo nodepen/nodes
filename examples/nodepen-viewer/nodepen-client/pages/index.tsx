@@ -1,5 +1,5 @@
 import type { NextPage } from 'next'
-import { Nodes } from '@nodepen/nodes'
+import { NodesApp } from '@nodepen/nodes'
 
 const Home: NextPage = () => {
   return (
@@ -14,7 +14,7 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="absolute" style={{ width: 1000, height: 750, top: 0, left: 0, zIndex: 10 }}>
-          <Nodes document={{ id: '', elements: {}, library: {}, version: 1 }} />
+          <NodesApp document={{ id: '', elements: {}, library: {}, version: 1 }} />
         </div>
       </div>
     </div>

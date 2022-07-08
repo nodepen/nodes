@@ -1,1 +1,1 @@
-export { Nodes } from './components'
+export { NodesApp } from './app'

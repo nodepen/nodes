@@ -4,15 +4,15 @@ import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
 import { CameraManager } from '@/context'
-import { CanvasGrid } from './layout'
-import { ElementsContainer } from './elements'
+import { CanvasGrid } from '@/components/layout'
+import { NodesContainer } from '@/components/nodes'
 
 type NodesProps = {
   document: Document
   onChange?: () => void
 }
 
-export const Nodes = ({ document }: NodesProps): React.ReactElement => {
+export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
   const cameraProps = useCameraProps(canvasRootRef)
@@ -24,7 +24,7 @@ export const Nodes = ({ document }: NodesProps): React.ReactElement => {
       <CameraManager>
         <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale">
           <CanvasGrid />
-          <ElementsContainer />
+          <NodesContainer />
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
           <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
         </svg>
