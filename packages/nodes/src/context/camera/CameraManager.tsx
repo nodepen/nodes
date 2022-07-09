@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react'
-import { useStore } from '$'
+import { useStore, useDispatch } from '$'
 import { CAMERA } from '@/constants'
 import { clamp } from '@/utils'
 import { usePageSpaceToWorldSpace } from '@/hooks'
@@ -11,6 +11,7 @@ type CameraManagerProps = {
 const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => {
   const cameraOverlayRef = useRef<HTMLDivElement>(null)
 
+  const { setCameraPosition, setCameraZoom } = useDispatch()
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
   const zoom = useRef<number>(useStore.getState().camera.zoom)
@@ -21,9 +22,6 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
       }),
     []
   )
-
-  const setCameraPosition = useStore((store) => store.dispatch.setCameraPosition)
-  const setCameraZoom = useStore((store) => store.dispatch.setCameraZoom)
 
   const initialCameraPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const initialScreenPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })

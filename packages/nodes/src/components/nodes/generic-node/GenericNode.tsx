@@ -1,5 +1,5 @@
 import React, { useRef, useCallback } from 'react'
-import { useStore } from '$'
+import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
 
 type GenericNodeProps = {
@@ -8,7 +8,8 @@ type GenericNodeProps = {
 
 const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
   const element = useStore((store) => store.document.elements[id])
-  const translate = useStore((store) => store.dispatch.test)
+
+  const { test: translate } = useDispatch()
 
   console.log(`Rendered ${id}`)
 
