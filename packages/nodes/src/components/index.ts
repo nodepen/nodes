@@ -1,4 +1,4 @@
-export { LayoutContainer } from './layout'
+export { AnnotationsContainer } from './annotations'
 export { NodesContainer } from './nodes/index'
 
 /**

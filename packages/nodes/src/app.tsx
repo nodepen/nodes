@@ -1,10 +1,10 @@
-import React, { useRef, useState, useLayoutEffect, useEffect } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import type { Document, Element } from '@nodepen/core'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
 import { CameraManager } from '@/context'
-import { LayoutContainer, NodesContainer } from '@/components'
+import { AnnotationsContainer, NodesContainer } from '@/components'
 
 type NodesProps = {
   document: Document
@@ -22,7 +22,7 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
     <div className="np-w-full np-h-full np-overflow-visible" ref={canvasRootRef}>
       <CameraManager>
         <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale">
-          <LayoutContainer />
+          <AnnotationsContainer />
           <NodesContainer />
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
           <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
@@ -47,7 +47,7 @@ const useCameraProps = (containerRef: React.RefObject<HTMLDivElement>): CameraPr
     height: 1080,
   })
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     if (!containerRef.current) {
       return
     }

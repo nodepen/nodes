@@ -5,7 +5,6 @@ import { useStore } from '$'
 import { GenericNode } from './generic-node'
 
 const NodesContainer = (): React.ReactElement => {
-  // TODO: Pull from state in a smart way
   const nodes = useDocumentNodes()
 
   return (
