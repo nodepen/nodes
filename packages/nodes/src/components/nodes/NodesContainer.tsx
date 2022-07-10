@@ -24,9 +24,9 @@ const NodesContainer = (): React.ReactElement => {
   )
 }
 
-const useDocumentNodes = (): NodePen.Element[] => {
-  const nodes = useStore<NodePen.Document['elements']>(
-    (store) => store.document.elements,
+const useDocumentNodes = (): NodePen.DocumentNode[] => {
+  const nodes = useStore<NodePen.Document['nodes']>(
+    (store) => store.document.nodes,
     (previousNodes, currentNodes) => {
       const previousNodeIds = Object.keys(previousNodes)
       const currentNodeIds = Object.keys(currentNodes)

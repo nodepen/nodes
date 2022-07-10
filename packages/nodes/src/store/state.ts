@@ -21,8 +21,8 @@ export type RootState = {
 
 export const initialState: RootState = {
   document: {
-    id: 'id',
-    elements: {
+    id: 'document-id',
+    nodes: {
       'test-element-id-a': {
         id: 'test-element-id-a',
         template: 'test-template-id',
@@ -48,7 +48,7 @@ export const initialState: RootState = {
         }
       }
     },
-    library: {},
+    templates: {},
     version: 1
   },
   camera: {

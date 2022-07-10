@@ -7,7 +7,7 @@ type GenericNodeProps = {
 }
 
 const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
-  const element = useStore((store) => store.document.elements[id])
+  const element = useStore((store) => store.document.nodes[id])
 
   const { test: translate } = useDispatch()
 

@@ -25,13 +25,13 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         })
     }),
     test: (id: string) => set((state) => {
-      const element = state.document.elements[id]
+      const node = state.document.nodes[id]
 
-      if (!element) {
+      if (!node) {
         return
       }
 
-      element.position.x = element.position.x + 25
+      node.position.x = node.position.x + 25
     })
   }
 

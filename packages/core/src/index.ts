@@ -1,3 +1,1 @@
-export type { Document, Element } from './types'
-
-export const core = 8
+export type { Document, DocumentNode, DocumentTemplate } from './types'

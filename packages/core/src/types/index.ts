@@ -1,2 +1,3 @@
 export type { Document } from './Document'
-export type { Element } from './Element'
+export type { DocumentNode } from './DocumentNode'
+export type { DocumentTemplate } from './DocumentTemplate'

@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from 'react'
-import type { Document, Element } from '@nodepen/core'
+import React, { useState, useEffect } from 'react'
+import type { Document } from '@nodepen/core'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
