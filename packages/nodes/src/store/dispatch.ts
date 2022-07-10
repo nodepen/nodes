@@ -1,8 +1,12 @@
 import type { RootState } from './state'
 import { startTransition } from 'react'
+import shallow from 'zustand/shallow'
+import { useStore } from '$'
 
 type BaseSetter = (callback: (state: RootState) => void) => void
 type BaseGetter = () => RootState
+
+export type RootDispatch = ReturnType<typeof createDispatch>
 
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
@@ -34,5 +38,6 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   return { dispatch }
 }
 
-export type RootDispatch = ReturnType<typeof createDispatch>
-
+export const useDispatch = () => {
+  return useStore((state) => state.dispatch, shallow)
+}

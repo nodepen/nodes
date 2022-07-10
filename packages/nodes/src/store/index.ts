@@ -1,2 +1,2 @@
+export { useDispatch } from './dispatch'
 export { useStore } from './store'
-export { useDispatch } from './hooks'
