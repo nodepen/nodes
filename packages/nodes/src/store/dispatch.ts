@@ -24,6 +24,18 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             state.camera.zoom = zoom
         })
     }),
+    setNodePosition: (id: string, x: number, y: number) => set((state) => {
+      const node = state.document.nodes[id]
+
+      if (!node) {
+        return
+      }
+
+      startTransition(() => {
+        node.position.x = x
+        node.position.y = y
+      })
+    }),
     test: (id: string) => set((state) => {
       const node = state.document.nodes[id]
 
