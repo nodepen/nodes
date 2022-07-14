@@ -1,5 +1,5 @@
-import { useRef, useEffect, useCallback } from 'react'
-import { useStore } from '$'
+import { useCallback } from 'react'
+import { useStore, useStoreRef } from '$'
 
 // TODO:
 // I think, technically, this creates a stable but *new* callback for every component that uses the hook.
@@ -11,14 +11,7 @@ import { useStore } from '$'
  * @remarks Guarantees latest values for camera and canvas div geometry without causing re-renders.
  */
 export const usePageSpaceToWorldSpace = (): (pageX: number, pageY: number) => [x: number, y: number] => {
-    const camera = useRef(useStore.getState().camera)
-    useEffect(
-        () =>
-        useStore.subscribe((state) => {
-            camera.current = state.camera
-        }),
-        []
-    )
+    const camera = useStoreRef((state) => state.camera)
 
     const canvas = useStore((state) => state.registry.canvasRoot)
 
