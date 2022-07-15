@@ -14,7 +14,7 @@ const Home: NextPage = () => {
           </div>
         </div>
         <div className="absolute" style={{ width: 1000, height: 750, top: 0, left: 0, zIndex: 10 }}>
-          <NodesApp document={{ id: '', elements: {}, library: {}, version: 1 }} />
+          <NodesApp document={{ id: '', nodes: {}, templates: {}, version: 1 }} />
         </div>
       </div>
     </div>
