@@ -1,9 +1,9 @@
 import type { DocumentNode } from './DocumentNode'
-import type { DocumentTemplate } from './DocumentTemplate'
+import type { NodeTemplate } from './templates'
 
 export type Document = {
     id: string
     nodes: { [id: string]: DocumentNode }
-    templates: { [id: string]: DocumentTemplate }
+    templates: { [id: string]: NodeTemplate }
     version: 1
 }

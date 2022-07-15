@@ -1,0 +1,16 @@
+import type { PortTemplate } from './PortTemplate'
+
+export type NodeTemplate = {
+  guid: string,
+  name: string,
+  nickname: string,
+  description: string,
+  keywords: string[],
+  icon?: string,
+  category: string,
+  subcategory: string,
+  isObsolete: boolean,
+  isVariable: boolean,
+  inputs: PortTemplate[],
+  outputs: PortTemplate[]
+}

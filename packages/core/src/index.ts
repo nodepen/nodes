@@ -1,1 +1,2 @@
-export type { Document, DocumentNode, DocumentTemplate } from './types'
+export type { Document, DocumentNode } from './types'
+export type { NodeTemplate, PortTemplate } from './types/templates'

@@ -1,3 +1,4 @@
-import * as Grasshopper1 from './templates.json'
+import * as GrasshopperTemplateLibrary from './templates.json'
+import type { NodeTemplate } from '../../types/templates'
 
-export { Grasshopper1 }
+export const Grasshopper1: NodeTemplate[] = GrasshopperTemplateLibrary
