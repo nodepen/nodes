@@ -5,11 +5,11 @@
     <PackageVersion>1.0.0</PackageVersion>
     <TargetFrameworks>net48</TargetFrameworks>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+    <Platforms>AnyCPU;x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grasshopper" Version="7.20.22193.9001" />
-    <PackageReference Include="RhinoCommon" Version="7.20.22193.9001" />
+    <PackageReference Include="Rhino.Inside" Version="7.0.0" />
   </ItemGroup>
 
 </Project>
