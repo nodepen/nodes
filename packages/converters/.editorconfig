@@ -1,0 +1,10 @@
+root = true
+
+[*.cs]
+indent_style = space
+indent_size = 4
+
+# Surface all style violations during build
+dotnet_analyzer_diagnostic.category-Style.severity = warning
+# Do not require namespaces to match directory structure
+dotnet_diagnostic.IDE0130.severity = none

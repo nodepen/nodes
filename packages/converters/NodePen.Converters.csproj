@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>NodePen.Converters</PackageId>
+    <PackageVersion>1.0.0</PackageVersion>
+    <TargetFrameworks>net48</TargetFrameworks>
+    <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grasshopper" Version="7.20.22193.9001" />
+    <PackageReference Include="RhinoCommon" Version="7.20.22193.9001" />
+  </ItemGroup>
+
+</Project>

@@ -5,3 +5,6 @@ dist/
 .vscode
 
 .turbo
+
+bin/
+obj/
