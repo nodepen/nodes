@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -24,6 +24,10 @@
     <PackageReference Include="Nancy.Owin" Version="2.0.0" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
     <PackageReference Include="Topshelf" Version="4.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\packages\converters\Nodepen.Converters.csproj" />
   </ItemGroup>
 
 </Project>

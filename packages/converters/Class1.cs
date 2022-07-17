@@ -1,4 +1,5 @@
 ﻿using System;
+using Grasshopper;
 
 namespace NodePen.Converters
 {
@@ -6,9 +7,9 @@ namespace NodePen.Converters
     public class Class1
     {
 
-        public void Test()
+        public static void Test()
         {
-            Console.WriteLine("OK");
+            Console.WriteLine($"Grasshopper loaded! Found {Grasshopper.Instances.ComponentServer.ObjectProxies.Count} components in library.");
         }
 
     }

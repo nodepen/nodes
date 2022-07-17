@@ -4,6 +4,7 @@ using Microsoft.Owin.Hosting;
 using Owin;
 using Nancy.TinyIoc;
 using Nancy.Bootstrapper;
+using NodePen.Converters;
 
 namespace Rhino.Compute
 {
@@ -74,7 +75,7 @@ namespace Rhino.Compute
                 runheadless.Invoke(pluginObject, null);
             }
 
-            Console.WriteLine($"Grasshopper loaded! Found {Grasshopper.Instances.ComponentServer.ObjectProxies.Count} components in library.");
+            Class1.Test();
 
             base.ApplicationStartup(container, pipelines);
         }

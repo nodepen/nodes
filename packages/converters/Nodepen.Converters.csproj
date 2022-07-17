@@ -5,7 +5,9 @@
     <PackageVersion>1.0.0</PackageVersion>
     <TargetFrameworks>net48</TargetFrameworks>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
-    <Platforms>AnyCPU;x64</Platforms>
+    <PlatformTarget>x64</PlatformTarget>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
