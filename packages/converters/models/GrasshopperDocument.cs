@@ -8,11 +8,11 @@ namespace NodePen.Converters
     public class GrasshopperDocument
     {
 
-        public GH_Archive Archive { get; private set; }
+        private GH_Archive Archive { get; set; }
 
         private readonly GH_Document _document = new GH_Document();
 
-        public GH_Document Document
+        private GH_Document Document
         {
 
             get
