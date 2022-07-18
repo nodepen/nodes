@@ -2,6 +2,7 @@
 using Topshelf;
 using Microsoft.Owin.Hosting;
 using Owin;
+using Nancy;
 using Nancy.TinyIoc;
 using Nancy.Bootstrapper;
 using NodePen.Converters;
@@ -78,6 +79,57 @@ namespace Rhino.Compute
             Class1.Test();
 
             base.ApplicationStartup(container, pipelines);
+        }
+
+    }
+
+    public class ConverterEndpointsModule : NancyModule
+    {
+
+        public ConverterEndpointsModule(Nancy.Routing.IRouteCacheProvider routeCacheProvider)
+        {
+            Post["/convert"] = _ => ConvertGrasshopperDocumentToNodePenDocument(Context);
+        }
+
+        public Response ConvertGrasshopperDocumentToNodePenDocument(Nancy.NancyContext ctx)
+        {
+            var (from, to) = ParseConversionRequest(ctx);
+
+            Console.WriteLine(from);
+            Console.WriteLine(to);
+
+            return (Response)"OK";
+        }
+
+        private (ConversionTarget, ConversionTarget) ParseConversionRequest(NancyContext ctx)
+        {
+            string from = ctx.Request.Query.from;
+            string to = ctx.Request.Query.to;
+
+            return (GetConversionTarget(from), GetConversionTarget(to));
+        }
+
+        private ConversionTarget GetConversionTarget(string code)
+        {
+            switch (code)
+            {
+                case "gh":
+                    {
+                        return ConversionTarget.Grasshopper;
+                    }
+                case "np":
+                    {
+                        return ConversionTarget.NodePen;
+                    }
+                default:
+                    throw new Exception($"Invalid conversion target requested: {code}");
+            }
+        }
+
+        enum ConversionTarget
+        {
+            NodePen,
+            Grasshopper
         }
 
     }

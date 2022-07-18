@@ -20,14 +20,19 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Owin.Host.HttpListener" Version="4.2.2" />
     <PackageReference Include="Microsoft.Owin.Hosting" Version="4.2.2" />
-    <PackageReference Include="Nancy" Version="2.0.0" />
-    <PackageReference Include="Nancy.Owin" Version="2.0.0" />
+    <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1020.30" />
+    <PackageReference Include="Nancy" Version="1.4.4" />
+    <PackageReference Include="Nancy.Owin" Version="1.4.1" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
     <PackageReference Include="Topshelf" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\packages\converters\Nodepen.Converters.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
 
 </Project>
