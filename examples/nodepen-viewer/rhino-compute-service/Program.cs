@@ -6,6 +6,8 @@ using Nancy;
 using Nancy.TinyIoc;
 using Nancy.Bootstrapper;
 using NodePen.Converters;
+using Grasshopper.Kernel;
+using GH_IO.Serialization;
 
 namespace Rhino.Compute
 {
@@ -98,7 +100,20 @@ namespace Rhino.Compute
             Console.WriteLine(from);
             Console.WriteLine(to);
 
-            return (Response)"OK";
+            var body = Request.Body;
+            int length = (int)body.Length;
+            byte[] data = new byte[length];
+            body.Read(data, 0, length);
+
+            var archive = new GH_Archive();
+            archive.Deserialize_Binary(data);
+
+            var definition = new GH_Document();
+            archive.ExtractObject(definition, "Definition");
+
+            Console.WriteLine($"Received .gh file with {definition.ObjectCount} objects.");
+
+            return (Response)archive.Serialize_Xml();
         }
 
         private (ConversionTarget, ConversionTarget) ParseConversionRequest(NancyContext ctx)
@@ -115,7 +130,11 @@ namespace Rhino.Compute
             {
                 case "gh":
                     {
-                        return ConversionTarget.Grasshopper;
+                        return ConversionTarget.GrasshopperBinary;
+                    }
+                case "ghx":
+                    {
+                        return ConversionTarget.GrasshopperXML;
                     }
                 case "np":
                     {
@@ -129,7 +148,8 @@ namespace Rhino.Compute
         enum ConversionTarget
         {
             NodePen,
-            Grasshopper
+            GrasshopperBinary,
+            GrasshopperXML,
         }
 
     }
