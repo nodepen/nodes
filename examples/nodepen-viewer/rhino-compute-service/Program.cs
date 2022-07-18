@@ -105,15 +105,11 @@ namespace Rhino.Compute
             byte[] data = new byte[length];
             body.Read(data, 0, length);
 
-            var archive = new GH_Archive();
-            archive.Deserialize_Binary(data);
+            var document = new GrasshopperDocument(data);
 
-            var definition = new GH_Document();
-            archive.ExtractObject(definition, "Definition");
+            Console.WriteLine($"Received .gh file with {document.GetObjectCount()} objects.");
 
-            Console.WriteLine($"Received .gh file with {definition.ObjectCount} objects.");
-
-            return (Response)archive.Serialize_Xml();
+            return (Response)document.GetObjectCount().ToString();
         }
 
         private (ConversionTarget, ConversionTarget) ParseConversionRequest(NancyContext ctx)
