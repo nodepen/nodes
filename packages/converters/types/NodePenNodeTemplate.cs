@@ -5,7 +5,7 @@ namespace NodePen.Converters
 {
 
     [JsonObject(MemberSerialization.OptOut)]
-    public class NodePenNodeTemplate
+    public struct NodePenNodeTemplate
     {
 
         [JsonProperty("guid")]
@@ -46,27 +46,6 @@ namespace NodePen.Converters
 
         [JsonProperty("outputs")]
         public List<NodePenPortTemplate> Outputs { get; set; }
-
-    }
-
-    [JsonObject(MemberSerialization.OptOut)]
-    public class NodePenPortTemplate
-    {
-
-        [JsonProperty("name")]
-        public string Name { get; set; }
-
-        [JsonProperty("nickname")]
-        public string NickName { get; set; }
-
-        [JsonProperty("description")]
-        public string Description { get; set; }
-
-        [JsonProperty("type")]
-        public string TypeName { get; set; }
-
-        [JsonProperty("isOptional")]
-        public bool IsOptional { get; set; }
 
     }
 

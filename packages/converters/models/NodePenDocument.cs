@@ -12,7 +12,10 @@ namespace NodePen.Converters
         public string Id { get; private set; }
 
         [JsonProperty("nodes")]
-        private Dictionary<string, NodePenDocumentNode> Nodes { get; set; } = new Dictionary<string, NodePenDocumentNode>();
+        public Dictionary<string, NodePenDocumentNode> Nodes { get; private set; } = new Dictionary<string, NodePenDocumentNode>();
+
+        [JsonProperty("version")]
+        public int Version { get; private set; }
 
     }
 

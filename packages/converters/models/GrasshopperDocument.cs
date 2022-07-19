@@ -5,14 +5,14 @@ using GH_IO.Serialization;
 namespace NodePen.Converters
 {
 
-    public class GrasshopperDocument
+    public class GrasshopperDocument : IConverter
     {
 
         private GH_Archive Archive { get; set; }
 
         private readonly GH_Document _document = new GH_Document();
 
-        private GH_Document Document
+        private new GH_Document Document
         {
 
             get
@@ -30,9 +30,13 @@ namespace NodePen.Converters
 
         }
 
+        public IConverterTo To { get; set; }
+
         public GrasshopperDocument(GH_Archive archive)
         {
             Archive = archive;
+
+            To = new GrasshopperDocumentConvertTo(this);
         }
 
         public GrasshopperDocument(string xml)
@@ -60,6 +64,27 @@ namespace NodePen.Converters
             return Document.ObjectCount;
         }
 
+    }
+
+    public class GrasshopperDocumentConvertTo : IConverterTo
+    {
+
+        private GrasshopperDocument Document { get; set; }
+
+        public GrasshopperDocumentConvertTo(GrasshopperDocument document)
+        {
+            Document = document;
+        }
+
+        public NodePenDocument NodePenDocument()
+        {
+            throw new NotImplementedException();
+        }
+
+        public GrasshopperDocument GrasshopperDocument()
+        {
+            throw new NotImplementedException();
+        }
     }
 
 }
