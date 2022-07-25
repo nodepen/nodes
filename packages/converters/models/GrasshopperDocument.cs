@@ -1,4 +1,6 @@
 using System;
+using System.Linq;
+using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GH_IO.Serialization;
 
@@ -12,7 +14,7 @@ namespace NodePen.Converters
 
         private readonly GH_Document _document = new GH_Document();
 
-        private new GH_Document Document
+        private GH_Document Document
         {
 
             get
@@ -62,6 +64,23 @@ namespace NodePen.Converters
         public int GetObjectCount()
         {
             return Document.ObjectCount;
+        }
+
+        public List<IGH_DocumentObject> GetObjects()
+        {
+            return Document.Objects.ToList();
+        }
+
+        public NodePenDocument ToNodePenDocument()
+        {
+            NodePenDocument document = new NodePenDocument();
+
+            foreach (var documentObject in this.GetObjects())
+            {
+                document.AddDocumentNode(documentObject);
+            }
+
+            return document;
         }
 
     }

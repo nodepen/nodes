@@ -51,6 +51,7 @@ namespace NodePen.Converters
         {
             GrasshopperDocument doc = new GrasshopperDocument("ok");
 
+            var test = NodePenConvert.From(doc).To;
             var gh = NodePenConvert.From(doc).To.NodePenDocument();
         }
     }

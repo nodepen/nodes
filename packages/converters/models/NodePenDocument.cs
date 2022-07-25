@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using Grasshopper.Kernel;
 
 namespace NodePen.Converters
 {
@@ -17,15 +18,22 @@ namespace NodePen.Converters
         [JsonProperty("version")]
         public int Version { get; private set; }
 
+        public void AddDocumentNode(IGH_DocumentObject documentObject)
+        {
+            Nodes.Add("some-guid", new NodePenDocumentNode(documentObject));
+        }
+
     }
 
     [JsonObject(MemberSerialization.OptOut)]
     public class NodePenDocumentNode
     {
 
-        public NodePenDocumentNode()
-        {
+        public string Id { get; set; }
 
+        public NodePenDocumentNode(IGH_DocumentObject documentObject)
+        {
+            Id = documentObject.InstanceGuid.ToString();
         }
 
     }
