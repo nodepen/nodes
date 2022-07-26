@@ -1,5 +1,6 @@
 ﻿using System;
-using Grasshopper;
+using NodePen.Converters;
+using GH_IO.Serialization;
 
 namespace NodePen.Converters
 {
@@ -10,6 +11,8 @@ namespace NodePen.Converters
         public static void Test()
         {
             Console.WriteLine($"Grasshopper loaded! Found {Grasshopper.Instances.ComponentServer.ObjectProxies.Count} components in library.");
+
+            NodePenConvert.This(new GH_Archive()).WithLibrary()
         }
 
     }

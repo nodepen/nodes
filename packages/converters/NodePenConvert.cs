@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using Grasshopper.Kernel;
+using GH_IO.Serialization;
 
 namespace NodePen.Converters
 {
@@ -7,52 +9,86 @@ namespace NodePen.Converters
     public static class NodePenConvert
     {
 
-        public static Dictionary<string, NodePenNodeTemplate> Templates { get; private set; } = new Dictionary<string, NodePenNodeTemplate>();
-
-        public static void LoadLibrary(List<NodePenNodeTemplate> templates)
+        public static GrasshopperDocumentConverterContext This(GH_Archive archive)
         {
-            Templates.Clear();
+            return new GrasshopperDocumentConverterContext(archive);
+        }
 
-            var x = new NodePenNodeTemplate()
+    }
+
+    public class NodePenConverterContext
+    {
+
+        private Dictionary<string, NodePenNodeTemplate> Library { get; set; } = new Dictionary<string, NodePenNodeTemplate>();
+
+        public NodePenConverterContext()
+        {
+
+        }
+
+        public NodePenConverterContext WithLibrary(Dictionary<string, NodePenNodeTemplate> library)
+        {
+            Library = library;
+            return this;
+        }
+
+    }
+
+    public class GrasshopperDocumentConverterContext : NodePenConverterContext
+    {
+
+        private GH_Archive Archive { get; set; }
+
+        private readonly GH_Document _document = new GH_Document();
+
+        private GH_Document Document
+        {
+
+            get
             {
-                Guid = "OK",
+                if (_document == null)
+                {
+                    if (!Archive.ExtractObject(_document, "Definition"))
+                    {
+                        throw new Exception("Failed to extract Grasshopper document from provided archive data.");
+                    }
+                }
+
+                return _document;
+            }
+
+        }
+
+        public GrasshopperDocumentConverterContext(GH_Archive archive)
+        {
+            Archive = archive;
+        }
+
+        public GrasshopperDocumentConverterContext(string xml)
+        {
+            Archive = new GH_Archive();
+
+            if (!Archive.Deserialize_Xml(xml))
+            {
+                throw new Exception("Failed to parse provided xml data as Grasshopper document.");
             };
+        }
 
-            foreach (NodePenNodeTemplate template in templates)
+        public GrasshopperDocumentConverterContext(byte[] data)
+        {
+            Archive = new GH_Archive();
+
+            if (!Archive.Deserialize_Binary(data))
             {
-                Templates.Add(template.Guid, template);
+                throw new Exception("Failed to parse provided binary data as Grasshopper document.");
             }
         }
 
-        public static T From<T>(T sourceDocument) where T : class, IConverter
+        public NodePenDocument ToNodePenDocument()
         {
-            return Activator.CreateInstance(typeof(T), new[] { sourceDocument }) as T;
-        }
+            NodePenDocument document = new NodePenDocument();
 
-    }
-
-    public interface IConverter
-    {
-        IConverterTo To { get; set; }
-    }
-
-    public interface IConverterTo
-    {
-
-        NodePenDocument NodePenDocument();
-        GrasshopperDocument GrasshopperDocument();
-
-    }
-
-    public class Test
-    {
-
-        public void Okay()
-        {
-            GrasshopperDocument doc = new GrasshopperDocument("ok");
-
-            var test = NodePenConvert.From(doc).To;
-            var gh = NodePenConvert.From(doc).To.NodePenDocument();
+            return document;
         }
     }
 }
