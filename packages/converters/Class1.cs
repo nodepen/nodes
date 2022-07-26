@@ -12,7 +12,9 @@ namespace NodePen.Converters
         {
             Console.WriteLine($"Grasshopper loaded! Found {Grasshopper.Instances.ComponentServer.ObjectProxies.Count} components in library.");
 
-            NodePenConvert.This(new GH_Archive()).WithLibrary()
+            var document = NodePenConvert.Serialize(new GH_Archive());
+
+            var archive = NodePenConvert.Deserialize<GH_Archive>(document);
         }
 
     }

@@ -7,7 +7,7 @@ using GH_IO.Serialization;
 namespace NodePen.Converters
 {
 
-    public class GrasshopperDocument : IConverter
+    public class GrasshopperDocument
     {
 
         private GH_Archive Archive { get; set; }
@@ -32,13 +32,9 @@ namespace NodePen.Converters
 
         }
 
-        public IConverterTo To { get; set; }
-
         public GrasshopperDocument(GH_Archive archive)
         {
             Archive = archive;
-
-            To = new GrasshopperDocumentConvertTo(this);
         }
 
         public GrasshopperDocument(string xml)
@@ -83,27 +79,6 @@ namespace NodePen.Converters
             return document;
         }
 
-    }
-
-    public class GrasshopperDocumentConvertTo : IConverterTo
-    {
-
-        private GrasshopperDocument Document { get; set; }
-
-        public GrasshopperDocumentConvertTo(GrasshopperDocument document)
-        {
-            Document = document;
-        }
-
-        public NodePenDocument NodePenDocument()
-        {
-            throw new NotImplementedException();
-        }
-
-        public GrasshopperDocument GrasshopperDocument()
-        {
-            throw new NotImplementedException();
-        }
     }
 
 }
