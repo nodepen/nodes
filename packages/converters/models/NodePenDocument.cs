@@ -29,7 +29,8 @@ namespace NodePen.Converters
     public class NodePenDocumentNode
     {
 
-        public string Id { get; set; }
+        [JsonProperty("instanceId")]
+        public string InstanceId { get; set; }
 
         public NodePenDocumentNode(IGH_DocumentObject documentObject)
         {

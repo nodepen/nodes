@@ -24,6 +24,26 @@ namespace NodePen.Converters
         {
             NodePenDocument document = new NodePenDocument();
 
+            var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;
+
+            foreach (IGH_ObjectProxy proxy in proxies)
+            {
+
+                var instance = proxy.CreateInstance() as IGH_Component;
+
+                if (instance == null)
+                {
+                    continue;
+                }
+
+                var parameters = instance.Params;
+
+                foreach (var input in parameters.Input)
+                {
+                    var x = input.InstanceGuid;
+                }
+            }
+
             return document;
         }
 
