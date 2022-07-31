@@ -6,5 +6,8 @@ indent_size = 4
 
 # Surface all style violations during build
 dotnet_analyzer_diagnostic.category-Style.severity = warning
+# Do not require explict types in variable initialization
+dotnet_diagnostic.IDE0008.severity = none
 # Do not require namespaces to match directory structure
 dotnet_diagnostic.IDE0130.severity = none
+

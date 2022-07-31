@@ -28,8 +28,35 @@ namespace NodePen.Converters
 
             foreach (IGH_ObjectProxy proxy in proxies)
             {
+                switch (proxy.Kind)
+                {
+                    case GH_ObjectType.CompiledObject:
+                        {
+                            var x = proxy.CreateInstance();
 
-                var instance = proxy.CreateInstance() as IGH_Component;
+                            var type = x.GetType();
+
+                            Console.WriteLine(type);
+                            continue;
+                        }
+                    case GH_ObjectType.UserObject:
+                        {
+                            var x = proxy.CreateInstance() as GH_UserObject;
+                            continue;
+                        }
+                    case GH_ObjectType.None:
+                    default:
+                        {
+                            continue;
+                        }
+                }
+
+                // var instance = proxy.CreateInstance() as IGH_Component;
+
+                if (!(proxy.CreateInstance() is IGH_Component instance))
+                {
+                    continue;
+                }
 
                 if (instance == null)
                 {
