@@ -20,6 +20,17 @@ namespace NodePen.Converters
             }
         }
 
+        public static NodePenDocument Serialize(byte[] data)
+        {
+            var archive = new GH_Archive();
+
+            var document = archive.Deserialize_Binary(data)
+                ? Serialize(archive)
+                : throw new Exception("Failed to parse provided binary data as Grasshopper document.");
+
+            return document;
+        }
+
         public static NodePenDocument Serialize(GH_Archive archive)
         {
             NodePenDocument document = new NodePenDocument();
@@ -32,11 +43,17 @@ namespace NodePen.Converters
                 {
                     case GH_ObjectType.CompiledObject:
                         {
-                            var x = proxy.CreateInstance();
 
-                            var type = x.GetType();
 
-                            Console.WriteLine(type);
+                            if (proxy.CreateInstance() is GH_Component instance)
+                            {
+                                var type = instance.GetType();
+
+                                // foreach (var inputParameter in instance.Params.Input) {
+                                //     inputParameter.
+                                // }
+                            }
+
                             continue;
                         }
                     case GH_ObjectType.UserObject:
@@ -53,22 +70,22 @@ namespace NodePen.Converters
 
                 // var instance = proxy.CreateInstance() as IGH_Component;
 
-                if (!(proxy.CreateInstance() is IGH_Component instance))
-                {
-                    continue;
-                }
+                // if (!(proxy.CreateInstance() is IGH_Component instance))
+                // {
+                //     continue;
+                // }
 
-                if (instance == null)
-                {
-                    continue;
-                }
+                // if (instance == null)
+                // {
+                //     continue;
+                // }
 
-                var parameters = instance.Params;
+                // var parameters = instance.Params;
 
-                foreach (var input in parameters.Input)
-                {
-                    var x = input.InstanceGuid;
-                }
+                // foreach (var input in parameters.Input)
+                // {
+                //     var x = input.InstanceGuid;
+                // }
             }
 
             return document;

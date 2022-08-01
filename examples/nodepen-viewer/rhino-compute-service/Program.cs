@@ -6,6 +6,7 @@ using Nancy;
 using Nancy.TinyIoc;
 using Nancy.Bootstrapper;
 using NodePen.Converters;
+using Newtonsoft.Json;
 using Grasshopper.Kernel;
 using GH_IO.Serialization;
 
@@ -105,11 +106,11 @@ namespace Rhino.Compute
             byte[] data = new byte[length];
             body.Read(data, 0, length);
 
-            var document = new GrasshopperDocument(data);
+            // var document = new GrasshopperDocument(data);
 
-            Console.WriteLine($"Received .gh file with {document.GetObjectCount()} objects.");
+            // Console.WriteLine($"Received .gh file with {document.GetObjectCount()} objects.");
 
-            return (Response)document.GetObjectCount().ToString();
+            return (Response)JsonConvert.SerializeObject(NodePenConvert.Serialize(data));
         }
 
         private (ConversionTarget, ConversionTarget) ParseConversionRequest(NancyContext ctx)
