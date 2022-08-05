@@ -24,8 +24,8 @@ export const initialState: RootState = {
     id: 'document-id',
     nodes: {
       'test-element-id-a': {
-        id: 'test-element-id-a',
-        template: 'test-template-id',
+        instanceId: 'test-element-id-a',
+        templateId: 'test-template-id',
         position: {
           x: 5,
           y: -5
@@ -33,11 +33,14 @@ export const initialState: RootState = {
         dimensions: {
           width: 20,
           height: 20,
-        }
+        },
+        sources: {},
+        inputs: {},
+        outputs: {},
       },
       'test-element-id-b': {
-        id: 'test-element-id-b',
-        template: 'test-template-id',
+        instanceId: 'test-element-id-b',
+        templateId: 'test-template-id',
         position: {
           x: 5,
           y: -200
@@ -45,7 +48,10 @@ export const initialState: RootState = {
         dimensions: {
           width: 20,
           height: 20,
-        }
+        },
+        sources: {},
+        inputs: {},
+        outputs: {},
       }
     },
     templates: {},

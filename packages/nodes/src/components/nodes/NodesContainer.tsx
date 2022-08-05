@@ -11,13 +11,13 @@ const NodesContainer = (): React.ReactElement => {
     <g id="np-nodes" className="np-pointer-events-auto">
       {nodes.map((node) => {
         // Handle special templates (number slider, panel, etc)
-        const { id, template } = node
+        const { instanceId, templateId } = node
 
-        switch (template) {
+        switch (templateId) {
           case 'some-id':
             return null
           default:
-            return <GenericNode key={`generic-node-${id}`} id={id} />
+            return <GenericNode key={`generic-node-${instanceId}`} id={instanceId} />
         }
       })}
     </g>
