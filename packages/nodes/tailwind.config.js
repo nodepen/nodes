@@ -21,6 +21,9 @@ module.exports = {
         vh: '100vh',
         vw: '100vw',
       },
+      boxShadow: {
+        main: '-4px 4px 0 0 rgba(123, 191, 165, 0.3)'
+      }
     },
   },
   plugins: [],
