@@ -151,7 +151,7 @@ const CameraManager = ({ children }: CameraManagerProps): React.ReactElement => 
 
   return (
     <div
-      className="np-w-full np-h-full np-overflow-visible"
+      className="np-w-full np-h-full np-absolute np-overflow-visible np-z-40"
       ref={cameraOverlayRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}

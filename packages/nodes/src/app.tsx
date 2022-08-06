@@ -4,7 +4,7 @@ import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
 import { CameraManager } from '@/context'
-import { AnnotationsContainer, NodesContainer } from '@/components'
+import { AnnotationsContainer, ControlsContainer, NodesContainer } from '@/components'
 
 type NodesProps = {
   document: Document
@@ -19,7 +19,8 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
   // TODO: Contextually disable pointer events on root svg (i.e. during pan)
 
   return (
-    <div className="np-w-full np-h-full np-overflow-visible" ref={canvasRootRef}>
+    <div className="np-w-full np-h-full np-relative np-overflow-visible" ref={canvasRootRef}>
+      <ControlsContainer />
       <CameraManager>
         <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale">
           <AnnotationsContainer />
