@@ -22,7 +22,7 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
     <div className="np-w-full np-h-full np-relative np-overflow-visible" ref={canvasRootRef}>
       <ControlsContainer />
       <CameraManager>
-        <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale">
+        <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale np-rounded-md">
           <AnnotationsContainer />
           <NodesContainer />
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
