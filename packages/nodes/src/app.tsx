@@ -14,21 +14,21 @@ type NodesProps = {
 export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
-  const cameraProps = useCameraProps(canvasRootRef)
+  const cameraProps = useCameraProps()
 
   // TODO: Contextually disable pointer events on root svg (i.e. during pan)
 
   return (
     <div className="np-w-full np-h-full np-relative np-overflow-visible" ref={canvasRootRef}>
       <ControlsContainer />
-      <CameraManager>
+      <div className="np-w-full np-h-full np-absolute np-z-40">
         <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale np-rounded-md">
           <AnnotationsContainer />
           <NodesContainer />
           <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
           <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
         </svg>
-      </CameraManager>
+      </div>
     </div>
   )
 }
@@ -40,7 +40,9 @@ type CameraProps = Pick<React.SVGProps<SVGElement>, 'viewBox' | 'width' | 'heigh
  * @param containerRef
  * @returns `viewBox` `width` `height`
  */
-const useCameraProps = (containerRef: React.RefObject<HTMLDivElement>): CameraProps => {
+const useCameraProps = (): CameraProps => {
+  const containerRef = useStore((state) => state.registry.canvasRoot)
+
   const { aspect, position, zoom } = useStore((state) => state.camera)
 
   const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
