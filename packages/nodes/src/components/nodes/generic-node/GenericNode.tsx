@@ -16,6 +16,20 @@ const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
 
   return (
     <DraggableNodeContainer id={id}>
+      {/* Shadow */}
+      <rect
+        x={position.x}
+        y={-position.y + 2}
+        width={250}
+        height={120}
+        rx={7}
+        ry={7}
+        fill={COLORS.DARK}
+        stroke={COLORS.DARK}
+        strokeWidth={2}
+        vectorEffect="non-scaling-stroke"
+      />
+      {/* Body */}
       <rect
         x={position.x}
         y={-position.y}
