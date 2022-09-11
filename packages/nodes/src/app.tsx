@@ -1,9 +1,8 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import type { Document } from '@nodepen/core'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useStore } from '$'
-import { CameraManager } from '@/context'
 import { AnnotationsContainer, ControlsContainer, NodesContainer } from '@/components'
 import { CameraOverlay, useCameraProps } from './components/camera'
 

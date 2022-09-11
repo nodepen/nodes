@@ -1,7 +1,6 @@
 import React, { useRef, useCallback } from 'react'
 import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
-import { DraggableNodeContainer } from '../common'
 import { useDraggableNode } from '../hooks'
 
 type GenericNodeProps = {

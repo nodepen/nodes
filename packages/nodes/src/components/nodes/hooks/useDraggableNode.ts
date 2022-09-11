@@ -10,10 +10,14 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGRec
 
   const zoom = useStoreRef((state) => state.camera.zoom)
 
+  const getCurrentNodePosition = (id: string): { x: number, y: number } => {
+    return useStore.getState().document.nodes[nodeInstanceId].position
+  }
+
   const isDragging = useRef(false)
   const initialPointerId = useRef<number>()
   const initialPointerPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
-  const initialNodePosition = useRef<{ x: number; y: number }>(useStore.getState().document.nodes[nodeInstanceId].position)
+  const initialNodePosition = useRef<{ x: number; y: number }>(getCurrentNodePosition(nodeInstanceId))
 
   const handlePointerDown = useCallback((e: PointerEvent): void => {
     const container = nodeRef.current
@@ -26,6 +30,8 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGRec
       // Already dragging, discard event
       return
     }
+
+    const { pageX, pageY, pointerId } = e
 
     switch (e.pointerType) {
       case 'pen':
@@ -40,13 +46,13 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGRec
             e.stopPropagation()
 
             // Register main pointer
-            initialPointerId.current = e.pointerId
-            container.setPointerCapture(e.pointerId)
+            initialPointerId.current = pointerId
+            container.setPointerCapture(pointerId)
 
             // Begin motion
             isDragging.current = true
-
-            console.log('???')
+            initialNodePosition.current = getCurrentNodePosition(nodeInstanceId)
+            initialPointerPosition.current = { x: pageX, y: pageY }
 
             return
           }
@@ -64,13 +70,24 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGRec
   }, [])
 
   const handlePointerMove = useCallback((e: PointerEvent): void => {
-    const { pageX, pageY, pointerId } = e
+    const { pageX: currentPointerX, pageY: currentPointerY, pointerId } = e
 
     if (!isDragging.current || pointerId !== initialPointerId.current) {
       return
     }
 
-    console.log(nodeInstanceId)
+    const { x: initialPointerX, y: initialPointerY } = initialPointerPosition.current
+
+    // TODO: Include zoom
+    const dx = currentPointerX - initialPointerX
+    const dy = (currentPointerY - initialPointerY) * -1
+
+    const { x: initialNodeX, y: initialNodeY } = initialNodePosition.current
+
+    const currentNodeX = initialNodeX + dx
+    const currentNodeY = initialNodeY + dy
+
+    setNodePosition(nodeInstanceId, currentNodeX, currentNodeY)
   }, [])
 
   const handlePointerUp = useCallback((e: PointerEvent): void => {
