@@ -3,48 +3,59 @@ import { startTransition } from 'react'
 import shallow from 'zustand/shallow'
 import { useStore } from '$'
 
-type BaseSetter = (callback: (state: RootState) => void) => void
+type BaseAction = string | ({ type: string } &  Record<string, unknown>)
+type BaseSetter = (callback: (state: RootState) => void, replace?: boolean, action?: BaseAction) => void
 type BaseGetter = () => RootState
 
 export type RootDispatch = ReturnType<typeof createDispatch>
 
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
-    setCameraAspect: (aspect: number) => set((state) => {
-      state.camera.aspect = aspect
-    }),
-    setCameraPosition: (x: number, y: number) => set((state) => {
+    setCameraAspect: (aspect: number) => set(
+      (state) => {
+        state.camera.aspect = aspect
+      },
+      false,
+      'camera/setAspect'
+    ),
+    setCameraPosition: (x: number, y: number) => set(
+      (state) => {
         startTransition(() => {
-            state.camera.position.x = x
-            state.camera.position.y = y
+          state.camera.position.x = x
+          state.camera.position.y = y
         })
-    }),
-    setCameraZoom: (zoom: number) => set((state) => {
+      },
+      false,
+      'camera/setPosition'
+    ),
+    setCameraZoom: (zoom: number) => set(
+      (state) => {
         startTransition(() => {
-            state.camera.zoom = zoom
+          state.camera.zoom = zoom
         })
-    }),
-    setNodePosition: (id: string, x: number, y: number) => set((state) => {
-      const node = state.document.nodes[id]
+      },
+      false,
+      'camera/setZoom'
+    ),
+    setNodePosition: (id: string, x: number, y: number) => set(
+      (state) => {
+        const node = state.document.nodes[id]
 
-      if (!node) {
-        return
+        if (!node) {
+          return
+        }
+
+        startTransition(() => {
+          node.position.x = x
+          node.position.y = y
+        })
+      },
+      false,
+      {
+        type: 'node/setPosition',
+        payload: { id, x, y }
       }
-
-      startTransition(() => {
-        node.position.x = x
-        node.position.y = y
-      })
-    }),
-    test: (id: string) => set((state) => {
-      const node = state.document.nodes[id]
-
-      if (!node) {
-        return
-      }
-
-      node.position.x = node.position.x + 25
-    })
+    )
   }
 
   return { dispatch }
