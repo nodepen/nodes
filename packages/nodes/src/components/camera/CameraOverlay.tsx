@@ -4,7 +4,11 @@ import { CAMERA } from '@/constants'
 import { clamp } from '@/utils'
 import { usePageSpaceToWorldSpace } from '@/hooks'
 
-const CameraControl = (): React.ReactElement => {
+type CameraControlProps = {
+  children?: React.ReactNode
+}
+
+const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 
   const { setCameraPosition, setCameraZoom } = useDispatch()
@@ -148,15 +152,17 @@ const CameraControl = (): React.ReactElement => {
   return (
     <div
       id="camera-control-overlay"
-      className="np-w-full np-h-full np-absolute np-z-40"
+      className="np-w-full np-h-full np-pointer-events-auto"
       ref={cameraControlOverlayRef}
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerOut={handlePointerOut}
       onContextMenu={handleContextMenu}
-    />
+    >
+      {children}
+    </div>
   )
 }
 
-export default React.memo(CameraControl)
+export default React.memo(CameraOverlay)

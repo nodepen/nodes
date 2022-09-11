@@ -5,6 +5,7 @@ import { COLORS } from '@/constants'
 import { useStore } from '$'
 import { CameraManager } from '@/context'
 import { AnnotationsContainer, ControlsContainer, NodesContainer } from '@/components'
+import { CameraOverlay, useCameraProps } from './components/camera'
 
 type NodesProps = {
   document: Document
@@ -19,54 +20,51 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
   // TODO: Contextually disable pointer events on root svg (i.e. during pan)
 
   return (
-    <div className="np-w-full np-h-full np-relative np-overflow-visible" ref={canvasRootRef}>
-      <ControlsContainer />
-      <div className="np-w-full np-h-full np-absolute np-z-40">
-        <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale np-rounded-md">
-          <AnnotationsContainer />
-          <NodesContainer />
-          <line x1={0} y1={0} x2={250} y2={0} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
-          <line x1={0} y1={0} x2={0} y2={-250} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
-        </svg>
-      </div>
+    <div id="np-app-root" className="np-w-full np-h-full np-relative np-overflow-visible" ref={canvasRootRef}>
+      <Layer id="np-controls-layer" z={90}>
+        <ControlsContainer />
+      </Layer>
+      <Layer id="np-graph-canvas-layer" z={70}>
+        <CameraOverlay>
+          <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale np-rounded-md">
+            <AnnotationsContainer />
+            <NodesContainer />
+            <line
+              x1={0}
+              y1={0}
+              x2={250}
+              y2={0}
+              stroke={COLORS.DARK}
+              strokeWidth={2}
+              vectorEffect="non-scaling-stroke"
+            />
+            <line
+              x1={0}
+              y1={0}
+              x2={0}
+              y2={-250}
+              stroke={COLORS.DARK}
+              strokeWidth={2}
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+        </CameraOverlay>
+      </Layer>
+      <Layer id="np-grid-canvas-layer" z={20}></Layer>
     </div>
   )
 }
 
-type CameraProps = Pick<React.SVGProps<SVGElement>, 'viewBox' | 'width' | 'height'>
+type LayerProps = {
+  id: string
+  z: number
+  children?: React.ReactNode
+}
 
-/**
- * Given the current camera and dimensions of the container in screen space, produce root svg props.
- * @param containerRef
- * @returns `viewBox` `width` `height`
- */
-const useCameraProps = (): CameraProps => {
-  const containerRef = useStore((state) => state.registry.canvasRoot)
-
-  const { aspect, position, zoom } = useStore((state) => state.camera)
-
-  const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
-    width: 1920,
-    height: 1080,
-  })
-
-  useEffect(() => {
-    if (!containerRef.current) {
-      return
-    }
-
-    const { width, height } = containerRef.current.getBoundingClientRect()
-
-    setContainerDimensions({ width, height })
-  }, [])
-
-  const { width: w, height: h } = containerDimensions
-  const { x, y } = position
-
-  const viewBox = [w / 2 / -zoom + x, h / 2 / -zoom - y, w / zoom, h / zoom].join(' ')
-
-  const width = `${w}px`
-  const height = `${h}px`
-
-  return { width, height, viewBox }
+const Layer = ({ id, z, children }: LayerProps): React.ReactElement => {
+  return (
+    <div id={id} className="np-w-full np-h-full np-absolute np-pointer-events-none" style={{ zIndex: z }}>
+      {children}
+    </div>
+  )
 }

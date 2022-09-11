@@ -7,6 +7,7 @@ const Home: NextPage = () => {
       <div className="relative" style={{ width: 1000, height: 750, overflow: 'visible' }}>
         <div
           className="absolute"
+          id="app-dot"
           style={{ width: 1000, height: 750, top: 0, left: 0, zIndex: 20, pointerEvents: 'none' }}
         >
           <div className="w-full h-full flex justify-center items-center">
