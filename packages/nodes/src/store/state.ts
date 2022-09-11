@@ -27,8 +27,8 @@ export const initialState: RootState = {
         instanceId: 'test-element-id-a',
         templateId: 'test-template-id',
         position: {
-          x: 5,
-          y: -5
+          x: 250,
+          y: -500
         },
         dimensions: {
           width: 20,
@@ -42,8 +42,8 @@ export const initialState: RootState = {
         instanceId: 'test-element-id-b',
         templateId: 'test-template-id',
         position: {
-          x: 5,
-          y: -200
+          x: 650,
+          y: -450
         },
         dimensions: {
           width: 20,
@@ -60,7 +60,7 @@ export const initialState: RootState = {
   camera: {
     aspect: 1.5,
     position: {
-      x: 250,
+      x: 0,
       y: 0,
     },
     zoom: 1,
