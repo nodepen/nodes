@@ -3,7 +3,7 @@ import type { Document } from '@nodepen/core'
 import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useDispatch, useStore } from '$'
-import { AnnotationsContainer, ControlsContainer, NodesContainer } from '@/components'
+import { AnnotationsContainer, ControlsContainer, GridContainer, NodesContainer } from '@/components'
 import { CameraOverlay, useCameraProps } from './components/camera'
 
 type NodesProps = {
@@ -41,8 +41,7 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
       </Layer>
       <Layer id="np-graph-canvas-layer" z={70}>
         <CameraOverlay>
-          <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale np-rounded-md">
-            <AnnotationsContainer />
+          <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-rounded-md">
             <NodesContainer />
             {/* XY Axis */}
             {/* <line
@@ -66,7 +65,9 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
           </svg>
         </CameraOverlay>
       </Layer>
-      <Layer id="np-grid-canvas-layer" z={20}></Layer>
+      <Layer id="np-grid-canvas-layer" z={20}>
+        <GridContainer />
+      </Layer>
     </div>
   )
 }

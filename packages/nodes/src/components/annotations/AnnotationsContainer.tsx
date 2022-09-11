@@ -1,8 +1,7 @@
 import React from 'react'
-import { CanvasGrid } from './canvas-grid'
 
 const AnnotationContainer = (): React.ReactElement => {
-  return <CanvasGrid />
+  return <></>
 }
 
 export default React.memo(AnnotationContainer)

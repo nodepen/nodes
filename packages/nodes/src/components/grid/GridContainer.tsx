@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { useStore } from '$'
 import { CAMERA, COLORS } from '@/constants'
+import { useCameraProps } from '../camera'
 
 type GridDetailLevel = 'low' | 'medium' | 'high'
 
-const CanvasGrid = (): React.ReactElement | null => {
+const GridContainer = (): React.ReactElement | null => {
+  const cameraProps = useCameraProps()
+
   const [detailLevel, setDetailLevel] = useState<GridDetailLevel>('medium')
 
   const previousDetailLevel = useRef<GridDetailLevel>(detailLevel)
@@ -71,22 +74,24 @@ const CanvasGrid = (): React.ReactElement | null => {
   }
 
   return (
-    <g id="np-grid">
-      {Array(GRID_COUNT)
-        .fill('')
-        .map((_, i) => {
-          const n = i * GRID_SPACING
-          const extent = GRID_SPACING * GRID_COUNT
+    <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale np-rounded-md">
+      <g id="np-grid">
+        {Array(GRID_COUNT)
+          .fill('')
+          .map((_, i) => {
+            const n = i * GRID_SPACING
+            const extent = GRID_SPACING * GRID_COUNT
 
-          return (
-            <React.Fragment key={`grid-position-${i}`}>
-              <line {...lineProps} x1={n} y1={0} x2={n} y2={extent} />
-              <line {...lineProps} x1={0} y1={n} x2={extent} y2={n} />
-            </React.Fragment>
-          )
-        })}
-    </g>
+            return (
+              <React.Fragment key={`grid-position-${i}`}>
+                <line {...lineProps} x1={n} y1={0} x2={n} y2={extent} />
+                <line {...lineProps} x1={0} y1={n} x2={extent} y2={n} />
+              </React.Fragment>
+            )
+          })}
+      </g>
+    </svg>
   )
 }
 
-export default React.memo(CanvasGrid)
+export default React.memo(GridContainer)
