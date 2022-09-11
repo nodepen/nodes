@@ -2,6 +2,7 @@ import React, { useRef, useCallback } from 'react'
 import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
 import { DraggableNodeContainer } from '../common'
+import { useDraggableNode } from '../hooks'
 
 type GenericNodeProps = {
   id: string
@@ -10,12 +11,14 @@ type GenericNodeProps = {
 const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
   const node = useStore((store) => store.document.nodes[id])
 
+  const draggableRef = useDraggableNode(id)
+
   console.log(`Rendered node ${id}`)
 
   const { position } = node
 
   return (
-    <DraggableNodeContainer id={id}>
+    <>
       {/* Shadow */}
       <rect
         x={position.x}
@@ -31,6 +34,7 @@ const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
       />
       {/* Body */}
       <rect
+        ref={draggableRef}
         x={position.x}
         y={-position.y}
         width={250}
@@ -41,8 +45,12 @@ const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
         stroke={COLORS.DARK}
         strokeWidth={2}
         vectorEffect="non-scaling-stroke"
+        pointerEvents="auto"
+        onPointerDown={() => {
+          console.log('wtf')
+        }}
       />
-    </DraggableNodeContainer>
+    </>
   )
 }
 
