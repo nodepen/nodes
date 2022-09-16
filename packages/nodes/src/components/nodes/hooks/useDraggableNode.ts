@@ -3,8 +3,8 @@ import { useCallback, useRef } from 'react'
 import { useDispatch, useStore, useStoreRef } from '$'
 import { useImperativeEvent } from '@/hooks'
 
-export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGRectElement> => {
-    const nodeRef = useRef<SVGRectElement>(null)
+export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement> => {
+  const nodeRef = useRef<SVGGElement>(null)
 
   const { setNodePosition } = useDispatch()
 

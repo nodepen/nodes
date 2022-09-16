@@ -65,6 +65,7 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
           </svg>
         </CameraOverlay>
       </Layer>
+      <Layer id="np-shadow-layer" z={30}></Layer>
       <Layer id="np-grid-canvas-layer" z={20}>
         <GridContainer />
       </Layer>

@@ -1,6 +1,9 @@
 module.exports = {
   prefix: "np-",
   content: ["./src/**/*.tsx"],
+  future: {
+    hoverOnlyWhenSupported: true,
+  },
   theme: {
     colors: {
       "dark": "#414141",

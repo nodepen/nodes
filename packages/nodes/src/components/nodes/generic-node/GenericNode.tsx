@@ -1,5 +1,5 @@
-import React, { useRef, useCallback } from 'react'
-import { useDispatch, useStore } from '$'
+import React from 'react'
+import { useStore } from '$'
 import { COLORS } from '@/constants'
 import { useDraggableNode } from '../hooks'
 
@@ -10,14 +10,14 @@ type GenericNodeProps = {
 const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
   const node = useStore((store) => store.document.nodes[id])
 
-  const draggableRef = useDraggableNode(id)
+  const draggableTargetRef = useDraggableNode(id)
 
   console.log(`Rendered node ${id}`)
 
   const { position } = node
 
   return (
-    <>
+    <g id={`generic-node-${id}`} ref={draggableTargetRef}>
       {/* Shadow */}
       <rect
         x={position.x}
@@ -33,7 +33,6 @@ const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
       />
       {/* Body */}
       <rect
-        ref={draggableRef}
         x={position.x}
         y={-position.y}
         width={250}
@@ -49,7 +48,7 @@ const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
           console.log('wtf')
         }}
       />
-    </>
+    </g>
   )
 }
 
