@@ -8,6 +8,8 @@ type CameraControlProps = {
   children?: React.ReactNode
 }
 
+// TODO: Give camera div pointer capture
+
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 

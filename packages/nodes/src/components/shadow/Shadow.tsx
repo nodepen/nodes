@@ -1,6 +1,5 @@
-import React from 'react'
-import { useImperativeEvent } from '@/hooks'
-import { useState, useLayoutEffect, useCallback } from 'react'
+import React, { useCallback } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ShadowPortal } from './ShadowPortal'
 import { useStore } from '$'
 
@@ -19,18 +18,30 @@ const Shadow = ({ target }: ShadowProps): React.ReactElement | null => {
   const canvasRootRef = useStore((store) => store.registry.canvasRoot)
   const [dimensions, setDimensions] = useState<ShadowDimensions>()
 
-  const updateShadowDimensions = useCallback(() => {
-    const root = canvasRootRef.current ?? document.documentElement
-    const element = target.current
+  const resizeObserver = useRef<ResizeObserver>()
 
-    if (!element) {
+  const handleShadowResize = useCallback(() => {
+    console.log(
+      `⚙️ Resizing shadow for [${target.current?.id?.length ?? 0 > 1 ? target.current?.id : 'anonymous element'}]`
+    )
+
+    const rootElement = canvasRootRef.current ?? document.documentElement
+    const targetElement = target.current
+
+    if (!targetElement) {
       return
     }
 
     const SHADOW_OFFSET = 4
 
-    const { top: offsetTop, left: offsetLeft } = root.getBoundingClientRect()
-    const { width, height, top, left } = element.getBoundingClientRect()
+    const { top: offsetTop, left: offsetLeft } = rootElement.getBoundingClientRect()
+    const { width, height, top, left } = targetElement.getBoundingClientRect()
+
+    const { width: currentWidth, height: currentHeight } = dimensions ?? {}
+
+    if (width === currentWidth && height === currentHeight) {
+      return
+    }
 
     setDimensions({
       left: left - SHADOW_OFFSET - offsetLeft,
@@ -38,19 +49,30 @@ const Shadow = ({ target }: ShadowProps): React.ReactElement | null => {
       width,
       height,
     })
-  }, [target])
+  }, [dimensions])
 
-  useLayoutEffect(() => {
-    updateShadowDimensions()
-  }, [])
+  useEffect(() => {
+    resizeObserver.current = new ResizeObserver(handleShadowResize)
+  }, [handleShadowResize])
 
-  useImperativeEvent(target, 'resize', updateShadowDimensions)
+  useEffect(() => {
+    const element = target.current
+    const observer = resizeObserver.current
+
+    if (!element || !observer) {
+      return
+    }
+
+    observer.observe(element)
+
+    return () => {
+      observer.unobserve(element)
+    }
+  })
 
   if (!dimensions) {
     return null
   }
-
-  //   -4px 4px 0 0 rgba(123, 191, 165, 0.3)
 
   return (
     <ShadowPortal>
