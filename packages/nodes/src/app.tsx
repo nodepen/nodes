@@ -4,7 +4,7 @@ import '@/styles.css'
 import { COLORS } from '@/constants'
 import { useDispatch, useStore } from '$'
 import { AnnotationsContainer, ControlsContainer, GridContainer, NodesContainer } from '@/components'
-import { CameraOverlay, useCameraProps } from './components/camera'
+import { CameraOverlay, useCameraProps } from './components/layout/camera'
 
 type NodesProps = {
   document: Document

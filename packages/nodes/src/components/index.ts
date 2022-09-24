@@ -1,6 +1,6 @@
 export { AnnotationsContainer } from './annotations'
 export { ControlsContainer } from './controls'
-export { GridContainer } from './grid'
+export { GridContainer } from './layout/grid'
 export { NodesContainer } from './nodes/index'
 
 /**

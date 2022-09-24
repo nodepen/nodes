@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react'
-import { Shadow } from '@/components/shadow'
+import { Shadow } from '@/components/layout/shadow'
 
 const SidebarControl = (): React.ReactElement => {
   const testRefA = useRef<HTMLDivElement>(null)
