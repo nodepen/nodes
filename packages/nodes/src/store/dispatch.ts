@@ -11,7 +11,7 @@ export type RootDispatch = ReturnType<typeof createDispatch>
 
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
-    do: (callback: (state: RootState, get: BaseGetter) => void) => set((state) => callback(state, get)),
+    apply: (callback: (state: RootState, get: BaseGetter) => void) => set((state) => callback(state, get)),
     setCameraAspect: (aspect: number) => set(
       (state) => {
         state.camera.aspect = aspect
