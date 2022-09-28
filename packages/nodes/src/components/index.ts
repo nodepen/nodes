@@ -1,6 +1,7 @@
 export { AnnotationsContainer } from './annotations'
 export { ControlsContainer } from './controls'
 export { GridContainer } from './layout/grid'
+export { PseudoShadowsContainer } from './layout/pseudo-shadow'
 export { NodesContainer } from './nodes/index'
 
 /**

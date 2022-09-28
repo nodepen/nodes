@@ -1,3 +1,4 @@
-import Shadow from './Shadow'
+import PseudoShadowsContainer from './PseudoShadowsContainer'
 
-export { Shadow }
+export { PseudoShadowsContainer }
+export { usePseudoShadow } from './hooks'

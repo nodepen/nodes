@@ -7,7 +7,7 @@ type ShadowPortalProps = {
   children?: React.ReactNode
 }
 
-export const ShadowPortal = ({ children }: ShadowPortalProps): React.ReactElement | null => {
+export const PseudoShadowPortal = ({ children }: ShadowPortalProps): React.ReactElement | null => {
   const rootElementRef = useStore((store) => store.registry.canvasRoot)
 
   const shadowContainer = useMemo(() => {

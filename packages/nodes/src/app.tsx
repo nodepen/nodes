@@ -1,9 +1,8 @@
 import React, { useLayoutEffect } from 'react'
 import type { Document } from '@nodepen/core'
 import '@/styles.css'
-import { COLORS } from '@/constants'
 import { useDispatch, useStore } from '$'
-import { AnnotationsContainer, ControlsContainer, GridContainer, NodesContainer } from '@/components'
+import { ControlsContainer, GridContainer, PseudoShadowsContainer, NodesContainer } from '@/components'
 import { CameraOverlay, useCameraProps } from './components/layout/camera'
 
 type NodesProps = {
@@ -68,6 +67,7 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
       <Layer id="np-grid-canvas-layer" z={20}>
         <GridContainer />
       </Layer>
+      <PseudoShadowsContainer />
     </div>
   )
 }
