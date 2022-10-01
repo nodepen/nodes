@@ -29,7 +29,7 @@ namespace NodePen.Converters
         [JsonProperty("isOptional")]
         public bool IsOptional { get; set; }
 
-        public NodePenPortTemplate(IGH_Param parameter, int order)
+        public NodePenPortTemplate(IGH_Param parameter, int order = 0)
         {
             _order = order;
             _type = parameter.TypeName;

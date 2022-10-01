@@ -10,7 +10,29 @@ namespace NodePen.Converters
     {
         public static Dictionary<string, NodePenNodeTemplate> Templates = new Dictionary<string, NodePenNodeTemplate>();
 
-        public static void Configure(List<NodePenNodeTemplate> templates)
+        /// <summary>
+        /// Detect and initialize all components installed on the current Grasshopper instance.
+        /// </summary>
+        public static void Configure()
+        {
+            var templates = new List<NodePenNodeTemplate>();
+
+            var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;
+
+            foreach (var proxy in proxies)
+            {
+                if (proxy is IGH_Component component)
+                {
+                    Console.WriteLine(component.Params);
+                }
+                else
+                {
+                    Console.WriteLine(":(");
+                }
+            }
+        }
+
+        public static void ConfigureWith(List<NodePenNodeTemplate> templates)
         {
             Templates.Clear();
 
@@ -43,15 +65,15 @@ namespace NodePen.Converters
                 {
                     case GH_ObjectType.CompiledObject:
                         {
-
-
                             if (proxy.CreateInstance() is GH_Component instance)
                             {
                                 var type = instance.GetType();
 
-                                // foreach (var inputParameter in instance.Params.Input) {
-                                //     inputParameter.
-                                // }
+                                for (var i = 0; i < instance.Params.Input.Count; i++)
+                                {
+                                    var inputParameter = instance.Params.Input[i];
+
+                                }
                             }
 
                             continue;

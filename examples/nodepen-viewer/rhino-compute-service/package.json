@@ -1,8 +1,0 @@
-{
-  "name": "rhino-compute-service",
-  "private": true,
-  "scripts": {
-    "dev": "dotnet watch",
-    "build": "dotnet build"
-  }
-}

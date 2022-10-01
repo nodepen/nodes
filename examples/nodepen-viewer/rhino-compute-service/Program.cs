@@ -109,6 +109,7 @@ namespace Rhino.Compute
             // var document = new GrasshopperDocument(data);
 
             // Console.WriteLine($"Received .gh file with {document.GetObjectCount()} objects.");
+            NodePenConvert.Configure();
 
             return (Response)JsonConvert.SerializeObject(NodePenConvert.Serialize(data));
         }
