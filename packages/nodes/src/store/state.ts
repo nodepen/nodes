@@ -1,5 +1,6 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
+import type { LayoutTab } from '@/types'
 
 export type RootState = {
   document: NodePen.Document,
@@ -14,6 +15,16 @@ export type RootState = {
     /** ratio of screen space pixel to graph space unit */
     zoom: number
   },
+  layout: {
+    tabs: {
+      current: LayoutTab
+      configuration: {
+        [key in LayoutTab]: {
+          order: number
+        }
+      }
+    }
+  }
   registry: {
     canvasRoot: React.RefObject<HTMLDivElement>
     pseudoShadowTargets: {
@@ -67,6 +78,19 @@ export const initialState: RootState = {
       y: 0,
     },
     zoom: 1,
+  },
+  layout: {
+    tabs: {
+      current: 'graph',
+      configuration: {
+        'graph': {
+          order: 0
+        },
+        'model': {
+          order: 1
+        }
+      }
+    }
   },
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),

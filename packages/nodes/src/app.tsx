@@ -35,10 +35,10 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
 
   return (
     <div id="np-app-root" className="np-w-full np-h-full np-relative np-overflow-hidden" ref={canvasRootRef}>
-      <Layer id="np-controls-layer" z={90}>
+      <Layer id="np-controls-layer" tab="static" z={90}>
         <ControlsContainer />
       </Layer>
-      <Layer id="np-graph-canvas-layer" z={70}>
+      <Layer id="np-graph-canvas-layer" tab="graph" z={70}>
         <CameraOverlay>
           <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-rounded-md">
             <NodesContainer />
@@ -64,7 +64,7 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
           </svg>
         </CameraOverlay>
       </Layer>
-      <Layer id="np-grid-canvas-layer" z={20}>
+      <Layer id="np-grid-canvas-layer" tab="graph" z={20}>
         <GridContainer />
       </Layer>
       <PseudoShadowsContainer />
@@ -74,13 +74,39 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
 
 type LayerProps = {
   id: string
+  tab: 'static' | 'graph' | 'model'
   z: number
   children?: React.ReactNode
 }
 
-const Layer = ({ id, z, children }: LayerProps): React.ReactElement => {
+const Layer = ({ id, tab, z, children }: LayerProps): React.ReactElement => {
+  const activeTabConfiguration = useStore((store) => store.layout.tabs.configuration[store.layout.tabs.current])
+
+  const layerTabConfiguration = useStore((store) => {
+    switch (tab) {
+      case 'static': {
+        return { order: activeTabConfiguration.order }
+      }
+      default: {
+        return store.layout.tabs.configuration[tab]
+      }
+    }
+  })
+
+  const activeTabDelta = layerTabConfiguration.order - activeTabConfiguration.order
+
   return (
-    <div id={id} className="np-w-full np-h-full np-absolute np-pointer-events-none" style={{ zIndex: z }}>
+    <div
+      id={id}
+      className="np-w-full np-h-full np-absolute np-pointer-events-none np-overflow-hidden"
+      style={{
+        zIndex: z,
+        transition: 'transform',
+        transitionDuration: '300ms',
+        transitionTimingFunction: 'ease-out',
+        transform: `translateX(${activeTabDelta * 100}%)`,
+      }}
+    >
       {children}
     </div>
   )

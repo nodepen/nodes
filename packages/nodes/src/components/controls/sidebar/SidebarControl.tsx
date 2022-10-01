@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { usePseudoShadow } from '@/components/layout/pseudo-shadow'
+import { useDispatch } from '@/store'
 
 const SidebarControl = (): React.ReactElement => {
   const testRefA = usePseudoShadow()
@@ -7,6 +8,8 @@ const SidebarControl = (): React.ReactElement => {
   const testRefC = usePseudoShadow()
 
   const [testHeight, setTestHeight] = useState(144)
+
+  const { apply } = useDispatch()
 
   useEffect(() => {
     setTimeout(() => {
@@ -27,6 +30,19 @@ const SidebarControl = (): React.ReactElement => {
             ref={testRefB}
             id="np-control-b"
             className="np-w-full np-h-8 np-p-4 np-mb-3 np-bg-green np-rounded-md np-shadow-main np-pointer-events-auto"
+            onClick={() =>
+              apply((state) => {
+                switch (state.layout.tabs.current) {
+                  case 'graph': {
+                    state.layout.tabs.current = 'model'
+                    return
+                  }
+                  case 'model': {
+                    state.layout.tabs.current = 'graph'
+                  }
+                }
+              })
+            }
           />
           <div
             ref={testRefC}
