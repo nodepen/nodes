@@ -1,3 +1,0 @@
-[submodule "apps/gh/speckle-server"]
-	path = examples/speckle-viewer/speckle-server
-	url = https://github.com/specklesystems/speckle-server.git

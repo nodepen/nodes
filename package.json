@@ -34,6 +34,6 @@
   "workspaces": [
     "packages/core",
     "packages/nodes",
-    "examples/nodepen-viewer/nodepen-client"
+    "apps/nodepen-client"
   ]
 }
