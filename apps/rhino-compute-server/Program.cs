@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Topshelf;
 using Microsoft.Owin.Hosting;
 using Owin;
@@ -11,6 +12,8 @@ using Grasshopper.Kernel;
 using GH_IO.Serialization;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
+using Speckle.Core.Credentials;
+using Speckle.Core.Transports;
 
 namespace Rhino.Compute
 {
@@ -71,7 +74,7 @@ namespace Rhino.Compute
 
     public class Bootstrapper : Nancy.DefaultNancyBootstrapper
     {
-        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        protected override async void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
             // Load Grasshopper
             var pluginObject = Rhino.RhinoApp.GetPlugInObject("Grasshopper");
@@ -84,16 +87,61 @@ namespace Rhino.Compute
             Class1.Test();
 
             // var account = new Speckle.Core.Credentials.Account();
+            var account = new Account()
+            {
+                token = "8ac998dd805648be63a69a8e0480d07a1e06c6465e",
+                serverInfo = new ServerInfo()
+                {
+                    url = "http://localhost:3000",
+                    company = "NodePen"
+                },
+                userInfo = new UserInfo()
+                {
+                    email = "chuck@nodepen.io"
+                }
+            };
 
-            var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
-            var accounts = Speckle.Core.Credentials.AccountManager.GetAccounts(streamUrl);
+            // var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
+            var streamId = "b0d3a3c122";
+
+            var client = new Client(account);
+
+            var transport = new ServerTransport(account, streamId);
 
             var data = new Base();
-            data["test"] = "Some Value";
+            data["test"] = "Some Value 2";
 
-            var commitId = Helpers.Send(streamUrl, data, "Test commit.").Result;
+            var objectId = await Operations.Send(
+                data,
+                new List<ITransport> { transport },
+                useDefaultCache: true,
+                disposeTransports: true
+            );
+
+            Console.WriteLine($"Successful object creation {objectId}");
+
+            var commitId = await client.CommitCreate(
+                new CommitCreateInput()
+                {
+                    streamId = streamId,
+                    branchName = "main",
+                    objectId = objectId,
+                    message = "howdy!",
+                    sourceApplication = "NodePen",
+                    totalChildrenCount = 1
+                }
+            );
+
+            // var commitId = client.CommitCreate(new CommitCreateInput()
+            // {
+            //     streamId = "b0d3a3c122",
+            //     branchName = "main",
+            //     objectId = "test",
+            // }).Result;
 
             Console.WriteLine($"Successful commit: {commitId}");
+
+            // Console.WriteLine(stream);
 
             base.ApplicationStartup(container, pipelines);
         }
