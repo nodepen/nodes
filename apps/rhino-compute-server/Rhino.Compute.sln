@@ -5,7 +5,7 @@ VisualStudioVersion = 17.1.32328.378
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rhino.Compute", "Rhino.Compute.csproj", "{1D0B8016-A827-414D-95C6-2DB6BEA4360D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nodepen.Converters", "..\..\..\packages\converters\Nodepen.Converters.csproj", "{DD94CFE1-569B-488E-9B1C-9F5BF2C04CD4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Nodepen.Converters", "..\..\packages\converters\Nodepen.Converters.csproj", "{DD94CFE1-569B-488E-9B1C-9F5BF2C04CD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

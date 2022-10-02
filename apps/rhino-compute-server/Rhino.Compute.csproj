@@ -28,7 +28,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\packages\converters\Nodepen.Converters.csproj" />
+    <ProjectReference Include="..\..\packages\converters\Nodepen.Converters.csproj" />
   </ItemGroup>
 
   <ItemGroup>
