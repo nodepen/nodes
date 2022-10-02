@@ -9,6 +9,8 @@ using NodePen.Converters;
 using Newtonsoft.Json;
 using Grasshopper.Kernel;
 using GH_IO.Serialization;
+using Speckle.Core.Api;
+using Speckle.Core.Models;
 
 namespace Rhino.Compute
 {
@@ -80,6 +82,18 @@ namespace Rhino.Compute
             }
 
             Class1.Test();
+
+            // var account = new Speckle.Core.Credentials.Account();
+
+            var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
+            var accounts = Speckle.Core.Credentials.AccountManager.GetAccounts(streamUrl);
+
+            var data = new Base();
+            data["test"] = "Some Value";
+
+            var commitId = Helpers.Send(streamUrl, data, "Test commit.").Result;
+
+            Console.WriteLine($"Successful commit: {commitId}");
 
             base.ApplicationStartup(container, pipelines);
         }
