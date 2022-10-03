@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Topshelf;
 using Microsoft.Owin.Hosting;
 using Owin;
@@ -74,19 +75,8 @@ namespace Rhino.Compute
 
     public class Bootstrapper : Nancy.DefaultNancyBootstrapper
     {
-        protected override async void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        private async Task<string> TryThis()
         {
-            // Load Grasshopper
-            var pluginObject = Rhino.RhinoApp.GetPlugInObject("Grasshopper");
-            var runheadless = pluginObject?.GetType().GetMethod("RunHeadless");
-            if (runheadless != null)
-            {
-                runheadless.Invoke(pluginObject, null);
-            }
-
-            Class1.Test();
-
-            // var account = new Speckle.Core.Credentials.Account();
             var account = new Account()
             {
                 token = "8ac998dd805648be63a69a8e0480d07a1e06c6465e",
@@ -101,36 +91,79 @@ namespace Rhino.Compute
                 }
             };
 
-            // var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
             var streamId = "b0d3a3c122";
 
             var client = new Client(account);
 
             var transport = new ServerTransport(account, streamId);
 
+            // var ok = await Helpers.Receive("http://localhost:3000/streams/b0d3a3c122/branches/main");
+            // Console.WriteLine(Operations.Serialize(ok));
+
             var data = new Base();
             data["test"] = "Some Value 2";
 
-            var objectId = await Operations.Send(
-                data,
-                new List<ITransport> { transport },
-                useDefaultCache: true,
-                disposeTransports: true
-            );
+            var commitId = await Helpers.Send("http://localhost:3000/streams/b0d3a3c122/branches/main", data, "Test message");
 
-            Console.WriteLine($"Successful object creation {objectId}");
+            // var objectId = await Operations.Send(
+            //     data,
+            //     new List<ITransport> { transport },
+            //     useDefaultCache: false,
+            //     disposeTransports: false,
+            //     onErrorAction: new Action<string, Exception>((a, b) =>
+            //     {
+            //         Console.WriteLine("Error:");
+            //         Console.WriteLine(a);
+            //         Console.WriteLine(b.Message);
+            //     }),
+            //     onProgressAction: new Action<System.Collections.Concurrent.ConcurrentDictionary<string, int>>((a) =>
+            //     {
+            //         Console.WriteLine("Progress:");
 
-            var commitId = await client.CommitCreate(
-                new CommitCreateInput()
-                {
-                    streamId = streamId,
-                    branchName = "main",
-                    objectId = objectId,
-                    message = "howdy!",
-                    sourceApplication = "NodePen",
-                    totalChildrenCount = 1
-                }
-            );
+            //         foreach (var key in a.Keys)
+            //         {
+            //             a.TryGetValue(key, out var val);
+
+            //             Console.WriteLine(key);
+            //             Console.WriteLine(val);
+            //         }
+            //     })
+            // );
+
+            // Console.WriteLine($"Successful object creation {objectId}");
+
+            // var commitId = await client.CommitCreate(
+            //     new CommitCreateInput()
+            //     {
+            //         streamId = streamId,
+            //         branchName = "main",
+            //         objectId = objectId,
+            //         message = "howdy!",
+            //         sourceApplication = ".net",
+            //         totalChildrenCount = 0
+            //     }
+            // );
+
+            return commitId;
+        }
+        protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
+        {
+            // Load Grasshopper
+            var pluginObject = Rhino.RhinoApp.GetPlugInObject("Grasshopper");
+            var runheadless = pluginObject?.GetType().GetMethod("RunHeadless");
+            if (runheadless != null)
+            {
+                runheadless.Invoke(pluginObject, null);
+            }
+
+            Class1.Test();
+
+            // var account = new Speckle.Core.Credentials.Account();
+
+
+            // var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
+
+            var commitId = TryThis().Result;
 
             // var commitId = client.CommitCreate(new CommitCreateInput()
             // {

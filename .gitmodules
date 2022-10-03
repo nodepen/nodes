@@ -1,3 +1,6 @@
 [submodule "apps/speckle-server"]
 	path = apps/speckle-server
 	url = https://github.com/specklesystems/speckle-server.git
+[submodule "packages/speckle-sharp"]
+	path = packages/speckle-sharp
+	url = git@github.com:specklesystems/speckle-sharp.git
