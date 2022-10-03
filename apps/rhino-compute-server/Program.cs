@@ -24,7 +24,7 @@ namespace Rhino.Compute
 
         public static IDisposable RhinoCore { get; set; }
 
-        private static async Task<string> TryThis()
+        public static async Task<string> TryThis()
         {
             var account = new Account()
             {
@@ -50,10 +50,14 @@ namespace Rhino.Compute
             // Console.WriteLine(Operations.Serialize(ok));
 
             var data = new Base();
-            data["test"] = "Some Value 2";
+            data["random"] = new Random().Next();
 
-            Console.WriteLine("Sending!");
-            var commitId = await Helpers.Send("http://localhost:3000/streams/b0d3a3c122/branches/main", data, "Test message", useDefaultCache: false, account: account);
+            var commitId = await Helpers.Send(
+                stream: "http://localhost:3000/streams/b0d3a3c122/branches/main",
+                data: data,
+                message: "Test message",
+                account: account
+            );
 
             // var objectId = await Operations.Send(
             //     data,
@@ -99,18 +103,16 @@ namespace Rhino.Compute
 
         static void Main(string[] args)
         {
-            var commitId = TryThis().Result;
+            RhinoInside.Resolver.Initialize();
 
+            var commitId = TryThis().Result;
             Console.WriteLine(commitId);
 
-            // RhinoInside.Resolver.Initialize();
-
-            // HostFactory.Run((Host) =>
-            // {
-            //     Host.Service<SelfHostService>();
-            //     Host.SetDisplayName("NodePen");
-            // });
-
+            HostFactory.Run((Host) =>
+            {
+                Host.Service<SelfHostService>();
+                Host.SetDisplayName("NodePen");
+            });
         }
 
     }
@@ -170,7 +172,6 @@ namespace Rhino.Compute
             // var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
 
             // var commitId = TryThis().Result;
-            var commitId = "ok";
 
             // var commitId = client.CommitCreate(new CommitCreateInput()
             // {
@@ -178,8 +179,6 @@ namespace Rhino.Compute
             //     branchName = "main",
             //     objectId = "test",
             // }).Result;
-
-            Console.WriteLine($"Successful commit: {commitId}");
 
             // Console.WriteLine(stream);
 
