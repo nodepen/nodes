@@ -8,13 +8,13 @@ using Nancy;
 using Nancy.TinyIoc;
 using Nancy.Bootstrapper;
 using NodePen.Converters;
-using Newtonsoft.Json;
 using Grasshopper.Kernel;
 using GH_IO.Serialization;
 using Speckle.Core.Api;
 using Speckle.Core.Models;
 using Speckle.Core.Credentials;
 using Speckle.Core.Transports;
+using Speckle.Newtonsoft.Json;
 
 namespace Rhino.Compute
 {
@@ -24,58 +24,7 @@ namespace Rhino.Compute
 
         public static IDisposable RhinoCore { get; set; }
 
-        static void Main(string[] args)
-        {
-            RhinoInside.Resolver.Initialize();
-
-            HostFactory.Run((Host) =>
-            {
-                Host.Service<SelfHostService>();
-                Host.SetDisplayName("NodePen");
-            });
-
-        }
-
-    }
-
-    internal class SelfHostService : ServiceControl
-    {
-
-        public bool Start(HostControl host)
-        {
-            // Start headless Rhino process
-            Console.WriteLine($"Rhino system directory: {RhinoInside.Resolver.RhinoSystemDirectory}");
-            Program.RhinoCore = new Rhino.Runtime.InProcess.RhinoCore(null, Rhino.Runtime.InProcess.WindowStyle.NoWindow);
-
-            // Start web server
-            var options = new StartOptions();
-            options.Urls.Add("http://localhost:6500");
-
-            WebApp.Start<Startup>(options);
-
-            return true;
-        }
-
-        public bool Stop(HostControl host)
-        {
-            return true;
-        }
-
-    }
-
-    internal class Startup
-    {
-
-        public void Configuration(IAppBuilder app)
-        {
-            app.UseNancy();
-        }
-
-    }
-
-    public class Bootstrapper : Nancy.DefaultNancyBootstrapper
-    {
-        private async Task<string> TryThis()
+        private static async Task<string> TryThis()
         {
             var account = new Account()
             {
@@ -103,7 +52,8 @@ namespace Rhino.Compute
             var data = new Base();
             data["test"] = "Some Value 2";
 
-            var commitId = await Helpers.Send("http://localhost:3000/streams/b0d3a3c122/branches/main", data, "Test message");
+            Console.WriteLine("Sending!");
+            var commitId = await Helpers.Send("http://localhost:3000/streams/b0d3a3c122/branches/main", data, "Test message", useDefaultCache: false, account: account);
 
             // var objectId = await Operations.Send(
             //     data,
@@ -146,6 +96,62 @@ namespace Rhino.Compute
 
             return commitId;
         }
+
+        static void Main(string[] args)
+        {
+            var commitId = TryThis().Result;
+
+            Console.WriteLine(commitId);
+
+            // RhinoInside.Resolver.Initialize();
+
+            // HostFactory.Run((Host) =>
+            // {
+            //     Host.Service<SelfHostService>();
+            //     Host.SetDisplayName("NodePen");
+            // });
+
+        }
+
+    }
+
+    internal class SelfHostService : ServiceControl
+    {
+
+        public bool Start(HostControl host)
+        {
+            // Start headless Rhino process
+            Console.WriteLine($"Rhino system directory: {RhinoInside.Resolver.RhinoSystemDirectory}");
+            Program.RhinoCore = new Rhino.Runtime.InProcess.RhinoCore(null, Rhino.Runtime.InProcess.WindowStyle.NoWindow);
+
+            // Start web server
+            var options = new StartOptions();
+            options.Urls.Add("http://localhost:6500");
+
+            WebApp.Start<Startup>(options);
+
+            return true;
+        }
+
+        public bool Stop(HostControl host)
+        {
+            return true;
+        }
+
+    }
+
+    internal class Startup
+    {
+
+        public void Configuration(IAppBuilder app)
+        {
+            app.UseNancy();
+        }
+
+    }
+
+    public class Bootstrapper : Nancy.DefaultNancyBootstrapper
+    {
         protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
         {
             // Load Grasshopper
@@ -163,7 +169,8 @@ namespace Rhino.Compute
 
             // var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
 
-            var commitId = TryThis().Result;
+            // var commitId = TryThis().Result;
+            var commitId = "ok";
 
             // var commitId = client.CommitCreate(new CommitCreateInput()
             // {

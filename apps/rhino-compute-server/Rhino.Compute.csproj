@@ -24,14 +24,15 @@
     <PackageReference Include="Nancy" Version="1.4.4" />
     <PackageReference Include="Nancy.Owin" Version="1.4.1" />
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
-    <!-- <PackageReference Include="Speckle.Objects.Converter.Rhino7" Version="2.8.0" /> -->
+    <PackageReference Include="Speckle.Core" Version="2.8.0" />
+    <PackageReference Include="Speckle.Objects" Version="2.8.0" />
+    <PackageReference Include="Speckle.Objects.Converter.Rhino7" Version="2.8.0" />
+    <PackageReference Include="Speckle.Objects.Converter.Grasshopper7" Version="2.8.0" />
     <PackageReference Include="Topshelf" Version="4.1.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\packages\converters\Nodepen.Converters.csproj" />
-    <ProjectReference Include="..\..\packages\speckle-sharp\Core\Core\Core.csproj" />
-    <ProjectReference Include="..\..\packages\speckle-sharp\Objects\Objects\Objects.csproj" />
   </ItemGroup>
 
   <ItemGroup>
