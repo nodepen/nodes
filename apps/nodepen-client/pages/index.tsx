@@ -1,5 +1,9 @@
 import type { NextPage } from 'next'
-import { NodesApp } from '@nodepen/nodes'
+import dynamic from 'next/dynamic'
+
+const NodesApp = dynamic(() => import('../components/Viewer'), {
+  ssr: false,
+})
 
 const Home: NextPage = () => {
   return (
@@ -15,7 +19,7 @@ const Home: NextPage = () => {
           </div>
         </div> */}
         <div className="absolute" style={{ width: 1000, height: 750, top: 0, left: 0, zIndex: 10 }}>
-          <NodesApp document={{ id: '', nodes: {}, templates: {}, version: 1 }} />
+          <NodesApp />
         </div>
       </div>
     </div>
