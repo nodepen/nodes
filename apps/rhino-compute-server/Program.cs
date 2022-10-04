@@ -46,8 +46,8 @@ namespace Rhino.Compute
 
             var transport = new ServerTransport(account, streamId);
 
-            // var ok = await Helpers.Receive("http://localhost:3000/streams/b0d3a3c122/branches/main");
-            // Console.WriteLine(Operations.Serialize(ok));
+            var ok = await Helpers.Receive("http://localhost:3000/streams/b0d3a3c122/branches/main");
+            Console.WriteLine(Operations.Serialize(ok));
 
             var data = new Base();
             data["random"] = new Random().Next();
@@ -105,8 +105,8 @@ namespace Rhino.Compute
         {
             RhinoInside.Resolver.Initialize();
 
-            var commitId = TryThis().Result;
-            Console.WriteLine(commitId);
+            // var commitId = TryThis().Result;
+            // Console.WriteLine(commitId);
 
             HostFactory.Run((Host) =>
             {
@@ -193,6 +193,14 @@ namespace Rhino.Compute
         public ConverterEndpointsModule(Nancy.Routing.IRouteCacheProvider routeCacheProvider)
         {
             Post["/convert"] = _ => ConvertGrasshopperDocumentToNodePenDocument(Context);
+            Get["/"] = _ => DebugSpeckle(Context);
+        }
+
+        public Response DebugSpeckle(NancyContext ctx)
+        {
+            var commitId = Program.TryThis().Result;
+            Console.WriteLine(commitId);
+            return (Response)commitId;
         }
 
         public Response ConvertGrasshopperDocumentToNodePenDocument(Nancy.NancyContext ctx)

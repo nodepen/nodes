@@ -11,7 +11,9 @@
   "license": "MIT",
   "scripts": {
     "build": "npx turbo run build",
-    "dev": "npx turbo run dev"
+    "dev": "npx turbo run dev",
+    "dev:speckle": "cd apps/speckle-server && yarn dev:docker:up && yarn dev",
+    "dev:rhino": "cd apps/rhino-compute-server && dotnet watch"
   },
   "devDependencies": {
     "@testing-library/jest-dom": "^5.14.1",
