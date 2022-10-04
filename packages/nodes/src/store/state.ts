@@ -27,6 +27,7 @@ export type RootState = {
   }
   registry: {
     canvasRoot: React.RefObject<HTMLDivElement>
+    modelRoot: React.RefObject<HTMLDivElement>
     pseudoShadowTargets: {
       [shadowId: string]: React.RefObject<HTMLDivElement>
     }
@@ -94,6 +95,7 @@ export const initialState: RootState = {
   },
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
+    modelRoot: React.createRef<HTMLDivElement>(),
     pseudoShadowTargets: {}
   }
 }

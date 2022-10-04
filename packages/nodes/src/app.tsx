@@ -4,6 +4,7 @@ import '@/styles.css'
 import { useDispatch, useStore } from '$'
 import { ControlsContainer, GridContainer, PseudoShadowsContainer, NodesContainer } from '@/components'
 import { CameraOverlay, useCameraProps } from './components/layout/camera'
+import { SpeckleViewer } from './components/layout/speckle-viewer'
 
 type NodesProps = {
   document: Document
@@ -68,6 +69,9 @@ export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
         <GridContainer />
       </Layer>
       <PseudoShadowsContainer />
+      <Layer id="np-model-layer" tab="model" z={10}>
+        <SpeckleViewer />
+      </Layer>
     </div>
   )
 }
