@@ -1,0 +1,42 @@
+version: 2
+
+updates:
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+    allow:
+      - dependency-type: "direct"
+    open-pull-requests-limit: 1
+    reviewers:
+      - "cdriesler"
+
+  - package-ecosystem: "npm"
+    directory: "/packages/core"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/packages/nodes"
+    schedule:
+      interval: "daily"
+    allow:
+      - dependency-name: "@speckle/viewer"
+        dependency-type: "direct"
+    open-pull-requests-limit: 1
+    reviewers:
+      - "cdriesler"
+
+  - package-ecosystem: "nuget"
+    directory: "/packages/converters"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: "npm"
+    directory: "/apps/nodepen-client"
+    schedule:
+      interval: "weekly"
+    open-pull-requests-limit: 0
