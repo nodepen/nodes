@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { Viewer } from '@speckle/viewer'
+import { Viewer, DefaultViewerParams } from '@speckle/viewer'
 import { useStore } from '$'
 
 const SpeckleViewer = (): React.ReactElement => {
@@ -16,10 +16,22 @@ const SpeckleViewer = (): React.ReactElement => {
       return
     }
 
-    const v = new Viewer(container.current)
-    v.init().then(() => {
-      viewer.current = v
-    })
+    const v = new Viewer(container.current, { showStats: true, environmentSrc: '' })
+    viewer.current = v
+    v.init()
+      .then(() => {
+        console.log('OK!')
+        // return v.loadObject(
+        //   'http://localhost:3000/streams/b0d3a3c122/branches/main',
+        //   '8ac998dd805648be63a69a8e0480d07a1e06c6465e'
+        // )
+      })
+      // .then(() => {
+      //   console.log('Loaded!')
+      // })
+      .catch((e) => {
+        console.error(e)
+      })
   })
 
   return <div className="np-w-full np-h-full" ref={container} />
