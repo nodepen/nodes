@@ -40,24 +40,18 @@ namespace Rhino.Compute
                 }
             };
 
-            var streamId = "b0d3a3c122";
-
-            var client = new Client(account);
-
-            var transport = new ServerTransport(account, streamId);
-
-            var ok = await Helpers.Receive("http://localhost:3000/streams/b0d3a3c122/branches/main");
-            Console.WriteLine(Operations.Serialize(ok));
-
-            var data = new Base();
-            data["random"] = new Random().Next();
+            var data = new TestModel();
 
             var commitId = await Helpers.Send(
                 stream: "http://localhost:3000/streams/b0d3a3c122/branches/main",
                 data: data,
-                message: "Test message",
-                account: account
+                message: "Test commit",
+                account: account,
+                sourceApplication: "nodepen"
             );
+
+            var ok = await Helpers.Receive("http://localhost:3000/streams/b0d3a3c122/branches/main");
+            Console.WriteLine(Operations.Serialize(ok));
 
             // var objectId = await Operations.Send(
             //     data,

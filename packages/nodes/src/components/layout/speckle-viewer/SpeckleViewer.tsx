@@ -21,10 +21,10 @@ const SpeckleViewer = (): React.ReactElement => {
     v.init()
       .then(() => {
         console.log('OK!')
-        // return v.loadObject(
-        //   'http://localhost:3000/streams/b0d3a3c122/branches/main',
-        //   '8ac998dd805648be63a69a8e0480d07a1e06c6465e'
-        // )
+        return v.loadObject(
+          'http://localhost:3000/streams/b0d3a3c122/objects/1a3e431a1e89b2c864aef3729d461a0a',
+          '8ac998dd805648be63a69a8e0480d07a1e06c6465e'
+        )
       })
       // .then(() => {
       //   console.log('Loaded!')
@@ -34,7 +34,7 @@ const SpeckleViewer = (): React.ReactElement => {
       })
   })
 
-  return <div className="np-w-full np-h-full" ref={container} />
+  return <div className="np-w-full np-h-full np-pointer-events-auto" ref={container} />
 }
 
 export default React.memo(SpeckleViewer)
