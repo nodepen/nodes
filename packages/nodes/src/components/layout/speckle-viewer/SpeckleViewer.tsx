@@ -16,13 +16,15 @@ const SpeckleViewer = (): React.ReactElement => {
       return
     }
 
+    const id = 'a01e621ca9fb21c9b081e600d8197592'
+
     const v = new Viewer(container.current, { showStats: true, environmentSrc: '' })
     viewer.current = v
     v.init()
       .then(() => {
         console.log('OK!')
         return v.loadObject(
-          'http://localhost:3000/streams/b0d3a3c122/objects/1a3e431a1e89b2c864aef3729d461a0a',
+          `http://localhost:3000/streams/b0d3a3c122/objects/${id}`,
           '8ac998dd805648be63a69a8e0480d07a1e06c6465e'
         )
       })
@@ -30,6 +32,7 @@ const SpeckleViewer = (): React.ReactElement => {
       //   console.log('Loaded!')
       // })
       .catch((e) => {
+        console.log(`Failed to load object ${id}`)
         console.error(e)
       })
   })
