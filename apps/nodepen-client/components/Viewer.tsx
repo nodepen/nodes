@@ -10,7 +10,13 @@ const Viewer = (): React.ReactElement => {
   // console.log(error)
   // console.log(data)
 
-  return <NodesApp document={{ id: '', nodes: {}, version: 1 }} templates={data} />
+  return (
+    <NodesApp
+      document={{ id: '', nodes: {}, configuration: { pinnedPorts: [] }, version: 1 }}
+      templates={data}
+      stream={{ id: '', objects: [] }}
+    />
+  )
 }
 
 export default Viewer

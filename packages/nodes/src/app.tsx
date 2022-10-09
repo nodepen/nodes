@@ -9,6 +9,10 @@ import { SpeckleViewer } from './components/layout/speckle-viewer'
 type NodesProps = {
   document: Document
   templates: NodeTemplate[]
+  stream: {
+    id: string
+    objects: string[]
+  }
   onChange?: () => void
 }
 
