@@ -15,6 +15,9 @@ module.exports = {
       "error": "#FF7171",
       "warn": "#FFBE71"
     },
+    fontFamily: {
+      'sans': ['Barlow', 'ui-sans-serif']
+    },
     extend: {
       height: {
         vh: '100vh',

@@ -25,7 +25,9 @@ const SidebarControl = (): React.ReactElement => {
             ref={testRefA}
             id="np-control-a"
             className="np-w-full np-h-16 np-p-4 np-mb-3 np-bg-green np-rounded-md np-shadow-main np-pointer-events-auto"
-          />
+          >
+            <h1 className="np-font-sans">OK</h1>
+          </div>
           <div
             ref={testRefB}
             id="np-control-b"

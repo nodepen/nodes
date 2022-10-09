@@ -1,2 +1,9 @@
 @tailwind components;
 @tailwind utilities;
+
+@font-face {
+    font-family: Barlow;
+    font-style: normal;
+    font-weight: 400;
+    src: url('assets/barlow-semibold.ttf');
+}

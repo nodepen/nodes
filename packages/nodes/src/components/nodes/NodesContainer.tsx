@@ -13,6 +13,8 @@ const NodesContainer = (): React.ReactElement => {
         // Handle special templates (number slider, panel, etc)
         const { instanceId, templateId } = node
 
+        console.log(`${instanceId}:${templateId}`)
+
         switch (templateId) {
           case 'some-id':
             return null

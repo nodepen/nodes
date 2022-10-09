@@ -40,36 +40,49 @@ export const initialState: RootState = {
     nodes: {
       'test-element-id-a': {
         instanceId: 'test-element-id-a',
-        templateId: 'test-template-id',
+        templateId: '845527a6-5cea-4ae9-a667-96ae1667a4e8',
         position: {
-          x: 250,
-          y: -500
+          x: 475,
+          y: -375
         },
         dimensions: {
           width: 20,
           height: 20,
         },
         sources: {},
-        values: {},
-        inputs: {},
-        outputs: {},
+        values: {
+          ['input-a']: {},
+          ['input-b']: {
+            '{0}': [3]
+          },
+          ['input-c']: {
+            '{0}': [6]
+          },
+          ['input-d']: {}
+        },
+        inputs: {
+          ['input-a']: 0,
+          ['input-b']: 1,
+          ['input-c']: 2,
+          ['input-d']: 3
+        },
+        outputs: {
+          ['output-a']: 0,
+          ['output-b']: 1
+        },
       },
-      'test-element-id-b': {
-        instanceId: 'test-element-id-b',
-        templateId: 'test-template-id',
-        position: {
-          x: 650,
-          y: -450
+    },
+    configuration: {
+      pinnedPorts: [
+        {
+          nodeInstanceId: 'test-instance-a',
+          portInstanceId: 'input-b'
         },
-        dimensions: {
-          width: 20,
-          height: 20,
-        },
-        sources: {},
-        values: {},
-        inputs: {},
-        outputs: {},
-      }
+        {
+          nodeInstanceId: 'test-instance-a',
+          portInstanceId: 'input-c'
+        }
+      ]
     },
     version: 1
   },
