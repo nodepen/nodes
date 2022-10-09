@@ -3,6 +3,8 @@ using System.Linq;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GH_IO.Serialization;
+using Speckle.Newtonsoft.Json;
+using Speckle.Newtonsoft.Json.Converters;
 
 namespace NodePen.Converters
 {
@@ -55,12 +57,12 @@ namespace NodePen.Converters
 
                             foreach (var input in component.Params.Input)
                             {
-                                template.AddParameter(input, NodePenPortDirection.Input);
+                                template.AddParameter(input, "input");
                             }
 
                             foreach (var output in component.Params.Output)
                             {
-                                template.AddParameter(output, NodePenPortDirection.Output);
+                                template.AddParameter(output, "output");
                             }
 
                             // Console.WriteLine($"Loaded [{template.Name}] from [{template.LibraryName}]");

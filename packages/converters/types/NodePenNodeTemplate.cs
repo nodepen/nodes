@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using Newtonsoft.Json;
+using Speckle.Newtonsoft.Json;
 using Grasshopper.Kernel;
 
 namespace NodePen.Converters
@@ -19,7 +19,7 @@ namespace NodePen.Converters
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("nickname")]
+        [JsonProperty("nickName")]
         public string NickName { get; set; }
 
         [JsonProperty("description")]
@@ -57,9 +57,9 @@ namespace NodePen.Converters
             Icon = Convert.ToBase64String(bytes);
         }
 
-        public void AddParameter(IGH_Param parameter, NodePenPortDirection direction)
+        public void AddParameter(IGH_Param parameter, string direction)
         {
-            var currentParameterCount = direction == NodePenPortDirection.Input ? Inputs.Count : Outputs.Count;
+            var currentParameterCount = direction == "input" ? Inputs.Count : Outputs.Count;
 
             var template = new NodePenPortTemplate()
             {
@@ -78,6 +78,25 @@ namespace NodePen.Converters
 
             template.SetDirection(direction);
             template.SetOrder(currentParameterCount);
+
+            switch (direction)
+            {
+                case "input":
+                    {
+                        Inputs.Add(template);
+                        break;
+                    }
+                case "output":
+                    {
+                        Outputs.Add(template);
+                        break;
+                    }
+                default:
+                    {
+                        Console.WriteLine($"Unhandled port direction: [{direction}]");
+                        break;
+                    }
+            }
         }
 
     }

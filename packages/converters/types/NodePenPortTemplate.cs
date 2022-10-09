@@ -1,6 +1,7 @@
+using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
-using Newtonsoft.Json;
+using Speckle.Newtonsoft.Json;
 
 namespace NodePen.Converters
 {
@@ -8,22 +9,21 @@ namespace NodePen.Converters
     [JsonObject(MemberSerialization.OptOut)]
     public struct NodePenPortTemplate
     {
-        [JsonProperty("__order")]
-        public int Order { get; private set; }
 
-        [JsonProperty("__direction")]
-        public NodePenPortDirection Direction { get; private set; }
+        public int __order { get; private set; }
+
+        public string __direction { get; private set; }
 
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        [JsonProperty("nickname")]
+        [JsonProperty("nickName")]
         public string NickName { get; set; }
 
         [JsonProperty("description")]
         public string Description { get; set; }
 
-        [JsonProperty("type")]
+        [JsonProperty("typeName")]
         public string TypeName { get; set; }
 
         [JsonProperty("keywords")]
@@ -34,12 +34,12 @@ namespace NodePen.Converters
 
         public void SetOrder(int order)
         {
-            Order = order;
+            __order = order;
         }
 
-        public void SetDirection(NodePenPortDirection direction)
+        public void SetDirection(string direction)
         {
-            Direction = direction;
+            __direction = direction;
         }
 
     }
@@ -50,6 +50,31 @@ namespace NodePen.Converters
         Input,
         [EnumMember(Value = "output")]
         Output
+    }
+
+    public class PortDirectionConverter : JsonConverter
+    {
+        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        {
+            var direction = (NodePenPortDirection)value;
+            writer.WriteValue(direction == NodePenPortDirection.Input ? "input" : "output");
+        }
+
+        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+        {
+            var direction = (string)existingValue;
+            return direction == "input" ? 0 : 1;
+        }
+
+        public override bool CanRead
+        {
+            get { return true; }
+        }
+
+        public override bool CanConvert(Type objectType)
+        {
+            return objectType == typeof(NodePenPortDirection);
+        }
     }
 
 }

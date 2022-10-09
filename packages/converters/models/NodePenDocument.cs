@@ -1,6 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
+using Speckle.Newtonsoft.Json;
 using Grasshopper.Kernel;
 
 namespace NodePen.Converters
