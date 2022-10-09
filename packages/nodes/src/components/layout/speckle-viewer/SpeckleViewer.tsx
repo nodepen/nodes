@@ -22,7 +22,6 @@ const SpeckleViewer = (): React.ReactElement => {
     viewer.current = v
     v.init()
       .then(() => {
-        console.log('OK!')
         return v.loadObject(
           `http://localhost:3000/streams/b0d3a3c122/objects/${id}`,
           '8ac998dd805648be63a69a8e0480d07a1e06c6465e'

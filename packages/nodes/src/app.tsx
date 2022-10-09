@@ -1,5 +1,5 @@
 import React, { useLayoutEffect } from 'react'
-import type { Document } from '@nodepen/core'
+import type { Document, NodeTemplate } from '@nodepen/core'
 import '@/styles.css'
 import { useDispatch, useStore } from '$'
 import { ControlsContainer, GridContainer, PseudoShadowsContainer, NodesContainer } from '@/components'
@@ -8,10 +8,11 @@ import { SpeckleViewer } from './components/layout/speckle-viewer'
 
 type NodesProps = {
   document: Document
+  templates: NodeTemplate[]
   onChange?: () => void
 }
 
-export const NodesApp = ({ document }: NodesProps): React.ReactElement => {
+export const NodesApp = ({ document, templates }: NodesProps): React.ReactElement => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
   const { setCameraPosition } = useDispatch()

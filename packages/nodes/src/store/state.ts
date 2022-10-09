@@ -50,6 +50,7 @@ export const initialState: RootState = {
           height: 20,
         },
         sources: {},
+        values: {},
         inputs: {},
         outputs: {},
       },
@@ -65,11 +66,11 @@ export const initialState: RootState = {
           height: 20,
         },
         sources: {},
+        values: {},
         inputs: {},
         outputs: {},
       }
     },
-    templates: {},
     version: 1
   },
   camera: {

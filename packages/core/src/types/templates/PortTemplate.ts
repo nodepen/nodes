@@ -1,9 +1,10 @@
 export type PortTemplate = {
-  // __order: number,
-  // __type: string,
-  name: string,
+  __order: number
+  __direction: string
+  name: string
+  nickname: string
+  description: string
   type: string
-  nickname: string,
-  description: string,
+  keywords: string[]
   isOptional: boolean
 }

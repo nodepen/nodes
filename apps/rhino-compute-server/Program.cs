@@ -108,7 +108,7 @@ namespace Rhino.Compute
 
     }
 
-    internal class SelfHostService : ServiceControl
+    internal partial class SelfHostService : ServiceControl
     {
 
         public bool Start(HostControl host)
@@ -157,7 +157,21 @@ namespace Rhino.Compute
 
             NodePenConvert.Configure();
 
+            Nancy.Json.JsonSettings.MaxJsonLength = int.MaxValue;
+
             base.ApplicationStartup(container, pipelines);
+        }
+
+        protected override void RequestStartup(TinyIoCContainer container, IPipelines pipelines, NancyContext context)
+        {
+
+            pipelines.AfterRequest.AddItemToEndOfPipeline((ctx) =>
+            {
+                ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")
+                                .WithHeader("Access-Control-Allow-Methods", "POST,GET")
+                                .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
+
+            });
         }
 
     }

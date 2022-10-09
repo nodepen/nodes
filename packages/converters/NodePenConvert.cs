@@ -9,7 +9,7 @@ namespace NodePen.Converters
 
     public static class NodePenConvert
     {
-        public static Dictionary<string, NodePenNodeTemplate> Templates = new Dictionary<string, NodePenNodeTemplate>();
+        public static List<NodePenNodeTemplate> Templates = new List<NodePenNodeTemplate>();
 
         /// <summary>
         /// Detect and initialize all components installed on the current Grasshopper instance.
@@ -65,7 +65,7 @@ namespace NodePen.Converters
 
                             // Console.WriteLine($"Loaded [{template.Name}] from [{template.LibraryName}]");
 
-                            Templates.Add(template.Guid, template);
+                            Templates.Add(template);
 
                             break;
                         }
@@ -88,7 +88,7 @@ namespace NodePen.Converters
                             template.SetIcon(parameter.Icon_24x24);
                             template.LibraryName = libraryDefinitions.FirstOrDefault((library) => library.Id == definition.LibraryGuid)?.Name ?? "";
 
-                            Templates.Add(template.Guid, template);
+                            Templates.Add(template);
 
                             break;
                         }
@@ -106,11 +106,11 @@ namespace NodePen.Converters
         public static void ConfigureWith(List<NodePenNodeTemplate> templates)
         {
             Templates.Clear();
+            Templates.AddRange(templates);
 
-            foreach (NodePenNodeTemplate template in templates)
-            {
-                Templates.Add(template.Guid, template);
-            }
+            // TODO: Confirm provided templates exist in current session.
+
+            Console.WriteLine($"Configured NodePenConvert with {Templates.Count()} of {templates.Count()} provided templates.");
         }
 
         public static NodePenDocument Serialize(byte[] data)
