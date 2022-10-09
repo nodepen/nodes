@@ -4,6 +4,9 @@ import type { LayoutTab } from '@/types'
 
 export type RootState = {
   document: NodePen.Document,
+  templates: {
+    [templateId: string]: NodePen.NodeTemplate
+  },
   camera: {
     /** container div innerWidth / innerHeight in screen space */
     aspect: number
@@ -86,6 +89,7 @@ export const initialState: RootState = {
     },
     version: 1
   },
+  templates: {},
   camera: {
     aspect: 1.5,
     position: {

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import type { Document, NodeTemplate } from '@nodepen/core'
 import '@/styles.css'
 import { useDispatch, useStore } from '$'
@@ -19,7 +19,7 @@ type NodesProps = {
 export const NodesApp = ({ document, templates }: NodesProps): React.ReactElement => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
-  const { setCameraPosition } = useDispatch()
+  const { setCameraPosition, loadTemplates } = useDispatch()
 
   useLayoutEffect(() => {
     const canvas = canvasRootRef.current
@@ -34,6 +34,11 @@ export const NodesApp = ({ document, templates }: NodesProps): React.ReactElemen
 
     setCameraPosition(width / 2 + offset, height / -2 - offset)
   }, [])
+
+  useEffect(() => {
+    console.log('Loading templates!')
+    loadTemplates(templates ?? [])
+  }, [templates])
 
   const cameraProps = useCameraProps()
 

@@ -16,7 +16,9 @@ module.exports = {
       "warn": "#FFBE71"
     },
     fontFamily: {
-      'sans': ['Barlow', 'ui-sans-serif']
+      'sans': ['Barlow', 'ui-sans-serif'],
+      'mono': ['Overpass Mono', 'monospace'],
+      'panel': ['Overpass']
     },
     extend: {
       height: {

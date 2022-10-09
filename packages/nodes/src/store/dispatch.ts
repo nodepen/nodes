@@ -1,5 +1,6 @@
 import type { RootState } from './state'
 import { startTransition } from 'react'
+import type * as NodePen from '@nodepen/core'
 import shallow from 'zustand/shallow'
 import { useStore } from '$'
 
@@ -12,6 +13,17 @@ export type RootDispatch = ReturnType<typeof createDispatch>
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
     apply: (callback: (state: RootState, get: BaseGetter) => void) => set((state) => callback(state, get)),
+    loadTemplates: (templates: NodePen.NodeTemplate[]) => set(
+      (state) => {
+        state.templates = {}
+
+        for (const template of templates) {
+          state.templates[template.guid] = template
+        }
+      },
+      false,
+      'templates/loadTemplates'
+    ),
     setCameraAspect: (aspect: number) => set(
       (state) => {
         state.camera.aspect = aspect
