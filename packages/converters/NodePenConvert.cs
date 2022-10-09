@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
 using GH_IO.Serialization;
@@ -15,21 +16,91 @@ namespace NodePen.Converters
         /// </summary>
         public static void Configure()
         {
+            Templates.Clear();
+
             var templates = new List<NodePenNodeTemplate>();
 
-            var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;
+            var libraryDefinitions = Grasshopper.Instances.ComponentServer.Libraries.ToList();
+            var objectDefinitions = Grasshopper.Instances.ComponentServer.ObjectProxies;
 
-            foreach (var proxy in proxies)
+            foreach (var definition in objectDefinitions)
             {
-                if (proxy is IGH_Component component)
+                var instance = definition.CreateInstance();
+
+                switch (instance)
                 {
-                    Console.WriteLine(component.Params);
-                }
-                else
-                {
-                    Console.WriteLine(":(");
+                    case IGH_Component component:
+                        {
+                            var template = new NodePenNodeTemplate()
+                            {
+                                Guid = component.ComponentGuid.ToString(),
+                                Name = component.Name,
+                                NickName = component.NickName,
+                                Description = component.Description,
+                                Category = component.Category,
+                                Subcategory = component.SubCategory,
+                                IsObsolete = component.Obsolete,
+                                Keywords = new List<string>(),
+                                Inputs = new List<NodePenPortTemplate>(),
+                                Outputs = new List<NodePenPortTemplate>()
+                            };
+
+                            template.SetIcon(component.Icon_24x24);
+                            template.LibraryName = libraryDefinitions.FirstOrDefault((library) => library.Id == definition.LibraryGuid)?.Name ?? "";
+
+                            if (component.Keywords != null && component.Keywords.Count() > 0)
+                            {
+                                template.Keywords = component.Keywords.ToList();
+                            }
+
+                            foreach (var input in component.Params.Input)
+                            {
+                                template.AddParameter(input, NodePenPortDirection.Input);
+                            }
+
+                            foreach (var output in component.Params.Output)
+                            {
+                                template.AddParameter(output, NodePenPortDirection.Output);
+                            }
+
+                            // Console.WriteLine($"Loaded [{template.Name}] from [{template.LibraryName}]");
+
+                            Templates.Add(template.Guid, template);
+
+                            break;
+                        }
+                    case IGH_Param parameter:
+                        {
+                            var template = new NodePenNodeTemplate()
+                            {
+                                Guid = parameter.ComponentGuid.ToString(),
+                                Name = parameter.Name,
+                                NickName = parameter.NickName,
+                                Description = parameter.Description,
+                                Category = parameter.Category,
+                                Subcategory = parameter.SubCategory,
+                                IsObsolete = parameter.Obsolete,
+                                Keywords = new List<string>(),
+                                Inputs = new List<NodePenPortTemplate>(),
+                                Outputs = new List<NodePenPortTemplate>()
+                            };
+
+                            template.SetIcon(parameter.Icon_24x24);
+                            template.LibraryName = libraryDefinitions.FirstOrDefault((library) => library.Id == definition.LibraryGuid)?.Name ?? "";
+
+                            Templates.Add(template.Guid, template);
+
+                            break;
+                        }
+                    default:
+                        {
+                            Console.WriteLine($"Failed to load [{instance.GetType()}]");
+                            break;
+                        }
                 }
             }
+
+            Console.WriteLine($"Configured NodePenConvert with {Templates.Count()} locally installed components.");
         }
 
         public static void ConfigureWith(List<NodePenNodeTemplate> templates)

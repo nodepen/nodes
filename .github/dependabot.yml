@@ -25,6 +25,10 @@ updates:
     allow:
       - dependency-name: "@speckle/viewer"
         dependency-type: "direct"
+      - dependency-name: "immer"
+        dependency-type: "direct"
+      - dependency-name: "zustand"
+        dependency-type: "direct"
     open-pull-requests-limit: 1
     reviewers:
       - "cdriesler"

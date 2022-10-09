@@ -99,9 +99,6 @@ namespace Rhino.Compute
         {
             RhinoInside.Resolver.Initialize();
 
-            // var commitId = TryThis().Result;
-            // Console.WriteLine(commitId);
-
             HostFactory.Run((Host) =>
             {
                 Host.Service<SelfHostService>();
@@ -158,23 +155,7 @@ namespace Rhino.Compute
                 runheadless.Invoke(pluginObject, null);
             }
 
-            Class1.Test();
-
-            // var account = new Speckle.Core.Credentials.Account();
-
-
-            // var streamUrl = "http://localhost:3000/streams/b0d3a3c122";
-
-            // var commitId = TryThis().Result;
-
-            // var commitId = client.CommitCreate(new CommitCreateInput()
-            // {
-            //     streamId = "b0d3a3c122",
-            //     branchName = "main",
-            //     objectId = "test",
-            // }).Result;
-
-            // Console.WriteLine(stream);
+            NodePenConvert.Configure();
 
             base.ApplicationStartup(container, pipelines);
         }

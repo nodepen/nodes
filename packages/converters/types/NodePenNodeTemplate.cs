@@ -1,5 +1,10 @@
+using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
+using Grasshopper.Kernel;
 
 namespace NodePen.Converters
 {
@@ -38,14 +43,42 @@ namespace NodePen.Converters
         [JsonProperty("isObsolete")]
         public bool IsObsolete { get; set; }
 
-        [JsonProperty("isVariable")]
-        public bool IsVariable { get; set; }
-
         [JsonProperty("inputs")]
         public List<NodePenPortTemplate> Inputs { get; set; }
 
         [JsonProperty("outputs")]
         public List<NodePenPortTemplate> Outputs { get; set; }
+
+        public void SetIcon(Bitmap icon)
+        {
+            var stream = new MemoryStream();
+            icon.Save(stream, System.Drawing.Imaging.ImageFormat.Png);
+            var bytes = stream.ToArray();
+            Icon = Convert.ToBase64String(bytes);
+        }
+
+        public void AddParameter(IGH_Param parameter, NodePenPortDirection direction)
+        {
+            var currentParameterCount = direction == NodePenPortDirection.Input ? Inputs.Count : Outputs.Count;
+
+            var template = new NodePenPortTemplate()
+            {
+                Name = parameter.Name,
+                NickName = parameter.NickName,
+                Description = parameter.Description,
+                TypeName = parameter.TypeName.ToLower(),
+                IsOptional = parameter.Optional,
+                Keywords = new List<string>(),
+            };
+
+            if (parameter.Keywords != null && parameter.Keywords.Count() > 0)
+            {
+                template.Keywords = parameter.Keywords.ToList();
+            }
+
+            template.SetDirection(direction);
+            template.SetOrder(currentParameterCount);
+        }
 
     }
 
