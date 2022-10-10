@@ -36,7 +36,6 @@ export const NodesApp = ({ document, templates }: NodesProps): React.ReactElemen
   }, [])
 
   useEffect(() => {
-    console.log('Loading templates!')
     loadTemplates(templates ?? [])
   }, [templates])
 
