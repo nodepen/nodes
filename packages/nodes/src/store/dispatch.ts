@@ -17,6 +17,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
       (state) => {
         state.templates = {}
 
+        console.log(templates)
+
         for (const template of templates) {
           state.templates[template.guid] = template
         }

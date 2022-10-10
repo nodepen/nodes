@@ -1,20 +1,23 @@
 import React from 'react'
+import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { COLORS } from '@/constants'
 import { useDraggableNode } from '../hooks'
 
 type GenericNodeProps = {
   id: string
+  template: NodePen.NodeTemplate
 }
 
-const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
+const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => {
   const node = useStore((store) => store.document.nodes[id])
 
   const draggableTargetRef = useDraggableNode(id)
 
-  console.log(`Rendered node ${id}`)
-
   const { position } = node
+  const { nickName, inputs, outputs } = template
+
+  console.log(`⚙️⚙️⚙️ generic-node : ${id.split('-')[0]} : ${nickName.toLowerCase()}`)
 
   return (
     <g id={`generic-node-${id}`} ref={draggableTargetRef}>
@@ -44,9 +47,6 @@ const GenericNode = ({ id }: GenericNodeProps): React.ReactElement => {
         strokeWidth={2}
         vectorEffect="non-scaling-stroke"
         pointerEvents="auto"
-        onPointerDown={() => {
-          console.log('wtf')
-        }}
       />
     </g>
   )
