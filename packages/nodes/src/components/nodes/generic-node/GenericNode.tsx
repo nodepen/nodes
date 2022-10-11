@@ -33,6 +33,33 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   const nodeContentHeight = Math.max(nodeParameterHeight, COMPONENT_MINIMUM_HEIGHT)
   const nodeHeight = COMPONENT_INTERNAL_PADDING * 2 + nodeContentHeight
 
+  const inputColumnX = position.x
+  const inputColumnVerticalStep = inputs.length === 0 ? nodeContentHeight : nodeContentHeight / inputs.length
+  const inputPorts = inputs.map((input, i) => (
+    <circle
+      r={6}
+      cx={inputColumnX}
+      cy={-position.y + COMPONENT_INTERNAL_PADDING + (i + 1) * inputColumnVerticalStep - inputColumnVerticalStep / 2}
+      fill={COLORS.LIGHT}
+      stroke={COLORS.DARK}
+      strokeWidth={2}
+      vectorEffect="non-scaling-stroke"
+    />
+  ))
+  const inputPortShadows = inputs.map((_input, i) => (
+    <circle
+      r={6}
+      cx={inputColumnX}
+      cy={
+        -position.y + COMPONENT_INTERNAL_PADDING + 2 + (i + 1) * inputColumnVerticalStep - inputColumnVerticalStep / 2
+      }
+      fill={COLORS.DARK}
+      stroke={COLORS.DARK}
+      strokeWidth={2}
+      vectorEffect="non-scaling-stroke"
+    />
+  ))
+
   return (
     <g id={`generic-node-${id}`} ref={draggableTargetRef}>
       {/* Shadow */}
@@ -48,6 +75,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         strokeWidth={2}
         vectorEffect="non-scaling-stroke"
       />
+      {inputPortShadows}
       {/* Body */}
       <rect
         x={position.x}
@@ -75,6 +103,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         vectorEffect="non-scaling-stroke"
         pointerEvents="none"
       />
+      {inputPorts}
     </g>
   )
 }
