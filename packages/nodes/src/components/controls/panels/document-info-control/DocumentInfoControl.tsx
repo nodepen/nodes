@@ -1,5 +1,5 @@
 import React from 'react'
-import { ControlPanel } from '../common'
+import { ControlPanel } from '../../common'
 
 export const DocumentInfoControl = (): React.ReactElement => {
   return (

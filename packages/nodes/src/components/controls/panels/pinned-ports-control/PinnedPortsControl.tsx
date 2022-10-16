@@ -1,7 +1,7 @@
 import React from 'react'
 import type { RootStore } from '$'
 import { COLORS } from '@/constants'
-import { ControlPanel } from '../common'
+import { ControlPanel } from '../../common'
 
 type PinnedPortsControlProps = {
   configuration: RootStore['document']['configuration']

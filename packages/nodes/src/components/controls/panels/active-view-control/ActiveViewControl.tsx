@@ -1,5 +1,5 @@
 import React from 'react'
-import { ControlPanel } from '../common'
+import { ControlPanel } from '../../common'
 import { useDispatch } from '$'
 import { useActiveViewTransform } from '@/hooks'
 import { COLORS } from '@/constants'

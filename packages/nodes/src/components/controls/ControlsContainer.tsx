@@ -1,8 +1,6 @@
 import React from 'react'
 import { useStore } from '$'
-import { ActiveViewControl } from './active-view-control'
-import { PinnedPortsControl } from './pinned-ports-control'
-import { DocumentInfoControl } from './document-info-control'
+import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl } from './panels'
 
 const ControlsContainer = (): React.ReactElement => {
   const configuration = useStore((store) => store.document.configuration)
