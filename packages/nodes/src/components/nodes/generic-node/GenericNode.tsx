@@ -33,32 +33,60 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   const nodeContentHeight = Math.max(nodeParameterHeight, COMPONENT_MINIMUM_HEIGHT)
   const nodeHeight = COMPONENT_INTERNAL_PADDING * 2 + nodeContentHeight
 
-  const inputColumnX = position.x
-  const inputColumnVerticalStep = inputs.length === 0 ? nodeContentHeight : nodeContentHeight / inputs.length
-  const inputPorts = inputs.map((input, i) => (
-    <circle
-      r={6}
-      cx={inputColumnX}
-      cy={-position.y + COMPONENT_INTERNAL_PADDING + (i + 1) * inputColumnVerticalStep - inputColumnVerticalStep / 2}
-      fill={COLORS.LIGHT}
-      stroke={COLORS.DARK}
-      strokeWidth={2}
-      vectorEffect="non-scaling-stroke"
-    />
-  ))
-  const inputPortShadows = inputs.map((_input, i) => (
-    <circle
-      r={6}
-      cx={inputColumnX}
-      cy={
-        -position.y + COMPONENT_INTERNAL_PADDING + 2 + (i + 1) * inputColumnVerticalStep - inputColumnVerticalStep / 2
-      }
-      fill={COLORS.DARK}
-      stroke={COLORS.DARK}
-      strokeWidth={2}
-      vectorEffect="non-scaling-stroke"
-    />
-  ))
+  const getInputColumnPosition = (orderNumber: number): [x: number, y: number] => {
+    const x = position.x
+
+    const inputColumnVerticalStep = inputs.length === 0 ? nodeContentHeight : nodeContentHeight / inputs.length
+
+    const currentVerticalNodePosition = -position.y
+    const currentVerticalPadding = COMPONENT_INTERNAL_PADDING
+    const currentVerticalPortPosition = orderNumber * inputColumnVerticalStep
+    const currentVerticalPortCenterOffset = inputColumnVerticalStep / 2
+
+    const y =
+      currentVerticalNodePosition +
+      currentVerticalPadding +
+      currentVerticalPortPosition +
+      currentVerticalPortCenterOffset
+
+    return [x, y]
+  }
+
+  const inputPorts = inputs.map((input, i) => {
+    const [x, y] = getInputColumnPosition(i)
+
+    return (
+      <circle
+        r={6}
+        cx={x}
+        cy={y}
+        fill={COLORS.LIGHT}
+        stroke={COLORS.DARK}
+        strokeWidth={2}
+        vectorEffect="non-scaling-stroke"
+      />
+    )
+  })
+
+  const inputPortShadows = inputs.map((_input, i) => {
+    const [x, y] = getInputColumnPosition(i)
+
+    return (
+      <circle
+        r={6}
+        cx={x}
+        cy={y + 2}
+        fill={COLORS.DARK}
+        stroke={COLORS.DARK}
+        strokeWidth={2}
+        vectorEffect="non-scaling-stroke"
+      />
+    )
+  })
+
+  // const inputPortLabels = inputs.map((input, i) => (
+  //   <
+  // ))
 
   return (
     <g id={`generic-node-${id}`} ref={draggableTargetRef}>
