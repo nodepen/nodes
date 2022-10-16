@@ -5,6 +5,7 @@ import { useDispatch, useStore } from '$'
 import { ControlsContainer, GridContainer, PseudoShadowsContainer, NodesContainer } from '@/components'
 import { CameraOverlay, useCameraProps } from './components/layout/camera'
 import { SpeckleViewer } from './components/layout/speckle-viewer'
+import { useActiveViewTransform } from './hooks'
 
 type NodesProps = {
   document: NodePen.Document
@@ -93,20 +94,7 @@ type LayerProps = {
 }
 
 const Layer = ({ id, tab, z, children }: LayerProps): React.ReactElement => {
-  const activeTabConfiguration = useStore((store) => store.layout.tabs.configuration[store.layout.tabs.current])
-
-  const layerTabConfiguration = useStore((store) => {
-    switch (tab) {
-      case 'static': {
-        return { order: activeTabConfiguration.order }
-      }
-      default: {
-        return store.layout.tabs.configuration[tab]
-      }
-    }
-  })
-
-  const activeTabDelta = layerTabConfiguration.order - activeTabConfiguration.order
+  const activeTabDelta = useActiveViewTransform(tab)
 
   return (
     <div

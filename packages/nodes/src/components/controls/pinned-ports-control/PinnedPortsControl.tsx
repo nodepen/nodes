@@ -1,6 +1,7 @@
 import React from 'react'
 import type { RootStore } from '$'
 import { COLORS } from '@/constants'
+import { ControlPanel } from '../common'
 
 type PinnedPortsControlProps = {
   configuration: RootStore['document']['configuration']
@@ -13,13 +14,28 @@ export const PinnedPortsControl = ({ configuration }: PinnedPortsControlProps): 
   const { pinnedPorts } = configuration
 
   return (
-    <>
-      <h3 className="np-mb-3 np-font-sans np-text-md np-text-darkgreen">Polygon Controls</h3>
+    <ControlPanel>
+      <div className="np-w-full np-flex np-justify-between np-items-center">
+        <h3 className="np-font-sans np-text-md np-text-darkgreen">Polygon Controls</h3>
+        <div className="np-h-full np-w-4 np-flex np-flex-col np-justify-center np-items-center">
+          <svg width={8} height={4} viewBox="0 0 10 5" className="np-overflow-visible">
+            <polyline
+              points="0,0 5,5 10,0"
+              fill="none"
+              stroke={COLORS.DARKGREEN}
+              strokeWidth="2px"
+              vectorEffect="non-scaling-stroke"
+              strokeLinecap="round"
+            />
+          </svg>
+        </div>
+      </div>
+
       {pinnedPorts.map((port, _i) => {
         const { nodeInstanceId, portInstanceId } = port
         return <PortControl key={`port-control-${nodeInstanceId}-${portInstanceId}`} portReference={port} />
       })}
-    </>
+    </ControlPanel>
   )
 }
 
@@ -51,7 +67,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
   const valueString = getDataTreeValueString(currentValue)
 
   return (
-    <div className="np-relative np-w-full np-h-8 np-mb-3 np-bg-pale np-rounded-sm">
+    <div className="np-relative np-w-full np-h-8 np-mt-3 np-bg-pale np-rounded-sm">
       <div
         className="np-absolute np-h-8 np-w-8 np-flex np-justify-center np-items-center"
         style={{ left: 0, top: 0, zIndex: 20 }}

@@ -18,7 +18,7 @@ const SpeckleViewer = (): React.ReactElement => {
 
     const id = 'a01e621ca9fb21c9b081e600d8197592'
 
-    const v = new Viewer(container.current, { showStats: true, environmentSrc: '' })
+    const v = new Viewer(container.current, { showStats: false, environmentSrc: '' })
     viewer.current = v
     v.init()
       .then(() => {
