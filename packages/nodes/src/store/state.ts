@@ -35,6 +35,9 @@ export type RootState = {
       [shadowId: string]: React.RefObject<HTMLDivElement>
     }
   }
+  callbacks: {
+    onChange: (document: NodePen.Document) => void
+  }
 }
 
 export const initialState: RootState = {
@@ -125,5 +128,8 @@ export const initialState: RootState = {
     canvasRoot: React.createRef<HTMLDivElement>(),
     modelRoot: React.createRef<HTMLDivElement>(),
     pseudoShadowTargets: {}
+  },
+  callbacks: {
+    onChange: () => { console.log('🐍 Incorrect [onChange] callback called!') }
   }
 }

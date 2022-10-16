@@ -12,6 +12,9 @@ const Viewer = (): React.ReactElement => {
       document={{ id: '', nodes: {}, configuration: { pinnedPorts: [] }, version: 1 }}
       templates={data}
       stream={{ id: '', objects: [] }}
+      onChange={(document) => {
+        console.log('Correct callback!')
+      }}
     />
   )
 }

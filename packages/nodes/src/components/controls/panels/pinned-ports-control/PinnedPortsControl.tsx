@@ -1,5 +1,5 @@
 import React from 'react'
-import type { RootStore } from '$'
+import { RootStore } from '$'
 import { COLORS } from '@/constants'
 import { ControlPanel } from '../../common'
 
@@ -39,7 +39,7 @@ export const PinnedPortsControl = ({ configuration }: PinnedPortsControlProps): 
   )
 }
 
-import { useStore } from '$'
+import { useStore, useDispatch } from '$'
 import shallow from 'zustand/shallow'
 import { getDataTreeValueString, tryGetSingleValue } from '@/utils/data'
 
@@ -49,6 +49,8 @@ type PortControlProps = {
 
 const PortControl = ({ portReference }: PortControlProps): React.ReactElement | null => {
   const { nodeInstanceId, portInstanceId } = portReference
+
+  const { apply } = useDispatch()
 
   const node = useStore((store) => store.document.nodes[nodeInstanceId])
   const templates = useStore((store) => store.templates, shallow)
@@ -85,6 +87,22 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
         type="text"
         defaultValue={valueString}
         style={{ left: 0, top: 0, zIndex: 10 }}
+        onBlur={(e) => {
+          const value = Number.parseInt(e.target.value)
+
+          apply((state) => {
+            state.document.nodes[nodeInstanceId].values[portInstanceId] = {
+              '{0}': [
+                {
+                  type: 'number',
+                  value: value,
+                },
+              ],
+            }
+
+            state.callbacks.onChange(state.document)
+          })
+        }}
       />
     </div>
     // <div className="np-mb-2 np-w-full np-flex np-flex-col">

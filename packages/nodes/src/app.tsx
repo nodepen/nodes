@@ -14,13 +14,13 @@ type NodesProps = {
     id: string
     objects: string[]
   }
-  onChange?: () => void
+  onChange?: (document: NodePen.Document) => void
 }
 
-export const NodesApp = ({ document, templates }: NodesProps): React.ReactElement => {
+export const NodesApp = ({ document, templates, onChange }: NodesProps): React.ReactElement => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
-  const { setCameraPosition, loadTemplates } = useDispatch()
+  const { setCameraPosition, loadTemplates, apply } = useDispatch()
 
   useLayoutEffect(() => {
     const canvas = canvasRootRef.current
@@ -35,6 +35,16 @@ export const NodesApp = ({ document, templates }: NodesProps): React.ReactElemen
 
     setCameraPosition(width / 2 + offset, height / -2 - offset)
   }, [])
+
+  useEffect(() => {
+    if (!onChange) {
+      return
+    }
+
+    apply((state) => {
+      state.callbacks.onChange = onChange
+    })
+  }, [onChange])
 
   useEffect(() => {
     loadTemplates(templates ?? [])
