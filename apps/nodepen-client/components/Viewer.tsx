@@ -7,9 +7,6 @@ const Viewer = (): React.ReactElement => {
     fetch('http://localhost:6500/grasshopper').then((res) => res.json())
   )
 
-  // console.log(error)
-  // console.log(data)
-
   return (
     <NodesApp
       document={{ id: '', nodes: {}, configuration: { pinnedPorts: [] }, version: 1 }}

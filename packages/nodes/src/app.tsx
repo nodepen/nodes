@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect } from 'react'
-import type { Document, NodeTemplate } from '@nodepen/core'
+import type * as NodePen from '@nodepen/core'
 import '@/styles.css'
 import { useDispatch, useStore } from '$'
 import { ControlsContainer, GridContainer, PseudoShadowsContainer, NodesContainer } from '@/components'
@@ -7,8 +7,8 @@ import { CameraOverlay, useCameraProps } from './components/layout/camera'
 import { SpeckleViewer } from './components/layout/speckle-viewer'
 
 type NodesProps = {
-  document: Document
-  templates: NodeTemplate[]
+  document: NodePen.Document
+  templates: NodePen.NodeTemplate[]
   stream: {
     id: string
     objects: string[]
