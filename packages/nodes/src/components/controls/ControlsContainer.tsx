@@ -26,7 +26,10 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
       {/* <SidebarControl /> */}
       <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-row np-justify-start np-items-center np-pointer-events-none np-z-50">
         <div className="np-h-full np-w-72 np-p-4 np-flex np-flex-col">
-          <div className="np-w-full np-flex-grow np-flex np-flex-col">{children}</div>
+          <div id="np-control-panels" className="np-w-full np-flex-grow np-flex np-flex-col">
+            {children}
+          </div>
+          <div id="np-navigation-panels" className="np-invisible" />
         </div>
       </div>
     </div>

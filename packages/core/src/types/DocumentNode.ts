@@ -1,3 +1,5 @@
+import type { DataTree } from "./data"
+
 export type DocumentNode = {
   instanceId: string
   templateId: string
@@ -20,7 +22,7 @@ export type DocumentNode = {
   }
   /** Data values manually set for inputs on this node. */
   values: {
-    [inputInstanceId: string]: unknown
+    [inputInstanceId: string]: DataTree
   }
   inputs: {
     [inputInstanceId: string]: number

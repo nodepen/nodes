@@ -56,10 +56,20 @@ export const initialState: RootState = {
         values: {
           ['input-a']: {},
           ['input-b']: {
-            '{0}': [3]
+            '{0}': [
+              {
+                type: 'number',
+                value: 3
+              }
+            ]
           },
           ['input-c']: {
-            '{0}': [6]
+            '{0}': [
+              {
+                type: 'number',
+                value: 6
+              }
+            ]
           },
           ['input-d']: {}
         },

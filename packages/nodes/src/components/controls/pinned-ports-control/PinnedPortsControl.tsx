@@ -23,6 +23,7 @@ export const PinnedPortsControl = ({ configuration }: PinnedPortsControlProps): 
 
 import { useStore } from '$'
 import shallow from 'zustand/shallow'
+import { getDataTreeValueString, tryGetSingleValue } from '@/utils/data'
 
 type PortControlProps = {
   portReference: RootStore['document']['configuration']['pinnedPorts'][0]
@@ -41,7 +42,11 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
     return null
   }
 
+  const currentValue = tryGetSingleValue(node.values[portInstanceId])
+
   const { name, nickName, typeName } = portTemplate
+
+  const valueString = getDataTreeValueString(currentValue)
 
   return (
     <div className="np-mb-2 np-w-full np-flex np-flex-col">
@@ -49,6 +54,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
       <p>
         {nickName} : {typeName}
       </p>
+      <p>{valueString}</p>
     </div>
   )
 }
