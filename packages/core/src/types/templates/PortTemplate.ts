@@ -4,7 +4,7 @@ export type PortTemplate = {
   name: string
   nickName: string
   description: string
-  type: string
+  typeName: string
   keywords: string[]
   isOptional: boolean
 }

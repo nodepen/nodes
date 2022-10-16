@@ -6,7 +6,7 @@ export type DataTreeValue =
     value: boolean
 }
 | {
-    type: 'number'
+    type: 'integer' | 'number'
     value: number
 }
 | {

@@ -78,11 +78,11 @@ export const initialState: RootState = {
     configuration: {
       pinnedPorts: [
         {
-          nodeInstanceId: 'test-instance-a',
+          nodeInstanceId: 'test-element-id-a',
           portInstanceId: 'input-b'
         },
         {
-          nodeInstanceId: 'test-instance-a',
+          nodeInstanceId: 'test-element-id-a',
           portInstanceId: 'input-c'
         }
       ]
