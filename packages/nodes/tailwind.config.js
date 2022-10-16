@@ -30,7 +30,8 @@ module.exports = {
         vw: '100vw',
       },
       boxShadow: {
-        main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)'
+        main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)',
+        input: 'inset -2px 2px 0px 0px rgba(123, 191, 165, 0.3)'
       }
     },
   },
