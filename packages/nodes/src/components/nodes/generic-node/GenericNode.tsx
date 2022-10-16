@@ -36,27 +36,50 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   const nodeContentHeight = Math.max(nodeParameterHeight, NODE_MINIMUM_HEIGHT)
   const nodeHeight = NODE_INTERNAL_PADDING * 2 + nodeContentHeight
 
-  const getInputColumnPosition = (orderNumber: number): [x: number, y: number] => {
-    const x = position.x
+  // TODO: Refactor out repetition, extract to util, add tests
+  const getPortColumnPosition = (orderNumber: number, direction: 'input' | 'output'): [x: number, y: number] => {
+    switch (direction) {
+      case 'input': {
+        const x = position.x
 
-    const inputColumnVerticalStep = inputs.length === 0 ? nodeContentHeight : nodeContentHeight / inputs.length
+        const columnVerticalStep = inputs.length === 0 ? nodeContentHeight : nodeContentHeight / inputs.length
 
-    const currentVerticalNodePosition = -position.y
-    const currentVerticalPadding = NODE_INTERNAL_PADDING
-    const currentVerticalPortPosition = orderNumber * inputColumnVerticalStep
-    const currentVerticalPortCenterOffset = inputColumnVerticalStep / 2
+        const currentVerticalNodePosition = -position.y
+        const currentVerticalPadding = NODE_INTERNAL_PADDING
+        const currentVerticalPortPosition = orderNumber * columnVerticalStep
+        const currentVerticalPortCenterOffset = columnVerticalStep / 2
 
-    const y =
-      currentVerticalNodePosition +
-      currentVerticalPadding +
-      currentVerticalPortPosition +
-      currentVerticalPortCenterOffset
+        const y =
+          currentVerticalNodePosition +
+          currentVerticalPadding +
+          currentVerticalPortPosition +
+          currentVerticalPortCenterOffset
 
-    return [x, y]
+        return [x, y]
+      }
+      case 'output': {
+        const x = position.x + nodeWidth
+
+        const columnVerticalStep = outputs.length === 0 ? nodeContentHeight : nodeContentHeight / outputs.length
+
+        const currentVerticalNodePosition = -position.y
+        const currentVerticalPadding = NODE_INTERNAL_PADDING
+        const currentVerticalPortPosition = orderNumber * columnVerticalStep
+        const currentVerticalPortCenterOffset = columnVerticalStep / 2
+
+        const y =
+          currentVerticalNodePosition +
+          currentVerticalPadding +
+          currentVerticalPortPosition +
+          currentVerticalPortCenterOffset
+
+        return [x, y]
+      }
+    }
   }
 
-  const inputPorts = inputs.map((input, i) => {
-    const [x, y] = getInputColumnPosition(i)
+  const inputPorts = inputs.map((_input, i) => {
+    const [x, y] = getPortColumnPosition(i, 'input')
 
     return (
       <circle
@@ -72,7 +95,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   })
 
   const inputPortShadows = inputs.map((_input, i) => {
-    const [x, y] = getInputColumnPosition(i)
+    const [x, y] = getPortColumnPosition(i, 'input')
 
     return (
       <circle
@@ -90,7 +113,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   const inputPortLabels = inputs.map((input, i) => {
     const { nickName } = input
 
-    const [x, y] = getInputColumnPosition(i)
+    const [x, y] = getPortColumnPosition(i, 'input')
 
     return (
       <text
@@ -99,6 +122,57 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         className="np-font-mono np-select-none"
         fontSize={NODE_PORT_LABEL_FONT_SIZE}
         fill={COLORS.DARK}
+      >
+        {nickName}
+      </text>
+    )
+  })
+
+  const outputPorts = outputs.map((_output, i) => {
+    const [x, y] = getPortColumnPosition(i, 'output')
+
+    return (
+      <circle
+        r={NODE_PORT_RADIUS}
+        cx={x}
+        cy={y}
+        fill={COLORS.LIGHT}
+        stroke={COLORS.DARK}
+        strokeWidth={2}
+        // vectorEffect="non-scaling-stroke"
+      />
+    )
+  })
+
+  const outputPortShadows = outputs.map((_output, i) => {
+    const [x, y] = getPortColumnPosition(i, 'output')
+
+    return (
+      <circle
+        r={NODE_PORT_RADIUS}
+        cx={x}
+        cy={y + 2}
+        fill={COLORS.DARK}
+        stroke={COLORS.DARK}
+        strokeWidth={2}
+        // vectorEffect="non-scaling-stroke"
+      />
+    )
+  })
+
+  const outputPortLabels = outputs.map((output, i) => {
+    const { nickName } = output
+
+    const [x, y] = getPortColumnPosition(i, 'output')
+
+    return (
+      <text
+        x={x - 12}
+        y={y - 3 + NODE_PORT_LABEL_FONT_SIZE / 2}
+        className="np-font-mono np-select-none"
+        fontSize={NODE_PORT_LABEL_FONT_SIZE}
+        fill={COLORS.DARK}
+        textAnchor="end"
       >
         {nickName}
       </text>
@@ -139,6 +213,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         // vectorEffect="non-scaling-stroke"
       />
       {inputPortShadows}
+      {outputPortShadows}
       {/* Body */}
       <rect
         x={position.x}
@@ -167,7 +242,9 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         pointerEvents="none"
       />
       {inputPorts}
+      {outputPorts}
       {inputPortLabels}
+      {outputPortLabels}
       {nodeLabel}
     </g>
   )
