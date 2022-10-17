@@ -24,7 +24,7 @@ namespace Rhino.Compute
 
         public static IDisposable RhinoCore { get; set; }
 
-        public static async Task<string> TryThis()
+        public static async Task<string> TryThis(DebugClass data)
         {
             var account = new Account()
             {
@@ -40,8 +40,6 @@ namespace Rhino.Compute
                 }
             };
 
-            var data = new TestModel();
-
             var commitId = await Helpers.Send(
                 stream: "http://localhost:3000/streams/b0d3a3c122/branches/main",
                 data: data,
@@ -50,8 +48,8 @@ namespace Rhino.Compute
                 sourceApplication: "nodepen"
             );
 
-            var ok = await Helpers.Receive("http://localhost:3000/streams/b0d3a3c122/branches/main");
-            Console.WriteLine(Operations.Serialize(ok));
+            // var ok = await Helpers.Receive("http://localhost:3000/streams/b0d3a3c122/branches/main");
+            // Console.WriteLine(Operations.Serialize(ok));
 
             // var objectId = await Operations.Send(
             //     data,
@@ -189,7 +187,7 @@ namespace Rhino.Compute
 
         public Response DebugSpeckle(NancyContext ctx)
         {
-            var commitId = Program.TryThis().Result;
+            var commitId = Program.TryThis(new DebugClass()).Result;
             Console.WriteLine(commitId);
             return (Response)commitId;
         }

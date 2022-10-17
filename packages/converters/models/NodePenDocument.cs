@@ -21,7 +21,7 @@ namespace NodePen.Converters
         [JsonProperty("version")]
         public int Version { get; private set; } = 1;
 
-        public Base Result { get; private set; }
+        public DebugClass Result { get; private set; }
 
         public NodePenDocument() { }
 

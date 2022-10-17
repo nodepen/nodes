@@ -30,7 +30,11 @@ namespace Rhino.Compute
 
             var document = new NodePenDocument(data);
 
-            return Response.AsJson(document.Result);
+            var commitId = Program.TryThis(document.Result).Result;
+
+            Console.WriteLine(commitId);
+
+            return Response.AsText(commitId);
 
 
             // try

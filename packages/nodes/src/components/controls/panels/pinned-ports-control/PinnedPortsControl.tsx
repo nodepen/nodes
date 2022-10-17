@@ -1,5 +1,5 @@
 import React from 'react'
-import { RootStore } from '$'
+import type { RootStore } from '$'
 import { COLORS } from '@/constants'
 import { ControlPanel } from '../../common'
 

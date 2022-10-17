@@ -28,6 +28,10 @@ export type RootState = {
       }
     }
   }
+  stream: {
+    id: string
+    objectIds: string[]
+  }
   registry: {
     canvasRoot: React.RefObject<HTMLDivElement>
     modelRoot: React.RefObject<HTMLDivElement>
@@ -123,6 +127,10 @@ export const initialState: RootState = {
         }
       }
     }
+  },
+  stream: {
+    id: 'b0d3a3c122',
+    objectIds: []
   },
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),

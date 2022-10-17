@@ -12,12 +12,12 @@ type NodesProps = {
   templates: NodePen.NodeTemplate[]
   stream: {
     id: string
-    objects: string[]
+    objectIds: string[]
   }
   onChange?: (document: NodePen.Document) => void
 }
 
-export const NodesApp = ({ document, templates, onChange }: NodesProps): React.ReactElement => {
+export const NodesApp = ({ document, templates, onChange, stream }: NodesProps): React.ReactElement => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
   const { setCameraPosition, loadTemplates, apply } = useDispatch()
@@ -56,8 +56,15 @@ export const NodesApp = ({ document, templates, onChange }: NodesProps): React.R
   const onDocumentChange = useStore((state) => state.callbacks.onChange)
 
   useEffect(() => {
+    // TODO: Be smarter about diffing this
     onDocumentChange(internalDocument)
   }, [internalDocument])
+
+  useEffect(() => {
+    apply((state) => {
+      state.stream = stream
+    })
+  }, [stream.objectIds])
 
   // TODO: Contextually disable pointer events on root svg (i.e. during pan)
 
