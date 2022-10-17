@@ -4,6 +4,8 @@ using Speckle.Core.Models;
 using Speckle.Newtonsoft.Json;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using Objects.Geometry;
 
 namespace NodePen.Converters
@@ -33,8 +35,10 @@ namespace NodePen.Converters
             var templateId = Convert.ToString(testNode["templateId"]) as string;
 
             double radiusValue = Convert.ToDouble(testNode["values"]["input-b"]["{0}"][0]["value"]);
+            var radiusValueGoo = new GH_Number(radiusValue);
             Console.WriteLine(radiusValue);
             int segmentsValue = Convert.ToInt32(testNode["values"]["input-c"]["{0}"][0]["value"]);
+            var segmentsValueGoo = new GH_Integer(segmentsValue);
             Console.WriteLine(segmentsValue);
 
             var ghdoc = new GH_Document();
@@ -45,15 +49,30 @@ namespace NodePen.Converters
 
             ghdoc.AddObject(nodeInstance, false);
 
-            nodeInstance.Params.Input[1].ClearData();
-            nodeInstance.Params.Input[1].ExpireSolution(false);
-            var res = nodeInstance.Params.Input[1].AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(new[] { 0 }), 0, radiusValue);
-            Console.WriteLine(res);
+            var tree = new GH_Structure<GH_Number>();
+            var pathIndices = new List<int>() { 0 }.ToArray();
+            var branch = new GH_Path(pathIndices);
+            tree.Insert(radiusValueGoo, branch, 0);
+            var param = nodeInstance.Params.Input[1] as Param_Number;
+            param.SetPersistentData(tree, branch, radiusValueGoo);
 
-            nodeInstance.Params.Input[2].ClearData();
-            nodeInstance.Params.Input[2].ExpireSolution(false);
-            var res2 = nodeInstance.Params.Input[2].AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(new[] { 0 }), 0, segmentsValue);
-            Console.WriteLine(res2);
+            var param2 = nodeInstance.Params.Input[2] as Param_Integer;
+            param2.SetPersistentData(tree, branch, segmentsValueGoo);
+
+
+
+            // nodeInstance.Params.Input[1].ClearData();
+            // nodeInstance.Params.Input[1].ExpireSolution(false);
+            // var res = nodeInstance.Params.Input[1].AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(new[] { 0 }), 0, radiusValueGoo);
+            // Console.WriteLine(res);
+
+            // nodeInstance.Params.Input[2].ClearData();
+            // nodeInstance.Params.Input[2].ExpireSolution(false);
+            // Console.WriteLine(nodeInstance.Params.Input[2].Name);
+            // Console.WriteLine(nodeInstance.Params.Input[2].VolatileDataCount);
+            // var res2 = nodeInstance.Params.Input[2].AddVolatileData(new Grasshopper.Kernel.Data.GH_Path(new[] { 0 }), 0, segmentsValueGoo);
+            // Console.WriteLine(nodeInstance.Params.Input[2].VolatileDataCount);
+            // Console.WriteLine(res2);
 
             ghdoc.Enabled = true;
             ghdoc.NewSolution(true, GH_SolutionMode.CommandLine);
@@ -67,7 +86,6 @@ namespace NodePen.Converters
                     case IGH_Component component:
                         {
                             Console.WriteLine(component.RuntimeMessageLevel);
-
                             var parameter = component.Params.Output[0];
 
                             Console.WriteLine(parameter.Name);
@@ -97,6 +115,8 @@ namespace NodePen.Converters
                                     var coordinates = new List<double>();
 
                                     var spans = geo.SpanCount;
+
+                                    Console.WriteLine($"Span count: {spans}");
 
                                     for (var k = 0; k < spans; k++)
                                     {
