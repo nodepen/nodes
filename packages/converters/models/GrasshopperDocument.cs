@@ -71,10 +71,10 @@ namespace NodePen.Converters
         {
             NodePenDocument document = new NodePenDocument();
 
-            foreach (var documentObject in this.GetObjects())
-            {
-                document.AddDocumentNode(documentObject);
-            }
+            // foreach (var documentObject in this.GetObjects())
+            // {
+            //     document.AddDocumentNode(documentObject);
+            // }
 
             return document;
         }

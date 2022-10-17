@@ -99,8 +99,6 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
                 },
               ],
             }
-
-            state.callbacks.onChange(state.document)
           })
         }}
       />

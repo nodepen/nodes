@@ -52,6 +52,13 @@ export const NodesApp = ({ document, templates, onChange }: NodesProps): React.R
 
   const cameraProps = useCameraProps()
 
+  const internalDocument = useStore((state) => state.document)
+  const onDocumentChange = useStore((state) => state.callbacks.onChange)
+
+  useEffect(() => {
+    onDocumentChange(internalDocument)
+  }, [internalDocument])
+
   // TODO: Contextually disable pointer events on root svg (i.e. during pan)
 
   return (
