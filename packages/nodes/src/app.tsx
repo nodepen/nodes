@@ -52,13 +52,13 @@ export const NodesApp = ({ document, templates, onChange, stream }: NodesProps):
 
   const cameraProps = useCameraProps()
 
-  const internalDocument = useStore((state) => state.document)
-  const onDocumentChange = useStore((state) => state.callbacks.onChange)
+  // const internalDocument = useStore((state) => state.document)
+  // const onDocumentChange = useStore((state) => state.callbacks.onChange)
 
-  useEffect(() => {
-    // TODO: Be smarter about diffing this
-    onDocumentChange(internalDocument)
-  }, [internalDocument])
+  // useEffect(() => {
+  //   // TODO: Be smarter about diffing this
+  //   onDocumentChange(internalDocument)
+  // }, [internalDocument])
 
   useEffect(() => {
     apply((state) => {

@@ -1,15 +1,18 @@
 import React from 'react'
 import { useStore } from '$'
-import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl } from './panels'
+import shallow from 'zustand/shallow'
+import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl, TemplateLibraryControl } from './panels'
 
 const ControlsContainer = (): React.ReactElement => {
   const configuration = useStore((store) => store.document.configuration)
+  const templates = useStore((store) => store.templates, shallow)
 
   return (
     <ControlsContainerLayout>
       <DocumentInfoControl />
       <ActiveViewControl />
-      <PinnedPortsControl configuration={configuration} />
+      <PinnedPortsControl pinnedPorts={configuration.pinnedPorts} />
+      <TemplateLibraryControl templates={templates} />
     </ControlsContainerLayout>
   )
 }
