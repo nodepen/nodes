@@ -1,10 +1,10 @@
 import React, { useCallback, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { NodesApp } from '@nodepen/nodes'
+import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
 import { useQuery } from '@tanstack/react-query'
 
 const Viewer = (): React.ReactElement => {
-  const { error, data } = useQuery(['grasshopper'], () =>
+  const { error, data: templates } = useQuery(['grasshopper'], () =>
     fetch('http://localhost:6500/grasshopper').then((res) => res.json())
   )
 
@@ -30,13 +30,26 @@ const Viewer = (): React.ReactElement => {
       })
   }, [])
 
+  const document: NodePen.Document = {
+    id: 'test-id',
+    nodes: {},
+    configuration: {
+      pinnedPorts: [],
+    },
+    version: 1,
+  }
+
+  const streamId = 'b0d3a3c122'
+
+  const callbacks = {
+    onChange: handleDocumentChange,
+  }
+
   return (
-    <NodesApp
-      document={{ id: '', nodes: {}, configuration: { pinnedPorts: [] }, version: 1 }}
-      templates={data}
-      stream={{ id: 'b0d3a3c122', objectIds }}
-      onChange={handleDocumentChange}
-    />
+    <NodesApp document={document} templates={templates} {...callbacks}>
+      <DocumentView editable />
+      <SpeckleModelView streamId={streamId} />
+    </NodesApp>
   )
 }
 
