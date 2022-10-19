@@ -18,7 +18,7 @@ const NodesContainer = (): React.ReactElement => {
         const template = templates[templateId]
 
         switch (getNodeTypeForTemplate(template)) {
-          case 'generic-component':
+          case 'generic-node':
             return <GenericNode key={`generic-node-${instanceId}`} id={instanceId} template={template} />
           case 'generic-parameter':
             return null
@@ -48,7 +48,7 @@ const useDocumentNodes = (): NodePen.DocumentNode[] => {
   return Object.values(nodes)
 }
 
-type NodePenNodeType = 'generic-component' | 'generic-parameter' | 'unknown'
+type NodePenNodeType = 'generic-node' | 'generic-parameter' | 'unknown'
 
 const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
   if (!template) {
@@ -60,7 +60,7 @@ const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeTyp
       return 'generic-parameter'
     }
     default: {
-      return 'generic-component'
+      return 'generic-node'
     }
   }
 }

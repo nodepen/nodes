@@ -52,7 +52,7 @@ export const NodesApp = ({ document, templates, children, ...callbacks }: NodesP
 
   // TODO: Contextually disable pointer events on root svg (i.e. during pan)
 
-  return <NodesAppInternal children={children} />
+  return <NodesAppInternal>{children}</NodesAppInternal>
 
   // return (
   //   <div id="np-app-root" className="np-w-full np-h-full np-relative np-overflow-hidden" ref={canvasRootRef}>

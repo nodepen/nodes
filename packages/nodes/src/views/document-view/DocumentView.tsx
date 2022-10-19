@@ -3,7 +3,7 @@ import { useStore, useDispatch } from '$'
 import { Layer } from '../common'
 import { CameraOverlay, GridContainer } from './components'
 import { useCameraProps } from './hooks'
-import { NodesContainer } from '@/components/nodes'
+import { NodesContainer } from '@/components'
 
 type DocumentViewProps = {
   editable: boolean
