@@ -29,9 +29,7 @@
     ],
     "types": [
       "node",
-      "jest",
-      "@testing-library/jest-dom",
-      "@testing-library/react"
+      "jest"
     ]
   }
 }

@@ -24,17 +24,19 @@
   "dependencies": {
     "@nodepen/core": "^1.1.0",
     "@speckle/viewer": "2.9.0",
-    "immer": "9.0.15",
-    "zustand": "4.1.1"
+    "immer": "^9.0.15",
+    "zustand": "^4.1.2"
   },
   "peerDependencies": {
     "react": "^18.0",
     "react-dom": "^18.0"
   },
   "devDependencies": {
+    "@types/react": "^18.0.21",
+    "@types/react-dom": "^18.0.6",
     "@types/three": "^0.144.0",
-    "autoprefixer": "^10.4.2",
-    "postcss": "^8.4.6",
-    "tailwindcss": "3.1.8"
+    "autoprefixer": "^10.4.12",
+    "postcss": "^8.4.18",
+    "tailwindcss": "^3.2.0"
   }
 }

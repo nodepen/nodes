@@ -14,10 +14,6 @@
       "@/*": ["./src/*"],
       "$": ["./src/store"]
     },
-    "types": [
-      "react/next",
-      "react-dom/next"
-    ],
     "module": "esnext",
     "target": "esnext",
     "declaration": true,
