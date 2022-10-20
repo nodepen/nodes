@@ -1,5 +1,5 @@
 import React from 'react'
-import { usePseudoShadow } from '@/components/layout/pseudo-shadow'
+import { usePseudoShadow } from '@/views/common/pseudo-shadow'
 
 type ControlPanelProps = {
   children: React.ReactNode
