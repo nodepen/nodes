@@ -52,5 +52,3 @@ const Viewer = (): React.ReactElement => {
     </NodesApp>
   )
 }
-
-export default Viewer

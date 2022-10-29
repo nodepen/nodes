@@ -20,6 +20,7 @@ namespace Rhino.Compute
 
         public Response GetGrasshopperConfiguration()
         {
+            Console.WriteLine("!");
             return Response.AsJson(NodePenConvert.Templates);
         }
 
