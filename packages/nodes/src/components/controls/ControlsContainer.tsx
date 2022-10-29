@@ -25,7 +25,7 @@ type LayoutProps = {
 const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement => {
   return (
     <Layer fixed id="np-controls-layer" z={90}>
-      <div className="w-full h-full np-relative">
+      <div className="np-w-full np-h-full np-relative">
         <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-row np-justify-start np-items-center np-pointer-events-none np-z-50">
           <div className="np-h-full np-w-72 np-p-4 np-flex np-flex-col">
             <div id="np-control-panels" className="np-w-full np-flex-grow np-flex np-flex-col">

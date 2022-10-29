@@ -1,6 +1,7 @@
 import type React from 'react'
+import { use } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { NodesAppContainer } from '../components'
+import { NodesAppContainer } from '../../components'
 
 const RootPage = async (): Promise<React.ReactElement> => {
   const document = await fetchDocument('test-id')
@@ -36,7 +37,7 @@ const fetchDocument = async (id: string): Promise<NodePen.Document> => {
 }
 
 const fetchTemplates = async (): Promise<NodePen.NodeTemplate[]> => {
-  const response = await fetch('http://localhost:6500/grasshopper', { next: { revalidate: 600 } })
+  const response = await fetch('http://localhost:6500/grasshopper', { cache: 'no-store' })
   const templates = await response.json()
 
   return templates

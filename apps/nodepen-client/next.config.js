@@ -4,7 +4,7 @@ const withImages = require('next-images')
 
 const nextConfig = {
   distDir: 'build',
-  reactStrictMode: false,
+  reactStrictMode: true,
   experimental: {
     appDir: true,
   },
