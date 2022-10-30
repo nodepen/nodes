@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useStore } from '$'
 import shallow from 'zustand/shallow'
 import { Layer } from '@/views/common'
@@ -6,17 +6,19 @@ import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl, TemplateLib
 
 const ControlsContainer = (): React.ReactElement => {
   const configuration = useStore((store) => store.document.configuration)
-  const templates = useStore((store) => store.templates, shallow)
+  // const templates = useStore((store) => store.templates, shallow)
 
   return (
     <ControlsContainerLayout>
       <DocumentInfoControl />
       <ActiveViewControl />
       <PinnedPortsControl pinnedPorts={configuration.pinnedPorts} />
-      <TemplateLibraryControl templates={templates} />
+      {/* <TemplateLibraryControl templates={templates} /> */}
     </ControlsContainerLayout>
   )
 }
+
+import { DownloadButton, HomeButton, ProfileButton, ShareButton, SolutionStatusBar } from './navigation'
 
 type LayoutProps = {
   children: React.ReactNode
@@ -35,11 +37,11 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
               id="np-navigation-panels"
               className="np-w-full np-h-8 np-flex np-justify-between np-items-center np-gap-2"
             >
-              <button className="np-w-8 np-h-8 np-rounded-md np-bg-light np-shadow-main np-pointer-events-auto" />
-              <button className="np-w-8 np-h-8 np-rounded-md np-bg-light np-shadow-main np-pointer-events-auto" />
-              <button className="np-w-8 np-h-8 np-rounded-md np-bg-light np-shadow-main np-pointer-events-auto" />
-              <div className="np-flex-grow np-h-8 np-rounded-md np-bg-light np-shadow-main" />
-              <button className="np-w-8 np-h-8 np-rounded-md np-bg-light np-shadow-main np-pointer-events-auto" />
+              <HomeButton />
+              <ShareButton />
+              <DownloadButton />
+              <SolutionStatusBar />
+              <ProfileButton />
             </div>
           </div>
         </div>

@@ -14,7 +14,7 @@ export const PinnedPortsControl = ({ pinnedPorts }: PinnedPortsControlProps): Re
   return (
     <ControlPanel>
       <div className="np-w-full np-flex np-justify-between np-items-center">
-        <h3 className="np-font-sans np-text-md np-text-darkgreen">Polygon Controls</h3>
+        <h3 className="np-mb-1 np-font-sans np-text-md np-text-darkgreen">Polygon Controls</h3>
         <div className="np-h-full np-w-4 np-flex np-flex-col np-justify-center np-items-center">
           <svg width={8} height={4} viewBox="0 0 10 5" className="np-overflow-visible">
             <polyline
@@ -78,7 +78,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
         className="np-absolute np-h-8 np-flex np-justify-start np-items-center"
         style={{ left: 32, top: 0, zIndex: 20 }}
       >
-        <h4 className="np-font-sans np-text-sm np-text-dark np-select-none">{name}</h4>
+        <h4 className="np-font-sans np-text-xs np-text-dark np-select-none">{name}</h4>
       </div>
       <input
         className="np-absolute np-w-full np-h-full np-pr-2 np-font-sans np-text-md np-text-dark np-text-right np-bg-none np-shadow-input"

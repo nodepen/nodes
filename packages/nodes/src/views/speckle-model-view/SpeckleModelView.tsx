@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { Viewer, DefaultViewerParams } from '@speckle/viewer'
+import { Viewer, DefaultViewerParams, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 
@@ -26,6 +26,10 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
 
     viewer.init().then(() => {
       viewerRef.current = viewer
+    })
+
+    viewer.on(ViewerEvent.LoadProgress, (arg) => {
+      console.log(arg)
     })
 
     return () => {
