@@ -26,10 +26,63 @@ export const getStaticProps: GetStaticProps<PageProps> = async () => {
   const fetchDocument = async (id: string): Promise<NodePen.Document> => {
     // TODO: Actually fetch it
     const document: NodePen.Document = {
-      id,
-      nodes: {},
+      id: id,
+      nodes: {
+        'test-element-id-a': {
+          instanceId: 'test-element-id-a',
+          templateId: '845527a6-5cea-4ae9-a667-96ae1667a4e8',
+          position: {
+            x: 475,
+            y: -375,
+          },
+          dimensions: {
+            width: 20,
+            height: 20,
+          },
+          sources: {},
+          values: {
+            ['input-a']: {},
+            ['input-b']: {
+              '{0}': [
+                {
+                  type: 'number',
+                  value: 3,
+                },
+              ],
+            },
+            ['input-c']: {
+              '{0}': [
+                {
+                  type: 'number',
+                  value: 6,
+                },
+              ],
+            },
+            ['input-d']: {},
+          },
+          inputs: {
+            ['input-a']: 0,
+            ['input-b']: 1,
+            ['input-c']: 2,
+            ['input-d']: 3,
+          },
+          outputs: {
+            ['output-a']: 0,
+            ['output-b']: 1,
+          },
+        },
+      },
       configuration: {
-        pinnedPorts: [],
+        pinnedPorts: [
+          {
+            nodeInstanceId: 'test-element-id-a',
+            portInstanceId: 'input-b',
+          },
+          {
+            nodeInstanceId: 'test-element-id-a',
+            portInstanceId: 'input-c',
+          },
+        ],
       },
       version: 1,
     }

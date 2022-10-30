@@ -20,17 +20,14 @@ export const useViewRegistry = (config: ViewConfig): ViewState => {
 
     const { apply } = useDispatch()
 
-    const isRegistered = useRef(false)
-
     useEffect(() => {
-        if (isRegistered.current) {
+        // Get current view information
+        const currentViews = useStore.getState().registry.views
+
+        if (key in currentViews) {
             return
         }
 
-        isRegistered.current = true
-
-        // Get current view information
-        const currentViews = useStore.getState().registry.views
         const nextViewIndex = Object.entries(currentViews).length
 
         console.log(`⚙️⚙️⚙️ Registered view [${key}] at position [${nextViewIndex}]`)

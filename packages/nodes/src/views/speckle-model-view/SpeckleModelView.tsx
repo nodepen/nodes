@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from 'react'
 import { Viewer, DefaultViewerParams } from '@speckle/viewer'
-import { useStore } from '$'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 
@@ -9,19 +8,18 @@ type SpeckleModelViewProps = {
 }
 
 const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactElement | null => {
-  const container = useStore((store) => store.registry.modelRoot)
-
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
+  const containerRef = useRef<HTMLDivElement>(null)
   const viewerRef = useRef<Viewer>()
 
   useEffect(() => {
-    if (!container.current) {
-      console.log(`🐍 Failed to mount Speckle Viewer container div.`)
+    if (!containerRef.current) {
+      console.log(`🐍 Failed to mount Speckle Viewer container div!`)
       return
     }
 
-    const viewer = new Viewer(container.current, {
+    const viewer = new Viewer(containerRef.current, {
       showStats: true,
       environmentSrc: '',
     })
@@ -60,7 +58,7 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
 
   return (
     <Layer id="np-model-layer" position={viewPosition ?? 1} z={10}>
-      <div className="np-w-full np-h-full np-pointer-events-auto np-bg-pale" ref={container} />
+      <div className="np-w-full np-h-full np-pointer-events-auto np-bg-pale" ref={containerRef} />
     </Layer>
   )
 }

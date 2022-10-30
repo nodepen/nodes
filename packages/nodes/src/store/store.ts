@@ -1,17 +1,17 @@
 import create from 'zustand'
 import { immer as withImmer } from 'zustand/middleware/immer'
 import { initialState } from './state'
-import type { RootState } from './state'
+import type { NodesAppState } from './state'
 import { createDispatch } from './dispatch'
-import type { RootDispatch } from './dispatch'
+import type { NodesAppDispatch } from './dispatch'
 
-export type RootStore = RootState & RootDispatch
+export type NodesAppStore = NodesAppState & NodesAppDispatch
 
-type RootMiddleware = [
+type NodesAppMiddleware = [
   ['zustand/immer', never]
 ]
 
-export const useStore = create<RootStore, RootMiddleware>(
+export const useStore = create<NodesAppStore, NodesAppMiddleware>(
     withImmer(
       (set, get) => ({
         ...initialState,

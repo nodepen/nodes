@@ -1,8 +1,7 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
-import type { LayoutTab } from '@/types'
 
-export type RootState = {
+export type NodesAppState = {
   document: NodePen.Document,
   templates: {
     [templateId: string]: NodePen.NodeTemplate
@@ -27,7 +26,6 @@ export type RootState = {
   }
   registry: {
     canvasRoot: React.RefObject<HTMLDivElement>
-    modelRoot: React.RefObject<HTMLDivElement>
     pseudoShadowTargets: {
       [shadowId: string]: React.RefObject<HTMLDivElement>
     }
@@ -38,70 +36,20 @@ export type RootState = {
       }
     }
   }
-  callbacks: {
-    onChange: (document: NodePen.Document) => void
-  }
+  callbacks: NodesAppCallbacks
 }
 
-export const initialState: RootState = {
+export type NodesAppCallbacks = {
+  onDocumentChange?: (state: NodesAppState) => void
+  onExpireSolution?: (state: NodesAppState) => void
+}
+
+export const initialState: NodesAppState = {
   document: {
-    id: 'document-id',
-    nodes: {
-      'test-element-id-a': {
-        instanceId: 'test-element-id-a',
-        templateId: '845527a6-5cea-4ae9-a667-96ae1667a4e8',
-        position: {
-          x: 475,
-          y: -375
-        },
-        dimensions: {
-          width: 20,
-          height: 20,
-        },
-        sources: {},
-        values: {
-          ['input-a']: {},
-          ['input-b']: {
-            '{0}': [
-              {
-                type: 'number',
-                value: 3
-              }
-            ]
-          },
-          ['input-c']: {
-            '{0}': [
-              {
-                type: 'number',
-                value: 6
-              }
-            ]
-          },
-          ['input-d']: {}
-        },
-        inputs: {
-          ['input-a']: 0,
-          ['input-b']: 1,
-          ['input-c']: 2,
-          ['input-d']: 3
-        },
-        outputs: {
-          ['output-a']: 0,
-          ['output-b']: 1
-        },
-      },
-    },
+    id: 'default-id',
+    nodes: {},
     configuration: {
-      pinnedPorts: [
-        {
-          nodeInstanceId: 'test-element-id-a',
-          portInstanceId: 'input-b'
-        },
-        {
-          nodeInstanceId: 'test-element-id-a',
-          portInstanceId: 'input-c'
-        }
-      ]
+      pinnedPorts: []
     },
     version: 1
   },
@@ -123,11 +71,11 @@ export const initialState: RootState = {
   },
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
-    modelRoot: React.createRef<HTMLDivElement>(),
     pseudoShadowTargets: {},
     views: {}
   },
   callbacks: {
-    onChange: () => { console.log('🐍 Incorrect [onChange] callback called!') }
+    onDocumentChange: () => { console.log('From library!') },
+    onExpireSolution: () => { console.log('From library!') }
   }
 }

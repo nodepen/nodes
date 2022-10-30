@@ -1,23 +1,28 @@
 import React, { useEffect } from 'react'
 import type * as NodePen from '@nodepen/core'
 import '@/styles.css'
-import { useDispatch, useStore } from '$'
+import { useDispatch, useStore, NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'
 import { PseudoShadowsContainer } from './views/common'
 
-type NodesProps = {
+type NodesAppProps = {
   document: NodePen.Document
   templates: NodePen.NodeTemplate[]
-  onChange?: (document: NodePen.Document) => void
   children: React.ReactNode
-}
+} & NodesAppCallbacks
 
-export const NodesApp = ({ document, templates, children, ...callbacks }: NodesProps): React.ReactElement => {
-  const { loadTemplates } = useDispatch()
+export const NodesApp = ({ document, templates, children, ...callbacks }: NodesAppProps): React.ReactElement => {
+  const { apply, loadTemplates } = useDispatch()
 
   useEffect(() => {
     loadTemplates(templates ?? [])
   }, [templates])
+
+  useEffect(() => {
+    apply((state) => {
+      state.document = document
+    })
+  }, [document.id])
 
   return <NodesAppInternal children={children} />
 }

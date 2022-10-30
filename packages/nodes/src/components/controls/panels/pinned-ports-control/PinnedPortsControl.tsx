@@ -1,10 +1,10 @@
 import React from 'react'
-import type { RootStore } from '$'
+import type { NodesAppState } from '$'
 import { COLORS } from '@/constants'
 import { ControlPanel } from '../../common'
 
 type PinnedPortsControlProps = {
-  pinnedPorts: RootStore['document']['configuration']['pinnedPorts']
+  pinnedPorts: NodesAppState['document']['configuration']['pinnedPorts']
 }
 
 /**
@@ -42,7 +42,7 @@ import shallow from 'zustand/shallow'
 import { getDataTreeValueString, tryGetSingleValue } from '@/utils/data-tree'
 
 type PortControlProps = {
-  portReference: RootStore['document']['configuration']['pinnedPorts'][0]
+  portReference: NodesAppState['document']['configuration']['pinnedPorts'][0]
 }
 
 const PortControl = ({ portReference }: PortControlProps): React.ReactElement | null => {

@@ -1,18 +1,18 @@
-import type { RootState } from './state'
+import type { NodesAppState } from './state'
 import { startTransition } from 'react'
 import type * as NodePen from '@nodepen/core'
 import shallow from 'zustand/shallow'
 import { useStore } from '$'
 
 type BaseAction = string | ({ type: string } &  Record<string, unknown>)
-type BaseSetter = (callback: (state: RootState) => void, replace?: boolean, action?: BaseAction) => void
-type BaseGetter = () => RootState
+type BaseSetter = (callback: (state: NodesAppState) => void, replace?: boolean, action?: BaseAction) => void
+type BaseGetter = () => NodesAppState
 
-export type RootDispatch = ReturnType<typeof createDispatch>
+export type NodesAppDispatch = ReturnType<typeof createDispatch>
 
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
-    apply: (callback: (state: RootState, get: BaseGetter) => void) => set((state) => callback(state, get)),
+    apply: (callback: (state: NodesAppState, get: BaseGetter) => void) => set((state) => callback(state, get)),
     loadTemplates: (templates: NodePen.NodeTemplate[]) => set(
       (state) => {
         state.templates = {}
