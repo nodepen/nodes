@@ -28,7 +28,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   const { position } = node
   const { nickName, inputs, outputs } = template
 
-  console.log(`⚙️⚙️⚙️ generic-node : ${id.split('-')[0]} : ${nickName.toLowerCase()}`)
+  console.log(`⚙️⚙️⚙️ Rendered generic node [${id.split('-')[0]}] (${nickName})`)
 
   const nodeWidth = NODE_INTERNAL_PADDING * 4 + NODE_PORT_MINIMUM_WIDTH * 2 + NODE_LABEL_WIDTH
 
@@ -78,11 +78,12 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
     }
   }
 
-  const inputPorts = inputs.map((_input, i) => {
+  const inputPorts = inputs.map((input, i) => {
     const [x, y] = getPortColumnPosition(i, 'input')
 
     return (
       <circle
+        key={`generic-node-input-port-${input.name}`}
         r={NODE_PORT_RADIUS}
         cx={x}
         cy={y}
@@ -94,11 +95,12 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
     )
   })
 
-  const inputPortShadows = inputs.map((_input, i) => {
+  const inputPortShadows = inputs.map((input, i) => {
     const [x, y] = getPortColumnPosition(i, 'input')
 
     return (
       <circle
+        key={`generic-node-input-port-shadow-${input.name}`}
         r={NODE_PORT_RADIUS}
         cx={x}
         cy={y + 2}
@@ -117,6 +119,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
 
     return (
       <text
+        key={`generic-node-input-port-label-${input.name}`}
         x={x + 12}
         y={y - 3 + NODE_PORT_LABEL_FONT_SIZE / 2}
         className="np-font-mono np-select-none"
@@ -128,11 +131,12 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
     )
   })
 
-  const outputPorts = outputs.map((_output, i) => {
+  const outputPorts = outputs.map((output, i) => {
     const [x, y] = getPortColumnPosition(i, 'output')
 
     return (
       <circle
+        key={`generic-node-output-port-${output.name}`}
         r={NODE_PORT_RADIUS}
         cx={x}
         cy={y}
@@ -144,11 +148,12 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
     )
   })
 
-  const outputPortShadows = outputs.map((_output, i) => {
+  const outputPortShadows = outputs.map((output, i) => {
     const [x, y] = getPortColumnPosition(i, 'output')
 
     return (
       <circle
+        key={`generic-node-output-port-shadow-${output.name}`}
         r={NODE_PORT_RADIUS}
         cx={x}
         cy={y + 2}
@@ -167,6 +172,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
 
     return (
       <text
+        key={`generic-node-output-port-label-${output.name}`}
         x={x - 12}
         y={y - 3 + NODE_PORT_LABEL_FONT_SIZE / 2}
         className="np-font-mono np-select-none"

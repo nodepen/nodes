@@ -40,7 +40,7 @@ const DocumentView = ({ editable }: DocumentViewProps): React.ReactElement | nul
     <>
       <Layer id="np-graph-canvas-layer" position={viewPosition} z={70}>
         <CameraOverlay>
-          <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-rounded-md">
+          <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
             <NodesContainer />
           </svg>
         </CameraOverlay>

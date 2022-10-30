@@ -33,13 +33,17 @@ export const useViewRegistry = (config: ViewConfig): ViewState => {
         const currentViews = useStore.getState().registry.views
         const nextViewIndex = Object.entries(currentViews).length
 
-        console.log(`${key} registered at ${nextViewIndex}`)
+        console.log(`⚙️⚙️⚙️ Registered view [${key}] at position [${nextViewIndex}]`)
 
         // Add view to registry
         apply((state) => {
             state.registry.views[key] = {
                 label,
                 order: nextViewIndex
+            }
+
+            if (!state.layout.activeView) {
+                state.layout.activeView = key
             }
         })
     })

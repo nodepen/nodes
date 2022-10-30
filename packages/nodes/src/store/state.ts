@@ -19,7 +19,7 @@ export type RootState = {
     zoom: number
   },
   layout: {
-    activeView: number
+    activeView: string | null
   }
   stream: {
     id: string
@@ -115,7 +115,7 @@ export const initialState: RootState = {
     zoom: 1,
   },
   layout: {
-    activeView: 0
+    activeView: null
   },
   stream: {
     id: 'b0d3a3c122',

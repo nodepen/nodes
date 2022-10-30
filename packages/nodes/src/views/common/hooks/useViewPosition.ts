@@ -6,14 +6,18 @@ import { useStore } from '$'
  */
 export const useViewPosition = (viewKey: string): number | null => {
     const currentViewPosition = useStore((state) => {
-        const registeredViewConfigurations = Object.entries(state.registry.views)
+        const registeredViewConfigurations = state.registry.views
         const activeView = state.layout.activeView
 
-        const activeViewConfiguration = registeredViewConfigurations.find(([_key, config]) => config.order === activeView)?.[1]
-        const currentViewConfiguration = registeredViewConfigurations.find(([key, _config]) => key === viewKey)?.[1]
+        if (!activeView) {
+            return null
+        }
+
+        const activeViewConfiguration = registeredViewConfigurations[activeView]
+        const currentViewConfiguration = registeredViewConfigurations[viewKey]
 
         if (!activeViewConfiguration) {
-            console.log(`🐍 View configuration not found for active view position ${activeView}`)
+            console.log(`🐍 View configuration not found for active view [${activeView}]`)
             return null
         }
 

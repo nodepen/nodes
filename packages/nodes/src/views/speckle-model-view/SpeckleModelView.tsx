@@ -22,7 +22,7 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
     }
 
     const viewer = new Viewer(container.current, {
-      showStats: false,
+      showStats: true,
       environmentSrc: '',
     })
 
@@ -60,7 +60,7 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
 
   return (
     <Layer id="np-model-layer" position={viewPosition ?? 1} z={10}>
-      <div className="np-w-full np-h-full np-pointer-events-auto" ref={container} />
+      <div className="np-w-full np-h-full np-pointer-events-auto np-bg-pale" ref={container} />
     </Layer>
   )
 }

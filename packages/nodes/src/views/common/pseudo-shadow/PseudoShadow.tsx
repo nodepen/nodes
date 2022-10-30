@@ -21,9 +21,7 @@ const PseudoShadow = ({ target }: PseudoShadowProps): React.ReactElement | null 
   const resizeObserver = useRef<ResizeObserver>()
 
   const handleShadowResize = useCallback(() => {
-    console.log(
-      `⚙️ Resizing shadow for [${target.current?.id?.length ?? 0 > 1 ? target.current?.id : 'anonymous element'}]`
-    )
+    console.log(`⚙️⚙️⚙️ Resized shadow for [${target.current?.id?.length ?? 0 > 1 ? target.current?.id : 'anonymous'}]`)
 
     const rootElement = canvasRootRef.current ?? document.documentElement
     const targetElement = target.current

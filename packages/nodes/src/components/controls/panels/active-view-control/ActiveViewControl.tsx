@@ -17,14 +17,33 @@ export const ActiveViewControl = (): React.ReactElement => {
           <ActiveViewLabel key={`view-control-tab-${viewKey}`} viewKey={viewKey} />
         ))}
         <div
-          className="np-w-3 np-h-4 np-absolute np-flex np-justify-center np-items-center hover:np-cursor-pointer"
+          className="np-w-3 np-h-4 np-absolute np-flex np-justify-center np-items-center hover:np-cursor-pointer np-bg-green"
           style={{ left: 0, top: 0, zIndex: 20 }}
           onClick={() =>
             apply((state) => {
               const viewCount = Object.keys(state.registry.views).length
               const activeView = state.layout.activeView
 
-              state.layout.activeView = clamp(activeView - 1, 0, viewCount - 1)
+              if (!activeView) {
+                return
+              }
+
+              const activeViewConfiguration = state.registry.views[activeView]
+
+              if (!activeViewConfiguration) {
+                return
+              }
+
+              const nextViewPosition = clamp(activeViewConfiguration.order - 1, 0, viewCount - 1)
+              const nextViewKey = Object.entries(state.registry.views).find(
+                ([_key, config]) => config.order === nextViewPosition
+              )?.[0]
+
+              if (!nextViewKey) {
+                return
+              }
+
+              state.layout.activeView = nextViewKey
             })
           }
         >
@@ -40,14 +59,33 @@ export const ActiveViewControl = (): React.ReactElement => {
           </svg>
         </div>
         <div
-          className="np-w-3 np-h-4 np-absolute np-flex np-justify-center np-items-center hover:np-cursor-pointer"
+          className="np-w-3 np-h-4 np-absolute np-flex np-justify-center np-items-center hover:np-cursor-pointer np-bg-green"
           style={{ right: 0, top: 0, zIndex: 20 }}
           onClick={() =>
             apply((state) => {
               const viewCount = Object.keys(state.registry.views).length
               const activeView = state.layout.activeView
 
-              state.layout.activeView = clamp(activeView + 1, 0, viewCount - 1)
+              if (!activeView) {
+                return
+              }
+
+              const activeViewConfiguration = state.registry.views[activeView]
+
+              if (!activeViewConfiguration) {
+                return
+              }
+
+              const nextViewPosition = clamp(activeViewConfiguration.order + 1, 0, viewCount - 1)
+              const nextViewKey = Object.entries(state.registry.views).find(
+                ([_key, config]) => config.order === nextViewPosition
+              )?.[0]
+
+              if (!nextViewKey) {
+                return
+              }
+
+              state.layout.activeView = nextViewKey
             })
           }
         >
