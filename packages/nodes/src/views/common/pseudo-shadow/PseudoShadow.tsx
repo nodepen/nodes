@@ -76,8 +76,8 @@ const PseudoShadow = ({ target }: PseudoShadowProps): React.ReactElement | null 
     <PseudoShadowPortal>
       <div className="np-w-full np-h-full np-relative">
         <div
-          className="np-absolute np-rounded-md np-opacity-30 np-border-2 np-border-swampgreen np-bg-none"
-          style={dimensions}
+          className="np-absolute np-rounded-md np-opacity-30 np-border-l-2 np-border-b-2 np-border-swampgreen np-bg-none"
+          style={{ ...dimensions, borderBottomLeftRadius: '0.5rem' }}
         />
       </div>
     </PseudoShadowPortal>
