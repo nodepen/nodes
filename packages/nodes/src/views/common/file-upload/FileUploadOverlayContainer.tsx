@@ -18,6 +18,9 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
   }, [])
 
   const handleDragDrop = useCallback((e: React.DragEvent<SVGSVGElement>) => {
+    e.preventDefault()
+    e.stopPropagation()
+
     console.log(e)
 
     apply((state) => {
@@ -34,6 +37,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
           viewBox="0 0 100 100"
           onDragOver={(e) => {
             e.preventDefault()
+            e.stopPropagation()
           }}
           onDragLeave={handleDragLeave}
           onDrop={handleDragDrop}

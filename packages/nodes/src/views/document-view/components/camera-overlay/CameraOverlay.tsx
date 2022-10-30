@@ -21,10 +21,21 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
   const initialCameraPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const initialScreenPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
+  const activePointerId = useRef<number>()
   const isPanActive = useRef(false)
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
+
+    if (isPanActive.current) {
+      return
+    }
+
+    const cameraElement = cameraControlOverlayRef.current
+
+    if (!cameraElement) {
+      return
+    }
 
     switch (e.pointerType) {
       case 'mouse': {
@@ -44,6 +55,9 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
           case 2: {
             // Initialize move
             isPanActive.current = true
+            activePointerId.current = e.pointerId
+
+            cameraElement.setPointerCapture(e.pointerId)
 
             initialScreenPosition.current = { x: pageX, y: pageY }
 
@@ -64,6 +78,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (!isPanActive.current) {
+      return
+    }
+
+    if (e.pointerId !== activePointerId.current) {
       return
     }
 
@@ -91,20 +109,34 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
   }
 
   const resetLocalState = useCallback(() => {
+    activePointerId.current = undefined
     isPanActive.current = false
   }, [])
 
-  const handlePointerUp = (_e: React.PointerEvent<HTMLDivElement>): void => {
+  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (e.pointerId !== activePointerId.current) {
+      return
+    }
+
     resetLocalState()
   }
 
-  const handlePointerOut = (_e: React.PointerEvent<HTMLDivElement>): void => {
+  const handlePointerOut = (e: React.PointerEvent<HTMLDivElement>): void => {
+    if (e.pointerId !== activePointerId.current) {
+      return
+    }
+
     resetLocalState()
   }
 
   const handleWheel = (e: WheelEvent): void => {
     e.stopPropagation()
     e.preventDefault()
+
+    if (useStore.getState().layout.fileUpload.isActive) {
+      // Disable scroll zoom while drag-and-drop overlay is active.
+      return
+    }
 
     const { pageX, pageY, deltaY } = e
 

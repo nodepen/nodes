@@ -51,12 +51,6 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
       id="np-app-root"
       className="np-w-full np-h-full np-relative np-overflow-hidden np-rounded-md"
       ref={canvasRootRef}
-      onDrop={(e) => {
-        e.preventDefault()
-      }}
-      onDragOver={(e) => {
-        e.preventDefault()
-      }}
       onDragEnter={handleDragEnter}
     >
       <FileUploadOverlayContainer />
