@@ -13,37 +13,27 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
 
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
-  const viewer = useRef<Viewer>()
+  const viewerRef = useRef<Viewer>()
 
   useEffect(() => {
-    if (viewer.current) {
-      return
-    }
-
     if (!container.current) {
+      console.log(`🐍 Failed to mount Speckle Viewer container div.`)
       return
     }
 
-    const v = new Viewer(container.current, { showStats: false, environmentSrc: '' })
-    viewer.current = v
-    v.init().then(() => {
-      console.log('Initialized viewer!')
+    const viewer = new Viewer(container.current, {
+      showStats: false,
+      environmentSrc: '',
     })
 
-    // .then(() => {
-    //   return v.loadObject(
-    //     `http://localhost:3000/streams/b0d3a3c122/objects/${id}`,
-    //     '8ac998dd805648be63a69a8e0480d07a1e06c6465e'
-    //   )
-    // })
-    // // .then(() => {
-    // //   console.log('Loaded!')
-    // // })
-    // .catch((e) => {
-    //   console.log(`Failed to load object ${id}`)
-    //   console.error(e)
-    // })
-  })
+    viewer.init().then(() => {
+      viewerRef.current = viewer
+    })
+
+    return () => {
+      viewer.dispose()
+    }
+  }, [])
 
   //   useEffect(() => {
   //     const v = viewer.current
@@ -68,12 +58,8 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
   //       })
   //   }, [streamId, streamObjectIds])
 
-  if (viewPosition === null) {
-    return <></>
-  }
-
   return (
-    <Layer id="np-model-layer" position={viewPosition} z={10}>
+    <Layer id="np-model-layer" position={viewPosition ?? 1} z={10}>
       <div className="np-w-full np-h-full np-pointer-events-auto" ref={container} />
     </Layer>
   )

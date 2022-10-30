@@ -24,7 +24,7 @@ const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): Rea
   return (
     <NodesApp document={document} templates={templates} {...callbacks}>
       <DocumentView editable />
-      {/* <SpeckleModelView streamId={streamId} /> */}
+      <SpeckleModelView streamId={streamId} />
     </NodesApp>
   )
 }
