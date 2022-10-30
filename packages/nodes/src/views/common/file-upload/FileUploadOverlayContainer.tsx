@@ -1,22 +1,43 @@
-import React from 'react'
-import { useStore } from '$'
+import React, { useCallback } from 'react'
+import { useDispatch, useStore } from '$'
 import { Layer } from '../layer'
 import { COLORS } from '@/constants'
 
 const FileUploadOverlayContainer = (): React.ReactElement => {
   const { isActive, activeFile, uploadStatus } = useStore((state) => state.layout.fileUpload)
 
-  // if (!isActive) {
-  //   return <></>
-  // }
+  const { apply } = useDispatch()
 
   const strokeWidth = isActive ? 160 : 0
   const r = isActive ? 20 : 100
 
+  const handleDragLeave = useCallback((e: React.DragEvent<SVGSVGElement>) => {
+    apply((state) => {
+      state.layout.fileUpload.isActive = false
+    })
+  }, [])
+
+  const handleDragDrop = useCallback((e: React.DragEvent<SVGSVGElement>) => {
+    console.log(e)
+
+    apply((state) => {
+      state.layout.fileUpload.isActive = false
+    })
+  }, [])
+
   return (
     <>
       <Layer id="np-file-upload-overlay" z={95}>
-        <svg className="np-w-full np-h-full" viewBox="0 0 100 100">
+        <svg
+          className="np-w-full np-h-full"
+          style={{ pointerEvents: isActive ? 'all' : 'none' }}
+          viewBox="0 0 100 100"
+          onDragOver={(e) => {
+            e.preventDefault()
+          }}
+          onDragLeave={handleDragLeave}
+          onDrop={handleDragDrop}
+        >
           <circle
             cx={49.5}
             cy={50.5}

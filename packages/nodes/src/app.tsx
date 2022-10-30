@@ -46,12 +46,6 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
     })
   }, [])
 
-  const handleDragLeave = useCallback((_e: React.DragEvent<HTMLDivElement>) => {
-    apply((state) => {
-      state.layout.fileUpload.isActive = false
-    })
-  }, [])
-
   return (
     <div
       id="np-app-root"
@@ -59,13 +53,11 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
       ref={canvasRootRef}
       onDrop={(e) => {
         e.preventDefault()
-        console.log(e)
       }}
       onDragOver={(e) => {
         e.preventDefault()
       }}
       onDragEnter={handleDragEnter}
-      onDragLeave={handleDragLeave}
     >
       <FileUploadOverlayContainer />
       <ControlsContainer />
