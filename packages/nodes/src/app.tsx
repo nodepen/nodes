@@ -3,7 +3,7 @@ import type * as NodePen from '@nodepen/core'
 import '@/styles.css'
 import { useDispatch, useStore, NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'
-import { PseudoShadowsContainer } from './views/common'
+import { FileUploadOverlayContainer, PseudoShadowsContainer } from './views/common'
 
 type NodesAppProps = {
   document: NodePen.Document
@@ -67,6 +67,7 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
     >
+      <FileUploadOverlayContainer />
       <ControlsContainer />
       <PseudoShadowsContainer />
       {children}
