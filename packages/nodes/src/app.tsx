@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import type * as NodePen from '@nodepen/core'
 import '@/styles.css'
 import { useDispatch, useStore, NodesAppCallbacks } from '$'
@@ -34,11 +34,38 @@ type NodesAppInternalProps = {
 const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
+  const { apply } = useDispatch()
+
+  const handleDragEnter = useCallback((_e: React.DragEvent<HTMLDivElement>) => {
+    apply((state) => {
+      state.layout.fileUpload = {
+        isActive: true,
+        activeFile: null,
+        uploadStatus: 'none',
+      }
+    })
+  }, [])
+
+  const handleDragLeave = useCallback((_e: React.DragEvent<HTMLDivElement>) => {
+    apply((state) => {
+      state.layout.fileUpload.isActive = false
+    })
+  }, [])
+
   return (
     <div
       id="np-app-root"
       className="np-w-full np-h-full np-relative np-overflow-hidden np-rounded-md"
       ref={canvasRootRef}
+      onDrop={(e) => {
+        e.preventDefault()
+        console.log(e)
+      }}
+      onDragOver={(e) => {
+        e.preventDefault()
+      }}
+      onDragEnter={handleDragEnter}
+      onDragLeave={handleDragLeave}
     >
       <ControlsContainer />
       <PseudoShadowsContainer />

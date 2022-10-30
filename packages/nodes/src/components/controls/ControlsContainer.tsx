@@ -10,7 +10,7 @@ const ControlsContainer = (): React.ReactElement => {
 
   return (
     <ControlsContainerLayout>
-      <DocumentInfoControl />
+      {/* <DocumentInfoControl /> */}
       <ActiveViewControl />
       <PinnedPortsControl pinnedPorts={configuration.pinnedPorts} />
       {/* <TemplateLibraryControl templates={templates} /> */}
@@ -19,6 +19,7 @@ const ControlsContainer = (): React.ReactElement => {
 }
 
 import { DownloadButton, HomeButton, ProfileButton, ShareButton, SolutionStatusBar } from './navigation'
+import { FileUploadOverlay } from './file-upload'
 
 type LayoutProps = {
   children: React.ReactNode
@@ -26,27 +27,32 @@ type LayoutProps = {
 
 const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement => {
   return (
-    <Layer fixed id="np-controls-layer" z={90}>
-      <div className="np-w-full np-h-full np-relative">
-        <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-row np-justify-start np-items-center np-pointer-events-none np-z-50">
-          <div className="np-h-full np-w-72 np-p-4 np-flex np-flex-col">
-            <div id="np-control-panels" className="np-w-full np-flex-grow np-flex np-flex-col">
-              {children}
-            </div>
-            <div
-              id="np-navigation-panels"
-              className="np-w-full np-h-8 np-flex np-justify-between np-items-center np-gap-2"
-            >
-              <HomeButton />
-              <ShareButton />
-              <DownloadButton />
-              <SolutionStatusBar />
-              <ProfileButton />
+    <>
+      <Layer fixed id="np-file-drop-layer" z={95}>
+        <FileUploadOverlay />
+      </Layer>
+      <Layer fixed id="np-controls-layer" z={90}>
+        <div className="np-w-full np-h-full np-relative">
+          <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-row np-justify-start np-items-center np-pointer-events-none np-z-50">
+            <div className="np-h-full np-w-72 np-p-4 np-flex np-flex-col">
+              <div id="np-control-panels" className="np-w-full np-flex-grow np-flex np-flex-col">
+                {children}
+              </div>
+              <div
+                id="np-navigation-panels"
+                className="np-w-full np-h-8 np-flex np-justify-between np-items-center np-gap-2"
+              >
+                <HomeButton />
+                <ShareButton />
+                <DownloadButton />
+                <SolutionStatusBar />
+                <ProfileButton />
+              </div>
             </div>
           </div>
         </div>
-      </div>
-    </Layer>
+      </Layer>
+    </>
   )
 }
 

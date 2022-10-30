@@ -18,6 +18,11 @@ export type NodesAppState = {
     zoom: number
   },
   layout: {
+    fileUpload: {
+      isActive: boolean
+      activeFile: File | null
+      uploadStatus: 'none' | 'pending' | 'success' | 'failure'
+    }
     activeView: string | null
   }
   stream: {
@@ -63,6 +68,11 @@ export const initialState: NodesAppState = {
     zoom: 1,
   },
   layout: {
+    fileUpload: {
+      isActive: false,
+      activeFile: null,
+      uploadStatus: 'none'
+    },
     activeView: null
   },
   stream: {

@@ -14,7 +14,7 @@ export const PinnedPortsControl = ({ pinnedPorts }: PinnedPortsControlProps): Re
   return (
     <ControlPanel>
       <div className="np-w-full np-flex np-justify-between np-items-center">
-        <h3 className="np-mb-1 np-font-sans np-text-md np-text-darkgreen">Polygon Controls</h3>
+        <h3 className="np-mb-1 np-font-sans np-text-md np-text-darkgreen">Pinned Controls</h3>
         <div className="np-h-full np-w-4 np-flex np-flex-col np-justify-center np-items-center">
           <svg width={8} height={4} viewBox="0 0 10 5" className="np-overflow-visible">
             <polyline
