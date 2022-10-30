@@ -2,13 +2,16 @@ import React, { useRef, useEffect } from 'react'
 import { Viewer, DefaultViewerParams } from '@speckle/viewer'
 import { useStore } from '$'
 import { Layer } from '../common'
+import { useViewRegistry } from '../common/hooks'
 
 type SpeckleModelViewProps = {
   streamId: string
 }
 
-const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactElement => {
+const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactElement | null => {
   const container = useStore((store) => store.registry.modelRoot)
+
+  const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
   const viewer = useRef<Viewer>()
 
@@ -65,8 +68,12 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
   //       })
   //   }, [streamId, streamObjectIds])
 
+  if (viewPosition === null) {
+    return <></>
+  }
+
   return (
-    <Layer id="np-model-layer" tab="model" z={10}>
+    <Layer id="np-model-layer" position={viewPosition} z={10}>
       <div className="np-w-full np-h-full np-pointer-events-auto" ref={container} />
     </Layer>
   )

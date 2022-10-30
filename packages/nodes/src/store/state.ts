@@ -19,14 +19,7 @@ export type RootState = {
     zoom: number
   },
   layout: {
-    tabs: {
-      current: LayoutTab
-      configuration: {
-        [key in LayoutTab]: {
-          order: number
-        }
-      }
-    }
+    activeView: number
   }
   stream: {
     id: string
@@ -37,6 +30,12 @@ export type RootState = {
     modelRoot: React.RefObject<HTMLDivElement>
     pseudoShadowTargets: {
       [shadowId: string]: React.RefObject<HTMLDivElement>
+    }
+    views: {
+      [viewKey: string]: {
+        label: string
+        order: number
+      }
     }
   }
   callbacks: {
@@ -116,17 +115,7 @@ export const initialState: RootState = {
     zoom: 1,
   },
   layout: {
-    tabs: {
-      current: 'graph',
-      configuration: {
-        'graph': {
-          order: 0
-        },
-        'model': {
-          order: 1
-        }
-      }
-    }
+    activeView: 0
   },
   stream: {
     id: 'b0d3a3c122',
@@ -135,7 +124,8 @@ export const initialState: RootState = {
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
     modelRoot: React.createRef<HTMLDivElement>(),
-    pseudoShadowTargets: {}
+    pseudoShadowTargets: {},
+    views: {}
   },
   callbacks: {
     onChange: () => { console.log('🐍 Incorrect [onChange] callback called!') }

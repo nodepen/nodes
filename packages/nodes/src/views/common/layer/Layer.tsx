@@ -1,18 +1,16 @@
 import React from 'react'
-import { useActiveViewTransform } from '@/hooks'
 
 type LayerProps = {
   id: string
-  tab?: 'graph' | 'model'
+  position?: number
   /** If `true`, layer is always rendered in the same position. */
   fixed?: boolean
   z: number
   children?: React.ReactNode
 }
 
-export const Layer = ({ id, tab, z, fixed = false, children }: LayerProps): React.ReactElement => {
-  const activeTabDelta = useActiveViewTransform(tab)
-  const transform = fixed ? 0 : activeTabDelta * 100
+export const Layer = ({ id, position = 0, z, fixed = false, children }: LayerProps): React.ReactElement => {
+  const transform = fixed ? 0 : position * 100
 
   return (
     <div

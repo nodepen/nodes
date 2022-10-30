@@ -1,29 +1,30 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { ControlPanel } from '../../common'
-import { useDispatch } from '$'
-import { useActiveViewTransform } from '@/hooks'
+import { useStore, useDispatch } from '$'
+import { clamp } from '@/utils'
+import { useViewPosition } from '@/views/common/hooks'
 import { COLORS } from '@/constants'
 
 export const ActiveViewControl = (): React.ReactElement => {
   const { apply } = useDispatch()
 
-  const tabs: ('graph' | 'model')[] = ['graph', 'model']
+  const registeredViews = useStore((store) => Object.keys(store.registry.views))
 
   return (
     <ControlPanel>
       <div className="np-w-full np-h-4 np-relative np-overflow-hidden">
-        {tabs.map((tab) => (
-          <ActiveViewLabel tab={tab} />
+        {registeredViews.map((viewKey) => (
+          <ActiveViewLabel key={`view-control-tab-${viewKey}`} viewKey={viewKey} />
         ))}
         <div
           className="np-w-3 np-h-4 np-absolute np-flex np-justify-center np-items-center hover:np-cursor-pointer"
           style={{ left: 0, top: 0, zIndex: 20 }}
           onClick={() =>
             apply((state) => {
-              if (state.layout.tabs.current === 'model') {
-                state.layout.tabs.current = 'graph'
-                return
-              }
+              const viewCount = Object.keys(state.registry.views).length
+              const activeView = state.layout.activeView
+
+              state.layout.activeView = clamp(activeView - 1, 0, viewCount - 1)
             })
           }
         >
@@ -43,10 +44,10 @@ export const ActiveViewControl = (): React.ReactElement => {
           style={{ right: 0, top: 0, zIndex: 20 }}
           onClick={() =>
             apply((state) => {
-              if (state.layout.tabs.current === 'graph') {
-                state.layout.tabs.current = 'model'
-                return
-              }
+              const viewCount = Object.keys(state.registry.views).length
+              const activeView = state.layout.activeView
+
+              state.layout.activeView = clamp(activeView + 1, 0, viewCount - 1)
             })
           }
         >
@@ -67,13 +68,16 @@ export const ActiveViewControl = (): React.ReactElement => {
 }
 
 type ActiveViewLabelProps = {
-  tab: 'graph' | 'model'
+  viewKey: string
 }
 
-const ActiveViewLabel = ({ tab }: ActiveViewLabelProps): React.ReactElement => {
-  const activeTabDelta = useActiveViewTransform(tab)
+const ActiveViewLabel = ({ viewKey }: ActiveViewLabelProps): React.ReactElement | null => {
+  const viewLabel = useStore((store) => store.registry.views[viewKey]?.label)
+  const viewPosition = useViewPosition(viewKey)
 
-  const label = tab === 'graph' ? 'Document' : 'Model'
+  if (!viewLabel || viewPosition === null) {
+    return null
+  }
 
   return (
     <div
@@ -83,10 +87,10 @@ const ActiveViewLabel = ({ tab }: ActiveViewLabelProps): React.ReactElement => {
         transition: 'transform',
         transitionDuration: '300ms',
         transitionTimingFunction: 'ease-out',
-        transform: `translateX(${activeTabDelta * 100}%)`,
+        transform: `translateX(${viewPosition * 100}%)`,
       }}
     >
-      <h2 className="np-font-sans np-text-md np-text-darkgreen">{label}</h2>
+      <h2 className="np-font-sans np-text-md np-text-darkgreen">{viewLabel}</h2>
     </div>
   )
 }

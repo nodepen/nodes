@@ -59,6 +59,7 @@ export const getStaticProps: GetStaticProps<PageProps> = async () => {
       document,
       templates,
     },
+    revalidate: 600,
   }
 }
 
