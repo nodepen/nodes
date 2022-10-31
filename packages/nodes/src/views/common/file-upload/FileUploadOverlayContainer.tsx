@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import { useDispatch, useStore } from '$'
+import { useCallbacks, useDispatch, useStore } from '$'
 import { Layer } from '../layer'
 import { COLORS } from '@/constants'
 
@@ -7,6 +7,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
   const { isActive, activeFile, uploadStatus } = useStore((state) => state.layout.fileUpload)
 
   const { apply } = useDispatch()
+  const { onFileUpload } = useCallbacks()
 
   const strokeWidth = isActive ? 160 : 0
   const r = isActive ? 20 : 100
@@ -17,16 +18,51 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
     })
   }, [])
 
-  const handleDragDrop = useCallback((e: React.DragEvent<SVGSVGElement>) => {
-    e.preventDefault()
-    e.stopPropagation()
+  const handleDragDrop = useCallback(
+    (e: React.DragEvent<SVGSVGElement>) => {
+      e.preventDefault()
+      e.stopPropagation()
 
-    console.log(e)
+      const file = e.dataTransfer.files.item(0)
 
-    apply((state) => {
-      state.layout.fileUpload.isActive = false
-    })
-  }, [])
+      apply((state) => {
+        state.layout.fileUpload.activeFile = file
+        state.layout.fileUpload.uploadStatus = 'pending'
+
+        if (!file) {
+          console.log('🐍 No files present in drop event!')
+          state.layout.fileUpload.isActive = false
+        }
+
+        if (!onFileUpload) {
+          console.log('🐍 No [onFileUpload] callback found.')
+          state.layout.fileUpload.isActive = false
+          return
+        }
+
+        const handleFileUpload = async (): Promise<void> => {
+          await onFileUpload(state)
+        }
+
+        handleFileUpload()
+          .then(() => {
+            // Successfully performed file upload
+            apply((state) => {
+              state.layout.fileUpload.isActive = false
+              state.layout.fileUpload.uploadStatus = 'success'
+            })
+          })
+          .catch((e) => {
+            // Failed to perform upload
+            console.error(e)
+            apply((state) => {
+              state.layout.fileUpload.uploadStatus = 'failure'
+            })
+          })
+      })
+    },
+    [onFileUpload]
+  )
 
   return (
     <>

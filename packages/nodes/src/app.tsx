@@ -24,6 +24,12 @@ export const NodesApp = ({ document, templates, children, ...callbacks }: NodesA
     })
   }, [document.id])
 
+  useEffect(() => {
+    apply((state) => {
+      state.callbacks = callbacks
+    })
+  }, [callbacks])
+
   return <NodesAppInternal children={children} />
 }
 

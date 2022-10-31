@@ -4,6 +4,7 @@ import type React from 'react'
 import { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
+import type { NodesAppState, NodesAppCallbacks } from '@nodepen/nodes'
 
 type NodesAppContainerProps = {
   document: NodePen.Document
@@ -13,12 +14,31 @@ type NodesAppContainerProps = {
 const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): React.ReactElement => {
   const streamId = ''
 
-  const handleDocumentChange = useCallback((document: NodePen.Document) => {
+  const handleDocumentChange = useCallback((state: NodesAppState): void => {
     console.log('Callback from app!')
   }, [])
 
-  const callbacks = {
-    onChange: handleDocumentChange,
+  const handleFileUpload = useCallback(async (state: NodesAppState): Promise<void> => {
+    const file = state.layout.fileUpload.activeFile
+
+    if (!file) {
+      return
+    }
+
+    const body = new FormData()
+    body.append('file', file)
+
+    const payload = { method: 'POST', body }
+
+    const response = await fetch('http://localhost:6500/files/gh', payload)
+    const data = await response.text()
+
+    console.log(data)
+  }, [])
+
+  const callbacks: NodesAppCallbacks = {
+    onDocumentChange: handleDocumentChange,
+    onFileUpload: handleFileUpload,
   }
 
   return (

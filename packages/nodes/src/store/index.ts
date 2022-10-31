@@ -1,5 +1,5 @@
 export { useDispatch } from './dispatch'
-export { useStore } from './store'
+export { useCallbacks, useStore } from './store'
 export { useStoreRef } from './hooks'
 
 export type { NodesAppStore } from './store'

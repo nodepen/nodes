@@ -128,6 +128,14 @@ namespace NodePen.Converters
 
         public static NodePenDocument Serialize(GH_Archive archive)
         {
+            var definition = new GH_Document();
+            archive.ExtractObject(definition, "Definition");
+
+            return Serialize(definition);
+        }
+
+        public static NodePenDocument Serialize(GH_Document ghdoc)
+        {
             NodePenDocument document = new NodePenDocument();
 
             var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;

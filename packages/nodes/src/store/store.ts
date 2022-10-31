@@ -19,3 +19,7 @@ export const useStore = create<NodesAppStore, NodesAppMiddleware>(
       })
     )
   )
+
+export const useCallbacks = () => {
+  return useStore((state) => state.callbacks)
+}

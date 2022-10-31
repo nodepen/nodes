@@ -47,6 +47,7 @@ export type NodesAppState = {
 export type NodesAppCallbacks = {
   onDocumentChange?: (state: NodesAppState) => void
   onExpireSolution?: (state: NodesAppState) => void
+  onFileUpload?: (state: NodesAppState) => Promise<void> | void
 }
 
 export const initialState: NodesAppState = {
