@@ -38,6 +38,10 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
 
   const handleDragEnter = useCallback((_e: React.DragEvent<HTMLDivElement>) => {
     apply((state) => {
+      if (state.layout.fileUpload.isActive) {
+        return
+      }
+
       state.layout.fileUpload = {
         isActive: true,
         activeFile: null,
