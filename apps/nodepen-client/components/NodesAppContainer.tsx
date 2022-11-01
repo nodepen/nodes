@@ -1,7 +1,7 @@
 'use client'
 
 import type React from 'react'
-import { useCallback } from 'react'
+import { useCallback, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
 import type { NodesAppState, NodesAppCallbacks } from '@nodepen/nodes'
@@ -11,8 +11,10 @@ type NodesAppContainerProps = {
   templates: NodePen.NodeTemplate[]
 }
 
-const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): React.ReactElement => {
+const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppContainerProps): React.ReactElement => {
   const streamId = ''
+
+  const [document, setDocument] = useState(initialDocument)
 
   const handleDocumentChange = useCallback((state: NodesAppState): void => {
     console.log('Callback from app!')
@@ -31,9 +33,11 @@ const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): Rea
     const payload = { method: 'POST', body }
 
     const response = await fetch('http://localhost:6500/files/gh', payload)
-    const data = await response.text()
+    const data = await response.json()
 
     console.log(data)
+
+    setDocument(data)
   }, [])
 
   const callbacks: NodesAppCallbacks = {

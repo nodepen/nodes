@@ -20,6 +20,9 @@ namespace NodePen.Converters
         [JsonProperty("nodes")]
         public Dictionary<string, NodePenDocumentNode> Nodes { get; set; } = new Dictionary<string, NodePenDocumentNode>();
 
+        [JsonProperty("configuration")]
+        public NodePenDocumentConfiguration Configuration { get; set; } = new NodePenDocumentConfiguration();
+
         [JsonProperty("version")]
         public int Version { get; private set; } = 1;
 
@@ -166,6 +169,25 @@ namespace NodePen.Converters
         public string name { get; set; } = "TEST";
 
         public DebugClass() { }
+    }
+
+    public class NodePenDocumentConfiguration
+    {
+
+        [JsonProperty("pinnedPorts")]
+        public List<PinnedPortConfiguration> PinnedPorts { get; set; } = new List<PinnedPortConfiguration>();
+
+        public class PinnedPortConfiguration
+        {
+
+            [JsonProperty("nodeInstanceId")]
+            public string NodeInstanceId { get; set; }
+
+            [JsonProperty("portInstanceId")]
+            public string PortInstanceId { get; set; }
+
+        }
+
     }
 
     public class NodePenDocumentNode
