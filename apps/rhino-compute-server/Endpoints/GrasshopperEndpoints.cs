@@ -45,10 +45,6 @@ namespace Rhino.Compute
             var definition = new GH_Document();
             archive.ExtractObject(definition, "Definition");
 
-            // Console.WriteLine(definition.ObjectCount);
-
-            Thread.Sleep(500);
-
             var document = NodePenConvert.Serialize(definition);
 
             return Response.AsJson(document);
