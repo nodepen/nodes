@@ -199,20 +199,56 @@ namespace NodePen.Converters
         [JsonProperty("templateId")]
         public string TemplateId { get; set; }
 
-        // [JsonProperty("inputs")]
-        // public Dictionary<string, int> Inputs { get; set; } = new Dictionary<string, int>();
+        [JsonProperty("position")]
+        public NodePenDocumentNodePosition Position { get; set; } = new NodePenDocumentNodePosition();
 
-        // [JsonProperty("outputs")]
-        // public Dictionary<string, int> Outputs { get; set; } = new Dictionary<string, int>();
+        [JsonProperty("dimensions")]
+        public NodePenDocumentNodeDimensions Dimensions { get; set; } = new NodePenDocumentNodeDimensions();
 
-        // [JsonProperty("values")]
-        // public Dictionary<string, NodePenDataTree> Values { get; set; } = new Dictionary<string, NodePenDataTree>();
+        [JsonProperty("sources")]
+        public Dictionary<string, List<NodePenPortReference>> Sources { get; set; } = new Dictionary<string, List<NodePenPortReference>>();
 
-        public NodePenDocumentNode(IGH_DocumentObject documentObject)
+        [JsonProperty("inputs")]
+        public Dictionary<string, int> Inputs { get; set; } = new Dictionary<string, int>();
+
+        [JsonProperty("outputs")]
+        public Dictionary<string, int> Outputs { get; set; } = new Dictionary<string, int>();
+
+        [JsonProperty("values")]
+        public Dictionary<string, NodePenDataTree> Values { get; set; } = new Dictionary<string, NodePenDataTree>();
+
+        public NodePenDocumentNode()
         {
-            InstanceId = documentObject.InstanceGuid.ToString();
+
         }
 
+    }
+
+    public class NodePenDocumentNodePosition
+    {
+        [JsonProperty("x")]
+        public double X { get; set; } = 0;
+
+        [JsonProperty("y")]
+        public double Y { get; set; } = 0;
+    }
+
+    public class NodePenDocumentNodeDimensions
+    {
+        [JsonProperty("width")]
+        public double Width { get; set; } = 0;
+
+        [JsonProperty("height")]
+        public double Height { get; set; } = 0;
+    }
+
+    public class NodePenPortReference
+    {
+        [JsonProperty("nodeInstanceId")]
+        public string NodeInstanceId { get; set; }
+
+        [JsonProperty("portInstanceId")]
+        public string PortInstanceId { get; set; }
     }
 
     public class NodePenDataTree : Dictionary<string, List<NodePenDataTreeValue>>

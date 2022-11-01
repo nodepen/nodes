@@ -129,7 +129,11 @@ namespace NodePen.Converters
         public static NodePenDocument Serialize(GH_Archive archive)
         {
             var definition = new GH_Document();
-            archive.ExtractObject(definition, "Definition");
+
+            if (!archive.ExtractObject(definition, "Definition"))
+            {
+                throw new Exception("Failed to extract definition from Grasshopper archive.");
+            }
 
             return Serialize(definition);
         }
@@ -138,57 +142,65 @@ namespace NodePen.Converters
         {
             NodePenDocument document = new NodePenDocument();
 
-            var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;
-
-            foreach (IGH_ObjectProxy proxy in proxies)
+            foreach (IGH_DocumentObject documentObject in ghdoc.Objects)
             {
-                switch (proxy.Kind)
+                switch (documentObject)
                 {
-                    case GH_ObjectType.CompiledObject:
+                    case IGH_Component component:
                         {
-                            if (proxy.CreateInstance() is GH_Component instance)
+                            var template = Templates.FirstOrDefault((t) => t.Guid == component.ComponentGuid.ToString());
+
+                            if (template.Guid == null)
                             {
-                                var type = instance.GetType();
-
-                                for (var i = 0; i < instance.Params.Input.Count; i++)
-                                {
-                                    var inputParameter = instance.Params.Input[i];
-
-                                }
+                                Console.WriteLine($"Could not find template for document object {component.Name}");
+                                continue;
                             }
 
-                            continue;
+                            var node = new NodePenDocumentNode()
+                            {
+                                InstanceId = component.InstanceGuid.ToString(),
+                                TemplateId = template.Guid.ToString(),
+                            };
+
+                            node.Position.X = component.Attributes.Pivot.X * 2;
+                            node.Position.Y = component.Attributes.Pivot.Y * -2;
+
+                            for (var i = 0; i < component.Params.Input.Count; i++)
+                            {
+                                var currentParam = component.Params.Input[i];
+                                var currentParamId = currentParam.InstanceGuid.ToString();
+
+                                node.Inputs.Add(currentParamId, i);
+
+                                // TODO: Populate sources
+                                node.Sources.Add(currentParamId, new List<NodePenPortReference>());
+
+                                // TODO: Populate persisted data
+                                node.Values.Add(currentParamId, new NodePenDataTree());
+                            }
+
+                            for (var i = 0; i < component.Params.Output.Count; i++)
+                            {
+                                var currentParam = component.Params.Output[i];
+                                var currentParamId = currentParam.InstanceGuid.ToString();
+
+                                node.Outputs.Add(currentParamId, i);
+                            }
+
+                            document.Nodes.Add(node.InstanceId, node);
+
+                            break;
                         }
-                    case GH_ObjectType.UserObject:
+                    case IGH_Param parameter:
                         {
-                            var x = proxy.CreateInstance() as GH_UserObject;
-                            continue;
+                            break;
                         }
-                    case GH_ObjectType.None:
                     default:
                         {
-                            continue;
+                            Console.WriteLine($"Could not serialize document object [{documentObject.GetType()}]");
+                            break;
                         }
                 }
-
-                // var instance = proxy.CreateInstance() as IGH_Component;
-
-                // if (!(proxy.CreateInstance() is IGH_Component instance))
-                // {
-                //     continue;
-                // }
-
-                // if (instance == null)
-                // {
-                //     continue;
-                // }
-
-                // var parameters = instance.Params;
-
-                // foreach (var input in parameters.Input)
-                // {
-                //     var x = input.InstanceGuid;
-                // }
             }
 
             return document;

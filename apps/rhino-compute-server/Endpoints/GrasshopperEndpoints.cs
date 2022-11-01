@@ -45,7 +45,7 @@ namespace Rhino.Compute
             var definition = new GH_Document();
             archive.ExtractObject(definition, "Definition");
 
-            Console.WriteLine(definition.ObjectCount);
+            // Console.WriteLine(definition.ObjectCount);
 
             Thread.Sleep(500);
 
