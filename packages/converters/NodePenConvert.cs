@@ -156,6 +156,8 @@ namespace NodePen.Converters
                                 continue;
                             }
 
+                            Console.WriteLine($"Converting component {component.InstanceGuid}");
+
                             var node = new NodePenDocumentNode()
                             {
                                 InstanceId = component.InstanceGuid.ToString(),
@@ -172,8 +174,24 @@ namespace NodePen.Converters
 
                                 node.Inputs.Add(currentParamId, i);
 
-                                // TODO: Populate sources
-                                node.Sources.Add(currentParamId, new List<NodePenPortReference>());
+                                // Populate sources
+                                var sources = new List<NodePenPortReference>();
+
+                                for (var j = 0; j < currentParam.SourceCount; j++)
+                                {
+                                    var currentSource = currentParam.Sources[j];
+
+                                    var sourceNodeInstanceId = currentSource.Attributes.Parent.DocObject.InstanceGuid.ToString();
+                                    var sourcePortInstanceId = currentSource.InstanceGuid.ToString();
+
+                                    sources.Add(new NodePenPortReference()
+                                    {
+                                        NodeInstanceId = sourceNodeInstanceId,
+                                        PortInstanceId = sourcePortInstanceId
+                                    });
+                                }
+
+                                node.Sources.Add(currentParamId, sources);
 
                                 // TODO: Populate persisted data
                                 node.Values.Add(currentParamId, new NodePenDataTree());

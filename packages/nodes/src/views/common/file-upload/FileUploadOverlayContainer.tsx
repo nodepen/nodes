@@ -35,7 +35,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
         }
 
         if (!onFileUpload) {
-          console.log('🐍 No [onFileUpload] callback found.')
+          console.log('🐍 No [onFileUpload]  callback found.')
           state.layout.fileUpload.isActive = false
           return
         }

@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from 'react'
+import React, { useEffect } from 'react'
 import { useStore, useDispatch } from '$'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
@@ -18,7 +18,7 @@ const DocumentView = ({ editable }: DocumentViewProps): React.ReactElement | nul
 
   const { viewPosition } = useViewRegistry({ key: 'document', label: 'Document' })
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     const canvas = canvasRootRef.current
 
     if (!canvas) {
