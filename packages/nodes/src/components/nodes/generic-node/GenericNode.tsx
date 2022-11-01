@@ -3,22 +3,15 @@ import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useDraggableNode } from '../hooks'
+import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 
 type GenericNodeProps = {
   id: string
   template: NodePen.NodeTemplate
 }
 
-const {
-  NODE_INTERNAL_PADDING,
-  NODE_LABEL_WIDTH,
-  NODE_LABEL_FONT_SIZE,
-  NODE_MINIMUM_HEIGHT,
-  NODE_PORT_LABEL_FONT_SIZE,
-  NODE_PORT_MINIMUM_HEIGHT,
-  NODE_PORT_MINIMUM_WIDTH,
-  NODE_PORT_RADIUS,
-} = DIMENSIONS
+const { NODE_INTERNAL_PADDING, NODE_LABEL_WIDTH, NODE_LABEL_FONT_SIZE, NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_RADIUS } =
+  DIMENSIONS
 
 const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => {
   const node = useStore((store) => store.document.nodes[id])
@@ -30,11 +23,10 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
 
   console.log(`⚙️⚙️⚙️ Rendered generic node [${id.split('-')[0]}] (${nickName})`)
 
-  const nodeWidth = NODE_INTERNAL_PADDING * 4 + NODE_PORT_MINIMUM_WIDTH * 2 + NODE_LABEL_WIDTH
+  const nodeWidth = getNodeWidth()
 
-  const nodeParameterHeight = Math.max(inputs.length, outputs.length, 1) * NODE_PORT_MINIMUM_HEIGHT
-  const nodeContentHeight = Math.max(nodeParameterHeight, NODE_MINIMUM_HEIGHT)
-  const nodeHeight = NODE_INTERNAL_PADDING * 2 + nodeContentHeight
+  const nodeHeight = getNodeHeight(template)
+  const nodeContentHeight = nodeHeight - NODE_INTERNAL_PADDING * 2
 
   // TODO: Refactor out repetition, extract to util, add tests
   const getPortColumnPosition = (orderNumber: number, direction: 'input' | 'output'): [x: number, y: number] => {

@@ -205,6 +205,9 @@ namespace NodePen.Converters
         [JsonProperty("dimensions")]
         public NodePenDocumentNodeDimensions Dimensions { get; set; } = new NodePenDocumentNodeDimensions();
 
+        [JsonProperty("anchors")]
+        public Dictionary<string, NodePenDocumentNodeAnchor> Anchors { get; set; } = new Dictionary<string, NodePenDocumentNodeAnchor>();
+
         [JsonProperty("sources")]
         public Dictionary<string, List<NodePenPortReference>> Sources { get; set; } = new Dictionary<string, List<NodePenPortReference>>();
 
@@ -240,6 +243,15 @@ namespace NodePen.Converters
 
         [JsonProperty("height")]
         public double Height { get; set; } = 0;
+    }
+
+    public class NodePenDocumentNodeAnchor
+    {
+        [JsonProperty("dx")]
+        public double Dx { get; set; } = 0;
+
+        [JsonProperty("dy")]
+        public double Dy { get; set; } = 0;
     }
 
     public class NodePenPortReference

@@ -40,6 +40,7 @@ export const getStaticProps: GetStaticProps<PageProps> = async () => {
             height: 20,
           },
           sources: {},
+          anchors: {},
           values: {
             ['input-a']: {},
             ['input-b']: {

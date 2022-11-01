@@ -1,1 +1,1 @@
-export { clamp } from './clamp'
+export { clamp } from './numerics'

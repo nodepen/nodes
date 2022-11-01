@@ -13,6 +13,14 @@ export type DocumentNode = {
     width: number
     height: number
   }
+  /** Anchors represent important positions on the node in world space. */
+  anchors: {
+    /** Anchors are stored as deltas from the current `position` */
+    [anchorId: string]: {
+      dx: number
+      dy: number
+    }
+  }
   /** Data providers for inputs on this node. */
   sources: {
     [inputInstanceId: string]: {

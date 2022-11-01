@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { groupTemplatesByCategory } from '@/utils/template'
+import { groupTemplatesByCategory } from '@/utils/templates'
 import { ControlPanel } from '../../common'
 
 type TemplateLibraryControlProps = {

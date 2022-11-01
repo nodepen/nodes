@@ -39,7 +39,7 @@ export const PinnedPortsControl = ({ pinnedPorts }: PinnedPortsControlProps): Re
 
 import { useStore, useDispatch } from '$'
 import shallow from 'zustand/shallow'
-import { getDataTreeValueString, tryGetSingleValue } from '@/utils/data-tree'
+import { getDataTreeValueString, tryGetSingleValue } from '@/utils/data-trees'
 
 type PortControlProps = {
   portReference: NodesAppState['document']['configuration']['pinnedPorts'][0]
