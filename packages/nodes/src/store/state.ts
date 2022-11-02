@@ -32,8 +32,11 @@ export type NodesAppState = {
   }
   registry: {
     canvasRoot: React.RefObject<HTMLDivElement>
-    pseudoShadowTargets: {
-      [shadowId: string]: React.RefObject<HTMLDivElement>
+    shadows: {
+      containerRef: React.RefObject<HTMLDivElement> | null
+      targets: {
+        [shadowId: string]: React.RefObject<HTMLDivElement>
+      }
     }
     views: {
       [viewKey: string]: {
@@ -93,7 +96,10 @@ export const initialState: NodesAppState = {
   },
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
-    pseudoShadowTargets: {},
+    shadows: {
+      containerRef: null,
+      targets: {},
+    },
     views: {},
     wires: {
       containerRef: null

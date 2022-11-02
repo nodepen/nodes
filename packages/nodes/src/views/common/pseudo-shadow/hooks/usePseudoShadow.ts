@@ -14,12 +14,12 @@ export const usePseudoShadow = (): React.RefObject<HTMLDivElement> => {
 
     useEffect(() => {
         apply((state) => {
-            state.registry.pseudoShadowTargets[shadowId] = shadowTargetRef
+            state.registry.shadows.targets[shadowId] = shadowTargetRef
         })
 
         return () => {
             apply((state) => {
-                delete state.registry.pseudoShadowTargets[shadowId]
+                delete state.registry.shadows.targets[shadowId]
             })
         }
     }, [])
