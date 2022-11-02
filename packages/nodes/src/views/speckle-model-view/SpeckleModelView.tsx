@@ -26,10 +26,16 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
       return
     }
 
+    if (viewerRef.current) {
+      return
+    }
+
     const viewer = new Viewer(containerRef.current, {
       showStats: true,
       environmentSrc: '',
     })
+
+    viewerRef.current = viewer
 
     viewer.init().then(() => {
       viewerRef.current = viewer
