@@ -2,12 +2,19 @@ import React, { useRef, useEffect } from 'react'
 import { Viewer, DefaultViewerParams, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
+import { useStore } from '$'
 
 type SpeckleModelViewProps = {
   streamId: string
 }
 
+const STREAM_ID = 'e1aa8e3dce'
+const BRANCH_NAME = 'main'
+const TOKEN = 'ed0010b22f0211453ad5807fca57925722cc86224a'
+
 const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactElement | null => {
+  const objectIds = useStore((state) => state.stream.objectIds)
+
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -37,28 +44,29 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
     }
   }, [])
 
-  //   useEffect(() => {
-  //     const v = viewer.current
+  useEffect(() => {
+    const viewer = viewerRef.current
 
-  //     if (!v) {
-  //       return
-  //     }
+    if (!viewer) {
+      return
+    }
 
-  //     v.unloadAll()
-  //       .then(() => {
-  //         const loadRequests = streamObjectIds.map((id) => {
-  //           console.log(`Loading ${id}`)
-  //           return v.loadObject(
-  //             `http://localhost:3000/streams/${streamId}/objects/${id}`,
-  //             '8ac998dd805648be63a69a8e0480d07a1e06c6465e'
-  //           )
-  //         })
-  //         return Promise.allSettled(loadRequests)
-  //       })
-  //       .then(() => {
-  //         console.log('Loaded a bunch of stuff.')
-  //       })
-  //   }, [streamId, streamObjectIds])
+    const objectId = objectIds[0]
+
+    if (!objectId) {
+      return
+    }
+
+    const refreshObjects = async (): Promise<void> => {
+      await viewer.unloadAll()
+
+      await viewer.loadObject(`http://localhost:3000/streams/${STREAM_ID}/objects/${objectId}`, TOKEN)
+    }
+
+    refreshObjects().then(() => {
+      // Do nothing
+    })
+  }, [objectIds])
 
   return (
     <Layer id="np-model-layer" position={viewPosition ?? 1} z={10}>

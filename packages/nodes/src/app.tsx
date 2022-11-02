@@ -8,10 +8,17 @@ import { FileUploadOverlayContainer, PseudoShadowsContainer } from './views/comm
 type NodesAppProps = {
   document: NodePen.Document
   templates: NodePen.NodeTemplate[]
+  solution?: NodePen.SolutionData
   children: React.ReactNode
 } & NodesAppCallbacks
 
-export const NodesApp = ({ document, templates, children, ...callbacks }: NodesAppProps): React.ReactElement => {
+export const NodesApp = ({
+  document,
+  templates,
+  solution,
+  children,
+  ...callbacks
+}: NodesAppProps): React.ReactElement => {
   const { apply, loadDocument, loadTemplates } = useDispatch()
 
   useEffect(() => {
@@ -27,6 +34,12 @@ export const NodesApp = ({ document, templates, children, ...callbacks }: NodesA
       state.callbacks = callbacks
     })
   }, [callbacks])
+
+  useEffect(() => {
+    apply((state) => {
+      state.stream.objectIds = solution?.manifest.streamObjectIds ?? []
+    })
+  }, [solution?.id, solution?.manifest.streamObjectIds])
 
   return <NodesAppInternal children={children} />
 }

@@ -78,6 +78,13 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     fetchSolution()
       .then((data) => {
         console.log(data)
+        setSolution({
+          id: data.id,
+          manifest: {
+            streamObjectIds: data.streamObjectIds,
+          },
+          values: {},
+        })
       })
       .catch((e) => {
         console.log(e)
@@ -91,7 +98,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   }
 
   return (
-    <NodesApp document={document} templates={templates} {...callbacks}>
+    <NodesApp document={document} templates={templates} solution={solution} {...callbacks}>
       <DocumentView editable />
       <SpeckleModelView streamId={streamId} />
     </NodesApp>
