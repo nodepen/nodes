@@ -18,7 +18,8 @@ const ControlsContainer = (): React.ReactElement => {
   )
 }
 
-import { DownloadButton, HomeButton, ProfileButton, ShareButton, SolutionStatusBar } from './navigation'
+import { DownloadButton, HomeButton, ProfileButton, ShareButton } from './navigation'
+import { SolutionStatusBar } from './solution-status'
 
 type LayoutProps = {
   children: React.ReactNode

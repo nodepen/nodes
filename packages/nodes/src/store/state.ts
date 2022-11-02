@@ -6,6 +6,7 @@ export type NodesAppState = {
   templates: {
     [templateId: string]: NodePen.NodeTemplate
   },
+  solution: NodePen.SolutionData
   camera: {
     /** container div innerWidth / innerHeight in screen space */
     aspect: number
@@ -63,6 +64,13 @@ export const initialState: NodesAppState = {
     version: 1
   },
   templates: {},
+  solution: {
+    id: crypto.randomUUID(),
+    manifest: {
+      streamObjectIds: []
+    },
+    values: {}
+  },
   camera: {
     aspect: 1.5,
     position: {
