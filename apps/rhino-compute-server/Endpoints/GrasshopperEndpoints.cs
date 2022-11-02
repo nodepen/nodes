@@ -11,6 +11,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
+using Speckle.Core.Api;
+using Speckle.Core.Credentials;
+using Speckle.Core.Models;
+using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 using Topshelf;
 
@@ -48,6 +52,15 @@ namespace Rhino.Compute
 
             [JsonProperty("streamObjectIds")]
             public List<string> StreamObjectIds { get; set; } = new List<string>();
+        }
+
+        public class NodePenSolution : Base
+        {
+
+            [DetachProperty]
+            public List<Polyline> displayValue { get; set; }
+
+            public string name { get; set; } = "TEST";
         }
 
         public Response SolveGrasshopperDocument(NancyContext context)
@@ -135,6 +148,132 @@ namespace Rhino.Compute
 
             definition.Enabled = true;
             definition.NewSolution(true, GH_SolutionMode.CommandLine);
+
+            var solution = new NodePenSolution();
+            solution.id = data.SolutionId;
+            solution.displayValue = new List<Polyline>();
+
+            for (var x = 0; x < definition.ObjectCount; x++)
+            {
+                var docObject = definition.Objects[x];
+
+                if (!(docObject is IGH_Component))
+                {
+                    continue;
+                }
+
+                Console.WriteLine(docObject.InstanceGuid);
+
+                var component = docObject as IGH_Component;
+
+                for (var i = 0; i < component.Params.Output.Count; i++)
+                {
+                    var outputParam = component.Params.Output[i];
+
+                    for (var j = 0; j < outputParam.VolatileData.PathCount; j++)
+                    {
+                        var currentPath = outputParam.VolatileData.get_Path(j);
+                        var currentBranch = outputParam.VolatileData.get_Branch(currentPath);
+
+                        for (var k = 0; k < currentBranch.Count; k++)
+                        {
+                            try
+                            {
+                                var goo = currentBranch[k] as IGH_Goo;
+
+                                if (goo == null)
+                                {
+                                    // `goo` appears to be null, not absent, on invalid solutions
+                                    continue;
+                                }
+
+                                switch (goo.TypeName)
+                                {
+                                    case "Circle":
+                                        {
+                                            var circleGoo = goo as GH_Circle;
+
+                                            var circle = circleGoo.Value;
+                                            // solution.displayValue.Add(new Circle(new Plane(new Point(circle.Center.X, circle.Center.Y, circle.Center.Z), new Vector(circle.Plane.Normal.X, circle.Plane.Normal.Y, circle.Plane.Normal.Z), new Vector(circle.Plane.XAxis.X, circle.Plane.XAxis.Y, circle.Plane.XAxis.Z), new Vector(circle.Plane.YAxis.X, circle.Plane.YAxis.Y, circle.Plane.YAxis.Z)), circle.Radius));
+                                            Console.WriteLine(circle);
+                                            break;
+                                        }
+                                    case "Curve":
+                                        {
+                                            var curveGoo = goo as GH_Curve;
+                                            var curve = curveGoo.Value;
+
+                                            var coords = new List<double>();
+
+                                            coords.Add(curve.PointAtStart.X);
+                                            coords.Add(curve.PointAtStart.Y);
+                                            coords.Add(curve.PointAtStart.Z);
+
+                                            for (var z = 0; z < curve.SpanCount; z++)
+                                            {
+                                                var span = curve.SpanDomain(z);
+
+                                                var pt = curve.PointAt(span.Max);
+
+                                                coords.Add(pt.X);
+                                                coords.Add(pt.Y);
+                                                coords.Add(pt.Z);
+                                            }
+
+                                            var rep = new Polyline(coords);
+
+                                            solution.displayValue.Add(rep);
+
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            // Console.WriteLine($"Did not parse [{goo.TypeName}]");
+                                            break;
+                                        }
+                                }
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine(e.Message);
+                            }
+
+                        }
+                    }
+                }
+            }
+
+            var streamId = "e1aa8e3dce";
+            var branchName = "main";
+
+            var account = new Account()
+            {
+                token = "ed0010b22f0211453ad5807fca57925722cc86224a",
+                serverInfo = new ServerInfo()
+                {
+                    url = "http://localhost:3000",
+                    company = "NodePen"
+                },
+                userInfo = new UserInfo()
+                {
+                    email = "chuck@nodepen.io"
+                }
+            };
+
+            var commitId = Helpers.Send(
+                stream: $"http://localhost:3000/streams/{streamId}/branches/{branchName}",
+                data: solution,
+                message: "Test commit",
+                account: account,
+                sourceApplication: "nodepen"
+            ).Result;
+
+            var client = new Client(account);
+
+            var streamBranch = client.BranchGet(streamId, branchName, 1).Result;
+            var objectId = streamBranch.commits.items[0].referencedObject;
+
+            response.StreamObjectIds.Add(objectId);
 
             return Response.AsJson(response);
         }

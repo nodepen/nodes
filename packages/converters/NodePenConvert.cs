@@ -13,7 +13,7 @@ namespace NodePen.Converters
     {
         public static List<NodePenNodeTemplate> Templates = new List<NodePenNodeTemplate>();
 
-        public static string DEBUG_PreviousDocument = "";
+        public static string DEBUG_PreviousDocument;
 
         /// <summary>
         /// Detect and initialize all components installed on the current Grasshopper instance.
