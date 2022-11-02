@@ -6,6 +6,7 @@ using Microsoft.Owin.Hosting;
 using Owin;
 using Nancy;
 using Nancy.TinyIoc;
+using Nancy.ErrorHandling;
 using Nancy.Bootstrapper;
 using NodePen.Converters;
 using Grasshopper.Kernel;
@@ -172,6 +173,25 @@ namespace Rhino.Compute
             });
         }
 
+    }
+
+    public class LoggingErrorHandler : Nancy.ErrorHandling.IStatusCodeHandler
+    {
+        public bool HandlesStatusCode(HttpStatusCode statusCode, NancyContext context)
+        {
+            return statusCode == HttpStatusCode.InternalServerError;
+        }
+
+        public void Handle(HttpStatusCode statusCode, NancyContext context)
+        {
+            object errorObject;
+            context.Items.TryGetValue(NancyEngine.ERROR_EXCEPTION, out errorObject);
+            var error = errorObject as Exception;
+
+            Console.WriteLine(error.Message);
+            Console.WriteLine(error.Message);
+            Console.WriteLine(error.Source);
+        }
     }
 
     public class ConverterEndpointsModule : NancyModule

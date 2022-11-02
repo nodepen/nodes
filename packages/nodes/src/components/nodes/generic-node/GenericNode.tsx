@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { useStore } from '$'
+import { useDispatch, useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useDraggableNode } from '../hooks'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
@@ -16,6 +16,8 @@ const { NODE_INTERNAL_PADDING, NODE_LABEL_WIDTH, NODE_LABEL_FONT_SIZE, NODE_PORT
 
 const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => {
   const node = useStore((store) => store.document.nodes[id])
+
+  const { apply } = useDispatch()
 
   const draggableTargetRef = useDraggableNode(id)
 
@@ -118,6 +120,23 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         className="np-font-mono np-select-none"
         fontSize={NODE_PORT_LABEL_FONT_SIZE}
         fill={COLORS.DARK}
+        onClick={(e) => {
+          e.stopPropagation()
+
+          const portInstanceId = Object.entries(node.inputs).find(([instanceId, order]) => order === input.__order)?.[0]
+
+          if (!portInstanceId) {
+            console.log('Not found')
+            return
+          }
+
+          apply((state) => {
+            state.document.configuration.pinnedPorts.push({
+              nodeInstanceId: node.instanceId,
+              portInstanceId: portInstanceId,
+            })
+          })
+        }}
       >
         {nickName}
       </text>

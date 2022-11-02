@@ -65,7 +65,7 @@ export const initialState: NodesAppState = {
   },
   templates: {},
   solution: {
-    id: crypto.randomUUID(),
+    id: 'initial',
     manifest: {
       streamObjectIds: []
     },

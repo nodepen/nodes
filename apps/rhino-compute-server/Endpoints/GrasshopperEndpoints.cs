@@ -1,4 +1,7 @@
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Parameters;
 using GH_IO.Serialization;
 using Nancy;
 using Nancy.Extensions;
@@ -52,17 +55,86 @@ namespace Rhino.Compute
             var body = context.Request.Body.AsString();
             var data = JsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
 
-            foreach (var key in data.UserValues.Keys)
-            {
-                Console.WriteLine(key);
-                Console.WriteLine(data.UserValues[key]);
-            }
-
             var response = new NodePenSolutionManifest()
             {
                 Id = data.SolutionId,
                 StreamObjectIds = new List<string>(),
             };
+
+            var archive = new GH_Archive();
+            archive.Deserialize_Xml(NodePenConvert.DEBUG_PreviousDocument);
+
+            var definition = new GH_Document();
+            if (!archive.ExtractObject(definition, "Definition"))
+            {
+                Console.WriteLine("???");
+            }
+
+            definition.Enabled = true;
+
+            foreach (var key in data.UserValues.Keys)
+            {
+                var value = data.UserValues[key];
+
+                Console.WriteLine(key);
+                Console.WriteLine(value);
+
+                var referenceInfo = key.Split(':');
+
+                var nodeId = referenceInfo[0];
+                var portId = referenceInfo[1];
+
+                var docObject = definition.Objects.FirstOrDefault((obj) => obj.InstanceGuid.ToString() == nodeId);
+
+                if (docObject == null || !(docObject is IGH_Component))
+                {
+                    Console.WriteLine($"Could not find document object {nodeId}");
+                    continue;
+                }
+
+                var component = docObject as IGH_Component;
+
+                for (var i = 0; i < component.Params.Input.Count; i++)
+                {
+                    var inputParam = component.Params.Input[i];
+
+                    if (inputParam.InstanceGuid.ToString() != portId)
+                    {
+                        continue;
+                    }
+
+                    switch (inputParam)
+                    {
+                        case Param_Number numberParam:
+                            {
+                                var valueGoo = new GH_Number(value);
+
+                                var tree = new GH_Structure<GH_Number>();
+                                var pathIndices = new List<int>() { 0 }.ToArray();
+                                var branch = new GH_Path(pathIndices);
+                                tree.Insert(valueGoo, branch, 0);
+
+                                numberParam.SetPersistentData(tree, branch, valueGoo);
+                                break;
+                            }
+                        case Param_Integer integerParam:
+                            {
+                                var valueGoo = new GH_Integer(Convert.ToInt32(value));
+
+                                var tree = new GH_Structure<GH_Integer>();
+                                var pathIndices = new List<int>() { 0 }.ToArray();
+                                var branch = new GH_Path(pathIndices);
+                                tree.Insert(valueGoo, branch, 0);
+
+                                integerParam.SetPersistentData(tree, branch, value);
+                                break;
+                            }
+                    }
+                }
+            }
+
+            definition.Enabled = true;
+            definition.NewSolution(true, GH_SolutionMode.CommandLine);
 
             return Response.AsJson(response);
         }
@@ -85,7 +157,7 @@ namespace Rhino.Compute
             var definition = new GH_Document();
             archive.ExtractObject(definition, "Definition");
 
-            NodePenConvert.DEBUG_PreviousDocument = archive;
+            NodePenConvert.DEBUG_PreviousDocument = archive.Serialize_Xml();
 
             var document = NodePenConvert.Serialize(definition);
 

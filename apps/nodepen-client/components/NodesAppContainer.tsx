@@ -45,6 +45,10 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     const solutionId = state.solution.id
     const userValues: { [portRef: string]: number } = {}
 
+    if (solutionId === 'initial') {
+      return
+    }
+
     for (const node of Object.values(state.document.nodes)) {
       const { instanceId, values } = node
 

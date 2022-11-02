@@ -75,14 +75,14 @@ export const getStaticProps: GetStaticProps<PageProps> = async () => {
       },
       configuration: {
         pinnedPorts: [
-          {
-            nodeInstanceId: 'test-element-id-a',
-            portInstanceId: 'input-b',
-          },
-          {
-            nodeInstanceId: 'test-element-id-a',
-            portInstanceId: 'input-c',
-          },
+          // {
+          //   nodeInstanceId: 'test-element-id-a',
+          //   portInstanceId: 'input-b',
+          // },
+          // {
+          //   nodeInstanceId: 'test-element-id-a',
+          //   portInstanceId: 'input-c',
+          // },
         ],
       },
       version: 1,

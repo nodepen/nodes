@@ -97,6 +97,8 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
                 },
               ],
             }
+
+            state.solution.id = crypto.randomUUID()
           })
         }}
       />
