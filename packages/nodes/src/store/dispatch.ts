@@ -6,6 +6,7 @@ import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
+import { expireSolution } from './utils'
 
 const { NODE_INTERNAL_PADDING } = DIMENSIONS
 
@@ -72,6 +73,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             }
           }
         }
+
+        expireSolution(state)
       }
     ),
     loadTemplates: (templates: NodePen.NodeTemplate[]) => set(

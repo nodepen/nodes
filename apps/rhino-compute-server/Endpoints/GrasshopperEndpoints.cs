@@ -5,6 +5,7 @@ using Nancy.Extensions;
 using Nancy.Routing;
 using NodePen.Converters;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using Speckle.Newtonsoft.Json;
@@ -25,6 +26,45 @@ namespace Rhino.Compute
             Post["/files/gh"] = _ => HandleGrasshopperFileUpload(Context);
             Get["/grasshopper"] = _ => GetGrasshopperConfiguration();
             Post["/grasshopper/id"] = _ => PostGrasshopperDocument(Context);
+            Post["/grasshopper/id/solution"] = _ => SolveGrasshopperDocument(Context);
+        }
+
+        public class NodePenSolutionRequestBody
+        {
+            [JsonProperty("solutionId")]
+            public string SolutionId { get; set; }
+
+            [JsonProperty("userValues")]
+            public Dictionary<string, double> UserValues { get; set; } = new Dictionary<string, double>();
+        }
+
+        public class NodePenSolutionManifest
+        {
+            [JsonProperty("id")]
+            public string Id { get; set; }
+
+            [JsonProperty("streamObjectIds")]
+            public List<string> StreamObjectIds { get; set; } = new List<string>();
+        }
+
+        public Response SolveGrasshopperDocument(NancyContext context)
+        {
+            var body = context.Request.Body.AsString();
+            var data = JsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
+
+            foreach (var key in data.UserValues.Keys)
+            {
+                Console.WriteLine(key);
+                Console.WriteLine(data.UserValues[key]);
+            }
+
+            var response = new NodePenSolutionManifest()
+            {
+                Id = data.SolutionId,
+                StreamObjectIds = new List<string>(),
+            };
+
+            return Response.AsJson(response);
         }
 
         public Response HandleGrasshopperFileUpload(NancyContext context)
@@ -44,6 +84,8 @@ namespace Rhino.Compute
 
             var definition = new GH_Document();
             archive.ExtractObject(definition, "Definition");
+
+            NodePenConvert.DEBUG_PreviousDocument = archive;
 
             var document = NodePenConvert.Serialize(definition);
 

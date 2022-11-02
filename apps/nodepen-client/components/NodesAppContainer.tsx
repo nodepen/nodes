@@ -15,6 +15,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   const streamId = ''
 
   const [document, setDocument] = useState(initialDocument)
+  const [solution, setSolution] = useState<NodePen.SolutionData>()
 
   const handleDocumentChange = useCallback((state: NodesAppState): void => {
     console.log('Callback from app!')
@@ -40,8 +41,48 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     setDocument(data)
   }, [])
 
+  const handleExpireSolution = useCallback((state: NodesAppState): void => {
+    const solutionId = state.solution.id
+    const userValues: { [portRef: string]: number } = {}
+
+    for (const node of Object.values(state.document.nodes)) {
+      const { instanceId, values } = node
+
+      for (const [portId, dataTree] of Object.entries(values)) {
+        const value = dataTree?.['{0}']?.[0]
+
+        if (!value) {
+          continue
+        }
+
+        if (value.type === 'number' || value.type === 'integer') {
+          userValues[`${instanceId}:${portId}`] = value.value
+        }
+      }
+    }
+
+    const fetchSolution = async (): Promise<{ id: string; streamObjectIds: string[] }> => {
+      const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
+        method: 'POST',
+        body: JSON.stringify({ solutionId, userValues }),
+      })
+      const data = await response.json()
+
+      return data
+    }
+
+    fetchSolution()
+      .then((data) => {
+        console.log(data)
+      })
+      .catch((e) => {
+        console.log(e)
+      })
+  }, [])
+
   const callbacks: NodesAppCallbacks = {
     onDocumentChange: handleDocumentChange,
+    onExpireSolution: handleExpireSolution,
     onFileUpload: handleFileUpload,
   }
 
