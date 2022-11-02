@@ -4,6 +4,7 @@ import { useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useDraggableNode } from '../hooks'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
+import { Wire } from '@/components/annotations/wire'
 
 type GenericNodeProps = {
   id: string
@@ -18,7 +19,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
 
   const draggableTargetRef = useDraggableNode(id)
 
-  const { position } = node
+  const { position, sources } = node
   const { nickName, inputs, outputs } = template
 
   console.log(`⚙️⚙️⚙️ Rendered generic node [${id.split('-')[0]}] (${nickName})`)
@@ -196,55 +197,67 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   )
 
   return (
-    <g id={`generic-node-${id}`} ref={draggableTargetRef}>
-      {/* Shadow */}
-      <rect
-        x={position.x}
-        y={-position.y + 2}
-        width={nodeWidth}
-        height={nodeHeight}
-        rx={7}
-        ry={7}
-        fill={COLORS.DARK}
-        stroke={COLORS.DARK}
-        strokeWidth={2}
-        // vectorEffect="non-scaling-stroke"
-      />
-      {inputPortShadows}
-      {outputPortShadows}
-      {/* Body */}
-      <rect
-        x={position.x}
-        y={-position.y}
-        width={nodeWidth}
-        height={nodeHeight}
-        rx={7}
-        ry={7}
-        fill={COLORS.LIGHT}
-        stroke={COLORS.DARK}
-        strokeWidth={2}
-        // vectorEffect="non-scaling-stroke"
-        pointerEvents="auto"
-      />
-      <rect
-        x={position.x + nodeWidth / 2 - NODE_LABEL_WIDTH / 2}
-        y={-position.y + NODE_INTERNAL_PADDING}
-        width={NODE_LABEL_WIDTH}
-        height={nodeHeight - NODE_INTERNAL_PADDING * 2}
-        rx={7}
-        ry={7}
-        fill={COLORS.LIGHT}
-        stroke={COLORS.DARK}
-        strokeWidth={2}
-        // vectorEffect="non-scaling-stroke"
-        pointerEvents="none"
-      />
-      {inputPorts}
-      {outputPorts}
-      {inputPortLabels}
-      {outputPortLabels}
-      {nodeLabel}
-    </g>
+    <>
+      {Object.entries(sources).map(([inputPortInstanceId, sources]) => {
+        const currentInput = {
+          nodeInstanceId: node.instanceId,
+          portInstanceId: inputPortInstanceId,
+        }
+
+        return Object.values(sources).map((source) => {
+          return <Wire from={source} to={currentInput} />
+        })
+      })}
+      <g id={`generic-node-${id}`} ref={draggableTargetRef}>
+        {/* Shadow */}
+        <rect
+          x={position.x}
+          y={-position.y + 2}
+          width={nodeWidth}
+          height={nodeHeight}
+          rx={7}
+          ry={7}
+          fill={COLORS.DARK}
+          stroke={COLORS.DARK}
+          strokeWidth={2}
+          // vectorEffect="non-scaling-stroke"
+        />
+        {inputPortShadows}
+        {outputPortShadows}
+        {/* Body */}
+        <rect
+          x={position.x}
+          y={-position.y}
+          width={nodeWidth}
+          height={nodeHeight}
+          rx={7}
+          ry={7}
+          fill={COLORS.LIGHT}
+          stroke={COLORS.DARK}
+          strokeWidth={2}
+          // vectorEffect="non-scaling-stroke"
+          pointerEvents="auto"
+        />
+        <rect
+          x={position.x + nodeWidth / 2 - NODE_LABEL_WIDTH / 2}
+          y={-position.y + NODE_INTERNAL_PADDING}
+          width={NODE_LABEL_WIDTH}
+          height={nodeHeight - NODE_INTERNAL_PADDING * 2}
+          rx={7}
+          ry={7}
+          fill={COLORS.LIGHT}
+          stroke={COLORS.DARK}
+          strokeWidth={2}
+          // vectorEffect="non-scaling-stroke"
+          pointerEvents="none"
+        />
+        {inputPorts}
+        {outputPorts}
+        {inputPortLabels}
+        {outputPortLabels}
+        {nodeLabel}
+      </g>
+    </>
   )
 }
 
