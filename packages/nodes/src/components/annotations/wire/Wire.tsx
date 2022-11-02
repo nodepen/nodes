@@ -22,7 +22,25 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
   const { x: ax, y: ay } = fromPosition
   const { x: bx, y: by } = toPosition
 
-  return <line x1={ax} y1={-ay} x2={bx} y2={-by} stroke={COLORS.DARK} strokeWidth={2} />
+  return (
+    <WirePortal>
+      <line x1={ax} y1={-ay} x2={bx} y2={-by} stroke={COLORS.DARK} strokeWidth={2} />
+    </WirePortal>
+  )
+}
+
+import { createPortal } from 'react-dom'
+
+type WirePortalProps = {
+  children: React.ReactNode
+}
+
+const WirePortal = ({ children }: WirePortalProps): React.ReactElement | null => {
+  const wiresContainerRef = useStore((state) => state.registry.wires.containerRef)
+  if (!wiresContainerRef || !wiresContainerRef.current) {
+    return null
+  }
+  return createPortal(children, wiresContainerRef.current)
 }
 
 const useAnchorPosition = (nodeId: string, anchorId: string): { x: number; y: number } | null => {

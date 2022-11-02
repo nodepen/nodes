@@ -205,7 +205,15 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         }
 
         return Object.values(sources).map((source) => {
-          return <Wire from={source} to={currentInput} />
+          const wireKey = [
+            'np-generic-node-wire',
+            source.nodeInstanceId,
+            source.portInstanceId,
+            currentInput.nodeInstanceId,
+            currentInput.portInstanceId,
+          ].join('-')
+
+          return <Wire key={wireKey} from={source} to={currentInput} />
         })
       })}
       <g id={`generic-node-${id}`} ref={draggableTargetRef}>

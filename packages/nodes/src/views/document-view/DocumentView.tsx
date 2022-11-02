@@ -4,7 +4,7 @@ import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 import { CameraOverlay, GridContainer } from './components'
 import { useCameraProps } from './hooks'
-import { NodesContainer } from '@/components'
+import { AnnotationsContainer, NodesContainer } from '@/components'
 
 type DocumentViewProps = {
   editable: boolean
@@ -41,6 +41,7 @@ const DocumentView = ({ editable }: DocumentViewProps): React.ReactElement | nul
       <Layer id="np-graph-canvas-layer" position={viewPosition} z={70}>
         <CameraOverlay>
           <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
+            <AnnotationsContainer />
             <NodesContainer />
           </svg>
         </CameraOverlay>

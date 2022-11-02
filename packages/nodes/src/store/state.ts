@@ -40,6 +40,9 @@ export type NodesAppState = {
         order: number
       }
     }
+    wires: {
+      containerRef: React.RefObject<SVGGElement> | null
+    }
   }
   callbacks: NodesAppCallbacks
 }
@@ -83,7 +86,10 @@ export const initialState: NodesAppState = {
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
     pseudoShadowTargets: {},
-    views: {}
+    views: {},
+    wires: {
+      containerRef: null
+    }
   },
   callbacks: {
     onDocumentChange: () => { console.log('From library!') },
