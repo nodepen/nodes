@@ -25,7 +25,7 @@ namespace Rhino.Compute
 
         public static IDisposable RhinoCore { get; set; }
 
-        public static async Task<string> TryThis(DebugClass data)
+        public static async Task<string> TryThis(Base data)
         {
             var account = new Account()
             {
@@ -207,7 +207,7 @@ namespace Rhino.Compute
 
         public Response DebugSpeckle(NancyContext ctx)
         {
-            var commitId = Program.TryThis(new DebugClass()).Result;
+            var commitId = Program.TryThis(new Base()).Result;
             Console.WriteLine(commitId);
             return (Response)commitId;
         }
