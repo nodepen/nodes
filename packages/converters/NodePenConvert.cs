@@ -230,6 +230,124 @@ namespace NodePen.Converters
         {
             T archive = new T();
 
+            var definition = new GH_Document();
+
+            var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;
+
+            var documentObjectMap = new Dictionary<string, IGH_DocumentObject>();
+
+            // First pass: instantiate all nodes with user-set values
+            // TODO: Some sort of topological sort so we can know sources are available and avoid a second loop
+            foreach (var node in document.Nodes.Values)
+            {
+                var nodeTemplateProxy = proxies.FirstOrDefault((proxy) => proxy.Guid.ToString() == node.TemplateId);
+
+                if (nodeTemplateProxy == null)
+                {
+                    Console.WriteLine($"Could not find object proxy for node {node.InstanceId}");
+                    continue;
+                }
+
+                var nodeInstance = nodeTemplateProxy.CreateInstance();
+
+                // Overwrite instance ids to match NodePen document
+                // TODO: Also set user values
+                nodeInstance.NewInstanceGuid(new Guid(node.InstanceId));
+
+                nodeInstance.Attributes.Pivot = new System.Drawing.PointF((float)node.Position.X, (float)node.Position.Y);
+
+                switch (nodeInstance)
+                {
+                    case IGH_Component componentInstance:
+                        {
+                            foreach (var inputInstanceId in node.Inputs.Keys)
+                            {
+                                var i = node.Inputs[inputInstanceId];
+                                var param = componentInstance.Params.Input[i];
+                                param.NewInstanceGuid(new Guid(inputInstanceId));
+                            }
+
+                            foreach (var outputInstanceId in node.Outputs.Keys)
+                            {
+                                var i = node.Outputs[outputInstanceId];
+                                var param = componentInstance.Params.Output[i];
+                                param.NewInstanceGuid(new Guid(outputInstanceId));
+                            }
+
+                            break;
+                        }
+                    default:
+                        {
+                            break;
+                        }
+                }
+
+                documentObjectMap.Add(node.InstanceId, nodeInstance);
+                definition.AddObject(nodeInstance, false);
+            }
+
+            // Second pass: attach sources
+            foreach (var node in document.Nodes.Values)
+            {
+                var nodeInstance = documentObjectMap[node.InstanceId];
+
+                if (nodeInstance == null)
+                {
+                    Console.WriteLine($"Could not document object with guid {node.InstanceId}");
+                    continue;
+                }
+
+                switch (nodeInstance)
+                {
+                    case IGH_Component componentInstance:
+                        {
+                            foreach (var inputInstanceId in node.Inputs.Keys)
+                            {
+                                var inputParam = componentInstance.Params.Input.FirstOrDefault((param) => param.InstanceGuid.ToString() == inputInstanceId);
+                                var sources = node.Sources[inputInstanceId];
+
+                                foreach (var source in sources)
+                                {
+                                    var sourceInstance = documentObjectMap[source.NodeInstanceId];
+
+                                    if (sourceInstance == null)
+                                    {
+                                        Console.WriteLine($"Could not assign source!");
+                                        continue;
+                                    }
+
+                                    switch (sourceInstance)
+                                    {
+                                        case IGH_Component sourceComponent:
+                                            {
+                                                var sourceParameter = sourceComponent.Params.Output.FirstOrDefault((param) => param.InstanceGuid.ToString() == source.PortInstanceId);
+                                                inputParam.Sources.Add(sourceParameter);
+                                                break;
+                                            }
+                                        default:
+                                            {
+                                                break;
+                                            }
+                                    }
+                                }
+                            }
+
+                            break;
+                        }
+                    default:
+                        {
+                            Console.WriteLine($"Could not deserialize unhandled document object type {nodeInstance.GetType()}");
+                            break;
+                        }
+                }
+            }
+
+            if (!archive.AppendObject(definition, "definition"))
+            {
+                Console.WriteLine("??");
+                throw new Exception("Failed to create empty definition.");
+            };
+
             return archive;
 
         }

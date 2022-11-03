@@ -41,8 +41,8 @@ namespace Rhino.Compute
             [JsonProperty("solutionId")]
             public string SolutionId { get; set; }
 
-            [JsonProperty("userValues")]
-            public Dictionary<string, double> UserValues { get; set; } = new Dictionary<string, double>();
+            [JsonProperty("document")]
+            public NodePenDocument Document { get; set; }
         }
 
         public class NodePenSolutionManifest
@@ -66,10 +66,17 @@ namespace Rhino.Compute
         public Response SolveGrasshopperDocument(NancyContext context)
         {
             var body = context.Request.Body.AsString();
+            var data = NJsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
 
-            var test = NJsonConvert.DeserializeObject<NodePenDocument>(body);
+            var archive = NodePenConvert.Deserialize<GH_Archive>(data.Document);
 
-            Console.WriteLine(test);
+            var definition = new GH_Document();
+            archive.ExtractObject(definition, "definition");
+
+            Console.WriteLine(definition.ObjectCount);
+
+            definition.Enabled = true;
+            definition.NewSolution(true, GH_SolutionMode.Silent);
 
             var response = new NodePenSolutionManifest()
             {

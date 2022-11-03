@@ -45,10 +45,6 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     const solutionId = state.solution.id
     const userValues: { [portRef: string]: number } = {}
 
-    if (solutionId === 'initial') {
-      return
-    }
-
     for (const node of Object.values(state.document.nodes)) {
       const { instanceId, values } = node
 
@@ -68,7 +64,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     const fetchSolution = async (): Promise<{ id: string; streamObjectIds: string[] }> => {
       const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
         method: 'POST',
-        body: JSON.stringify(state.document),
+        body: JSON.stringify({ solutionId, document: state.document }),
       })
 
       const data = await response.json()
