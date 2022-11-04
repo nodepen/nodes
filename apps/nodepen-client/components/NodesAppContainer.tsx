@@ -54,6 +54,8 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     }
 
     const sanitize = (data: NodePen.SolutionData): NodePen.SolutionData => {
+      data.id = solutionId
+
       for (const nodeData of Object.values(data.values)) {
         for (const portData of Object.values(nodeData)) {
           for (const branchData of Object.values(portData)) {

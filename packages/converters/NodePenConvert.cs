@@ -21,8 +21,6 @@ namespace NodePen.Converters
             return id.Split('-')[0];
         }
 
-        public static string DEBUG_PreviousDocument;
-
         /// <summary>
         /// Detect and initialize all components installed on the current Grasshopper instance.
         /// </summary>

@@ -13,7 +13,7 @@ const BRANCH_NAME = 'main'
 const TOKEN = 'ed0010b22f0211453ad5807fca57925722cc86224a'
 
 const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactElement | null => {
-  const objectIds = useStore((state) => state.stream.objectIds)
+  const objectIds = useStore((state) => state.solution.manifest.streamObjectIds)
 
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 

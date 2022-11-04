@@ -36,8 +36,12 @@ export const NodesApp = ({
   }, [callbacks])
 
   useEffect(() => {
+    if (!solution) {
+      return
+    }
+
     apply((state) => {
-      state.stream.objectIds = solution?.manifest.streamObjectIds ?? []
+      state.solution = solution
     })
   }, [solution?.id, solution?.manifest.streamObjectIds])
 

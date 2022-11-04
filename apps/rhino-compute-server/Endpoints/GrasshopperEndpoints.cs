@@ -159,10 +159,7 @@ namespace Rhino.Compute
             Log(">>", requestData.Document.Id, "Document");
             Log(" >", requestData.Document.Id, $"Created and solved document in {timer.ElapsedMilliseconds}ms");
 
-            var solutionData = new NodePenSolutionData()
-            {
-                Id = requestData.SolutionId
-            };
+            var solutionData = new NodePenSolutionData();
 
             foreach (var documentObject in definition.Objects)
             {
@@ -364,6 +361,7 @@ namespace Rhino.Compute
             var streamBranch = client.BranchGet(streamId, branchName, 1).Result;
             var objectId = streamBranch.commits.items[0].referencedObject;
 
+            solutionData["Id"] = requestData.SolutionId;
             solutionData.Manifest.StreamObjectIds.Add(objectId);
 
             return Response.AsJson(solutionData);
@@ -386,8 +384,6 @@ namespace Rhino.Compute
 
             var definition = new GH_Document();
             archive.ExtractObject(definition, "Definition");
-
-            NodePenConvert.DEBUG_PreviousDocument = archive.Serialize_Xml();
 
             var document = NodePenConvert.Serialize(definition);
 
