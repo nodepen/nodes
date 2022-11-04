@@ -66,6 +66,19 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
 
   return (
     <>
+      <Layer id="np-file-upload-overlay-content" z={96}>
+        <div
+          className="np-w-full np-h-full np-flex np-items-center np-justify-center"
+          style={{
+            transform: `translateY(${isActive ? '33%' : '100%'})`,
+            transition: 'transform',
+            transitionDuration: '300ms',
+            transitionTimingFunction: 'ease-out',
+          }}
+        >
+          <h3 className="np-font-panel np-font-medium np-text-darkgreen np-text-xl">Upload Script</h3>
+        </div>
+      </Layer>
       <Layer id="np-file-upload-overlay" z={95}>
         <svg
           className="np-w-full np-h-full"

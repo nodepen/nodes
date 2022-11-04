@@ -30,7 +30,7 @@ export const SolutionStatusBar = (): React.ReactElement => {
         </svg>
       </div>
       <div className="np-h-8 np-flex-grow np-pr-2 np-flex np-items-center np-justify-start">
-        <div className="np-w-full np-h-4 np-rounded-sm np-border-2 np-border-dark" />
+        <div className="np-w-full np-h-4 np-rounded-sm np-border-2 np-border-dark np-bg-green" />
       </div>
     </div>
   )
