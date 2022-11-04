@@ -131,14 +131,17 @@ namespace NodePen.Converters
         [JsonProperty("type")]
         public string Type { get; set; }
 
+        [JsonProperty("value")]
+        public dynamic Value { get; set; }
+
         public double UnwrapAsDouble()
         {
-            return Convert.ToDouble(this["value"]);
+            return Convert.ToDouble(this["Value"]);
         }
 
         public int UnwrapAsInteger()
         {
-            return Convert.ToInt32(this["value"]);
+            return Convert.ToInt32(this["Value"]);
         }
 
     }

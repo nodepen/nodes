@@ -244,6 +244,14 @@ namespace Rhino.Compute
                                             default:
                                                 {
                                                     Log("!>", branchKey, $"Unhandled value type [{goo.TypeName}]", 3);
+                                                    var entrySolutionData = new NodePenDataTreeValue()
+                                                    {
+                                                        Type = goo.TypeName.ToLower(),
+                                                        Value = NJsonConvert.SerializeObject(goo)
+                                                    };
+
+                                                    branchSolutionData.Add(entrySolutionData);
+
                                                     break;
                                                 }
                                         }
@@ -300,7 +308,7 @@ namespace Rhino.Compute
             var commitId = Helpers.Send(
                 stream: $"http://localhost:3000/streams/{streamId}/branches/{branchName}",
                 data: streamData,
-                message: "Test commit",
+                message: $"Solution ${SID(requestData.SolutionId)}",
                 account: account,
                 sourceApplication: "nodepen"
             ).Result;
