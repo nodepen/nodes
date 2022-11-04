@@ -1,0 +1,34 @@
+{
+  "name": "nodepen-viewer-example",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 4000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "link:react": "npm link ../../../node_modules/react"
+  },
+  "dependencies": {
+    "@nodepen/core": "^1.1.0",
+    "@nodepen/nodes": "^1.1.0",
+    "@tanstack/react-query": "^4.10.3",
+    "next": "13.0.0",
+    "next-images": "^1.8.4",
+    "react": "^18.0",
+    "react-dom": "^18.0"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.13",
+    "@types/react": "^18.0.21",
+    "autoprefixer": "^10.4.2",
+    "eslint": "8.7.0",
+    "eslint-config-next": "12.0.9",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-jsx-a11y": "^6.4.1",
+    "eslint-plugin-prettier": "^3.4.0",
+    "next-transpile-modules": "^9.0.0",
+    "postcss": "^8.4.5",
+    "prettier": "^2.3.0",
+    "tailwindcss": "^3.0.17"
+  }
+}

@@ -1,1 +1,0 @@
-export { PlaceComponentMenu } from './PlaceComponentMenu'

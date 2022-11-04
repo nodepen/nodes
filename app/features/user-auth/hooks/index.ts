@@ -1,1 +1,0 @@
-export { useAuthRedirectResult } from './useAuthRedirectResult'

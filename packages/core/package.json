@@ -1,0 +1,19 @@
+{
+  "name": "@nodepen/core",
+  "version": "1.1.0",
+  "description": "core types and utils for nodepen",
+  "author": "@cdriesler",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nodepen/nodes.git"
+  },
+  "license": "MIT",
+  "files": [
+    "dist/**/*"
+  ],
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc -w --preserveWatchOutput"
+  }
+}

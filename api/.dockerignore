@@ -1,9 +1,0 @@
-node_modules
-dist
-.vscode
-.firebase
-
-.env
-app.yaml
-app.beta.yaml
-app.dev.yaml

@@ -1,0 +1,1 @@
+export { DocumentInfoControl } from './DocumentInfoControl'

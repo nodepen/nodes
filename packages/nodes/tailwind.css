@@ -1,0 +1,23 @@
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: Barlow;
+    font-style: normal;
+    font-weight: 400;
+    src: url('assets/barlow-semibold.ttf');
+}
+
+@font-face {
+    font-family: Overpass;
+    font-style: normal;
+    font-weight: 800;
+    src: url('assets/overpass-bold.ttf')
+}
+
+@font-face {
+    font-family: Overpass Mono;
+    font-style: normal;
+    font-weight: 800;
+    src: url('assets/overpassmono-bold.ttf')
+}
