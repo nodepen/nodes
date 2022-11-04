@@ -22,11 +22,8 @@ export type DataTreeValue =
         plane: GH.Plane
         radius: number
     }
-    boundingBox: {
-        min: GH.Point
-        max: GH.Point
-    }
 }
 | {
     type: 'curve' | 'box' | 'surface'
+    value: string
 }

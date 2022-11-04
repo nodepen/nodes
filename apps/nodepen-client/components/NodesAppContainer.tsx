@@ -42,7 +42,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   const handleExpireSolution = useCallback((state: NodesAppState): void => {
     const solutionId = state.solution.id
 
-    const fetchSolution = async (): Promise<{ solutionId: string; streamObjectIds: string[] }> => {
+    const fetchSolution = async (): Promise<NodePen.SolutionData> => {
       const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
         method: 'POST',
         body: JSON.stringify({ solutionId, document: state.document }),
@@ -53,16 +53,35 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
       return data
     }
 
+    const sanitize = (data: NodePen.SolutionData): NodePen.SolutionData => {
+      for (const nodeData of Object.values(data.values)) {
+        for (const portData of Object.values(nodeData)) {
+          for (const branchData of Object.values(portData)) {
+            for (const dataTreeValue of branchData) {
+              const validKeys = ['type', 'value']
+
+              for (const key of Object.keys(dataTreeValue)) {
+                if (validKeys.includes(key)) {
+                  continue
+                }
+
+                var proxy = dataTreeValue as any
+
+                delete proxy[key]
+              }
+            }
+          }
+        }
+      }
+
+      return data
+    }
+
     fetchSolution()
       .then((data) => {
-        console.log(data)
-        setSolution({
-          id: data.solutionId,
-          manifest: {
-            streamObjectIds: data.streamObjectIds,
-          },
-          values: {},
-        })
+        const sanitized = sanitize(data)
+        console.log(sanitized)
+        setSolution(sanitized)
       })
       .catch((e) => {
         console.log(e)

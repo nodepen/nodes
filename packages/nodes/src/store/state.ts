@@ -70,6 +70,7 @@ export const initialState: NodesAppState = {
   solution: {
     id: 'initial',
     manifest: {
+      runtimeMessages: {},
       streamObjectIds: []
     },
     values: {}

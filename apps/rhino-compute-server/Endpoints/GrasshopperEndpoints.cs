@@ -103,11 +103,20 @@ namespace Rhino.Compute
             [JsonProperty("id")]
             public string Id { get; set; }
 
+            [JsonProperty("manifest")]
+            public NodePenSolutionDataManifest Manifest { get; set; } = new NodePenSolutionDataManifest();
+
+            [JsonProperty("values")]
+            public Dictionary<string, Dictionary<string, NodePenDataTree>> Values { get; set; } = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
+        }
+
+        public class NodePenSolutionDataManifest : Base
+        {
             [JsonProperty("runtimeMessages")]
             public Dictionary<string, string> RuntimeMessages { get; set; } = new Dictionary<string, string>();
 
-            [JsonProperty("data")]
-            public Dictionary<string, Dictionary<string, NodePenDataTree>> Data { get; set; } = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
+            [JsonProperty("streamObjectIds")]
+            public List<string> StreamObjectIds = new List<string>();
         }
 
         public class NodePenDocumentStream : Base
@@ -234,8 +243,43 @@ namespace Rhino.Compute
                                                         Type = "curve"
                                                     };
 
+                                                    // entrySolutionData["Value"] = curve.ToJSON(new FileIO.SerializationOptions());
                                                     entrySolutionData["Value"] = curve.ToJSON(new FileIO.SerializationOptions());
                                                     entrySolutionData["displayValue"] = displayValue;
+
+                                                    branchSolutionData.Add(entrySolutionData);
+
+                                                    break;
+                                                }
+                                            case "Integer":
+                                                {
+                                                    Log(" >", branchKey, "Integer", 3);
+
+                                                    var integerGoo = goo as GH_Integer;
+                                                    var integer = integerGoo.Value;
+
+                                                    var entrySolutionData = new NodePenDataTreeValue()
+                                                    {
+                                                        Type = "integer",
+                                                        Value = integer
+                                                    };
+
+                                                    branchSolutionData.Add(entrySolutionData);
+
+                                                    break;
+                                                }
+                                            case "Number":
+                                                {
+                                                    Log(" >", branchKey, "Number", 3);
+
+                                                    var numberGoo = goo as GH_Number;
+                                                    var number = numberGoo.Value;
+
+                                                    var entrySolutionData = new NodePenDataTreeValue()
+                                                    {
+                                                        Type = "number",
+                                                        Value = number
+                                                    };
 
                                                     branchSolutionData.Add(entrySolutionData);
 
@@ -244,6 +288,7 @@ namespace Rhino.Compute
                                             default:
                                                 {
                                                     Log("!>", branchKey, $"Unhandled value type [{goo.TypeName}]", 3);
+
                                                     var entrySolutionData = new NodePenDataTreeValue()
                                                     {
                                                         Type = goo.TypeName.ToLower(),
@@ -265,7 +310,7 @@ namespace Rhino.Compute
                                 Log("--", componentParam.InstanceGuid, $"Wrote {paramSolutionData.Keys.Count} branches to param solution data.", 2);
                             }
 
-                            solutionData.Data.Add(componentInstance.InstanceGuid.ToString(), componentSolutionData);
+                            solutionData.Values.Add(componentInstance.InstanceGuid.ToString(), componentSolutionData);
                             Log("--", componentInstance.InstanceGuid, $"Wrote {componentSolutionData.Keys.Count} params to component solution data.", 1);
                             break;
                         }
@@ -277,7 +322,7 @@ namespace Rhino.Compute
                 }
             }
 
-            Log("--", requestData.Document.Id, $"Wrote {solutionData.Data.Keys.Count} components to document solution data.");
+            Log("--", requestData.Document.Id, $"Wrote {solutionData.Values.Keys.Count} components to document solution data.");
 
             // Commit updated document and solution data to stream
             var streamId = "e1aa8e3dce";
@@ -314,22 +359,14 @@ namespace Rhino.Compute
             ).Result;
 
             // Serialize and return response
-            // TODO: Strip `displayValue` fields before serializing response
-            var response = new NodePenSolutionManifest()
-            {
-                SolutionId = requestData.SolutionId,
-                SolutionData = solutionData,
-                StreamObjectIds = new List<string>(),
-            };
-
             var client = new Client(account);
 
             var streamBranch = client.BranchGet(streamId, branchName, 1).Result;
             var objectId = streamBranch.commits.items[0].referencedObject;
 
-            response.StreamObjectIds.Add(objectId);
+            solutionData.Manifest.StreamObjectIds.Add(objectId);
 
-            return Response.AsJson(response);
+            return Response.AsJson(solutionData);
         }
 
         public Response HandleGrasshopperFileUpload(NancyContext context)
