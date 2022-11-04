@@ -36,30 +36,11 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     const response = await fetch('http://localhost:6500/files/gh', payload)
     const data = await response.json()
 
-    console.log(data)
-
     setDocument(data)
   }, [])
 
   const handleExpireSolution = useCallback((state: NodesAppState): void => {
     const solutionId = state.solution.id
-    const userValues: { [portRef: string]: number } = {}
-
-    for (const node of Object.values(state.document.nodes)) {
-      const { instanceId, values } = node
-
-      for (const [portId, dataTree] of Object.entries(values)) {
-        const value = dataTree?.['{0}']?.[0]
-
-        if (!value) {
-          continue
-        }
-
-        if (value.type === 'number' || value.type === 'integer') {
-          userValues[`${instanceId}:${portId}`] = value.value
-        }
-      }
-    }
 
     const fetchSolution = async (): Promise<{ id: string; streamObjectIds: string[] }> => {
       const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
@@ -75,13 +56,13 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     fetchSolution()
       .then((data) => {
         console.log(data)
-        setSolution({
-          id: data.id,
-          manifest: {
-            streamObjectIds: data.streamObjectIds,
-          },
-          values: {},
-        })
+        // setSolution({
+        //   id: data.id,
+        //   manifest: {
+        //     streamObjectIds: data.streamObjectIds,
+        //   },
+        //   values: {},
+        // })
       })
       .catch((e) => {
         console.log(e)

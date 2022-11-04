@@ -47,123 +47,68 @@ namespace Rhino.Compute
 
         public class NodePenSolutionManifest
         {
-            [JsonProperty("id")]
-            public string Id { get; set; }
+            [JsonProperty("solutionId")]
+            public string SolutionId { get; set; }
+
+            [JsonProperty("solutionData")]
+            public NodePenSolutionData SolutionData { get; set; }
 
             [JsonProperty("streamObjectIds")]
             public List<string> StreamObjectIds { get; set; } = new List<string>();
         }
 
-        public class NodePenSolution : Base
+        public class NodePenSolutionData : Base
         {
+            [JsonProperty("id")]
+            public string Id { get; set; }
+
+            [JsonProperty("runtimeMessages")]
+            public Dictionary<string, string> RuntimeMessages { get; set; } = new Dictionary<string, string>();
+
+            [JsonProperty("data")]
+            public Dictionary<string, Dictionary<string, NodePenDataTree>> Data { get; set; } = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
+        }
+
+        public class NodePenDocumentStream : Base
+        {
+            public string Id { get; set; }
+
+            public string Name { get; set; }
 
             [DetachProperty]
-            public List<Polyline> displayValue { get; set; }
+            public NodePenDocument Document { get; set; }
 
-            public string name { get; set; } = "TEST";
+            [DetachProperty]
+            public NodePenSolutionData SolutionData { get; set; }
         }
 
         public Response SolveGrasshopperDocument(NancyContext context)
         {
             var body = context.Request.Body.AsString();
-            var data = NJsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
+            var requestData = NJsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
 
-            var archive = NodePenConvert.Deserialize<GH_Archive>(data.Document);
+            // Create Grasshopper document
+            var archive = NodePenConvert.Deserialize<GH_Archive>(requestData.Document);
 
             var definition = new GH_Document();
             archive.ExtractObject(definition, "definition");
 
             Console.WriteLine(definition.ObjectCount);
 
+            // Solve Grasshopper document
             definition.Enabled = true;
             definition.NewSolution(true, GH_SolutionMode.Silent);
 
-            var response = new NodePenSolutionManifest()
+            // Extract solution data
+            var solutionData = new NodePenSolutionData()
             {
-                Id = "",
-                StreamObjectIds = new List<string>(),
+                Id = requestData.SolutionId
             };
 
-            return Response.AsJson(response);
-
-            // var archive = new GH_Archive();
-            // archive.Deserialize_Xml(NodePenConvert.DEBUG_PreviousDocument);
-
-            // var definition = new GH_Document();
-            // if (!archive.ExtractObject(definition, "Definition"))
-            // {
-            //     Console.WriteLine("???");
-            // }
-
-            // definition.Enabled = true;
-
-            // foreach (var key in data.UserValues.Keys)
-            // {
-            //     var value = data.UserValues[key];
-
-            //     Console.WriteLine(key);
-            //     Console.WriteLine(value);
-
-            //     var referenceInfo = key.Split(':');
-
-            //     var nodeId = referenceInfo[0];
-            //     var portId = referenceInfo[1];
-
-            //     var docObject = definition.Objects.FirstOrDefault((obj) => obj.InstanceGuid.ToString() == nodeId);
-
-            //     if (docObject == null || !(docObject is IGH_Component))
-            //     {
-            //         Console.WriteLine($"Could not find document object {nodeId}");
-            //         continue;
-            //     }
-
-            //     var component = docObject as IGH_Component;
-
-            //     for (var i = 0; i < component.Params.Input.Count; i++)
-            //     {
-            //         var inputParam = component.Params.Input[i];
-
-            //         if (inputParam.InstanceGuid.ToString() != portId)
-            //         {
-            //             continue;
-            //         }
-
-            //         switch (inputParam)
-            //         {
-            //             case Param_Number numberParam:
-            //                 {
-            //                     var valueGoo = new GH_Number(value);
-
-            //                     var tree = new GH_Structure<GH_Number>();
-            //                     var pathIndices = new List<int>() { 0 }.ToArray();
-            //                     var branch = new GH_Path(pathIndices);
-            //                     tree.Insert(valueGoo, branch, 0);
-
-            //                     numberParam.SetPersistentData(tree, branch, valueGoo);
-            //                     break;
-            //                 }
-            //             case Param_Integer integerParam:
-            //                 {
-            //                     var valueGoo = new GH_Integer(Convert.ToInt32(value));
-
-            //                     var tree = new GH_Structure<GH_Integer>();
-            //                     var pathIndices = new List<int>() { 0 }.ToArray();
-            //                     var branch = new GH_Path(pathIndices);
-            //                     tree.Insert(valueGoo, branch, 0);
-
-            //                     integerParam.SetPersistentData(tree, branch, value);
-            //                     break;
-            //                 }
-            //         }
-            //     }
-            // }
-
-            // definition.Enabled = true;
-            // definition.NewSolution(true, GH_SolutionMode.CommandLine);
-
-            // var solution = new NodePenSolution();
-            // solution.id = data.SolutionId;
-            // solution.displayValue = new List<Polyline>();
+            foreach (var documentObject in definition.Objects)
+            {
+                Console.WriteLine(documentObject.InstanceGuid);
+            }
 
             // for (var x = 0; x < definition.ObjectCount; x++)
             // {
@@ -255,6 +200,10 @@ namespace Rhino.Compute
             //     }
             // }
 
+            // Commit updated document and solution data to stream
+
+            // Strip `displayValue` fields before serializing response
+
             // var streamId = "e1aa8e3dce";
             // var branchName = "main";
 
@@ -287,7 +236,14 @@ namespace Rhino.Compute
 
             // response.StreamObjectIds.Add(objectId);
 
-            // return Response.AsJson(response);
+            var response = new NodePenSolutionManifest()
+            {
+                SolutionId = requestData.SolutionId,
+                SolutionData = solutionData,
+                StreamObjectIds = new List<string>(),
+            };
+
+            return Response.AsJson(response);
         }
 
         public Response HandleGrasshopperFileUpload(NancyContext context)

@@ -2,6 +2,9 @@ using System;
 using System.Linq;
 using System.Collections.Generic;
 using Grasshopper.Kernel;
+using Grasshopper.Kernel.Data;
+using Grasshopper.Kernel.Types;
+using Grasshopper.Kernel.Parameters;
 using GH_IO.Serialization;
 using Speckle.Newtonsoft.Json;
 using Speckle.Newtonsoft.Json.Converters;
@@ -250,10 +253,8 @@ namespace NodePen.Converters
 
                 var nodeInstance = nodeTemplateProxy.CreateInstance();
 
-                // Overwrite instance ids to match NodePen document
-                // TODO: Also set user values
+                // Apply properties from document node to component instance
                 nodeInstance.NewInstanceGuid(new Guid(node.InstanceId));
-
                 nodeInstance.Attributes.Pivot = new System.Drawing.PointF((float)node.Position.X, (float)node.Position.Y);
 
                 switch (nodeInstance)
@@ -262,13 +263,72 @@ namespace NodePen.Converters
                         {
                             foreach (var inputInstanceId in node.Inputs.Keys)
                             {
+                                // Associate input param with document port
                                 var i = node.Inputs[inputInstanceId];
                                 var param = componentInstance.Params.Input[i];
                                 param.NewInstanceGuid(new Guid(inputInstanceId));
+
+                                // Set user values
+                                var values = node.Values[inputInstanceId];
+
+                                if (values == null)
+                                {
+                                    Console.WriteLine($"🐍 Node [{node.InstanceId}] is missing values for input port [{inputInstanceId}]");
+                                }
+
+                                if (values.Keys.Count == 0)
+                                {
+                                    // Node has no values to assign.
+                                    continue;
+                                }
+
+                                // TODO: Handle more than single values
+                                var value = values["{0}"].FirstOrDefault();
+
+                                if (value == null)
+                                {
+                                    // Branch has no values
+                                    continue;
+                                }
+
+                                param.ClearData();
+
+                                switch (param)
+                                {
+                                    case Param_Number numberParam:
+                                        {
+                                            var valueGoo = new GH_Number(value.UnwrapAsDouble());
+
+                                            var tree = new GH_Structure<GH_Number>();
+                                            var pathIndices = new List<int>() { 0 }.ToArray();
+                                            var branch = new GH_Path(pathIndices);
+                                            tree.Insert(valueGoo, branch, 0);
+
+                                            numberParam.SetPersistentData(tree, branch, valueGoo);
+                                            break;
+                                        }
+                                    case Param_Integer integerParam:
+                                        {
+                                            var valueGoo = new GH_Integer(value.UnwrapAsInteger());
+
+                                            var tree = new GH_Structure<GH_Integer>();
+                                            var pathIndices = new List<int>() { 0 }.ToArray();
+                                            var branch = new GH_Path(pathIndices);
+                                            tree.Insert(valueGoo, branch, 0);
+
+                                            integerParam.SetPersistentData(tree, branch, value);
+                                            break;
+                                        }
+                                    default:
+                                        {
+                                            break;
+                                        }
+                                }
                             }
 
                             foreach (var outputInstanceId in node.Outputs.Keys)
                             {
+                                // Associate output param with document port
                                 var i = node.Outputs[outputInstanceId];
                                 var param = componentInstance.Params.Output[i];
                                 param.NewInstanceGuid(new Guid(outputInstanceId));

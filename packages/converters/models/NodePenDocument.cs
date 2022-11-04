@@ -125,14 +125,21 @@ namespace NodePen.Converters
 
     }
 
-    public class NodePenDataTreeValue
+    public class NodePenDataTreeValue : Base
     {
 
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("value")]
-        public double Value { get; set; }
+        public double UnwrapAsDouble()
+        {
+            return Convert.ToDouble(this["Value"]);
+        }
+
+        public int UnwrapAsInteger()
+        {
+            return Convert.ToInt32(this["Value"]);
+        }
 
     }
 
