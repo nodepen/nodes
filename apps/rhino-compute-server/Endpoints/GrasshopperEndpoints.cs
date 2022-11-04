@@ -9,11 +9,13 @@ using Nancy.Routing;
 using NodePen.Converters;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Models;
+using System.Text;
 using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 using Topshelf;
@@ -34,6 +36,44 @@ namespace Rhino.Compute
             Post["/files/gh"] = _ => HandleGrasshopperFileUpload(Context);
             Get["/grasshopper"] = _ => GetGrasshopperConfiguration();
             Post["/grasshopper/id/solution"] = _ => SolveGrasshopperDocument(Context);
+        }
+
+        private string SID(string id)
+        {
+            return $"[{NodePenConvert.TruncateId(id)}]";
+        }
+
+        private string SID(Guid guid)
+        {
+            return SID(guid.ToString());
+        }
+
+        private void Log(string prefix, string id, string message, int tabCount = 0)
+        {
+            try
+            {
+                var messageBuilder = new StringBuilder();
+
+                for (var i = 0; i < tabCount; i++)
+                {
+                    messageBuilder.Append("    ");
+                }
+
+                messageBuilder.Append(prefix);
+                messageBuilder.Append($" {SID(id)}");
+                messageBuilder.Append($" {message}");
+
+                Console.WriteLine(messageBuilder.ToString());
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
+        private void Log(string prefix, Guid id, string message, int tabCount = 0)
+        {
+            Log(prefix, id.ToString(), message, tabCount);
         }
 
         public class NodePenSolutionRequestBody
@@ -87,6 +127,10 @@ namespace Rhino.Compute
             var body = context.Request.Body.AsString();
             var requestData = NJsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
 
+            var timer = new Stopwatch();
+
+            timer.Start();
+
             // Create Grasshopper document
             var archive = NodePenConvert.Deserialize<GH_Archive>(requestData.Document);
 
@@ -99,7 +143,12 @@ namespace Rhino.Compute
             definition.Enabled = true;
             definition.NewSolution(true, GH_SolutionMode.Silent);
 
+            timer.Stop();
+
             // Extract solution data
+            Log(">>", requestData.Document.Id, "Document");
+            Log(" >", requestData.Document.Id, $"Created and solved document in {timer.ElapsedMilliseconds}ms");
+
             var solutionData = new NodePenSolutionData()
             {
                 Id = requestData.SolutionId
@@ -107,7 +156,42 @@ namespace Rhino.Compute
 
             foreach (var documentObject in definition.Objects)
             {
-                Console.WriteLine(documentObject.InstanceGuid);
+                Log(">>", documentObject.InstanceGuid, "Document Object", 1);
+
+                switch (documentObject)
+                {
+                    case IGH_Component componentInstance:
+                        {
+                            Log(" >", componentInstance.InstanceGuid, "IGH_Component", 1);
+
+                            foreach (var inputParam in componentInstance.Params.Input)
+                            {
+                                Log(">>", inputParam.InstanceGuid, "IGH_Param (Input)", 2);
+
+                                switch (inputParam)
+                                {
+                                    case Param_Integer integerParam:
+                                        {
+                                            Log(" >", integerParam.InstanceGuid, "Param_Integer", 2);
+                                            break;
+                                        }
+                                    case Param_Number numberParam:
+                                        {
+                                            Log(" >", numberParam.InstanceGuid, "Param_Number", 2);
+                                            break;
+                                        }
+                                }
+                            }
+                            break;
+                        }
+                    default:
+                        {
+                            Log("XX", documentObject.InstanceGuid, $"Unhandled object type [{documentObject.GetType()}]", 1);
+                            break;
+                        }
+                }
+
+                Log("--", documentObject.InstanceGuid, "Extracted solution values.", 1);
             }
 
             // for (var x = 0; x < definition.ObjectCount; x++)

@@ -16,6 +16,11 @@ namespace NodePen.Converters
     {
         public static List<NodePenNodeTemplate> Templates = new List<NodePenNodeTemplate>();
 
+        public static string TruncateId(string id)
+        {
+            return id.Split('-')[0];
+        }
+
         public static string DEBUG_PreviousDocument;
 
         /// <summary>
