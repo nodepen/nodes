@@ -42,7 +42,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   const handleExpireSolution = useCallback((state: NodesAppState): void => {
     const solutionId = state.solution.id
 
-    const fetchSolution = async (): Promise<{ id: string; streamObjectIds: string[] }> => {
+    const fetchSolution = async (): Promise<{ solutionId: string; streamObjectIds: string[] }> => {
       const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
         method: 'POST',
         body: JSON.stringify({ solutionId, document: state.document }),
@@ -56,13 +56,13 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     fetchSolution()
       .then((data) => {
         console.log(data)
-        // setSolution({
-        //   id: data.id,
-        //   manifest: {
-        //     streamObjectIds: data.streamObjectIds,
-        //   },
-        //   values: {},
-        // })
+        setSolution({
+          id: data.solutionId,
+          manifest: {
+            streamObjectIds: data.streamObjectIds,
+          },
+          values: {},
+        })
       })
       .catch((e) => {
         console.log(e)

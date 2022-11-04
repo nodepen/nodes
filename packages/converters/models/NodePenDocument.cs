@@ -28,26 +28,26 @@ namespace NodePen.Converters
         public NodePenDocument() { }
     }
 
-    public class NodePenDocumentConfiguration
+    public class NodePenDocumentConfiguration : Base
     {
 
         [JsonProperty("pinnedPorts")]
         public List<PinnedPortConfiguration> PinnedPorts { get; set; } = new List<PinnedPortConfiguration>();
 
-        public class PinnedPortConfiguration
-        {
+    }
 
-            [JsonProperty("nodeInstanceId")]
-            public string NodeInstanceId { get; set; }
+    public class PinnedPortConfiguration : Base
+    {
 
-            [JsonProperty("portInstanceId")]
-            public string PortInstanceId { get; set; }
+        [JsonProperty("nodeInstanceId")]
+        public string NodeInstanceId { get; set; }
 
-        }
+        [JsonProperty("portInstanceId")]
+        public string PortInstanceId { get; set; }
 
     }
 
-    public class NodePenDocumentNode
+    public class NodePenDocumentNode : Base
     {
 
         [JsonProperty("instanceId")]
@@ -84,7 +84,7 @@ namespace NodePen.Converters
 
     }
 
-    public class NodePenDocumentNodePosition
+    public class NodePenDocumentNodePosition : Base
     {
         [JsonProperty("x")]
         public double X { get; set; } = 0;
@@ -93,7 +93,7 @@ namespace NodePen.Converters
         public double Y { get; set; } = 0;
     }
 
-    public class NodePenDocumentNodeDimensions
+    public class NodePenDocumentNodeDimensions : Base
     {
         [JsonProperty("width")]
         public double Width { get; set; } = 0;
@@ -102,7 +102,7 @@ namespace NodePen.Converters
         public double Height { get; set; } = 0;
     }
 
-    public class NodePenDocumentNodeAnchor
+    public class NodePenDocumentNodeAnchor : Base
     {
         [JsonProperty("dx")]
         public double Dx { get; set; } = 0;
@@ -111,7 +111,7 @@ namespace NodePen.Converters
         public double Dy { get; set; } = 0;
     }
 
-    public class NodePenPortReference
+    public class NodePenPortReference : Base
     {
         [JsonProperty("nodeInstanceId")]
         public string NodeInstanceId { get; set; }
@@ -133,12 +133,12 @@ namespace NodePen.Converters
 
         public double UnwrapAsDouble()
         {
-            return Convert.ToDouble(this["Value"]);
+            return Convert.ToDouble(this["value"]);
         }
 
         public int UnwrapAsInteger()
         {
-            return Convert.ToInt32(this["Value"]);
+            return Convert.ToInt32(this["value"]);
         }
 
     }

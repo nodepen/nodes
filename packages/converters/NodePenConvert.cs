@@ -239,6 +239,7 @@ namespace NodePen.Converters
             T archive = new T();
 
             var definition = new GH_Document();
+            definition.Enabled = true;
 
             var proxies = Grasshopper.Instances.ComponentServer.ObjectProxies;
 
@@ -321,11 +322,12 @@ namespace NodePen.Converters
                                             var branch = new GH_Path(pathIndices);
                                             tree.Insert(valueGoo, branch, 0);
 
-                                            integerParam.SetPersistentData(tree, branch, value);
+                                            integerParam.SetPersistentData(tree, branch, valueGoo);
                                             break;
                                         }
                                     default:
                                         {
+                                            Console.WriteLine($"Unhandled user-input param [{param.GetType()}]");
                                             break;
                                         }
                                 }
