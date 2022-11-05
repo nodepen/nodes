@@ -17,6 +17,10 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
 
         const userValues = node.values[portInstanceId]
 
+        if (!userValues) {
+            return null
+        }
+
         if (Object.keys(userValues).length > 0) {
             return userValues
         }
