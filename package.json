@@ -16,7 +16,7 @@
     "dev:rhino": "cd apps/rhino-compute-server && dotnet watch"
   },
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^5.40.1",
+    "@typescript-eslint/eslint-plugin": "^5.42.0",
     "@typescript-eslint/parser": "^5.40.1",
     "concurrently": "^7.4.0",
     "copyfiles": "^2.4.1",
