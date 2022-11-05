@@ -67,7 +67,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
                   continue
                 }
 
-                var proxy = dataTreeValue as any
+                const proxy = dataTreeValue as any
 
                 delete proxy[key]
               }
