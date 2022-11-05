@@ -2,6 +2,7 @@ import React from 'react'
 import { useStore } from '$'
 import type { NodePortReference } from '@/types'
 import { COLORS } from '@/constants'
+import { usePortValues } from '@/hooks'
 
 type WireProps = {
   from: NodePortReference
@@ -14,6 +15,8 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
 
   const fromPosition = useAnchorPosition(fromNodeId, fromPortId)
   const toPosition = useAnchorPosition(toNodeId, toPortId)
+
+  const sourceValues = usePortValues(fromNodeId, fromPortId)
 
   if (!fromPosition || !toPosition) {
     return null
