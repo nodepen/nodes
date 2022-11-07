@@ -59,15 +59,48 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
     `S ${bRightAnchor.x} ${-bRightAnchor.y} ${end.x} ${-end.y}`,
   ].join('')
 
-  return (
-    <WirePortal>
-      <path d={d} strokeWidth={2} stroke={COLORS.DARK} fill="none" />
-    </WirePortal>
-  )
+  const getWireStyle = (structure: DataTreeStructure) => {
+    switch (structure) {
+      case 'empty':
+      case 'single': {
+        return <path d={d} strokeWidth={3} stroke={COLORS.DARK} fill="none" />
+      }
+      case 'list': {
+        return (
+          <>
+            <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" />
+            <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" />
+          </>
+        )
+      }
+      case 'tree': {
+        return (
+          <>
+            <path d={d} strokeWidth={7} stroke={COLORS.DARK} strokeDasharray="6 10" strokeLinecap="round" fill="none" />
+            <path
+              d={d}
+              strokeWidth={3}
+              stroke={COLORS.LIGHT}
+              strokeDasharray="6 10"
+              strokeLinecap="round"
+              fill="none"
+            />
+          </>
+        )
+      }
+    }
+  }
+
+  const wireStructure = getDataTreeStructure(sourceValues ?? {})
+  const wire = getWireStyle(wireStructure)
+
+  return <WirePortal>{wire}</WirePortal>
 }
 
 import { createPortal } from 'react-dom'
 import { distance } from '@/utils/numerics'
+import type { DataTreeStructure } from '@nodepen/core'
+import { getDataTreeStructure } from '@/utils/data-trees'
 
 type WirePortalProps = {
   children: React.ReactNode
