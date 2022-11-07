@@ -23,40 +23,40 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
     return null
   }
 
-  const { x: ax, y: ay } = fromPosition
-  const { x: bx, y: by } = toPosition
-
-  const dist = distance([ax, ay], [bx, by])
-  const width = Math.abs(bx - ax)
+  const start = fromPosition
+  const end = toPosition
 
   const mid = {
-    x: (ax + bx) / 2,
-    y: (ay + by) / 2,
+    x: (start.x + end.x) / 2,
+    y: (start.y + end.y) / 2,
   }
+
+  const dist = distance([start.x, start.y], [end.x, end.y])
+  const width = Math.abs(end.x - start.x)
 
   // Calculate horizontal offset from port for bezier control point
   const lead = Math.max(width / 2, dist / 2)
-  const invert = ax < bx ? 1 : -1
+  const invert = start.x < end.x ? 1 : -1
 
   const startLead = {
-    x: ax < bx ? ax + lead * invert : ax - lead * invert,
-    y: ay,
+    x: start.x < end.x ? start.x + lead * invert : start.x - lead * invert,
+    y: start.y,
   }
   const endLead = {
-    x: ax < bx ? bx - lead * invert : bx + lead * invert,
-    y: by,
+    x: start.x < end.x ? end.x - lead * invert : end.x + lead * invert,
+    y: end.y,
   }
 
-  const aLeftAnchor = pointAt([ax, ay], [startLead.x, startLead.y], 0.7)
+  const aLeftAnchor = pointAt([start.x, start.y], [startLead.x, startLead.y], 0.7)
   const aRightAnchor = pointAt([mid.x, mid.y], [aLeftAnchor.x, aLeftAnchor.y], 0.5)
 
   // path `S` directive makes `bLeftAnchor` a reflection of `aRightAnchor`
-  const bRightAnchor = pointAt([bx, by], [endLead.x, endLead.y], 0.7)
+  const bRightAnchor = pointAt([end.x, end.y], [endLead.x, endLead.y], 0.7)
 
   const d = [
-    `M ${ax} ${-ay}`,
+    `M ${start.x} ${-start.y}`,
     `C ${aLeftAnchor.x} ${-aLeftAnchor.y} ${aRightAnchor.x} ${-aRightAnchor.y} ${mid.x} ${-mid.y}`,
-    `S ${bRightAnchor.x} ${-bRightAnchor.y} ${bx} ${-by}`,
+    `S ${bRightAnchor.x} ${-bRightAnchor.y} ${end.x} ${-end.y}`,
   ].join('')
 
   return (
