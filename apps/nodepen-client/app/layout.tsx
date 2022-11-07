@@ -5,7 +5,14 @@ type RootLayoutProps = {
 }
 
 const RootLayout = ({ children }: RootLayoutProps): React.ReactElement => {
-  return <div className="w-vw h-vh flex justify-center items-center">{children}</div>
+  return (
+    <html>
+      <head></head>
+      <body>
+        <div className="w-vw h-vh flex justify-center items-center">{children}</div>
+      </body>
+    </html>
+  )
 }
 
 export default RootLayout

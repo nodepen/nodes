@@ -27,12 +27,6 @@ const fetchDocument = async (id: string): Promise<NodePen.Document> => {
     version: 1,
   }
 
-  await new Promise<void>((resolve) => {
-    setTimeout(() => {
-      resolve()
-    }, 100)
-  })
-
   return document
 }
 
