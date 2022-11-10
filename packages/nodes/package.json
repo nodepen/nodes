@@ -18,8 +18,7 @@
     "build": "tsc",
     "postbuild": "tsc-alias",
     "dev": "concurrently \"tsc-watch --noClear --onSuccess \\\"npm run prebuild\\\"\" \"tsc-alias -w\"",
-    "test": "jest",
-    "link:react": "npm link ../../node_modules/react"
+    "test": "jest"
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0",
