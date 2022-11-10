@@ -1,0 +1,38 @@
+name: ci
+
+on: [push]
+
+jobs:
+  build-nodes:
+    name: nodes
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'npm'
+      - name: Install dependencies
+        run: npm ci
+      - name: Build packages
+        run: npm run build:ci
+      - name: Run tests
+        working-directory: packages/nodes/
+        run: npm run test
+
+  build-converters:
+    name: converters
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.0.x'
+          dotnet-quality: 'ga'
+      - name: Build project
+        working-directory: packages/converters/
+        run: dotnet build
+
+
