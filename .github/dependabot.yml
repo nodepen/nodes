@@ -4,28 +4,28 @@ updates:
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "friday"
     allow:
-      - dependency-type: "direct"
+      - dependency-name: "turbo"
+        dependency-type: "direct"
+      - dependency-name: "typescript"
+        dependency-type: "direct"
     open-pull-requests-limit: 1
     reviewers:
       - "cdriesler"
 
   - package-ecosystem: "npm"
-    directory: "/packages/core"
-    schedule:
-      interval: "weekly"
-    open-pull-requests-limit: 0
-
-  - package-ecosystem: "npm"
     directory: "/packages/nodes"
     schedule:
-      interval: "daily"
+      interval: "weekly"
+      day: "friday"
     allow:
       - dependency-name: "@speckle/viewer"
         dependency-type: "direct"
       - dependency-name: "immer"
         dependency-type: "direct"
+      - dependency-name: "tailwindcss"
       - dependency-name: "zustand"
         dependency-type: "direct"
     open-pull-requests-limit: 1
@@ -36,10 +36,21 @@ updates:
     directory: "/packages/converters"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 0
+      day: "friday"
+    allow:
+      - dependency-name: "Speckle*"
+    open-pull-requests-limit: 1
+    reviewers:
+      - "cdriesler"
 
   - package-ecosystem: "npm"
     directory: "/apps/nodepen-client"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 0
+      day: "friday"
+    allow:
+      - dependency-name: "next"
+        dependency-type: "direct"
+    open-pull-requests-limit: 1
+    reviewers:
+      - "cdriesler"
