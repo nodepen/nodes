@@ -16,13 +16,13 @@ Nodepen is a web client for Grasshopper. This monorepo is for the main `@nodepen
 
 This project is under active development towards a 2.0 release that will:
 
-- Publish useful bits of the [previous release](https://github.com/nodepen/nodes/releases/tag/1.0.0) as javascript and React modules
-- Integrate with Speckle for backend processes and frontend geometry
+- Publish useful bits of the [previous release](https://github.com/nodepen/nodes/releases/tag/1.0.0) as independent libraries
+- Integrate with Speckle for backend processes and frontend visualization
 
 ## Features
 
 - Compose, execute, and view results from your Grasshopper graphs in the browser
-- Or, upload an existing script and continue working on the web
+- Upload an existing script and continue working on the web
 - Easily pin any number of parameters for a quick configurator-like experience
 - Open the same graph in multiple browser windows for the "two screen" UX we've come to love with Rhino and Grasshopper
 - Download your current graph to continue work in Grasshopper offline
@@ -98,10 +98,6 @@ const MyApp = ({ templates }: MyAppProps) => {
     )
 }
 ```
-
-## API
-
-WIP
 
 ## Development
 
