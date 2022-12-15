@@ -16,96 +16,143 @@ Nodepen is a web client for Grasshopper. This monorepo is for the main `@nodepen
 
 This project is under active development towards a 2.0 release that will:
 
-- Publish useful bits of the [previous release](https://github.com/nodepen/nodes/releases/tag/1.0.0) as javascript and React modules
-- Integrate with Speckle for backend processes and frontend geometry
+- Publish useful bits of the [previous release](https://github.com/nodepen/nodes/releases/tag/1.0.0) as independent libraries
+- Integrate with Speckle for backend processes and frontend visualization
 
 ## Features
 
 - Compose, execute, and view results from your Grasshopper graphs in the browser
-- Or, upload an existing script and continue working on the web
+- Upload an existing script and continue working on the web
 - Easily pin any number of parameters for a quick configurator-like experience
 - Open the same graph in multiple browser windows for the "two screen" UX we've come to love with Rhino and Grasshopper
 - Download your current graph to continue work in Grasshopper offline
 
-## Quickstart
+## Project Structure
 
-Minimal
+This monorepo contains the core NodePen libraries (`/packages`) and a collection of example applications (`/apps`) that use them. The applications are meant to be a simple demonstration of how to run a Grasshopper-like environment and how NodePen integrates with Speckle technology.
 
-```ts
-import type * as NodePen from '@nodepen/core'
-import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
+### Packages
 
-const MyApp = () => {
-    const document: NodePen.Document = { ...yourData }
-    const streamId = "your-speckle-stream-id"
+NodePen currently supports three core libraries:
 
-    return (
-        <NodesApp document={document}>
-            <DocumentView />
-            <SpeckleModelView streamId={streamId} />
-        </NodesApp>
-    )
-}
+#### @nodepen/nodes
+
+A React component library that exports the main NodePen client-side "app" for interacting with nodes and viewing results. It also exports the individual "views" which may be included and configured as necessary.
+
+#### @nodepen/core
+
+A typescript library that exports types and utilities for NodePen concepts. Useful if you need to perform operations with NodePen-shaped data but do not need to include the client-side logic.
+
+#### NodePen.Converters
+
+A C# library that can be used to serialize/deserialize types to/from the NodePen Document JSON format.
+
+### Apps
+
+#### nodepen-client
+
+A thin next.js client that communicates directly with the Rhino Compute server for Grasshopper solutions and the Speckle server to receive results from Speckle streams.
+
+#### rhino-compute-server
+
+A minimal Rhino Compute server with endpoints for updating a given NodePen document. Writes results directly to the local Speckle server instance it's configured to point to.
+
+#### speckle-server
+
+A git submodule of [specklesystems/speckle-server](https://github.com/specklesystems/speckle-server).
+
+## Local Development
+
+Running NodePen locally requires a number of dependencies and, at the moment, a bit of manual work for first-time setup. Please also see the section below about known limitations.
+
+### Dependencies
+
+In order to run all of the example applications, you will need:
+
+- Git with SSH auth
+- Nodejs 16, 18
+- Dotnet CLI
+- Docker and docker-compose
+- Rhino 7+
+
+### Initial Setup
+
+Clone this repo and its speckle-server submodule with:
+
+```
+git clone --recurse-submodules git@github.com:nodepen/nodes.git
 ```
 
-Not minimal:
+From the root directory, run:
 
-```ts
-import { useState, useCallback } from 'react'
-import type * as NodePen from '@nodepen/core'
-import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
-import type { NodesAppState, NodesAppCallbacks } from '@nodepen/nodes'
-
-type MyAppProps = {
-    templates: NodePen.NodeTemplate[]
-}
-
-const MyApp = ({ templates }: MyAppProps) => {
-    const [document, setDocument] = useState<NodePen.Document>()
-    const [solution, setSolution] = useState<NodePen.SolutionData>()
-
-    const handleDocumentChange = useCallback((state: NodesAppState) => {
-        const { document } = state
-        // React to document changes
-    }, [])
-
-    const handleExpireSolution = useCallback((state: NodesAppState) => {
-        const { document, solution } = state
-        // React to new solution requests
-
-        const fetchSolution = async (): Promise<NodePen.SolutionData> => {
-            const response = await fetch('your-endpoint', { method: 'POST', body: { id: solution.id, document }})
-            const data = await response.json()
-
-            // Do work with solution data
-
-            return data
-        }
-
-        fetchSolution().then((solutionData) => setSolution(solutionData))
-    }, [])
-
-    const callbacks: NodesAppCallbacks = {
-        handleDocumentChange,
-        handleExpireSolution
-    }
-
-    return (
-        <NodesApp document={document} templates={templates} solution={solution} {...callbacks}>
-            <DocumentView editable />
-            <SpeckleModelView streamId={streamId} />
-        </NodesApp>
-    )
-}
+```
+npm i
+npm run build
 ```
 
-## API
+This should install dependencies for all of the javascript projects and build them once. Build failures may occur for the last project, `nodepen-client`, and can be ignored.
 
-WIP
+From `/apps/rhino-compute-server` run:
 
-## Development
+```
+dotnet build
+```
 
-WIP
+This should restore dependencies for and build both the example application and NodePen.Converters.
+
+Last, follow [Speckle's instructions](https://speckle.guide/dev/server-local-dev.html) for how to set up your local development environment for the speckle-server project. Run the server.
+
+Visit your local Speckle server and:
+
+- Create your admin user (the first user on the server)
+- Create a new stream
+- [Create a personal access token for your account](https://speckle.guide/dev/tokens.html).
+
+In `apps/nodepen-client`, copy `.env.development` to a `.env.development.local` and populate each environment variable with the relevant information from the previous steps.
+
+In `apps/rhino-compute-server`, modify the values at the top of `Endpoints/GrasshopperEndpoints.cs`.
+
+For production systems, it is bad practice (and dangerous) to commit personal access tokens in this way. But so long as its for your locally running and disposable Speckle server, this is acceptable for local NodePen development.
+
+At this point, you may leave your Speckle server running and continue onto the next section.
+
+### Development Environment
+
+All three services in the `/apps` directory must be running in order to develop with NodePen locally. In general, I recommend letting all three run in their own terminal. In VSCode, you can split terminals to see results from each one at the same time.
+
+Once all three are successfully running, you can navigate to `http://localhost:4000` to begin working.
+
+You can validate that everything is working by dropping a grasshopper script onto the canvas and viewing the results in the next tab. (Please see the limitations section below if you script does not appear.)
+
+#### nodepen-client
+
+From the root directory, run:
+
+```
+npm run dev
+```
+
+This uses turborepo to watch and react to changes made in either the client application or any of the packages it consumes.
+
+#### rhino-compute-server
+
+From the `apps/rhino-compute-server` directory, run:
+
+```
+dotnet watch
+```
+
+After a short wait for Rhino startup processes, you will see `The Rhino.Compute service is now running` when it's ready for communication with the other apps.
+
+#### speckle-server
+
+Follow Speckle's instructions for local development [here](https://speckle.guide/dev/server-local-dev.html).
+
+### Limitations
+
+- Grasshopper script conversion will fail often because several important component types are not yet handled. You may safely use most default components, but you can't (yet!) use anything with a special type or behavior like the Number Slider or floating parameters.
+- You may only expose number-based input parameters at this time in the HUD inputs window.
+- Only curve-based results are being pushed to the Speckle server at this time, and so they are the only geometry you can see in the viewer.
 
 ## Attribution
 

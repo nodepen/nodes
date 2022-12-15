@@ -5,14 +5,14 @@ import { useViewRegistry } from '../common/hooks'
 import { useStore } from '$'
 
 type SpeckleModelViewProps = {
-  streamId: string
+  stream: {
+    id: string
+    url: string
+    token: string
+  }
 }
 
-const STREAM_ID = 'e1aa8e3dce'
-const BRANCH_NAME = 'main'
-const TOKEN = 'ed0010b22f0211453ad5807fca57925722cc86224a'
-
-const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactElement | null => {
+const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement | null => {
   const objectIds = useStore((state) => state.solution.manifest.streamObjectIds)
 
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
@@ -66,7 +66,7 @@ const SpeckleModelView = ({ streamId }: SpeckleModelViewProps): React.ReactEleme
     const refreshObjects = async (): Promise<void> => {
       await viewer.unloadAll()
 
-      await viewer.loadObject(`http://localhost:3000/streams/${STREAM_ID}/objects/${objectId}`, TOKEN)
+      await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${objectId}`, stream.token)
     }
 
     refreshObjects().then(() => {

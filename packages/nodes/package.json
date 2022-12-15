@@ -22,9 +22,9 @@
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0",
-    "@speckle/viewer": "2.9.1",
-    "immer": "9.0.16",
-    "zustand": "4.1.4"
+    "@speckle/viewer": "^2.10.3",
+    "immer": "^9.0.16",
+    "zustand": "^4.1.5"
   },
   "peerDependencies": {
     "react": "^18.0",
