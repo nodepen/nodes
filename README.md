@@ -98,7 +98,7 @@ dotnet build
 
 This should restore dependencies for and build both the example application and NodePen.Converters.
 
-Last, follow Speckle's instructions for how to set up your local development environment for the speckle-server project. Run the server.
+Last, follow [Speckle's instructions](https://speckle.guide/dev/server-local-dev.html) for how to set up your local development environment for the speckle-server project. Run the server.
 
 Visit your local Speckle server and:
 
@@ -114,7 +114,33 @@ At this point, you may leave your Speckle server running and continue onto the n
 
 ### Development Environment
 
-We will need to
+All three services in the `/apps` directory must be running in order to develop with NodePen locally. In general, I recommend letting all three run in their own terminal. In VSCode, you can split terminals to see results from each one at the same time.
+
+Once all three are successfully running, you can navigate to `http://localhost:4000` to begin working.
+
+#### nodepen-client
+
+From the root directory, run:
+
+```
+npm run dev
+```
+
+This uses turborepo to watch and react to changes made in either the client application or any of the packages it consumes.
+
+#### rhino-compute-server
+
+From the `apps/rhino-compute-server` directory, run:
+
+```
+dotnet watch
+```
+
+After a short wait for Rhino startup processes, you will see `The Rhino.Compute service is now running` when it's ready for communication with the other apps.
+
+#### speckle-server
+
+Follow Speckle's instructions for local development [here](https://speckle.guide/dev/server-local-dev.html).
 
 ### Limitations
 
