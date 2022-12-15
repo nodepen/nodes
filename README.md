@@ -63,15 +63,16 @@ A git submodule of [specklesystems/speckle-server](https://github.com/specklesys
 
 ## Local Development
 
-Running NodePen locally required a number of dependencies and, at the moment, a bit of manual work for first-time setup. Please also see the section below about known limitations.
+Running NodePen locally requires a number of dependencies and, at the moment, a bit of manual work for first-time setup. Please also see the section below about known limitations.
 
 ### Dependencies
 
 In order to run all of the example applications, you will need:
 
+- Git with SSH auth
 - Nodejs 16, 18
 - Dotnet CLI
-- Docker (or similar CLI)
+- Docker and docker-compose
 - Rhino 7+
 
 ### Initial Setup
@@ -86,9 +87,10 @@ From the root directory, run:
 
 ```
 npm i
+npm run build
 ```
 
-This should install dependencies for all of the javascript projects and build them once.
+This should install dependencies for all of the javascript projects and build them once. Build failures may occur for the last project, `nodepen-client`, and can be ignored.
 
 From `/apps/rhino-compute-server` run:
 
@@ -110,6 +112,8 @@ In `apps/nodepen-client`, copy `.env.development` to a `.env.development.local` 
 
 In `apps/rhino-compute-server`, modify the values at the top of `Endpoints/GrasshopperEndpoints.cs`.
 
+For production systems, it is bad practice (and dangerous) to commit personal access tokens in this way. But so long as its for your locally running and disposable Speckle server, this is acceptable for local NodePen development.
+
 At this point, you may leave your Speckle server running and continue onto the next section.
 
 ### Development Environment
@@ -117,6 +121,8 @@ At this point, you may leave your Speckle server running and continue onto the n
 All three services in the `/apps` directory must be running in order to develop with NodePen locally. In general, I recommend letting all three run in their own terminal. In VSCode, you can split terminals to see results from each one at the same time.
 
 Once all three are successfully running, you can navigate to `http://localhost:4000` to begin working.
+
+You can validate that everything is working by dropping a grasshopper script onto the canvas and viewing the results in the next tab. (Please see the limitations section below if you script does not appear.)
 
 #### nodepen-client
 
@@ -144,7 +150,7 @@ Follow Speckle's instructions for local development [here](https://speckle.guide
 
 ### Limitations
 
-- Grasshopper script conversion will fail often because several important component types are not yet handled.
+- Grasshopper script conversion will fail often because several important component types are not yet handled. You may safely use most default components, but you can't (yet!) use anything with a special type or behavior like the Number Slider or floating parameters.
 - You may only expose number-based input parameters at this time in the HUD inputs window.
 - Only curve-based results are being pushed to the Speckle server at this time, and so they are the only geometry you can see in the viewer.
 

@@ -26,9 +26,9 @@ namespace Rhino.Compute
 
     public class GrasshopperEndpointsModule : NancyModule
     {
-        public static string STREAM_ID = "e1aa8e3dce";
+        public static string STREAM_ID = "002acf71a3";
         public static string STREAM_URL = "http://localhost:3000";
-        public static string STREAM_TOKEN = "ed0010b22f0211453ad5807fca57925722cc86224a";
+        public static string STREAM_TOKEN = "831b84ba488137c78ae2d026e59c4945706eade9e3";
 
         public GrasshopperEndpointsModule(IRouteCacheProvider routeCacheProvider)
         {
