@@ -12,7 +12,11 @@ type NodesAppContainerProps = {
 }
 
 const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppContainerProps): React.ReactElement => {
-  const streamId = ''
+  const stream = {
+    id: process.env.NEXT_PUBLIC_STREAM_ID!,
+    url: process.env.NEXT_PUBLIC_STREAM_URL!,
+    token: process.env.NEXT_PUBLIC_STREAM_TOKEN!,
+  }
 
   const [document, setDocument] = useState(initialDocument)
   const [solution, setSolution] = useState<NodePen.SolutionData>()
@@ -99,7 +103,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   return (
     <NodesApp document={document} templates={templates} solution={solution} {...callbacks}>
       <DocumentView editable />
-      <SpeckleModelView streamId={streamId} />
+      <SpeckleModelView stream={stream} />
     </NodesApp>
   )
 }

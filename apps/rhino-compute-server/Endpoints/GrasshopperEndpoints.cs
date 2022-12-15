@@ -23,13 +23,12 @@ using NJsonConvert = Newtonsoft.Json.JsonConvert;
 
 namespace Rhino.Compute
 {
-    //      public class FileUploadRequest
-    //     {
-    //         public HttpFile File { get; set; }
-    //     }
 
     public class GrasshopperEndpointsModule : NancyModule
     {
+        public static string STREAM_ID = "e1aa8e3dce";
+        public static string STREAM_URL = "http://localhost:3000";
+        public static string STREAM_TOKEN = "ed0010b22f0211453ad5807fca57925722cc86224a";
 
         public GrasshopperEndpointsModule(IRouteCacheProvider routeCacheProvider)
         {
@@ -322,15 +321,15 @@ namespace Rhino.Compute
             Log("--", requestData.Document.Id, $"Wrote {solutionData.Values.Keys.Count} components to document solution data.");
 
             // Commit updated document and solution data to stream
-            var streamId = "e1aa8e3dce";
+            var streamId = STREAM_ID;
             var branchName = "main";
 
             var account = new Account()
             {
-                token = "ed0010b22f0211453ad5807fca57925722cc86224a",
+                token = STREAM_TOKEN,
                 serverInfo = new ServerInfo()
                 {
-                    url = "http://localhost:3000",
+                    url = STREAM_URL,
                     company = "NodePen"
                 },
                 userInfo = new UserInfo()
@@ -348,7 +347,7 @@ namespace Rhino.Compute
             };
 
             var commitId = Helpers.Send(
-                stream: $"http://localhost:3000/streams/{streamId}/branches/{branchName}",
+                stream: $"{STREAM_URL}/streams/{streamId}/branches/{branchName}",
                 data: streamData,
                 message: $"Solution ${SID(requestData.SolutionId)}",
                 account: account,
