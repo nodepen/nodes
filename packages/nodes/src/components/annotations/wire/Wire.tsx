@@ -1,9 +1,11 @@
 import React from 'react'
-import { useStore } from '$'
+import type { DataTreeStructure } from '@nodepen/core'
 import type { NodePortReference } from '@/types'
 import { COLORS } from '@/constants'
-import { usePortValues } from '@/hooks'
-import { pointAt } from '@/utils/numerics'
+import { useNodeAnchorPosition, usePortValues } from '@/hooks'
+import { getDataTreeStructure } from '@/utils/data-trees'
+import { distance, pointAt } from '@/utils/numerics'
+import { WirePortal } from './components'
 
 type WireProps = {
   from: NodePortReference
@@ -14,8 +16,8 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
   const { nodeInstanceId: fromNodeId, portInstanceId: fromPortId } = from
   const { nodeInstanceId: toNodeId, portInstanceId: toPortId } = to
 
-  const fromPosition = useAnchorPosition(fromNodeId, fromPortId)
-  const toPosition = useAnchorPosition(toNodeId, toPortId)
+  const fromPosition = useNodeAnchorPosition(fromNodeId, fromPortId)
+  const toPosition = useNodeAnchorPosition(toNodeId, toPortId)
 
   const sourceValues = usePortValues(fromNodeId, fromPortId)
 
@@ -95,40 +97,6 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
   const wire = getWireStyle(wireStructure)
 
   return <WirePortal>{wire}</WirePortal>
-}
-
-import { createPortal } from 'react-dom'
-import { distance } from '@/utils/numerics'
-import type { DataTreeStructure } from '@nodepen/core'
-import { getDataTreeStructure } from '@/utils/data-trees'
-
-type WirePortalProps = {
-  children: React.ReactNode
-}
-
-const WirePortal = ({ children }: WirePortalProps): React.ReactElement | null => {
-  const wiresContainerRef = useStore((state) => state.registry.wires.containerRef)
-  if (!wiresContainerRef || !wiresContainerRef.current) {
-    return null
-  }
-  return createPortal(children, wiresContainerRef.current)
-}
-
-const useAnchorPosition = (nodeId: string, anchorId: string): { x: number; y: number } | null => {
-  const nodePosition = useStore((state) => state.document.nodes[nodeId]?.position)
-  const anchorDelta = useStore((state) => state.document.nodes[nodeId]?.anchors?.[anchorId])
-
-  if (!nodePosition || !anchorDelta) {
-    return null
-  }
-
-  const { x, y } = nodePosition
-  const { dx, dy } = anchorDelta
-
-  return {
-    x: x + dx,
-    y: y + dy,
-  }
 }
 
 export default React.memo(Wire, (prevProps, nextProps) => {

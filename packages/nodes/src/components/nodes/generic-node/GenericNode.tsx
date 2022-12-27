@@ -5,6 +5,7 @@ import { COLORS, DIMENSIONS } from '@/constants'
 import { useDraggableNode } from '../hooks'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { Wire } from '@/components/annotations/wire'
+import { GenericNodePort } from './components'
 
 type GenericNodeProps = {
   id: string
@@ -249,8 +250,8 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
           strokeWidth={2}
           // vectorEffect="non-scaling-stroke"
         />
-        {inputPortShadows}
-        {outputPortShadows}
+        {/* {inputPortShadows} */}
+        {/* {outputPortShadows} */}
         {/* Body */}
         <rect
           x={position.x}
@@ -278,10 +279,26 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
           // vectorEffect="non-scaling-stroke"
           pointerEvents="none"
         />
-        {inputPorts}
-        {outputPorts}
-        {inputPortLabels}
-        {outputPortLabels}
+        {/* {inputPorts} */}
+        {/* {outputPorts} */}
+        {/* {inputPortLabels} */}
+        {/* {outputPortLabels} */}
+        {Object.keys(node.inputs).map((inputPortInstanceId) => (
+          <GenericNodePort
+            key={`generic-node-input-port-${inputPortInstanceId}`}
+            nodeInstanceId={id}
+            portInstanceId={inputPortInstanceId}
+            direction="input"
+          />
+        ))}
+        {Object.keys(node.outputs).map((outputPortInstanceId) => (
+          <GenericNodePort
+            key={`generic-node-output-port-${outputPortInstanceId}`}
+            nodeInstanceId={id}
+            portInstanceId={outputPortInstanceId}
+            direction="output"
+          />
+        ))}
         {nodeLabel}
       </g>
     </>

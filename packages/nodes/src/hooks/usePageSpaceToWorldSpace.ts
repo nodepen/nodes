@@ -7,7 +7,7 @@ import { useStore, useStoreRef } from '$'
 // (...and if it's even worth the trouble to do so)
 
 /**
- * Get a stable reference to a function that can map a position in page space to its position in visible world space.
+ * Get a stable reference to a function that can map a position in browser page space to its position in world space.
  * @remarks Guarantees latest values for camera and canvas div geometry without causing re-renders.
  */
 export const usePageSpaceToWorldSpace = (): (pageX: number, pageY: number) => [x: number, y: number] => {
