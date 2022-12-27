@@ -159,7 +159,6 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
             nodeInstanceId={id}
             portInstanceId={inputPortInstanceId}
             template={template.inputs[order]}
-            direction="input"
           />
         ))}
         {Object.entries(node.outputs).map(([outputPortInstanceId, order]) => (
@@ -168,7 +167,6 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
             nodeInstanceId={id}
             portInstanceId={outputPortInstanceId}
             template={template.outputs[order]}
-            direction="output"
           />
         ))}
       </g>

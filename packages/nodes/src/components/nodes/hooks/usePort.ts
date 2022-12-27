@@ -1,51 +1,55 @@
-import { useMemo } from 'react'
+import type React from 'react'
+import { useCallback, useRef } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { useStore } from '$'
-import { useNodeAnchorPosition } from '@/hooks'
+import { useImperativeEvent } from '@/hooks'
 
-type PortInfo = {
-    direction: 'input' | 'output'
-    position: {
-        x: number
-        y: number
-    }
-    template: NodePen.PortTemplate
-}
+export const usePort = (nodeInstanceId: string, portInstanceId: string, template: NodePen.PortTemplate): React.RefObject<SVGGElement> => {
+    const portRef = useRef<SVGGElement>(null)
 
-export const usePort = (nodeInstanceId: string, portInstanceId: string): PortInfo | null => {
-    const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
+    const { __direction: direction } = template
 
-    const { direction, template } = useMemo((): Partial<PortInfo> => {
-        const node = useStore.getState().document.nodes[nodeInstanceId]
+    const handleContextMenu = useCallback((e: MouseEvent): void => {
+        e.stopPropagation()
+        e.preventDefault()
+    }, [])
 
-        if (!node) {
-            return {}
+    const handlePointerDown = useCallback((e: PointerEvent): void => {
+        switch (e.pointerType) {
+            case 'pen':
+            case 'touch': {
+                // Handle touch input
+                break
+            }
+            case 'mouse': {
+                switch (e.button) {
+                    case 0: {
+                        // Handle left click
+                        e.stopPropagation()
+
+                        console.log(`L ${nodeInstanceId} ${direction}`)
+                        break
+                    }
+                    case 1: {
+                        // Handle middle click
+                        break
+                    }
+                    case 2: {
+                        // Handle right click
+                        console.log(`R ${nodeInstanceId} ${direction}`)
+                        break
+                    }
+                }
+                break
+            }
+            default: {
+                console.log(`🐍 Unhandled pointer type ${e.pointerType}`)
+                break
+            }
         }
+    }, [])
 
-        const nodeTemplate = useStore.getState().templates[node.templateId]
+    useImperativeEvent(portRef, 'contextmenu', handleContextMenu)
+    useImperativeEvent(portRef, 'pointerdown', handlePointerDown)
 
-        if (!nodeTemplate) {
-            return {}
-        }
-
-        const direction = Object.keys(node.inputs).includes(portInstanceId) ? 'input' : Object.keys(node.outputs).includes(portInstanceId) ? 'output' : null
-
-        if (!direction) {
-            return {}
-        }
-
-        const portTemplate = direction === 'input' ? nodeTemplate.inputs[node.inputs[portInstanceId]] : nodeTemplate.outputs[node.outputs[portInstanceId]]
-
-        if (!portTemplate) {
-            return {}
-        }
-
-        return { direction, template }
-    }, [nodeInstanceId, portInstanceId])
-
-    if (!direction || !position || !template) {
-        return null
-    }
-
-    return { direction, position, template }
+    return portRef
 }

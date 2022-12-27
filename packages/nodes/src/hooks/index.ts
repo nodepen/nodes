@@ -1,4 +1,5 @@
 export { useImperativeEvent } from './useImperativeEvent'
 export { useNodeAnchorPosition } from './useNodeAnchorPosition'
+export { useNodePortTemplate } from './useNodePortTemplate'
 export { usePageSpaceToWorldSpace } from './usePageSpaceToWorldSpace'
 export { usePortValues } from './usePortValues'

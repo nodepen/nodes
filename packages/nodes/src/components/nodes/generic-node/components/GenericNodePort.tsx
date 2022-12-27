@@ -2,17 +2,19 @@ import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useNodeAnchorPosition } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
+import { usePort } from '../../hooks'
 
-const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_RADIUS } = DIMENSIONS
+const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_LABEL_OFFSET, NODE_PORT_RADIUS } = DIMENSIONS
 
 type GenericNodePortProps = {
     nodeInstanceId: string
     portInstanceId: string
     template: NodePen.PortTemplate
-    direction: 'input' | 'output'
 }
 
-const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, direction }: GenericNodePortProps) => {
+const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNodePortProps) => {
+    const portRef = usePort(nodeInstanceId, portInstanceId, template)
+
     const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
 
     if (!position) {
@@ -20,25 +22,23 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, direction }
         return null
     }
 
-    const { x, y } = position
+    const { __direction: direction } = template
 
     const labelPosition = {
         x: direction === 'input'
-            ? x + 12
-            : x - 12,
-        y: y - 1.5 - NODE_PORT_LABEL_FONT_SIZE / 4
+            ? position.x + NODE_PORT_LABEL_OFFSET
+            : position.x - NODE_PORT_LABEL_OFFSET,
+        y: position.y - 1.5 - NODE_PORT_LABEL_FONT_SIZE / 4
     }
 
-    const labelAnchor = direction === 'input'
-        ? 'start'
-        : 'end'
+    const labelTextAnchor = direction === 'input' ? 'start' : 'end'
 
     return (
-        <>
+        <g id={`generic-node-${direction}-port-${portInstanceId}`} ref={portRef}>
             <circle
                 r={NODE_PORT_RADIUS}
-                cx={x}
-                cy={-y}
+                cx={position.x}
+                cy={-position.y}
                 fill={COLORS.LIGHT}
                 stroke={COLORS.DARK}
                 strokeWidth={2}
@@ -49,11 +49,11 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, direction }
                 className="np-font-mono np-select-none"
                 fontSize={NODE_PORT_LABEL_FONT_SIZE}
                 fill={COLORS.DARK}
-                textAnchor={labelAnchor}
+                textAnchor={labelTextAnchor}
             >
                 {template.nickName}
             </text>
-        </>
+        </g>
     )
 }
 
