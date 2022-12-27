@@ -1,6 +1,6 @@
 export type PortTemplate = {
   __order: number
-  __direction: string
+  __direction: PortDirection
   name: string
   nickName: string
   description: string
@@ -8,3 +8,5 @@ export type PortTemplate = {
   keywords: string[]
   isOptional: boolean
 }
+
+export type PortDirection = 'input' | 'output'
