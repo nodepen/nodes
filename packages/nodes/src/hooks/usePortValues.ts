@@ -2,8 +2,8 @@ import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 
 /**
- * Given a reference to a specific port, return its user-defined values  or its current solution values.
- * @remarks Returns first value found in that order, or `null` if none exist.
+ * Given a reference to a specific port, return its user-defined values or its current solution values.
+ * @remarks Returns first value found, in that order, or `null` if none exist.
  * @param nodeInstanceId
  * @param portInstanceId
  */

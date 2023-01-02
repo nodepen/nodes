@@ -62,6 +62,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
           }
           case 2: {
             // Handle right mouse down
+            console.log('draggable')
             return
           }
         }
