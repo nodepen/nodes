@@ -1,6 +1,6 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import type * as NodePen from '@nodepen/core'
-import { useDispatch, useStore } from '$'
+import { useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useDraggableNode } from '../hooks'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
@@ -18,86 +18,16 @@ const { NODE_INTERNAL_PADDING, NODE_LABEL_WIDTH, NODE_LABEL_FONT_SIZE, NODE_PORT
 const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => {
   const node = useStore((store) => store.document.nodes[id])
 
-  const { apply } = useDispatch()
-
-  const draggableTargetRef = useDraggableNode(id)
-
   const { position } = node
 
   console.log(`⚙️⚙️⚙️ Rendered generic node [${id.split('-')[0]}] (${template.nickName})`)
 
+  const draggableTargetRef = useDraggableNode(id)
+
   const nodeWidth = getNodeWidth()
   const nodeHeight = getNodeHeight(template)
 
-  // const inputPortShadows = inputs.map((input, i) => {
-  //   const [x, y] = getPortColumnPosition(i, 'input')
-
-  //   return (
-  //     <circle
-  //       key={`generic-node-input-port-shadow-${input.name}`}
-  //       r={NODE_PORT_RADIUS}
-  //       cx={x}
-  //       cy={y + 2}
-  //       fill={COLORS.DARK}
-  //       stroke={COLORS.DARK}
-  //       strokeWidth={2}
-  //       // vectorEffect="non-scaling-stroke"
-  //     />
-  //   )
-  // })
-
-  // const inputPortLabels = inputs.map((input, i) => {
-  //   const { nickName } = input
-
-  //   const [x, y] = getPortColumnPosition(i, 'input')
-
-  //   return (
-  //     <text
-  //       key={`generic-node-input-port-label-${input.name}`}
-  //       x={x + 12}
-  //       y={y - 3 + NODE_PORT_LABEL_FONT_SIZE / 2}
-  //       className="np-font-mono np-select-none"
-  //       fontSize={NODE_PORT_LABEL_FONT_SIZE}
-  //       fill={COLORS.DARK}
-  //       onClick={(e) => {
-  //         e.stopPropagation()
-
-  //         const portInstanceId = Object.entries(node.inputs).find(([instanceId, order]) => order === input.__order)?.[0]
-
-  //         if (!portInstanceId) {
-  //           console.log('Not found')
-  //           return
-  //         }
-
-  //         apply((state) => {
-  //           state.document.configuration.pinnedPorts.push({
-  //             nodeInstanceId: node.instanceId,
-  //             portInstanceId: portInstanceId,
-  //           })
-  //         })
-  //       }}
-  //     >
-  //       {nickName}
-  //     </text>
-  //   )
-  // })
-
-  // const outputPortShadows = outputs.map((output, i) => {
-  //   const [x, y] = getPortColumnPosition(i, 'output')
-
-  //   return (
-  //     <circle
-  //       key={`generic-node-output-port-shadow-${output.name}`}
-  //       r={NODE_PORT_RADIUS}
-  //       cx={x}
-  //       cy={y + 2}
-  //       fill={COLORS.DARK}
-  //       stroke={COLORS.DARK}
-  //       strokeWidth={2}
-  //       // vectorEffect="non-scaling-stroke"
-  //     />
-  //   )
-  // })
+  const nodePortInstanceIds = [...Object.keys(node.inputs), ...Object.keys(node.outputs)]
 
   return (
     <>
@@ -114,6 +44,32 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
           stroke={COLORS.DARK}
           strokeWidth={2}
         />
+        {nodePortInstanceIds.map((portInstanceId) => {
+          const portAnchor = node.anchors[portInstanceId]
+
+          if (!portAnchor) {
+            return null
+          }
+
+          const portPosition = {
+            x: position.x + portAnchor.dx - NODE_PORT_RADIUS,
+            y: position.y + portAnchor.dy + NODE_PORT_RADIUS,
+          }
+
+          return (
+            <rect
+              x={portPosition.x}
+              y={-portPosition.y}
+              width={NODE_PORT_RADIUS * 2}
+              height={NODE_PORT_RADIUS * 2 + 2}
+              rx={NODE_PORT_RADIUS}
+              ry={NODE_PORT_RADIUS}
+              fill={COLORS.DARK}
+              stroke={COLORS.DARK}
+              strokeWidth={2}
+            />
+          )
+        })}
         {/* Body */}
         <rect
           x={position.x}
