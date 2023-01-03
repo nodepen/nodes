@@ -1,20 +1,25 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
-import { useDraggableNode } from '../hooks'
-import { Wire } from '@/components/annotations/wire'
-import { GenericNodeBody, GenericNodeLabel, GenericNodePort, GenericNodeShadow } from './components'
+import { useDebugRender, useDraggableNode } from '../hooks'
+import { GenericNodeBody, GenericNodeLabel, GenericNodePorts, GenericNodeShadow, GenericNodeWires } from './components'
 
 type GenericNodeProps = {
   id: string
   template: NodePen.NodeTemplate
 }
 
+/**
+ * Renders most common node types with a static number of inputs and outputs.
+ */
 const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => {
+  // Subscribe to current node state
   const node = useStore((store) => store.document.nodes[id])
 
-  console.log(`⚙️⚙️⚙️ Rendered generic node [${id.split('-')[0]}] (${template.nickName})`)
+  // Attach debug behaviors
+  useDebugRender(node, template)
 
+  // Attach interactive behaviors
   const draggableTargetRef = useDraggableNode(id)
 
   return (
@@ -23,41 +28,9 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         <GenericNodeShadow node={node} template={template} />
         <GenericNodeBody node={node} template={template} />
         <GenericNodeLabel node={node} template={template} />
-        {Object.entries(node.inputs).map(([inputPortInstanceId, order]) => (
-          <GenericNodePort
-            key={`generic-node-input-port-${inputPortInstanceId}`}
-            nodeInstanceId={id}
-            portInstanceId={inputPortInstanceId}
-            template={template.inputs[order]}
-          />
-        ))}
-        {Object.entries(node.outputs).map(([outputPortInstanceId, order]) => (
-          <GenericNodePort
-            key={`generic-node-output-port-${outputPortInstanceId}`}
-            nodeInstanceId={id}
-            portInstanceId={outputPortInstanceId}
-            template={template.outputs[order]}
-          />
-        ))}
+        <GenericNodePorts node={node} template={template} />
       </g>
-      {Object.entries(node.sources).map(([inputPortInstanceId, sources]) => {
-        const currentInput = {
-          nodeInstanceId: node.instanceId,
-          portInstanceId: inputPortInstanceId,
-        }
-
-        return Object.values(sources).map((source) => {
-          const wireKey = [
-            'np-generic-node-wire',
-            source.nodeInstanceId,
-            source.portInstanceId,
-            currentInput.nodeInstanceId,
-            currentInput.portInstanceId,
-          ].join('-')
-
-          return <Wire key={wireKey} from={source} to={currentInput} />
-        })
-      })}
+      <GenericNodeWires node={node} />
     </>
   )
 }

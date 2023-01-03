@@ -13,4 +13,10 @@ test('{0;}', () => {
     expect(result).toBe(false)
 })
 
+test('{0;0}', () => {
+    const value = '{0;0}'
+    const result = isDataTreePath(value)
+    expect(result).toBe(true)
+})
+
 

@@ -12,7 +12,6 @@ const NodesContainer = (): React.ReactElement => {
   return (
     <g id="np-nodes" className="np-pointer-events-auto">
       {nodes.map((node) => {
-        // Handle special templates (number slider, panel, etc)
         const { instanceId, templateId } = node
 
         const template = templates[templateId]
