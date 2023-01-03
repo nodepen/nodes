@@ -6,7 +6,7 @@ import { useImperativeEvent } from '@/hooks'
 export const usePort = (nodeInstanceId: string, portInstanceId: string, template: NodePen.PortTemplate): React.RefObject<SVGGElement> => {
     const portRef = useRef<SVGGElement>(null)
 
-    const { __direction: direction } = template
+    const { __direction: direction, nickName } = template
 
     const handleContextMenu = useCallback((e: MouseEvent): void => {
         e.stopPropagation()
@@ -34,7 +34,7 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, template
                         // Handle right click
                         e.stopPropagation()
 
-                        console.log(`R ${nodeInstanceId} ${direction}`)
+                        console.log(`R ${nickName} ${direction}`)
                         break
                     }
                 }

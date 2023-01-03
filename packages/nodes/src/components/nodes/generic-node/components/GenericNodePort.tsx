@@ -33,6 +33,19 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
 
     const labelTextAnchor = direction === 'input' ? 'start' : 'end'
 
+    const eventTargetAreaOffset = 12
+
+    const eventTargetAreaPosition = {
+        x: direction === 'input'
+            ? position.x - NODE_PORT_RADIUS - eventTargetAreaOffset
+            : position.x - NODE_PORT_RADIUS - 32,
+        y: position.y - NODE_PORT_RADIUS - NODE_PORT_LABEL_FONT_SIZE
+    }
+
+    const eventTargetAreaHeight = (NODE_PORT_LABEL_FONT_SIZE * 2) + (NODE_PORT_RADIUS * 2)
+
+    const eventTargetAreaWidth = 32 + NODE_PORT_RADIUS + eventTargetAreaOffset
+
     return (
         <g id={`generic-node-${direction}-port-${portInstanceId}`} ref={portRef}>
             <circle
@@ -53,6 +66,14 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
             >
                 {template.nickName}
             </text>
+            <rect
+                x={eventTargetAreaPosition.x}
+                y={eventTargetAreaPosition.y}
+                height={eventTargetAreaHeight}
+                width={eventTargetAreaWidth}
+                fill={"#FFFFFF"}
+                opacity={0}
+            />
         </g>
     )
 }
