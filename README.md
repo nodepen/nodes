@@ -8,8 +8,6 @@
 <!-- <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@nodepen/nodes?style=flat-square"> -->
 <img alt="GitHub" src="https://img.shields.io/github/license/nodepen/nodes?style=flat-square">
 </div>
-
----
 <br />
 
 Nodepen is a web client for Grasshopper. This monorepo is for the main `@nodepen/nodes` React app library and its supporting packages.
