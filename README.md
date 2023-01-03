@@ -4,8 +4,8 @@
 <img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/NodePenIO?style=social">
 <img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nodepen/nodes?style=social">
 &nbsp;
-<img alt="GitHub Workflow Status" src="https://img.shields.io/github/workflow/status/nodepen/nodes/ci?style=flat-square">
-<img alt="npm (scoped)" src="https://img.shields.io/npm/v/@nodepen/nodes?style=flat-square">
+<img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/nodepen/nodes/ci.yml?style=flat-square">
+<!-- <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@nodepen/nodes?style=flat-square"> -->
 <img alt="GitHub" src="https://img.shields.io/github/license/nodepen/nodes?style=flat-square">
 </div>
 
