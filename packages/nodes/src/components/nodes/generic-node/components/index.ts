@@ -1,3 +1,5 @@
-import GenericNodePort from './GenericNodePort'
-
-export { GenericNodePort }
+export { GenericNodeBody } from './GenericNodeBody'
+export { GenericNodeLabel } from './GenericNodeLabel'
+export { GenericNodePorts } from './GenericNodePorts'
+export { GenericNodeShadow } from './GenericNodeShadow'
+export { GenericNodeWires } from './GenericNodeWires'
