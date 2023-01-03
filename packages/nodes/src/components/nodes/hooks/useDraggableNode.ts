@@ -81,7 +81,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
     // TODO: Include zoom
     const dx = (currentPointerX - initialPointerX) / zoom.current
-    const dy = ((currentPointerY - initialPointerY) * -1) / zoom.current
+    const dy = (currentPointerY - initialPointerY) / zoom.current
 
     const { x: initialNodeX, y: initialNodeY } = initialNodePosition.current
 

@@ -35,7 +35,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         {/* Shadow */}
         <rect
           x={position.x}
-          y={-position.y + 2}
+          y={position.y + 2}
           width={nodeWidth}
           height={nodeHeight}
           rx={7}
@@ -53,13 +53,13 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
 
           const portPosition = {
             x: position.x + portAnchor.dx - NODE_PORT_RADIUS,
-            y: position.y + portAnchor.dy + NODE_PORT_RADIUS,
+            y: position.y + portAnchor.dy - NODE_PORT_RADIUS,
           }
 
           return (
             <rect
               x={portPosition.x}
-              y={-portPosition.y}
+              y={portPosition.y}
               width={NODE_PORT_RADIUS * 2}
               height={NODE_PORT_RADIUS * 2 + 2}
               rx={NODE_PORT_RADIUS}
@@ -73,7 +73,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         {/* Body */}
         <rect
           x={position.x}
-          y={-position.y}
+          y={position.y}
           width={nodeWidth}
           height={nodeHeight}
           rx={7}
@@ -86,7 +86,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         {/* Label */}
         <rect
           x={position.x + nodeWidth / 2 - NODE_LABEL_WIDTH / 2}
-          y={-position.y + NODE_INTERNAL_PADDING}
+          y={position.y + NODE_INTERNAL_PADDING}
           width={NODE_LABEL_WIDTH}
           height={nodeHeight - NODE_INTERNAL_PADDING * 2}
           rx={7}
@@ -99,9 +99,9 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
         <path
           id={`node-label-${id}`}
           fill="none"
-          d={`M ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3} ${-position.y + nodeHeight} L ${
+          d={`M ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3} ${position.y + nodeHeight} L ${
             position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3
-          } ${-position.y}`}
+          } ${position.y}`}
         />
         <text className="np-font-panel np-select-none" fill={COLORS.DARK} fontSize={NODE_LABEL_FONT_SIZE}>
           <textPath href={`#node-label-${id}`} startOffset="50%" textAnchor="middle" alignmentBaseline="middle">
