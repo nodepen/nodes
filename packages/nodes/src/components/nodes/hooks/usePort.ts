@@ -24,9 +24,6 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, template
                 switch (e.button) {
                     case 0: {
                         // Handle left click
-                        e.stopPropagation()
-
-                        console.log(`L ${nodeInstanceId} ${direction}`)
                         break
                     }
                     case 1: {
@@ -35,6 +32,8 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, template
                     }
                     case 2: {
                         // Handle right click
+                        e.stopPropagation()
+
                         console.log(`R ${nodeInstanceId} ${direction}`)
                         break
                     }

@@ -45,6 +45,7 @@ export const GenericNodeShadow = ({ node, template }: GenericNodeShadowProps) =>
 
                 return (
                     <rect
+                        key={`port-shadow-${portInstanceId}`}
                         x={portPosition.x}
                         y={portPosition.y}
                         width={NODE_PORT_RADIUS * 2}
