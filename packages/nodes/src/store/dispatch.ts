@@ -10,7 +10,7 @@ import { expireSolution } from './utils'
 
 const { NODE_INTERNAL_PADDING } = DIMENSIONS
 
-type BaseAction = string | ({ type: string } &  Record<string, unknown>)
+type BaseAction = string | ({ type: string } & Record<string, unknown>)
 type BaseSetter = (callback: (state: NodesAppState) => void, replace?: boolean, action?: BaseAction) => void
 type BaseGetter = () => NodesAppState
 
@@ -49,7 +49,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             const currentDomain = inputHeightSegments[i]
 
             const deltaX = 0
-            const deltaY = (remap(0.5, [0, 1], currentDomain) * -1) - NODE_INTERNAL_PADDING
+            const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
 
             node.anchors[currentId] = {
               dx: deltaX,
@@ -65,7 +65,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             const currentDomain = outputHeightSegments[i]
 
             const deltaX = nodeWidth
-            const deltaY = (remap(0.5, [0, 1], currentDomain) * -1) - NODE_INTERNAL_PADDING
+            const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
 
             node.anchors[currentId] = {
               dx: deltaX,

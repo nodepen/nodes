@@ -56,9 +56,9 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
   const bRightAnchor = pointAt([end.x, end.y], [endLead.x, endLead.y], 0.7)
 
   const d = [
-    `M ${start.x} ${-start.y}`,
-    `C ${aLeftAnchor.x} ${-aLeftAnchor.y} ${aRightAnchor.x} ${-aRightAnchor.y} ${mid.x} ${-mid.y}`,
-    `S ${bRightAnchor.x} ${-bRightAnchor.y} ${end.x} ${-end.y}`,
+    `M ${start.x} ${start.y}`,
+    `C ${aLeftAnchor.x} ${aLeftAnchor.y} ${aRightAnchor.x} ${aRightAnchor.y} ${mid.x} ${mid.y}`,
+    `S ${bRightAnchor.x} ${bRightAnchor.y} ${end.x} ${end.y}`,
   ].join('')
 
   const getWireStyle = (structure: DataTreeStructure) => {

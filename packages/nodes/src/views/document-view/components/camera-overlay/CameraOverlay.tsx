@@ -150,14 +150,14 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     const { x: cameraWorldX, y: cameraWorldY } = useStore.getState().camera.position
 
     const vec = {
-      x: cameraWorldX - cursorWorldX,
-      y: cameraWorldY - cursorWorldY,
+      x: cursorWorldX - cameraWorldX,
+      y: cursorWorldY - (cameraWorldY * -1),
     }
 
     const zoomDelta = nextZoom - zoom.current
 
     const transform = {
-      x: (vec.x / nextZoom) * -zoomDelta,
+      x: (vec.x / nextZoom) * zoomDelta,
       y: (vec.y / nextZoom) * -zoomDelta,
     }
 

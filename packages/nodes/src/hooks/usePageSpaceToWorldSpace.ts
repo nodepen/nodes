@@ -35,13 +35,13 @@ export const usePageSpaceToWorldSpace = (): (pageX: number, pageY: number) => [x
         // Cursor position, relative to camera position, in world units
         const relativeCursorPositionWorldSpace = {
             x: relativeCursorPositionPageSpace.x / zoom,
-            y: relativeCursorPositionPageSpace.y / -zoom
+            y: relativeCursorPositionPageSpace.y / zoom
         }
 
         // Cursor position in world units
         const absoluteCursorPositionWorldSpace = {
             x: relativeCursorPositionWorldSpace.x + position.x,
-            y: relativeCursorPositionWorldSpace.y + position.y
+            y: relativeCursorPositionWorldSpace.y - position.y
         }
 
         return [absoluteCursorPositionWorldSpace.x, absoluteCursorPositionWorldSpace.y]

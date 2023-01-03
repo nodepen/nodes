@@ -173,7 +173,7 @@ namespace NodePen.Converters
                             };
 
                             node.Position.X = component.Attributes.Pivot.X * 2;
-                            node.Position.Y = component.Attributes.Pivot.Y * -2;
+                            node.Position.Y = component.Attributes.Pivot.Y * 2;
 
                             for (var i = 0; i < component.Params.Input.Count; i++)
                             {
