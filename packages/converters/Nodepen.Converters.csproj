@@ -13,7 +13,7 @@
   <ItemGroup>
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
     <PackageReference Include="Speckle.Core" Version="2.11.0" />
-    <PackageReference Include="Speckle.Objects" Version="2.10.3" />
+    <PackageReference Include="Speckle.Objects" Version="2.11.1" />
   </ItemGroup>
 
 </Project>
