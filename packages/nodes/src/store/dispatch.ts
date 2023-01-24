@@ -1,7 +1,7 @@
 import type { NodesAppState } from './state'
 import { startTransition } from 'react'
 import type * as NodePen from '@nodepen/core'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'

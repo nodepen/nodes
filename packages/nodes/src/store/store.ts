@@ -1,4 +1,4 @@
-import create from 'zustand'
+import { create } from 'zustand'
 import { immer as withImmer } from 'zustand/middleware/immer'
 import { initialState } from './state'
 import type { NodesAppState } from './state'
@@ -12,13 +12,13 @@ type NodesAppMiddleware = [
 ]
 
 export const useStore = create<NodesAppStore, NodesAppMiddleware>(
-    withImmer(
-      (set, get) => ({
-        ...initialState,
-        ...createDispatch(set, get)
-      })
-    )
+  withImmer(
+    (set, get) => ({
+      ...initialState,
+      ...createDispatch(set, get)
+    })
   )
+)
 
 export const useCallbacks = () => {
   return useStore((state) => state.callbacks)

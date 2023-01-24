@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { useStore } from '$'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { Layer } from '@/views/common'
 import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl, TemplateLibraryControl } from './panels'
 
