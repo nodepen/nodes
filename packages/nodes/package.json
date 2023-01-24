@@ -22,20 +22,20 @@
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0",
-    "@speckle/viewer": "^2.11.2",
-    "immer": "^9.0.16",
-    "zustand": "^4.1.5"
+    "@speckle/viewer": "^2.11.4",
+    "immer": "^9.0.18",
+    "zustand": "^4.3.2"
   },
   "peerDependencies": {
     "react": "^18.0",
     "react-dom": "^18.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.21",
-    "@types/react-dom": "^18.0.9",
-    "@types/three": "^0.144.0",
-    "autoprefixer": "^10.4.12",
-    "postcss": "^8.4.18",
-    "tailwindcss": "^3.2.2"
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
+    "@types/three": "^0.148.1",
+    "autoprefixer": "^10.4.13",
+    "postcss": "^8.4.21",
+    "tailwindcss": "^3.2.4"
   }
 }

@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageId>NodePen.Converters</PackageId>
     <PackageVersion>1.0.0</PackageVersion>
-    <TargetFrameworks>net48</TargetFrameworks>
+    <TargetFramework>net48</TargetFramework>
     <EnforceCodeStyleInBuild>true</EnforceCodeStyleInBuild>
     <PlatformTarget>x64</PlatformTarget>
     <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
@@ -12,8 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Rhino.Inside" Version="7.0.0" />
-    <PackageReference Include="Speckle.Core" Version="2.11.0" />
-    <PackageReference Include="Speckle.Objects" Version="2.10.3" />
+    <PackageReference Include="Speckle.Objects" Version="2.11.1" />
   </ItemGroup>
 
 </Project>
