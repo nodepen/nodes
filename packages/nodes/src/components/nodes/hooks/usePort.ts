@@ -11,6 +11,8 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, template
     const handleContextMenu = useCallback((e: MouseEvent): void => {
         e.stopPropagation()
         e.preventDefault()
+
+        console.log(`R ${nickName} ${direction}`)
     }, [])
 
     const handlePointerDown = useCallback((e: PointerEvent): void => {
@@ -23,18 +25,15 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, template
             case 'mouse': {
                 switch (e.button) {
                     case 0: {
-                        // Handle left click
+                        // Handle left mouse button
                         break
                     }
                     case 1: {
-                        // Handle middle click
+                        // Handle middle mouse button
                         break
                     }
                     case 2: {
-                        // Handle right click
-                        e.stopPropagation()
-
-                        console.log(`R ${nickName} ${direction}`)
+                        // Handle right mouse button
                         break
                     }
                 }

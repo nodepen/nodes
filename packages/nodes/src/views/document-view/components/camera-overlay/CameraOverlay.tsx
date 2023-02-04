@@ -121,7 +121,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     resetLocalState()
   }
 
-  const handlePointerOut = (e: React.PointerEvent<HTMLDivElement>): void => {
+  const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (e.pointerId !== activePointerId.current) {
       return
     }
@@ -191,7 +191,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
       onPointerDown={handlePointerDown}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
-      onPointerOut={handlePointerOut}
+      onPointerLeave={handlePointerLeave}
       onContextMenu={handleContextMenu}
     >
       {children}
