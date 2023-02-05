@@ -2,14 +2,15 @@ import type React from 'react'
 import { useCallback, useRef } from 'react'
 import { useDispatch } from '$'
 import type * as NodePen from '@nodepen/core'
-import { useImperativeEvent } from '@/hooks'
+import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 
-export const usePort = (nodeInstanceId: string, portInstanceId: string, template: NodePen.PortTemplate): React.RefObject<SVGGElement> => {
+export const usePort = (nodeInstanceId: string, portInstanceId: string, portTemplate: NodePen.PortTemplate): React.RefObject<SVGGElement> => {
     const portRef = useRef<SVGGElement>(null)
 
     const { apply } = useDispatch()
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
-    const { __direction: direction, nickName } = template
+    const { __direction: direction, nickName } = portTemplate
 
     const handleContextMenu = useCallback((e: MouseEvent): void => {
         e.stopPropagation()
@@ -19,18 +20,20 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, template
 
         console.log(`R ${nickName} ${direction}`)
 
+        const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+
         apply((state) => {
             state.registry.contextMenus['test'] = {
                 position: {
-                    x: pageX,
-                    y: pageY
+                    x,
+                    y,
                 },
                 context: {
                     type: 'port',
                     direction,
                     nodeInstanceId,
                     portInstanceId,
-                    portTemplate: template
+                    portTemplate,
                 }
             }
         })
