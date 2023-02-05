@@ -18,12 +18,12 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, portTemp
 
         const { pageX, pageY } = e
 
-        console.log(`R ${nickName} ${direction}`)
+        const key = `${nodeInstanceId}-${portInstanceId}-${direction}-${nickName}`
 
         const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
 
         apply((state) => {
-            state.registry.contextMenus['test'] = {
+            state.registry.contextMenus[key] = {
                 position: {
                     x,
                     y,

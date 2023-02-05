@@ -132,6 +132,16 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         type: 'node/setPosition',
         payload: { id, x, y }
       }
+    ),
+    clearInterface: () => set(
+      (state) => {
+        state.registry.contextMenus = {}
+        // for (const key of Object.keys(state.registry.contextMenus)) {
+        //   state.registry.contextMenus[key].position.x += 10
+        // }
+      },
+      false,
+      'ui/clearInterface'
     )
   }
 
