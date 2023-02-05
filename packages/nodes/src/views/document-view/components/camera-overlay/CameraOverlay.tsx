@@ -76,6 +76,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     }
   }
 
+  const handlePointerDownCapture = (_e: React.PointerEvent<HTMLDivElement>): void => {
+    clearInterface()
+  }
+
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
     if (!isPanActive.current) {
       return
@@ -189,6 +193,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
       className="np-w-full np-h-full np-pointer-events-auto"
       ref={cameraControlOverlayRef}
       onPointerDown={handlePointerDown}
+      onPointerDownCapture={handlePointerDownCapture}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}
