@@ -1,16 +1,14 @@
 import React from 'react'
 import type { NodesAppState } from '$'
+import { useStore } from '$'
 import { COLORS } from '@/constants'
 import { ControlPanel } from '../../common'
-
-type PinnedPortsControlProps = {
-  pinnedPorts: NodesAppState['document']['configuration']['pinnedPorts']
-}
 
 /**
  * Surfaces "pinned ports" in controls overlay for direct interaction.
  */
-export const PinnedPortsControl = ({ pinnedPorts }: PinnedPortsControlProps): React.ReactElement => {
+export const PinnedPortsControl = (): React.ReactElement => {
+  const pinnedPorts = useStore((state) => state.document.configuration.pinnedPorts)
   return (
     <ControlPanel>
       {/* <div className="np-w-full np-flex np-justify-between np-items-center">
@@ -39,7 +37,7 @@ export const PinnedPortsControl = ({ pinnedPorts }: PinnedPortsControlProps): Re
   )
 }
 
-import { useStore, useDispatch } from '$'
+import { useDispatch } from '$'
 import { shallow } from 'zustand/shallow'
 import { getDataTreeValueString, tryGetSingleValue } from '@/utils/data-trees'
 

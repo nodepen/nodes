@@ -12,9 +12,7 @@ const ContextMenuContainer = () => {
 
                 switch (contextType) {
                     case 'port': {
-                        const { direction, nodeInstanceId, portInstanceId, portTemplate } = menu.context
-
-                        return <PortContextMenu key={`context-menu-${key}`} position={menu.position} />
+                        return <PortContextMenu key={`context-menu-${key}`} position={menu.position} context={menu.context} />
                     }
                     case 'root': {
                         return null
