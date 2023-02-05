@@ -10,7 +10,7 @@ type PortContextMenu = {
 export const PortContextMenu = ({ position }: PortContextMenu) => {
     const { x: left, y: top } = position
 
-    return <div className={`np-absolute np-w-8 np-h-8 np-bg-error`} style={{ left, top }}></div>
+    return <div className="np-absolute np-w-8 np-h-8 np-bg-error np-pointer-events-auto" style={{ left, top }}></div>
 }
 
 export default PortContextMenu

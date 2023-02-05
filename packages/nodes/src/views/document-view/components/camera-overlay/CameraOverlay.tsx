@@ -13,7 +13,7 @@ type CameraControlProps = {
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 
-  const { setCameraPosition, setCameraZoom } = useDispatch()
+  const { apply, setCameraPosition, setCameraZoom } = useDispatch()
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
   const zoom = useStoreRef((state) => state.camera.zoom)
@@ -74,6 +74,12 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
         break
       }
     }
+  }
+
+  const handlePointerDownCapture = (e: React.PointerEvent<HTMLDivElement>): void => {
+    apply((state) => {
+      state.registry.contextMenus = {}
+    })
   }
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
@@ -189,6 +195,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
       className="np-w-full np-h-full np-pointer-events-auto"
       ref={cameraControlOverlayRef}
       onPointerDown={handlePointerDown}
+      onPointerDownCapture={handlePointerDownCapture}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}
