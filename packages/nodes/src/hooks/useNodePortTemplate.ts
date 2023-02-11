@@ -1,5 +1,5 @@
 import type * as NodePen from '@nodepen/core'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 
 export const useNodePortTemplate = (nodeInstanceId: string, portInstanceId: string): NodePen.PortTemplate | null => {

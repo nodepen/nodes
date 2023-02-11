@@ -1,7 +1,7 @@
 import type { NodesAppState } from './state'
 import { startTransition } from 'react'
 import type * as NodePen from '@nodepen/core'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
@@ -132,6 +132,16 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         type: 'node/setPosition',
         payload: { id, x, y }
       }
+    ),
+    clearInterface: () => set(
+      (state) => {
+        state.registry.contextMenus = {}
+        // for (const key of Object.keys(state.registry.contextMenus)) {
+        //   state.registry.contextMenus[key].position.x += 10
+        // }
+      },
+      false,
+      'ui/clearInterface'
     )
   }
 

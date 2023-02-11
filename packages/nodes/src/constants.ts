@@ -3,7 +3,7 @@ export const CAMERA = {
   MAXIMUM_ZOOM: 4,
   ZOOM_BREAKPOINT_NEAR: 2.5,
   ZOOM_BREAKPOINT_FAR: 0.75
-}
+} as const
 
 export const COLORS = {
   /* Grayscale */
@@ -18,7 +18,7 @@ export const COLORS = {
   /* Special */
   ERROR: "#FF7171",
   WARN: "#FFBE71",
-}
+} as const
 
 export const DIMENSIONS = {
   NODE_INTERNAL_PADDING: 5,
@@ -30,4 +30,4 @@ export const DIMENSIONS = {
   NODE_PORT_MINIMUM_HEIGHT: 40,
   NODE_PORT_MINIMUM_WIDTH: 50,
   NODE_PORT_RADIUS: 5
-}
+} as const

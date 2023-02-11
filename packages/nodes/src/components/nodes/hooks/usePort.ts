@@ -1,16 +1,42 @@
 import type React from 'react'
 import { useCallback, useRef } from 'react'
+import { useDispatch } from '$'
 import type * as NodePen from '@nodepen/core'
-import { useImperativeEvent } from '@/hooks'
+import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 
-export const usePort = (nodeInstanceId: string, portInstanceId: string, template: NodePen.PortTemplate): React.RefObject<SVGGElement> => {
+export const usePort = (nodeInstanceId: string, portInstanceId: string, portTemplate: NodePen.PortTemplate): React.RefObject<SVGGElement> => {
     const portRef = useRef<SVGGElement>(null)
 
-    const { __direction: direction, nickName } = template
+    const { apply } = useDispatch()
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
+    const { __direction: direction, nickName } = portTemplate
 
     const handleContextMenu = useCallback((e: MouseEvent): void => {
         e.stopPropagation()
         e.preventDefault()
+
+        const { pageX, pageY } = e
+
+        const key = `${nodeInstanceId}-${portInstanceId}-${direction}-${nickName}`
+
+        const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+
+        apply((state) => {
+            state.registry.contextMenus[key] = {
+                position: {
+                    x,
+                    y,
+                },
+                context: {
+                    type: 'port',
+                    direction,
+                    nodeInstanceId,
+                    portInstanceId,
+                    portTemplate,
+                }
+            }
+        })
     }, [])
 
     const handlePointerDown = useCallback((e: PointerEvent): void => {
@@ -23,18 +49,15 @@ export const usePort = (nodeInstanceId: string, portInstanceId: string, template
             case 'mouse': {
                 switch (e.button) {
                     case 0: {
-                        // Handle left click
+                        // Handle left mouse button
                         break
                     }
                     case 1: {
-                        // Handle middle click
+                        // Handle middle mouse button
                         break
                     }
                     case 2: {
-                        // Handle right click
-                        e.stopPropagation()
-
-                        console.log(`R ${nickName} ${direction}`)
+                        // Handle right mouse button
                         break
                     }
                 }

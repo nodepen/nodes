@@ -12,8 +12,8 @@ export type NodesAppState = {
     aspect: number
     /** coordinates of center pixel in container div in graph space */
     position: {
-        x: number
-        y: number
+      x: number
+      y: number
     }
     /** ratio of screen space pixel to graph space unit */
     zoom: number
@@ -32,6 +32,26 @@ export type NodesAppState = {
   }
   registry: {
     canvasRoot: React.RefObject<HTMLDivElement>
+    contextMenus: {
+      [menuKey: string]: {
+        /** Position in page space. */
+        position: {
+          x: number
+          y: number
+        }
+        context:
+        | {
+          type: 'port'
+          direction: 'input' | 'output'
+          nodeInstanceId: string
+          portInstanceId: string
+          portTemplate: NodePen.PortTemplate
+        }
+        | {
+          type: 'root'
+        }
+      }
+    }
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null
       targets: {
@@ -97,6 +117,7 @@ export const initialState: NodesAppState = {
   },
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
+    contextMenus: {},
     shadows: {
       containerRef: null,
       targets: {},

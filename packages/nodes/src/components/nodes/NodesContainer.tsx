@@ -1,7 +1,7 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
-import shallow from 'zustand/shallow'
+import { shallow } from 'zustand/shallow'
 
 import { GenericNode } from './generic-node'
 
