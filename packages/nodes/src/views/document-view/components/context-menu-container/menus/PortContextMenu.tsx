@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { useDispatch, useStore } from '$'
 import type { ContextMenu, PortContextMenuContext } from '../types'
+import { MenuButton } from '../common'
+import { COLORS } from '@/constants'
 
 type PortContextMenuProps = {
     position: ContextMenu['position']
@@ -15,30 +17,44 @@ export const PortContextMenu = ({ position, context }: PortContextMenuProps) => 
     const { apply } = useDispatch()
 
     const isPinned = useStore((state) => state.document.configuration.pinnedPorts.some((pin) => pin.nodeInstanceId === nodeInstanceId && pin.portInstanceId === portInstanceId))
-    const isPinnable = direction === 'input'
+    const allowPin = direction === 'input'
+
+    const pinIcon = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} vectorEffect="non-scaling-stroke" stroke={COLORS.DARK} className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 19.5l-15-15m0 0v11.25m0-11.25h11.25" />
+    </svg>
+
+
+    const handlePin = useCallback(() => {
+        apply((state) => {
+            state.document.configuration.pinnedPorts.push({
+                nodeInstanceId,
+                portInstanceId
+            })
+        })
+    }, [])
+
+    const unpinIcon = <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} vectorEffect="non-scaling-stroke" stroke={COLORS.DARK} className="w-6 h-6">
+        <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 4.5l15 15m0 0V8.25m0 11.25H8.25" />
+    </svg>
+
+
+    const handleUnpin = useCallback(() => {
+        apply((state) => {
+            state.document.configuration.pinnedPorts = state.document.configuration.pinnedPorts.filter((pin) => {
+                const sameNode = pin.nodeInstanceId === nodeInstanceId
+                const samePort = pin.portInstanceId === portInstanceId
+
+                return !sameNode && !samePort
+            })
+        })
+    }, [])
 
     return (
-        <div className="np-absolute np-p-4 np-bg-light np-rounded-md np-shadow-main np-pointer-events-auto" style={{ left, top }}>
-            {isPinnable
+        <div className="np-absolute np-p-2 np-w-32 np-bg-light np-rounded-md np-shadow-main np-pointer-events-auto" style={{ left, top }}>
+            {allowPin
                 ? isPinned
-                    ? <button onClick={(e) => {
-                        apply((state) => {
-                            state.document.configuration.pinnedPorts = state.document.configuration.pinnedPorts.filter((pin) => {
-                                const sameNode = pin.nodeInstanceId === nodeInstanceId
-                                const samePort = pin.portInstanceId === portInstanceId
-
-                                return !sameNode && !samePort
-                            })
-                        })
-                    }}>Unpin!</button>
-                    : <button onClick={() => {
-                        apply((state) => {
-                            state.document.configuration.pinnedPorts.push({
-                                nodeInstanceId,
-                                portInstanceId
-                            })
-                        })
-                    }}>Pin!</button>
+                    ? <MenuButton icon={unpinIcon} label="Unpin" action={handleUnpin} />
+                    : <MenuButton icon={pinIcon} label="Pin" action={handlePin} />
                 : null
             }
         </div>
