@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect } from 'react'
 import type * as NodePen from '@nodepen/core'
+import { freeze } from 'immer'
 import '@/styles.css'
 import { useDispatch, useStore, NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'
@@ -41,7 +42,7 @@ export const NodesApp = ({
     }
 
     apply((state) => {
-      state.solution = solution
+      state.solution = freeze(solution)
     })
   }, [solution?.id, solution?.manifest.streamObjectIds])
 

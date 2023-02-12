@@ -1,5 +1,6 @@
 import type { NodesAppState } from './state'
 import { startTransition } from 'react'
+import { setAutoFreeze, freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
 import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
@@ -15,6 +16,8 @@ type BaseSetter = (callback: (state: NodesAppState) => void, replace?: boolean, 
 type BaseGetter = () => NodesAppState
 
 export type NodesAppDispatch = ReturnType<typeof createDispatch>
+
+setAutoFreeze(false)
 
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
@@ -79,11 +82,13 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
     ),
     loadTemplates: (templates: NodePen.NodeTemplate[]) => set(
       (state) => {
-        state.templates = {}
+        const library: Record<string, NodePen.NodeTemplate> = {}
 
         for (const template of templates) {
-          state.templates[template.guid] = template
+          library[template.guid] = template
         }
+
+        state.templates = freeze(library)
       },
       false,
       'templates/loadTemplates'
@@ -98,8 +103,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
     setCameraPosition: (x: number, y: number) => set(
       (state) => {
         startTransition(() => {
-          state.camera.position.x = x
-          state.camera.position.y = y
+          state.camera.position = { x, y }
         })
       },
       false,
@@ -136,9 +140,6 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
     clearInterface: () => set(
       (state) => {
         state.registry.contextMenus = {}
-        // for (const key of Object.keys(state.registry.contextMenus)) {
-        //   state.registry.contextMenus[key].position.x += 10
-        // }
       },
       false,
       'ui/clearInterface'
