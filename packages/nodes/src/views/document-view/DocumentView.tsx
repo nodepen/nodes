@@ -25,6 +25,13 @@ const DocumentView = ({ editable }: DocumentViewProps): React.ReactElement | nul
       return
     }
 
+    const { x, y } = useStore.getState().camera.position
+
+    if (x !== 0 || y !== 0) {
+      // Do not reset camera if it has already been moved
+      return
+    }
+
     const { width, height } = canvas.getBoundingClientRect()
 
     const offset = 25
