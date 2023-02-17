@@ -1,4 +1,5 @@
 import React from 'react'
+import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
 
 export type NodesAppState = {
@@ -86,15 +87,15 @@ export const initialState: NodesAppState = {
     },
     version: 1
   },
-  templates: {},
-  solution: {
+  templates: freeze({}),
+  solution: freeze({
     id: 'initial',
     manifest: {
       runtimeMessages: {},
       streamObjectIds: []
     },
     values: {}
-  },
+  }),
   camera: {
     aspect: 1.5,
     position: {
