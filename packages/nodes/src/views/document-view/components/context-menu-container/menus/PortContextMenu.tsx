@@ -1,9 +1,8 @@
 import React, { useCallback } from 'react'
 import { useDispatch, useStore } from '$'
 import type { ContextMenu, PortContextMenuContext } from '../types'
-import { MenuButton } from '../common'
+import { MenuBody, MenuButton } from '../common'
 import { COLORS } from '@/constants'
-import { usePseudoShadow } from '@/views/common/pseudo-shadow'
 
 type PortContextMenuProps = {
     position: ContextMenu['position']
@@ -14,8 +13,6 @@ export const PortContextMenu = ({ position, context }: PortContextMenuProps) => 
     const { nodeInstanceId, portInstanceId, portTemplate } = context
     const { x: left, y: top } = position
     const { __direction: direction } = portTemplate
-
-    const shadowTarget = usePseudoShadow()
 
     const { apply } = useDispatch()
 
@@ -53,14 +50,14 @@ export const PortContextMenu = ({ position, context }: PortContextMenuProps) => 
     }, [])
 
     return (
-        <div ref={shadowTarget} className="np-absolute np-p-2 np-w-32 np-bg-light np-rounded-md np-shadow-main np-pointer-events-auto" style={{ left, top }}>
+        <MenuBody position={position}>
             {allowPin
                 ? isPinned
                     ? <MenuButton icon={unpinIcon} label="Unpin" action={handleUnpin} />
                     : <MenuButton icon={pinIcon} label="Pin" action={handlePin} />
                 : null
             }
-        </div>
+        </MenuBody>
     )
 }
 

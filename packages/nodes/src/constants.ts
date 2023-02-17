@@ -8,6 +8,7 @@ export const CAMERA = {
 export const COLORS = {
   /* Grayscale */
   DARK: "#414141",
+  GREY: "E7E7E7",
   LIGHT: "#FFFFFF",
   /* Neutrals */
   PALE: "#EFF2F2",

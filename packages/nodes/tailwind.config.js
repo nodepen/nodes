@@ -1,13 +1,14 @@
 module.exports = {
   prefix: "np-",
   content: ["./src/**/*.tsx"],
-  future: {
-    hoverOnlyWhenSupported: true,
-  },
+  // future: {
+  //   hoverOnlyWhenSupported: true,
+  // },
   theme: {
     colors: {
       "dark": "#414141",
       "light": "#FFFFFF",
+      "grey": "#E7E7E7",
       "pale": "#EFF2F2",
       "green": "#98E2C6",
       "swampgreen": "#7BBFA5",

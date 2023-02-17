@@ -9,8 +9,9 @@ type MenuButtonProps = {
 export const MenuButton = ({ icon, label, action }: MenuButtonProps) => {
     return (
         <button
-            className='np-w-full np-p-2 np-flex np-items-center np-rounded-md hover:np-bg-green'
-            onClick={action}>
+            className='np-w-full np-p-2 np-mt-1 np-mb-1 first:np-mt-0 last:np-mb-0 np-flex np-items-center np-rounded-md np-bg-light hover:np-bg-grey'
+            onClick={action}
+        >
             <div className='np-w-6 np-h-6 np-flex np-items-center np-justify-center'>
                 {icon}
             </div>
