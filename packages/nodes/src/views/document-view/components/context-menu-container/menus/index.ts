@@ -1,1 +1,1 @@
-export { PortContextMenu } from './PortContextMenu'
+export { PortContextMenu } from './port-context-menu'
