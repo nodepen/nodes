@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { MenuButton } from '../../../common'
 import { useDispatch, useStore } from '$'
-import { COLORS } from '@/constants'
+import { COLORS, STYLES } from '@/constants'
 
 type PinButtonProps = {
     nodeInstanceId: string
@@ -13,7 +13,7 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
 
     const isPinned = useStore((state) => state.document.configuration.pinnedPorts.some((pin) => pin.nodeInstanceId === nodeInstanceId && pin.portInstanceId === portInstanceId))
 
-    const pinIcon = <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="none" viewBox="0 0 24 24" strokeWidth={3} vectorEffect="non-scaling-stroke" stroke={COLORS.DARK}>
+    const pinIcon = <svg {...STYLES.BUTTON.SMALL}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 19.5l-15-15m0 0v11.25m0-11.25h11.25" />
     </svg>
 
@@ -27,7 +27,7 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
         })
     }, [])
 
-    const unpinIcon = <svg xmlns="http://www.w3.org/2000/svg" width={16} height={16} fill="none" viewBox="0 0 24 24" strokeWidth={3} vectorEffect="non-scaling-stroke" stroke={COLORS.DARK}>
+    const unpinIcon = <svg {...STYLES.BUTTON.SMALL}>
         <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 4.5l15 15m0 0V8.25m0 11.25H8.25" />
     </svg>
 

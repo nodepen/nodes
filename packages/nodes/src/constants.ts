@@ -32,3 +32,18 @@ export const DIMENSIONS = {
   NODE_PORT_MINIMUM_WIDTH: 50,
   NODE_PORT_RADIUS: 5
 } as const
+
+export const STYLES = {
+  BUTTON: {
+    SMALL: {
+      xmlns: "http://www.w3.org/2000/svg",
+      width: 16,
+      height: 16,
+      fill: 'none',
+      viewBox: '0 0 24 24',
+      strokeWidth: 3,
+      vectorEffect: 'non-scaling-stroke',
+      stroke: COLORS.DARK
+    }
+  }
+} as const
