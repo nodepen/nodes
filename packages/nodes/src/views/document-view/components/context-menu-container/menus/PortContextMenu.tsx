@@ -3,6 +3,7 @@ import { useDispatch, useStore } from '$'
 import type { ContextMenu, PortContextMenuContext } from '../types'
 import { MenuBody, MenuButton } from '../common'
 import { COLORS } from '@/constants'
+import { PortTypeIcon } from '@/components/icons'
 
 type PortContextMenuProps = {
     position: ContextMenu['position']
@@ -12,7 +13,7 @@ type PortContextMenuProps = {
 export const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const { nodeInstanceId, portInstanceId, portTemplate } = context
     const { x: left, y: top } = position
-    const { __direction: direction } = portTemplate
+    const { __direction: direction, name, nickName } = portTemplate
 
     const { apply } = useDispatch()
 
@@ -51,6 +52,15 @@ export const PortContextMenu = ({ position, context }: PortContextMenuProps) => 
 
     return (
         <MenuBody position={position}>
+            <div className='np-w-full np-flex np-flex-col np-justify-start'>
+                <div className='np-w-full np-flex np-items-center np-pl-1 np-h-8 np-mb-1 np-border-2 np-border-dark np-rounded-sm'>
+                    <PortTypeIcon />
+                    <p className='np-pl-2 np-font-sans np-font-medium np-text-dark np-text-sm -np-translate-y-px'>
+                        {`${name} (${nickName})`}
+                    </p>
+
+                </div>
+            </div>
             {allowPin
                 ? isPinned
                     ? <MenuButton icon={unpinIcon} label="Unpin" action={handleUnpin} />
