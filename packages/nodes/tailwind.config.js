@@ -1,9 +1,6 @@
 module.exports = {
   prefix: "np-",
   content: ["./src/**/*.tsx"],
-  // future: {
-  //   hoverOnlyWhenSupported: true,
-  // },
   theme: {
     colors: {
       "dark": "#414141",
@@ -28,8 +25,6 @@ module.exports = {
       keyframes: {
         'menu-appear': {
           '0%': { 'max-height': '0px' },
-          // '30%': { 'opacity': '1' },
-          // '75%': { 'transform': 'translateY(10px)' },
           '100%': { 'max-height': 'var(--np-active-menu-height)' }
         }
       },

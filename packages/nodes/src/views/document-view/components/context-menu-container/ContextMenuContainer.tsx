@@ -1,6 +1,7 @@
 import React from 'react'
 import { useStore } from '$'
 import { PortContextMenu } from './menus'
+import { getMenuHeight } from './utils'
 
 const ContextMenuContainer = () => {
     const menus = useStore((state) => Object.entries(state.registry.contextMenus))
@@ -9,6 +10,9 @@ const ContextMenuContainer = () => {
         <div className="np-w-full np-h-full np-pointer-events-none np-relative">
             {menus.map(([key, menu]) => {
                 const contextType = menu.context.type
+
+                const menuHeight = getMenuHeight(menu.context)
+                document.documentElement.style.setProperty('--np-active-menu-height', `${menuHeight}px`)
 
                 switch (contextType) {
                     case 'port': {
