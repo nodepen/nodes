@@ -23,14 +23,14 @@ module.exports = {
     },
     extend: {
       animation: {
-        'menu-appear': 'menu-appear 100ms ease-in'
+        'menu-appear': 'menu-appear 125ms ease-in'
       },
       keyframes: {
         'menu-appear': {
-          '0%': { 'transform': 'translateY(-15px)', 'opacity': '0' },
-          '30%': { 'opacity': '1' },
+          '0%': { 'max-height': '0px' },
+          // '30%': { 'opacity': '1' },
           // '75%': { 'transform': 'translateY(10px)' },
-          '100%': { 'transform': 'translateY(0px)' }
+          '100%': { 'max-height': 'var(--np-active-menu-height)' }
         }
       },
       boxShadow: {

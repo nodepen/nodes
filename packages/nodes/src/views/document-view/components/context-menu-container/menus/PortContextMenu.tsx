@@ -4,6 +4,7 @@ import type { ContextMenu, PortContextMenuContext } from '../types'
 import { MenuBody, MenuButton } from '../common'
 import { COLORS } from '@/constants'
 import { PortTypeIcon } from '@/components/icons'
+import { getMenuHeight } from '../utils'
 
 type PortContextMenuProps = {
     position: ContextMenu['position']
@@ -16,6 +17,9 @@ export const PortContextMenu = ({ position, context }: PortContextMenuProps) => 
     const { __direction: direction, name, nickName } = portTemplate
 
     const { apply } = useDispatch()
+
+    const menuHeight = getMenuHeight(context)
+    document.documentElement.style.setProperty('--np-active-menu-height', `${menuHeight}px`)
 
     const isPinned = useStore((state) => state.document.configuration.pinnedPorts.some((pin) => pin.nodeInstanceId === nodeInstanceId && pin.portInstanceId === portInstanceId))
     const allowPin = direction === 'input'
