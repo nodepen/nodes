@@ -1,0 +1,1 @@
+export { trySetVariable } from './trySetVariable'
