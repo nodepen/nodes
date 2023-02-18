@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react'
 import { useDispatch, useStore } from '$'
 import type { ContextMenu, PortContextMenuContext } from '../../types'
-import { MenuBody, MenuButton } from '../../common'
+import { MenuBody, MenuButton, MenuDivider } from '../../common'
 import { COLORS } from '@/constants'
 import { PortTypeIcon } from '@/components/icons'
-import { PinButton, SetValueButton } from './buttons'
+import { FlattenButton, GraftButton, PinButton, SetValueButton, SimplifyButton } from './buttons'
 
 type PortContextMenuProps = {
     position: ContextMenu['position']
@@ -29,6 +29,10 @@ export const PortContextMenu = ({ position, context }: PortContextMenuProps) => 
                 </div>
                 {enablePin ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} /> : null}
                 {enableSetValue ? <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} /> : null}
+                {enablePin || enableSetValue ? <MenuDivider /> : null}
+                <FlattenButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+                <GraftButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+                <SimplifyButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
             </div>
         </MenuBody>
     )
