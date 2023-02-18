@@ -15,7 +15,7 @@ export const MenuBody = ({ children, position }: MenuBodyProps) => {
     const { x: left, y: top } = position
 
     return (
-        <div ref={shadowTarget} className="np-absolute np-w-48 np-p-1 np-rounded-md np-bg-light np-shadow-main np-pointer-events-auto np-select-none" style={{ left, top }}>
+        <div ref={shadowTarget} className="np-absolute np-w-48 np-p-1 np-rounded-md np-bg-light np-shadow-main np-pointer-events-auto np-select-none np-animate-menu-appear" style={{ left, top }}>
             {children}
         </div>
     )

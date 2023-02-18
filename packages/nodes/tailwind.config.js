@@ -22,6 +22,21 @@ module.exports = {
       'panel': ['Overpass']
     },
     extend: {
+      animation: {
+        'menu-appear': 'menu-appear 100ms ease-in'
+      },
+      keyframes: {
+        'menu-appear': {
+          '0%': { 'transform': 'translateY(-15px)', 'opacity': '0' },
+          '30%': { 'opacity': '1' },
+          // '75%': { 'transform': 'translateY(10px)' },
+          '100%': { 'transform': 'translateY(0px)' }
+        }
+      },
+      boxShadow: {
+        main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)',
+        input: 'inset -2px 2px 0px 0px rgba(123, 191, 165, 0.3)'
+      },
       height: {
         vh: '100vh',
         vw: '100vw',
@@ -29,10 +44,6 @@ module.exports = {
       width: {
         vh: '100vh',
         vw: '100vw',
-      },
-      boxShadow: {
-        main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)',
-        input: 'inset -2px 2px 0px 0px rgba(123, 191, 165, 0.3)'
       },
     },
   },
