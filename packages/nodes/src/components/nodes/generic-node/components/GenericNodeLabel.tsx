@@ -33,11 +33,10 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
             <path
                 id={`node-label-${id}`}
                 fill="none"
-                d={`M ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3} ${position.y + nodeHeight} L ${
-                    position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3
-                } ${position.y}`}
+                d={`M ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3} ${position.y + nodeHeight} L ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3
+                    } ${position.y}`}
             />
-            <text className="np-font-panel np-select-none" fill={COLORS.DARK} fontSize={NODE_LABEL_FONT_SIZE}>
+            <text className="np-font-panel np-select-none np-pointer-events-none" fill={COLORS.DARK} fontSize={NODE_LABEL_FONT_SIZE}>
                 <textPath href={`#node-label-${id}`} startOffset="50%" textAnchor="middle" alignmentBaseline="middle">
                     {template.nickName.toUpperCase()}
                 </textPath>

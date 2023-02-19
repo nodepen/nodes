@@ -1,6 +1,7 @@
 import React from 'react'
 import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
+import type { ContextMenu } from '@/views/document-view/components/context-menu-container/types'
 
 export type NodesAppState = {
   document: NodePen.Document,
@@ -34,24 +35,7 @@ export type NodesAppState = {
   registry: {
     canvasRoot: React.RefObject<HTMLDivElement>
     contextMenus: {
-      [menuKey: string]: {
-        /** Position in page space. */
-        position: {
-          x: number
-          y: number
-        }
-        context:
-        | {
-          type: 'port'
-          direction: 'input' | 'output'
-          nodeInstanceId: string
-          portInstanceId: string
-          portTemplate: NodePen.PortTemplate
-        }
-        | {
-          type: 'root'
-        }
-      }
+      [menuKey: string]: ContextMenu
     }
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null

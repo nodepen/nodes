@@ -18,15 +18,13 @@ export const PortContextMenu = ({ position, context }: PortContextMenuProps) => 
 
     return (
         <MenuBody position={position}>
-            <div className='np-w-full np-flex np-flex-col np-justify-start'>
-                <MenuHeader icon={<PortTypeIcon />} label={`${name} (${nickName})`} />
-                {enablePin ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} /> : null}
-                {enableSetValue ? <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} /> : null}
-                {enablePin || enableSetValue ? <MenuDivider /> : null}
-                <FlattenButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
-                <GraftButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
-                <SimplifyButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
-            </div>
+            <MenuHeader icon={<PortTypeIcon />} label={`${name} (${nickName})`} />
+            {enablePin ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} /> : null}
+            {enableSetValue ? <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} /> : null}
+            {enablePin || enableSetValue ? <MenuDivider /> : null}
+            <FlattenButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+            <GraftButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+            <SimplifyButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
         </MenuBody>
     )
 }

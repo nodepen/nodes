@@ -2,8 +2,15 @@
 import type * as NodePen from '@nodepen/core'
 
 export type ContextMenuContext =
+    | NodeContextMenuContext
     | PortContextMenuContext
-    | RootContextMenuContext
+    | DocumentContextMenuContext
+
+export type NodeContextMenuContext = {
+    type: 'node'
+    nodeInstanceId: string
+    nodeTemplate: NodePen.NodeTemplate
+}
 
 export type PortContextMenuContext = {
     type: 'port'
@@ -13,6 +20,6 @@ export type PortContextMenuContext = {
     portTemplate: NodePen.PortTemplate
 }
 
-export type RootContextMenuContext = {
-    type: 'root'
+export type DocumentContextMenuContext = {
+    type: 'document'
 }

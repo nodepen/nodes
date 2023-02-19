@@ -3,6 +3,9 @@ import { getPortContextMenuButtons } from '../menus/port-context-menu/utils'
 
 export const getMenuHeight = (context: ContextMenuContext): number => {
     switch (context.type) {
+        case 'node': {
+            return 85
+        }
         case 'port': {
             const { direction } = context
 

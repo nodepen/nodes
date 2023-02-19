@@ -1,6 +1,6 @@
 import React from 'react'
 import { useStore } from '$'
-import { PortContextMenu } from './menus'
+import { NodeContextMenu, PortContextMenu } from './menus'
 import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
 
@@ -19,11 +19,14 @@ const ContextMenuContainer = () => {
                 }
 
                 switch (contextType) {
+                    case 'document': {
+                        return null
+                    }
+                    case 'node': {
+                        return <NodeContextMenu key={`context-menu-${key}`} position={menu.position} context={menu.context} />
+                    }
                     case 'port': {
                         return <PortContextMenu key={`context-menu-${key}`} position={menu.position} context={menu.context} />
-                    }
-                    case 'root': {
-                        return null
                     }
                     default: {
                         console.log(`🐍 Unhandled context menu type [${contextType}]`)
