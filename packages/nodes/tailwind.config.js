@@ -1,13 +1,11 @@
 module.exports = {
   prefix: "np-",
   content: ["./src/**/*.tsx"],
-  future: {
-    hoverOnlyWhenSupported: true,
-  },
   theme: {
     colors: {
       "dark": "#414141",
       "light": "#FFFFFF",
+      "grey": "#E7E7E7",
       "pale": "#EFF2F2",
       "green": "#98E2C6",
       "swampgreen": "#7BBFA5",
@@ -21,6 +19,19 @@ module.exports = {
       'panel': ['Overpass']
     },
     extend: {
+      animation: {
+        'menu-appear': 'menu-appear 125ms ease-in'
+      },
+      keyframes: {
+        'menu-appear': {
+          '0%': { 'max-height': '0px' },
+          '100%': { 'max-height': 'var(--np-active-menu-height)' }
+        }
+      },
+      boxShadow: {
+        main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)',
+        input: 'inset -2px 2px 0px 0px rgba(123, 191, 165, 0.3)'
+      },
       height: {
         vh: '100vh',
         vw: '100vw',
@@ -29,10 +40,6 @@ module.exports = {
         vh: '100vh',
         vw: '100vw',
       },
-      boxShadow: {
-        main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)',
-        input: 'inset -2px 2px 0px 0px rgba(123, 191, 165, 0.3)'
-      }
     },
   },
   plugins: [],

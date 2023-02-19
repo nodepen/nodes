@@ -1,8 +1,8 @@
 import React from 'react'
 import type { NodesAppState } from '$'
 import { useStore } from '$'
-import { COLORS } from '@/constants'
 import { ControlPanel } from '../../common'
+import { PortTypeIcon } from '@/components/icons'
 
 /**
  * Surfaces "pinned ports" in controls overlay for direct interaction.
@@ -74,7 +74,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
         className="np-absolute np-h-8 np-w-8 np-flex np-justify-center np-items-center"
         style={{ left: 0, top: 0, zIndex: 20 }}
       >
-        <NodeTypeIcon />
+        <PortTypeIcon />
       </div>
       <div
         className="np-absolute np-h-8 np-flex np-justify-start np-items-center"
@@ -112,38 +112,5 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
     //   </p>
     //   <p>{valueString}</p>
     // </div>
-  )
-}
-
-const NodeTypeIcon = (): React.ReactElement => {
-  const r = 20
-
-  const px = `${r}px`
-  const s = r / 2
-
-  const a = s
-  const b = s / 2
-  const f = (Math.sqrt(3) / 2) * s
-  const points = `${a},0 ${b},-${f} -${b},-${f} -${a},0 -${b},${f} ${b},${f}`
-
-  return (
-    <div>
-      <svg width={px} height={px} viewBox={`0 0 ${s * 2} ${s * 2}`}>
-        <defs>
-          <clipPath id="annoying">
-            <polygon points={points} />
-          </clipPath>
-        </defs>
-        <polygon
-          points={points}
-          stroke={COLORS.DARK}
-          strokeWidth="4px"
-          fill={COLORS.DARK}
-          vectorEffect="non-scaling-stroke"
-          clipPath="url(#annoying)"
-          style={{ transform: `translate(${s}px, ${s}px)` }}
-        />
-      </svg>
-    </div>
   )
 }

@@ -1,7 +1,10 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
+import { useDispatch } from '$'
 import { COLORS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
+import { usePageSpaceToOverlaySpace } from '@/hooks'
+
 
 type GenericNodeBodyProps = {
     node: NodePen.DocumentNode
@@ -13,6 +16,34 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
 
     const nodeWidth = getNodeWidth()
     const nodeHeight = getNodeHeight(template)
+
+    const { apply } = useDispatch()
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
+    const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
+        e.stopPropagation()
+        e.preventDefault()
+
+        const { pageX, pageY } = e
+
+        const key = `node-context-menu-${node.instanceId}`
+
+        const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+
+        apply((state) => {
+            state.registry.contextMenus[key] = {
+                position: {
+                    x,
+                    y,
+                },
+                context: {
+                    type: 'node',
+                    nodeInstanceId: node.instanceId,
+                    nodeTemplate: template
+                }
+            }
+        })
+    }, [])
 
     return (
         <rect
@@ -26,6 +57,7 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
             stroke={COLORS.DARK}
             strokeWidth={2}
             pointerEvents="auto"
+            onContextMenu={handleContextMenu}
         />
     )
 }
