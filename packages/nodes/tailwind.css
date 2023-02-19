@@ -23,11 +23,5 @@
 }
 
 :root {
-    --np-active-menu-height: 100px;
-}
-
-@media (prefers-reduced-motion) {
-    :root {
-        --np-active-menu-height: 100%;
-    }
+    --np-active-menu-height: 100%;
 }
