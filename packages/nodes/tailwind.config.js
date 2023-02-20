@@ -20,7 +20,7 @@ module.exports = {
     },
     extend: {
       animation: {
-        'menu-appear': 'menu-appear 125ms ease-in'
+        'menu-appear': 'menu-appear 125ms ease-in forwards'
       },
       keyframes: {
         'menu-appear': {
