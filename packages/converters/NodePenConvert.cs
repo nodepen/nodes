@@ -295,12 +295,12 @@ namespace NodePen.Converters
                                     continue;
                                 }
 
-                                param.ClearData();
-
                                 switch (param)
                                 {
                                     case Param_Number numberParam:
                                         {
+                                            numberParam.PersistentData.ClearData();
+
                                             var valueGoo = new GH_Number(value.UnwrapAsDouble());
 
                                             var tree = new GH_Structure<GH_Number>();
@@ -309,10 +309,13 @@ namespace NodePen.Converters
                                             tree.Insert(valueGoo, branch, 0);
 
                                             numberParam.SetPersistentData(tree, branch, valueGoo);
+                                            numberParam.OnObjectChanged(GH_ObjectEventType.PersistentData);
                                             break;
                                         }
                                     case Param_Integer integerParam:
                                         {
+                                            integerParam.PersistentData.ClearData();
+
                                             var valueGoo = new GH_Integer(value.UnwrapAsInteger());
 
                                             var tree = new GH_Structure<GH_Integer>();
@@ -321,6 +324,7 @@ namespace NodePen.Converters
                                             tree.Insert(valueGoo, branch, 0);
 
                                             integerParam.SetPersistentData(tree, branch, valueGoo);
+                                            integerParam.OnObjectChanged(GH_ObjectEventType.PersistentData);
                                             break;
                                         }
                                     default:
@@ -329,6 +333,7 @@ namespace NodePen.Converters
                                             break;
                                         }
                                 }
+
                             }
 
                             foreach (var outputInstanceId in node.Outputs.Keys)
