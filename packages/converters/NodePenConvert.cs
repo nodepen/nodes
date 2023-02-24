@@ -267,12 +267,12 @@ namespace NodePen.Converters
                         {
                             foreach (var inputInstanceId in node.Inputs.Keys)
                             {
-                                // Associate input param with document port
+                                // Associate Grasshopper document input param with NodePen document port
                                 var i = node.Inputs[inputInstanceId];
                                 var param = componentInstance.Params.Input[i];
                                 param.NewInstanceGuid(new Guid(inputInstanceId));
 
-                                // Set user values
+                                // Get user-declared values from NodePen document
                                 var values = node.Values[inputInstanceId];
 
                                 if (values == null)
@@ -295,45 +295,50 @@ namespace NodePen.Converters
                                     continue;
                                 }
 
-                                switch (param)
+                                // Set user-declared values as param persistent data
+                                if (Grasshopper.Utility.InvokeGetterSafe(param, "PersistentData") is IGH_Structure persistentData)
                                 {
-                                    case Param_Number numberParam:
-                                        {
-                                            numberParam.PersistentData.ClearData();
+                                    persistentData.ClearData();
 
-                                            var valueGoo = new GH_Number(value.UnwrapAsDouble());
+                                    switch (param)
+                                    {
+                                        case Param_Number numberParam:
+                                            {
+                                                var valueGoo = new GH_Number(value.UnwrapAsDouble());
 
-                                            var tree = new GH_Structure<GH_Number>();
-                                            var pathIndices = new List<int>() { 0 }.ToArray();
-                                            var branch = new GH_Path(pathIndices);
-                                            tree.Insert(valueGoo, branch, 0);
+                                                var tree = new GH_Structure<GH_Number>();
+                                                var pathIndices = new List<int>() { 0 }.ToArray();
+                                                var branch = new GH_Path(pathIndices);
+                                                tree.Insert(valueGoo, branch, 0);
 
-                                            numberParam.SetPersistentData(tree, branch, valueGoo);
-                                            numberParam.OnObjectChanged(GH_ObjectEventType.PersistentData);
-                                            break;
-                                        }
-                                    case Param_Integer integerParam:
-                                        {
-                                            integerParam.PersistentData.ClearData();
+                                                numberParam.SetPersistentData(tree, branch, valueGoo);
+                                                break;
+                                            }
+                                        case Param_Integer integerParam:
+                                            {
+                                                var valueGoo = new GH_Integer(value.UnwrapAsInteger());
 
-                                            var valueGoo = new GH_Integer(value.UnwrapAsInteger());
+                                                var tree = new GH_Structure<GH_Integer>();
+                                                var pathIndices = new List<int>() { 0 }.ToArray();
+                                                var branch = new GH_Path(pathIndices);
+                                                tree.Insert(valueGoo, branch, 0);
 
-                                            var tree = new GH_Structure<GH_Integer>();
-                                            var pathIndices = new List<int>() { 0 }.ToArray();
-                                            var branch = new GH_Path(pathIndices);
-                                            tree.Insert(valueGoo, branch, 0);
+                                                integerParam.SetPersistentData(tree, branch, valueGoo);
+                                                break;
+                                            }
+                                        default:
+                                            {
+                                                Console.WriteLine($"Unhandled user-input param [{param.GetType()}]");
+                                                break;
+                                            }
+                                    }
 
-                                            integerParam.SetPersistentData(tree, branch, valueGoo);
-                                            integerParam.OnObjectChanged(GH_ObjectEventType.PersistentData);
-                                            break;
-                                        }
-                                    default:
-                                        {
-                                            Console.WriteLine($"Unhandled user-input param [{param.GetType()}]");
-                                            break;
-                                        }
+                                    param.OnObjectChanged(GH_ObjectEventType.PersistentData);
                                 }
-
+                                else
+                                {
+                                    Console.WriteLine($"🐍 Failed to set persistent data on port [{inputInstanceId}]");
+                                }
                             }
 
                             foreach (var outputInstanceId in node.Outputs.Keys)
@@ -353,7 +358,10 @@ namespace NodePen.Converters
                 }
 
                 documentObjectMap.Add(node.InstanceId, nodeInstance);
-                definition.AddObject(nodeInstance, false);
+                if (!definition.AddObject(nodeInstance, false))
+                {
+                    Console.WriteLine($"Failed to write node [{node.InstanceId}] to Grasshopper document!");
+                }
             }
 
             // Second pass: attach sources
@@ -414,7 +422,6 @@ namespace NodePen.Converters
 
             if (!archive.AppendObject(definition, "definition"))
             {
-                Console.WriteLine("??");
                 throw new Exception("Failed to create empty definition.");
             };
 
