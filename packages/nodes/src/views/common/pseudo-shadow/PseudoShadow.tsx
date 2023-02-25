@@ -34,15 +34,19 @@ const PseudoShadow = ({ target }: PseudoShadowProps): React.ReactElement | null 
     const { top: offsetTop, left: offsetLeft } = rootElement.getBoundingClientRect()
     const { width, height, top, left } = targetElement.getBoundingClientRect()
 
-    const { width: currentWidth, height: currentHeight } = dimensions ?? {}
+    const { width: currentWidth, height: currentHeight, top: currentTop } = dimensions ?? {}
 
-    if (width === currentWidth && height === currentHeight) {
+    const getShadowTop = (): number => {
+      return top + SHADOW_OFFSET - offsetTop
+    }
+
+    if (width === currentWidth && height === currentHeight && Math.abs((currentTop ?? 0) - getShadowTop()) < 5) {
       return
     }
 
     setDimensions({
       left: left - SHADOW_OFFSET - offsetLeft,
-      top: top + SHADOW_OFFSET - offsetTop,
+      top: getShadowTop(),
       width,
       height,
     })
