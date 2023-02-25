@@ -1,30 +1,30 @@
 version: 2
 
 updates:
-  - package-ecosystem: "npm"
-    directory: "/"
+  - directory: "/"
+    package-ecosystem: "npm"
     schedule:
       interval: "weekly"
       day: "friday"
     allow:
       - dependency-type: "direct"
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 5
     reviewers:
       - "cdriesler"
 
-  - package-ecosystem: "npm"
-    directory: "/packages/nodes"
+  - directory: "/packages/nodes"
+    package-ecosystem: "npm"
     schedule:
       interval: "weekly"
       day: "friday"
     allow:
       - dependency-type: "direct"
-    open-pull-requests-limit: 1
+    open-pull-requests-limit: 5
     reviewers:
       - "cdriesler"
 
-  - package-ecosystem: "nuget"
-    directory: "/packages/converters"
+  - directory: "/packages/converters"
+    package-ecosystem: "nuget"
     schedule:
       interval: "weekly"
       day: "friday"
@@ -34,8 +34,8 @@ updates:
     reviewers:
       - "cdriesler"
 
-  - package-ecosystem: "npm"
-    directory: "/apps/nodepen-client"
+  - directory: "/apps/nodepen-client"
+    package-ecosystem: "npm"
     schedule:
       interval: "weekly"
       day: "friday"
