@@ -5,8 +5,8 @@ import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl, TemplateLib
 const ControlsContainer = (): React.ReactElement => {
   return (
     <ControlsContainerLayout>
-      {/* <DocumentInfoControl /> */}
       <ActiveViewControl />
+      <DocumentInfoControl />
       <PinnedPortsControl />
       {/* <TemplateLibraryControl templates={templates} /> */}
     </ControlsContainerLayout>
