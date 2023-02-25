@@ -1,14 +1,17 @@
 import React, { useCallback } from 'react'
 import { Layer } from '@/views/common'
+import { useStore } from '$'
 import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl, TemplateLibraryControl } from './panels'
 
 const ControlsContainer = (): React.ReactElement => {
+  const templates = useStore((state) => state.templates)
+
   return (
     <ControlsContainerLayout>
       <ActiveViewControl />
       <DocumentInfoControl />
       <PinnedPortsControl />
-      {/* <TemplateLibraryControl templates={templates} /> */}
+      <TemplateLibraryControl templates={templates} />
     </ControlsContainerLayout>
   )
 }

@@ -18,7 +18,7 @@ export const ControlPanelHeader = ({ icon, label, sublabel, onClickMenu }: Contr
             </div>
             {sublabel ? (
                 <div className='np-w-full np-pl-9 np-flex np-justify-start np-items-center'>
-                    <p className='np-font-sans np-text-sm np-text-darkgreen np-font-light'>{sublabel}</p>
+                    <p className='np-font-sans np-text-sm np-text-darkgreen np-font-light np-select-none'>{sublabel}</p>
                 </div>
             ) : null}
         </div>
