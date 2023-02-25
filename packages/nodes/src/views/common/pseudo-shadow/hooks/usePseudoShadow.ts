@@ -6,7 +6,7 @@ import { useDispatch } from '@/store'
  * Registers a new element that should express the pseudo-shadow effect.
  * @returns The `RefObject` that should be associated with a `div` that represents the extents of the target element.
  */
-export const usePseudoShadow = (): React.RefObject<HTMLDivElement> => {
+export const usePseudoShadow = (resizeProxyKey?: string): React.RefObject<HTMLDivElement> => {
     const shadowId = useId()
     const shadowTargetRef = useRef<HTMLDivElement>(null)
 
@@ -14,7 +14,10 @@ export const usePseudoShadow = (): React.RefObject<HTMLDivElement> => {
 
     useEffect(() => {
         apply((state) => {
-            state.registry.shadows.targets[shadowId] = shadowTargetRef
+            state.registry.shadows.targets[shadowId] = {
+                ref: shadowTargetRef,
+                resizeProxyKey
+            }
         })
 
         return () => {

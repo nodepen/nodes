@@ -7,7 +7,7 @@ type ControlPanelProps = {
 }
 
 export const ControlPanel = ({ children, disablePadding }: ControlPanelProps): React.ReactElement => {
-  const shadowTargetRef = usePseudoShadow()
+  const shadowTargetRef = usePseudoShadow("controls")
 
   return (
     <div

@@ -39,8 +39,15 @@ export type NodesAppState = {
     }
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null
+      proxyRefs: {
+        [proxyKey: string]: React.RefObject<HTMLDivElement>
+      }
       targets: {
-        [shadowId: string]: React.RefObject<HTMLDivElement>
+        [shadowId: string]: {
+          ref: React.RefObject<HTMLDivElement>
+          /** The optional alternate element to observe for resize. */
+          resizeProxyKey?: string
+        }
       }
     }
     views: {
@@ -105,6 +112,9 @@ export const initialState: NodesAppState = {
     contextMenus: {},
     shadows: {
       containerRef: null,
+      proxyRefs: {
+        controls: React.createRef<HTMLDivElement>()
+      },
       targets: {},
     },
     views: {},
