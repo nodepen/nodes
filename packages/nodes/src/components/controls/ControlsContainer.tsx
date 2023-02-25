@@ -11,7 +11,7 @@ const ControlsContainer = (): React.ReactElement => {
       <ActiveViewControl />
       <DocumentInfoControl />
       <PinnedPortsControl />
-      <TemplateLibraryControl templates={templates} />
+      {/* <TemplateLibraryControl templates={templates} /> */}
     </ControlsContainerLayout>
   )
 }
