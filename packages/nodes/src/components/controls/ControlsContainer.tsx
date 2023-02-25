@@ -1,19 +1,22 @@
 import React, { useCallback } from 'react'
 import { Layer } from '@/views/common'
+import { useStore } from '$'
 import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl, TemplateLibraryControl } from './panels'
 
 const ControlsContainer = (): React.ReactElement => {
+  const templates = useStore((state) => state.templates)
+
   return (
     <ControlsContainerLayout>
-      {/* <DocumentInfoControl /> */}
       <ActiveViewControl />
+      <DocumentInfoControl />
       <PinnedPortsControl />
       {/* <TemplateLibraryControl templates={templates} /> */}
     </ControlsContainerLayout>
   )
 }
 
-import { DownloadButton, HomeButton, ProfileButton, ShareButton } from './navigation'
+import { DownloadButton, HelpButton, LikeButton, ShareButton } from './navigation'
 import { SolutionStatusBar } from './solution-status'
 
 type LayoutProps = {
@@ -33,11 +36,11 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
               id="np-navigation-panels"
               className="np-w-full np-h-8 np-flex np-justify-between np-items-center np-gap-2"
             >
-              <HomeButton />
+              <LikeButton />
               <ShareButton />
               <DownloadButton />
               <SolutionStatusBar />
-              <ProfileButton />
+              <HelpButton />
             </div>
           </div>
         </div>

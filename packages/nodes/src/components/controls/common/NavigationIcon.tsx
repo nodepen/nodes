@@ -9,7 +9,7 @@ export const NavigationIcon = ({ d }: NavigationIconProps): React.ReactElement =
   return (
     <svg
       style={{ width: 20, height: 20 }}
-      fill="none"
+      fill={COLORS.LIGHT}
       stroke={COLORS.DARK}
       viewBox="0 0 24 24"
       xmlns="http://www.w3.org/2000/svg"
