@@ -1,4 +1,4 @@
 export { DownloadButton } from './DownloadButton'
-export { HomeButton } from './HomeButton'
-export { ProfileButton } from './ProfileButton'
+export { LikeButton } from './LikeButton'
+export { HelpButton } from './HelpButton'
 export { ShareButton } from './ShareButton'
