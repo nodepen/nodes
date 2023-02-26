@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { COLORS } from '@/constants'
 import { groupTemplatesByCategory } from '@/utils/templates'
@@ -10,6 +10,15 @@ type TemplateLibraryControlProps = {
 
 const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): React.ReactElement => {
   const templatesByCategory = useMemo(() => groupTemplatesByCategory(templates), [templates])
+  const templateCategories = Object.keys(templatesByCategory)
+
+  const [activeCategory, setActiveCategory] = useState<string>()
+
+  if (!activeCategory && templateCategories.length > 0) {
+    setActiveCategory(templateCategories[0])
+  }
+
+  const [overflows, setOverflows] = useState<('left' | 'right')[]>(['right'])
 
   const icon = (
     <svg width={24} aria-hidden="true" fill="none" stroke={COLORS.DARKGREEN} strokeWidth={2} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -24,9 +33,35 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
         label="Component Library"
         onClickMenu={() => ''}
       />
-      <div className='np-w-full np-overflow-auto np-whitespace-nowrap'>
-        {Object.keys(templatesByCategory).map((category) => (
-          <p className='np-inline-block'>{category}</p>
+      <div
+        className={`np-border-l-2 np-border-r-2 ${overflows.includes('left') ? 'np-border-l-swampgreen' : 'np-border-l-green'} ${overflows.includes('right') ? 'np-border-r-swampgreen' : 'np-border-r-green'} np-w-full np-pb-[1px] np-rounded-sm np-overflow-auto np-whitespace-nowrap no-scrollbar`}
+        onScroll={(e) => {
+          const { scrollLeft, scrollWidth, clientWidth } = e.currentTarget
+
+          const currentOverflows: ('left' | 'right')[] = []
+
+          if (scrollLeft > 0) {
+            currentOverflows.push('left')
+          }
+
+          const maximumScroll = scrollWidth - clientWidth
+
+          if (scrollLeft < maximumScroll) {
+            currentOverflows.push('right')
+          }
+
+          setOverflows(currentOverflows)
+        }}
+      >
+        {templateCategories.map((category) => (
+          <button
+            className={`${category === activeCategory ? 'np-bg-swampgreen np-border-b-swampgreen' : 'np-border-b-green'} np-inline-block np-box-border np-h-6 np-mr-1 last:np-mr-0 np-rounded-sm np-border-b-2 hover:np-border-b-swampgreen`}
+            onClick={() => { setActiveCategory(category) }}
+          >
+            <p className='np-pl-2 np-pr-2 np-font-sans np-text-sm np-text-dark np-select-none -np-translate-y-px hover:np-translate-y-[-2px]'>
+              {category}
+            </p>
+          </button>
         ))}
       </div>
       {/* {Object.entries(templatesByCategory).map(([category, subcategoryNodes]) => (

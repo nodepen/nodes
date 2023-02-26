@@ -25,3 +25,12 @@
 :root {
     --np-active-menu-height: 100%;
 }
+
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
