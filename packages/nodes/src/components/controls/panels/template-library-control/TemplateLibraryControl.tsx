@@ -36,15 +36,24 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
           </button>
         ))}
       </div>
-      <div className='np-w-full np-max-h-36 np-overflow-auto no-scrollbar'>
+      <div className='np-w-full np-max-h-[148px] np-overflow-auto no-scrollbar'>
         {Object.entries(activeCategoryTemplatesBySubcategory).map(([subcategory, templates]) => (
-          <div className='np-w-full np-grid np-grid-cols-6 np-gap-2'>
-            {templates.map((template) => (
-              <div className='np-w-full np-h-full np-bg-swampgreen np-rounded-sm'>
-                <img src={getIconAsImage(template)} />
-              </div>
-            ))}
-          </div>
+          <>
+            {/* <div className='np-sticky np-top-0 np-pl-2 np-p-1 np-mb-2 np-bg-green np-z-10'>
+              <p className='np-font-sans np-text-sm np-text-darkgreen np-select-none -np-translate-y-px'>{subcategory}</p>
+            </div> */}
+            <div className='np-w-full np-pb-2 last:np-pb-0 np-mb-2 last:np-mb-0 np-border-b-2 np-border-b-swampgreen last:np-border-none np-grid np-grid-cols-[repeat(auto-fill,_minmax(30px,_1fr))] np-gap-2 np-z-0'>
+              {templates.map((template) => (
+                <button className='np-w-full np-h-full np-pt-[100%] np-relative hover:np-bg-swampgreen np-rounded-sm'>
+                  <div className='np-absolute np-top-0 np-right-0 np-left-0 np-bottom-0'>
+                    <div className='np-w-full np-h-full np-flex np-items-center np-justify-center'>
+                      <img width={22} draggable={false} src={getIconAsImage(template)} />
+                    </div>
+                  </div>
+                </button>
+              ))}
+            </div>
+          </>
         ))}
       </div>
       {/* {Object.entries(templatesByCategory).map(([category, subcategoryNodes]) => (
