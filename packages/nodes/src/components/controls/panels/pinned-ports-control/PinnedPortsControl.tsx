@@ -95,7 +95,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
         <h4 className="np-font-sans np-text-xs np-text-dark np-select-none">{name}</h4>
       </div>
       <input
-        className="np-absolute np-w-full np-h-full np-pr-2 np-font-sans np-text-md np-text-dark np-text-right np-bg-none np-shadow-input"
+        className="np-absolute np-w-full np-h-full np-pr-2 np-font-sans np-text-md np-text-dark np-text-right np-bg-pale np-shadow-input"
         type="text"
         defaultValue={valueString}
         style={{ left: 0, top: 0, zIndex: 10 }}
