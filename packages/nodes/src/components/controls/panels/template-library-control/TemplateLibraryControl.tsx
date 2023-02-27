@@ -4,6 +4,8 @@ import { COLORS } from '@/constants'
 import { createInstance, getIconAsImage, groupTemplatesByCategory } from '@/utils/templates'
 import { ControlPanel, ControlPanelHeader } from '../../common'
 import { useDispatch } from '@/store'
+import { usePageSpaceToWorldSpace } from '@/hooks'
+import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 
 type TemplateLibraryControlProps = {
   templates: { [templateId: string]: NodePen.NodeTemplate }
@@ -11,6 +13,8 @@ type TemplateLibraryControlProps = {
 
 const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): React.ReactElement => {
   const { apply } = useDispatch()
+
+  const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
   const templatesByCategory = useMemo(() => groupTemplatesByCategory(templates), [templates])
 
@@ -50,17 +54,27 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
                 <button
                   className='np-w-full np-h-full np-pt-[100%] np-relative hover:np-bg-swampgreen np-rounded-sm'
                   onPointerDown={(e) => {
+                    const { pageX, pageY } = e
+
+                    const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+
+                    const nodeWidth = getNodeWidth()
+                    const nodeHeight = getNodeHeight(template)
+
                     apply((state) => {
                       const node = createInstance(template)
 
                       node.status.isProvisional = true
+                      node.position = {
+                        x: x - nodeWidth / 2,
+                        y: y - nodeHeight / 2
+                      }
 
                       state.document.nodes[node.instanceId] = node
 
                       state.layout.nodePlacement = {
                         isActive: true,
                         activeNodeId: node.instanceId,
-                        activePointerId: e.pointerId
                       }
                     })
                   }}

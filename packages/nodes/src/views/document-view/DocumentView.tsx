@@ -45,11 +45,11 @@ const DocumentView = ({ editable }: DocumentViewProps): React.ReactElement | nul
 
   return (
     <>
+      <Layer id="np-node-placement-overlay-layer" position={viewPosition} z={91}>
+        <NodePlacementOverlay />
+      </Layer>
       <Layer id="np-context-menu-layer" position={viewPosition} z={90}>
         <ContextMenuContainer />
-      </Layer>
-      <Layer id="np-node-placement-overlay-layer" position={viewPosition} z={71}>
-        <NodePlacementOverlay />
       </Layer>
       <Layer id="np-graph-canvas-layer" position={viewPosition} z={70}>
         <CameraOverlay>

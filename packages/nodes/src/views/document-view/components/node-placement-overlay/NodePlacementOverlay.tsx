@@ -1,31 +1,31 @@
-import React, { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { useDispatch, useStore } from '$'
 import { usePageSpaceToWorldSpace } from '@/hooks'
+import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
+import { expireSolution } from '@/store/utils'
 
 const NodePlacementOverlay = () => {
-    const overlayRef = useRef<HTMLDivElement>(null)
-
     const { apply } = useDispatch()
-    const { isActive, activeNodeId, activePointerId } = useStore((state) => state.layout.nodePlacement)
+    const { isActive, activeNodeId } = useStore((state) => state.layout.nodePlacement)
 
-    const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
-
-    useEffect(() => {
-        const element = overlayRef.current
-
-        if (!isActive || !element || !activePointerId) {
-            return
+    const [activeNodeWidth, activeNodeHeight] = useMemo((): [number, number] => {
+        if (!activeNodeId) {
+            return [0, 0]
         }
 
-        element.setPointerCapture(activePointerId)
-    }, [isActive])
+        const activeNode = useStore.getState().document.nodes[activeNodeId]
+        const activeNodeTemplate = useStore.getState().templates[activeNode.templateId]
+
+        return [getNodeWidth(), getNodeHeight(activeNodeTemplate)]
+    }, [activeNodeId])
+
+    const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
     const resetOverlayState = useCallback(() => {
         apply((state) => {
             state.layout.nodePlacement = {
                 isActive: false,
-                activeNodeId: null,
-                activePointerId: null
+                activeNodeId: null
             }
         })
     }, [])
@@ -40,7 +40,10 @@ const NodePlacementOverlay = () => {
         const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
         apply((state) => {
-            state.document.nodes[activeNodeId].position = { x, y }
+            state.document.nodes[activeNodeId].position = {
+                x: x - activeNodeWidth / 2,
+                y: y - activeNodeHeight / 2
+            }
         })
     }, [activeNodeId])
 
@@ -51,6 +54,7 @@ const NodePlacementOverlay = () => {
 
         apply((state) => {
             state.document.nodes[activeNodeId].status.isProvisional = false
+            expireSolution(state)
         })
 
         resetOverlayState()
@@ -58,7 +62,6 @@ const NodePlacementOverlay = () => {
 
     return (
         <div
-            ref={overlayRef}
             className={`${isActive ? 'np-pointer-events-auto' : 'np-pointer-events-none'} np-w-full np-h-full`}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}

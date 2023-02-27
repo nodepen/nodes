@@ -29,7 +29,6 @@ export type NodesAppState = {
     nodePlacement: {
       isActive: boolean
       activeNodeId: string | null
-      activePointerId: number | null
     }
     activeView: string | null
   }
@@ -109,7 +108,6 @@ export const initialState: NodesAppState = {
     nodePlacement: {
       isActive: false,
       activeNodeId: null,
-      activePointerId: null
     },
     activeView: null
   },
