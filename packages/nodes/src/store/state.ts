@@ -28,7 +28,7 @@ export type NodesAppState = {
     }
     nodePlacement: {
       isActive: boolean
-      activeNodeTemplate: NodePen.NodeTemplate | null
+      activeNodeId: string | null
       activePointerId: number | null
     }
     activeView: string | null
@@ -108,7 +108,7 @@ export const initialState: NodesAppState = {
     },
     nodePlacement: {
       isActive: false,
-      activeNodeTemplate: null,
+      activeNodeId: null,
       activePointerId: null
     },
     activeView: null

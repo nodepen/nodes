@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { COLORS } from '@/constants'
-import { getIconAsImage, groupTemplatesByCategory } from '@/utils/templates'
+import { createInstance, getIconAsImage, groupTemplatesByCategory } from '@/utils/templates'
 import { ControlPanel, ControlPanelHeader } from '../../common'
 import { useDispatch } from '@/store'
 
@@ -51,9 +51,13 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
                   className='np-w-full np-h-full np-pt-[100%] np-relative hover:np-bg-swampgreen np-rounded-sm'
                   onPointerDown={(e) => {
                     apply((state) => {
+                      const node = createInstance(template)
+
+                      state.document.nodes[node.instanceId] = node
+
                       state.layout.nodePlacement = {
                         isActive: true,
-                        activeNodeTemplate: template,
+                        activeNodeId: node.instanceId,
                         activePointerId: e.pointerId
                       }
                     })
