@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useStore, useDispatch } from '$'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
-import { CameraOverlay, ContextMenuContainer, GridContainer } from './components'
+import { CameraOverlay, ContextMenuContainer, GridContainer, NodePlacementOverlay } from './components'
 import { useCameraProps } from './hooks'
 import { AnnotationsContainer, NodesContainer } from '@/components'
 
@@ -47,6 +47,9 @@ const DocumentView = ({ editable }: DocumentViewProps): React.ReactElement | nul
     <>
       <Layer id="np-context-menu-layer" position={viewPosition} z={90}>
         <ContextMenuContainer />
+      </Layer>
+      <Layer id="np-node-placement-overlay-layer" position={viewPosition} z={71}>
+        <NodePlacementOverlay />
       </Layer>
       <Layer id="np-graph-canvas-layer" position={viewPosition} z={70}>
         <CameraOverlay>

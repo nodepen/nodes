@@ -93,6 +93,18 @@ namespace NodePen.Converters
         public double Y { get; set; } = 0;
     }
 
+    public class NodePenDocumentNodeStatus : Base
+    {
+        [JsonProperty("isEnabled")]
+        public bool IsEnabled { get; set; } = true;
+
+        [JsonProperty("isProvisional")]
+        public bool IsProvisional { get; set; } = false;
+
+        [JsonProperty("isSelected")]
+        public bool IsSelected { get; set; } = false;
+    }
+
     public class NodePenDocumentNodeDimensions : Base
     {
         [JsonProperty("width")]

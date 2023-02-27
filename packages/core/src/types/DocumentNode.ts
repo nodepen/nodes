@@ -8,6 +8,15 @@ export type DocumentNode = {
     x: number
     y: number
   }
+  /** Transient status flags associated with the given document node. */
+  status: {
+    /** If false, the node should not be allowed to run during solutions. */
+    isEnabled: boolean
+    /** If true, the node has not yet been committed to the document and should not be included in solutions. */
+    isProvisional: boolean
+    /** If true, the node is currently selected. */
+    isSelected: boolean
+  }
   /** Current width and height of node in world dimensions. */
   dimensions: {
     width: number

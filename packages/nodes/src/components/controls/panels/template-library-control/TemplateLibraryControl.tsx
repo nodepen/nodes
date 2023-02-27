@@ -3,12 +3,15 @@ import type * as NodePen from '@nodepen/core'
 import { COLORS } from '@/constants'
 import { getIconAsImage, groupTemplatesByCategory } from '@/utils/templates'
 import { ControlPanel, ControlPanelHeader } from '../../common'
+import { useDispatch } from '@/store'
 
 type TemplateLibraryControlProps = {
   templates: { [templateId: string]: NodePen.NodeTemplate }
 }
 
 const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): React.ReactElement => {
+  const { apply } = useDispatch()
+
   const templatesByCategory = useMemo(() => groupTemplatesByCategory(templates), [templates])
 
   const [activeCategory, setActiveCategory] = useState<string>()
@@ -44,7 +47,18 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
             </div> */}
             <div className='np-w-full np-pb-2 last:np-pb-0 np-mb-2 last:np-mb-0 np-border-b-2 np-border-b-swampgreen last:np-border-none np-grid np-grid-cols-[repeat(auto-fill,_minmax(30px,_1fr))] np-gap-2 np-z-0'>
               {templates.map((template) => (
-                <button className='np-w-full np-h-full np-pt-[100%] np-relative hover:np-bg-swampgreen np-rounded-sm'>
+                <button
+                  className='np-w-full np-h-full np-pt-[100%] np-relative hover:np-bg-swampgreen np-rounded-sm'
+                  onPointerDown={(e) => {
+                    apply((state) => {
+                      state.layout.nodePlacement = {
+                        isActive: true,
+                        activeNodeTemplate: template,
+                        activePointerId: e.pointerId
+                      }
+                    })
+                  }}
+                >
                   <div className='np-absolute np-top-0 np-right-0 np-left-0 np-bottom-0'>
                     <div className='np-w-full np-h-full np-flex np-items-center np-justify-center'>
                       <img width={22} draggable={false} src={getIconAsImage(template)} />

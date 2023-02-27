@@ -26,6 +26,11 @@ export type NodesAppState = {
       activeFile: File | null
       uploadStatus: 'none' | 'pending' | 'success' | 'failure'
     }
+    nodePlacement: {
+      isActive: boolean
+      activeNodeTemplate: NodePen.NodeTemplate | null
+      activePointerId: number | null
+    }
     activeView: string | null
   }
   stream: {
@@ -100,6 +105,11 @@ export const initialState: NodesAppState = {
       isActive: false,
       activeFile: null,
       uploadStatus: 'none'
+    },
+    nodePlacement: {
+      isActive: false,
+      activeNodeTemplate: null,
+      activePointerId: null
     },
     activeView: null
   },
