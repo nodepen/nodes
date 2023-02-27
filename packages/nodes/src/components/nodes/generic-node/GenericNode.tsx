@@ -2,7 +2,7 @@ import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { useDebugRender, useDraggableNode } from '../hooks'
-import { GenericNodeBody, GenericNodeLabel, GenericNodePorts, GenericNodeShadow, GenericNodeWires } from './components'
+import { GenericNodeBody, GenericNodeLabel, GenericNodePorts, GenericNodeShadow, GenericNodeSkeleton, GenericNodeWires } from './components'
 
 type GenericNodeProps = {
   id: string
@@ -25,10 +25,18 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
   return (
     <>
       <g id={`generic-node-${id}`} ref={draggableTargetRef}>
-        <GenericNodeShadow node={node} template={template} />
-        <GenericNodeBody node={node} template={template} />
-        <GenericNodeLabel node={node} template={template} />
-        <GenericNodePorts node={node} template={template} />
+        {node.status.isProvisional ? (
+          <>
+            <GenericNodeSkeleton node={node} template={template} />
+          </>
+        ) : (
+          <>
+            <GenericNodeShadow node={node} template={template} />
+            <GenericNodeBody node={node} template={template} />
+            <GenericNodeLabel node={node} template={template} />
+            <GenericNodePorts node={node} template={template} />
+          </>
+        )}
       </g>
       <GenericNodeWires node={node} />
     </>

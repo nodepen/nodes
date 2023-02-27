@@ -53,6 +53,8 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
                     apply((state) => {
                       const node = createInstance(template)
 
+                      node.status.isProvisional = true
+
                       state.document.nodes[node.instanceId] = node
 
                       state.layout.nodePlacement = {
