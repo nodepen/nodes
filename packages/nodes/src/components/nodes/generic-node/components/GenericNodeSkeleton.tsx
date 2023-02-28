@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react'
 import type * as NodePen from '@nodepen/core'
+import { useStore } from '$'
 import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { COLORS } from '@/constants'
 
@@ -11,6 +12,8 @@ type GenericNodeSkeletonProps = {
 export const GenericNodeSkeleton = ({ node, template }: GenericNodeSkeletonProps) => {
     const { position } = node
 
+    const currentZoom = useStore((state) => state.camera.zoom)
+
     const nodeWidth = useMemo(() => getNodeWidth(), [])
     const nodeHeight = useMemo(() => getNodeHeight(template), [template])
 
@@ -20,7 +23,7 @@ export const GenericNodeSkeleton = ({ node, template }: GenericNodeSkeletonProps
         2 * Math.PI * NODE_CORNER_RADIUS,
         2 * (nodeHeight - (2 * NODE_CORNER_RADIUS)),
         2 * (nodeWidth - (2 * NODE_CORNER_RADIUS))
-    ].reduce((partial, value) => value + partial, 0)
+    ].reduce((partial, value) => value + partial, 0) * currentZoom
 
     const NODE_TARGET_DASH = 15
 
