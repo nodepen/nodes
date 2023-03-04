@@ -62,6 +62,9 @@ namespace NodePen.Converters
         [JsonProperty("dimensions")]
         public NodePenDocumentNodeDimensions Dimensions { get; set; } = new NodePenDocumentNodeDimensions();
 
+        [JsonProperty("status")]
+        public NodePenDocumentNodeStatus Status { get; set; } = new NodePenDocumentNodeStatus();
+
         [JsonProperty("anchors")]
         public Dictionary<string, NodePenDocumentNodeAnchor> Anchors { get; set; } = new Dictionary<string, NodePenDocumentNodeAnchor>();
 
