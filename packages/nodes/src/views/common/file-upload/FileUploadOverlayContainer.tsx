@@ -2,12 +2,15 @@ import React, { useCallback } from 'react'
 import { useCallbacks, useDispatch, useStore } from '$'
 import { Layer } from '../layer'
 import { COLORS } from '@/constants'
+import { useReducedMotion } from '@/hooks'
 
 const FileUploadOverlayContainer = (): React.ReactElement => {
   const { isActive, activeFile, uploadStatus } = useStore((state) => state.layout.fileUpload)
 
   const { apply } = useDispatch()
   const { onFileUpload } = useCallbacks()
+
+  const prefersReducedMotion = useReducedMotion()
 
   const strokeWidth = isActive ? 160 : 0
   const r = isActive ? 20 : 100
@@ -71,7 +74,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
           className="np-w-full np-h-full np-flex np-items-center np-justify-center"
           style={{
             transform: `translateY(${isActive ? '33%' : '100%'})`,
-            transition: 'transform',
+            transition: prefersReducedMotion ? '' : 'transform',
             transitionDuration: '300ms',
             transitionTimingFunction: 'ease-out',
           }}
@@ -99,7 +102,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
             r={100}
             fill="none"
             style={{
-              transition: 'stroke-width',
+              transition: prefersReducedMotion ? '' : 'stroke-width',
               transitionDuration: '300ms',
               transitionTimingFunction: 'ease-out',
               opacity: '.3',
@@ -112,7 +115,11 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
             strokeWidth={strokeWidth}
             r={100}
             fill="none"
-            style={{ transition: 'stroke-width', transitionDuration: '300ms', transitionTimingFunction: 'ease-out' }}
+            style={{
+              transition: prefersReducedMotion ? '' : 'stroke-width',
+              transitionDuration: '300ms',
+              transitionTimingFunction: 'ease-out'
+            }}
           />
         </svg>
       </Layer>
@@ -126,7 +133,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
             r={r - 0.25}
             fill="none"
             style={{
-              transition: 'r',
+              transition: prefersReducedMotion ? '' : 'r',
               transitionDuration: '300ms',
               transitionTimingFunction: 'ease-out',
               opacity: '.3',

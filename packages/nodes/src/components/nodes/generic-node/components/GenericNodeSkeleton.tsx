@@ -3,6 +3,7 @@ import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { COLORS } from '@/constants'
+import { useReducedMotion } from '@/hooks'
 
 type GenericNodeSkeletonProps = {
     node: NodePen.DocumentNode
@@ -13,6 +14,8 @@ export const GenericNodeSkeleton = ({ node, template }: GenericNodeSkeletonProps
     const { position } = node
 
     const currentZoom = useStore((state) => state.camera.zoom)
+
+    const prefersReducedMotion = useReducedMotion()
 
     const nodeWidth = useMemo(() => getNodeWidth(), [])
     const nodeHeight = useMemo(() => getNodeHeight(template), [template])
@@ -38,7 +41,7 @@ export const GenericNodeSkeleton = ({ node, template }: GenericNodeSkeletonProps
 
     return (
         <rect
-            className='np-animate-march'
+            className={prefersReducedMotion ? '' : 'np-animate-march'}
             x={position.x}
             y={position.y}
             width={nodeWidth}
