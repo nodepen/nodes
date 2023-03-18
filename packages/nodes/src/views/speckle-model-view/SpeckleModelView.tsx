@@ -33,6 +33,8 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
     const viewer = new Viewer(containerRef.current, {
       showStats: false,
       environmentSrc: '',
+      verbose: true,
+      keepGeometryData: true,
     })
 
     viewerRef.current = viewer
