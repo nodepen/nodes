@@ -9,8 +9,8 @@ const PseudoShadowsContainer = (): React.ReactElement => {
   return (
     <Layer id="np-shadows-layer" fixed z={30}>
       <div className="np-w-full np-h-full np-relative">
-        {shadowTargets.map(([id, ref]) => (
-          <PseudoShadow key={`np-shadow-${id}`} target={ref} />
+        {shadowTargets.map(([id, config]) => (
+          <PseudoShadow key={`np-shadow-${id}`} target={config.ref} resizeProxyKey={config.resizeProxyKey} />
         ))}
       </div>
     </Layer>

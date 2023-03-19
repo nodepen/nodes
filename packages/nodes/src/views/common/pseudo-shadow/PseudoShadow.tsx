@@ -4,6 +4,7 @@ import { useStore } from '$'
 
 type PseudoShadowProps = {
   target: React.RefObject<HTMLDivElement>
+  resizeProxyKey?: string
 }
 
 type PseudoShadowDimensions = {
@@ -13,8 +14,9 @@ type PseudoShadowDimensions = {
   height: number
 }
 
-const PseudoShadow = ({ target }: PseudoShadowProps): React.ReactElement | null => {
+const PseudoShadow = ({ target, resizeProxyKey }: PseudoShadowProps): React.ReactElement | null => {
   const canvasRootRef = useStore((store) => store.registry.canvasRoot)
+  const resizeProxyRef = useStore((store) => store.registry.shadows.proxyRefs[resizeProxyKey ?? ''])
   const [dimensions, setDimensions] = useState<PseudoShadowDimensions>()
 
   const resizeObserver = useRef<ResizeObserver>()
@@ -34,15 +36,19 @@ const PseudoShadow = ({ target }: PseudoShadowProps): React.ReactElement | null 
     const { top: offsetTop, left: offsetLeft } = rootElement.getBoundingClientRect()
     const { width, height, top, left } = targetElement.getBoundingClientRect()
 
-    const { width: currentWidth, height: currentHeight } = dimensions ?? {}
+    const { width: currentWidth, height: currentHeight, top: currentTop } = dimensions ?? {}
 
-    if (width === currentWidth && height === currentHeight) {
+    const getShadowTop = (): number => {
+      return top + SHADOW_OFFSET - offsetTop
+    }
+
+    if (width === currentWidth && height === currentHeight && Math.abs((currentTop ?? 0) - getShadowTop()) < 5) {
       return
     }
 
     setDimensions({
       left: left - SHADOW_OFFSET - offsetLeft,
-      top: top + SHADOW_OFFSET - offsetTop,
+      top: getShadowTop(),
       width,
       height,
     })
@@ -53,7 +59,7 @@ const PseudoShadow = ({ target }: PseudoShadowProps): React.ReactElement | null 
   }, [handleShadowResize])
 
   useEffect(() => {
-    const element = target.current
+    const element = resizeProxyRef?.current ?? target.current
     const observer = resizeObserver.current
 
     if (!element || !observer) {

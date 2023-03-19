@@ -62,6 +62,9 @@ namespace NodePen.Converters
         [JsonProperty("dimensions")]
         public NodePenDocumentNodeDimensions Dimensions { get; set; } = new NodePenDocumentNodeDimensions();
 
+        [JsonProperty("status")]
+        public NodePenDocumentNodeStatus Status { get; set; } = new NodePenDocumentNodeStatus();
+
         [JsonProperty("anchors")]
         public Dictionary<string, NodePenDocumentNodeAnchor> Anchors { get; set; } = new Dictionary<string, NodePenDocumentNodeAnchor>();
 
@@ -91,6 +94,18 @@ namespace NodePen.Converters
 
         [JsonProperty("y")]
         public double Y { get; set; } = 0;
+    }
+
+    public class NodePenDocumentNodeStatus : Base
+    {
+        [JsonProperty("isEnabled")]
+        public bool IsEnabled { get; set; } = true;
+
+        [JsonProperty("isProvisional")]
+        public bool IsProvisional { get; set; } = false;
+
+        [JsonProperty("isSelected")]
+        public bool IsSelected { get; set; } = false;
     }
 
     public class NodePenDocumentNodeDimensions : Base

@@ -26,6 +26,10 @@ export type NodesAppState = {
       activeFile: File | null
       uploadStatus: 'none' | 'pending' | 'success' | 'failure'
     }
+    nodePlacement: {
+      isActive: boolean
+      activeNodeId: string | null
+    }
     activeView: string | null
   }
   stream: {
@@ -39,8 +43,15 @@ export type NodesAppState = {
     }
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null
+      proxyRefs: {
+        [proxyKey: string]: React.RefObject<HTMLDivElement>
+      }
       targets: {
-        [shadowId: string]: React.RefObject<HTMLDivElement>
+        [shadowId: string]: {
+          ref: React.RefObject<HTMLDivElement>
+          /** The optional alternate element to observe for resize. */
+          resizeProxyKey?: string
+        }
       }
     }
     views: {
@@ -94,6 +105,10 @@ export const initialState: NodesAppState = {
       activeFile: null,
       uploadStatus: 'none'
     },
+    nodePlacement: {
+      isActive: false,
+      activeNodeId: null,
+    },
     activeView: null
   },
   stream: {
@@ -105,6 +120,9 @@ export const initialState: NodesAppState = {
     contextMenus: {},
     shadows: {
       containerRef: null,
+      proxyRefs: {
+        controls: React.createRef<HTMLDivElement>()
+      },
       targets: {},
     },
     views: {},

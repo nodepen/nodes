@@ -20,9 +20,13 @@ module.exports = {
     },
     extend: {
       animation: {
+        'march': 'march 1000ms infinite ease-in-out',
         'menu-appear': 'menu-appear 125ms ease-in forwards'
       },
       keyframes: {
+        'march': {
+          'to': { 'stroke-dashoffset': '0' }
+        },
         'menu-appear': {
           '0%': { 'max-height': '0px' },
           '100%': { 'max-height': 'var(--np-active-menu-height)' }
