@@ -11,7 +11,6 @@
     "declarationMap": false,
     "sourceMap": false,
     "esModuleInterop": true,
-    "importsNotUsedAsValues": "error",
     "resolveJsonModule": true,
     "jsx": "preserve",
     "noFallthroughCasesInSwitch": true,
@@ -30,6 +29,7 @@
     "types": [
       "node",
       "jest"
-    ]
+    ],
+    "verbatimModuleSyntax": true,
   }
 }
