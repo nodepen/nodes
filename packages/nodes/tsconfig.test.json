@@ -6,7 +6,6 @@
   "exclude": [
     "dist",
     "node_modules",
-    "src/**/*.spec.ts"
   ],
   "compilerOptions": {
     "outDir": "dist",
@@ -17,9 +16,10 @@
     },
     "module": "esnext",
     "target": "esnext",
-    "declaration": true,
-    "resolveJsonModule": false,
-    "moduleResolution": "bundler",
-    "jsx": "react"
+    "verbatimModuleSyntax": false,
+    "types": [
+      "mocha",
+      "jest"
+    ]
   }
 }

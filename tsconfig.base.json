@@ -27,6 +27,7 @@
       "node_modules/jest"
     ],
     "types": [
+      "mocha",
       "node",
       "jest"
     ],
