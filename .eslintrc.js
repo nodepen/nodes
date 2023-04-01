@@ -9,6 +9,10 @@ module.exports = {
     'prettier'
   ],
   ignorePatterns: [
+    '*.js',
+    '*.json',
+    '*.spec.ts',
+    'build',
     'dist',
     'node_modules'
   ],
