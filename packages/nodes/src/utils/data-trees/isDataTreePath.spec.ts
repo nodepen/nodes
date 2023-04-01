@@ -1,4 +1,4 @@
-import { expect, test } from '@jest/globals';
+import { expect } from '@jest/globals'
 import { isDataTreePath } from './isDataTreePath'
 
 test('{0}', () => {
