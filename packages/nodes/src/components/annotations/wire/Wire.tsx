@@ -1,11 +1,15 @@
 import React from 'react'
 import type { DataTreeStructure } from '@nodepen/core'
-import type { NodePortReference } from '@/types'
 import { COLORS } from '@/constants'
 import { useNodeAnchorPosition, usePortValues } from '@/hooks'
 import { getDataTreeStructure } from '@/utils/data-trees'
 import { distance, pointAt } from '@/utils/numerics'
 import { WirePortal } from './components'
+
+type NodePortReference = {
+  nodeInstanceId: string
+  portInstanceId: string
+}
 
 type WireProps = {
   from: NodePortReference
