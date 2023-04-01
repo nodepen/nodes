@@ -15,7 +15,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
   const strokeWidth = isActive ? 160 : 0
   const r = isActive ? 20 : 100
 
-  const handleDragLeave = useCallback((e: React.DragEvent<SVGSVGElement>) => {
+  const handleDragLeave = useCallback((_e: React.DragEvent<SVGSVGElement>) => {
     apply((state) => {
       state.layout.fileUpload.isActive = false
     })
