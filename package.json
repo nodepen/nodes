@@ -15,9 +15,10 @@
     "dev": "npx turbo run dev --no-daemon",
     "dev:speckle": "cd apps/speckle-server && yarn dev:docker:up && yarn dev",
     "dev:rhino": "cd apps/rhino-compute-server && dotnet watch",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "npx turbo run lint --no-daemon"
   },
   "devDependencies": {
+    "@next/eslint-plugin-next": "^13.2.4",
     "@types/mocha": "^10.0.1",
     "@types/node": "^18.15.11",
     "@typescript-eslint/eslint-plugin": "^5.55.0",

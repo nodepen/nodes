@@ -14,6 +14,7 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "dev": "tsc -w --preserveWatchOutput"
+    "dev": "tsc -w --preserveWatchOutput",
+    "lint": "eslint --ext .ts,.tsx ."
   }
 }

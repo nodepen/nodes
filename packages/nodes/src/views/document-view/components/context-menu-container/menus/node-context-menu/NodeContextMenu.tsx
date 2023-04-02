@@ -14,7 +14,7 @@ export const NodeContextMenu = ({ position, context }: NodeContextMenuProps) => 
     const { nodeInstanceId, nodeTemplate } = context
     const { name } = nodeTemplate
 
-    const menuIcon = <img width={20} height={20} src={getIconAsImage(nodeTemplate)} />
+    const menuIcon = <img width={20} height={20} src={getIconAsImage(nodeTemplate)} alt={`${nodeTemplate.name} (${nodeTemplate.nickName}): ${nodeTemplate.description}`} />
 
     return (
         <MenuBody position={position}>

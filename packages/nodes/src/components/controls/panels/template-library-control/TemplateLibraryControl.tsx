@@ -81,7 +81,12 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
               >
                 <div className='np-absolute np-top-0 np-right-0 np-left-0 np-bottom-0'>
                   <div className='np-w-full np-h-full np-flex np-items-center np-justify-center'>
-                    <img width={22} draggable={false} src={getIconAsImage(template)} />
+                    <img
+                      width={22}
+                      draggable={false}
+                      src={getIconAsImage(template)}
+                      alt={`${template.name} (${template.nickName}): ${template.description}`}
+                    />
                   </div>
                 </div>
               </button>
