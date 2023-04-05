@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import { NavigationButton, NavigationIcon } from '../common'
 
 export const ShareButton = (): React.ReactElement => {
-  const handleClick = useCallback((e: React.MouseEvent<HTMLButtonElement>) => {
+  const handleClick = useCallback((_e: React.MouseEvent<HTMLButtonElement>) => {
     console.log('ShareButton')
   }, [])
 

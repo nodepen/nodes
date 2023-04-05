@@ -1,4 +1,3 @@
-import type * as NodePen from '@nodepen/core'
 import { DIMENSIONS } from '@/constants'
 
 const { NODE_INTERNAL_PADDING, NODE_LABEL_WIDTH, NODE_PORT_MINIMUM_WIDTH } = DIMENSIONS

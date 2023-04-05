@@ -10,7 +10,7 @@ type DocumentViewProps = {
   editable: boolean
 }
 
-const DocumentView = ({ editable }: DocumentViewProps): React.ReactElement | null => {
+const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement | null => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
   const cameraProps = useCameraProps()
 

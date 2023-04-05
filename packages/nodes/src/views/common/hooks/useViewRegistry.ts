@@ -1,14 +1,14 @@
-import { useRef, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useStore, useDispatch } from '$'
 import { useViewPosition } from './useViewPosition'
 
 type ViewConfig = {
-    key: string
-    label: string
+  key: string
+  label: string
 }
 
 type ViewState = {
-    viewPosition: number | null
+  viewPosition: number | null
 }
 
 /**
@@ -16,36 +16,36 @@ type ViewState = {
  * state and emit information about its relationship to other views.
  */
 export const useViewRegistry = (config: ViewConfig): ViewState => {
-    const { key, label } = config
+  const { key, label } = config
 
-    const { apply } = useDispatch()
+  const { apply } = useDispatch()
 
-    useEffect(() => {
-        // Get current view information
-        const currentViews = useStore.getState().registry.views
+  useEffect(() => {
+    // Get current view information
+    const currentViews = useStore.getState().registry.views
 
-        if (key in currentViews) {
-            return
-        }
+    if (key in currentViews) {
+      return
+    }
 
-        const nextViewIndex = Object.entries(currentViews).length
+    const nextViewIndex = Object.entries(currentViews).length
 
-        console.log(`⚙️⚙️⚙️ Registered view [${key}] at position [${nextViewIndex}]`)
+    console.log(`⚙️⚙️⚙️ Registered view [${key}] at position [${nextViewIndex}]`)
 
-        // Add view to registry
-        apply((state) => {
-            state.registry.views[key] = {
-                label,
-                order: nextViewIndex
-            }
+    // Add view to registry
+    apply((state) => {
+      state.registry.views[key] = {
+        label,
+        order: nextViewIndex,
+      }
 
-            if (!state.layout.activeView) {
-                state.layout.activeView = key
-            }
-        })
+      if (!state.layout.activeView) {
+        state.layout.activeView = key
+      }
     })
+  })
 
-    const viewPosition = useViewPosition(key)
+  const viewPosition = useViewPosition(key)
 
-    return { viewPosition }
+  return { viewPosition }
 }

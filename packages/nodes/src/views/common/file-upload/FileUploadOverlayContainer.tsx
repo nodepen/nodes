@@ -5,7 +5,7 @@ import { COLORS } from '@/constants'
 import { useReducedMotion } from '@/hooks'
 
 const FileUploadOverlayContainer = (): React.ReactElement => {
-  const { isActive, activeFile, uploadStatus } = useStore((state) => state.layout.fileUpload)
+  const { isActive } = useStore((state) => state.layout.fileUpload)
 
   const { apply } = useDispatch()
   const { onFileUpload } = useCallbacks()

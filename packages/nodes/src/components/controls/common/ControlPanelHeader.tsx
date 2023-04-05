@@ -7,7 +7,7 @@ type ControlPanelHeaderProps = {
     onClickMenu: () => void
 }
 
-export const ControlPanelHeader = ({ icon, label, sublabel, onClickMenu }: ControlPanelHeaderProps) => {
+export const ControlPanelHeader = ({ icon, label, sublabel }: ControlPanelHeaderProps) => {
     return (
         <div className={`np-w-full ${sublabel ? 'np-mb-3' : 'np-mb-4'} last:np-mb-0 np-flex np-flex-col np-justify-start`}>
             <div className='np-w-full np-h-6 np-flex np-justify-start np-items-center'>
