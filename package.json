@@ -15,7 +15,10 @@
     "dev": "npx turbo run dev --no-daemon",
     "dev:speckle": "cd apps/speckle-server && yarn dev:docker:up && yarn dev",
     "dev:rhino": "cd apps/rhino-compute-server && dotnet watch",
-    "lint": "npx turbo run lint --no-daemon"
+    "lint": "npx turbo run lint --no-daemon --concurrency=1",
+    "lint:ci": "npx turbo run lint --no-daemon --concurrency=1 --filter=!./apps/*",
+    "test": "npx turbo run test --no-daemon",
+    "test:ci": "npx turbo run test --no-daemon --filter=./packages/nodes"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",

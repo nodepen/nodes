@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "link:react": "npm link ../../../node_modules/react"
+    "test": "echo \"ok\""
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0",
