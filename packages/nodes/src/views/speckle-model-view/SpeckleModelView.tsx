@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { Viewer, DefaultViewerParams, ViewerEvent } from '@speckle/viewer'
+import { Viewer, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 import { useStore } from '$'
