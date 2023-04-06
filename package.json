@@ -14,7 +14,11 @@
     "build:ci": "npx turbo run build --filter=!./apps/*",
     "dev": "npx turbo run dev --no-daemon",
     "dev:speckle": "cd apps/speckle-server && yarn dev:docker:up && yarn dev",
-    "dev:rhino": "cd apps/rhino-compute-server && dotnet watch"
+    "dev:rhino": "cd apps/rhino-compute-server && dotnet watch",
+    "lint": "npx turbo run lint --no-daemon --concurrency=1",
+    "lint:ci": "npx turbo run lint --no-daemon --concurrency=1 --filter=!./apps/*",
+    "test": "npx turbo run test --no-daemon",
+    "test:ci": "npx turbo run test --no-daemon --filter=./packages/nodes"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
@@ -24,6 +28,8 @@
     "copyfiles": "^2.4.1",
     "eslint": "^8.32.0",
     "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-jsx-a11y": "^6.7.1",
+    "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.3",
     "ts-jest": "^29.1.0",
     "tsc-alias": "^1.8.3",

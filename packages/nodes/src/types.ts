@@ -1,4 +1,4 @@
 export type NodePortReference = {
-    nodeInstanceId: string
-    portInstanceId: string
+  nodeInstanceId: string
+  portInstanceId: string
 }

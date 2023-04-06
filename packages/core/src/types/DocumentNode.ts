@@ -1,4 +1,4 @@
-import type { DataTree } from "./data"
+import type { DataTree } from './data'
 
 export type DocumentNode = {
   instanceId: string

@@ -76,7 +76,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
 
   const currentValue = tryGetSingleValue(node.values[portInstanceId]) ?? tryGetSingleValue(solutionValues)
 
-  const { name, nickName, typeName } = portTemplate
+  const { name } = portTemplate
 
   const valueString = getDataTreeValueString(currentValue)
 

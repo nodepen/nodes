@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "link:react": "npm link ../../../node_modules/react"
+    "test": "echo \"ok\""
   },
   "dependencies": {
     "@nodepen/core": "^1.1.0",
@@ -23,8 +23,6 @@
     "eslint": "8.27.0",
     "eslint-config-next": "^13.2.4",
     "eslint-config-prettier": "^8.8.0",
-    "eslint-plugin-jsx-a11y": "^6.7.1",
-    "eslint-plugin-prettier": "^4.2.1",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7"
   }

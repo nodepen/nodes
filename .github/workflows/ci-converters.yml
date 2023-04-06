@@ -1,10 +1,11 @@
-name: ci-converters
+name: converters
 
 on: [push]
 
 jobs:
-  build-converters:
-    name: build-converters
+
+  build:
+    name: build
     runs-on: ubuntu-latest
 
     steps:

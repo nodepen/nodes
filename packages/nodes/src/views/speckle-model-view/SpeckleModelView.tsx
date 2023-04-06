@@ -1,5 +1,5 @@
 import React, { useRef, useEffect } from 'react'
-import { Viewer, DefaultViewerParams, ViewerEvent } from '@speckle/viewer'
+import { Viewer, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 import { useStore } from '$'
@@ -39,7 +39,7 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
 
     viewerRef.current = viewer
 
-    viewer.init().then(() => {
+    void viewer.init().then(() => {
       viewerRef.current = viewer
     })
 
@@ -71,9 +71,7 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
       await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${objectId}`, stream.token)
     }
 
-    refreshObjects().then(() => {
-      // Do nothing
-    })
+    void refreshObjects()
   }, [objectIds])
 
   return (

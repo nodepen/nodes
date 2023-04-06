@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Layer } from '@/views/common'
 import { useStore } from '$'
 import { ActiveViewControl, DocumentInfoControl, PinnedPortsControl, TemplateLibraryControl } from './panels'

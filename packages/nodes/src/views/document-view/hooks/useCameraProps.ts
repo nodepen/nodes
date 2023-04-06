@@ -11,7 +11,7 @@ type CameraProps = Pick<React.SVGProps<SVGElement>, 'viewBox' | 'width' | 'heigh
 export const useCameraProps = (): CameraProps => {
   const containerRef = useStore((state) => state.registry.canvasRoot)
 
-  const { aspect, position, zoom } = useStore((state) => state.camera)
+  const { position, zoom } = useStore((state) => state.camera)
 
   const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
     width: 1920,

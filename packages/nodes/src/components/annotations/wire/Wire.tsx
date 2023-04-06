@@ -1,7 +1,7 @@
 import React from 'react'
 import type { DataTreeStructure } from '@nodepen/core'
-import type { NodePortReference } from '@/types'
 import { COLORS } from '@/constants'
+import type { NodePortReference } from '@/types'
 import { useNodeAnchorPosition, usePortValues } from '@/hooks'
 import { getDataTreeStructure } from '@/utils/data-trees'
 import { distance, pointAt } from '@/utils/numerics'

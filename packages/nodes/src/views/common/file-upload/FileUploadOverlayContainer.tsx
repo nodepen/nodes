@@ -5,7 +5,7 @@ import { COLORS } from '@/constants'
 import { useReducedMotion } from '@/hooks'
 
 const FileUploadOverlayContainer = (): React.ReactElement => {
-  const { isActive, activeFile, uploadStatus } = useStore((state) => state.layout.fileUpload)
+  const { isActive } = useStore((state) => state.layout.fileUpload)
 
   const { apply } = useDispatch()
   const { onFileUpload } = useCallbacks()
@@ -15,7 +15,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
   const strokeWidth = isActive ? 160 : 0
   const r = isActive ? 20 : 100
 
-  const handleDragLeave = useCallback((e: React.DragEvent<SVGSVGElement>) => {
+  const handleDragLeave = useCallback((_e: React.DragEvent<SVGSVGElement>) => {
     apply((state) => {
       state.layout.fileUpload.isActive = false
     })
