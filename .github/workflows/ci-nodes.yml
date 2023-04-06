@@ -4,21 +4,6 @@ on: [push]
 
 jobs:
 
-  build:
-    name: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16
-          cache: "npm"
-      - name: Install dependencies
-        run: npm ci
-      - name: Build packages
-        run: npm run build:ci
-
   lint:
     name: lint
     runs-on: ubuntu-latest
@@ -46,5 +31,7 @@ jobs:
           cache: "npm"
       - name: Install dependencies
         run: npm ci
+      - name: Build packages
+        run: npm run build:ci
       - name: Lint packages
         run: npm run test:ci
