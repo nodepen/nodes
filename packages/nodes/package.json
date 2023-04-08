@@ -25,7 +25,7 @@
     "@nodepen/core": "^1.1.0",
     "@speckle/viewer": "^2.12.5",
     "immer": "^9.0.21",
-    "zustand": "^4.3.6"
+    "zustand": "^4.3.7"
   },
   "peerDependencies": {
     "react": "^18.0",
