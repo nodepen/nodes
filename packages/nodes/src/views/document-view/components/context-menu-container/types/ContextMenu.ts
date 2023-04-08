@@ -1,7 +1,8 @@
 import type { ContextMenuContext } from './ContextMenuContext'
 
 export type ContextMenu = {
-    position: {
+  /** Position in overlay space. */
+  position: {
         x: number
         y: number
     }
