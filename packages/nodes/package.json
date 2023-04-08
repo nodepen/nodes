@@ -35,7 +35,7 @@
     "@types/react": "^18.0.31",
     "@types/react-dom": "^18.0.11",
     "@types/three": "^0.150.0",
-    "autoprefixer": "^10.4.13",
+    "autoprefixer": "^10.4.14",
     "concurrently": "^8.0.1",
     "postcss": "^8.4.21",
     "tailwindcss": "^3.2.7"
