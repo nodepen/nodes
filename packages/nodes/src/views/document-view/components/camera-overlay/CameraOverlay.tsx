@@ -13,7 +13,7 @@ type CameraControlProps = {
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 
-  const { clearInterface, setCameraPosition, setCameraZoom } = useDispatch()
+  const { apply, clearInterface, setCameraPosition, setCameraZoom } = useDispatch()
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
   const zoom = useStoreRef((state) => state.camera.zoom)
@@ -187,17 +187,34 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     e.preventDefault()
   }
 
+  const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    const { pageX, pageY } = e
+
+    apply((state) => {
+      state.registry.contextMenus['add-node'] = {
+        position: {
+          x: pageX,
+          y: pageY
+        },
+        context: {
+          type: 'add-node'
+        }
+      }
+    })
+  }
+
   return (
     <div
       id="camera-control-overlay"
       className="np-w-full np-h-full np-pointer-events-auto"
       ref={cameraControlOverlayRef}
+      onContextMenu={handleContextMenu}
+      onDoubleClick={handleDoubleClick}
       onPointerDown={handlePointerDown}
       onPointerDownCapture={handlePointerDownCapture}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}
-      onContextMenu={handleContextMenu}
     >
       {children}
     </div>
