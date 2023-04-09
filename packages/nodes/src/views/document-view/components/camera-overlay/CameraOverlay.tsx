@@ -8,8 +8,6 @@ type CameraControlProps = {
   children?: React.ReactNode
 }
 
-// TODO: Give camera div pointer capture
-
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 
@@ -189,18 +187,33 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
   }
 
   const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
-    const { pageX, pageY } = e
+    switch (e.button) {
+      case 0: {
+        // Handle left mouse double click
+        const { pageX, pageY } = e
 
-    const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+        const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
 
-    apply((state) => {
-      state.registry.contextMenus['add-node'] = {
-        position: { x, y },
-        context: {
-          type: 'add-node'
-        }
+        apply((state) => {
+          state.registry.contextMenus['add-node'] = {
+            position: { x, y },
+            context: {
+              type: 'add-node'
+            }
+          }
+        })
+
+        break
       }
-    })
+      case 1: {
+        // Handle center mouse button double click
+        break
+      }
+      case 2: {
+        // Handle right mouse button double click
+        break
+      }
+    }
   }
 
   return (
