@@ -154,7 +154,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
     const vec = {
       x: cursorWorldX - cameraWorldX,
-      y: cursorWorldY - (cameraWorldY * -1),
+      y: cursorWorldY - cameraWorldY * -1,
     }
 
     const zoomDelta = nextZoom - zoom.current
@@ -198,8 +198,8 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
           state.registry.contextMenus['add-node'] = {
             position: { x, y },
             context: {
-              type: 'add-node'
-            }
+              type: 'add-node',
+            },
           }
         })
 

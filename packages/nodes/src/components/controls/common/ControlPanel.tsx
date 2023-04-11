@@ -7,12 +7,14 @@ type ControlPanelProps = {
 }
 
 export const ControlPanel = ({ children, disablePadding }: ControlPanelProps): React.ReactElement => {
-  const shadowTargetRef = usePseudoShadow("controls")
+  const shadowTargetRef = usePseudoShadow('controls')
 
   return (
     <div
       ref={shadowTargetRef}
-      className={`${disablePadding ? '' : 'np-p-4'} np-w-full np-mb-3 np-bg-green np-rounded-md np-shadow-main np-pointer-events-auto`}
+      className={`${
+        disablePadding ? '' : 'np-p-4'
+      } np-w-full np-mb-3 np-bg-green np-rounded-md np-shadow-main np-pointer-events-auto`}
     >
       {children}
     </div>

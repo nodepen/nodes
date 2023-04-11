@@ -2,7 +2,14 @@ import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { useDebugRender, useDraggableNode } from '../hooks'
-import { GenericNodeBody, GenericNodeLabel, GenericNodePorts, GenericNodeShadow, GenericNodeSkeleton, GenericNodeWires } from './components'
+import {
+  GenericNodeBody,
+  GenericNodeLabel,
+  GenericNodePorts,
+  GenericNodeShadow,
+  GenericNodeSkeleton,
+  GenericNodeWires,
+} from './components'
 
 type GenericNodeProps = {
   id: string

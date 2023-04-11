@@ -3,33 +3,40 @@ import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 
 export const useNodePortTemplate = (nodeInstanceId: string, portInstanceId: string): NodePen.PortTemplate | null => {
-    const template = useStore((state) => {
-        const node = state.document.nodes[nodeInstanceId]
+  const template = useStore((state) => {
+    const node = state.document.nodes[nodeInstanceId]
 
-        if (!node) {
-            return null
-        }
+    if (!node) {
+      return null
+    }
 
-        const nodeTemplate = state.templates[node.templateId]
+    const nodeTemplate = state.templates[node.templateId]
 
-        if (!nodeTemplate) {
-            return null
-        }
+    if (!nodeTemplate) {
+      return null
+    }
 
-        const direction = Object.keys(node.inputs).includes(portInstanceId) ? 'input' : Object.keys(node.outputs).includes(portInstanceId) ? 'output' : null
+    const direction = Object.keys(node.inputs).includes(portInstanceId)
+      ? 'input'
+      : Object.keys(node.outputs).includes(portInstanceId)
+      ? 'output'
+      : null
 
-        if (!direction) {
-            return null
-        }
+    if (!direction) {
+      return null
+    }
 
-        const portTemplate = direction === 'input' ? nodeTemplate.inputs[node.inputs[portInstanceId]] : nodeTemplate.outputs[node.outputs[portInstanceId]]
+    const portTemplate =
+      direction === 'input'
+        ? nodeTemplate.inputs[node.inputs[portInstanceId]]
+        : nodeTemplate.outputs[node.outputs[portInstanceId]]
 
-        if (!portTemplate) {
-            return null
-        }
+    if (!portTemplate) {
+      return null
+    }
 
-        return portTemplate
-    }, shallow)
+    return portTemplate
+  }, shallow)
 
-    return template
+  return template
 }

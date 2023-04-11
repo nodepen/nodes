@@ -5,18 +5,18 @@ import { useStore } from '$'
  * @returns `null` if anchor does not exist.
  */
 export const useNodeAnchorPosition = (nodeInstanceId: string, anchorId: string): { x: number; y: number } | null => {
-    const nodePosition = useStore((state) => state.document.nodes[nodeInstanceId]?.position)
-    const anchorDelta = useStore((state) => state.document.nodes[nodeInstanceId]?.anchors?.[anchorId])
+  const nodePosition = useStore((state) => state.document.nodes[nodeInstanceId]?.position)
+  const anchorDelta = useStore((state) => state.document.nodes[nodeInstanceId]?.anchors?.[anchorId])
 
-    if (!nodePosition || !anchorDelta) {
-        return null
-    }
+  if (!nodePosition || !anchorDelta) {
+    return null
+  }
 
-    const { x, y } = nodePosition
-    const { dx, dy } = anchorDelta
+  const { x, y } = nodePosition
+  const { dx, dy } = anchorDelta
 
-    return {
-        x: x + dx,
-        y: y + dy,
-    }
+  return {
+    x: x + dx,
+    y: y + dy,
+  }
 }

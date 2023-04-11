@@ -6,28 +6,29 @@ import { FlattenButton, GraftButton, PinButton, SetValueButton, SimplifyButton }
 import { getPortContextMenuButtons } from './utils'
 
 type PortContextMenuProps = {
-    position: ContextMenu['position']
-    context: PortContextMenuContext
+  position: ContextMenu['position']
+  context: PortContextMenuContext
 }
 
 export const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
-    const { nodeInstanceId, portInstanceId, portTemplate } = context
-    const { name, nickName } = portTemplate
+  const { nodeInstanceId, portInstanceId, portTemplate } = context
+  const { name, nickName } = portTemplate
 
-    const { enablePin, enableSetValue } = getPortContextMenuButtons(context)
+  const { enablePin, enableSetValue } = getPortContextMenuButtons(context)
 
-    return (
-        <MenuBody position={position}>
-            <MenuHeader icon={<PortTypeIcon />} label={`${name} (${nickName})`} />
-            {enablePin ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} /> : null}
-            {enableSetValue ? <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} /> : null}
-            {enablePin || enableSetValue ? <MenuDivider /> : null}
-            <FlattenButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
-            <GraftButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
-            <SimplifyButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
-        </MenuBody>
-    )
+  return (
+    <MenuBody position={position}>
+      <MenuHeader icon={<PortTypeIcon />} label={`${name} (${nickName})`} />
+      {enablePin ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} /> : null}
+      {enableSetValue ? (
+        <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} />
+      ) : null}
+      {enablePin || enableSetValue ? <MenuDivider /> : null}
+      <FlattenButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+      <GraftButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+      <SimplifyButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+    </MenuBody>
+  )
 }
-
 
 export default PortContextMenu

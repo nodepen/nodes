@@ -1,6 +1,6 @@
 export const library = {
-  'grasshopper': {
+  grasshopper: {
     '1': null,
-    '2': null
-  }
+    '2': null,
+  },
 }

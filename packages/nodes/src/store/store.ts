@@ -7,17 +7,13 @@ import type { NodesAppDispatch } from './dispatch'
 
 export type NodesAppStore = NodesAppState & NodesAppDispatch
 
-type NodesAppMiddleware = [
-  ['zustand/immer', never]
-]
+type NodesAppMiddleware = [['zustand/immer', never]]
 
 export const useStore = create<NodesAppStore, NodesAppMiddleware>(
-  withImmer(
-    (set, get) => ({
-      ...initialState,
-      ...createDispatch(set, get)
-    })
-  )
+  withImmer((set, get) => ({
+    ...initialState,
+    ...createDispatch(set, get),
+  }))
 )
 
 export const useCallbacks = () => {
