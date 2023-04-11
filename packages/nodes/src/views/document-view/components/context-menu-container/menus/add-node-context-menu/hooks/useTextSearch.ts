@@ -2,7 +2,15 @@ import { levenshteinDistance } from '../utils'
 import { useMemo } from 'react'
 
 type RequireStringValue<T extends Record<string, unknown>> = {
-  [Property in keyof T as T[Property] extends string ? (Property extends string ? Property : never) : never]: string
+  [Property in keyof T as T[Property] extends string
+    ? Property extends string
+      ? Property
+      : never
+    : T[Property] extends string[]
+    ? Property extends string
+      ? Property
+      : never
+    : never]: string | string[]
 }
 
 type OnlyStringKeys<T extends Record<string, unknown>> = keyof Pick<
@@ -28,7 +36,9 @@ export const useTextSearch = <T extends Record<string, unknown>>(
   const getSortValue = (item: T, search: string): number => {
     return Math.min(
       ...keys.map((key) => {
-        const targetValue = item[key]
+        const targetValue = item[key] as RequireStringValue<T>[keyof RequireStringValue<T>]
+
+        // TODO: targetValue is string | string[]
 
         if (typeof targetValue !== 'string') {
           return Number.MAX_SAFE_INTEGER
