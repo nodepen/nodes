@@ -30,6 +30,8 @@ type SearchResult<T> = {
   exactMatch?: T
 }
 
+// TODO: Use a better text comparison algorithm
+
 /**
  * @param items The collection of objects to run the search against.
  * @param search The string value to compare object properties against.
@@ -61,14 +63,12 @@ export const useTextSearch = <T extends Record<string, unknown>>(
           }
         }
       }, [] as string[])
-      .map((term) => levenshteinDistance(term, search))
+      .map((term) => levenshteinDistance(term.toLowerCase(), search.toLowerCase()))
 
     return Math.min(...sortValues)
   }
 
-  const searchCandidates = useMemo(() => {
-    return structuredClone(items)
-  }, [items])
+  const searchCandidates = items
 
   const result: SearchResult<T> = useMemo(() => {
     const defaultResult: SearchResult<T> = {
