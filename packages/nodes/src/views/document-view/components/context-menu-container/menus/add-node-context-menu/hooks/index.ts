@@ -1,0 +1,1 @@
+export { useTextSearch } from './useTextSearch'

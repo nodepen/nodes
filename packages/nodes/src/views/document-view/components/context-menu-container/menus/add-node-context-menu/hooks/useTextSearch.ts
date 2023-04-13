@@ -1,7 +1,11 @@
 import { levenshteinDistance } from '../utils'
 import { useMemo } from 'react'
 
-type RequireStringValue<T extends Record<string, unknown>> = {
+/**
+ * Given a generic record type T, map T to a subset of T where the only keys are those that are
+ * for a value of type `string` or `string[]` in T.
+ */
+type PickStringOrStringArrayValue<T extends Record<string, unknown>> = {
   [Property in keyof T as T[Property] extends string
     ? Property extends string
       ? Property
@@ -13,9 +17,12 @@ type RequireStringValue<T extends Record<string, unknown>> = {
     : never]: string | string[]
 }
 
-type OnlyStringKeys<T extends Record<string, unknown>> = keyof Pick<
+/**
+ * Given a generic record type T, return the string union type of its keys that are strings.
+ */
+type RequireStringKeys<T extends Record<string | number | symbol, unknown>> = keyof Pick<
   T,
-  Exclude<keyof RequireStringValue<T>, number | symbol>
+  Exclude<keyof T, number | symbol>
 >
 
 type SearchResult<T> = {
@@ -31,22 +38,32 @@ type SearchResult<T> = {
 export const useTextSearch = <T extends Record<string, unknown>>(
   items: T[],
   search: string,
-  keys: OnlyStringKeys<T>[]
+  keys: RequireStringKeys<PickStringOrStringArrayValue<T>>[]
 ): SearchResult<T> => {
   const getSortValue = (item: T, search: string): number => {
-    return Math.min(
-      ...keys.map((key) => {
-        const targetValue = item[key] as RequireStringValue<T>[keyof RequireStringValue<T>]
+    const sortValues = keys
+      .reduce((allTerms, key) => {
+        const targetValue = item[key] as PickStringOrStringArrayValue<T>[keyof PickStringOrStringArrayValue<T>]
 
-        // TODO: targetValue is string | string[]
+        switch (typeof targetValue) {
+          case 'object': {
+            if (!Array.isArray(targetValue)) {
+              return allTerms
+            }
 
-        if (typeof targetValue !== 'string') {
-          return Number.MAX_SAFE_INTEGER
+            return [...allTerms, ...targetValue]
+          }
+          case 'string': {
+            return [...allTerms, targetValue]
+          }
+          default: {
+            return allTerms
+          }
         }
+      }, [] as string[])
+      .map((term) => levenshteinDistance(term, search))
 
-        return levenshteinDistance(targetValue, search)
-      })
-    )
+    return Math.min(...sortValues)
   }
 
   const searchCandidates = useMemo(() => {
