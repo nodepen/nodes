@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useTransition, useRef } from 'react'
+import React, { useCallback, useState, useTransition, useRef, useEffect } from 'react'
 import { useStore } from '$'
 import type { ContextMenu } from '../../types'
 import { MenuBody, MenuButton } from '../../common'
@@ -40,6 +40,18 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
   const searchResults = exactMatch
     ? [...candidates.slice(0, 3).reverse(), exactMatch]
     : candidates.slice(0, 4).reverse()
+
+  useEffect(() => {
+    const element = searchQueryInputRef.current
+
+    if (!element) {
+      return
+    }
+
+    queueMicrotask(() => {
+      element.focus()
+    })
+  }, [])
 
   return (
     <MenuBody position={menuPosition} animate={false}>

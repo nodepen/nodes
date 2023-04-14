@@ -29,6 +29,9 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
   const tabsContainerRef = useRef<HTMLDivElement>(null)
 
   const remapVerticalScroll = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    // Based on post by StackOverflow user Guido Bouman 🙏
+    // https://stackoverflow.com/a/59680347
+
     if (!e.deltaY) {
       return
     }
@@ -49,8 +52,8 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
             key={`template-library-tab-button-${category.toLowerCase()}`}
             className={`${category === activeCategory
                 ? 'np-bg-green np-shadow-main np-sticky np-left-0 np-right-0 np-z-20 np-translate-y-[-2px]'
-                : 'np-z-10 np-translate-y-[-1px]'
-              } np-inline-block np-box-border np-mr-1 last:np-mr-2 np-rounded-sm hover:np-bg-green`}
+                : 'np-z-10 np-translate-y-[-1px] hover:np-bg-grey'
+              } np-inline-block np-box-border np-mr-1 last:np-mr-2 np-rounded-sm`}
             onClick={() => {
               setActiveCategory(category)
             }}
