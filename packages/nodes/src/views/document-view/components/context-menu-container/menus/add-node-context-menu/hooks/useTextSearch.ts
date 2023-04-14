@@ -79,21 +79,23 @@ export const useTextSearch = <T extends Record<string, unknown>>(
       return defaultResult
     }
 
-    const exactMatch = searchCandidates.find((candidate) => {
-      for (const key of keys) {
-        const value = candidate[key]
+    const exactMatch = undefined
 
-        if (typeof value !== 'string') {
-          continue
-        }
+    // const exactMatch = searchCandidates.find((candidate) => {
+    //   for (const key of keys) {
+    //     const value = candidate[key]
 
-        if (value.toLowerCase() === search) {
-          return true
-        }
-      }
+    //     if (typeof value !== 'string') {
+    //       continue
+    //     }
 
-      return false
-    })
+    //     if (value.toLowerCase() === search) {
+    //       return true
+    //     }
+    //   }
+
+    //   return false
+    // })
 
     const candidates = searchCandidates.sort((a, b) => getSortValue(a, search) - getSortValue(b, search))
 
