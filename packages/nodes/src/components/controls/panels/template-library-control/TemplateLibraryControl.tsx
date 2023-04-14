@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { createInstance, getIconAsImage, groupTemplatesByCategory } from '@/utils/templates'
 import { ControlPanel } from '../../common'
@@ -26,24 +26,36 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
 
   const activeCategoryTemplatesBySubcategory = templatesByCategory[activeCategory ?? ''] ?? {}
 
+  const tabsContainerRef = useRef<HTMLDivElement>(null)
+
+  const remapVerticalScroll = useCallback((e: React.WheelEvent<HTMLDivElement>) => {
+    if (!e.deltaY) {
+      return
+    }
+
+    e.currentTarget.scrollLeft += e.deltaY * 0.2 + e.deltaX
+    e.preventDefault()
+  }, [])
+
   return (
     <ControlPanel>
       <div
+        ref={tabsContainerRef}
         className={`np-shadow-input np-bg-pale np-w-full np-p-2 np-pt-1 np-pb-0 np-mb-2 np-rounded-sm np-overflow-auto np-whitespace-nowrap no-scrollbar`}
+        onWheel={remapVerticalScroll}
       >
         {templateCategories.map((category) => (
           <button
             key={`template-library-tab-button-${category.toLowerCase()}`}
-            className={`${
-              category === activeCategory
-                ? 'np-bg-green np-border-b-green np-border-b-2 np-shadow-main np-sticky np-left-0 np-right-0 np-z-20'
-                : 'np-z-10'
-            } np-inline-block np-box-border np-h-6 np-mr-1 last:np-mr-2 np-rounded-sm np-rounded-br-none np-rounded-bl-none hover:np-border-b-2 hover:np-border-b-green`}
+            className={`${category === activeCategory
+                ? 'np-bg-green np-shadow-main np-sticky np-left-0 np-right-0 np-z-20 np-translate-y-[-2px]'
+                : 'np-z-10 np-translate-y-[-1px]'
+              } np-inline-block np-box-border np-mr-1 last:np-mr-2 np-rounded-sm hover:np-bg-green`}
             onClick={() => {
               setActiveCategory(category)
             }}
           >
-            <p className="np-pl-2 np-pr-2 np-font-sans np-text-sm np-text-dark np-select-none -np-translate-y-px hover:np-translate-y-[-2px]">
+            <p className="np-pl-2 np-pr-2 np-font-sans np-text-sm np-text-dark np-select-none -np-translate-y-px">
               {category}
             </p>
           </button>
