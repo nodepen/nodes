@@ -1,7 +1,9 @@
 import React, { useCallback, useState, useTransition, useRef, useEffect } from 'react'
+import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import type { ContextMenu } from '../../types'
 import { MenuBody, MenuButton } from '../../common'
+import { clamp } from '@/utils/numerics'
 import { getIconAsImage } from '@/utils/templates'
 import { useTextSearch } from './hooks'
 
@@ -53,9 +55,35 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     })
   }, [])
 
-  const [internalSelection, setInternalSelection] = useState<0 | 1 | 2 | 3>(3)
+  const [internalSelection, setInternalSelection] = useState<number>(3)
   const [preferHoverSelection, setPreferHoverSelection] = useState(false)
   const visibleSelection = preferHoverSelection ? null : internalSelection
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>): void => {
+    switch (e.key) {
+      case 'ArrowUp': {
+        setInternalSelection(clamp(internalSelection - 1, 0, 3))
+        break
+      }
+      case 'ArrowDown': {
+        setInternalSelection(clamp(internalSelection + 1, 0, 3))
+        break
+      }
+      case 'Enter': {
+        if (preferHoverSelection) {
+          return
+        }
+
+        handleAddNode(searchResults[internalSelection])
+
+        break
+      }
+    }
+  }
+
+  const handleAddNode = (template: NodePen.NodeTemplate): void => {
+    console.log(template)
+  }
 
   return (
     <MenuBody position={menuPosition} animate={false}>
@@ -66,7 +94,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
             icon={<img src={getIconAsImage(template)} alt={`${template.name}`} />}
             label={template.name}
             isSelected={i === visibleSelection}
-            action={() => ''}
+            action={() => handleAddNode(template)}
           />
         ))}
       </div>
@@ -75,6 +103,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         className="np-w-full np-h-8 np-pl-2 np-pr-2 np-mt-1 np-font-sans np-text-md np-text-dark np-text-left np-bg-pale np-shadow-input no-focus"
         type="text"
         onChange={debounceUpdateSearchQuery}
+        onKeyDown={handleKeyDown}
       />
     </MenuBody>
   )
