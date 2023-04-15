@@ -2,35 +2,43 @@
 @tailwind utilities;
 
 @font-face {
-    font-family: Barlow;
-    font-style: normal;
-    font-weight: 400;
-    src: url('assets/barlow-semibold.ttf');
+  font-family: Barlow;
+  font-style: normal;
+  font-weight: 400;
+  src: url('assets/barlow-semibold.ttf');
 }
 
 @font-face {
-    font-family: Overpass;
-    font-style: normal;
-    font-weight: 800;
-    src: url('assets/overpass-bold.ttf')
+  font-family: Overpass;
+  font-style: normal;
+  font-weight: 800;
+  src: url('assets/overpass-bold.ttf');
 }
 
 @font-face {
-    font-family: Overpass Mono;
-    font-style: normal;
-    font-weight: 800;
-    src: url('assets/overpassmono-bold.ttf')
+  font-family: Overpass Mono;
+  font-style: normal;
+  font-weight: 800;
+  src: url('assets/overpassmono-bold.ttf');
 }
 
 :root {
-    --np-active-menu-height: 100%;
+  --np-active-menu-height: 100%;
 }
 
 .no-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .no-scrollbar::-webkit-scrollbar {
-    display: none;
+  display: none;
+}
+
+.no-focus:focus {
+  outline: none;
+}
+
+input:focus {
+  outline: 1px solid #7bbfa5;
 }

@@ -65,7 +65,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
       ))}
       <input
         ref={searchQueryInputRef}
-        className="np-w-full np-h-8 np-pl-2 np-pr-2 np-font-sans np-text-md np-text-dark np-text-left np-bg-pale np-shadow-input"
+        className="np-w-full np-h-8 np-pl-2 np-pr-2 np-font-sans np-text-md np-text-dark np-text-left np-bg-pale np-shadow-input no-focus"
         type="text"
         onChange={debounceUpdateSearchQuery}
       />
@@ -75,7 +75,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
 const useDebounceCallback = (callback: () => void, delay: number): (() => void) => {
   const internalTimeout = useRef<ReturnType<typeof setTimeout>>()
-
+  //
   const internalCallback = useCallback(() => {
     if (internalTimeout.current) {
       clearTimeout(internalTimeout.current)
