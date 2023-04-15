@@ -53,19 +53,26 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     })
   }, [])
 
+  const [internalSelection, setInternalSelection] = useState<0 | 1 | 2 | 3>(3)
+  const [preferHoverSelection, setPreferHoverSelection] = useState(false)
+  const visibleSelection = preferHoverSelection ? null : internalSelection
+
   return (
     <MenuBody position={menuPosition} animate={false}>
-      {searchResults.map((template, i) => (
-        <MenuButton
-          key={`add-node-menu-entry-${i}-${template.guid}`}
-          icon={<img src={getIconAsImage(template)} alt={`${template.name}`} />}
-          label={template.name}
-          action={() => ''}
-        />
-      ))}
+      <div onPointerEnter={() => setPreferHoverSelection(true)} onPointerLeave={() => setPreferHoverSelection(false)}>
+        {searchResults.map((template, i) => (
+          <MenuButton
+            key={`add-node-menu-entry-${i}-${template.guid}`}
+            icon={<img src={getIconAsImage(template)} alt={`${template.name}`} />}
+            label={template.name}
+            isSelected={i === visibleSelection}
+            action={() => ''}
+          />
+        ))}
+      </div>
       <input
         ref={searchQueryInputRef}
-        className="np-w-full np-h-8 np-pl-2 np-pr-2 np-font-sans np-text-md np-text-dark np-text-left np-bg-pale np-shadow-input no-focus"
+        className="np-w-full np-h-8 np-pl-2 np-pr-2 np-mt-1 np-font-sans np-text-md np-text-dark np-text-left np-bg-pale np-shadow-input no-focus"
         type="text"
         onChange={debounceUpdateSearchQuery}
       />
