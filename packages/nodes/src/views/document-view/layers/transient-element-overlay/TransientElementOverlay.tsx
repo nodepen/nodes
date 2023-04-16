@@ -1,10 +1,10 @@
 import React from 'react'
 import { useStore } from '$'
-import { AddNodeContextMenu, NodeContextMenu, PortContextMenu } from './menus'
+import { AddNodeContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
 import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
 
-const ContextMenuContainer = () => {
+const TransientElementOverlay = () => {
   const menus = useStore((state) => Object.entries(state.registry.contextMenus))
   const prefersReducedMotion = useReducedMotion()
 
@@ -41,4 +41,4 @@ const ContextMenuContainer = () => {
   )
 }
 
-export default React.memo(ContextMenuContainer)
+export default React.memo(TransientElementOverlay)

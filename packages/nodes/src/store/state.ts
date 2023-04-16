@@ -1,7 +1,7 @@
 import React from 'react'
 import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
-import type { ContextMenu } from '@/views/document-view/components/context-menu-container/types'
+import type { ContextMenu } from '@/views/document-view/layers/transient-element-overlay/types'
 
 export type NodesAppState = {
   document: NodePen.Document

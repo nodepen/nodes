@@ -87,7 +87,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         }
       }
     },
-    [internalSelection]
+    [internalSelection, searchResults]
   )
 
   const handleAddNode = (template: NodePen.NodeTemplate): void => {
