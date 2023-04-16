@@ -1,11 +1,13 @@
 import React, { useCallback, useState, useTransition, useRef, useEffect } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { useStore } from '$'
+import { useDispatch, useStore } from '$'
 import type { ContextMenu } from '../../types'
 import { MenuBody, MenuButton } from '../../common'
 import { clamp } from '@/utils/numerics'
-import { getIconAsImage } from '@/utils/templates'
+import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useTextSearch } from './hooks'
+import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
+import { useOverlaySpaceToWorldSpace } from '@/hooks'
 
 type AddNodeContextMenuProps = {
   position: ContextMenu['position']
@@ -13,6 +15,9 @@ type AddNodeContextMenuProps = {
 
 export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMenuProps) => {
   const templates = useStore((state) => Object.values(state.templates))
+  const { apply } = useDispatch()
+
+  const overlaySpaceToWorldSpace = useOverlaySpaceToWorldSpace()
 
   const menuPosition = {
     x: eventPosition.x - 192 / 2,
@@ -59,30 +64,53 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
   const [preferHoverSelection, setPreferHoverSelection] = useState(false)
   const visibleSelection = preferHoverSelection ? null : internalSelection
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>): void => {
-    switch (e.key) {
-      case 'ArrowUp': {
-        setInternalSelection(clamp(internalSelection - 1, 0, 3))
-        break
-      }
-      case 'ArrowDown': {
-        setInternalSelection(clamp(internalSelection + 1, 0, 3))
-        break
-      }
-      case 'Enter': {
-        if (preferHoverSelection) {
-          return
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLDivElement>): void => {
+      switch (e.key) {
+        case 'ArrowUp': {
+          setInternalSelection(clamp(internalSelection - 1, 0, 3))
+          break
         }
+        case 'ArrowDown': {
+          setInternalSelection(clamp(internalSelection + 1, 0, 3))
+          break
+        }
+        case 'Enter': {
+          if (preferHoverSelection) {
+            return
+          }
 
-        handleAddNode(searchResults[internalSelection])
+          handleAddNode(searchResults[internalSelection])
 
-        break
+          break
+        }
       }
-    }
-  }
+    },
+    [internalSelection]
+  )
 
   const handleAddNode = (template: NodePen.NodeTemplate): void => {
-    console.log(template)
+    const nodeInstance = createInstance(template)
+
+    const nodeWidth = getNodeWidth()
+    const nodeHeight = getNodeHeight(template)
+
+    const [centerX, centerY] = overlaySpaceToWorldSpace(eventPosition.x, eventPosition.y)
+
+    const nodePosition = {
+      x: centerX - nodeWidth / 2,
+      y: centerY - nodeHeight / 2,
+    }
+
+    nodeInstance.position = nodePosition
+
+    apply((state) => {
+      // Add node to document
+      state.document.nodes[nodeInstance.instanceId] = nodeInstance
+
+      // Clear menu from interface
+      state.registry.contextMenus = {}
+    })
   }
 
   return (
