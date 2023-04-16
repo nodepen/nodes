@@ -8,6 +8,7 @@ import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useTextSearch } from './hooks'
 import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
+import { AddNodeButton } from './components'
 
 type AddNodeContextMenuProps = {
   position: ContextMenu['position']
@@ -117,10 +118,9 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     <MenuBody position={menuPosition} animate={false}>
       <div onPointerEnter={() => setPreferHoverSelection(true)} onPointerLeave={() => setPreferHoverSelection(false)}>
         {searchResults.map((template, i) => (
-          <MenuButton
+          <AddNodeButton
             key={`add-node-menu-entry-${i}-${template.guid}`}
-            icon={<img src={getIconAsImage(template)} alt={`${template.name}`} />}
-            label={template.name}
+            template={template}
             isSelected={i === visibleSelection}
             action={() => handleAddNode(template)}
           />
@@ -139,7 +139,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
 const useDebounceCallback = (callback: () => void, delay: number): (() => void) => {
   const internalTimeout = useRef<ReturnType<typeof setTimeout>>()
-  //
+
   const internalCallback = useCallback(() => {
     if (internalTimeout.current) {
       clearTimeout(internalTimeout.current)

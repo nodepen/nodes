@@ -1,4 +1,5 @@
 export { useImperativeEvent } from './useImperativeEvent'
+export { useLongHover } from './useLongHover'
 export { useNodeAnchorPosition } from './useNodeAnchorPosition'
 export { useNodePortTemplate } from './useNodePortTemplate'
 export { useOverlaySpaceToWorldSpace } from './useOverlaySpaceToWorldSpace'
