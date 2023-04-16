@@ -2,13 +2,14 @@ import React, { useCallback, useState, useTransition, useRef, useEffect } from '
 import type * as NodePen from '@nodepen/core'
 import { useDispatch, useStore } from '$'
 import type { ContextMenu } from '../../types'
-import { MenuBody, MenuButton } from '../../common'
+import { MenuBody } from '../../common'
 import { clamp } from '@/utils/numerics'
-import { createInstance, getIconAsImage } from '@/utils/templates'
+import { createInstance } from '@/utils/templates'
 import { useTextSearch } from './hooks'
 import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
 import { AddNodeButton } from './components'
+import { KEYS } from '@/constants'
 
 type AddNodeContextMenuProps = {
   position: ContextMenu['position']
@@ -114,9 +115,22 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     })
   }
 
+  const handlePointerEnterOptions = useCallback(() => {
+    setPreferHoverSelection(true)
+  }, [])
+
+  const handlePointerLeaveOptions = useCallback(() => {
+    // Remove any tooltips
+    apply((state) => {
+      delete state.registry.tooltips[KEYS.TOOLTIPS.ADD_NODE_MENU_OPTION_HOVER]
+    })
+
+    setPreferHoverSelection(false)
+  }, [])
+
   return (
     <MenuBody position={menuPosition} animate={false}>
-      <div onPointerEnter={() => setPreferHoverSelection(true)} onPointerLeave={() => setPreferHoverSelection(false)}>
+      <div onPointerEnter={handlePointerEnterOptions} onPointerLeave={handlePointerLeaveOptions}>
         {searchResults.map((template, i) => (
           <AddNodeButton
             key={`add-node-menu-entry-${i}-${template.guid}`}

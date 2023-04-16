@@ -4,6 +4,7 @@ import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { MenuButton } from '../../../common'
 import { getIconAsImage } from '@/utils/templates'
 import { useDispatch } from '@/store'
+import { KEYS } from '@/constants'
 
 type AddNodeButtonProps = {
   template: NodePen.NodeTemplate
@@ -34,7 +35,7 @@ export const AddNodeButton = ({ template, isSelected, action }: AddNodeButtonPro
     const [px, py] = pageSpaceToOverlaySpace(tooltipPagePosition.x, tooltipPagePosition.y)
 
     apply((state) => {
-      state.registry.tooltips['add-node-menu'] = {
+      state.registry.tooltips[KEYS.TOOLTIPS.ADD_NODE_MENU_OPTION_HOVER] = {
         configuration: {
           position: {
             x: px,

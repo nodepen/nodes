@@ -47,3 +47,9 @@ export const STYLES = {
     },
   },
 } as const
+
+export const KEYS = {
+  TOOLTIPS: {
+    ADD_NODE_MENU_OPTION_HOVER: 'add-node-menu',
+  },
+} as const
