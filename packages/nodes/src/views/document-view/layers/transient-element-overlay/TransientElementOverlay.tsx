@@ -3,9 +3,12 @@ import { useStore } from '$'
 import { AddNodeContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
 import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
+import { NodeTemplateSummaryTooltip } from './tooltips'
 
 const TransientElementOverlay = () => {
   const menus = useStore((state) => Object.entries(state.registry.contextMenus))
+  const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
+
   const prefersReducedMotion = useReducedMotion()
 
   return (
@@ -26,14 +29,29 @@ const TransientElementOverlay = () => {
             return null
           }
           case 'node': {
-            return <NodeContextMenu key={`context-menu-${key}`} position={menu.position} context={menu.context} />
+            return <NodeContextMenu key={`node-context-menu-${key}`} position={menu.position} context={menu.context} />
           }
           case 'port': {
-            return <PortContextMenu key={`context-menu-${key}`} position={menu.position} context={menu.context} />
+            return <PortContextMenu key={`node-context-menu-${key}`} position={menu.position} context={menu.context} />
           }
           default: {
             console.log(`🐍 Unhandled context menu type [${contextType}]`)
             return null
+          }
+        }
+      })}
+      {tooltips.map(([key, tooltip]) => {
+        const contextType = tooltip.context.type
+
+        switch (contextType) {
+          case 'node-template-summary': {
+            return (
+              <NodeTemplateSummaryTooltip
+                key={`node-template-summary`}
+                configuration={tooltip.configuration}
+                context={tooltip.context}
+              />
+            )
           }
         }
       })}

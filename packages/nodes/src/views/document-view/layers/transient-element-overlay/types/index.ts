@@ -1,3 +1,5 @@
 export type { ContextMenu } from './ContextMenu'
-export type { ContextMenuContext } from './ContextMenuContext'
-export type { PortContextMenuContext } from './ContextMenuContext'
+export type { ContextMenuContext, PortContextMenuContext } from './ContextMenuContext'
+export type { Tooltip } from './Tooltip'
+export type { TooltipConfiguration } from './TooltipConfiguration'
+export type { TooltipContext, NodeTemplateSummaryTooltipContext } from './TooltipContext'

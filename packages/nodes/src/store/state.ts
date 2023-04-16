@@ -1,7 +1,7 @@
 import React from 'react'
 import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
-import type { ContextMenu } from '@/views/document-view/layers/transient-element-overlay/types'
+import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
 
 export type NodesAppState = {
   document: NodePen.Document
@@ -53,6 +53,9 @@ export type NodesAppState = {
           resizeProxyKey?: string
         }
       }
+    }
+    tooltips: {
+      [tooltipKey: string]: Tooltip
     }
     views: {
       [viewKey: string]: {
@@ -125,6 +128,7 @@ export const initialState: NodesAppState = {
       },
       targets: {},
     },
+    tooltips: {},
     views: {},
     wires: {
       containerRef: null,
