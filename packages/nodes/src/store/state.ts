@@ -4,10 +4,10 @@ import type * as NodePen from '@nodepen/core'
 import type { ContextMenu } from '@/views/document-view/components/context-menu-container/types'
 
 export type NodesAppState = {
-  document: NodePen.Document,
+  document: NodePen.Document
   templates: {
     [templateId: string]: NodePen.NodeTemplate
-  },
+  }
   solution: NodePen.SolutionData
   camera: {
     /** container div innerWidth / innerHeight in screen space */
@@ -19,7 +19,7 @@ export type NodesAppState = {
     }
     /** ratio of screen space pixel to graph space unit */
     zoom: number
-  },
+  }
   layout: {
     fileUpload: {
       isActive: boolean
@@ -78,18 +78,18 @@ export const initialState: NodesAppState = {
     id: 'default-id',
     nodes: {},
     configuration: {
-      pinnedPorts: []
+      pinnedPorts: [],
     },
-    version: 1
+    version: 1,
   },
   templates: freeze({}),
   solution: freeze({
     id: 'initial',
     manifest: {
       runtimeMessages: {},
-      streamObjectIds: []
+      streamObjectIds: [],
     },
-    values: {}
+    values: {},
   }),
   camera: {
     aspect: 1.5,
@@ -103,17 +103,17 @@ export const initialState: NodesAppState = {
     fileUpload: {
       isActive: false,
       activeFile: null,
-      uploadStatus: 'none'
+      uploadStatus: 'none',
     },
     nodePlacement: {
       isActive: false,
       activeNodeId: null,
     },
-    activeView: null
+    activeView: null,
   },
   stream: {
     id: 'b0d3a3c122',
-    objectIds: []
+    objectIds: [],
   },
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
@@ -121,17 +121,21 @@ export const initialState: NodesAppState = {
     shadows: {
       containerRef: null,
       proxyRefs: {
-        controls: React.createRef<HTMLDivElement>()
+        controls: React.createRef<HTMLDivElement>(),
       },
       targets: {},
     },
     views: {},
     wires: {
-      containerRef: null
-    }
+      containerRef: null,
+    },
   },
   callbacks: {
-    onDocumentChange: () => { console.log('From library!') },
-    onExpireSolution: () => { console.log('From library!') }
-  }
+    onDocumentChange: () => {
+      console.log('From library!')
+    },
+    onExpireSolution: () => {
+      console.log('From library!')
+    },
+  },
 }

@@ -2,19 +2,18 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { useStore, useStoreRef, useDispatch } from '$'
 import { CAMERA } from '@/constants'
 import { clamp } from '@/utils'
-import { usePageSpaceToWorldSpace } from '@/hooks'
+import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 
 type CameraControlProps = {
   children?: React.ReactNode
 }
 
-// TODO: Give camera div pointer capture
-
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 
-  const { clearInterface, setCameraPosition, setCameraZoom } = useDispatch()
+  const { apply, clearInterface, setCameraPosition, setCameraZoom } = useDispatch()
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
+  const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
   const zoom = useStoreRef((state) => state.camera.zoom)
 
@@ -155,7 +154,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
     const vec = {
       x: cursorWorldX - cameraWorldX,
-      y: cursorWorldY - (cameraWorldY * -1),
+      y: cursorWorldY - cameraWorldY * -1,
     }
 
     const zoomDelta = nextZoom - zoom.current
@@ -187,17 +186,48 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     e.preventDefault()
   }
 
+  const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+    switch (e.button) {
+      case 0: {
+        // Handle left mouse double click
+        const { pageX, pageY } = e
+
+        const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+
+        apply((state) => {
+          state.registry.contextMenus['add-node'] = {
+            position: { x, y },
+            context: {
+              type: 'add-node',
+            },
+          }
+        })
+
+        break
+      }
+      case 1: {
+        // Handle center mouse button double click
+        break
+      }
+      case 2: {
+        // Handle right mouse button double click
+        break
+      }
+    }
+  }
+
   return (
     <div
       id="camera-control-overlay"
       className="np-w-full np-h-full np-pointer-events-auto"
       ref={cameraControlOverlayRef}
+      onContextMenu={handleContextMenu}
+      onDoubleClick={handleDoubleClick}
       onPointerDown={handlePointerDown}
       onPointerDownCapture={handlePointerDownCapture}
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
       onPointerLeave={handlePointerLeave}
-      onContextMenu={handleContextMenu}
     >
       {children}
     </div>

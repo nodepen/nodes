@@ -10,7 +10,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
   const zoom = useStoreRef((state) => state.camera.zoom)
 
-  const getCurrentNodePosition = (id: string): { x: number, y: number } => {
+  const getCurrentNodePosition = (id: string): { x: number; y: number } => {
     return useStore.getState().document.nodes[id].position
   }
 

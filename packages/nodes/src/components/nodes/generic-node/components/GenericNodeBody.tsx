@@ -5,59 +5,58 @@ import { COLORS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
 
-
 type GenericNodeBodyProps = {
-    node: NodePen.DocumentNode
-    template: NodePen.NodeTemplate
+  node: NodePen.DocumentNode
+  template: NodePen.NodeTemplate
 }
 
 export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
-    const { position } = node
+  const { position } = node
 
-    const nodeWidth = getNodeWidth()
-    const nodeHeight = getNodeHeight(template)
+  const nodeWidth = getNodeWidth()
+  const nodeHeight = getNodeHeight(template)
 
-    const { apply } = useDispatch()
-    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+  const { apply } = useDispatch()
+  const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
-    const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
-        e.stopPropagation()
-        e.preventDefault()
+  const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
+    e.stopPropagation()
+    e.preventDefault()
 
-        const { pageX, pageY } = e
+    const { pageX, pageY } = e
 
-        const key = `node-context-menu-${node.instanceId}`
+    const key = `node-context-menu-${node.instanceId}`
 
-        const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+    const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 
-        apply((state) => {
-            state.registry.contextMenus[key] = {
-                position: {
-                    x,
-                    y,
-                },
-                context: {
-                    type: 'node',
-                    nodeInstanceId: node.instanceId,
-                    nodeTemplate: template
-                }
-            }
-        })
-    }, [])
+    apply((state) => {
+      state.registry.contextMenus[key] = {
+        position: {
+          x,
+          y,
+        },
+        context: {
+          type: 'node',
+          nodeInstanceId: node.instanceId,
+          nodeTemplate: template,
+        },
+      }
+    })
+  }, [])
 
-    return (
-        <rect
-            x={position.x}
-            y={position.y}
-            width={nodeWidth}
-            height={nodeHeight}
-            rx={7}
-            ry={7}
-            fill={COLORS.LIGHT}
-            stroke={COLORS.DARK}
-            strokeWidth={2}
-            pointerEvents="auto"
-            onContextMenu={handleContextMenu}
-        />
-    )
+  return (
+    <rect
+      x={position.x}
+      y={position.y}
+      width={nodeWidth}
+      height={nodeHeight}
+      rx={7}
+      ry={7}
+      fill={COLORS.LIGHT}
+      stroke={COLORS.DARK}
+      strokeWidth={2}
+      pointerEvents="auto"
+      onContextMenu={handleContextMenu}
+    />
+  )
 }

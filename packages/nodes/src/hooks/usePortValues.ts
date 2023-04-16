@@ -8,27 +8,27 @@ import { useStore } from '$'
  * @param portInstanceId
  */
 export const usePortValues = (nodeInstanceId: string, portInstanceId: string): NodePen.DataTree | null => {
-    const values = useStore((state) => {
-        const node = state.document.nodes[nodeInstanceId]
+  const values = useStore((state) => {
+    const node = state.document.nodes[nodeInstanceId]
 
-        if (!node) {
-            return null
-        }
+    if (!node) {
+      return null
+    }
 
-        const userValues = node.values[portInstanceId]
+    const userValues = node.values[portInstanceId]
 
-        if (userValues && Object.keys(userValues).length > 0) {
-            return userValues
-        }
+    if (userValues && Object.keys(userValues).length > 0) {
+      return userValues
+    }
 
-        const solutionData = state.solution.values?.[nodeInstanceId]?.[portInstanceId]
+    const solutionData = state.solution.values?.[nodeInstanceId]?.[portInstanceId]
 
-        if (solutionData) {
-            return solutionData
-        }
+    if (solutionData) {
+      return solutionData
+    }
 
-        return null
-    })
+    return null
+  })
 
-    return values
+  return values
 }

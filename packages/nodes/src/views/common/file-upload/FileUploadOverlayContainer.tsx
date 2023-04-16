@@ -118,7 +118,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
             style={{
               transition: prefersReducedMotion ? '' : 'stroke-width',
               transitionDuration: '300ms',
-              transitionTimingFunction: 'ease-out'
+              transitionTimingFunction: 'ease-out',
             }}
           />
         </svg>

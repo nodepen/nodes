@@ -1,42 +1,30 @@
 module.exports = {
   env: {
-    node: true
+    node: true,
   },
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    "plugin:jsx-a11y/recommended",
-    'prettier'
+    'plugin:jsx-a11y/recommended',
+    'plugin:prettier/recommended',
   ],
-  ignorePatterns: [
-    '*.js',
-    '*.json',
-    '*.spec.ts',
-    'build',
-    'dist',
-    'node_modules'
-  ],
+  ignorePatterns: ['*.js', '*.json', '*.spec.ts', 'build', 'dist', 'node_modules'],
   overrides: [
     {
-      files: [
-        "*.ts",
-        "*.tsx"
-      ],
+      files: ['*.ts', '*.tsx'],
       rules: {
-        "no-unused-vars": "off",
-        "@typescript-eslint/explicit-module-boundary-types": [
-          0
-        ],
-        "@typescript-eslint/no-unused-vars": [
-          "warn",
+        'no-unused-vars': 'off',
+        '@typescript-eslint/explicit-module-boundary-types': [0],
+        '@typescript-eslint/no-unused-vars': [
+          'warn',
           {
-            "argsIgnorePattern": "^_",
-            "varsIgnorePattern": "^_",
-            "caughtErrorsIgnorePattern": "^_"
-          }
-        ]
-      }
-    }
+            argsIgnorePattern: '^_',
+            varsIgnorePattern: '^_',
+            caughtErrorsIgnorePattern: '^_',
+          },
+        ],
+      },
+    },
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -45,11 +33,12 @@ module.exports = {
       './tsconfig.eslint.json',
       './apps/nodepen-client/tsconfig.json',
       './packages/core/tsconfig.json',
-      './packages/nodes/tsconfig.json'
-    ]
+      './packages/nodes/tsconfig.json',
+    ],
   },
-  plugins: [
-    '@typescript-eslint'
-  ],
-  root: true
+  plugins: ['@typescript-eslint', 'prettier'],
+  root: true,
+  rules: {
+    "prettier/prettier": "error"
+  }
 }

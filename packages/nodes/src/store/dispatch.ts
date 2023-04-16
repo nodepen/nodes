@@ -22,8 +22,8 @@ setAutoFreeze(false)
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
     apply: (callback: (state: NodesAppState, get: BaseGetter) => void) => set((state) => callback(state, get)),
-    loadDocument: (document: NodePen.Document) => set(
-      (state) => {
+    loadDocument: (document: NodePen.Document) =>
+      set((state) => {
         state.document = document
 
         for (const node of Object.values(document.nodes)) {
@@ -41,11 +41,14 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
           node.dimensions = {
             width: nodeWidth,
-            height: nodeHeight
+            height: nodeHeight,
           }
 
           const inputInstanceIds = Object.keys(inputs)
-          const inputHeightSegments = divideDomain([0, nodeHeight - (NODE_INTERNAL_PADDING * 2)], inputInstanceIds.length > 0 ? inputInstanceIds.length : 1)
+          const inputHeightSegments = divideDomain(
+            [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
+            inputInstanceIds.length > 0 ? inputInstanceIds.length : 1
+          )
 
           for (let i = 0; i < inputInstanceIds.length; i++) {
             const currentId = inputInstanceIds[i]
@@ -56,12 +59,15 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
             node.anchors[currentId] = {
               dx: deltaX,
-              dy: deltaY
+              dy: deltaY,
             }
           }
 
           const outputInstanceIds = Object.keys(outputs)
-          const outputHeightSegments = divideDomain([0, nodeHeight - (NODE_INTERNAL_PADDING * 2)], outputInstanceIds.length > 0 ? outputInstanceIds.length : 1)
+          const outputHeightSegments = divideDomain(
+            [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
+            outputInstanceIds.length > 0 ? outputInstanceIds.length : 1
+          )
 
           for (let i = 0; i < outputInstanceIds.length; i++) {
             const currentId = outputInstanceIds[i]
@@ -72,78 +78,83 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
             node.anchors[currentId] = {
               dx: deltaX,
-              dy: deltaY
+              dy: deltaY,
             }
           }
         }
 
         expireSolution(state)
-      }
-    ),
-    loadTemplates: (templates: NodePen.NodeTemplate[]) => set(
-      (state) => {
-        const library: Record<string, NodePen.NodeTemplate> = {}
+      }),
+    loadTemplates: (templates: NodePen.NodeTemplate[]) =>
+      set(
+        (state) => {
+          const library: Record<string, NodePen.NodeTemplate> = {}
 
-        for (const template of templates) {
-          library[template.guid] = template
+          for (const template of templates) {
+            library[template.guid] = template
+          }
+
+          state.templates = freeze(library)
+        },
+        false,
+        'templates/loadTemplates'
+      ),
+    setCameraAspect: (aspect: number) =>
+      set(
+        (state) => {
+          state.camera.aspect = aspect
+        },
+        false,
+        'camera/setAspect'
+      ),
+    setCameraPosition: (x: number, y: number) =>
+      set(
+        (state) => {
+          startTransition(() => {
+            state.camera.position = { x, y }
+          })
+        },
+        false,
+        'camera/setPosition'
+      ),
+    setCameraZoom: (zoom: number) =>
+      set(
+        (state) => {
+          startTransition(() => {
+            state.camera.zoom = zoom
+          })
+        },
+        false,
+        'camera/setZoom'
+      ),
+    setNodePosition: (id: string, x: number, y: number) =>
+      set(
+        (state) => {
+          const node = state.document.nodes[id]
+
+          if (!node) {
+            return
+          }
+
+          startTransition(() => {
+            node.position.x = x
+            node.position.y = y
+          })
+        },
+        false,
+        {
+          type: 'node/setPosition',
+          payload: { id, x, y },
         }
-
-        state.templates = freeze(library)
-      },
-      false,
-      'templates/loadTemplates'
-    ),
-    setCameraAspect: (aspect: number) => set(
-      (state) => {
-        state.camera.aspect = aspect
-      },
-      false,
-      'camera/setAspect'
-    ),
-    setCameraPosition: (x: number, y: number) => set(
-      (state) => {
-        startTransition(() => {
-          state.camera.position = { x, y }
-        })
-      },
-      false,
-      'camera/setPosition'
-    ),
-    setCameraZoom: (zoom: number) => set(
-      (state) => {
-        startTransition(() => {
-          state.camera.zoom = zoom
-        })
-      },
-      false,
-      'camera/setZoom'
-    ),
-    setNodePosition: (id: string, x: number, y: number) => set(
-      (state) => {
-        const node = state.document.nodes[id]
-
-        if (!node) {
-          return
-        }
-
-        startTransition(() => {
-          node.position.x = x
-          node.position.y = y
-        })
-      },
-      false,
-      {
-        type: 'node/setPosition',
-        payload: { id, x, y }
-      }
-    ),
-    clearInterface: () => set(
-      (state) => {
-        state.registry.contextMenus = {}
-      },
-      false,
-      'ui/clearInterface'
-    )
+      ),
+    clearInterface: () =>
+      set(
+        (state) => {
+          state.registry.contextMenus = {}
+        },
+        false,
+        'ui/clearInterface'
+      ),
   }
 
   return { dispatch }

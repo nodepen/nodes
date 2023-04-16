@@ -5,68 +5,74 @@ import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { expireSolution } from '@/store/utils'
 
 const NodePlacementOverlay = () => {
-    const { apply } = useDispatch()
-    const { isActive, activeNodeId } = useStore((state) => state.layout.nodePlacement)
+  const { apply } = useDispatch()
+  const { isActive, activeNodeId } = useStore((state) => state.layout.nodePlacement)
 
-    const [activeNodeWidth, activeNodeHeight] = useMemo((): [number, number] => {
-        if (!activeNodeId) {
-            return [0, 0]
+  const [activeNodeWidth, activeNodeHeight] = useMemo((): [number, number] => {
+    if (!activeNodeId) {
+      return [0, 0]
+    }
+
+    const activeNode = useStore.getState().document.nodes[activeNodeId]
+    const activeNodeTemplate = useStore.getState().templates[activeNode.templateId]
+
+    return [getNodeWidth(), getNodeHeight(activeNodeTemplate)]
+  }, [activeNodeId])
+
+  const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
+
+  const resetOverlayState = useCallback(() => {
+    apply((state) => {
+      state.layout.nodePlacement = {
+        isActive: false,
+        activeNodeId: null,
+      }
+    })
+  }, [])
+
+  const handlePointerMove = useCallback(
+    (e: React.PointerEvent<HTMLDivElement>) => {
+      if (!isActive || !activeNodeId) {
+        return
+      }
+
+      const { pageX, pageY } = e
+
+      const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+
+      apply((state) => {
+        state.document.nodes[activeNodeId].position = {
+          x: x - activeNodeWidth / 2,
+          y: y - activeNodeHeight / 2,
         }
+      })
+    },
+    [activeNodeId]
+  )
 
-        const activeNode = useStore.getState().document.nodes[activeNodeId]
-        const activeNodeTemplate = useStore.getState().templates[activeNode.templateId]
+  const handlePointerUp = useCallback(
+    (_e: React.PointerEvent<HTMLDivElement>) => {
+      if (!activeNodeId) {
+        return
+      }
 
-        return [getNodeWidth(), getNodeHeight(activeNodeTemplate)]
-    }, [activeNodeId])
+      apply((state) => {
+        state.document.nodes[activeNodeId].status.isProvisional = false
+        expireSolution(state)
+      })
 
-    const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
+      resetOverlayState()
+    },
+    [activeNodeId, resetOverlayState]
+  )
 
-    const resetOverlayState = useCallback(() => {
-        apply((state) => {
-            state.layout.nodePlacement = {
-                isActive: false,
-                activeNodeId: null
-            }
-        })
-    }, [])
-
-    const handlePointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-        if (!isActive || !activeNodeId) {
-            return
-        }
-
-        const { pageX, pageY } = e
-
-        const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
-
-        apply((state) => {
-            state.document.nodes[activeNodeId].position = {
-                x: x - activeNodeWidth / 2,
-                y: y - activeNodeHeight / 2
-            }
-        })
-    }, [activeNodeId])
-
-    const handlePointerUp = useCallback((_e: React.PointerEvent<HTMLDivElement>) => {
-        if (!activeNodeId) {
-            return
-        }
-
-        apply((state) => {
-            state.document.nodes[activeNodeId].status.isProvisional = false
-            expireSolution(state)
-        })
-
-        resetOverlayState()
-    }, [activeNodeId, resetOverlayState])
-
-    return (
-        <div
-            className={`${isActive ? 'np-pointer-events-auto' : 'np-pointer-events-none'} np-w-full np-h-full`}
-            onPointerMove={handlePointerMove}
-            onPointerUp={handlePointerUp}
-        />
-    )
+  return (
+    <div
+      className={`${isActive ? 'np-pointer-events-auto' : 'np-pointer-events-none'} np-w-full np-h-full`}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+    />
+  )
 }
 
 export default React.memo(NodePlacementOverlay)

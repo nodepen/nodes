@@ -19,6 +19,7 @@
     "postbuild": "tsc-alias",
     "dev": "concurrently \"tsc-watch --noClear --onSuccess \\\"npm run prebuild\\\"\" \"tsc-alias -w\"",
     "lint": "eslint --ext .ts,.tsx .",
+    "lint:fix": "eslint --fix --ext .ts,.tsx .",
     "test": "jest"
   },
   "dependencies": {

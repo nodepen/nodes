@@ -6,20 +6,20 @@ import { useStore } from '$'
  * within the root container div.
  */
 export const usePageSpaceToOverlaySpace = () => {
-    const canvas = useStore((state) => state.registry.canvasRoot)
+  const canvas = useStore((state) => state.registry.canvasRoot)
 
-    const callback = useCallback((pageX: number, pageY: number): [x: number, y: number] => {
-        const container = canvas.current
+  const callback = useCallback((pageX: number, pageY: number): [x: number, y: number] => {
+    const container = canvas.current
 
-        if (!container) {
-            console.log(`🐍 Could not locate root container div.`)
-            return [pageX, pageY]
-        }
+    if (!container) {
+      console.log(`🐍 Could not locate root container div.`)
+      return [pageX, pageY]
+    }
 
-        const { left, top } = container.getBoundingClientRect()
+    const { left, top } = container.getBoundingClientRect()
 
-        return [pageX - left, pageY - top]
-    }, [])
+    return [pageX - left, pageY - top]
+  }, [])
 
-    return callback
+  return callback
 }
