@@ -35,7 +35,7 @@
   "devDependencies": {
     "@types/react": "^18.0.35",
     "@types/react-dom": "^18.0.11",
-    "@types/three": "^0.150.0",
+    "@types/three": "^0.150.1",
     "autoprefixer": "^10.4.14",
     "concurrently": "^8.0.1",
     "postcss": "^8.4.21",
