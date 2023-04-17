@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useNodeAnchorPosition } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
@@ -70,8 +70,8 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
         y={eventTargetAreaPosition.y}
         height={eventTargetAreaHeight}
         width={eventTargetAreaWidth}
-        fill={'#FFFFFF'}
-        opacity={0}
+        fill={'#FFFF00'}
+        opacity={0.5}
       />
     </g>
   )
