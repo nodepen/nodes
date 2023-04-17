@@ -51,5 +51,6 @@ export const STYLES = {
 export const KEYS = {
   TOOLTIPS: {
     ADD_NODE_MENU_OPTION_HOVER: 'add-node-menu',
+    TEMPLATE_LIBRARY_CONTROL_OPTION_HOVER: 'template-library-control',
   },
 } as const

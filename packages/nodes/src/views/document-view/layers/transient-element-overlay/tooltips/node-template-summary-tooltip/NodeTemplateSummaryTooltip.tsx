@@ -1,10 +1,9 @@
 import React from 'react'
-import type { TooltipConfiguration, NodeTemplateSummaryTooltipContext } from '../types'
+import type { TooltipConfiguration, NodeTemplateSummaryTooltipContext } from '../../types'
 import { usePseudoShadow } from '@/views/common/pseudo-shadow'
-import { MenuSection } from '../common'
-import { COLORS } from '@/constants'
+import { MenuSection } from '../../common'
 import { getIconAsImage } from '@/utils/templates'
-import { useTooltip } from './hooks'
+import { useTooltip } from '../hooks'
 
 type NodeTemplateSummaryTooltipProps = {
   tooltipKey: string
