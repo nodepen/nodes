@@ -29,7 +29,7 @@ export const AddNodeButton = ({ template, isSelected, action }: AddNodeButtonPro
 
     const tooltipPagePosition = {
       x: left + width + 12,
-      y: top,
+      y: top - 4,
     }
 
     const [px, py] = pageSpaceToOverlaySpace(tooltipPagePosition.x, tooltipPagePosition.y)

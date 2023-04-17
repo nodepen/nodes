@@ -1,6 +1,8 @@
 import React from 'react'
 import type { TooltipConfiguration, NodeTemplateSummaryTooltipContext } from '../types'
 import { usePseudoShadow } from '@/views/common/pseudo-shadow'
+import { MenuSection } from '../common'
+import { COLORS } from '@/constants'
 
 type NodeTemplateSummaryTooltipProps = {
   configuration: TooltipConfiguration
@@ -18,10 +20,12 @@ export const NodeTemplateSummaryTooltip = ({ configuration, context }: NodeTempl
   return (
     <div
       ref={shadowTarget}
-      className="np-absolute np-h-8 np-bg-light np-shadow-main np-transition-all np-rounded-md"
+      className="np-absolute np-w-48 np-p-1 np-flex np-flex-col np-bg-light np-shadow-main np-transition-all np-rounded-md"
       style={{ left, top }}
     >
-      <p>{template.name}</p>
+      <MenuSection>{template.name}</MenuSection>
+      <MenuSection>{template.description}</MenuSection>
+      {/* <MenuSection background={`${'#'}${COLORS.GREY}`}>2456 items</MenuSection> */}
     </div>
   )
 }
