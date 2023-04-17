@@ -3,6 +3,7 @@ import type { TooltipConfiguration, NodeTemplateSummaryTooltipContext } from '..
 import { usePseudoShadow } from '@/views/common/pseudo-shadow'
 import { MenuSection } from '../common'
 import { COLORS } from '@/constants'
+import { getIconAsImage } from '@/utils/templates'
 
 type NodeTemplateSummaryTooltipProps = {
   configuration: TooltipConfiguration
@@ -23,9 +24,12 @@ export const NodeTemplateSummaryTooltip = ({ configuration, context }: NodeTempl
       className="np-absolute np-w-48 np-p-1 np-flex np-flex-col np-bg-light np-shadow-main np-transition-all np-rounded-md"
       style={{ left, top }}
     >
-      <MenuSection>{template.name}</MenuSection>
-      <MenuSection>{template.description}</MenuSection>
-      {/* <MenuSection background={`${'#'}${COLORS.GREY}`}>2456 items</MenuSection> */}
+      <MenuSection title={template.name} icon={<img src={getIconAsImage(template)} alt={template.name} />} />
+      <MenuSection>
+        <p className="np-mb-1 np-font-sans np-font-medium np-text-dark np-text-xs -np-translate-y-px">
+          {template.description}
+        </p>
+      </MenuSection>
     </div>
   )
 }

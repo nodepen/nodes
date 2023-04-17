@@ -112,6 +112,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
       // Clear menu from interface
       state.registry.contextMenus = {}
+      state.registry.tooltips = {}
     })
   }
 
