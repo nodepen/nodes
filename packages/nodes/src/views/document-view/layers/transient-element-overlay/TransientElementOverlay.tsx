@@ -3,7 +3,7 @@ import { useStore } from '$'
 import { AddNodeContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
 import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
-import { NodeTemplateSummaryTooltip } from './tooltips'
+import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
 
 const TransientElementOverlay = () => {
   const menus = useStore((state) => Object.entries(state.registry.contextMenus))
@@ -47,12 +47,26 @@ const TransientElementOverlay = () => {
           case 'node-template-summary': {
             return (
               <NodeTemplateSummaryTooltip
-                key={`node-template-summary`}
+                key={`node-template-summary-tooltip`}
                 tooltipKey={key}
                 configuration={tooltip.configuration}
                 context={tooltip.context}
               />
             )
+          }
+          case 'port': {
+            return (
+              <PortTooltip
+                key={`port-tooltip`}
+                tooltipKey={key}
+                configuration={tooltip.configuration}
+                context={tooltip.context}
+              />
+            )
+          }
+          default: {
+            console.log(`🐍 Unhandled tooltip type [${contextType}]`)
+            return null
           }
         }
       })}

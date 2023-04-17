@@ -21,7 +21,6 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
 
   const handleLongHover = useCallback(
     (e: PointerEvent): void => {
-      console.log('!!')
       const { pageX, pageY } = e
 
       const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
