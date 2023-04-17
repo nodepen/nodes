@@ -4,15 +4,19 @@ import { usePseudoShadow } from '@/views/common/pseudo-shadow'
 import { MenuSection } from '../common'
 import { COLORS } from '@/constants'
 import { getIconAsImage } from '@/utils/templates'
+import { useTooltip } from './hooks'
 
 type NodeTemplateSummaryTooltipProps = {
+  tooltipKey: string
   configuration: TooltipConfiguration
   context: NodeTemplateSummaryTooltipContext
 }
 
-export const NodeTemplateSummaryTooltip = ({ configuration, context }: NodeTemplateSummaryTooltipProps) => {
-  const { position, isSticky } = configuration
+export const NodeTemplateSummaryTooltip = ({ tooltipKey, configuration, context }: NodeTemplateSummaryTooltipProps) => {
+  const { position } = configuration
   const { template } = context
+
+  useTooltip(tooltipKey, configuration)
 
   const shadowTarget = usePseudoShadow()
 

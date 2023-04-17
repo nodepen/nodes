@@ -48,6 +48,7 @@ const TransientElementOverlay = () => {
             return (
               <NodeTemplateSummaryTooltip
                 key={`node-template-summary`}
+                tooltipKey={key}
                 configuration={tooltip.configuration}
                 context={tooltip.context}
               />
