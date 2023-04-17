@@ -1,6 +1,7 @@
 import React, { useCallback } from 'react'
 import { useState, useRef, useEffect } from 'react'
 import { useStore } from '$'
+import { useImperativeEvent } from '@/hooks'
 
 type PseudoShadowProps = {
   target: React.RefObject<HTMLDivElement>
@@ -72,6 +73,30 @@ const PseudoShadow = ({ target, resizeProxyKey }: PseudoShadowProps): React.Reac
       observer.unobserve(element)
     }
   })
+
+  // Keep shadow in sync with div transitions
+  const animationFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>()
+
+  const animate = useCallback(() => {
+    handleShadowResize()
+    animationFrameRef.current = requestAnimationFrame(animate)
+  }, [handleShadowResize])
+
+  const handleTransitionStart = useCallback(() => {
+    animationFrameRef.current = requestAnimationFrame(animate)
+  }, [])
+
+  const handleTransitionEnd = useCallback(() => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current)
+      animationFrameRef.current = undefined
+    }
+
+    handleShadowResize()
+  }, [])
+
+  useImperativeEvent(target, 'transitionstart', handleTransitionStart)
+  useImperativeEvent(target, 'transitionend', handleTransitionEnd)
 
   if (!dimensions) {
     return null

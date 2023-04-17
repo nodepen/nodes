@@ -2,9 +2,8 @@ import React, { useEffect } from 'react'
 import { useStore, useDispatch } from '$'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
-import { CameraOverlay, ContextMenuContainer, GridContainer, NodePlacementOverlay } from './components'
-import { useCameraProps } from './hooks'
-import { AnnotationsContainer, NodesContainer } from '@/components'
+import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay } from './layers'
+import { DocumentViewContent } from './DocumentViewContent'
 
 type DocumentViewProps = {
   editable: boolean
@@ -12,7 +11,6 @@ type DocumentViewProps = {
 
 const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement | null => {
   const canvasRootRef = useStore((state) => state.registry.canvasRoot)
-  const cameraProps = useCameraProps()
 
   const { setCameraPosition } = useDispatch()
 
@@ -48,19 +46,14 @@ const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement |
       <Layer id="np-node-placement-overlay-layer" position={viewPosition} z={91}>
         <NodePlacementOverlay />
       </Layer>
-      <Layer id="np-context-menu-layer" position={viewPosition} z={90}>
-        <ContextMenuContainer />
+      <Layer id="np-transient-element-overlay-layer" position={viewPosition} z={90}>
+        <TransientElementOverlay />
       </Layer>
-      <Layer id="np-graph-canvas-layer" position={viewPosition} z={70}>
-        <CameraOverlay>
-          <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
-            <AnnotationsContainer />
-            <NodesContainer />
-          </svg>
-        </CameraOverlay>
+      <Layer id="np-document-view-content-layer" position={viewPosition} z={70}>
+        <DocumentViewContent />
       </Layer>
       <Layer id="np-grid-canvas-layer" position={viewPosition} z={20}>
-        <GridContainer />
+        <CanvasGridUnderlay />
       </Layer>
     </>
   )

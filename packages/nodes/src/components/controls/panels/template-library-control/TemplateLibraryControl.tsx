@@ -5,6 +5,8 @@ import { ControlPanel } from '../../common'
 import { useDispatch } from '@/store'
 import { usePageSpaceToWorldSpace } from '@/hooks'
 import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
+import { TemplateDraggable } from './components'
+import { KEYS } from '@/constants'
 
 type TemplateLibraryControlProps = {
   templates: { [templateId: string]: NodePen.NodeTemplate }
@@ -65,53 +67,21 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
           </button>
         ))}
       </div>
-      <div className="np-w-full np-max-h-[148px] np-overflow-auto no-scrollbar">
+      <div
+        className="np-w-full np-max-h-[148px] np-overflow-auto no-scrollbar"
+        onPointerLeave={() => {
+          apply((state) => {
+            delete state.registry.tooltips[KEYS.TOOLTIPS.TEMPLATE_LIBRARY_CONTROL_OPTION_HOVER]
+          })
+        }}
+      >
         {Object.entries(activeCategoryTemplatesBySubcategory).map(([subcategory, templates]) => (
           <div
             key={`template-library-subcategory-group-${subcategory.toLowerCase()}`}
             className="np-w-full np-pb-2 last:np-pb-0 np-mb-2 last:np-mb-0 np-border-b-2 np-border-b-swampgreen last:np-border-none np-grid np-grid-cols-[repeat(auto-fill,_minmax(30px,_1fr))] np-gap-2 np-z-0"
           >
             {templates.map((template) => (
-              <button
-                key={`template-library-template-icon-${template.guid}`}
-                className="np-w-full np-h-full np-pt-[100%] np-relative hover:np-bg-swampgreen np-rounded-sm"
-                onPointerDown={(e) => {
-                  const { pageX, pageY } = e
-
-                  const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
-
-                  const nodeWidth = getNodeWidth()
-                  const nodeHeight = getNodeHeight(template)
-
-                  apply((state) => {
-                    const node = createInstance(template)
-
-                    node.status.isProvisional = true
-                    node.position = {
-                      x: x - nodeWidth / 2,
-                      y: y - nodeHeight / 2,
-                    }
-
-                    state.document.nodes[node.instanceId] = node
-
-                    state.layout.nodePlacement = {
-                      isActive: true,
-                      activeNodeId: node.instanceId,
-                    }
-                  })
-                }}
-              >
-                <div className="np-absolute np-top-0 np-right-0 np-left-0 np-bottom-0">
-                  <div className="np-w-full np-h-full np-flex np-items-center np-justify-center">
-                    <img
-                      width={22}
-                      draggable={false}
-                      src={getIconAsImage(template)}
-                      alt={`${template.name} (${template.nickName}): ${template.description}`}
-                    />
-                  </div>
-                </div>
-              </button>
+              <TemplateDraggable key={`template-library-template-icon-${template.guid}`} template={template} />
             ))}
           </div>
         ))}

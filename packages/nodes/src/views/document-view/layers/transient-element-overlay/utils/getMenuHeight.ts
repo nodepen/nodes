@@ -1,5 +1,5 @@
 import type { ContextMenuContext } from '../types'
-import { getPortContextMenuButtons } from '../menus/port-context-menu/utils'
+import { getPortContextMenuButtons } from '../context-menus/port-context-menu/utils'
 
 export const getMenuHeight = (context: ContextMenuContext): number => {
   switch (context.type) {

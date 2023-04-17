@@ -5,7 +5,7 @@ import { useCameraProps } from '../../hooks'
 
 type GridDetailLevel = 'low' | 'medium' | 'high'
 
-const GridContainer = (): React.ReactElement | null => {
+const CanvasGridUnderlay = (): React.ReactElement | null => {
   const cameraProps = useCameraProps()
 
   const [detailLevel, setDetailLevel] = useState<GridDetailLevel>('medium')
@@ -94,4 +94,4 @@ const GridContainer = (): React.ReactElement | null => {
   )
 }
 
-export default React.memo(GridContainer)
+export default React.memo(CanvasGridUnderlay)

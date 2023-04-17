@@ -151,6 +151,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
       set(
         (state) => {
           state.registry.contextMenus = {}
+          state.registry.tooltips = {}
         },
         false,
         'ui/clearInterface'

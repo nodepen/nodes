@@ -1,8 +1,9 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { useNodeAnchorPosition } from '@/hooks'
+import { useLongHover, useNodeAnchorPosition, usePageSpaceToOverlaySpace } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePort } from '../../hooks'
+import { useDispatch } from '$'
 
 const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_LABEL_OFFSET, NODE_PORT_RADIUS, NODE_PORT_MINIMUM_WIDTH } = DIMENSIONS
 
@@ -14,6 +15,35 @@ type GenericNodePortProps = {
 
 const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNodePortProps) => {
   const portRef = usePort(nodeInstanceId, portInstanceId, template)
+
+  const { apply } = useDispatch()
+  const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
+  const handleLongHover = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+
+    apply((state) => {
+      state.registry.tooltips[`port-tooltip-${nodeInstanceId}-${portInstanceId}`] = {
+        configuration: {
+          position: {
+            x: x + 8,
+            y: y + 8,
+          },
+          isSticky: false,
+        },
+        context: {
+          type: 'port',
+          template,
+          nodeInstanceId,
+          portInstanceId,
+        },
+      }
+    })
+  }, [])
+
+  const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
   const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
 
@@ -65,14 +95,16 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
       >
         {template.nickName}
       </text>
-      <rect
-        x={eventTargetAreaPosition.x}
-        y={eventTargetAreaPosition.y}
-        height={eventTargetAreaHeight}
-        width={eventTargetAreaWidth}
-        fill={'#FFFFFF'}
-        opacity={0}
-      />
+      <g ref={longHoverTarget}>
+        <rect
+          x={eventTargetAreaPosition.x}
+          y={eventTargetAreaPosition.y}
+          height={eventTargetAreaHeight}
+          width={eventTargetAreaWidth}
+          fill={'#FFFFFF'}
+          opacity={0}
+        />
+      </g>
     </g>
   )
 }
