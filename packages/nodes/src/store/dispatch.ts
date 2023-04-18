@@ -152,6 +152,19 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         (state) => {
           state.registry.contextMenus = {}
           state.registry.tooltips = {}
+
+          for (const nodeInstanceId of state.registry.selection.nodes) {
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+              console.log('🐍 Node selected in registry missing from document!')
+              continue
+            }
+
+            node.status.isSelected = false
+          }
+
+          state.registry.selection.nodes = []
         },
         false,
         'ui/clearInterface'

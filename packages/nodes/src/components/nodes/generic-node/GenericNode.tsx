@@ -1,7 +1,7 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
-import { useDebugRender, useDraggableNode } from '../hooks'
+import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import {
   GenericNodeBody,
   GenericNodeLabel,
@@ -28,22 +28,25 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
 
   // Attach interactive behaviors
   const draggableTargetRef = useDraggableNode(id)
+  const selectableTargetRef = useSelectableNode(id)
 
   return (
     <>
       <g id={`generic-node-${id}`} ref={draggableTargetRef}>
-        {node.status.isProvisional ? (
-          <>
-            <GenericNodeSkeleton node={node} template={template} />
-          </>
-        ) : (
-          <>
-            <GenericNodeShadow node={node} template={template} />
-            <GenericNodeBody node={node} template={template} />
-            <GenericNodeLabel node={node} template={template} />
-            <GenericNodePorts node={node} template={template} />
-          </>
-        )}
+        <g ref={selectableTargetRef}>
+          {node.status.isProvisional ? (
+            <>
+              <GenericNodeSkeleton node={node} template={template} />
+            </>
+          ) : (
+            <>
+              <GenericNodeShadow node={node} template={template} />
+              <GenericNodeBody node={node} template={template} />
+              <GenericNodeLabel node={node} template={template} />
+              <GenericNodePorts node={node} template={template} />
+            </>
+          )}
+        </g>
       </g>
       <GenericNodeWires node={node} />
     </>

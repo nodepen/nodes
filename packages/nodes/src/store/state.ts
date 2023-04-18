@@ -54,6 +54,9 @@ export type NodesAppState = {
         }
       }
     }
+    selection: {
+      nodes: string[]
+    }
     tooltips: {
       [tooltipKey: string]: Tooltip
     }
@@ -127,6 +130,9 @@ export const initialState: NodesAppState = {
         controls: React.createRef<HTMLDivElement>(),
       },
       targets: {},
+    },
+    selection: {
+      nodes: [],
     },
     tooltips: {},
     views: {},

@@ -11,7 +11,7 @@ type GenericNodeBodyProps = {
 }
 
 export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
-  const { position } = node
+  const { position, status } = node
 
   const nodeWidth = getNodeWidth()
   const nodeHeight = getNodeHeight(template)
@@ -52,7 +52,7 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
       height={nodeHeight}
       rx={7}
       ry={7}
-      fill={COLORS.LIGHT}
+      fill={status.isSelected ? COLORS.GREEN : COLORS.LIGHT}
       stroke={COLORS.DARK}
       strokeWidth={2}
       pointerEvents="auto"
