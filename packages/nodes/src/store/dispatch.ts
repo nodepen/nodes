@@ -152,7 +152,13 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         (state) => {
           state.registry.contextMenus = {}
           state.registry.tooltips = {}
-
+        },
+        false,
+        'ui/clearInterface'
+      ),
+    clearSelection: () =>
+      set(
+        (state) => {
           for (const nodeInstanceId of state.registry.selection.nodes) {
             const node = state.document.nodes[nodeInstanceId]
 
@@ -167,7 +173,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
           state.registry.selection.nodes = []
         },
         false,
-        'ui/clearInterface'
+        'ui/clearSelection'
       ),
   }
 

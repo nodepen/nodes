@@ -11,7 +11,7 @@ type CameraControlProps = {
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 
-  const { apply, clearInterface, setCameraPosition, setCameraZoom } = useDispatch()
+  const { apply, clearInterface, clearSelection, setCameraPosition, setCameraZoom } = useDispatch()
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
@@ -40,15 +40,16 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
       case 'mouse': {
         const { pageX, pageY } = e
 
+        clearSelection()
+
         switch (e.button) {
           case 0: {
-            const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
-            console.log({ x, y })
-
+            // TODO: Initialize region select
             break
           }
           case 1: {
-            // Only start pan if using right click
+            const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+            console.log({ x, y })
             break
           }
           case 2: {
