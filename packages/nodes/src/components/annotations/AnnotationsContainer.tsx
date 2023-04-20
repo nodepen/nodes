@@ -15,8 +15,6 @@ const AnnotationContainer = (): React.ReactElement => {
 
   const selectionRegionState = useStore((state) => state.registry.selection.region)
 
-  console.log(selectionRegionState.isActive)
-
   return (
     <g id="np-annotations">
       <g id="np-wires" ref={ref} />
