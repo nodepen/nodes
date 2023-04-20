@@ -136,10 +136,32 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             return
           }
 
-          startTransition(() => {
-            node.position.x = x
-            node.position.y = y
-          })
+          if (!state.registry.selection.nodes.includes(id)) {
+            startTransition(() => {
+              node.position.x = x
+              node.position.y = y
+            })
+
+            return
+          }
+
+          const { x: currentX, y: currentY } = node.position
+
+          const [dx, dy] = [x - currentX, y - currentY]
+
+          for (const nodeInstanceId of state.registry.selection.nodes) {
+            const selectedNode = state.document.nodes[nodeInstanceId]
+
+            if (!selectedNode) {
+              console.log('🐍 Could not move selected node position because node is not present in document!')
+              continue
+            }
+
+            state.document.nodes[nodeInstanceId].position = {
+              x: selectedNode.position.x + dx,
+              y: selectedNode.position.y + dy,
+            }
+          }
         },
         false,
         {

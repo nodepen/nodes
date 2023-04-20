@@ -69,7 +69,7 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
             }
 
             // Bail out if we are in a multi-select mode
-            if (useStore.getState().registry.selection.nodes.length > 0) {
+            if (useStore.getState().registry.selection.nodes.length > 1) {
               return
             }
 
