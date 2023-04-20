@@ -45,6 +45,16 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
         switch (e.button) {
           case 0: {
             // TODO: Initialize region select
+            const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+
+            apply((state) => {
+              state.registry.selection.region = {
+                isActive: true,
+                pointerId: e.pointerId,
+                from: { x, y },
+                to: { x, y },
+              }
+            })
             break
           }
           case 1: {
