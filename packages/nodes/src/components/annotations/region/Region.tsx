@@ -12,9 +12,10 @@ type RegionProps = {
   }
   isFill?: boolean
   isBorder?: boolean
+  isDashed?: boolean
 }
 
-export const Region = ({ from, to, isFill = false, isBorder = false }: RegionProps) => {
+export const Region = ({ from, to, isFill = false, isBorder = false, isDashed = false }: RegionProps) => {
   const { x: ax, y: ay } = from
   const { x: bx, y: by } = to
 
@@ -32,6 +33,7 @@ export const Region = ({ from, to, isFill = false, isBorder = false }: RegionPro
       strokeWidth={isBorder ? 2 : 0}
       vectorEffect="non-scaling-stroke"
       stroke={COLORS.DARK}
+      strokeDasharray={isDashed ? '6 6' : ''}
       rx={6}
       ry={6}
       fill={isFill ? COLORS.PALE : 'none'}

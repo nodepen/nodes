@@ -60,6 +60,8 @@ const SelectionRegionOverlay = () => {
           apply((state) => {
             state.registry.selection.region = { isActive: false }
           })
+
+          // TODO: Perform selection based on region!
         }
       }
     },
