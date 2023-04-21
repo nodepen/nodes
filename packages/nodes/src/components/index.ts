@@ -1,4 +1,4 @@
-export { AnnotationsContainer } from './annotations'
+export { AnnotationsOverlayContainer, AnnotationsUnderlayContainer } from './annotations'
 export { ControlsContainer } from './controls'
 export { NodesContainer } from './nodes/index'
 

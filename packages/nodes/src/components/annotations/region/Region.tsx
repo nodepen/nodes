@@ -10,9 +10,11 @@ type RegionProps = {
     x: number
     y: number
   }
+  isFill?: boolean
+  isBorder?: boolean
 }
 
-export const Region = ({ from, to }: RegionProps) => {
+export const Region = ({ from, to, isFill = false, isBorder = false }: RegionProps) => {
   const { x: ax, y: ay } = from
   const { x: bx, y: by } = to
 
@@ -27,10 +29,12 @@ export const Region = ({ from, to }: RegionProps) => {
       y={y}
       width={width}
       height={height}
-      strokeWidth={2}
+      strokeWidth={isBorder ? 2 : 0}
       vectorEffect="non-scaling-stroke"
       stroke={COLORS.DARK}
-      fill="none"
+      rx={6}
+      ry={6}
+      fill={isFill ? COLORS.PALE : 'none'}
     />
   )
 }

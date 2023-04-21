@@ -1,7 +1,7 @@
 import React from 'react'
 import { useCameraProps } from './hooks'
 import { CameraOverlay } from './layers'
-import { AnnotationsContainer, NodesContainer } from '@/components'
+import { AnnotationsOverlayContainer, AnnotationsUnderlayContainer, NodesContainer } from '@/components'
 
 export const DocumentViewContent = () => {
   const cameraProps = useCameraProps()
@@ -9,8 +9,9 @@ export const DocumentViewContent = () => {
   return (
     <CameraOverlay>
       <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
-        <AnnotationsContainer />
+        <AnnotationsUnderlayContainer />
         <NodesContainer />
+        <AnnotationsOverlayContainer />
       </svg>
     </CameraOverlay>
   )
