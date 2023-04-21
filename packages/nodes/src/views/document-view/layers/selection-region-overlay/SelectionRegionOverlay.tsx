@@ -3,7 +3,7 @@ import { useDispatch, useStore } from '$'
 import { usePageSpaceToWorldSpace } from '@/hooks'
 
 const SelectionRegionOverlay = () => {
-  const { apply } = useDispatch()
+  const { apply, commitRegionSelection } = useDispatch()
   const selectionRegionState = useStore((state) => state.registry.selection.region)
 
   const overlayRef = useRef<HTMLDivElement>(null)
@@ -57,11 +57,7 @@ const SelectionRegionOverlay = () => {
 
       switch (e.pointerType) {
         case 'mouse': {
-          apply((state) => {
-            state.registry.selection.region = { isActive: false }
-          })
-
-          // TODO: Perform selection based on region!
+          commitRegionSelection()
         }
       }
     },

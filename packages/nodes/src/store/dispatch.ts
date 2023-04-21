@@ -99,6 +99,51 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         false,
         'templates/loadTemplates'
       ),
+    commitRegionSelection: () =>
+      set(
+        (state) => {
+          if (!state.registry.selection.region.isActive) {
+            console.log('🐍 Attempted to commit a region selection that was not active!')
+            return
+          }
+
+          const { from, to } = state.registry.selection.region
+
+          const mode = from.x < to.x ? 'contains' : 'intersects'
+
+          const selectedNodeIds: string[] = []
+
+          for (const node of Object.values(state.document.nodes)) {
+            // const extents = getExtents(node)
+
+            const isSelected = false
+
+            switch (mode) {
+              case 'contains': {
+                // regionContainsRegion()
+                break
+              }
+              case 'intersects': {
+                // regionIntersectsRegion()
+                break
+              }
+            }
+
+            if (isSelected) {
+              state.document.nodes[node.instanceId].status.isSelected = true
+              selectedNodeIds.push(node.instanceId)
+            }
+          }
+
+          // Update top-level selection
+          state.registry.selection.nodes = selectedNodeIds
+
+          // Reset state to unset value
+          state.registry.selection.region = { isActive: false }
+        },
+        false,
+        'selection/region/commit'
+      ),
     setCameraAspect: (aspect: number) =>
       set(
         (state) => {
