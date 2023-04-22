@@ -4,6 +4,7 @@ import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
+import { GenericNodeLabel } from '.'
 
 type GenericNodeBodyProps = {
   node: NodePen.DocumentNode
@@ -48,18 +49,20 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
   }, [])
 
   return (
-    <rect
-      x={position.x}
-      y={position.y}
-      width={nodeWidth}
-      height={nodeHeight}
-      rx={7}
-      ry={7}
-      fill={isSelected ? COLORS.GREEN : COLORS.LIGHT}
-      stroke={COLORS.DARK}
-      strokeWidth={2}
-      pointerEvents="auto"
-      onContextMenu={handleContextMenu}
-    />
+    <g id={`generic-node-body-${node.instanceId}`} onContextMenu={handleContextMenu}>
+      <rect
+        x={position.x}
+        y={position.y}
+        width={nodeWidth}
+        height={nodeHeight}
+        rx={7}
+        ry={7}
+        fill={isSelected ? COLORS.GREEN : COLORS.LIGHT}
+        stroke={COLORS.DARK}
+        strokeWidth={2}
+        pointerEvents="auto"
+      />
+      <GenericNodeLabel node={node} template={template} />
+    </g>
   )
 }

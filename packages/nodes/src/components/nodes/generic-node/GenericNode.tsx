@@ -42,7 +42,6 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
             <>
               <GenericNodeShadow node={node} template={template} />
               <GenericNodeBody node={node} template={template} />
-              <GenericNodeLabel node={node} template={template} />
               <GenericNodePorts node={node} template={template} />
             </>
           )}
