@@ -43,8 +43,6 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
       case 'mouse': {
         const { pageX, pageY } = e
 
-        clearSelection()
-
         switch (e.button) {
           case 0: {
             isRegionSelectActive.current = true
@@ -56,11 +54,19 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
             initialWorldPosition.current = { x, y }
             initialPagePosition.current = { x: pageX, y: pageY }
+
+            if (e.shiftKey || e.ctrlKey) {
+              break
+            }
+
+            clearSelection()
+
             break
           }
           case 1: {
             const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
             console.log({ x, y })
+
             break
           }
           case 2: {

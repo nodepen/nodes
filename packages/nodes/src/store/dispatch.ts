@@ -5,7 +5,8 @@ import type * as NodePen from '@nodepen/core'
 import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
-import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
+import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
+import { getNodeExtents, getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution } from './utils'
 
@@ -99,7 +100,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         false,
         'templates/loadTemplates'
       ),
-    commitRegionSelection: () =>
+    commitRegionSelection: (selectionMode: 'set' | 'add' | 'remove') =>
       set(
         (state) => {
           if (!state.registry.selection.region.isActive) {
@@ -107,36 +108,74 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             return
           }
 
-          const { from, to } = state.registry.selection.region
+          const selectionRegion = state.registry.selection.region
+          const { from, to } = selectionRegion
 
-          const mode = from.x < to.x ? 'contains' : 'intersects'
+          const regionMode = from.x < to.x ? 'contains' : 'intersects'
 
           const selectedNodeIds: string[] = []
 
           for (const node of Object.values(state.document.nodes)) {
-            // const extents = getExtents(node)
+            const nodeExtents = getNodeExtents(node)
 
-            const isSelected = false
+            let isSelected = false
 
-            switch (mode) {
+            switch (regionMode) {
               case 'contains': {
-                // regionContainsRegion()
+                if (regionContainsRegion(selectionRegion, nodeExtents)) {
+                  isSelected = true
+                }
                 break
               }
               case 'intersects': {
-                // regionIntersectsRegion()
+                if (regionIntersectsRegion(selectionRegion, nodeExtents)) {
+                  isSelected = true
+                }
                 break
               }
             }
 
-            if (isSelected) {
-              state.document.nodes[node.instanceId].status.isSelected = true
-              selectedNodeIds.push(node.instanceId)
+            if (!isSelected) {
+              continue
+            }
+
+            // Update node-level selection
+            selectedNodeIds.push(node.instanceId)
+
+            const nodeRef = state.document.nodes[node.instanceId]
+
+            switch (selectionMode) {
+              case 'set':
+              case 'add':
+                nodeRef.status.isSelected = true
+                break
+              case 'remove':
+                nodeRef.status.isSelected = false
+                break
             }
           }
 
           // Update top-level selection
-          state.registry.selection.nodes = selectedNodeIds
+          switch (selectionMode) {
+            case 'set': {
+              state.registry.selection.nodes = selectedNodeIds
+              break
+            }
+            case 'add': {
+              for (const id of selectedNodeIds) {
+                if (!state.registry.selection.nodes.includes(id)) {
+                  state.registry.selection.nodes.push(id)
+                }
+              }
+              break
+            }
+            case 'remove': {
+              state.registry.selection.nodes = state.registry.selection.nodes.filter(
+                (id) => !selectedNodeIds.includes(id)
+              )
+              break
+            }
+          }
 
           // Reset state to unset value
           state.registry.selection.region = { isActive: false }

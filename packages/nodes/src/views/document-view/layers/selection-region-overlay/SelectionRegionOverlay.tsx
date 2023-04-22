@@ -57,7 +57,17 @@ const SelectionRegionOverlay = () => {
 
       switch (e.pointerType) {
         case 'mouse': {
-          commitRegionSelection()
+          if (e.shiftKey) {
+            commitRegionSelection('add')
+            return
+          }
+
+          if (e.ctrlKey) {
+            commitRegionSelection('remove')
+            return
+          }
+
+          commitRegionSelection('set')
         }
       }
     },
