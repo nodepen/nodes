@@ -5,7 +5,8 @@ import type * as NodePen from '@nodepen/core'
 import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
-import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
+import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
+import { getNodeExtents, getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution } from './utils'
 
@@ -99,6 +100,76 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         false,
         'templates/loadTemplates'
       ),
+    commitRegionSelection: (selectionMode: 'set' | 'add' | 'remove') =>
+      set(
+        (state) => {
+          if (!state.registry.selection.region.isActive) {
+            console.log('🐍 Attempted to commit a region selection that was not active!')
+            return
+          }
+
+          const selectionRegion = state.registry.selection.region
+          const { from, to } = selectionRegion
+
+          const regionMode = from.x < to.x ? 'contains' : 'intersects'
+
+          const selectedNodeIds: string[] = []
+
+          for (const node of Object.values(state.document.nodes)) {
+            const nodeExtents = getNodeExtents(node)
+
+            let isSelected = false
+
+            switch (regionMode) {
+              case 'contains': {
+                if (regionContainsRegion(selectionRegion, nodeExtents)) {
+                  isSelected = true
+                }
+                break
+              }
+              case 'intersects': {
+                if (regionIntersectsRegion(selectionRegion, nodeExtents)) {
+                  isSelected = true
+                }
+                break
+              }
+            }
+
+            if (!isSelected) {
+              continue
+            }
+
+            selectedNodeIds.push(node.instanceId)
+          }
+
+          // Update top-level selection
+          switch (selectionMode) {
+            case 'set': {
+              state.registry.selection.nodes = selectedNodeIds
+              break
+            }
+            case 'add': {
+              for (const id of selectedNodeIds) {
+                if (!state.registry.selection.nodes.includes(id)) {
+                  state.registry.selection.nodes.push(id)
+                }
+              }
+              break
+            }
+            case 'remove': {
+              state.registry.selection.nodes = state.registry.selection.nodes.filter(
+                (id) => !selectedNodeIds.includes(id)
+              )
+              break
+            }
+          }
+
+          // Reset state to unset value
+          state.registry.selection.region = { isActive: false }
+        },
+        false,
+        'selection/region/commit'
+      ),
     setCameraAspect: (aspect: number) =>
       set(
         (state) => {
@@ -136,10 +207,32 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             return
           }
 
-          startTransition(() => {
-            node.position.x = x
-            node.position.y = y
-          })
+          if (!state.registry.selection.nodes.includes(id)) {
+            startTransition(() => {
+              node.position.x = x
+              node.position.y = y
+            })
+
+            return
+          }
+
+          const { x: currentX, y: currentY } = node.position
+
+          const [dx, dy] = [x - currentX, y - currentY]
+
+          for (const nodeInstanceId of state.registry.selection.nodes) {
+            const selectedNode = state.document.nodes[nodeInstanceId]
+
+            if (!selectedNode) {
+              console.log('🐍 Could not move selected node position because node is not present in document!')
+              continue
+            }
+
+            state.document.nodes[nodeInstanceId].position = {
+              x: selectedNode.position.x + dx,
+              y: selectedNode.position.y + dy,
+            }
+          }
         },
         false,
         {
@@ -155,6 +248,14 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         },
         false,
         'ui/clearInterface'
+      ),
+    clearSelection: () =>
+      set(
+        (state) => {
+          state.registry.selection.nodes = []
+        },
+        false,
+        'ui/clearSelection'
       ),
   }
 

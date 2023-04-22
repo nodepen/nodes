@@ -14,8 +14,6 @@ export type DocumentNode = {
     isEnabled: boolean
     /** If true, the node has not yet been committed to the document and should not be included in solutions. */
     isProvisional: boolean
-    /** If true, the node is currently selected. */
-    isSelected: boolean
   }
   /** Current width and height of node in world dimensions. */
   dimensions: {

@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useStore, useDispatch } from '$'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
-import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay } from './layers'
+import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay, SelectionRegionOverlay } from './layers'
 import { DocumentViewContent } from './DocumentViewContent'
 
 type DocumentViewProps = {
@@ -43,8 +43,11 @@ const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement |
 
   return (
     <>
-      <Layer id="np-node-placement-overlay-layer" position={viewPosition} z={91}>
+      <Layer id="np-node-placement-overlay-layer" position={viewPosition} z={95}>
         <NodePlacementOverlay />
+      </Layer>
+      <Layer id="np-selection-region-overlay-layer" position={viewPosition} z={95}>
+        <SelectionRegionOverlay />
       </Layer>
       <Layer id="np-transient-element-overlay-layer" position={viewPosition} z={90}>
         <TransientElementOverlay />

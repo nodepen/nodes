@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { useDispatch } from '$'
+import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
@@ -18,6 +18,9 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
 
   const { apply } = useDispatch()
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
+  const documentSelection = useStore((state) => state.registry.selection.nodes)
+  const isSelected = documentSelection.includes(node.instanceId)
 
   const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
     e.stopPropagation()
@@ -52,7 +55,7 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
       height={nodeHeight}
       rx={7}
       ry={7}
-      fill={COLORS.LIGHT}
+      fill={isSelected ? COLORS.GREEN : COLORS.LIGHT}
       stroke={COLORS.DARK}
       strokeWidth={2}
       pointerEvents="auto"

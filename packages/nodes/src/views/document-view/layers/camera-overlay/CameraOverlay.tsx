@@ -3,6 +3,7 @@ import { useStore, useStoreRef, useDispatch } from '$'
 import { CAMERA } from '@/constants'
 import { clamp } from '@/utils'
 import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
+import { distance } from '@/utils/numerics'
 
 type CameraControlProps = {
   children?: React.ReactNode
@@ -11,17 +12,19 @@ type CameraControlProps = {
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
   const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
 
-  const { apply, clearInterface, setCameraPosition, setCameraZoom } = useDispatch()
+  const { apply, clearInterface, clearSelection, setCameraPosition, setCameraZoom } = useDispatch()
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
   const zoom = useStoreRef((state) => state.camera.zoom)
 
   const initialCameraPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
-  const initialScreenPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const initialPagePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
+  const initialWorldPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
   const activePointerId = useRef<number>()
   const isPanActive = useRef(false)
+  const isRegionSelectActive = useRef(false)
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
     e.stopPropagation()
@@ -42,13 +45,28 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
         switch (e.button) {
           case 0: {
+            isRegionSelectActive.current = true
+            activePointerId.current = e.pointerId
+
+            cameraElement.setPointerCapture(e.pointerId)
+
             const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
-            console.log({ x, y })
+
+            initialWorldPosition.current = { x, y }
+            initialPagePosition.current = { x: pageX, y: pageY }
+
+            if (e.shiftKey || e.ctrlKey) {
+              break
+            }
+
+            clearSelection()
 
             break
           }
           case 1: {
-            // Only start pan if using right click
+            const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+            console.log({ x, y })
+
             break
           }
           case 2: {
@@ -58,7 +76,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
             cameraElement.setPointerCapture(e.pointerId)
 
-            initialScreenPosition.current = { x: pageX, y: pageY }
+            initialPagePosition.current = { x: pageX, y: pageY }
 
             const { x, y } = useStore.getState().camera.position
             initialCameraPosition.current = { x, y }
@@ -80,10 +98,6 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
   }
 
   const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
-    if (!isPanActive.current) {
-      return
-    }
-
     if (e.pointerId !== activePointerId.current) {
       return
     }
@@ -91,17 +105,48 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     switch (e.pointerType) {
       case 'mouse': {
         const { pageX: currentScreenX, pageY: currentScreenY } = e
-        const { x: initialScreenX, y: initialScreenY } = initialScreenPosition.current
+        const { x: initialScreenX, y: initialScreenY } = initialPagePosition.current
 
-        const totalDeltaX = currentScreenX - initialScreenX
-        const totalDeltaY = currentScreenY - initialScreenY
+        if (isPanActive.current) {
+          // Continue panning
 
-        const { x, y } = initialCameraPosition.current
+          const totalDeltaX = currentScreenX - initialScreenX
+          const totalDeltaY = currentScreenY - initialScreenY
 
-        const dx = -totalDeltaX / zoom.current
-        const dy = totalDeltaY / zoom.current
+          const { x, y } = initialCameraPosition.current
 
-        setCameraPosition(x + dx, y + dy)
+          const dx = -totalDeltaX / zoom.current
+          const dy = totalDeltaY / zoom.current
+
+          setCameraPosition(x + dx, y + dy)
+          break
+        }
+
+        if (isRegionSelectActive.current) {
+          const d = distance([initialScreenX, initialScreenY], [currentScreenX, currentScreenY])
+
+          if (d > 15) {
+            // Initialize region select
+            const { x: ax, y: ay } = initialWorldPosition.current
+
+            const [bx, by] = pageSpaceToWorldSpace(currentScreenX, currentScreenY)
+
+            apply((state) => {
+              state.registry.selection.region = {
+                isActive: true,
+                pointerId: e.pointerId,
+                from: { x: ax, y: ay },
+                to: { x: bx, y: by },
+              }
+            })
+
+            resetLocalState()
+            break
+          }
+
+          break
+        }
+
         break
       }
       case 'pen':
@@ -114,6 +159,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
   const resetLocalState = useCallback(() => {
     activePointerId.current = undefined
     isPanActive.current = false
+    isRegionSelectActive.current = false
   }, [])
 
   const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {

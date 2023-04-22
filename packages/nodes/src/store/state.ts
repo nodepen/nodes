@@ -54,6 +54,27 @@ export type NodesAppState = {
         }
       }
     }
+    selection: {
+      nodes: string[]
+      region:
+        | {
+            isActive: false
+          }
+        | {
+            isActive: true
+            /** World space */
+            from: {
+              x: number
+              y: number
+            }
+            /** World space */
+            to: {
+              x: number
+              y: number
+            }
+            pointerId: number
+          }
+    }
     tooltips: {
       [tooltipKey: string]: Tooltip
     }
@@ -127,6 +148,12 @@ export const initialState: NodesAppState = {
         controls: React.createRef<HTMLDivElement>(),
       },
       targets: {},
+    },
+    selection: {
+      nodes: [],
+      region: {
+        isActive: false,
+      },
     },
     tooltips: {},
     views: {},

@@ -1,3 +1,4 @@
-import AnnotationsContainer from './AnnotationsContainer'
+import AnnotationsOverlayContainer from './AnnotationsOverlayContainer'
+import AnnotationsUnderlayContainer from './AnnotationsUnderlayContainer'
 
-export { AnnotationsContainer }
+export { AnnotationsOverlayContainer, AnnotationsUnderlayContainer }
