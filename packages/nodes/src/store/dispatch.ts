@@ -139,20 +139,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
               continue
             }
 
-            // Update node-level selection
             selectedNodeIds.push(node.instanceId)
-
-            const nodeRef = state.document.nodes[node.instanceId]
-
-            switch (selectionMode) {
-              case 'set':
-              case 'add':
-                nodeRef.status.isSelected = true
-                break
-              case 'remove':
-                nodeRef.status.isSelected = false
-                break
-            }
           }
 
           // Update top-level selection
@@ -265,17 +252,6 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
     clearSelection: () =>
       set(
         (state) => {
-          for (const nodeInstanceId of state.registry.selection.nodes) {
-            const node = state.document.nodes[nodeInstanceId]
-
-            if (!node) {
-              console.log('🐍 Node selected in registry missing from document!')
-              continue
-            }
-
-            node.status.isSelected = false
-          }
-
           state.registry.selection.nodes = []
         },
         false,

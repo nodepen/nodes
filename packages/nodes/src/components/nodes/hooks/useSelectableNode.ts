@@ -35,9 +35,6 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
                   return
                 }
 
-                // Set node as selected on node
-                node.status.isSelected = false
-
                 // Set node as selected in registry
                 const currentSelection = state.registry.selection.nodes
                 state.registry.selection.nodes = currentSelection.filter((id) => id !== nodeInstanceId)
@@ -55,9 +52,6 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
                   console.log('🐍 Could not find node for selection event!')
                   return
                 }
-
-                // Set node as selected on node
-                node.status.isSelected = true
 
                 // Set node as selected in registry
                 if (!state.registry.selection.nodes.includes(nodeInstanceId)) {
@@ -81,9 +75,6 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
                 console.log('🐍 Could not find node for selection event!')
                 return
               }
-
-              // Set node as selected on node
-              node.status.isSelected = true
 
               // Set node as selected in registry
               state.registry.selection.nodes = [nodeInstanceId]

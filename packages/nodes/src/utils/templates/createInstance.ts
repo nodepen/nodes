@@ -26,7 +26,6 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
     status: {
       isEnabled: true,
       isProvisional: false,
-      isSelected: false,
     },
     anchors: {},
     values: {},
