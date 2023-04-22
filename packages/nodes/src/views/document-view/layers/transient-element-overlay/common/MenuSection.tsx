@@ -1,5 +1,4 @@
 import React from 'react'
-import { COLORS } from '@/constants'
 
 type MenuSectionProps = {
   icon?: React.ReactNode

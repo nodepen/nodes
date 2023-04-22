@@ -4,7 +4,6 @@ import { useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import {
   GenericNodeBody,
-  GenericNodeLabel,
   GenericNodePorts,
   GenericNodeShadow,
   GenericNodeSkeleton,
