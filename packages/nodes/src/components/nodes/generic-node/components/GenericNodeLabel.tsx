@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'

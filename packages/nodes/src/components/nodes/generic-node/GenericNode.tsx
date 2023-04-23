@@ -4,7 +4,6 @@ import { useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import {
   GenericNodeBody,
-  GenericNodeLabel,
   GenericNodePorts,
   GenericNodeShadow,
   GenericNodeSkeleton,
@@ -42,7 +41,6 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
             <>
               <GenericNodeShadow node={node} template={template} />
               <GenericNodeBody node={node} template={template} />
-              <GenericNodeLabel node={node} template={template} />
               <GenericNodePorts node={node} template={template} />
             </>
           )}

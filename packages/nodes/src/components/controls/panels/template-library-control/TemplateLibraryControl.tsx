@@ -1,10 +1,8 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { createInstance, getIconAsImage, groupTemplatesByCategory } from '@/utils/templates'
+import { groupTemplatesByCategory } from '@/utils/templates'
 import { ControlPanel } from '../../common'
 import { useDispatch } from '@/store'
-import { usePageSpaceToWorldSpace } from '@/hooks'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { TemplateDraggable } from './components'
 import { KEYS } from '@/constants'
 
@@ -14,8 +12,6 @@ type TemplateLibraryControlProps = {
 
 const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): React.ReactElement => {
   const { apply } = useDispatch()
-
-  const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
   const templatesByCategory = useMemo(() => groupTemplatesByCategory(templates), [templates])
 
