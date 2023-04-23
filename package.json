@@ -18,7 +18,8 @@
     "lint": "npx turbo run lint --no-daemon --concurrency=1",
     "lint:ci": "npx turbo run lint --no-daemon --concurrency=1 --filter=!./apps/*",
     "test": "npx turbo run test --no-daemon",
-    "test:ci": "npx turbo run test --no-daemon --filter=./packages/nodes"
+    "test:ci": "npx turbo run test --no-daemon --filter=./packages/nodes",
+    "install:ci": "npm install -D --arch=x64 --platform=linux turbo && npm install -D --arch=arm64 --platform=darwin turbo"
   },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
