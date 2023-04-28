@@ -13,7 +13,7 @@
     "@nodepen/nodes": "^1.1.0",
     "@tanstack/react-query": "^4.28.0",
     "next": "13.3.0",
-    "next-images": "^1.8.4",
+    "next-images": "^1.8.5",
     "react": "^18.0",
     "react-dom": "^18.0"
   },
