@@ -1,6 +1,6 @@
 {
   "name": "@nodepen/nodes",
-  "version": "1.1.0",
+  "version": "2.0.0",
   "description": "node editor component library for nodepen",
   "author": "@cdriesler",
   "repository": {
@@ -23,7 +23,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@nodepen/core": "^1.1.0",
+    "@nodepen/core": "^2.0.0",
     "@speckle/viewer": "^2.13.3",
     "immer": "^9.0.21",
     "zustand": "4.3.6"
