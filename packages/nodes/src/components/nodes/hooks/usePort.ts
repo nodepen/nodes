@@ -74,8 +74,73 @@ export const usePort = (
     }
   }, [])
 
+  const handlePointerEnter = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        break
+      }
+      case 'mouse': {
+        apply((state) => {
+          state.registry.cursors[portInstanceId] = {
+            type: 'wire-edit',
+            mode: 'set',
+            position: {
+              x: pageX,
+              y: pageY,
+            },
+          }
+        })
+      }
+    }
+  }, [])
+
+  const handlePointerMove = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        break
+      }
+      case 'mouse': {
+        apply((state) => {
+          state.registry.cursors[portInstanceId] = {
+            type: 'wire-edit',
+            mode: 'set',
+            position: {
+              x: pageX,
+              y: pageY,
+            },
+          }
+        })
+      }
+    }
+  }, [])
+
+  const handlePointerLeave = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        break
+      }
+      case 'mouse': {
+        apply((state) => {
+          delete state.registry.cursors[portInstanceId]
+        })
+      }
+    }
+  }, [])
+
   useImperativeEvent(portRef, 'contextmenu', handleContextMenu)
   useImperativeEvent(portRef, 'pointerdown', handlePointerDown)
+  useImperativeEvent(portRef, 'pointerenter', handlePointerEnter)
+  useImperativeEvent(portRef, 'pointermove', handlePointerMove)
+  useImperativeEvent(portRef, 'pointerleave', handlePointerLeave)
 
   return portRef
 }

@@ -19,5 +19,5 @@ export const WireEditCursor = ({ position }: WireEditCursorProps) => {
   const x = cx + CURSOR_OFFSET
   const y = cy + CURSOR_OFFSET
 
-  return <div className="np-w-8 np-h-8 np-bg-red np-absolute" style={{ left: x, top: y }} />
+  return <div className="np-w-8 np-h-8 np-bg-dark np-absolute" style={{ left: x, top: y }} />
 }
