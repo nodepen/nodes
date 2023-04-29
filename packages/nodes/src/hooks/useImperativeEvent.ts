@@ -29,5 +29,5 @@ export const useImperativeEvent = <T extends HTMLElement | SVGElement, U extends
     return () => {
       element.removeEventListener(eventName, eventHandler as EventListener)
     }
-  })
+  }, [eventHandler])
 }
