@@ -41,6 +41,17 @@ export type NodesAppState = {
     contextMenus: {
       [menuKey: string]: ContextMenu
     }
+    cursors: {
+      [cursorKey: string]: {
+        type: 'wire-edit'
+        mode: 'set' | 'merge' | 'remove' | 'move'
+        /** Current cursor position in world space. */
+        position: {
+          x: number
+          y: number
+        }
+      }
+    }
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null
       proxyRefs: {
@@ -142,6 +153,7 @@ export const initialState: NodesAppState = {
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
     contextMenus: {},
+    cursors: {},
     shadows: {
       containerRef: null,
       proxyRefs: {
