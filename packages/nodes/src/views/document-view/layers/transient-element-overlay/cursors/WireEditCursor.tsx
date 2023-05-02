@@ -1,6 +1,8 @@
-import React from 'react'
-import { usePageSpaceToOverlaySpace } from '@/hooks'
+import React, { useCallback } from 'react'
+import { useDocumentRef, useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 import type { CursorConfiguration, WireEditCursorContext } from '../types'
+import { getWireEditModalityFromEvent } from '@/utils/wires'
+import { useDispatch } from '@/store'
 
 type WireEditCursorProps = {
   configuration: CursorConfiguration
@@ -9,6 +11,10 @@ type WireEditCursorProps = {
 
 export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) => {
   const { position } = configuration
+  const { mode, target } = context
+  const { portInstanceId } = target
+
+  const { apply } = useDispatch()
 
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
@@ -19,5 +25,34 @@ export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) 
   const x = cx + CURSOR_OFFSET
   const y = cy + CURSOR_OFFSET
 
-  return <div className="np-w-8 np-h-8 np-bg-dark np-absolute" style={{ left: x, top: y }} />
+  const documentRef = useDocumentRef()
+
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    e.preventDefault()
+
+    const mode = getWireEditModalityFromEvent(e)
+
+    apply((state) => {
+      state.registry.cursors[portInstanceId].context.mode = mode
+    })
+  }, [])
+
+  const handleKeyUp = useCallback((e: KeyboardEvent) => {
+    e.preventDefault()
+
+    const mode = getWireEditModalityFromEvent(e)
+
+    apply((state) => {
+      state.registry.cursors[portInstanceId].context.mode = mode
+    })
+  }, [])
+
+  useImperativeEvent(documentRef, 'keydown', handleKeyDown)
+  useImperativeEvent(documentRef, 'keyup', handleKeyUp)
+
+  return (
+    <div className="np-w-8 np-h-8 np-bg-pale np-absolute" style={{ left: x, top: y }}>
+      {mode}
+    </div>
+  )
 }

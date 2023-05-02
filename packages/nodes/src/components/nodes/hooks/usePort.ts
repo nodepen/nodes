@@ -3,7 +3,7 @@ import { useCallback, useRef } from 'react'
 import { useDispatch } from '$'
 import type * as NodePen from '@nodepen/core'
 import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
-import type { WireEditMode } from '@/types'
+import { getWireEditModalityFromEvent } from '@/utils/wires'
 
 export const usePort = (
   nodeInstanceId: string,
@@ -75,58 +75,39 @@ export const usePort = (
     }
   }, [])
 
-  const getWireEditModality = useCallback((e: PointerEvent): WireEditMode => {
-    if (e.ctrlKey && e.shiftKey) {
-      return 'move'
-    }
+  const handlePointerEnter = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
 
-    if (e.ctrlKey) {
-      return 'remove'
-    }
-
-    if (e.shiftKey) {
-      return 'merge'
-    }
-
-    return 'set'
-  }, [])
-
-  const handlePointerEnter = useCallback(
-    (e: PointerEvent): void => {
-      const { pageX, pageY } = e
-
-      switch (e.pointerType) {
-        case 'pen':
-        case 'touch': {
-          break
-        }
-        case 'mouse': {
-          const wireEditTarget = {
-            nodeInstanceId,
-            portInstanceId,
-            portDirection: direction,
-          }
-
-          apply((state) => {
-            state.registry.cursors[portInstanceId] = {
-              configuration: {
-                position: {
-                  x: pageX,
-                  y: pageY,
-                },
-              },
-              context: {
-                type: 'wire-edit',
-                mode: getWireEditModality(e),
-                target: wireEditTarget,
-              },
-            }
-          })
-        }
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        break
       }
-    },
-    [getWireEditModality]
-  )
+      case 'mouse': {
+        const wireEditTarget = {
+          nodeInstanceId,
+          portInstanceId,
+          portDirection: direction,
+        }
+
+        apply((state) => {
+          state.registry.cursors[portInstanceId] = {
+            configuration: {
+              position: {
+                x: pageX,
+                y: pageY,
+              },
+            },
+            context: {
+              type: 'wire-edit',
+              mode: getWireEditModalityFromEvent(e),
+              target: wireEditTarget,
+            },
+          }
+        })
+      }
+    }
+  }, [])
 
   const handlePointerMove = useCallback((e: PointerEvent): void => {
     const { pageX, pageY } = e
