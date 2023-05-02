@@ -16,13 +16,13 @@ const TransientElementOverlay = () => {
   return (
     <div className="np-w-full np-h-full np-pointer-events-none np-relative">
       {cursors.map(([key, cursor]) => {
-        switch (cursor.type) {
+        switch (cursor.context.type) {
           case 'wire-edit': {
-            const { mode, position } = cursor
-            return <WireEditCursor key={`wire-edit-cursor-${key}`} position={position} mode={mode} />
+            const { configuration, context } = cursor
+            return <WireEditCursor key={`wire-edit-cursor-${key}`} configuration={configuration} context={context} />
           }
           default: {
-            console.log(`🐍 Unhandled cursor type [${cursor.type}]`)
+            console.log(`🐍 Unhandled cursor type [${cursor.context.type}]`)
             return null
           }
         }

@@ -1,7 +1,8 @@
 import React from 'react'
 import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
-import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
+import type { ContextMenu, Cursor, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
+import type { WireEditMode } from '@/types'
 
 export type NodesAppState = {
   document: NodePen.Document
@@ -42,15 +43,7 @@ export type NodesAppState = {
       [menuKey: string]: ContextMenu
     }
     cursors: {
-      [cursorKey: string]: {
-        type: 'wire-edit'
-        mode: 'set' | 'merge' | 'remove' | 'move'
-        /** Current cursor position in world space. */
-        position: {
-          x: number
-          y: number
-        }
-      }
+      [cursorKey: string]: Cursor
     }
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null

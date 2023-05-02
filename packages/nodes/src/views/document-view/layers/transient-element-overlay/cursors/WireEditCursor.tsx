@@ -1,15 +1,15 @@
 import React from 'react'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
+import type { CursorConfiguration, WireEditCursorContext } from '../types'
 
 type WireEditCursorProps = {
-  mode: string
-  position: {
-    x: number
-    y: number
-  }
+  configuration: CursorConfiguration
+  context: WireEditCursorContext
 }
 
-export const WireEditCursor = ({ position }: WireEditCursorProps) => {
+export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) => {
+  const { position } = configuration
+
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
   const [cx, cy] = pageSpaceToOverlaySpace(position.x, position.y)
