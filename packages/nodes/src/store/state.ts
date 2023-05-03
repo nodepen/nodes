@@ -2,7 +2,7 @@ import React from 'react'
 import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
 import type { ContextMenu, Cursor, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
-import type { WireEditMode } from '@/types'
+import type { NodePortReference, WireEditMode } from '@/types'
 
 export type NodesAppState = {
   document: NodePen.Document
@@ -90,6 +90,22 @@ export type NodesAppState = {
     }
     wires: {
       containerRef: React.RefObject<SVGGElement> | null
+      live: {
+        cursor: {
+          pointerId: number
+          position: {
+            x: number
+            y: number
+          }
+        }
+        connections: {
+          [liveConnectionKey: string]: {
+            portAnchor: NodePortReference
+            portAnchorType: 'output' | 'input'
+          }
+        }
+        target: NodePortReference | null
+      }
     }
   }
   callbacks: NodesAppCallbacks
