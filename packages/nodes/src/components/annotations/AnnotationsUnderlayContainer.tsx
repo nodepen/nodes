@@ -16,11 +16,17 @@ const AnnotationUnderlayContainer = (): React.ReactElement => {
     })
   }, [])
 
+  const liveWires = useStore((state) => Object.entries(state.registry.wires.live.connections))
+
   const selectionRegionState = useStore((state) => state.registry.selection.region)
 
   return (
     <g id="np-annotations-underlay">
-      <g id="np-wires" ref={ref} />
+      <g id="np-wires-underlay" ref={ref}>
+        {liveWires.map(([liveWireKey, liveWire]) => (
+          <></>
+        ))}
+      </g>
       <g id="np-regions-underlay">
         {selectionRegionState.isActive ? (
           <Region isFill from={selectionRegionState.from} to={selectionRegionState.to} />

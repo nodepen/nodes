@@ -1,3 +1,3 @@
-import Wire from './Wire'
+import PortConnectionWire from './PortConnectionWire'
 
-export { Wire }
+export { PortConnectionWire }

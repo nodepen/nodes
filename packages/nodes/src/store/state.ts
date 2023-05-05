@@ -91,19 +91,24 @@ export type NodesAppState = {
     wires: {
       containerRef: React.RefObject<SVGGElement> | null
       live: {
+        /** The current position of the cursor pointer in page space. */
         cursor: {
           pointerId: number
           position: {
             x: number
             y: number
           }
-        }
+        } | null
+        /** The live wire connections to draw. */
         connections: {
           [liveConnectionKey: string]: {
+            /** The port to connect one end of the wire to. */
             portAnchor: NodePortReference
+            /** The end of the wire to connect to the given port. */
             portAnchorType: 'output' | 'input'
           }
         }
+        /** The 'candidate' connection claimed on hover. Used for connection snapping. */
         target: NodePortReference | null
       }
     }
@@ -180,6 +185,11 @@ export const initialState: NodesAppState = {
     views: {},
     wires: {
       containerRef: null,
+      live: {
+        cursor: null,
+        target: null,
+        connections: {},
+      },
     },
   },
   callbacks: {
