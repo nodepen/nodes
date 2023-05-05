@@ -1,3 +1,4 @@
+import LiveConnectionWire from './LiveConnectionWire'
 import PortConnectionWire from './PortConnectionWire'
 
-export { PortConnectionWire }
+export { LiveConnectionWire, PortConnectionWire }

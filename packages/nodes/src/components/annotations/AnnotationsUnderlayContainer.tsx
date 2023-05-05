@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useDispatch, useStore } from '$'
 import { Region } from './region'
+import { LiveConnectionWire } from './wire'
 
 /**
  * Renders SVG annotation elements meant to be drawn behind nodes in all cases.
@@ -24,7 +25,11 @@ const AnnotationUnderlayContainer = (): React.ReactElement => {
     <g id="np-annotations-underlay">
       <g id="np-wires-underlay" ref={ref}>
         {liveWires.map(([liveWireKey, liveWire]) => (
-          <></>
+          <LiveConnectionWire
+            key={`live-wire-${liveWireKey}`}
+            portAnchor={liveWire.portAnchor}
+            portAnchorType={liveWire.portAnchorType}
+          />
         ))}
       </g>
       <g id="np-regions-underlay">

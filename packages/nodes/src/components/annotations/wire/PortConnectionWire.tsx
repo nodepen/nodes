@@ -1,10 +1,7 @@
 import React from 'react'
-import type { DataTreeStructure } from '@nodepen/core'
-import { COLORS } from '@/constants'
 import type { NodePortReference } from '@/types'
 import { useNodeAnchorPosition, usePortValues } from '@/hooks'
 import { getDataTreeStructure } from '@/utils/data-trees'
-import { distance, pointAt } from '@/utils/numerics'
 import { WirePortal } from './components'
 import { Wire } from './Wire'
 
@@ -13,6 +10,7 @@ type PortConnectionWireProps = {
   to: NodePortReference
 }
 
+/** Draws a wire between two node port references based on their position and the source's data structure. */
 const PortConnectionWire = ({ from, to }: PortConnectionWireProps): React.ReactElement | null => {
   const { nodeInstanceId: fromNodeId, portInstanceId: fromPortId } = from
   const { nodeInstanceId: toNodeId, portInstanceId: toPortId } = to
