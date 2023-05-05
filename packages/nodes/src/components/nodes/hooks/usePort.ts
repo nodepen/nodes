@@ -45,6 +45,8 @@ export const usePort = (
   }, [])
 
   const handlePointerDown = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY, pointerId } = e
+
     switch (e.pointerType) {
       case 'pen':
       case 'touch': {
@@ -55,6 +57,27 @@ export const usePort = (
         switch (e.button) {
           case 0: {
             // Handle left mouse button
+            e.stopPropagation()
+
+            console.log('!')
+
+            apply((state) => {
+              state.registry.wires.live.connections[portInstanceId] = {
+                portAnchor: {
+                  nodeInstanceId,
+                  portInstanceId,
+                },
+                portAnchorType: direction,
+              }
+
+              state.registry.wires.live.cursor = {
+                pointerId,
+                position: {
+                  x: pageX,
+                  y: pageY,
+                },
+              }
+            })
             break
           }
           case 1: {
@@ -91,6 +114,7 @@ export const usePort = (
         }
 
         apply((state) => {
+          // Update cursor
           state.registry.cursors[portInstanceId] = {
             configuration: {
               position: {
@@ -103,6 +127,22 @@ export const usePort = (
               mode: getWireEditModalityFromEvent(e),
               target: wireEditTarget,
             },
+          }
+
+          // Update live wire capture
+          for (const connection of Object.values(state.registry.wires.live.connections)) {
+            if (connection.portAnchorType === direction) {
+              return
+            }
+
+            if (connection.portAnchor.nodeInstanceId === nodeInstanceId) {
+              return
+            }
+          }
+
+          state.registry.wires.live.target = {
+            nodeInstanceId,
+            portInstanceId,
           }
         })
       }
@@ -130,6 +170,15 @@ export const usePort = (
               y: pageY,
             },
           }
+
+          if (!state.registry.wires.live.cursor) {
+            return
+          }
+
+          state.registry.wires.live.cursor.position = {
+            x: pageX,
+            y: pageY,
+          }
         })
       }
     }
@@ -143,7 +192,11 @@ export const usePort = (
       }
       case 'mouse': {
         apply((state) => {
+          // Clear wire edit cursor
           delete state.registry.cursors[portInstanceId]
+
+          // Release live wire capture
+          state.registry.wires.live.target = null
         })
       }
     }
