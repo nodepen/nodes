@@ -152,6 +152,8 @@ export const usePort = (
   const handlePointerMove = useCallback((e: PointerEvent): void => {
     const { pageX, pageY } = e
 
+    console.log('A')
+
     switch (e.pointerType) {
       case 'pen':
       case 'touch': {
@@ -171,14 +173,14 @@ export const usePort = (
             },
           }
 
-          if (!state.registry.wires.live.cursor) {
-            return
-          }
+          // if (!state.registry.wires.live.cursor) {
+          //   return
+          // }
 
-          state.registry.wires.live.cursor.position = {
-            x: pageX,
-            y: pageY,
-          }
+          // state.registry.wires.live.cursor.position = {
+          //   x: pageX,
+          //   y: pageY,
+          // }
         })
       }
     }
