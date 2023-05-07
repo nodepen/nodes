@@ -2,7 +2,7 @@ import React from 'react'
 import type { NodePortReference } from '@/types'
 import { useNodeAnchorPosition, usePortValues } from '@/hooks'
 import { getDataTreeStructure } from '@/utils/data-trees'
-import { WirePortal } from './components'
+import { WirePortal, WiresMaskPortal } from './components'
 import { Wire } from './Wire'
 
 type PortConnectionWireProps = {
@@ -27,9 +27,14 @@ const PortConnectionWire = ({ from, to }: PortConnectionWireProps): React.ReactE
   const wireStructure = getDataTreeStructure(sourceValues ?? {})
 
   return (
-    <WirePortal>
-      <Wire start={fromPosition} end={toPosition} structure={wireStructure} />
-    </WirePortal>
+    <>
+      <WirePortal>
+        <Wire start={fromPosition} end={toPosition} structure={wireStructure} />
+      </WirePortal>
+      <WiresMaskPortal>
+        <Wire start={fromPosition} end={toPosition} structure={wireStructure} drawMask />
+      </WiresMaskPortal>
+    </>
   )
 }
 

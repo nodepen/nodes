@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import type { DataTreeStructure, DocumentNode } from '@nodepen/core'
-import { COLORS, DIMENSIONS } from '@/constants'
+import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
 import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
@@ -17,9 +17,19 @@ type WireProps = {
   structure: DataTreeStructure
   drawArrows?: 'LTR' | 'RTL'
   drawNodeBackground?: boolean
+  drawWireBackground?: boolean
+  drawMask?: boolean
 }
 
-export const Wire = ({ start, end, structure, drawArrows, drawNodeBackground = false }: WireProps) => {
+export const Wire = ({
+  start,
+  end,
+  structure,
+  drawArrows,
+  drawNodeBackground = false,
+  drawWireBackground = false,
+  drawMask = false,
+}: WireProps) => {
   const mid = {
     x: (start.x + end.x) / 2,
     y: (start.y + end.y) / 2,
@@ -59,7 +69,15 @@ export const Wire = ({ start, end, structure, drawArrows, drawNodeBackground = f
     switch (structure) {
       case 'empty':
       case 'single': {
-        return <path d={d} strokeWidth={3} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
+        return (
+          <path
+            d={d}
+            strokeWidth={drawMask ? 5 : 3}
+            stroke={drawMask ? '#FFFFFF' : COLORS.DARK}
+            fill="none"
+            strokeLinecap="round"
+          />
+        )
       }
       case 'list': {
         return (
@@ -269,10 +287,33 @@ export const Wire = ({ start, end, structure, drawArrows, drawNodeBackground = f
     )
   }
 
+  const getWireBackgroundGraphics = () => {
+    if (!drawWireBackground) {
+      return null
+    }
+
+    return (
+      <g mask={`url(#${KEYS.ELEMENT_IDS.WIRES_MASK_ID})`}>
+        <path d={d} stroke={COLORS.PALE} strokeWidth={NODE_BACKGROUND_STROKE} fill="none" />
+        {drawArrows ? (
+          <polyline
+            points={getArrowPolylinePoints(true)}
+            stroke={COLORS.PALE}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill={COLORS.PALE}
+          />
+        ) : null}
+      </g>
+    )
+  }
+
   return (
     <>
       {nodeBackgroundClipPath}
       {getNodeBackgroundGraphics()}
+      {getWireBackgroundGraphics()}
       {getWireGraphics(structure)}
       {getArrowGraphics()}
     </>
