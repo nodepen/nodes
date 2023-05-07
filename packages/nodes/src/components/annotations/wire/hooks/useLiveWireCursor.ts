@@ -57,6 +57,6 @@ export const useLiveWireCursor = (anchors: NodePortReference[]) => {
     [isActive, activeCursor]
   )
 
-  useImperativeEvent(documentRef, 'pointermove', handlePointerMove)
-  useImperativeEvent(documentRef, 'pointerup', handlePointerUp)
+  useImperativeEvent(documentRef, 'pointermove', handlePointerMove, isActive)
+  useImperativeEvent(documentRef, 'pointerup', handlePointerUp, isActive)
 }

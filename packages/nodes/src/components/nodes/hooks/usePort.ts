@@ -62,20 +62,24 @@ export const usePort = (
             console.log('!')
 
             apply((state) => {
-              state.registry.wires.live.connections[portInstanceId] = {
-                portAnchor: {
-                  nodeInstanceId,
-                  portInstanceId,
+              state.registry.wires.live = {
+                cursor: {
+                  pointerId,
+                  position: {
+                    x: pageX,
+                    y: pageY,
+                  },
                 },
-                portAnchorType: direction,
-              }
-
-              state.registry.wires.live.cursor = {
-                pointerId,
-                position: {
-                  x: pageX,
-                  y: pageY,
+                connections: {
+                  [portInstanceId]: {
+                    portAnchor: {
+                      nodeInstanceId,
+                      portInstanceId,
+                    },
+                    portAnchorType: direction,
+                  },
                 },
+                target: null,
               }
             })
             break
@@ -207,7 +211,7 @@ export const usePort = (
   useImperativeEvent(portRef, 'contextmenu', handleContextMenu)
   useImperativeEvent(portRef, 'pointerdown', handlePointerDown)
   useImperativeEvent(portRef, 'pointerenter', handlePointerEnter)
-  useImperativeEvent(portRef, 'pointermove', handlePointerMove)
+  // useImperativeEvent(portRef, 'pointermove', handlePointerMove)
   useImperativeEvent(portRef, 'pointerleave', handlePointerLeave)
 
   return portRef

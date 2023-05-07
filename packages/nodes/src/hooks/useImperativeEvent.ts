@@ -15,7 +15,8 @@ type EventHandler<T extends HTMLElement | SVGElement, U extends EventKey<T>> = T
 export const useImperativeEvent = <T extends HTMLElement | SVGElement, U extends EventKey<T>>(
   ref: React.RefObject<T>,
   eventName: U,
-  eventHandler: EventHandler<T, U>
+  eventHandler: EventHandler<T, U>,
+  isActive = true
 ): void => {
   useEffect(() => {
     const element = ref.current
@@ -24,10 +25,14 @@ export const useImperativeEvent = <T extends HTMLElement | SVGElement, U extends
       return
     }
 
+    if (!isActive) {
+      return
+    }
+
     element.addEventListener(eventName, eventHandler as EventListener)
 
     return () => {
       element.removeEventListener(eventName, eventHandler as EventListener)
     }
-  }, [eventHandler])
+  }, [eventHandler, isActive])
 }
