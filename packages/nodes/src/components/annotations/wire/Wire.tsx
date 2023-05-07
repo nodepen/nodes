@@ -13,9 +13,10 @@ type WireProps = {
     y: number
   }
   structure: DataTreeStructure
+  showArrows?: boolean
 }
 
-export const Wire = ({ start, end, structure }: WireProps) => {
+export const Wire = ({ start, end, structure, showArrows = false }: WireProps) => {
   const mid = {
     x: (start.x + end.x) / 2,
     y: (start.y + end.y) / 2,
@@ -49,17 +50,17 @@ export const Wire = ({ start, end, structure }: WireProps) => {
     `S ${bRightAnchor.x} ${bRightAnchor.y} ${end.x} ${end.y}`,
   ].join('')
 
-  const getWireStyle = (structure: DataTreeStructure) => {
+  const getWireGraphics = (structure: DataTreeStructure) => {
     switch (structure) {
       case 'empty':
       case 'single': {
-        return <path d={d} strokeWidth={3} stroke={COLORS.DARK} fill="none" />
+        return <path d={d} strokeWidth={3} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
       }
       case 'list': {
         return (
           <>
-            <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" />
-            <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" />
+            <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
+            <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" strokeLinecap="round" />
           </>
         )
       }
@@ -81,7 +82,31 @@ export const Wire = ({ start, end, structure }: WireProps) => {
     }
   }
 
-  const wire = getWireStyle(structure)
+  const getArrowGraphics = () => {
+    if (!showArrows) {
+      return null
+    }
 
-  return wire
+    const { x, y } = end
+
+    const S = 12
+
+    return (
+      <polyline
+        points={`${x},${y - S / 2} ${x + S},${y} ${x},${y + S / 2}`}
+        stroke={COLORS.DARK}
+        strokeWidth={3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    )
+  }
+
+  return (
+    <>
+      {getWireGraphics(structure)}
+      {getArrowGraphics()}
+    </>
+  )
 }
