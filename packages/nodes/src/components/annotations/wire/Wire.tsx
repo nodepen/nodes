@@ -1,7 +1,9 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import type { DataTreeStructure } from '@nodepen/core'
-import { COLORS } from '@/constants'
+import { COLORS, DIMENSIONS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
+import { useStore } from '$'
+import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 
 type WireProps = {
   start: {
@@ -13,10 +15,11 @@ type WireProps = {
     y: number
   }
   structure: DataTreeStructure
-  showArrows?: boolean
+  drawArrows?: boolean
+  drawNodeBackground?: boolean
 }
 
-export const Wire = ({ start, end, structure, showArrows = false }: WireProps) => {
+export const Wire = ({ start, end, structure, drawArrows = false, drawNodeBackground = false }: WireProps) => {
   const mid = {
     x: (start.x + end.x) / 2,
     y: (start.y + end.y) / 2,
@@ -82,18 +85,22 @@ export const Wire = ({ start, end, structure, showArrows = false }: WireProps) =
     }
   }
 
-  const getArrowGraphics = () => {
-    if (!showArrows) {
-      return null
-    }
-
+  const getArrowPolylinePoints = (closed: boolean) => {
     const { x, y } = end
 
     const S = 12
 
+    return `${x},${y - S / 2} ${x + S},${y} ${x},${y + S / 2} ${closed ? `${x},${y - S / 2}` : ''}`
+  }
+
+  const getArrowGraphics = () => {
+    if (!drawArrows) {
+      return null
+    }
+
     return (
       <polyline
-        points={`${x},${y - S / 2} ${x + S},${y} ${x},${y + S / 2}`}
+        points={getArrowPolylinePoints(false)}
         stroke={COLORS.DARK}
         strokeWidth={3}
         strokeLinecap="round"
@@ -103,8 +110,72 @@ export const Wire = ({ start, end, structure, showArrows = false }: WireProps) =
     )
   }
 
+  const nodeBackgroundClipPath = useMemo(() => {
+    const nodes = Object.values(useStore.getState().document.nodes)
+
+    if (!drawNodeBackground) {
+      return null
+    }
+
+    return (
+      <defs>
+        <clipPath id="live-wire-background-clip">
+          {nodes.map((node) => {
+            const { position, templateId } = node
+
+            const template = useStore.getState().templates[templateId]
+
+            const nodeWidth = getNodeWidth()
+            const nodeHeight = getNodeHeight(template)
+
+            return (
+              <rect
+                x={position.x - 2}
+                y={position.y - 2}
+                width={nodeWidth + 4}
+                height={nodeHeight + 6}
+                rx={7}
+                ry={7}
+                fill="none"
+                stroke={COLORS.DARK}
+                strokeWidth={9}
+                pointerEvents="auto"
+              />
+            )
+          })}
+        </clipPath>
+      </defs>
+    )
+  }, [])
+
+  const getNodeBackgroundGraphics = () => {
+    if (!drawNodeBackground) {
+      return null
+    }
+
+    return (
+      <>
+        <g clipPath="url(#live-wire-background-clip)">
+          <path d={d} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          {drawArrows ? (
+            <polyline
+              points={getArrowPolylinePoints(true)}
+              stroke={COLORS.LIGHT}
+              strokeWidth={6}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill={COLORS.LIGHT}
+            />
+          ) : null}
+        </g>
+      </>
+    )
+  }
+
   return (
     <>
+      {nodeBackgroundClipPath}
+      {getNodeBackgroundGraphics()}
       {getWireGraphics(structure)}
       {getArrowGraphics()}
     </>

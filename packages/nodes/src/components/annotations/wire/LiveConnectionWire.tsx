@@ -30,7 +30,9 @@ const LiveConnectionWire = ({ portAnchor, portAnchorType }: LiveConnectionWirePr
   const start = portAnchorType === 'output' ? portAnchorPosition : targetAnchorPosition ?? cursorAnchorPosition
   const end = portAnchorType === 'input' ? portAnchorPosition : targetAnchorPosition ?? cursorAnchorPosition
 
-  return <Wire start={start} end={end} structure="single" showArrows />
+  const showArrows = !targetAnchorPosition
+
+  return <Wire start={start} end={end} structure="single" drawArrows={showArrows} drawNodeBackground />
 }
 
 export default React.memo(LiveConnectionWire, (prevProps, nextProps) => {
