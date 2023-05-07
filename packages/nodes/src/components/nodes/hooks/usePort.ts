@@ -69,6 +69,7 @@ export const usePort = (
                     x: pageX,
                     y: pageY,
                   },
+                  mode: getWireEditModalityFromEvent(e),
                 },
                 connections: {
                   [portInstanceId]: {
@@ -146,6 +147,7 @@ export const usePort = (
               x: pageX,
               y: pageY,
             },
+            mode: getWireEditModalityFromEvent(e),
           }
         })
       }

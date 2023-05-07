@@ -98,6 +98,7 @@ export type NodesAppState = {
             x: number
             y: number
           }
+          mode: WireEditMode
         } | null
         /** The live wire connections to draw. */
         connections: {

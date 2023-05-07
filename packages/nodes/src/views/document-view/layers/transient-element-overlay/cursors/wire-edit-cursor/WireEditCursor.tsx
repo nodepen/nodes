@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import { useDocumentRef, useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
-import type { CursorConfiguration, WireEditCursorContext } from '../types'
+import type { CursorConfiguration, WireEditCursorContext } from '../../types'
 import { getWireEditIcon, getWireEditModalityFromEvent } from '@/utils/wires'
 import { useDispatch } from '@/store'
 
@@ -11,8 +11,7 @@ type WireEditCursorProps = {
 
 export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) => {
   const { position } = configuration
-  const { mode, target } = context
-  const { portInstanceId } = target
+  const { mode } = context
 
   const { apply } = useDispatch()
 
@@ -33,7 +32,11 @@ export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) 
     const mode = getWireEditModalityFromEvent(e)
 
     apply((state) => {
-      state.registry.cursors[portInstanceId].context.mode = mode
+      if (!state.registry.wires.live.cursor) {
+        return
+      }
+
+      state.registry.wires.live.cursor.mode = mode
     })
   }, [])
 
@@ -43,7 +46,11 @@ export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) 
     const mode = getWireEditModalityFromEvent(e)
 
     apply((state) => {
-      state.registry.cursors[portInstanceId].context.mode = mode
+      if (!state.registry.wires.live.cursor) {
+        return
+      }
+
+      state.registry.wires.live.cursor.mode = mode
     })
   }, [])
 

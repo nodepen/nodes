@@ -2,6 +2,7 @@ import { useCallback } from 'react'
 import { useDocumentRef, useImperativeEvent } from '@/hooks'
 import type { NodePortReference } from '@/types'
 import { useDispatch } from '$'
+import { getWireEditModalityFromEvent } from '@/utils/wires'
 
 export const useLiveWireCursor = (anchors: NodePortReference[]) => {
   const documentRef = useDocumentRef()
@@ -26,6 +27,7 @@ export const useLiveWireCursor = (anchors: NodePortReference[]) => {
               x: pageX,
               y: pageY,
             },
+            mode: getWireEditModalityFromEvent(e),
           }
         })
       }

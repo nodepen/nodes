@@ -18,7 +18,7 @@ export type CursorContext = WireEditCursorContext
 export type WireEditCursorContext = {
   type: 'wire-edit'
   mode: WireEditMode
-  target: {
+  target?: {
     nodeInstanceId: string
     portInstanceId: string
     portDirection: 'input' | 'output'

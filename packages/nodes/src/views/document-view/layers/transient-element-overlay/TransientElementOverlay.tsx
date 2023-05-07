@@ -1,13 +1,14 @@
 import React from 'react'
 import { useStore } from '$'
 import { AddNodeContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
-import { WireEditCursor } from './cursors'
+import { CursorContainer } from './cursors'
 import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
 import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
+import { useCursorState } from './cursors/hooks'
 
 const TransientElementOverlay = () => {
-  const cursor = useStore((state) => state.registry.wires.live.cursor)
+  const cursor = useCursorState()
   const menus = useStore((state) => Object.entries(state.registry.contextMenus))
   const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
 
@@ -15,17 +16,7 @@ const TransientElementOverlay = () => {
 
   return (
     <div className="np-w-full np-h-full np-pointer-events-none np-relative">
-      {cursor ? (
-        <WireEditCursor
-          key="wire-edit-cursor"
-          configuration={{ position: cursor?.position }}
-          context={{
-            type: 'wire-edit',
-            mode: 'set',
-            target: { nodeInstanceId: 'a', portInstanceId: 'b', portDirection: 'input' },
-          }}
-        />
-      ) : null}
+      <CursorContainer cursor={cursor} />
       {menus.map(([key, menu]) => {
         const contextType = menu.context.type
 

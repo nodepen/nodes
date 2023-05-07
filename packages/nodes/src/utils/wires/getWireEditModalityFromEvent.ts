@@ -4,7 +4,8 @@ type ValidEvent = Pick<PointerEvent | KeyboardEvent, 'altKey' | 'shiftKey' | 'ct
 
 export const getWireEditModalityFromEvent = (e: ValidEvent): WireEditMode => {
   if (e.ctrlKey && e.shiftKey) {
-    return 'move'
+    // TODO: Support 'move' edit mode
+    return 'set'
   }
 
   if (e.shiftKey) {

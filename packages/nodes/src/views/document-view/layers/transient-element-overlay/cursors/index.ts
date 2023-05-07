@@ -1,1 +1,1 @@
-export { WireEditCursor } from './WireEditCursor'
+export { CursorContainer } from './CursorContainer'
