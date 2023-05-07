@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import type { DataTreeStructure } from '@nodepen/core'
+import type { DataTreeStructure, DocumentNode } from '@nodepen/core'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
@@ -110,6 +110,29 @@ export const Wire = ({ start, end, structure, drawArrows = false, drawNodeBackgr
     )
   }
 
+  const getNodeBodyClipPath = (node: DocumentNode) => {
+    const { position, templateId } = node
+
+    const template = useStore.getState().templates[templateId]
+
+    const nodeWidth = getNodeWidth()
+    const nodeHeight = getNodeHeight(template)
+
+    return (
+      <rect
+        x={position.x - 2}
+        y={position.y - 2}
+        width={nodeWidth + 4}
+        height={nodeHeight + 6}
+        rx={7}
+        ry={7}
+        fill="none"
+        stroke={COLORS.DARK}
+        strokeWidth={9}
+      />
+    )
+  }
+
   const nodeBackgroundClipPath = useMemo(() => {
     const nodes = Object.values(useStore.getState().document.nodes)
 
@@ -119,28 +142,25 @@ export const Wire = ({ start, end, structure, drawArrows = false, drawNodeBackgr
 
     return (
       <defs>
-        <clipPath id="live-wire-background-clip">
+        <clipPath id="live-wire-background-clip-light">
           {nodes.map((node) => {
-            const { position, templateId } = node
-
-            const template = useStore.getState().templates[templateId]
-
-            const nodeWidth = getNodeWidth()
-            const nodeHeight = getNodeHeight(template)
+            const { position, anchors } = node
 
             return (
-              <rect
-                x={position.x - 2}
-                y={position.y - 2}
-                width={nodeWidth + 4}
-                height={nodeHeight + 6}
-                rx={7}
-                ry={7}
-                fill="none"
-                stroke={COLORS.DARK}
-                strokeWidth={9}
-                pointerEvents="auto"
-              />
+              <>
+                {getNodeBodyClipPath(node)}
+                {Object.values(anchors).map((anchor) => {
+                  const { x, y } = position
+                  const { dx, dy } = anchor
+
+                  return (
+                    <>
+                      <circle cx={x + dx} cy={y + dy} r={DIMENSIONS.NODE_PORT_RADIUS + 2} fill="none" />
+                      <circle cx={x + dx} cy={y + dy + 1} r={DIMENSIONS.NODE_PORT_RADIUS + 2} fill="none" />
+                    </>
+                  )
+                })}
+              </>
             )
           })}
         </clipPath>
@@ -155,7 +175,7 @@ export const Wire = ({ start, end, structure, drawArrows = false, drawNodeBackgr
 
     return (
       <>
-        <g clipPath="url(#live-wire-background-clip)">
+        <g clipPath="url(#live-wire-background-clip-light)">
           <path d={d} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
           {drawArrows ? (
             <polyline
