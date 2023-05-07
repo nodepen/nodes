@@ -86,7 +86,8 @@ export type NodesAppState = {
       }
     }
     wires: {
-      containerRef: React.RefObject<SVGGElement> | null
+      underlayContainerRef: React.RefObject<SVGGElement>
+      maskRef: React.RefObject<SVGMaskElement>
       live: {
         /** The current position of the cursor pointer in page space. */
         cursor: {
@@ -181,7 +182,8 @@ export const initialState: NodesAppState = {
     tooltips: {},
     views: {},
     wires: {
-      containerRef: null,
+      underlayContainerRef: React.createRef<SVGGElement>(),
+      maskRef: React.createRef<SVGMaskElement>(),
       live: {
         cursor: null,
         target: null,

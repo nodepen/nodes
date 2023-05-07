@@ -10,7 +10,7 @@ type WirePortalProps = {
  * Used to place wire graphics within the wires annotation svg layer.
  */
 export const WirePortal = ({ children }: WirePortalProps): React.ReactElement | null => {
-  const wiresContainerRef = useStore((state) => state.registry.wires.containerRef)
+  const wiresContainerRef = useStore((state) => state.registry.wires.underlayContainerRef)
 
   if (!wiresContainerRef || !wiresContainerRef.current) {
     return null
