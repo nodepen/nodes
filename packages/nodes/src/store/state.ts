@@ -2,6 +2,7 @@ import React from 'react'
 import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
 import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
+import type { NodePortReference, WireEditMode } from '@/types'
 
 export type NodesAppState = {
   document: NodePen.Document
@@ -85,7 +86,30 @@ export type NodesAppState = {
       }
     }
     wires: {
-      containerRef: React.RefObject<SVGGElement> | null
+      underlayContainerRef: React.RefObject<SVGGElement>
+      maskRef: React.RefObject<SVGMaskElement>
+      live: {
+        /** The current position of the cursor pointer in page space. */
+        cursor: {
+          pointerId: number
+          position: {
+            x: number
+            y: number
+          }
+        } | null
+        /** The live wire connections to draw. */
+        connections: {
+          [liveConnectionKey: string]: {
+            /** The port to connect one end of the wire to. */
+            portAnchor: NodePortReference
+            /** The end of the wire to connect to the given port. */
+            portAnchorType: 'output' | 'input'
+          }
+        }
+        /** The 'candidate' connection claimed on hover. Used for connection snapping. */
+        target: NodePortReference | null
+        mode: WireEditMode | null
+      }
     }
   }
   callbacks: NodesAppCallbacks
@@ -158,7 +182,14 @@ export const initialState: NodesAppState = {
     tooltips: {},
     views: {},
     wires: {
-      containerRef: null,
+      underlayContainerRef: React.createRef<SVGGElement>(),
+      maskRef: React.createRef<SVGMaskElement>(),
+      live: {
+        cursor: null,
+        target: null,
+        connections: {},
+        mode: null,
+      },
     },
   },
   callbacks: {

@@ -170,6 +170,88 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         false,
         'selection/region/commit'
       ),
+    commitLiveWireEdit: () =>
+      set(
+        (state) => {
+          const unsetLiveWireState = {
+            cursor: null,
+            target: null,
+            connections: {},
+            mode: null,
+          }
+
+          const { connections, target, mode } = state.registry.wires.live
+
+          if (!target) {
+            // No potential connection made, reset state to unset state
+            state.registry.wires.live = unsetLiveWireState
+            return
+          }
+
+          if (!mode) {
+            console.log('🐍 Tried to commit a live wire edit but no mode was specified!')
+          }
+
+          for (const connection of Object.values(connections)) {
+            const { portAnchor, portAnchorType } = connection
+
+            const [inputPort, outputPort] = portAnchorType === 'input' ? [portAnchor, target] : [target, portAnchor]
+
+            const currentSources = state.document.nodes[inputPort.nodeInstanceId]?.sources?.[inputPort.portInstanceId]
+
+            if (!currentSources) {
+              console.log('🐍 Tried to update node port sources that did not exist!')
+              continue
+            }
+
+            switch (mode) {
+              case 'set': {
+                // Set the given output port as the only source on the given input port
+                state.document.nodes[inputPort.nodeInstanceId].sources[inputPort.portInstanceId] = [outputPort]
+                break
+              }
+              case 'merge': {
+                // Add the given output port to any sources at the given input port
+                if (
+                  currentSources.some(
+                    (source) =>
+                      source.nodeInstanceId === outputPort.nodeInstanceId &&
+                      source.portInstanceId === outputPort.portInstanceId
+                  )
+                ) {
+                  // Source already exists
+                  break
+                }
+
+                state.document.nodes[inputPort.nodeInstanceId].sources[inputPort.portInstanceId].push(outputPort)
+                break
+              }
+              case 'remove': {
+                // Remove the given output port from the sources at the given input port
+                state.document.nodes[inputPort.nodeInstanceId].sources[inputPort.portInstanceId] =
+                  currentSources.filter(
+                    (source) =>
+                      source.nodeInstanceId !== outputPort.nodeInstanceId &&
+                      source.portInstanceId !== outputPort.portInstanceId
+                  )
+                break
+              }
+              case 'move': {
+                // TODO
+                break
+              }
+            }
+          }
+
+          // Connections changed, expire solution
+          expireSolution(state)
+
+          // All connections processed, reset state to unset state
+          state.registry.wires.live = unsetLiveWireState
+        },
+        false,
+        'wires/edit/commit'
+      ),
     setCameraAspect: (aspect: number) =>
       set(
         (state) => {

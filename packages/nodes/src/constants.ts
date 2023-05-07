@@ -53,4 +53,7 @@ export const KEYS = {
     ADD_NODE_MENU_OPTION_HOVER: 'add-node-menu',
     TEMPLATE_LIBRARY_CONTROL_OPTION_HOVER: 'template-library-control',
   },
+  ELEMENT_IDS: {
+    WIRES_MASK_ID: 'np-wires-mask',
+  },
 } as const

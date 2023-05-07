@@ -3,6 +3,7 @@ import { useCallback, useRef } from 'react'
 import { useDispatch } from '$'
 import type * as NodePen from '@nodepen/core'
 import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
+import { getWireEditModalityFromEvent } from '@/utils/wires'
 
 export const usePort = (
   nodeInstanceId: string,
@@ -44,6 +45,8 @@ export const usePort = (
   }, [])
 
   const handlePointerDown = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY, pointerId } = e
+
     switch (e.pointerType) {
       case 'pen':
       case 'touch': {
@@ -54,6 +57,30 @@ export const usePort = (
         switch (e.button) {
           case 0: {
             // Handle left mouse button
+            e.stopPropagation()
+
+            apply((state) => {
+              state.registry.wires.live = {
+                cursor: {
+                  pointerId,
+                  position: {
+                    x: pageX,
+                    y: pageY,
+                  },
+                },
+                connections: {
+                  [portInstanceId]: {
+                    portAnchor: {
+                      nodeInstanceId,
+                      portInstanceId,
+                    },
+                    portAnchorType: direction,
+                  },
+                },
+                target: null,
+                mode: getWireEditModalityFromEvent(e),
+              }
+            })
             break
           }
           case 1: {
@@ -74,8 +101,86 @@ export const usePort = (
     }
   }, [])
 
+  const handlePointerEnter = useCallback((e: PointerEvent): void => {
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        break
+      }
+      case 'mouse': {
+        apply((state) => {
+          // Set initial cursor state, if relevant
+          state.registry.wires.live.mode = getWireEditModalityFromEvent(e)
+
+          // Update live wire capture
+          for (const connection of Object.values(state.registry.wires.live.connections)) {
+            if (connection.portAnchorType === direction) {
+              return
+            }
+
+            if (connection.portAnchor.nodeInstanceId === nodeInstanceId) {
+              return
+            }
+          }
+
+          state.registry.wires.live.target = {
+            nodeInstanceId,
+            portInstanceId,
+          }
+        })
+      }
+    }
+  }, [])
+
+  const handlePointerMove = useCallback((e: PointerEvent): void => {
+    const { pageX, pageY } = e
+
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        break
+      }
+      case 'mouse': {
+        apply((state) => {
+          state.registry.wires.live.cursor = {
+            pointerId: e.pointerId,
+            position: {
+              x: pageX,
+              y: pageY,
+            },
+          }
+        })
+      }
+    }
+  }, [])
+
+  const handlePointerLeave = useCallback((e: PointerEvent): void => {
+    switch (e.pointerType) {
+      case 'pen':
+      case 'touch': {
+        break
+      }
+      case 'mouse': {
+        apply((state) => {
+          // Release live wire capture
+          state.registry.wires.live.target = null
+
+          if (Object.keys(state.registry.wires.live.connections).length > 0) {
+            return
+          }
+
+          // No connections are live, clear cursor
+          state.registry.wires.live.cursor = null
+        })
+      }
+    }
+  }, [])
+
   useImperativeEvent(portRef, 'contextmenu', handleContextMenu)
   useImperativeEvent(portRef, 'pointerdown', handlePointerDown)
+  useImperativeEvent(portRef, 'pointerenter', handlePointerEnter)
+  useImperativeEvent(portRef, 'pointermove', handlePointerMove)
+  useImperativeEvent(portRef, 'pointerleave', handlePointerLeave)
 
   return portRef
 }

@@ -1,6 +1,6 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
-import { Wire } from '@/components/annotations/wire'
+import { PortConnectionWire } from '@/components/annotations/wire'
 
 type GenericNodeWiresProps = {
   node: NodePen.DocumentNode
@@ -26,7 +26,7 @@ export const GenericNodeWires = ({ node }: GenericNodeWiresProps) => {
             currentInput.portInstanceId,
           ].join('-')
 
-          return <Wire key={wireKey} from={source} to={currentInput} />
+          return <PortConnectionWire key={wireKey} from={source} to={currentInput} />
         })
       })}
     </>

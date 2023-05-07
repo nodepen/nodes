@@ -1,11 +1,14 @@
 import React from 'react'
 import { useStore } from '$'
 import { AddNodeContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
+import { CursorContainer } from './cursors'
 import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
 import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
+import { useCursorState } from './cursors/hooks'
 
 const TransientElementOverlay = () => {
+  const cursor = useCursorState()
   const menus = useStore((state) => Object.entries(state.registry.contextMenus))
   const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
 
@@ -13,6 +16,7 @@ const TransientElementOverlay = () => {
 
   return (
     <div className="np-w-full np-h-full np-pointer-events-none np-relative">
+      <CursorContainer cursor={cursor} />
       {menus.map(([key, menu]) => {
         const contextType = menu.context.type
 

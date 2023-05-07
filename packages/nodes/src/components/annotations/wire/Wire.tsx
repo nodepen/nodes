@@ -1,33 +1,35 @@
-import React from 'react'
-import type { DataTreeStructure } from '@nodepen/core'
-import { COLORS } from '@/constants'
-import type { NodePortReference } from '@/types'
-import { useNodeAnchorPosition, usePortValues } from '@/hooks'
-import { getDataTreeStructure } from '@/utils/data-trees'
+import React, { useMemo } from 'react'
+import type { DataTreeStructure, DocumentNode } from '@nodepen/core'
+import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
-import { WirePortal } from './components'
+import { useStore } from '$'
+import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 
 type WireProps = {
-  from: NodePortReference
-  to: NodePortReference
+  start: {
+    x: number
+    y: number
+  }
+  end: {
+    x: number
+    y: number
+  }
+  structure: DataTreeStructure
+  drawArrows?: 'LTR' | 'RTL'
+  drawNodeBackground?: boolean
+  drawWireBackground?: boolean
+  drawMask?: boolean
 }
 
-const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
-  const { nodeInstanceId: fromNodeId, portInstanceId: fromPortId } = from
-  const { nodeInstanceId: toNodeId, portInstanceId: toPortId } = to
-
-  const fromPosition = useNodeAnchorPosition(fromNodeId, fromPortId)
-  const toPosition = useNodeAnchorPosition(toNodeId, toPortId)
-
-  const sourceValues = usePortValues(fromNodeId, fromPortId)
-
-  if (!fromPosition || !toPosition) {
-    return null
-  }
-
-  const start = fromPosition
-  const end = toPosition
-
+export const Wire = ({
+  start,
+  end,
+  structure,
+  drawArrows,
+  drawNodeBackground = false,
+  drawWireBackground = false,
+  drawMask = false,
+}: WireProps) => {
   const mid = {
     x: (start.x + end.x) / 2,
     y: (start.y + end.y) / 2,
@@ -61,17 +63,27 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
     `S ${bRightAnchor.x} ${bRightAnchor.y} ${end.x} ${end.y}`,
   ].join('')
 
-  const getWireStyle = (structure: DataTreeStructure) => {
+  const NODE_BACKGROUND_STROKE = structure === 'single' ? 6 : 10
+
+  const getWireGraphics = (structure: DataTreeStructure) => {
     switch (structure) {
       case 'empty':
       case 'single': {
-        return <path d={d} strokeWidth={3} stroke={COLORS.DARK} fill="none" />
+        return (
+          <path
+            d={d}
+            strokeWidth={drawMask ? 5 : 3}
+            stroke={drawMask ? '#FFFFFF' : COLORS.DARK}
+            fill="none"
+            strokeLinecap="round"
+          />
+        )
       }
       case 'list': {
         return (
           <>
-            <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" />
-            <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" />
+            <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
+            <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" strokeLinecap="round" />
           </>
         )
       }
@@ -93,17 +105,217 @@ const Wire = ({ from, to }: WireProps): React.ReactElement | null => {
     }
   }
 
-  const wireStructure = getDataTreeStructure(sourceValues ?? {})
-  const wire = getWireStyle(wireStructure)
+  const getArrowPolylinePoints = (closed: boolean) => {
+    const { x, y } = drawArrows === 'LTR' ? end : start
 
-  return <WirePortal>{wire}</WirePortal>
+    const S = 12
+
+    switch (drawArrows) {
+      case 'LTR': {
+        return `${x},${y - S / 2} ${x + S},${y} ${x},${y + S / 2} ${closed ? `${x},${y - S / 2}` : ''}`
+      }
+      case 'RTL': {
+        return `${x},${y - S / 2} ${x - S},${y} ${x},${y + S / 2} ${closed ? `${x},${y - S / 2}` : ''}`
+      }
+      default: {
+        return ''
+      }
+    }
+  }
+
+  const getArrowGraphics = () => {
+    if (!drawArrows) {
+      return null
+    }
+
+    return (
+      <polyline
+        points={getArrowPolylinePoints(false)}
+        stroke={COLORS.DARK}
+        strokeWidth={3}
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    )
+  }
+
+  const getNodeBodyClipPath = (node: DocumentNode) => {
+    const { position, templateId } = node
+
+    const template = useStore.getState().templates[templateId]
+
+    const nodeWidth = getNodeWidth()
+    const nodeHeight = getNodeHeight(template)
+
+    return (
+      <rect
+        x={position.x - 2}
+        y={position.y - 2}
+        width={nodeWidth + 4}
+        height={nodeHeight + 6}
+        rx={7}
+        ry={7}
+        fill="none"
+        stroke={COLORS.DARK}
+        strokeWidth={9}
+      />
+    )
+  }
+
+  const getNodeLabelClipPath = (node: DocumentNode) => {
+    const { position, templateId } = node
+
+    const template = useStore.getState().templates[templateId]
+
+    const nodeWidth = getNodeWidth()
+    const nodeHeight = getNodeHeight(template)
+
+    return (
+      <rect
+        x={position.x + nodeWidth / 2 - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
+        y={position.y + DIMENSIONS.NODE_INTERNAL_PADDING - 1}
+        width={DIMENSIONS.NODE_LABEL_WIDTH + 2}
+        height={nodeHeight - DIMENSIONS.NODE_INTERNAL_PADDING * 2 + 2}
+        rx={7}
+        ry={7}
+        fill={COLORS.LIGHT}
+        stroke={COLORS.DARK}
+        strokeWidth={2}
+      />
+    )
+  }
+
+  const nodeBackgroundClipPath = useMemo(() => {
+    const nodes = Object.values(useStore.getState().document.nodes)
+    const selection = useStore.getState().registry.selection.nodes
+
+    if (!drawNodeBackground) {
+      return null
+    }
+    return (
+      <defs>
+        <clipPath id="live-wire-background-clip-light">
+          {nodes.map((node) => {
+            const { instanceId, position, anchors } = node
+
+            const isSelected = selection.includes(instanceId)
+
+            return (
+              <>
+                {isSelected ? getNodeLabelClipPath(node) : getNodeBodyClipPath(node)}
+                {Object.values(anchors).map((anchor) => {
+                  const { x, y } = position
+                  const { dx, dy } = anchor
+
+                  return (
+                    <>
+                      <circle cx={x + dx} cy={y + dy} r={DIMENSIONS.NODE_PORT_RADIUS + 2} fill="none" />
+                      <circle cx={x + dx} cy={y + dy + 1} r={DIMENSIONS.NODE_PORT_RADIUS + 2} fill="none" />
+                    </>
+                  )
+                })}
+              </>
+            )
+          })}
+        </clipPath>
+        <clipPath id="live-wire-background-clip-green">
+          {nodes.map((node) => {
+            const { instanceId } = node
+
+            const isSelected = selection.includes(instanceId)
+
+            if (!isSelected) {
+              return <></>
+            }
+
+            return getNodeBodyClipPath(node)
+          })}
+        </clipPath>
+      </defs>
+    )
+  }, [])
+
+  const getNodeBackgroundGraphics = () => {
+    if (!drawNodeBackground) {
+      return null
+    }
+
+    return (
+      <>
+        <g clipPath="url(#live-wire-background-clip-green)">
+          <path
+            d={d}
+            stroke={COLORS.GREEN}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          {drawArrows ? (
+            <polyline
+              points={getArrowPolylinePoints(true)}
+              stroke={COLORS.GREEN}
+              strokeWidth={NODE_BACKGROUND_STROKE}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill={COLORS.GREEN}
+            />
+          ) : null}
+        </g>
+        <g clipPath="url(#live-wire-background-clip-light)">
+          <path
+            d={d}
+            stroke={COLORS.LIGHT}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          {drawArrows ? (
+            <polyline
+              points={getArrowPolylinePoints(true)}
+              stroke={COLORS.LIGHT}
+              strokeWidth={NODE_BACKGROUND_STROKE}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill={COLORS.LIGHT}
+            />
+          ) : null}
+        </g>
+      </>
+    )
+  }
+
+  const getWireBackgroundGraphics = () => {
+    if (!drawWireBackground) {
+      return null
+    }
+
+    return (
+      <g mask={`url(#${KEYS.ELEMENT_IDS.WIRES_MASK_ID})`}>
+        <path d={d} stroke={COLORS.PALE} strokeWidth={NODE_BACKGROUND_STROKE} fill="none" />
+        {drawArrows ? (
+          <polyline
+            points={getArrowPolylinePoints(true)}
+            stroke={COLORS.PALE}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill={COLORS.PALE}
+          />
+        ) : null}
+      </g>
+    )
+  }
+
+  return (
+    <>
+      {nodeBackgroundClipPath}
+      {getNodeBackgroundGraphics()}
+      {getWireBackgroundGraphics()}
+      {getWireGraphics(structure)}
+      {getArrowGraphics()}
+    </>
+  )
 }
-
-export default React.memo(Wire, (prevProps, nextProps) => {
-  const a = prevProps.from.nodeInstanceId === nextProps.from.nodeInstanceId
-  const b = prevProps.from.portInstanceId === nextProps.from.portInstanceId
-  const c = prevProps.to.nodeInstanceId === nextProps.to.nodeInstanceId
-  const d = prevProps.to.portInstanceId === nextProps.to.portInstanceId
-
-  return a && b && c && d
-})
