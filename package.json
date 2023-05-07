@@ -34,7 +34,7 @@
     "prettier": "^2.8.3",
     "ts-jest": "^29.1.0",
     "tsc-alias": "^1.8.6",
-    "tsc-watch": "^6.0.0",
+    "tsc-watch": "^6.0.4",
     "turbo": "^1.9.3",
     "typescript": "5.0.4"
   },
