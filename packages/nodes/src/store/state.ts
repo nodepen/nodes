@@ -1,7 +1,7 @@
 import React from 'react'
 import { freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
-import type { ContextMenu, Cursor, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
+import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
 import type { NodePortReference, WireEditMode } from '@/types'
 
 export type NodesAppState = {
@@ -41,9 +41,6 @@ export type NodesAppState = {
     canvasRoot: React.RefObject<HTMLDivElement>
     contextMenus: {
       [menuKey: string]: ContextMenu
-    }
-    cursors: {
-      [cursorKey: string]: Cursor
     }
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null
@@ -168,7 +165,6 @@ export const initialState: NodesAppState = {
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
     contextMenus: {},
-    cursors: {},
     shadows: {
       containerRef: null,
       proxyRefs: {
