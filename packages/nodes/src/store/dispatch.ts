@@ -194,21 +194,57 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
           for (const connection of Object.values(connections)) {
             const { portAnchor, portAnchorType } = connection
-            switch (portAnchorType) {
-              case 'input': {
-                const inputPort = portAnchor
-                const outputPort = target
 
+            const [inputPort, outputPort] = portAnchorType === 'input' ? [portAnchor, target] : [target, portAnchor]
+
+            const currentSources = state.document.nodes[inputPort.nodeInstanceId]?.sources?.[inputPort.portInstanceId]
+
+            if (!currentSources) {
+              console.log('🐍 Tried to update node port sources that did not exist!')
+              continue
+            }
+
+            switch (mode) {
+              case 'set': {
+                // Set the given output port as the only source on the given input port
+                state.document.nodes[inputPort.nodeInstanceId].sources[inputPort.portInstanceId] = [outputPort]
                 break
               }
-              case 'output': {
-                const inputPort = target
-                const outputPort = portAnchor
+              case 'merge': {
+                // Add the given output port to any sources at the given input port
+                if (
+                  currentSources.some(
+                    (source) =>
+                      source.nodeInstanceId === outputPort.nodeInstanceId &&
+                      source.portInstanceId === outputPort.portInstanceId
+                  )
+                ) {
+                  // Source already exists
+                  break
+                }
 
+                state.document.nodes[inputPort.nodeInstanceId].sources[inputPort.portInstanceId].push(outputPort)
+                break
+              }
+              case 'remove': {
+                // Remove the given output port from the sources at the given input port
+                state.document.nodes[inputPort.nodeInstanceId].sources[inputPort.portInstanceId] =
+                  currentSources.filter(
+                    (source) =>
+                      source.nodeInstanceId !== outputPort.nodeInstanceId &&
+                      source.portInstanceId !== outputPort.portInstanceId
+                  )
+                break
+              }
+              case 'move': {
+                // TODO
                 break
               }
             }
           }
+
+          // Connections changed, expire solution
+          expireSolution(state)
 
           // All connections processed, reset state to unset state
           state.registry.wires.live = unsetLiveWireState

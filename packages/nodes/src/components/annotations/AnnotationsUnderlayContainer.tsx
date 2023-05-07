@@ -20,12 +20,12 @@ const AnnotationUnderlayContainer = (): React.ReactElement => {
 
   return (
     <g id="np-annotations-underlay">
-      <g id="np-wires-underlay" ref={ref} />
       <g id="np-regions-underlay">
         {selectionRegionState.isActive ? (
           <Region isFill from={selectionRegionState.from} to={selectionRegionState.to} />
         ) : null}
       </g>
+      <g id="np-wires-underlay" ref={ref} />
     </g>
   )
 }

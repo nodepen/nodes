@@ -53,6 +53,8 @@ export const Wire = ({ start, end, structure, drawArrows, drawNodeBackground = f
     `S ${bRightAnchor.x} ${bRightAnchor.y} ${end.x} ${end.y}`,
   ].join('')
 
+  const NODE_BACKGROUND_STROKE = structure === 'single' ? 6 : 10
+
   const getWireGraphics = (structure: DataTreeStructure) => {
     switch (structure) {
       case 'empty':
@@ -224,12 +226,19 @@ export const Wire = ({ start, end, structure, drawArrows, drawNodeBackground = f
     return (
       <>
         <g clipPath="url(#live-wire-background-clip-green)">
-          <path d={d} stroke={COLORS.GREEN} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <path
+            d={d}
+            stroke={COLORS.GREEN}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
           {drawArrows ? (
             <polyline
               points={getArrowPolylinePoints(true)}
               stroke={COLORS.GREEN}
-              strokeWidth={6}
+              strokeWidth={NODE_BACKGROUND_STROKE}
               strokeLinecap="round"
               strokeLinejoin="round"
               fill={COLORS.GREEN}
@@ -237,12 +246,19 @@ export const Wire = ({ start, end, structure, drawArrows, drawNodeBackground = f
           ) : null}
         </g>
         <g clipPath="url(#live-wire-background-clip-light)">
-          <path d={d} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          <path
+            d={d}
+            stroke={COLORS.LIGHT}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
           {drawArrows ? (
             <polyline
               points={getArrowPolylinePoints(true)}
               stroke={COLORS.LIGHT}
-              strokeWidth={6}
+              strokeWidth={NODE_BACKGROUND_STROKE}
               strokeLinecap="round"
               strokeLinejoin="round"
               fill={COLORS.LIGHT}
