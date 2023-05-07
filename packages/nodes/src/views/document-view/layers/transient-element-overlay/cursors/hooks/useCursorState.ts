@@ -10,7 +10,12 @@ export const useCursorState = (): Cursor | null => {
       return null
     }
 
-    const { position, mode } = cursorInfo
+    if (!state.registry.wires.live.mode) {
+      console.log('🐍 Tried to generate wire edit cursor without a `mode` set!')
+      return null
+    }
+
+    const { position } = cursorInfo
 
     const cursor: Cursor = {
       configuration: {
@@ -18,7 +23,7 @@ export const useCursorState = (): Cursor | null => {
       },
       context: {
         type: 'wire-edit',
-        mode,
+        mode: state.registry.wires.live.mode,
       },
     }
 

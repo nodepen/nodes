@@ -95,7 +95,6 @@ export type NodesAppState = {
             x: number
             y: number
           }
-          mode: WireEditMode
         } | null
         /** The live wire connections to draw. */
         connections: {
@@ -108,6 +107,7 @@ export type NodesAppState = {
         }
         /** The 'candidate' connection claimed on hover. Used for connection snapping. */
         target: NodePortReference | null
+        mode: WireEditMode | null
       }
     }
   }
@@ -186,6 +186,7 @@ export const initialState: NodesAppState = {
         cursor: null,
         target: null,
         connections: {},
+        mode: null,
       },
     },
   },

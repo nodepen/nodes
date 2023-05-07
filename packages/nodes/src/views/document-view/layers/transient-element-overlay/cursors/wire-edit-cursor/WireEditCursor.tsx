@@ -32,11 +32,7 @@ export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) 
     const mode = getWireEditModalityFromEvent(e)
 
     apply((state) => {
-      if (!state.registry.wires.live.cursor) {
-        return
-      }
-
-      state.registry.wires.live.cursor.mode = mode
+      state.registry.wires.live.mode = mode
     })
   }, [])
 
@@ -46,11 +42,7 @@ export const WireEditCursor = ({ configuration, context }: WireEditCursorProps) 
     const mode = getWireEditModalityFromEvent(e)
 
     apply((state) => {
-      if (!state.registry.wires.live.cursor) {
-        return
-      }
-
-      state.registry.wires.live.cursor.mode = mode
+      state.registry.wires.live.mode = mode
     })
   }, [])
 

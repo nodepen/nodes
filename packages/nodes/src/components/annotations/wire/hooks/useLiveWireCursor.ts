@@ -2,12 +2,11 @@ import { useCallback } from 'react'
 import { useDocumentRef, useImperativeEvent } from '@/hooks'
 import type { NodePortReference } from '@/types'
 import { useDispatch } from '$'
-import { getWireEditModalityFromEvent } from '@/utils/wires'
 
 export const useLiveWireCursor = (anchors: NodePortReference[]) => {
   const documentRef = useDocumentRef()
 
-  const { apply } = useDispatch()
+  const { apply, commitLiveWireEdit } = useDispatch()
 
   const isActive = anchors.length > 0
 
@@ -27,7 +26,6 @@ export const useLiveWireCursor = (anchors: NodePortReference[]) => {
               x: pageX,
               y: pageY,
             },
-            mode: getWireEditModalityFromEvent(e),
           }
         })
       }
@@ -41,13 +39,7 @@ export const useLiveWireCursor = (anchors: NodePortReference[]) => {
         return
       }
       case 'mouse': {
-        apply((state) => {
-          state.registry.wires.live = {
-            cursor: null,
-            target: null,
-            connections: {},
-          }
-        })
+        commitLiveWireEdit()
       }
     }
   }, [])

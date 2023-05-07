@@ -170,6 +170,52 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         false,
         'selection/region/commit'
       ),
+    commitLiveWireEdit: () =>
+      set(
+        (state) => {
+          const unsetLiveWireState = {
+            cursor: null,
+            target: null,
+            connections: {},
+            mode: null,
+          }
+
+          const { connections, target, mode } = state.registry.wires.live
+
+          if (!target) {
+            // No potential connection made, reset state to unset state
+            state.registry.wires.live = unsetLiveWireState
+            return
+          }
+
+          if (!mode) {
+            console.log('🐍 Tried to commit a live wire edit but no mode was specified!')
+          }
+
+          for (const connection of Object.values(connections)) {
+            const { portAnchor, portAnchorType } = connection
+            switch (portAnchorType) {
+              case 'input': {
+                const inputPort = portAnchor
+                const outputPort = target
+
+                break
+              }
+              case 'output': {
+                const inputPort = target
+                const outputPort = portAnchor
+
+                break
+              }
+            }
+          }
+
+          // All connections processed, reset state to unset state
+          state.registry.wires.live = unsetLiveWireState
+        },
+        false,
+        'wires/edit/commit'
+      ),
     setCameraAspect: (aspect: number) =>
       set(
         (state) => {

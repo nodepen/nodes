@@ -59,8 +59,6 @@ export const usePort = (
             // Handle left mouse button
             e.stopPropagation()
 
-            console.log('!')
-
             apply((state) => {
               state.registry.wires.live = {
                 cursor: {
@@ -69,7 +67,6 @@ export const usePort = (
                     x: pageX,
                     y: pageY,
                   },
-                  mode: getWireEditModalityFromEvent(e),
                 },
                 connections: {
                   [portInstanceId]: {
@@ -81,6 +78,7 @@ export const usePort = (
                   },
                 },
                 target: null,
+                mode: getWireEditModalityFromEvent(e),
               }
             })
             break
@@ -111,6 +109,9 @@ export const usePort = (
       }
       case 'mouse': {
         apply((state) => {
+          // Set initial cursor state, if relevant
+          state.registry.wires.live.mode = getWireEditModalityFromEvent(e)
+
           // Update live wire capture
           for (const connection of Object.values(state.registry.wires.live.connections)) {
             if (connection.portAnchorType === direction) {
@@ -147,7 +148,6 @@ export const usePort = (
               x: pageX,
               y: pageY,
             },
-            mode: getWireEditModalityFromEvent(e),
           }
         })
       }
