@@ -7,7 +7,7 @@ import { useReducedMotion } from '@/hooks'
 import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
 
 const TransientElementOverlay = () => {
-  const cursors = useStore((state) => Object.entries(state.registry.cursors))
+  const cursor = useStore((state) => state.registry.wires.live.cursor)
   const menus = useStore((state) => Object.entries(state.registry.contextMenus))
   const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
 
@@ -15,18 +15,17 @@ const TransientElementOverlay = () => {
 
   return (
     <div className="np-w-full np-h-full np-pointer-events-none np-relative">
-      {cursors.map(([key, cursor]) => {
-        switch (cursor.context.type) {
-          case 'wire-edit': {
-            const { configuration, context } = cursor
-            return <WireEditCursor key={`wire-edit-cursor-${key}`} configuration={configuration} context={context} />
-          }
-          default: {
-            console.log(`🐍 Unhandled cursor type [${cursor.context.type}]`)
-            return null
-          }
-        }
-      })}
+      {cursor ? (
+        <WireEditCursor
+          key="wire-edit-cursor"
+          configuration={{ position: cursor?.position }}
+          context={{
+            type: 'wire-edit',
+            mode: 'set',
+            target: { nodeInstanceId: 'a', portInstanceId: 'b', portDirection: 'input' },
+          }}
+        />
+      ) : null}
       {menus.map(([key, menu]) => {
         const contextType = menu.context.type
 
