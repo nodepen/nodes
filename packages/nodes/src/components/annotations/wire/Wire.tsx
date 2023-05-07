@@ -15,11 +15,11 @@ type WireProps = {
     y: number
   }
   structure: DataTreeStructure
-  drawArrows?: boolean
+  drawArrows?: 'LTR' | 'RTL'
   drawNodeBackground?: boolean
 }
 
-export const Wire = ({ start, end, structure, drawArrows = false, drawNodeBackground = false }: WireProps) => {
+export const Wire = ({ start, end, structure, drawArrows, drawNodeBackground = false }: WireProps) => {
   const mid = {
     x: (start.x + end.x) / 2,
     y: (start.y + end.y) / 2,
@@ -86,11 +86,21 @@ export const Wire = ({ start, end, structure, drawArrows = false, drawNodeBackgr
   }
 
   const getArrowPolylinePoints = (closed: boolean) => {
-    const { x, y } = end
+    const { x, y } = drawArrows === 'LTR' ? end : start
 
     const S = 12
 
-    return `${x},${y - S / 2} ${x + S},${y} ${x},${y + S / 2} ${closed ? `${x},${y - S / 2}` : ''}`
+    switch (drawArrows) {
+      case 'LTR': {
+        return `${x},${y - S / 2} ${x + S},${y} ${x},${y + S / 2} ${closed ? `${x},${y - S / 2}` : ''}`
+      }
+      case 'RTL': {
+        return `${x},${y - S / 2} ${x - S},${y} ${x},${y + S / 2} ${closed ? `${x},${y - S / 2}` : ''}`
+      }
+      default: {
+        return ''
+      }
+    }
   }
 
   const getArrowGraphics = () => {
@@ -215,6 +225,16 @@ export const Wire = ({ start, end, structure, drawArrows = false, drawNodeBackgr
       <>
         <g clipPath="url(#live-wire-background-clip-green)">
           <path d={d} stroke={COLORS.GREEN} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+          {drawArrows ? (
+            <polyline
+              points={getArrowPolylinePoints(true)}
+              stroke={COLORS.GREEN}
+              strokeWidth={6}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill={COLORS.GREEN}
+            />
+          ) : null}
         </g>
         <g clipPath="url(#live-wire-background-clip-light)">
           <path d={d} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap="round" strokeLinejoin="round" fill="none" />
