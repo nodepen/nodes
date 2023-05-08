@@ -312,8 +312,8 @@ export const Wire = ({
   return (
     <>
       {nodeBackgroundClipPath}
-      {getNodeBackgroundGraphics()}
       {getWireBackgroundGraphics()}
+      {getNodeBackgroundGraphics()}
       {getWireGraphics(structure)}
       {getArrowGraphics()}
     </>
