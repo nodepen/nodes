@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { immer as withImmer } from 'zustand/middleware/immer'
+import type { StoreApi, UseBoundStore } from 'zustand'
+import { immer } from 'zustand/middleware/immer'
 import { initialState } from './state'
 import type { NodesAppState } from './state'
 import { createDispatch } from './dispatch'
@@ -9,8 +10,8 @@ export type NodesAppStore = NodesAppState & NodesAppDispatch
 
 type NodesAppMiddleware = [['zustand/immer', never]]
 
-export const useStore = create<NodesAppStore, NodesAppMiddleware>(
-  withImmer((set, get) => ({
+export const useStore: UseBoundStore<StoreApi<NodesAppStore>> = create<NodesAppStore, NodesAppMiddleware>(
+  immer((set, get) => ({
     ...initialState,
     ...createDispatch(set, get),
   }))
