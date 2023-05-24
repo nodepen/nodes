@@ -16,6 +16,22 @@ type BaseAction = string | ({ type: string } & Record<string, unknown>)
 type BaseSetter = (callback: (state: NodesAppState) => void, replace?: boolean, action?: BaseAction) => void
 type BaseGetter = () => NodesAppState
 
+// export type NodesAppDispatch = {
+//   dispatch: {
+//     apply(callback: (state: NodesAppState, get: BaseGetter) => void): void
+//     loadDocument(document: NodePen.Document): void
+//     loadTemplates(templates: NodePen.NodeTemplate[]): void
+//     commitRegionSelection: (selectionMode: 'set' | 'add' | 'remove') => void
+//     commitLiveWireEdit: () => void
+//     setCameraAspect: (aspect: number) => void
+//     setCameraPosition: (x: number, y: number) => void
+//     setCameraZoom: (zoom: number) => void
+//     setNodePosition: (id: string, x: number, y: number) => void
+//     clearInterface: () => void
+//     clearSelection: () => void
+//   }
+// }
+
 export type NodesAppDispatch = ReturnType<typeof createDispatch>
 
 setAutoFreeze(false)
