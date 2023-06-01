@@ -98,6 +98,8 @@ namespace Rhino.Compute
         {
             RhinoInside.Resolver.Initialize();
 
+            Speckle.Core.Logging.SpeckleLog.Initialize("NodePen", "0.0.0");
+
             HostFactory.Run((Host) =>
             {
                 Host.Service<SelfHostService>();

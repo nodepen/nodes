@@ -1,12 +1,12 @@
 import React from 'react'
 import { usePseudoShadow } from '@/views/common/pseudo-shadow'
 import { COLORS } from '@/constants'
-// import { useSolutionData } from './hooks'
+import { useSolutionData } from './hooks'
 
 export const SolutionStatusBar = (): React.ReactElement => {
   const shadowTarget = usePseudoShadow()
 
-  // const { values } = useSolutionData()
+  const { values } = useSolutionData()
 
   return (
     <div
