@@ -3,10 +3,7 @@
     "target": "es6",
     "module": "esnext",
     "moduleResolution": "node",
-    "lib": [
-        "dom",
-        "esnext"
-    ],
+    "lib": ["dom", "esnext"],
     "declaration": true,
     "declarationMap": false,
     "sourceMap": false,
@@ -22,15 +19,7 @@
     "strictFunctionTypes": true,
     "strictNullChecks": true,
     "stripInternal": true,
-    "typeRoots": [
-      "node_modules/@types",
-      "node_modules/jest"
-    ],
-    "types": [
-      "mocha",
-      "node",
-      "jest"
-    ],
-    "verbatimModuleSyntax": true,
+    "types": ["node", "jest"],
+    "verbatimModuleSyntax": true
   }
 }
