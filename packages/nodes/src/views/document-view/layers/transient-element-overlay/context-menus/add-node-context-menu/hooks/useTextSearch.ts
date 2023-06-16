@@ -37,6 +37,7 @@ export const useTextSearch = <T extends Record<string, unknown>>(
   search: string,
   keys: RequireStringKeys<PickStringOrStringArrayValue<T>>[],
   searchAlgorithm: SearchAlgorithmKey = 'lev',
+  searchResultThreshold = 0,
   searchResultLimit = 20
 ): T[] => {
   // Map each object to an array of string values at specified search keys
@@ -71,7 +72,7 @@ export const useTextSearch = <T extends Record<string, unknown>>(
     })
   }, [items, keys])
 
-  const sortResult = useMemo(() => {
+  const sortResult: [searchValue: number, originalIndex: number][] = useMemo(() => {
     const searchAlgorithms: Record<SearchAlgorithmKey, (a: string, b: string) => number> = {
       lev: levenshteinDistance,
       jw: (a, b) => 1 - jaroWinklerDistance(a, b),
@@ -84,8 +85,11 @@ export const useTextSearch = <T extends Record<string, unknown>>(
       return Math.min(...values.map((value) => compare(value.toLowerCase(), search.toLowerCase())))
     }
 
-    return searchValues.sort((a, b) => getSearchValue(a[0]) - getSearchValue(b[0]))
-  }, [searchValues, search, searchAlgorithm])
+    return searchValues
+      .map(([values, originalIndex]): [number, number] => [getSearchValue(values), originalIndex])
+      .filter(([searchValue]) => searchValue > searchResultThreshold)
+      .sort((a, b) => a[0] - b[0])
+  }, [search, searchValues, searchAlgorithm])
 
   return sortResult.slice(0, searchResultLimit).map(([_keys, originalIndex]) => items[originalIndex])
 }
