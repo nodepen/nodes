@@ -1,4 +1,4 @@
-import { levenshteinDistance } from '../utils'
+import { exactDistance, jaroWinklerDistance, levenshteinDistance } from '../utils'
 import { useMemo } from 'react'
 
 /**
@@ -25,12 +25,7 @@ type RequireStringKeys<T extends Record<string | number | symbol, unknown>> = ke
   Exclude<keyof T, number | symbol>
 >
 
-type SearchResult<T> = {
-  candidates: T[]
-  exactMatch?: T
-}
-
-// TODO: Use a better text comparison algorithm
+type SearchAlgorithmKey = 'lev' | 'jw' | 'exact'
 
 /**
  * @param items The collection of objects to run the search against.
@@ -40,67 +35,65 @@ type SearchResult<T> = {
 export const useTextSearch = <T extends Record<string, unknown>>(
   items: T[],
   search: string,
-  keys: RequireStringKeys<PickStringOrStringArrayValue<T>>[]
-): SearchResult<T> => {
-  const getSortValue = (item: T, search: string): number => {
-    const sortValues = keys
-      .reduce((allTerms, key) => {
-        const targetValue = item[key] as PickStringOrStringArrayValue<T>[keyof PickStringOrStringArrayValue<T>]
+  keys: RequireStringKeys<PickStringOrStringArrayValue<T>>[],
+  searchAlgorithm: SearchAlgorithmKey = 'lev',
+  /**
+   * Only return results with search value less than threshold.
+   * Values are between 0 and 1, with lower values meaning a better match.
+   */
+  searchResultThreshold = 1,
+  searchResultLimit = 20
+): T[] => {
+  // Map each object to an array of string values at specified search keys
+  const searchValues: [string[], number][] = useMemo(() => {
+    return items.map((item, i) => {
+      const searchValuesForItem: string[] = []
+
+      for (const key of keys) {
+        const targetValue = item[key]
 
         switch (typeof targetValue) {
           case 'object': {
             if (!Array.isArray(targetValue)) {
-              return allTerms
+              continue
             }
 
-            return [...allTerms, ...targetValue]
+            searchValuesForItem.push(...targetValue)
+
+            break
           }
           case 'string': {
-            return [...allTerms, targetValue]
+            searchValuesForItem.push(targetValue)
+            break
           }
           default: {
-            return allTerms
+            break
           }
         }
-      }, [] as string[])
-      .map((term) => levenshteinDistance(term.toLowerCase(), search.toLowerCase()))
+      }
 
-    return Math.min(...sortValues)
-  }
+      return [searchValuesForItem, i]
+    })
+  }, [items, keys])
 
-  const searchCandidates = items
-
-  const result: SearchResult<T> = useMemo(() => {
-    const defaultResult: SearchResult<T> = {
-      candidates: searchCandidates,
+  const sortResult: [searchValue: number, originalIndex: number][] = useMemo(() => {
+    const searchAlgorithms: Record<SearchAlgorithmKey, (a: string, b: string) => number> = {
+      lev: levenshteinDistance,
+      jw: (a, b) => 1 - jaroWinklerDistance(a, b),
+      exact: exactDistance,
     }
 
-    if (!search || search.length <= 0) {
-      return defaultResult
+    const compare = searchAlgorithms[searchAlgorithm]
+
+    const getSearchValue = (values: string[]): number => {
+      return Math.min(...values.map((value) => compare(value.toLowerCase(), search.toLowerCase())))
     }
 
-    const exactMatch = undefined
+    return searchValues
+      .map(([values, originalIndex]): [number, number] => [getSearchValue(values), originalIndex])
+      .filter(([searchValue]) => searchValue <= searchResultThreshold)
+      .sort((a, b) => a[0] - b[0])
+  }, [search, searchValues, searchAlgorithm])
 
-    // const exactMatch = searchCandidates.find((candidate) => {
-    //   for (const key of keys) {
-    //     const value = candidate[key]
-
-    //     if (typeof value !== 'string') {
-    //       continue
-    //     }
-
-    //     if (value.toLowerCase() === search) {
-    //       return true
-    //     }
-    //   }
-
-    //   return false
-    // })
-
-    const candidates = searchCandidates.sort((a, b) => getSortValue(a, search) - getSortValue(b, search))
-
-    return { candidates, exactMatch }
-  }, [search, searchCandidates])
-
-  return result
+  return sortResult.slice(0, searchResultLimit).map(([_keys, originalIndex]) => items[originalIndex])
 }

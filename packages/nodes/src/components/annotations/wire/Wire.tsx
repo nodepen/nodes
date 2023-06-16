@@ -65,42 +65,55 @@ export const Wire = ({
 
   const NODE_BACKGROUND_STROKE = structure === 'single' ? 6 : 10
 
+  // The graphics for either the wire proper or its mask
   const getWireGraphics = (structure: DataTreeStructure) => {
-    switch (structure) {
-      case 'empty':
-      case 'single': {
-        return (
-          <path
-            d={d}
-            strokeWidth={drawMask ? 5 : 3}
-            stroke={drawMask ? '#FFFFFF' : COLORS.DARK}
-            fill="none"
-            strokeLinecap="round"
-          />
-        )
+    if (drawMask) {
+      switch (structure) {
+        case 'empty':
+        case 'single': {
+          return <path d={d} strokeWidth={5} stroke="#FFFFFF" fill="none" strokeLinecap="round" />
+        }
+        case 'list':
+        case 'tree': {
+          return <path d={d} strokeWidth={9} stroke="#FFFFFF" fill="none" strokeLinecap="round" />
+        }
       }
-      case 'list': {
-        return (
-          <>
-            <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
-            <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" strokeLinecap="round" />
-          </>
-        )
-      }
-      case 'tree': {
-        return (
-          <>
-            <path d={d} strokeWidth={7} stroke={COLORS.DARK} strokeDasharray="6 10" strokeLinecap="round" fill="none" />
-            <path
-              d={d}
-              strokeWidth={3}
-              stroke={COLORS.LIGHT}
-              strokeDasharray="6 10"
-              strokeLinecap="round"
-              fill="none"
-            />
-          </>
-        )
+    } else {
+      switch (structure) {
+        case 'empty':
+        case 'single': {
+          return <path d={d} strokeWidth={3} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
+        }
+        case 'list': {
+          return (
+            <>
+              <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
+              <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" strokeLinecap="round" />
+            </>
+          )
+        }
+        case 'tree': {
+          return (
+            <>
+              <path
+                d={d}
+                strokeWidth={7}
+                stroke={COLORS.DARK}
+                strokeDasharray="6 10"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <path
+                d={d}
+                strokeWidth={3}
+                stroke={COLORS.LIGHT}
+                strokeDasharray="6 10"
+                strokeLinecap="round"
+                fill="none"
+              />
+            </>
+          )
+        }
       }
     }
   }
@@ -193,6 +206,7 @@ export const Wire = ({
     if (!drawNodeBackground) {
       return null
     }
+
     return (
       <defs>
         <clipPath id="live-wire-background-clip-light">

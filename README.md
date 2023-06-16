@@ -56,10 +56,6 @@ A thin next.js client that communicates directly with the Rhino Compute server f
 
 A minimal Rhino Compute server with endpoints for updating a given NodePen document. Writes results directly to the local Speckle server instance it's configured to point to.
 
-#### speckle-server
-
-A git submodule of [specklesystems/speckle-server](https://github.com/specklesystems/speckle-server).
-
 ## Local Development
 
 Running NodePen locally requires a number of dependencies and, at the moment, a bit of manual work for first-time setup. Please also see the section below about known limitations.
@@ -76,10 +72,10 @@ In order to run all of the example applications, you will need:
 
 ### Initial Setup
 
-Clone this repo and its speckle-server submodule with:
+Clone this repo:
 
 ```
-git clone --recurse-submodules git@github.com:nodepen/nodes.git
+git clone git@github.com:nodepen/nodes.git
 ```
 
 From the root directory, run:
@@ -89,7 +85,7 @@ npm i
 npm run build
 ```
 
-This should install dependencies for all of the javascript projects and build them once. Build failures may occur for the last project, `nodepen-client`, and can be ignored.
+This should install dependencies for all of the javascript projects and build them once. Build failures may still occur for the last project, `nodepen-client`, and can be ignored.
 
 From `/apps/rhino-compute-server` run:
 
@@ -117,7 +113,7 @@ At this point, you may leave your Speckle server running and continue onto the n
 
 ### Development Environment
 
-All three services in the `/apps` directory must be running in order to develop with NodePen locally. In general, I recommend letting all three run in their own terminal. In VSCode, you can split terminals to see results from each one at the same time.
+Both services in the `/apps` directory must be running in order to develop with NodePen locally. For all current features, you must also have access to a running speckle server (local or otherwise).
 
 Once all three are successfully running, you can navigate to `http://localhost:4000` to begin working.
 
