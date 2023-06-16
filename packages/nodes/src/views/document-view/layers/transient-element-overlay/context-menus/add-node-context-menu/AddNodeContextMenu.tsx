@@ -30,7 +30,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
   const [searchQuery, setSearchQuery] = useState<string>()
   const [_isPending, startTransition] = useTransition()
 
-  const candidates = useTextSearch(templates, searchQuery ?? '', ['name', 'nickName'], 'jw')
+  const candidates = useTextSearch(templates, searchQuery ?? '', ['name', 'nickName', 'keywords'], 'jw')
 
   const updateSearchQuery = useCallback(() => {
     const element = searchQueryInputRef.current

@@ -37,7 +37,11 @@ export const useTextSearch = <T extends Record<string, unknown>>(
   search: string,
   keys: RequireStringKeys<PickStringOrStringArrayValue<T>>[],
   searchAlgorithm: SearchAlgorithmKey = 'lev',
-  searchResultThreshold = 0,
+  /**
+   * Only return results with search value less than threshold.
+   * Values are between 0 and 1, with lower values meaning a better match.
+   */
+  searchResultThreshold = 1,
   searchResultLimit = 20
 ): T[] => {
   // Map each object to an array of string values at specified search keys
@@ -87,7 +91,7 @@ export const useTextSearch = <T extends Record<string, unknown>>(
 
     return searchValues
       .map(([values, originalIndex]): [number, number] => [getSearchValue(values), originalIndex])
-      .filter(([searchValue]) => searchValue > searchResultThreshold)
+      .filter(([searchValue]) => searchValue <= searchResultThreshold)
       .sort((a, b) => a[0] - b[0])
   }, [search, searchValues, searchAlgorithm])
 
