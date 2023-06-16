@@ -30,7 +30,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
   const [searchQuery, setSearchQuery] = useState<string>()
   const [_isPending, startTransition] = useTransition()
 
-  const { exactMatch, candidates } = useTextSearch(templates, searchQuery ?? '', ['name', 'nickName', 'keywords'])
+  const candidates = useTextSearch(templates, searchQuery ?? '', ['name', 'nickName'], 'jw')
 
   const updateSearchQuery = useCallback(() => {
     const element = searchQueryInputRef.current
@@ -46,9 +46,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
   const debounceUpdateSearchQuery = useDebounceCallback(updateSearchQuery, 200)
 
-  const searchResults = exactMatch
-    ? [...candidates.slice(0, 3).reverse(), exactMatch]
-    : candidates.slice(0, 4).reverse()
+  const searchResults = candidates.slice(0, 4).reverse()
 
   useEffect(() => {
     const element = searchQueryInputRef.current
@@ -70,11 +68,17 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     (e: React.KeyboardEvent<HTMLDivElement>): void => {
       switch (e.key) {
         case 'ArrowUp': {
+          e.preventDefault()
+
           setInternalSelection(clamp(internalSelection - 1, 0, 3))
+
           break
         }
         case 'ArrowDown': {
+          e.preventDefault()
+
           setInternalSelection(clamp(internalSelection + 1, 0, 3))
+
           break
         }
         case 'Enter': {
