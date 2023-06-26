@@ -12,7 +12,7 @@ export const MenuSection = ({ icon, title, background, border = false, children 
   return (
     <div
       className={`${border ? 'np-border-2 np-border-dark np-grid-cols-[18px_1fr]' : 'np-grid-cols-[20px_1fr]'
-        } np-w-full last:np-mb-0 np-p-1 np-grid np-gap-2 np-rounded-sm`}
+        } np-w-full last:np-mb-0 np-p-1 np-grid np-gap-2 np-rounded-sm np-overflow-visible`}
       style={{ backgroundColor: background }}
     >
       <div className="np-w-full np-h-full np-flex np-flex-col np-justify-start np-items-center">

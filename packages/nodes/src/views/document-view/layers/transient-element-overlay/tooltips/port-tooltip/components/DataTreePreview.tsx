@@ -1,6 +1,8 @@
 import React from 'react'
 import type { DataTree } from '@nodepen/core'
 import { getDataTreeStructure, getDataTreeValueString } from '@/utils/data-trees'
+import { DataTreePreviewEntry } from './DataTreePreviewEntry'
+import { COLORS } from '@/constants'
 
 type DataTreePreviewProps = {
   dataTree: DataTree
@@ -22,14 +24,24 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
         return (
           <>
             {firstValues.map((value, i) => (
-              <>
-                <div>{i}</div>
-                <div>{getDataTreeValueString(value)}</div>
-              </>
+              <DataTreePreviewEntry index={i} value={value} showBackground={i % 2 === 0} />
             ))}
-            <div className="np-col-span-full np-h-8 np-bg-error" />
-            <div>{values.length - 1}</div>
-            <div>{getDataTreeValueString(lastValue)}</div>
+            {values.length >= 5 && lastValue ? (
+              <>
+                <div className="np-col-span-full np-h-2 np-w-full np-flex np-justify-center np-items-center np-overflow-visible np-z-10">
+                  <svg width={138} height={20} className="np-overflow-visible">
+                    <polyline
+                      points="-5,10 60,10 64,6 68,10 72,14 76,10 143,10"
+                      stroke={COLORS.LIGHT}
+                      strokeWidth={2}
+                      vectorEffect="non-scaling-stroke"
+                      fill="none"
+                    />
+                  </svg>
+                </div>
+                <DataTreePreviewEntry index={values.length - 1} value={lastValue} showBackground />
+              </>
+            ) : null}
           </>
         )
       }
@@ -40,7 +52,7 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
   }
 
   return (
-    <div className="np-w-full np-p-2 np-grid np-grid-cols-[min-content_1fr] np-grid-flow-row-dense np-gap-1 np-rounded-sm np-bg-grey np-text-xs np-font-mono np-font-semibold">
+    <div className="np-w-full np-p-1 np-grid np-grid-cols-[min-content_1fr] np-grid-flow-row-dense np-rounded-sm np-bg-grey np-text-xs np-font-mono np-font-semibold">
       {getContent()}
     </div>
   )
