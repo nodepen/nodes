@@ -10,6 +10,7 @@ import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
 import { AddNodeButton } from './components'
 import { KEYS } from '@/constants'
+import { expireSolution } from '@/store/utils'
 
 type AddNodeContextMenuProps = {
   position: ContextMenu['position']
@@ -117,6 +118,9 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
       // Clear menu from interface
       state.registry.contextMenus = {}
       state.registry.tooltips = {}
+
+      // Expire solution
+      expireSolution(state)
     })
   }
 
