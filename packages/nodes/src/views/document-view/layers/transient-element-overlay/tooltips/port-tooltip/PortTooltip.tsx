@@ -6,6 +6,7 @@ import { useTooltip } from '../hooks'
 import { PortTypeIcon } from '@/components/icons'
 import { usePortValues } from '@/hooks'
 import { COLORS } from '@/constants'
+import { DataTreePreview } from './components'
 
 type PortTooltipProps = {
   tooltipKey: string
@@ -45,8 +46,6 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
     </svg>
   )
 
-  console.log(values)
-
   return (
     <div
       ref={shadowTarget}
@@ -60,7 +59,7 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
       </MenuSection>
       <MenuSection title={'4 values'} icon={dataIcon} border>
         <p className="np-mt-1 np-mb-2 np-font-sans np-font-medius np-text-dark np-text-xs">1 list of 24 values</p>
-        <div className="np-w-full np-h-16 np-rounded-sm np-bg-grey" />
+        {values ? <DataTreePreview dataTree={values} /> : null}
       </MenuSection>
     </div>
   )

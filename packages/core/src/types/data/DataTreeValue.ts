@@ -1,6 +1,6 @@
 import type * as GH from './geometry'
 
-export type DataTreeValue =
+export type DataTreeValue = (
   | {
       type: 'boolean'
       value: boolean
@@ -27,3 +27,6 @@ export type DataTreeValue =
       type: 'curve' | 'box' | 'surface'
       value: string
     }
+) & {
+  valueString?: string
+}

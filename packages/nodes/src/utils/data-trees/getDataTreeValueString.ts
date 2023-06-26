@@ -5,6 +5,10 @@ export const getDataTreeValueString = (dataTreeValue?: NodePen.DataTreeValue): s
     return 'undefined'
   }
 
+  if (dataTreeValue.valueString) {
+    return dataTreeValue.valueString
+  }
+
   switch (dataTreeValue.type) {
     case 'string': {
       const { value } = dataTreeValue
