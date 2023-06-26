@@ -7,6 +7,7 @@ import { PortTypeIcon } from '@/components/icons'
 import { usePortValues } from '@/hooks'
 import { COLORS } from '@/constants'
 import { DataTreePreview } from './components'
+import { getDataTreeSummary, getDataTreeValueCount } from '@/utils/data-trees'
 
 type PortTooltipProps = {
   tooltipKey: string
@@ -25,6 +26,7 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
   const { x: left, y: top } = position
 
   const values = usePortValues(nodeInstanceId, portInstanceId)
+  const valueCount = getDataTreeValueCount(values)
 
   const dataIcon = (
     <svg
@@ -57,8 +59,10 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
           {template.description}
         </p>
       </MenuSection>
-      <MenuSection title={'4 values'} icon={dataIcon} border>
-        <p className="np-mt-1 np-mb-2 np-font-sans np-font-medius np-text-dark np-text-xs">1 list of 24 values</p>
+      <MenuSection title={`${valueCount} value${valueCount === 1 ? '' : 's'}`} icon={dataIcon} border>
+        <p className="np-mt-1 np-mb-2 np-font-sans np-font-medius np-text-dark np-text-xs">
+          {getDataTreeSummary(values)}
+        </p>
         {values ? <DataTreePreview dataTree={values} /> : null}
       </MenuSection>
     </div>
