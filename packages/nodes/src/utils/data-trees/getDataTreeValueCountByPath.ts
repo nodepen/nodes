@@ -11,8 +11,6 @@ export const getDataTreeValueCountByPath = (data?: DataTree | null): [min: numbe
 
   pathLengths.sort((a, b) => a - b)
 
-  console.log(pathLengths)
-
   const min = pathLengths.at(0)
   const max = pathLengths.at(-1)
 

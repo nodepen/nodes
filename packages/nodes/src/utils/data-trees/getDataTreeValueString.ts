@@ -21,7 +21,7 @@ export const getDataTreeValueString = (dataTreeValue?: NodePen.DataTreeValue): s
     }
     default: {
       console.log(`🐍 Cannot parse unknown data type [${dataTreeValue.type}] as a string!`)
-      return 'unknown'
+      return `(${dataTreeValue.type.toLowerCase()} value)`
     }
   }
 }

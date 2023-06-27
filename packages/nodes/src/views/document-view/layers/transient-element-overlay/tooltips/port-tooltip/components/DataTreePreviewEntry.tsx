@@ -4,12 +4,12 @@ import { getDataTreeValueString } from '@/utils/data-trees'
 
 type DataTreePreviewEntryProps = {
   entryKey?: string | number
-  entryValue: DataTreeValue
+  entryValue: DataTreeValue | string
   showBackground?: boolean
 }
 
 export const DataTreePreviewEntry = ({ entryKey, entryValue, showBackground = false }: DataTreePreviewEntryProps) => {
-  const valueString = getDataTreeValueString(entryValue)
+  const valueString = typeof entryValue === 'string' ? entryValue : getDataTreeValueString(entryValue)
 
   return entryKey === undefined ? (
     <div className="np-p-1 np-pb-0 np-font-semibold -np-translate-y-px">{valueString}</div>
@@ -23,9 +23,9 @@ export const DataTreePreviewEntry = ({ entryKey, entryValue, showBackground = fa
       </div>
       <div
         className={`${showBackground ? 'np-bg-grey-2' : ''
-          } np-p-1 np-pb-0 np-rounded-tr-sm np-rounded-br-sm np-font-medium`}
+          } np-p-1 np-pb-0 np-rounded-tr-sm np-rounded-br-sm np-font-medium np-whitespace-nowrap np-overflow-hidden`}
       >
-        <div className="-np-translate-y-px">{valueString}</div>
+        <div className="-np-translate-y-px np-whitespace-nowrap np-overflow-hidden">{valueString}</div>
       </div>
     </>
   )

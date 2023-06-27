@@ -13,6 +13,20 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
 
   const structure = getDataTreeStructure(dataTree)
 
+  const cutoffDivider = (
+    <div className="np-col-span-full np-h-2 np-w-full np-flex np-justify-center np-items-center np-overflow-visible np-z-10">
+      <svg width={138} height={20} className="np-overflow-visible">
+        <polyline
+          points="-5,10 60,10 64,6 68,10 72,14 76,10 143,10"
+          stroke={COLORS.LIGHT}
+          strokeWidth={2}
+          vectorEffect="non-scaling-stroke"
+          fill="none"
+        />
+      </svg>
+    </div>
+  )
+
   const getContent = () => {
     switch (structure) {
       case 'single': {
@@ -42,18 +56,33 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
             ))}
             {values.length >= 5 && lastValue ? (
               <>
-                <div className="np-col-span-full np-h-2 np-w-full np-flex np-justify-center np-items-center np-overflow-visible np-z-10">
-                  <svg width={138} height={20} className="np-overflow-visible">
-                    <polyline
-                      points="-5,10 60,10 64,6 68,10 72,14 76,10 143,10"
-                      stroke={COLORS.LIGHT}
-                      strokeWidth={2}
-                      vectorEffect="non-scaling-stroke"
-                      fill="none"
-                    />
-                  </svg>
-                </div>
+                {cutoffDivider}
                 <DataTreePreviewEntry entryKey={values.length - 1} entryValue={lastValue} showBackground />
+              </>
+            ) : null}
+          </>
+        )
+      }
+      case 'tree': {
+        const firstEntries = entries.slice(0, 5)
+
+        const lastEntry = entries.at(-1)
+        const lastEntryValue = `n=${lastEntry?.[1]?.length}`
+
+        return (
+          <>
+            {firstEntries.map(([path, values], i) => (
+              <DataTreePreviewEntry
+                key={`tree-preview-${path}`}
+                entryKey={path}
+                entryValue={`n=${values.length}`}
+                showBackground={i % 2 === 0}
+              />
+            ))}
+            {entries.length >= 5 && lastEntry ? (
+              <>
+                {cutoffDivider}
+                <DataTreePreviewEntry entryKey={lastEntry[0]} entryValue={lastEntryValue} showBackground />
               </>
             ) : null}
           </>

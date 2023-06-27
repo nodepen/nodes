@@ -27,7 +27,6 @@ export const getDataTreeSummary = (data?: DataTree | null): string => {
       const types = getDataTreeTypes(data)
 
       const [minCount, maxCount] = getDataTreeValueCountByPath(data)
-      console.log([minCount, maxCount])
       const isUniformLength = minCount === maxCount
 
       return [
