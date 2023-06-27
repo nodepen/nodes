@@ -1,6 +1,6 @@
 import React from 'react'
 import type { DataTree } from '@nodepen/core'
-import { getDataTreeStructure, getDataTreeValueString } from '@/utils/data-trees'
+import { getDataTreeStructure, getDataTreeValueString, tryGetSingleValue } from '@/utils/data-trees'
 import { DataTreePreviewEntry } from './DataTreePreviewEntry'
 import { COLORS } from '@/constants'
 
@@ -15,8 +15,17 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
 
   const getContent = () => {
     switch (structure) {
+      case 'single': {
+        const value = tryGetSingleValue(dataTree)
+
+        if (!value) {
+          return null
+        }
+
+        return <DataTreePreviewEntry entryValue={value} />
+      }
       case 'list': {
-        const [_path, values] = entries[0]
+        const [path, values] = entries[0]
 
         const firstValues = values.slice(0, 5)
         const lastValue = values.at(-1)
@@ -24,7 +33,12 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
         return (
           <>
             {firstValues.map((value, i) => (
-              <DataTreePreviewEntry index={i} value={value} showBackground={i % 2 === 0} />
+              <DataTreePreviewEntry
+                key={`tree-preview-${path}-${i}`}
+                entryKey={i}
+                entryValue={value}
+                showBackground={i % 2 === 0}
+              />
             ))}
             {values.length >= 5 && lastValue ? (
               <>
@@ -39,7 +53,7 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
                     />
                   </svg>
                 </div>
-                <DataTreePreviewEntry index={values.length - 1} value={lastValue} showBackground />
+                <DataTreePreviewEntry entryKey={values.length - 1} entryValue={lastValue} showBackground />
               </>
             ) : null}
           </>

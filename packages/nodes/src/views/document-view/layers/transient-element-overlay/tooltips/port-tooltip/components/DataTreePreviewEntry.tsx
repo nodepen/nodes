@@ -3,21 +3,23 @@ import type { DataTreeValue } from '@nodepen/core'
 import { getDataTreeValueString } from '@/utils/data-trees'
 
 type DataTreePreviewEntryProps = {
-  index: number
-  value: DataTreeValue
+  entryKey?: string | number
+  entryValue: DataTreeValue
   showBackground?: boolean
 }
 
-export const DataTreePreviewEntry = ({ index, value, showBackground = false }: DataTreePreviewEntryProps) => {
-  const valueString = getDataTreeValueString(value)
+export const DataTreePreviewEntry = ({ entryKey, entryValue, showBackground = false }: DataTreePreviewEntryProps) => {
+  const valueString = getDataTreeValueString(entryValue)
 
-  return (
+  return entryKey === undefined ? (
+    <div className="np-p-1 np-pb-0 np-font-semibold -np-translate-y-px">{valueString}</div>
+  ) : (
     <>
       <div
         className={`${showBackground ? 'np-bg-grey-2' : ''
           } np-p-1 np-pr-2 np-pb-0 np-rounded-tl-sm np-rounded-bl-sm np-text-right np-font-semibold`}
       >
-        <div className="-np-translate-y-px np-opacity-70">{index}</div>
+        <div className="-np-translate-y-px np-opacity-70">{entryKey}</div>
       </div>
       <div
         className={`${showBackground ? 'np-bg-grey-2' : ''
