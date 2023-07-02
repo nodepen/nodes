@@ -5,10 +5,8 @@ using System.IO;
 
 namespace Rhino.Compute
 {
-
   public static class Environment
   {
-
     public static string SpeckleEndpoint { get; set; } = "";
     public static string SpeckleToken { get; set; } = "";
     public static string SpeckleStreamId { get; set; } = "";
@@ -51,5 +49,4 @@ namespace Rhino.Compute
     public string SpeckleToken { get; set; }
     public string SpeckleStreamId { get; set; }
   }
-
 }
