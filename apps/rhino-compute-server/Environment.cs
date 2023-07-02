@@ -1,5 +1,6 @@
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 
 namespace Rhino.Compute
@@ -14,15 +15,33 @@ namespace Rhino.Compute
 
     public static void Configure()
     {
-      using (StreamReader r = new StreamReader("./appsettings.json"))
-      {
-        string json = r.ReadToEnd();
-        var config = JsonConvert.DeserializeObject<EnvironmentVariables>(json);
+      var configFilePaths = new List<string>() {
+        "./appsettings.json",
+        "./appsettings.local.json"
+      };
 
-        SpeckleEndpoint = config.SpeckleEndpoint;
-        SpeckleToken = config.SpeckleToken;
-        SpeckleStreamId = config.SpeckleStreamId;
+      foreach (var path in configFilePaths)
+      {
+        if (!File.Exists(path))
+        {
+          continue;
+        }
+
+        using (StreamReader r = new StreamReader(path))
+        {
+          string json = r.ReadToEnd();
+          var config = JsonConvert.DeserializeObject<EnvironmentVariables>(json);
+
+          SpeckleEndpoint = config.SpeckleEndpoint;
+          SpeckleToken = config.SpeckleToken;
+          SpeckleStreamId = config.SpeckleStreamId;
+        }
       }
+
+      Console.WriteLine("Starting server with Speckle configuration:");
+      Console.WriteLine($"Endpoint: {SpeckleEndpoint}");
+      Console.WriteLine($"Stream: {SpeckleStreamId}");
+      Console.WriteLine($"Token: {SpeckleToken.Substring(0, 4)}...");
     }
   }
 

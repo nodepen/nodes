@@ -102,8 +102,6 @@ namespace Rhino.Compute
 
       Environment.Configure();
 
-      Console.WriteLine($"Server: {Environment.SpeckleEndpoint}");
-
       HostFactory.Run((Host) =>
             {
               Host.Service<SelfHostService>();

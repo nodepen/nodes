@@ -21,10 +21,6 @@ namespace Rhino.Compute.Endpoints
 
   public class GrasshopperEndpointsModule : NancyModule
   {
-    public static string STREAM_ID = "8f152cb7a4";
-    public static string STREAM_URL = "http://localhost:3000";
-    public static string STREAM_TOKEN = "5786dd5155738317691e81c1facb9d7a19d5c27320";
-
     public GrasshopperEndpointsModule(IRouteCacheProvider routeCacheProvider)
     {
       Post["/files/gh"] = _ => HandleGrasshopperFileUpload(Context);
@@ -291,15 +287,15 @@ namespace Rhino.Compute.Endpoints
       Log("--", requestData.Document.Id, $"Wrote {solutionData.Values.Keys.Count} components to document solution data.");
 
       // Commit updated document and solution data to stream
-      string streamId = STREAM_ID;
+      string streamId = Environment.SpeckleStreamId;
       string branchName = "main";
 
       Account account = new Account()
       {
-        token = STREAM_TOKEN,
+        token = Environment.SpeckleToken,
         serverInfo = new ServerInfo()
         {
-          url = STREAM_URL,
+          url = Environment.SpeckleEndpoint,
           company = "NodePen"
         },
         userInfo = new UserInfo()
@@ -317,7 +313,7 @@ namespace Rhino.Compute.Endpoints
       };
 
       string commitId = Helpers.Send(
-          stream: $"{STREAM_URL}/streams/{streamId}/branches/{branchName}",
+          stream: $"{Environment.SpeckleEndpoint}/streams/{streamId}/branches/{branchName}",
           data: streamData,
           message: $"Solution ${SID(requestData.SolutionId)}",
           account: account,
