@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using Rhino.Compute.Kits;
 
 namespace Rhino.Compute
 {
@@ -11,14 +12,16 @@ namespace Rhino.Compute
     public static string SpeckleToken { get; set; } = "";
     public static string SpeckleStreamId { get; set; } = "";
 
+    public static NodePenRhinoConverter Converter { get; set; } = new NodePenRhinoConverter();
+
     public static void Configure()
     {
-      var configFilePaths = new List<string>() {
+      List<string> configFilePaths = new List<string>() {
         "./appsettings.json",
         "./appsettings.local.json"
       };
 
-      foreach (var path in configFilePaths)
+      foreach (string path in configFilePaths)
       {
         if (!File.Exists(path))
         {
@@ -28,7 +31,7 @@ namespace Rhino.Compute
         using (StreamReader r = new StreamReader(path))
         {
           string json = r.ReadToEnd();
-          var config = JsonConvert.DeserializeObject<EnvironmentVariables>(json);
+          EnvironmentVariables config = JsonConvert.DeserializeObject<EnvironmentVariables>(json);
 
           SpeckleEndpoint = config.SpeckleEndpoint;
           SpeckleToken = config.SpeckleToken;

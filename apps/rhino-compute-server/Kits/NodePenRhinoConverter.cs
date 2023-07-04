@@ -72,7 +72,7 @@ namespace Rhino.Compute.Kits
         case GH_Circle circleGoo:
           {
             Geometry.Circle circleNativeGeometry = circleGoo.Value;
-            Objects.Geometry.Circle circleSpeckleGeometry = BaseConverter.CircleToSpeckle(circleNativeGeometry, "");
+            Objects.Geometry.Circle circleSpeckleGeometry = BaseConverter.CircleToSpeckle(circleNativeGeometry);
 
             NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
             {

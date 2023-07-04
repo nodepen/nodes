@@ -6,15 +6,14 @@ using Nancy;
 using Nancy.TinyIoc;
 using Nancy.Bootstrapper;
 using NodePen.Converters;
-using Objects.Converter.RhinoGh;
 
 namespace Rhino.Compute
 {
-  class Program
+  internal class Program
   {
     public static IDisposable RhinoCore { get; set; }
 
-    static void Main(string[] args)
+    private static void Main(string[] args)
     {
       RhinoInside.Resolver.Initialize();
 
@@ -22,9 +21,9 @@ namespace Rhino.Compute
 
       Environment.Configure();
 
-      HostFactory.Run((Host) =>
+      _ = HostFactory.Run((Host) =>
             {
-              Host.Service<SelfHostService>();
+              _ = Host.Service<SelfHostService>();
               Host.SetDisplayName("NodePen");
             });
     }
@@ -36,13 +35,13 @@ namespace Rhino.Compute
     {
       // Start headless Rhino process
       Console.WriteLine($"Rhino system directory: {RhinoInside.Resolver.RhinoSystemDirectory}");
-      Program.RhinoCore = new Rhino.Runtime.InProcess.RhinoCore(null, Rhino.Runtime.InProcess.WindowStyle.NoWindow);
+      Program.RhinoCore = new Runtime.InProcess.RhinoCore(null, Runtime.InProcess.WindowStyle.NoWindow);
 
       // Start web server
-      var options = new StartOptions();
+      StartOptions options = new StartOptions();
       options.Urls.Add("http://localhost:6500");
 
-      WebApp.Start<Startup>(options);
+      _ = WebApp.Start<Startup>(options);
 
       return true;
     }
@@ -57,23 +56,23 @@ namespace Rhino.Compute
   {
     public void Configuration(IAppBuilder app)
     {
-      app.UseNancy();
+      _ = app.UseNancy();
     }
   }
 
-  public class Bootstrapper : Nancy.DefaultNancyBootstrapper
+  public class Bootstrapper : DefaultNancyBootstrapper
   {
     protected override void ApplicationStartup(TinyIoCContainer container, IPipelines pipelines)
     {
       // Load Grasshopper
-      var pluginObject = Rhino.RhinoApp.GetPlugInObject("Grasshopper");
-      var runheadless = pluginObject?.GetType().GetMethod("RunHeadless");
-      if (runheadless != null)
-      {
-        runheadless.Invoke(pluginObject, null);
-      }
+      object pluginObject = RhinoApp.GetPlugInObject("Grasshopper");
+      System.Reflection.MethodInfo runheadless = pluginObject?.GetType().GetMethod("RunHeadless");
+      _ = (runheadless?.Invoke(pluginObject, null));
 
       NodePenConvert.Configure();
+
+      RhinoDoc contextDoc = RhinoDoc.Create(null);
+      Environment.Converter.SetContextDocument(contextDoc);
 
       Nancy.Json.JsonSettings.MaxJsonLength = int.MaxValue;
 
@@ -84,7 +83,7 @@ namespace Rhino.Compute
     {
       pipelines.AfterRequest.AddItemToEndOfPipeline((ctx) =>
       {
-        ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")
+        _ = ctx.Response.WithHeader("Access-Control-Allow-Origin", "*")
                               .WithHeader("Access-Control-Allow-Methods", "POST,GET")
                               .WithHeader("Access-Control-Allow-Headers", "Accept, Origin, Content-type");
 
@@ -101,9 +100,8 @@ namespace Rhino.Compute
 
     public void Handle(HttpStatusCode statusCode, NancyContext context)
     {
-      object errorObject;
-      context.Items.TryGetValue(NancyEngine.ERROR_EXCEPTION, out errorObject);
-      var error = errorObject as Exception;
+      _ = context.Items.TryGetValue(NancyEngine.ERROR_EXCEPTION, out object errorObject);
+      Exception error = errorObject as Exception;
 
       Console.WriteLine(error.Message);
       Console.WriteLine(error.Message);

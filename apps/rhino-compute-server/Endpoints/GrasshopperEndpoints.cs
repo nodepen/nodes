@@ -15,7 +15,6 @@ using Speckle.Core.Models;
 using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 using NJsonConvert = Newtonsoft.Json.JsonConvert;
-using Rhino.Compute.Kits;
 
 namespace Rhino.Compute.Endpoints
 {
@@ -128,12 +127,6 @@ namespace Rhino.Compute.Endpoints
 
       NodePenSolutionData solutionData = new NodePenSolutionData();
 
-      // Prepare Speckle
-      NodePenRhinoConverter converter = new NodePenRhinoConverter();
-
-      RhinoDoc contextDoc = RhinoDoc.Create(null);
-      converter.SetContextDocument(contextDoc);
-
       foreach (IGH_DocumentObject documentObject in definition.Objects)
       {
         Log(">>", documentObject.InstanceGuid, "Document Object", 1);
@@ -186,7 +179,7 @@ namespace Rhino.Compute.Endpoints
                         {
                           GH_Circle circleGoo = goo as GH_Circle;
 
-                          NodePenDataTreeValue entrySolutionData = converter.ConvertToSpeckle(goo);
+                          NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
 
                           branchSolutionData.Add(entrySolutionData);
 
