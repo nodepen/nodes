@@ -6,6 +6,7 @@ using Nancy;
 using Nancy.TinyIoc;
 using Nancy.Bootstrapper;
 using NodePen.Converters;
+using Objects.Converter.RhinoGh;
 
 namespace Rhino.Compute
 {

@@ -15,6 +15,8 @@ using Speckle.Core.Models;
 using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 using NJsonConvert = Newtonsoft.Json.JsonConvert;
+using Rhino.Compute.Kits;
+using Objects.Converter.RhinoGh;
 
 namespace Rhino.Compute.Endpoints
 {
@@ -171,8 +173,41 @@ namespace Rhino.Compute.Endpoints
                       continue;
                     }
 
+                    var converter = new NodePenRhinoConverter();
+
+                    Console.WriteLine(goo.TypeName);
+
                     switch (goo.TypeName)
                     {
+                      case "Circle":
+                        {
+                          GH_Circle circleGoo = goo as GH_Circle;
+                          Geometry.Circle circle = circleGoo.Value;
+
+                          Console.WriteLine(JsonConvert.SerializeObject(circle));
+
+                          var res = converter.ConvertToSpeckle(circle);
+
+                          Console.WriteLine(JsonConvert.SerializeObject(res));
+
+                          var baseConverter = new ConverterRhinoGh();
+
+                          var circleRes = baseConverter.CircleToSpeckle(circle);
+                          Console.WriteLine("Circle res:");
+                          Console.WriteLine(circleRes);
+                          Console.WriteLine(JsonConvert.SerializeObject(circleRes));
+
+                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
+                          {
+                            Type = "circle"
+                          };
+
+                          entrySolutionData["Value"] = res;
+
+                          branchSolutionData.Add(entrySolutionData);
+
+                          break;
+                        }
                       case "Curve":
                         {
                           Log(" >", branchKey, "Curve", 3);
