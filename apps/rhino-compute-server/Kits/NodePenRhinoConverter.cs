@@ -4,6 +4,7 @@ using Objects.Converter.RhinoGh;
 using Speckle.Core.Kits;
 using NodePen.Converters;
 using System;
+using Grasshopper.Kernel.Types;
 
 namespace Rhino.Compute.Kits
 {
@@ -39,7 +40,7 @@ namespace Rhino.Compute.Kits
 
     public List<object> ConvertToNative(List<Base> objects)
     {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException();
     }
 
     public NodePenDataTreeValue ConvertToSpeckle(object @object, NodePenDataTreeValue output)
@@ -64,29 +65,58 @@ namespace Rhino.Compute.Kits
       return el;
     }
 
+    public NodePenDataTreeValue ConvertToSpeckle(IGH_Goo goo)
+    {
+      switch (goo)
+      {
+        case GH_Circle circleGoo:
+          {
+            Geometry.Circle circleNativeGeometry = circleGoo.Value;
+            Objects.Geometry.Circle circleSpeckleGeometry = BaseConverter.CircleToSpeckle(circleNativeGeometry, "");
+
+            NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
+            {
+              Type = "Circle",
+              Value = circleSpeckleGeometry,
+            };
+
+            return entrySolutionValue;
+          }
+        default:
+          {
+            throw new NotImplementedException();
+          }
+      }
+    }
+
     public IEnumerable<string> GetServicedApplications()
     {
       return BaseConverter.GetServicedApplications();
     }
 
-    public void SetContextDocument(object doc)
+    public void SetContextDocument(object obj)
+    {
+      throw new NotImplementedException();
+    }
+
+    public void SetContextDocument(RhinoDoc doc)
     {
       BaseConverter.SetContextDocument(doc);
     }
 
     public void SetContextObjects(List<ApplicationObject> objects)
     {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException();
     }
 
     public void SetConverterSettings(object settings)
     {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException();
     }
 
     public void SetPreviousContextObjects(List<ApplicationObject> objects)
     {
-      throw new System.NotImplementedException();
+      throw new NotImplementedException();
     }
 
     // public void SetContextObjects(List<ApplicationPlaceholderObject> objects)

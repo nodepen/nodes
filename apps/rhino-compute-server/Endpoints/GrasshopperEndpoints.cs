@@ -16,7 +16,6 @@ using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 using NJsonConvert = Newtonsoft.Json.JsonConvert;
 using Rhino.Compute.Kits;
-using Objects.Converter.RhinoGh;
 
 namespace Rhino.Compute.Endpoints
 {
@@ -129,6 +128,12 @@ namespace Rhino.Compute.Endpoints
 
       NodePenSolutionData solutionData = new NodePenSolutionData();
 
+      // Prepare Speckle
+      NodePenRhinoConverter converter = new NodePenRhinoConverter();
+
+      RhinoDoc contextDoc = RhinoDoc.Create(null);
+      converter.SetContextDocument(contextDoc);
+
       foreach (IGH_DocumentObject documentObject in definition.Objects)
       {
         Log(">>", documentObject.InstanceGuid, "Document Object", 1);
@@ -173,8 +178,6 @@ namespace Rhino.Compute.Endpoints
                       continue;
                     }
 
-                    var converter = new NodePenRhinoConverter();
-
                     Console.WriteLine(goo.TypeName);
 
                     switch (goo.TypeName)
@@ -182,27 +185,8 @@ namespace Rhino.Compute.Endpoints
                       case "Circle":
                         {
                           GH_Circle circleGoo = goo as GH_Circle;
-                          Geometry.Circle circle = circleGoo.Value;
 
-                          Console.WriteLine(JsonConvert.SerializeObject(circle));
-
-                          var res = converter.ConvertToSpeckle(circle);
-
-                          Console.WriteLine(JsonConvert.SerializeObject(res));
-
-                          var baseConverter = new ConverterRhinoGh();
-
-                          var circleRes = baseConverter.CircleToSpeckle(circle);
-                          Console.WriteLine("Circle res:");
-                          Console.WriteLine(circleRes);
-                          Console.WriteLine(JsonConvert.SerializeObject(circleRes));
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = "circle"
-                          };
-
-                          entrySolutionData["Value"] = res;
+                          NodePenDataTreeValue entrySolutionData = converter.ConvertToSpeckle(goo);
 
                           branchSolutionData.Add(entrySolutionData);
 
@@ -359,6 +343,15 @@ namespace Rhino.Compute.Endpoints
       Client client = new Client(account);
 
       Branch streamBranch = client.BranchGet(streamId, branchName, 1).Result;
+
+      Console.WriteLine("Solution:");
+
+      foreach (Commit item in streamBranch.commits.items)
+      {
+        Console.WriteLine("Object:");
+        Console.WriteLine(item.id);
+        Console.WriteLine(item.referencedObject);
+      }
       string objectId = streamBranch.commits.items[0].referencedObject;
 
       solutionData["Id"] = requestData.SolutionId;
