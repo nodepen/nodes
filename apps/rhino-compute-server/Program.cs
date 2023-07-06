@@ -72,6 +72,7 @@ namespace Rhino.Compute
       NodePenConvert.Configure();
 
       RhinoDoc contextDoc = RhinoDoc.Create(null);
+      contextDoc.AdjustModelUnitSystem(UnitSystem.Meters, false);
       Environment.Converter.SetContextDocument(contextDoc);
 
       Nancy.Json.JsonSettings.MaxJsonLength = int.MaxValue;

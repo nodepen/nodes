@@ -73,7 +73,7 @@ namespace Rhino.Compute.Kits
         case GH_Brep brepGoo:
           {
             var brepNativeGeometry = brepGoo.Value;
-            var brepSpeckleGeometry = BaseConverter.BrepToSpeckle(brepNativeGeometry);
+            var brepSpeckleGeometry = BaseConverter.BrepToSpeckle(brepNativeGeometry, units: "m");
 
             var entrySolutionValue = new NodePenDataTreeValue()
             {
@@ -88,7 +88,7 @@ namespace Rhino.Compute.Kits
         case GH_Circle circleGoo:
           {
             Geometry.Circle circleNativeGeometry = circleGoo.Value;
-            Objects.Geometry.Circle circleSpeckleGeometry = BaseConverter.CircleToSpeckle(circleNativeGeometry);
+            Objects.Geometry.Circle circleSpeckleGeometry = BaseConverter.CircleToSpeckle(circleNativeGeometry, units: "m");
 
             NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
             {
@@ -98,10 +98,25 @@ namespace Rhino.Compute.Kits
 
             return entrySolutionValue;
           }
+        case GH_Curve curveGoo:
+          {
+            var curveNativeGeometry = curveGoo.Value;
+            var curveSpeckleGeometry = BaseConverter.CurveToSpeckle(curveNativeGeometry, units: "m");
+
+            NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
+            {
+              Type = "Curve",
+              Value = "test",
+            };
+
+            entrySolutionValue["Geometry"] = curveSpeckleGeometry;
+
+            return entrySolutionValue;
+          }
         case GH_Surface surfaceGoo:
           {
             var surfaceNativeGeometry = surfaceGoo.Value;
-            var surfaceSpeckleGeometry = BaseConverter.BrepToSpeckle(surfaceNativeGeometry);
+            var surfaceSpeckleGeometry = BaseConverter.BrepToSpeckle(surfaceNativeGeometry, units: "m");
 
             NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
             {

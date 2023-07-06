@@ -187,39 +187,9 @@ namespace Rhino.Compute.Endpoints
                         }
                       case "Curve":
                         {
-                          Log(" >", branchKey, "Curve", 3);
-
                           GH_Curve curveGoo = goo as GH_Curve;
-                          Geometry.Curve curve = curveGoo.Value;
 
-                          List<double> coords = new List<double>
-                          {
-                            curve.PointAtStart.X,
-                            curve.PointAtStart.Y,
-                            curve.PointAtStart.Z
-                          };
-
-                          for (int z = 0; z < curve.SpanCount; z++)
-                          {
-                            Geometry.Interval span = curve.SpanDomain(z);
-
-                            Geometry.Point3d pt = curve.PointAt(span.Max);
-
-                            coords.Add(pt.X);
-                            coords.Add(pt.Y);
-                            coords.Add(pt.Z);
-                          }
-
-                          Polyline displayValue = new Polyline(coords);
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = "curve"
-                          };
-
-                          // entrySolutionData["Value"] = curve.ToJSON(new FileIO.SerializationOptions());
-                          entrySolutionData["Value"] = curve.ToJSON(new FileIO.SerializationOptions());
-                          entrySolutionData["displayValue"] = displayValue;
+                          NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
 
                           branchSolutionData.Add(entrySolutionData);
 
@@ -360,7 +330,7 @@ namespace Rhino.Compute.Endpoints
       solutionData["Id"] = requestData.SolutionId;
       solutionData.Manifest.StreamObjectIds.Add(objectId);
 
-      // solutionData.Values = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
+      solutionData.Values = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
 
       return Response.AsJson(solutionData);
     }
