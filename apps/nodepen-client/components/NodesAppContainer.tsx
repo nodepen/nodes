@@ -85,9 +85,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
     fetchSolution()
       .then((data) => {
-        const sanitized = sanitize(data)
-        console.log(sanitized)
-        setSolution(sanitized)
+        setSolution(sanitize(data))
       })
       .catch((e) => {
         console.log(e)

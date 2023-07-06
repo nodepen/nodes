@@ -5,6 +5,7 @@ using Speckle.Core.Kits;
 using NodePen.Converters;
 using System;
 using Grasshopper.Kernel.Types;
+using Newtonsoft.Json;
 
 namespace Rhino.Compute.Kits
 {
@@ -69,6 +70,21 @@ namespace Rhino.Compute.Kits
     {
       switch (goo)
       {
+        case GH_Brep brepGoo:
+          {
+            var brepNativeGeometry = brepGoo.Value;
+            var brepSpeckleGeometry = BaseConverter.BrepToSpeckle(brepNativeGeometry);
+
+            var entrySolutionValue = new NodePenDataTreeValue()
+            {
+              Type = "Brep",
+              Value = brepSpeckleGeometry,
+            };
+
+            Console.WriteLine(JsonConvert.SerializeObject(brepSpeckleGeometry));
+
+            return entrySolutionValue;
+          }
         case GH_Circle circleGoo:
           {
             Geometry.Circle circleNativeGeometry = circleGoo.Value;
@@ -79,6 +95,21 @@ namespace Rhino.Compute.Kits
               Type = "Circle",
               Value = circleSpeckleGeometry,
             };
+
+            return entrySolutionValue;
+          }
+        case GH_Surface surfaceGoo:
+          {
+            var surfaceNativeGeometry = surfaceGoo.Value;
+            var surfaceSpeckleGeometry = BaseConverter.BrepToSpeckle(surfaceNativeGeometry);
+
+            NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
+            {
+              Type = "Surface",
+              Value = "Nothing"
+            };
+
+            entrySolutionValue["Geometry"] = surfaceSpeckleGeometry;
 
             return entrySolutionValue;
           }

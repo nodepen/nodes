@@ -259,6 +259,16 @@ namespace Rhino.Compute.Endpoints
 
                           break;
                         }
+                      case "Surface":
+                        {
+                          GH_Surface surfaceGoo = goo as GH_Surface;
+
+                          NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
+
+                          branchSolutionData.Add(entrySolutionData);
+
+                          break;
+                        }
                       default:
                         {
                           Log("!>", branchKey, $"Unhandled value type [{goo.TypeName}]", 3);
@@ -349,6 +359,8 @@ namespace Rhino.Compute.Endpoints
 
       solutionData["Id"] = requestData.SolutionId;
       solutionData.Manifest.StreamObjectIds.Add(objectId);
+
+      // solutionData.Values = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
 
       return Response.AsJson(solutionData);
     }
