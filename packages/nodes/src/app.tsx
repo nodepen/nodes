@@ -43,6 +43,10 @@ export const NodesApp = ({
     }
 
     apply((state) => {
+      if (state.solution.id !== solution.id) {
+        return
+      }
+
       state.solution = freeze(solution)
     })
   }, [solution?.id, solution?.manifest.streamObjectIds])
