@@ -152,7 +152,6 @@ namespace NodePen.Converters
         [JsonIgnore]
         public dynamic Value { get; set; }
 
-        [JsonIgnore]
         public dynamic Geometry { get; set; } = null;
 
         public double UnwrapAsDouble()

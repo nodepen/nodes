@@ -173,8 +173,6 @@ namespace Rhino.Compute.Endpoints
 
                     var entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
                     branchSolutionData.Add(entrySolutionData);
-
-                    Console.WriteLine(goo.TypeName);
                   }
 
                   paramSolutionData.Add(branchKey, branchSolutionData);

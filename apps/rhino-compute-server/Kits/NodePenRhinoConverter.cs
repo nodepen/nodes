@@ -67,9 +67,129 @@ namespace Rhino.Compute.Kits
     {
       switch (goo)
       {
-        case GH_Goo<Plane> planeGoo:
+        case GH_Arc arcGoo:
+          {
+            return ConvertToSpeckle(arcGoo);
+          }
+        case GH_Boolean booleanGoo:
+          {
+            return ConvertToSpeckle(booleanGoo);
+          }
+        case GH_Box boxGoo:
+          {
+            return ConvertToSpeckle(boxGoo);
+          }
+        case GH_Brep brepGoo:
+          {
+            return ConvertToSpeckle(brepGoo);
+          }
+        case GH_Circle circleGoo:
+          {
+            return ConvertToSpeckle(circleGoo);
+          }
+        case GH_Colour colourGoo:
+          {
+            return ConvertToSpeckle(colourGoo);
+          }
+        case GH_ComplexNumber complexNumberGoo:
+          {
+            return ConvertToSpeckle(complexNumberGoo);
+          }
+        case GH_Culture cultureGoo:
+          {
+            return ConvertToSpeckle(cultureGoo);
+          }
+        case GH_Curve curveGoo:
+          {
+            return ConvertToSpeckle(curveGoo);
+          }
+        case GH_Field fieldGoo:
+          {
+            return ConvertToSpeckle(fieldGoo);
+          }
+        case GH_Guid guidGoo:
+          {
+            return ConvertToSpeckle(guidGoo);
+          }
+        case GH_Integer intGoo:
+          {
+            return ConvertToSpeckle(intGoo);
+          }
+        case GH_Interval intervalGoo:
+          {
+            return ConvertToSpeckle(intervalGoo);
+          }
+        case GH_Interval2D interval2dGoo:
+          {
+            return ConvertToSpeckle(interval2dGoo);
+          }
+        case GH_Line lineGoo:
+          {
+            return ConvertToSpeckle(lineGoo);
+          }
+        case GH_Material materialGoo:
+          {
+            return ConvertToSpeckle(materialGoo);
+          }
+        case GH_Matrix matrixGoo:
+          {
+            return ConvertToSpeckle(matrixGoo);
+          }
+        case GH_Mesh meshGoo:
+          {
+            return ConvertToSpeckle(meshGoo);
+          }
+        case GH_MeshFace meshFaceGoo:
+          {
+            return ConvertToSpeckle(meshFaceGoo);
+          }
+        case GH_MeshingParameters meshingParametersGoo:
+          {
+            return ConvertToSpeckle(meshingParametersGoo);
+          }
+        case GH_Number numberGoo:
+          {
+            return ConvertToSpeckle(numberGoo);
+          }
+        case GH_Plane planeGoo:
           {
             return ConvertToSpeckle(planeGoo);
+          }
+        case GH_Point pointGoo:
+          {
+            return ConvertToSpeckle(pointGoo);
+          }
+        case GH_Rectangle rectangleGoo:
+          {
+            return ConvertToSpeckle(rectangleGoo);
+          }
+        case GH_String stringGoo:
+          {
+            return ConvertToSpeckle(stringGoo);
+          }
+        case GH_SubD subdGoo:
+          {
+            return ConvertToSpeckle(subdGoo);
+          }
+        case GH_Surface surfaceGoo:
+          {
+            return ConvertToSpeckle(surfaceGoo);
+          }
+        case GH_Time timeGoo:
+          {
+            return ConvertToSpeckle(timeGoo);
+          }
+        case GH_Transform transformGoo:
+          {
+            return ConvertToSpeckle(transformGoo);
+          }
+        case GH_Vector vectorGoo:
+          {
+            return ConvertToSpeckle(vectorGoo);
+          }
+        default:
+          {
+            throw new Exception($"Failed to convert {goo.TypeName} value!");
           }
       }
 
