@@ -6,7 +6,7 @@ import { useSolutionData } from './hooks'
 export const SolutionStatusBar = (): React.ReactElement => {
   const shadowTarget = usePseudoShadow()
 
-  const { values } = useSolutionData()
+  const { values: _values } = useSolutionData()
 
   return (
     <div
