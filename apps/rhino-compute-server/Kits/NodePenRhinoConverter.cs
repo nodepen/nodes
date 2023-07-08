@@ -6,6 +6,7 @@ using NodePen.Converters;
 using System;
 using Grasshopper.Kernel.Types;
 using Newtonsoft.Json;
+using Rhino.Geometry;
 
 namespace Rhino.Compute.Kits
 {
@@ -59,80 +60,36 @@ namespace Rhino.Compute.Kits
 
     public Base ConvertToSpeckle(object @object)
     {
-      Base el = BaseConverter.ConvertToSpeckle(@object);
-      Console.WriteLine("Speckle result:");
-      Console.WriteLine(el);
-
-      return el;
+      throw new NotImplementedException();
     }
 
     public NodePenDataTreeValue ConvertToSpeckle(IGH_Goo goo)
     {
       switch (goo)
       {
-        case GH_Brep brepGoo:
+        case GH_Goo<Plane> planeGoo:
           {
-            var brepNativeGeometry = brepGoo.Value;
-            var brepSpeckleGeometry = BaseConverter.BrepToSpeckle(brepNativeGeometry, units: "m");
-
-            var entrySolutionValue = new NodePenDataTreeValue()
-            {
-              Type = "Brep",
-              Value = brepSpeckleGeometry,
-            };
-
-            Console.WriteLine(JsonConvert.SerializeObject(brepSpeckleGeometry));
-
-            return entrySolutionValue;
-          }
-        case GH_Circle circleGoo:
-          {
-            Geometry.Circle circleNativeGeometry = circleGoo.Value;
-            Objects.Geometry.Circle circleSpeckleGeometry = BaseConverter.CircleToSpeckle(circleNativeGeometry, units: "m");
-
-            NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
-            {
-              Type = "Circle",
-              Value = circleSpeckleGeometry,
-            };
-
-            return entrySolutionValue;
-          }
-        case GH_Curve curveGoo:
-          {
-            var curveNativeGeometry = curveGoo.Value;
-            var curveSpeckleGeometry = BaseConverter.CurveToSpeckle(curveNativeGeometry, units: "m");
-
-            NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
-            {
-              Type = "Curve",
-              Value = "test",
-            };
-
-            entrySolutionValue["Geometry"] = curveSpeckleGeometry;
-
-            return entrySolutionValue;
-          }
-        case GH_Surface surfaceGoo:
-          {
-            var surfaceNativeGeometry = surfaceGoo.Value;
-            var surfaceSpeckleGeometry = BaseConverter.BrepToSpeckle(surfaceNativeGeometry, units: "m");
-            Console.WriteLine(surfaceGoo.ToString());
-            NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
-            {
-              Type = "Surface",
-              Value = "Nothing"
-            };
-
-            entrySolutionValue["Geometry"] = surfaceSpeckleGeometry;
-
-            return entrySolutionValue;
-          }
-        default:
-          {
-            throw new NotImplementedException();
+            return ConvertToSpeckle(planeGoo);
           }
       }
+
+      throw new Exception($"Failed to convert {goo.TypeName}");
+    }
+
+    public NodePenDataTreeValue ConvertToSpeckle<T>(GH_Goo<T> goo)
+    {
+      var nativeGeometry = goo.Value;
+      var speckleGeometry = BaseConverter.ConvertToSpeckle(nativeGeometry);
+
+      var entrySolutionValue = new NodePenDataTreeValue()
+      {
+        Type = goo.TypeName.ToLower(),
+        Description = goo.ToString(),
+        Value = nativeGeometry,
+        Geometry = speckleGeometry,
+      };
+
+      return entrySolutionValue;
     }
 
     public IEnumerable<string> GetServicedApplications()

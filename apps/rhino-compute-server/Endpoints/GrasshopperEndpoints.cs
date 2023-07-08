@@ -171,89 +171,10 @@ namespace Rhino.Compute.Endpoints
                       continue;
                     }
 
+                    var entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
+                    branchSolutionData.Add(entrySolutionData);
+
                     Console.WriteLine(goo.TypeName);
-
-                    switch (goo.TypeName)
-                    {
-                      case "Circle":
-                        {
-                          GH_Circle circleGoo = goo as GH_Circle;
-
-                          NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      case "Curve":
-                        {
-                          GH_Curve curveGoo = goo as GH_Curve;
-
-                          NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      case "Integer":
-                        {
-                          Log(" >", branchKey, "Integer", 3);
-
-                          GH_Integer integerGoo = goo as GH_Integer;
-                          int integer = integerGoo.Value;
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = "integer",
-                            Value = integer
-                          };
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      case "Number":
-                        {
-                          Log(" >", branchKey, "Number", 3);
-
-                          GH_Number numberGoo = goo as GH_Number;
-                          double number = numberGoo.Value;
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = "number",
-                            Value = number
-                          };
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      case "Surface":
-                        {
-                          GH_Surface surfaceGoo = goo as GH_Surface;
-
-                          NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      default:
-                        {
-                          Log("!>", branchKey, $"Unhandled value type [{goo.TypeName}]", 3);
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = goo.TypeName.ToLower(),
-                            Value = NJsonConvert.SerializeObject(goo)
-                          };
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                    }
                   }
 
                   paramSolutionData.Add(branchKey, branchSolutionData);
