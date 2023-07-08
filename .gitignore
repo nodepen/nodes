@@ -11,3 +11,5 @@ bin/
 obj/
 
 coverage/
+
+appsettings.local.json

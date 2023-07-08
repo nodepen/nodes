@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useCallback } from 'react'
 import { Viewer, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
@@ -33,7 +33,7 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
     const viewer = new Viewer(containerRef.current, {
       showStats: false,
       environmentSrc: '',
-      verbose: true,
+      verbose: false,
       keepGeometryData: true,
     })
 
@@ -52,7 +52,7 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
     }
   }, [])
 
-  useEffect(() => {
+  const refreshObjects = useCallback(async () => {
     const viewer = viewerRef.current
 
     if (!viewer) {
@@ -65,13 +65,14 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
       return
     }
 
-    const refreshObjects = async (): Promise<void> => {
-      await viewer.unloadAll()
+    await viewer.unloadAll()
+    await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${objectId}`, stream.token)
+  }, [objectIds])
 
-      await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${objectId}`, stream.token)
-    }
+  const requestRefreshObjects = useDeferCallback(refreshObjects)
 
-    void refreshObjects()
+  useEffect(() => {
+    requestRefreshObjects()
   }, [objectIds])
 
   return (
@@ -79,6 +80,37 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
       <div className="np-w-full np-h-full np-pointer-events-auto np-bg-pale" ref={containerRef} />
     </Layer>
   )
+}
+
+// Delay serial requests to invoke a given callback until the current invocation finishes.
+// Multiple requests while waiting will only lead to one invocation.
+const useDeferCallback = (callback: () => Promise<void>): (() => void) => {
+  const isInvoked = useRef(false)
+  const shouldInvoke = useRef(false)
+
+  const requestInvoke = useCallback(() => {
+    const handleInvoke = () => {
+      isInvoked.current = true
+      shouldInvoke.current = false
+
+      callback().finally(() => {
+        isInvoked.current = false
+        if (shouldInvoke.current) {
+          handleInvoke()
+        }
+      })
+    }
+
+    if (!isInvoked.current) {
+      // We are not awaiting a call, call immediately
+      handleInvoke()
+    } else {
+      // We are awaiting a call, flag request for a subsequent run.
+      shouldInvoke.current = true
+    }
+  }, [callback])
+
+  return requestInvoke
 }
 
 export default React.memo(SpeckleModelView)

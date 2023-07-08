@@ -21,10 +21,6 @@ namespace Rhino.Compute.Endpoints
 
   public class GrasshopperEndpointsModule : NancyModule
   {
-    public static string STREAM_ID = "8f152cb7a4";
-    public static string STREAM_URL = "http://localhost:3000";
-    public static string STREAM_TOKEN = "5786dd5155738317691e81c1facb9d7a19d5c27320";
-
     public GrasshopperEndpointsModule(IRouteCacheProvider routeCacheProvider)
     {
       Post["/files/gh"] = _ => HandleGrasshopperFileUpload(Context);
@@ -77,7 +73,12 @@ namespace Rhino.Compute.Endpoints
       public NodePenSolutionDataManifest Manifest { get; set; } = new NodePenSolutionDataManifest();
 
       [JsonProperty("values")]
-      public Dictionary<string, Dictionary<string, NodePenDataTree>> Values { get; set; } = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
+      public NodePenSolutionDataSolutionValues Values { get; set; } = new NodePenSolutionDataSolutionValues();
+    }
+
+    public class NodePenSolutionDataSolutionValues : Dictionary<string, Dictionary<string, NodePenDataTree>>
+    {
+
     }
 
     public class NodePenSolutionDataManifest : Base
@@ -175,97 +176,8 @@ namespace Rhino.Compute.Endpoints
                       continue;
                     }
 
-                    switch (goo.TypeName)
-                    {
-                      case "Curve":
-                        {
-                          Log(" >", branchKey, "Curve", 3);
-
-                          GH_Curve curveGoo = goo as GH_Curve;
-                          Geometry.Curve curve = curveGoo.Value;
-
-                          List<double> coords = new List<double>
-                          {
-                            curve.PointAtStart.X,
-                            curve.PointAtStart.Y,
-                            curve.PointAtStart.Z
-                          };
-
-                          for (int z = 0; z < curve.SpanCount; z++)
-                          {
-                            Geometry.Interval span = curve.SpanDomain(z);
-
-                            Geometry.Point3d pt = curve.PointAt(span.Max);
-
-                            coords.Add(pt.X);
-                            coords.Add(pt.Y);
-                            coords.Add(pt.Z);
-                          }
-
-                          Polyline displayValue = new Polyline(coords);
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = "curve"
-                          };
-
-                          // entrySolutionData["Value"] = curve.ToJSON(new FileIO.SerializationOptions());
-                          entrySolutionData["Value"] = curve.ToJSON(new FileIO.SerializationOptions());
-                          entrySolutionData["displayValue"] = displayValue;
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      case "Integer":
-                        {
-                          Log(" >", branchKey, "Integer", 3);
-
-                          GH_Integer integerGoo = goo as GH_Integer;
-                          int integer = integerGoo.Value;
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = "integer",
-                            Value = integer
-                          };
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      case "Number":
-                        {
-                          Log(" >", branchKey, "Number", 3);
-
-                          GH_Number numberGoo = goo as GH_Number;
-                          double number = numberGoo.Value;
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = "number",
-                            Value = number
-                          };
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                      default:
-                        {
-                          Log("!>", branchKey, $"Unhandled value type [{goo.TypeName}]", 3);
-
-                          NodePenDataTreeValue entrySolutionData = new NodePenDataTreeValue()
-                          {
-                            Type = goo.TypeName.ToLower(),
-                            Value = NJsonConvert.SerializeObject(goo)
-                          };
-
-                          branchSolutionData.Add(entrySolutionData);
-
-                          break;
-                        }
-                    }
+                    var entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
+                    branchSolutionData.Add(entrySolutionData);
                   }
 
                   paramSolutionData.Add(branchKey, branchSolutionData);
@@ -291,15 +203,15 @@ namespace Rhino.Compute.Endpoints
       Log("--", requestData.Document.Id, $"Wrote {solutionData.Values.Keys.Count} components to document solution data.");
 
       // Commit updated document and solution data to stream
-      string streamId = STREAM_ID;
+      string streamId = Environment.SpeckleStreamId;
       string branchName = "main";
 
       Account account = new Account()
       {
-        token = STREAM_TOKEN,
+        token = Environment.SpeckleToken,
         serverInfo = new ServerInfo()
         {
-          url = STREAM_URL,
+          url = Environment.SpeckleEndpoint,
           company = "NodePen"
         },
         userInfo = new UserInfo()
@@ -317,7 +229,7 @@ namespace Rhino.Compute.Endpoints
       };
 
       string commitId = Helpers.Send(
-          stream: $"{STREAM_URL}/streams/{streamId}/branches/{branchName}",
+          stream: $"{Environment.SpeckleEndpoint}/streams/{streamId}/branches/{branchName}",
           data: streamData,
           message: $"Solution ${SID(requestData.SolutionId)}",
           account: account,
@@ -328,6 +240,15 @@ namespace Rhino.Compute.Endpoints
       Client client = new Client(account);
 
       Branch streamBranch = client.BranchGet(streamId, branchName, 1).Result;
+
+      Console.WriteLine("Solution:");
+
+      foreach (Commit item in streamBranch.commits.items)
+      {
+        Console.WriteLine("Object:");
+        Console.WriteLine(item.id);
+        Console.WriteLine(item.referencedObject);
+      }
       string objectId = streamBranch.commits.items[0].referencedObject;
 
       solutionData["Id"] = requestData.SolutionId;

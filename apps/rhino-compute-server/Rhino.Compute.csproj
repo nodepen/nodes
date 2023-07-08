@@ -23,8 +23,8 @@
     <PackageReference Include="Microsoft.Web.WebView2" Version="1.0.1020.30" />
     <PackageReference Include="Nancy" Version="1.4.4" />
     <PackageReference Include="Nancy.Owin" Version="1.4.1" />
-    <PackageReference Include="NewtonSoft.Json" Version="13.0.1" />
-    <PackageReference Include="Rhino.Inside" Version="7.0.0" />
+    <PackageReference Include="Speckle.Objects.Converter.Grasshopper7" Version="2.14.2" />
+    <!-- <PackageReference Include="NewtonSoft.Json" Version="13.0.1" /> -->
     <PackageReference Include="Topshelf" Version="4.1.0" />
   </ItemGroup>
 
@@ -33,7 +33,15 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.local.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>

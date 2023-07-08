@@ -142,12 +142,21 @@ namespace NodePen.Converters
 
     public class NodePenDataTreeValue : Base
     {
-
         [JsonProperty("type")]
         public string Type { get; set; }
 
-        [JsonProperty("value")]
+        [JsonProperty("description")]
+        public string Description { get; set; }
+
+        [JsonIgnore]
         public dynamic Value { get; set; }
+
+        public dynamic Geometry { get; set; } = null;
+
+        public bool ShouldSerializeGeometry()
+        {
+            return Geometry != null;
+        }
 
         public double UnwrapAsDouble()
         {

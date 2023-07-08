@@ -1,32 +1,8 @@
-import type * as GH from './geometry'
+import type { DataTreeValueType } from './DataTreeValueType'
 
-export type DataTreeValue = (
-  | {
-      type: 'boolean'
-      value: boolean
-    }
-  | {
-      type: 'integer' | 'number'
-      value: number
-    }
-  | {
-      type: 'string'
-      value: string
-    }
-  | {
-      type: 'circle'
-      value: {
-        center: GH.Point
-        circumference: number
-        diameter: number
-        plane: GH.Plane
-        radius: number
-      }
-    }
-  | {
-      type: 'curve' | 'box' | 'surface'
-      value: string
-    }
-) & {
-  valueString?: string
-}
+export type DataTreeValue = Readonly<{
+  type: DataTreeValueType
+  description: string
+  value?: unknown // Rhino JSON?
+  geometry?: unknown // Speckle
+}>

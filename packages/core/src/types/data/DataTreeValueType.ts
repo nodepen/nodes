@@ -1,3 +1,1 @@
-import type { DataTreeValue } from './DataTreeValue'
-
-export type DataTreeValueType = DataTreeValue['type']
+export type DataTreeValueType = 'boolean' | 'box' | 'circle' | 'curve' | 'integer' | 'number' | 'string' | 'surface'
