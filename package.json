@@ -33,7 +33,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "prettier": "^2.8.8",
     "ts-jest": "^29.1.1",
-    "tsc-alias": "^1.8.6",
+    "tsc-alias": "^1.8.7",
     "tsc-watch": "^6.0.4",
     "turbo": "^1.10.7",
     "typescript": "^5.1.6"
