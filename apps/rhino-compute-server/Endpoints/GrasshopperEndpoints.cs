@@ -73,7 +73,29 @@ namespace Rhino.Compute.Endpoints
       public NodePenSolutionDataManifest Manifest { get; set; } = new NodePenSolutionDataManifest();
 
       [JsonProperty("values")]
-      public Dictionary<string, Dictionary<string, NodePenDataTree>> Values { get; set; } = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
+      public NodePenSolutionDataSolutionValues Values { get; set; } = new NodePenSolutionDataSolutionValues();
+
+      public void ToDto()
+      {
+        foreach (var node in Values.Values)
+        {
+          foreach (var port in node.Values)
+          {
+            foreach (var branch in port.Values)
+            {
+              foreach (var entry in branch)
+              {
+                entry.ToDto();
+              }
+            }
+          }
+        }
+      }
+    }
+
+    public class NodePenSolutionDataSolutionValues : Dictionary<string, Dictionary<string, NodePenDataTree>>
+    {
+
     }
 
     public class NodePenSolutionDataManifest : Base
@@ -249,7 +271,7 @@ namespace Rhino.Compute.Endpoints
       solutionData["Id"] = requestData.SolutionId;
       solutionData.Manifest.StreamObjectIds.Add(objectId);
 
-      solutionData.Values = new Dictionary<string, Dictionary<string, NodePenDataTree>>();
+      solutionData.ToDto();
 
       return Response.AsJson(solutionData);
     }
