@@ -5,23 +5,5 @@ export const getDataTreeValueString = (dataTreeValue?: NodePen.DataTreeValue): s
     return 'undefined'
   }
 
-  if (dataTreeValue.valueString) {
-    return dataTreeValue.valueString
-  }
-
-  switch (dataTreeValue.type) {
-    case 'string': {
-      const { value } = dataTreeValue
-      return value
-    }
-    case 'number':
-    case 'integer': {
-      const { value } = dataTreeValue
-      return value.toString()
-    }
-    default: {
-      console.log(`🐍 Cannot parse unknown data type [${dataTreeValue.type}] as a string!`)
-      return `(${dataTreeValue.type.toLowerCase()} value)`
-    }
-  }
+  return dataTreeValue.description
 }

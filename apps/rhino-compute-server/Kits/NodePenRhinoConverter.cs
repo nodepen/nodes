@@ -117,7 +117,7 @@ namespace Rhino.Compute.Kits
           {
             var surfaceNativeGeometry = surfaceGoo.Value;
             var surfaceSpeckleGeometry = BaseConverter.BrepToSpeckle(surfaceNativeGeometry, units: "m");
-
+            Console.WriteLine(surfaceGoo.ToString());
             NodePenDataTreeValue entrySolutionValue = new NodePenDataTreeValue()
             {
               Type = "Surface",
