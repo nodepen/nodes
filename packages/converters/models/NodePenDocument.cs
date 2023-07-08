@@ -153,12 +153,6 @@ namespace NodePen.Converters
 
         public dynamic Geometry { get; set; } = null;
 
-        public void ToDto()
-        {
-            Value = null;
-            Geometry = null;
-        }
-
         public bool ShouldSerializeGeometry()
         {
             return Geometry != null;
@@ -174,26 +168,6 @@ namespace NodePen.Converters
             return Convert.ToInt32(this["Value"]);
         }
 
-    }
-
-    public class NodePenDataTreeDto : Dictionary<string, List<NodePenDataTreeValueDto>>
-    {
-
-    }
-
-    public class NodePenDataTreeValueDto
-    {
-        [JsonProperty("type")]
-        public string Type { get; set; }
-
-        [JsonProperty("description")]
-        public string Description { get; set; }
-
-        public NodePenDataTreeValueDto(NodePenDataTreeValue value)
-        {
-            Type = value.Type;
-            Description = value.Description;
-        }
     }
 
 }

@@ -74,23 +74,6 @@ namespace Rhino.Compute.Endpoints
 
       [JsonProperty("values")]
       public NodePenSolutionDataSolutionValues Values { get; set; } = new NodePenSolutionDataSolutionValues();
-
-      public void ToDto()
-      {
-        foreach (var node in Values.Values)
-        {
-          foreach (var port in node.Values)
-          {
-            foreach (var branch in port.Values)
-            {
-              foreach (var entry in branch)
-              {
-                entry.ToDto();
-              }
-            }
-          }
-        }
-      }
     }
 
     public class NodePenSolutionDataSolutionValues : Dictionary<string, Dictionary<string, NodePenDataTree>>
@@ -270,8 +253,6 @@ namespace Rhino.Compute.Endpoints
 
       solutionData["Id"] = requestData.SolutionId;
       solutionData.Manifest.StreamObjectIds.Add(objectId);
-
-      solutionData.ToDto();
 
       return Response.AsJson(solutionData);
     }
