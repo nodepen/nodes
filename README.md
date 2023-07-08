@@ -1,13 +1,11 @@
 <img src="np-banner.png" >
 
 <div>
-<img alt="Twitter Follow" src="https://img.shields.io/twitter/follow/NodePenIO?style=social">
-<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nodepen/nodes?style=social">
-&nbsp;
+<img alt="npm (scoped)" src="https://img.shields.io/npm/v/%40nodepen/nodes?style=flat-square&color=%2398E2C6">
 <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/nodepen/nodes/ci-nodes.yml?label=nodes&style=flat-square">
 <img alt="GitHub Workflow Status" src="https://img.shields.io/github/actions/workflow/status/nodepen/nodes/ci-converters.yml?label=converters&style=flat-square">
-<!-- <img alt="npm (scoped)" src="https://img.shields.io/npm/v/@nodepen/nodes?style=flat-square"> -->
 <img alt="GitHub" src="https://img.shields.io/github/license/nodepen/nodes?style=flat-square">
+<img alt="GitHub Repo stars" src="https://img.shields.io/github/stars/nodepen/nodes?style=social">
 </div>
 <br />
 
