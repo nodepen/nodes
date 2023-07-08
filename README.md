@@ -67,8 +67,8 @@ In order to run all of the example applications, you will need:
 - Git with SSH auth
 - Nodejs 16, 18
 - Dotnet CLI
-- Docker and docker-compose
 - Rhino 7+
+- Access to a running Speckle Server
 
 ### Initial Setup
 
@@ -103,11 +103,11 @@ Visit your local Speckle server and:
 - Create a new stream
 - [Create a personal access token for your account](https://speckle.guide/dev/tokens.html).
 
+Alternatively, you may also source these values from a live Speckle server you have access to.
+
 In `apps/nodepen-client`, copy `.env.development` to a `.env.development.local` and populate each environment variable with the relevant information from the previous steps.
 
-In `apps/rhino-compute-server`, modify the values at the top of `Endpoints/GrasshopperEndpoints.cs`.
-
-For production systems, it is bad practice (and dangerous) to commit personal access tokens in this way. But so long as its for your locally running and disposable Speckle server, this is acceptable for local NodePen development.
+In `apps/rhino-compute-server`, copy `appsettings.json` to an `appsettings.local.json` and populate the named variables in the same way.
 
 At this point, you may leave your Speckle server running and continue onto the next section.
 
@@ -145,9 +145,8 @@ Follow Speckle's instructions for local development [here](https://speckle.guide
 
 ### Limitations
 
-- Grasshopper script conversion will fail often because several important component types are not yet handled. You may safely use most default components, but you can't (yet!) use anything with a special type or behavior like the Number Slider or floating parameters.
+- Grasshopper script conversion (upload Grasshopper file => create NodePen doc) will fail often because several important component types are not yet handled. You may safely use most default components, but you can't (yet!) use anything with a special type or behavior like the Number Slider or floating parameters.
 - You may only expose number-based input parameters at this time in the HUD inputs window.
-- Only curve-based results are being pushed to the Speckle server at this time, and so they are the only geometry you can see in the viewer.
 
 ## Attribution
 
