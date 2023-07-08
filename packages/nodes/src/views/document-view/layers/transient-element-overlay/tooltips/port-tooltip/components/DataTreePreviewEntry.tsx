@@ -1,6 +1,5 @@
 import React from 'react'
 import type { DataTreeValue } from '@nodepen/core'
-import { getDataTreeValueString } from '@/utils/data-trees'
 
 type DataTreePreviewEntryProps = {
   entryKey?: string | number
@@ -9,7 +8,7 @@ type DataTreePreviewEntryProps = {
 }
 
 export const DataTreePreviewEntry = ({ entryKey, entryValue, showBackground = false }: DataTreePreviewEntryProps) => {
-  const valueString = typeof entryValue === 'string' ? entryValue : getDataTreeValueString(entryValue)
+  const valueString = typeof entryValue === 'string' ? entryValue : entryValue.description
 
   return entryKey === undefined ? (
     <div className="np-p-1 np-pb-0 np-font-semibold -np-translate-y-px">{valueString}</div>

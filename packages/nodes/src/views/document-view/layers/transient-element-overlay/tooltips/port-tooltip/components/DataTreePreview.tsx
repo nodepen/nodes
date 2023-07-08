@@ -1,6 +1,6 @@
 import React from 'react'
 import type { DataTree } from '@nodepen/core'
-import { getDataTreeStructure, getDataTreeValueString, tryGetSingleValue } from '@/utils/data-trees'
+import { getDataTreeStructure, tryGetSingleValue } from '@/utils/data-trees'
 import { DataTreePreviewEntry } from './DataTreePreviewEntry'
 import { COLORS } from '@/constants'
 
