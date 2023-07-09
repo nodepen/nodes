@@ -1,6 +1,10 @@
-import type { DataTreePath } from './DataTreePath'
-import type { DataTreeValue } from './DataTreeValue'
+import type { DataTreeBranch } from './DataTreeBranch'
+import type { DataTreeStats } from './DataTreeStats'
+import type { DataTreeStructure } from './DataTreeStructure'
 
 export type DataTree = {
-  [key: DataTreePath]: DataTreeValue[]
+  branches: DataTreeBranch[]
+  description: string // "1 list of 2 strings"
+  stats: DataTreeStats
+  structure: DataTreeStructure
 }
