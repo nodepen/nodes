@@ -135,39 +135,39 @@ namespace NodePen.Converters
         public string PortInstanceId { get; set; }
     }
 
-    public class NodePenDataTree : Dictionary<string, List<NodePenDataTreeValue>>
-    {
+    // public class NodePenDataTree : Dictionary<string, List<NodePenDataTreeValue>>
+    // {
 
-    }
+    // }
 
-    public class NodePenDataTreeValue : Base
-    {
-        [JsonProperty("type")]
-        public string Type { get; set; }
+    // public class NodePenDataTreeValue : Base
+    // {
+    //     [JsonProperty("type")]
+    //     public string Type { get; set; }
 
-        [JsonProperty("description")]
-        public string Description { get; set; }
+    //     [JsonProperty("description")]
+    //     public string Description { get; set; }
 
-        [JsonIgnore]
-        public dynamic Value { get; set; }
+    //     [JsonIgnore]
+    //     public dynamic Value { get; set; }
 
-        public dynamic Geometry { get; set; } = null;
+    //     public dynamic Geometry { get; set; } = null;
 
-        public bool ShouldSerializeGeometry()
-        {
-            return Geometry != null;
-        }
+    //     public bool ShouldSerializeGeometry()
+    //     {
+    //         return Geometry != null;
+    //     }
 
-        public double UnwrapAsDouble()
-        {
-            return Convert.ToDouble(this["Value"]);
-        }
+    //     public double UnwrapAsDouble()
+    //     {
+    //         return Convert.ToDouble(this["Value"]);
+    //     }
 
-        public int UnwrapAsInteger()
-        {
-            return Convert.ToInt32(this["Value"]);
-        }
+    //     public int UnwrapAsInteger()
+    //     {
+    //         return Convert.ToInt32(this["Value"]);
+    //     }
 
-    }
+    // }
 
 }
