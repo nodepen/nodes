@@ -1,5 +1,7 @@
 using Speckle.Core.Models;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace NodePen.Converters
 {
@@ -7,6 +9,7 @@ namespace NodePen.Converters
     public class NodePenDataTree : Base
     {
 
+        [DetachProperty]
         public List<NodePenDataTreeBranch> Branches { get; set; } = new List<NodePenDataTreeBranch>();
 
         public string Description { get; set; }
@@ -15,6 +18,11 @@ namespace NodePen.Converters
 
         // "empty" | "single" | "list" | "tree"
         public string Structure { get; set; }
+
+        public NodePenDataTreeBranch GetBranchByPath(string path)
+        {
+            return Branches.FirstOrDefault((branch) => branch.Path == path);
+        }
 
     }
 
@@ -36,6 +44,7 @@ namespace NodePen.Converters
 
         public string Path { get; set; }
 
+        [DetachProperty]
         public List<NodePenDataTreeValue> Values { get; set; } = new List<NodePenDataTreeValue>();
 
     }
@@ -49,32 +58,22 @@ namespace NodePen.Converters
         // "Trimmed Curve"
         public string Description { get; set; }
 
-        public dynamic NativeValue { get; set; } = null;
+        public string NativeValue { get; set; } = null;
 
         public dynamic NativeGeometry { get; set; } = null;
 
         public dynamic SpeckleGeometry { get; set; } = null;
 
+        public double UnwrapAsDouble()
+        {
+            return Convert.ToDouble(NativeValue);
+        }
+
+        public int UnwrapAsInteger()
+        {
+            return Convert.ToInt32(NativeValue);
+        }
+
     }
 
 }
-
-// export type DataTree = {
-//   branches: DataTreeBranch[]
-//   description: string // "1 list of 2 strings"
-//   stats: DataTreeStats
-//   structure: DataTreeStructure
-// }
-
-// export type DataTreeBranch = {
-//   order: number
-//   path: DataTreePath
-//   values: DataTreeValue[]
-// }
-
-// export type DataTreeValue = Readonly<{
-//   type: DataTreeValueType
-//   description: string
-//   value?: unknown // Rhino JSON?
-//   geometry?: unknown // Speckle
-// }>

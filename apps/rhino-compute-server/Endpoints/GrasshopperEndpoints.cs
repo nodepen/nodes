@@ -12,7 +12,6 @@ using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Models;
-using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 using NJsonConvert = Newtonsoft.Json.JsonConvert;
 
@@ -52,55 +51,12 @@ namespace Rhino.Compute.Endpoints
       public NodePenDocument Document { get; set; }
     }
 
-    public class NodePenSolutionManifest
+    public class NodePenDocumentSpeckleStreamData : Base
     {
-      [JsonProperty("solutionId")]
-      public string SolutionId { get; set; }
-
-      [JsonProperty("solutionData")]
-      public NodePenSolutionData SolutionData { get; set; }
-
-      [JsonProperty("streamObjectIds")]
-      public List<string> StreamObjectIds { get; set; } = new List<string>();
-    }
-
-    public class NodePenSolutionData : Base
-    {
-      [JsonProperty("id")]
-      public string Id { get; set; }
-
-      [JsonProperty("manifest")]
-      public NodePenSolutionDataManifest Manifest { get; set; } = new NodePenSolutionDataManifest();
-
-      [JsonProperty("values")]
-      public NodePenSolutionDataSolutionValues Values { get; set; } = new NodePenSolutionDataSolutionValues();
-    }
-
-    public class NodePenSolutionDataSolutionValues : Dictionary<string, Dictionary<string, NodePenDataTree>>
-    {
-
-    }
-
-    public class NodePenSolutionDataManifest : Base
-    {
-      [JsonProperty("runtimeMessages")]
-      public Dictionary<string, string> RuntimeMessages { get; set; } = new Dictionary<string, string>();
-
-      [JsonProperty("streamObjectIds")]
-      public List<string> StreamObjectIds = new List<string>();
-    }
-
-    public class NodePenDocumentStream : Base
-    {
-      public string Id { get; set; }
-
-      public string Name { get; set; }
-
-      [DetachProperty]
       public NodePenDocument Document { get; set; }
 
-      [DetachProperty]
-      public NodePenSolutionData SolutionData { get; set; }
+      public NodePenDocumentSolutionData SolutionData { get; set; }
+
     }
 
     public Response SolveGrasshopperDocument(NancyContext context)
@@ -130,32 +86,30 @@ namespace Rhino.Compute.Endpoints
       Log(">>", requestData.Document.Id, "Document");
       Log(" >", requestData.Document.Id, $"Created and solved document in {timer.ElapsedMilliseconds}ms");
 
-      NodePenSolutionData solutionData = new NodePenSolutionData();
+      NodePenDocumentSolutionData documentSolutionData = new NodePenDocumentSolutionData()
+      {
+        SolutionId = requestData.SolutionId,
+        // TODO: Actually collect manifest info
+        SolutionManifest = new NodePenDocumentSolutionManifest()
+        {
+          RuntimeDurationMs = 0,
+          RuntimeMessages = new Dictionary<string, string>()
+        }
+      };
 
       foreach (IGH_DocumentObject documentObject in definition.Objects)
       {
-        Log(">>", documentObject.InstanceGuid, "Document Object", 1);
-
         switch (documentObject)
         {
           case IGH_Component componentInstance:
             {
-              Log(" >", componentInstance.InstanceGuid, "IGH_Component", 1);
-              Log(" >", componentInstance.InstanceGuid, componentInstance.Name, 1);
-              Dictionary<string, NodePenDataTree> componentSolutionData = new Dictionary<string, NodePenDataTree>();
-
-              Log(" >", componentInstance.InstanceGuid, $"{componentInstance.Params.Input.Count} input params", 1);
-              Log(" >", componentInstance.InstanceGuid, $"{componentInstance.Params.Output.Count} output params", 1);
-
               List<IGH_Param> componentParams = new List<IGH_Param>();
               componentParams.AddRange(componentInstance.Params.Input);
               componentParams.AddRange(componentInstance.Params.Output);
 
               foreach (IGH_Param componentParam in componentParams)
               {
-                Log(">>", componentParam.InstanceGuid, "IGH_Param", 2);
-                Log(" >", componentParam.InstanceGuid, $"Found {componentParam.VolatileData.PathCount} branch(es) of results.", 2);
-                NodePenDataTree paramSolutionData = new NodePenDataTree();
+                NodePenPortSolutionData portSolutionData = new NodePenPortSolutionData();
 
                 for (int i = 0; i < componentParam.VolatileData.PathCount; i++)
                 {
@@ -164,9 +118,11 @@ namespace Rhino.Compute.Endpoints
 
                   string branchKey = $"{{{string.Join(";", currentPath.Indices.Select((idx) => idx.ToString()))}}}";
 
-                  Log(">>", branchKey, $"Branch with {currentBranch.Count} entries", 3);
-
-                  List<NodePenDataTreeValue> branchSolutionData = new List<NodePenDataTreeValue>();
+                  NodePenDataTreeBranch branchSolutionData = new NodePenDataTreeBranch()
+                  {
+                    Order = i,
+                    Path = branchKey,
+                  };
 
                   foreach (object entry in currentBranch)
                   {
@@ -177,30 +133,24 @@ namespace Rhino.Compute.Endpoints
                     }
 
                     var entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
-                    branchSolutionData.Add(entrySolutionData);
+                    branchSolutionData.Values.Add(entrySolutionData);
                   }
 
-                  paramSolutionData.Add(branchKey, branchSolutionData);
-                  Log("--", branchKey, $"Wrote {branchSolutionData.Count} items to branch solution data.", 3);
+                  portSolutionData.DataTree.Branches.Add(branchSolutionData);
                 }
 
-                componentSolutionData.Add(componentParam.InstanceGuid.ToString(), paramSolutionData);
-                Log("--", componentParam.InstanceGuid, $"Wrote {paramSolutionData.Keys.Count} branches to param solution data.", 2);
+                documentSolutionData.PortSolutionData.Add(portSolutionData);
               }
 
-              solutionData.Values.Add(componentInstance.InstanceGuid.ToString(), componentSolutionData);
-              Log("--", componentInstance.InstanceGuid, $"Wrote {componentSolutionData.Keys.Count} params to component solution data.", 1);
               break;
             }
           default:
             {
-              Log("XX", documentObject.InstanceGuid, $"Unhandled object type [{documentObject.GetType()}]", 1);
+              Console.WriteLine($"Unhandled object type [{documentObject.GetType()}]");
               break;
             }
         }
       }
-
-      Log("--", requestData.Document.Id, $"Wrote {solutionData.Values.Keys.Count} components to document solution data.");
 
       // Commit updated document and solution data to stream
       string streamId = Environment.SpeckleStreamId;
@@ -220,17 +170,15 @@ namespace Rhino.Compute.Endpoints
         }
       };
 
-      NodePenDocumentStream streamData = new NodePenDocumentStream()
+      var documentStreamData = new NodePenDocumentSpeckleStreamData()
       {
-        Id = requestData.Document.Id,
-        Name = "Test Stream Name",
         Document = requestData.Document,
-        SolutionData = solutionData
+        SolutionData = documentSolutionData,
       };
 
       string commitId = Helpers.Send(
           stream: $"{Environment.SpeckleEndpoint}/streams/{streamId}/branches/{branchName}",
-          data: streamData,
+          data: documentStreamData,
           message: $"Solution ${SID(requestData.SolutionId)}",
           account: account,
           sourceApplication: "nodepen"
@@ -249,12 +197,10 @@ namespace Rhino.Compute.Endpoints
         Console.WriteLine(item.id);
         Console.WriteLine(item.referencedObject);
       }
-      string objectId = streamBranch.commits.items[0].referencedObject;
 
-      solutionData["Id"] = requestData.SolutionId;
-      solutionData.Manifest.StreamObjectIds.Add(objectId);
+      string rootObjectId = streamBranch.commits.items[0].referencedObject;
 
-      return Response.AsJson(solutionData);
+      return Response.AsText(rootObjectId);
     }
 
     public Response HandleGrasshopperFileUpload(NancyContext context)

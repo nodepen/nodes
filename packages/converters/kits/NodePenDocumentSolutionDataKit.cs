@@ -4,11 +4,12 @@ using Objects.Converter.RhinoGh;
 using Speckle.Core.Kits;
 using NodePen.Converters;
 using System;
+using Rhino;
 using Grasshopper.Kernel.Types;
 using Newtonsoft.Json;
 using Rhino.Geometry;
 
-namespace NodePen.Converts.Kits
+namespace NodePen.Converters.Kits
 {
 
     public class NodePenDocumentSolutionDataKit : ISpeckleConverter
@@ -45,20 +46,12 @@ namespace NodePen.Converts.Kits
             throw new NotImplementedException();
         }
 
-        public NodePenDataTreeValue ConvertToSpeckle(object @object, NodePenDataTreeValue output)
+        public Base ConvertToSpeckle(object @object)
         {
-            Base speckleObject = BaseConverter.ConvertToSpeckle(@object);
-            output["test"] = speckleObject;
-
-            return output;
+            throw new NotImplementedException();
         }
 
         public List<Base> ConvertToSpeckle(List<object> objects)
-        {
-            return BaseConverter.ConvertToSpeckle(objects);
-        }
-
-        public Base ConvertToSpeckle(object @object)
         {
             throw new NotImplementedException();
         }
@@ -205,8 +198,9 @@ namespace NodePen.Converts.Kits
             {
                 Type = goo.TypeName.ToLower(),
                 Description = goo.ToString(),
-                Value = nativeGeometry,
-                Geometry = speckleGeometry,
+                NativeValue = nativeGeometry.ToString(),
+                NativeGeometry = nativeGeometry,
+                SpeckleGeometry = speckleGeometry,
             };
 
             return entrySolutionValue;

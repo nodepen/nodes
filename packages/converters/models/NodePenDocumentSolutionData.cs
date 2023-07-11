@@ -11,6 +11,7 @@ namespace NodePen.Converters
 
         public NodePenDocumentSolutionManifest SolutionManifest { get; set; }
 
+        [DetachProperty]
         public List<NodePenPortSolutionData> PortSolutionData { get; set; } = new List<NodePenPortSolutionData>();
 
     }
@@ -31,7 +32,7 @@ namespace NodePen.Converters
 
         public string PortInstanceId { get; set; }
 
-        public NodePenDataTree DataTree { get; set; }
+        public NodePenDataTree DataTree { get; set; } = new NodePenDataTree();
 
     }
 }
