@@ -113,13 +113,25 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
 
           apply((state) => {
             state.document.nodes[nodeInstanceId].values[portInstanceId] = {
-              '{0}': [
+              branches: [
                 {
-                  type: 'number',
-                  description: value.toString(),
-                  value: value,
+                  order: 0,
+                  path: '{0}',
+                  values: [
+                    {
+                      type: 'number',
+                      description: value.toString(),
+                      nativeValue: value.toString(),
+                    },
+                  ],
                 },
               ],
+              stats: {
+                types: ['number'],
+                branchCount: 1,
+                valueCount: 1,
+              },
+              structure: 'single',
             }
 
             state.solution.id = crypto.randomUUID()

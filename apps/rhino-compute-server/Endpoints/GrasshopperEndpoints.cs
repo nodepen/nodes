@@ -139,6 +139,9 @@ namespace Rhino.Compute.Endpoints
                   portSolutionData.DataTree.Branches.Add(branchSolutionData);
                 }
 
+                portSolutionData.DataTree.ComputeStats();
+                portSolutionData.DataTree.ComputeStructure();
+
                 documentSolutionData.PortSolutionData.Add(portSolutionData);
               }
 

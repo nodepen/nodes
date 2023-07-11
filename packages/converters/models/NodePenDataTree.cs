@@ -12,16 +12,43 @@ namespace NodePen.Converters
         [DetachProperty]
         public List<NodePenDataTreeBranch> Branches { get; set; } = new List<NodePenDataTreeBranch>();
 
-        public string Description { get; set; }
-
         public NodePenDataTreeStats Stats { get; set; }
 
         // "empty" | "single" | "list" | "tree"
         public string Structure { get; set; }
 
-        public NodePenDataTreeBranch GetBranchByPath(string path)
+        // TODO
+        public void ComputeStats()
         {
-            return Branches.FirstOrDefault((branch) => branch.Path == path);
+            return;
+        }
+
+        public void ComputeStructure()
+        {
+            if (Branches == null || Branches.Count == 0)
+            {
+                Structure = "empty";
+                return;
+            }
+
+            if (Branches.Count == 1)
+            {
+                var branch = Branches[0];
+
+                if (branch.Values.Count == 1)
+                {
+                    Structure = "single";
+                    return;
+                }
+
+                if (branch.Values.Count > 1)
+                {
+                    Structure = "list";
+                    return;
+                }
+            }
+
+            Structure = "tree";
         }
 
     }
