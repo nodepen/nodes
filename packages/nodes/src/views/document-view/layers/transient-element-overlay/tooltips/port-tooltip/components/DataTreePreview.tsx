@@ -1,6 +1,6 @@
 import React from 'react'
 import type { DataTree } from '@nodepen/core'
-import { getDataTreeStructure, tryGetSingleValue } from '@/utils/data-trees'
+import { tryGetSingleValue } from '@/utils/data-trees'
 import { DataTreePreviewEntry } from './DataTreePreviewEntry'
 import { COLORS } from '@/constants'
 
@@ -9,9 +9,7 @@ type DataTreePreviewProps = {
 }
 
 export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
-  const entries = Object.entries(dataTree)
-
-  const structure = getDataTreeStructure(dataTree)
+  const { branches, structure } = dataTree
 
   const cutoffDivider = (
     <div className="np-col-span-full np-h-2 np-w-full np-flex np-justify-center np-items-center np-overflow-visible np-z-10">
@@ -39,7 +37,7 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
         return <DataTreePreviewEntry entryValue={value} />
       }
       case 'list': {
-        const [path, values] = entries[0]
+        const { path, values } = branches[0]
 
         const firstValues = values.slice(0, 5)
         const lastValue = values.at(-1)
@@ -64,14 +62,14 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
         )
       }
       case 'tree': {
-        const firstEntries = entries.slice(0, 5)
+        const firstBranches = branches.slice(0, 5)
 
-        const lastEntry = entries.at(-1)
-        const lastEntryValue = `n=${lastEntry?.[1]?.length}`
+        const lastBranch = branches.at(-1)
+        const lastBranchValue = `n=${lastBranch?.values.length}`
 
         return (
           <>
-            {firstEntries.map(([path, values], i) => (
+            {firstBranches.map(({ path, values }, i) => (
               <DataTreePreviewEntry
                 key={`tree-preview-${path}`}
                 entryKey={path}
@@ -79,10 +77,10 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
                 showBackground={i % 2 === 0}
               />
             ))}
-            {entries.length >= 5 && lastEntry ? (
+            {branches.length >= 5 && lastBranch ? (
               <>
                 {cutoffDivider}
-                <DataTreePreviewEntry entryKey={lastEntry[0]} entryValue={lastEntryValue} showBackground />
+                <DataTreePreviewEntry entryKey={lastBranch.path} entryValue={lastBranchValue} showBackground />
               </>
             ) : null}
           </>

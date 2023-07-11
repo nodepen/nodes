@@ -7,7 +7,7 @@ import { PortTypeIcon } from '@/components/icons'
 import { usePortValues } from '@/hooks'
 import { COLORS } from '@/constants'
 import { DataTreePreview } from './components'
-import { getDataTreeSummary, getDataTreeValueCount } from '@/utils/data-trees'
+import { getDataTreeSummary } from '@/utils/data-trees'
 
 type PortTooltipProps = {
   tooltipKey: string
@@ -26,7 +26,7 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
   const { x: left, y: top } = position
 
   const values = usePortValues(nodeInstanceId, portInstanceId)
-  const valueCount = getDataTreeValueCount(values)
+  const valueCount = values?.stats?.valueCount
 
   const dataIcon = (
     <svg

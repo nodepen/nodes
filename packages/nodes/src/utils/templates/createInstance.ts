@@ -39,9 +39,13 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
 
     const inputInstanceId = newGuid()
 
-    node.values[inputInstanceId] = {}
     node.sources[inputInstanceId] = []
     node.inputs[inputInstanceId] = order
+    node.values[inputInstanceId] = {
+      branches: [],
+      stats: null,
+      structure: 'empty',
+    }
   }
 
   const inputInstanceIds = Object.keys(node.inputs)

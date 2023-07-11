@@ -4,6 +4,13 @@ import type { DataTreeStructure } from './DataTreeStructure'
 
 export type DataTree = {
   branches: DataTreeBranch[]
-  stats: DataTreeStats
-  structure: DataTreeStructure
-}
+} & (
+  | {
+      stats: DataTreeStats
+      structure: Exclude<DataTreeStructure, 'empty'>
+    }
+  | {
+      stats: null
+      structure: 'empty'
+    }
+)
