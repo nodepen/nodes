@@ -12,6 +12,8 @@
     "@nodepen/core": "^2.0.0",
     "@nodepen/nodes": "^2.0.0",
     "@tanstack/react-query": "^4.29.19",
+    "graphql": "^16.7.1",
+    "graphql-tag": "^2.12.6",
     "next": "13.4.9",
     "next-images": "^1.8.5",
     "react": "^18.0",

@@ -2,6 +2,8 @@
 
 import type React from 'react'
 import { useCallback, useState } from 'react'
+import { print } from 'graphql'
+import gql from 'graphql-tag'
 import type * as NodePen from '@nodepen/core'
 import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
 import type { NodesAppState, NodesAppCallbacks } from '@nodepen/nodes'
@@ -46,7 +48,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   const handleExpireSolution = useCallback((state: NodesAppState): void => {
     const solutionId = state.solution.id
 
-    const fetchSolution = async (): Promise<string> => {
+    const requestSolution = async (): Promise<string> => {
       const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
         method: 'POST',
         body: JSON.stringify({ solutionId, document: state.document }),
@@ -57,10 +59,50 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
       return data
     }
 
-    fetchSolution()
-      .then((data) => {
-        console.log(`🟢 Solution object id: ${data}`)
-        // setSolution(sanitize(data))
+    const fetchObjects = async (objectId: string): Promise<void> => {
+      const query = gql`
+        query GetObjects($streamId: String!, $objectId: String!) {
+          stream(id: $streamId) {
+            object(id: $objectId) {
+              data
+              children {
+                objects {
+                  data
+                }
+              }
+            }
+          }
+        }
+      `
+
+      const response = await fetch(`${stream.url}/graphql`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${stream.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: print(query),
+          operationName: 'GetObjects',
+          variables: {
+            streamId: stream.id,
+            objectId: objectId,
+          },
+        }),
+      })
+
+      const data = await response.json()
+
+      console.log(data)
+    }
+
+    requestSolution()
+      .then((rootObjectId) => {
+        console.log(`🟢 Solution object id: ${rootObjectId}`)
+        return fetchObjects(rootObjectId)
+      })
+      .then(() => {
+        // Do nothing
       })
       .catch((e) => {
         console.log(e)
