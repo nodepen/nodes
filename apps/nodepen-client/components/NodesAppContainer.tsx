@@ -61,11 +61,16 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
     const fetchObjects = async (objectId: string): Promise<void> => {
       const query = gql`
-        query GetObjects($streamId: String!, $objectId: String!, $depth: Int!) {
+        query GetObjects(
+          $streamId: String!
+          $objectId: String!
+          $depth: Int!
+          $portSolutionDataTypeQuery: [JSONObject!]
+        ) {
           stream(id: $streamId) {
             object(id: $objectId) {
               data
-              children(depth: $depth) {
+              children(depth: $depth, query: $portSolutionDataTypeQuery) {
                 totalCount
                 cursor
                 objects {
@@ -87,9 +92,16 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           query: print(query),
           operationName: 'GetObjects',
           variables: {
-            depth: 1,
+            depth: 2,
             streamId: stream.id,
             objectId: objectId,
+            portSolutionDataTypeQuery: [
+              {
+                field: 'speckle_type',
+                value: 'NodePen.Converters.NodePenPortSolutionData',
+                operator: '=',
+              },
+            ],
           },
         }),
       })
