@@ -61,11 +61,13 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
     const fetchObjects = async (objectId: string): Promise<void> => {
       const query = gql`
-        query GetObjects($streamId: String!, $objectId: String!) {
+        query GetObjects($streamId: String!, $objectId: String!, $depth: Int!) {
           stream(id: $streamId) {
             object(id: $objectId) {
               data
-              children {
+              children(depth: $depth) {
+                totalCount
+                cursor
                 objects {
                   data
                 }
@@ -85,6 +87,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           query: print(query),
           operationName: 'GetObjects',
           variables: {
+            depth: 1,
             streamId: stream.id,
             objectId: objectId,
           },
