@@ -23,7 +23,7 @@
     "eslint": "8.44.0",
     "eslint-config-next": "^13.4.7",
     "eslint-config-prettier": "^8.8.0",
-    "postcss": "^8.4.24",
+    "postcss": "^8.4.26",
     "tailwindcss": "^3.3.1"
   }
 }
