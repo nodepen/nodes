@@ -89,12 +89,8 @@ namespace Rhino.Compute.Endpoints
       NodePenDocumentSolutionData documentSolutionData = new NodePenDocumentSolutionData()
       {
         SolutionId = requestData.SolutionId,
-        // TODO: Actually collect manifest info
-        SolutionManifest = new NodePenDocumentSolutionManifest()
-        {
-          RuntimeDurationMs = 0,
-          RuntimeMessages = new Dictionary<string, string>()
-        }
+        RuntimeDurationMs = timer.ElapsedMilliseconds,
+        // TODO: Collect runtime messages
       };
 
       foreach (IGH_DocumentObject documentObject in definition.Objects)
@@ -143,6 +139,11 @@ namespace Rhino.Compute.Endpoints
                 portSolutionData.DataTree.ComputeStructure();
 
                 documentSolutionData.PortSolutionData.Add(portSolutionData);
+              }
+
+              foreach (var runtimeMessage in componentInstance.RuntimeMessages(GH))
+              {
+
               }
 
               break;

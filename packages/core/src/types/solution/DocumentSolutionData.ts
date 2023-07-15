@@ -1,8 +1,11 @@
-import type { DocumentSolutionManifest } from './DocumentSolutionManifest'
-import type { PortSolutionData } from './PortSolutionData'
+import type { NodeSolutionData } from './NodeSolutionData'
 
 export type DocumentSolutionData = {
   solutionId: string
-  solutionManifest: DocumentSolutionManifest
-  portSolutionData: PortSolutionData[]
+  documentRuntimeData: DocumentRuntimeData
+  nodeSolutionData: NodeSolutionData[]
+}
+
+type DocumentRuntimeData = {
+  durationMs: number
 }
