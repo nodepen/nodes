@@ -13,7 +13,9 @@ type SpeckleModelViewProps = {
 }
 
 const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement | null => {
-  const objectIds = useStore((state) => state.solution.manifest.streamObjectIds)
+  // TODO: On a new solution, how does SpeckleModelView know _when_ and _how_ to fetch new object(s) by id?
+  // const objectIds = useStore((state) => state.solution.manifest.streamObjectIds)
+  const objectIds: string[] = []
 
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 

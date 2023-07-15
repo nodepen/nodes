@@ -21,7 +21,9 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
       return userValues
     }
 
-    const solutionData = state.solution.values?.[nodeInstanceId]?.[portInstanceId]
+    const solutionData = state.solution.nodeSolutionData
+      .find(({ nodeInstanceId: id }) => id === nodeInstanceId)
+      ?.portSolutionData?.find(({ portInstanceId: id }) => id === portInstanceId)?.dataTree
 
     if (solutionData) {
       return solutionData

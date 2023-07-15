@@ -9,7 +9,7 @@ export type NodesAppState = {
   templates: {
     [templateId: string]: NodePen.NodeTemplate
   }
-  solution: NodePen.SolutionData
+  solution: NodePen.DocumentSolutionData
   camera: {
     /** container div innerWidth / innerHeight in screen space */
     aspect: number
@@ -132,12 +132,11 @@ export const initialState: NodesAppState = {
   },
   templates: freeze({}),
   solution: freeze({
-    id: 'initial',
-    manifest: {
-      runtimeMessages: {},
-      streamObjectIds: [],
+    solutionId: 'initial',
+    documentRuntimeData: {
+      durationMs: 0,
     },
-    values: {},
+    nodeSolutionData: [],
   }),
   camera: {
     aspect: 1.5,

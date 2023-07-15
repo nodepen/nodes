@@ -10,7 +10,7 @@ import { FileUploadOverlayContainer, PseudoShadowsContainer } from './views/comm
 type NodesAppProps = {
   document: NodePen.Document
   templates: NodePen.NodeTemplate[]
-  solution?: NodePen.SolutionData
+  solution?: NodePen.DocumentSolutionData
   children: React.ReactNode
 } & NodesAppCallbacks
 
@@ -43,13 +43,13 @@ export const NodesApp = ({
     }
 
     apply((state) => {
-      if (state.solution.id !== solution.id) {
+      if (state.solution.solutionId !== solution.solutionId) {
         return
       }
 
       state.solution = freeze(solution)
     })
-  }, [solution?.id, solution?.manifest.streamObjectIds])
+  }, [solution?.solutionId])
 
   return <NodesAppInternal children={children} />
 }

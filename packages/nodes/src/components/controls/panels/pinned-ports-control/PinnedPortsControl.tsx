@@ -61,6 +61,7 @@ export const PinnedPortsControl = (): React.ReactElement => {
 import { useDispatch } from '$'
 import { shallow } from 'zustand/shallow'
 import { tryGetSingleValue } from '@/utils/data-trees'
+import { expireSolution } from '@/store/utils'
 
 type PortControlProps = {
   portReference: NodesAppState['document']['configuration']['pinnedPorts'][0]
@@ -69,7 +70,11 @@ type PortControlProps = {
 const PortControl = ({ portReference }: PortControlProps): React.ReactElement | null => {
   const { nodeInstanceId, portInstanceId } = portReference
 
-  const solutionValues = useStore.getState().solution.values[nodeInstanceId]?.[portInstanceId] ?? {}
+  // TODO: Create `tryGetPortSolutionData(documentSolutionData, portInstanceId)` util
+  const solutionValues = useStore
+    .getState()
+    .solution.nodeSolutionData?.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
+    ?.portSolutionData?.find(({ portInstanceId: id }) => id === portInstanceId)
 
   const { apply } = useDispatch()
 
@@ -83,7 +88,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
     return null
   }
 
-  const currentValue = tryGetSingleValue(node.values[portInstanceId]) ?? tryGetSingleValue(solutionValues)
+  const currentValue = tryGetSingleValue(node.values[portInstanceId]) ?? tryGetSingleValue(solutionValues?.dataTree)
 
   const { name } = portTemplate
 
@@ -134,7 +139,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
               structure: 'single',
             }
 
-            state.solution.id = crypto.randomUUID()
+            expireSolution(state)
           })
         }}
       />
