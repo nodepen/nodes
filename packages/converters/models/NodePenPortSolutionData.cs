@@ -22,9 +22,9 @@ namespace NodePen.Converters
         [JsonProperty("dataTree")]
         public NodePenDataTree DataTree { get; set; } = new NodePenDataTree();
 
-        public NodePenPortSolutionData()
+        public NodePenPortSolutionData(string portInstanceId)
         {
-
+            PortInstanceId = portInstanceId;
         }
 
     }

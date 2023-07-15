@@ -27,21 +27,6 @@ namespace Rhino.Compute.Endpoints
       Post["/grasshopper/id/solution"] = _ => SolveGrasshopperDocument(Context);
     }
 
-    private string SID(string id)
-    {
-      return $"[{NodePenConvert.TruncateId(id)}]";
-    }
-
-    private void Log(string prefix, string id, string message, int tabCount = 0)
-    {
-      return;
-    }
-
-    private void Log(string prefix, Guid id, string message, int tabCount = 0)
-    {
-      Log(prefix, id.ToString(), message, tabCount);
-    }
-
     public class NodePenSolutionRequestBody
     {
       [JsonProperty("solutionId")]
@@ -61,52 +46,77 @@ namespace Rhino.Compute.Endpoints
 
     public Response SolveGrasshopperDocument(NancyContext context)
     {
+      // Parse request body
       string body = context.Request.Body.AsString();
       NodePenSolutionRequestBody requestData = NJsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
 
-      Stopwatch timer = new Stopwatch();
-
-      timer.Start();
-
       // Create Grasshopper document
       GH_Archive archive = NodePenConvert.Deserialize<GH_Archive>(requestData.Document);
-
       GH_Document definition = new GH_Document();
       _ = archive.ExtractObject(definition, "definition");
 
-      Console.WriteLine(definition.ObjectCount);
+      definition.Enabled = true;
+      definition.Profiler = GH_ProfilerMode.Processor;
 
       // Solve Grasshopper document
-      definition.Enabled = true;
+      Stopwatch documentSolutionTimer = new Stopwatch();
+
+      documentSolutionTimer.Start();
+
       definition.NewSolution(true, GH_SolutionMode.Silent);
 
-      timer.Stop();
+      documentSolutionTimer.Stop();
 
-      // Extract solution data
-      Log(">>", requestData.Document.Id, "Document");
-      Log(" >", requestData.Document.Id, $"Created and solved document in {timer.ElapsedMilliseconds}ms");
+      // Collect document solution data
+      var documentSolutionData = new NodePenDocumentSolutionData(requestData.SolutionId);
 
-      NodePenDocumentSolutionData documentSolutionData = new NodePenDocumentSolutionData()
-      {
-        SolutionId = requestData.SolutionId,
-        RuntimeDurationMs = timer.ElapsedMilliseconds,
-        // TODO: Collect runtime messages
-      };
+      documentSolutionData.DocumentRuntimeData.DurationMs = documentSolutionTimer.ElapsedMilliseconds;
 
+      // Collect node solution data
       foreach (IGH_DocumentObject documentObject in definition.Objects)
       {
         switch (documentObject)
         {
           case IGH_Component componentInstance:
             {
+              // Convert Grasshopper component solution data to node solution data
+              var nodeSolutionData = new NodePenNodeSolutionData(componentInstance.InstanceGuid.ToString());
+
+              nodeSolutionData.NodeRuntimeData.DurationMs = componentInstance.ProcessorTime.TotalMilliseconds;
+
+              foreach (var runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+              {
+                var nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
+                {
+                  Level = "error",
+                  Message = runtimeMessage
+                };
+
+                nodeSolutionData.NodeRuntimeData.Messages.Add(nodeRuntimeMessage);
+              }
+
+              foreach (var runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+              {
+                var nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
+                {
+                  Level = "warn",
+                  Message = runtimeMessage
+                };
+
+                nodeSolutionData.NodeRuntimeData.Messages.Add(nodeRuntimeMessage);
+              }
+
+              // Collect child param solution data
               List<IGH_Param> componentParams = new List<IGH_Param>();
               componentParams.AddRange(componentInstance.Params.Input);
               componentParams.AddRange(componentInstance.Params.Output);
 
               foreach (IGH_Param componentParam in componentParams)
               {
-                NodePenPortSolutionData portSolutionData = new NodePenPortSolutionData();
+                // Convert Grasshopper param solution data to port solution data
+                var portSolutionData = new NodePenPortSolutionData(componentParam.InstanceGuid.ToString());
 
+                // Collect data tree branches and their values
                 for (int i = 0; i < componentParam.VolatileData.PathCount; i++)
                 {
                   Grasshopper.Kernel.Data.GH_Path currentPath = componentParam.VolatileData.get_Path(i);
@@ -135,15 +145,12 @@ namespace Rhino.Compute.Endpoints
                   portSolutionData.DataTree.Branches.Add(branchSolutionData);
                 }
 
+                // Finalize port solution data
                 portSolutionData.DataTree.ComputeStats();
                 portSolutionData.DataTree.ComputeStructure();
 
-                documentSolutionData.PortSolutionData.Add(portSolutionData);
-              }
-
-              foreach (var runtimeMessage in componentInstance.RuntimeMessages(GH))
-              {
-
+                // Add port solution data to node solution data
+                nodeSolutionData.PortSolutionData.Add(portSolutionData);
               }
 
               break;
@@ -183,10 +190,13 @@ namespace Rhino.Compute.Endpoints
       string commitId = Helpers.Send(
           stream: $"{Environment.SpeckleEndpoint}/streams/{streamId}/branches/{branchName}",
           data: documentStreamData,
-          message: $"Solution ${SID(requestData.SolutionId)}",
+          message: $"Solution [{documentSolutionData.SolutionId}]",
           account: account,
-          sourceApplication: "nodepen"
+          sourceApplication: "NodePen"
       ).Result;
+
+      Console.WriteLine("Send response value:");
+      Console.WriteLine(commitId);
 
       // Serialize and return response
       Client client = new Client(account);

@@ -30,9 +30,9 @@ namespace NodePen.Converters
         [JsonProperty("portSolutionData")]
         public List<NodePenPortSolutionData> PortSolutionData { get; set; } = new List<NodePenPortSolutionData>();
 
-        public NodePenNodeSolutionData()
+        public NodePenNodeSolutionData(string nodeInstanceId)
         {
-
+            NodeInstanceId = nodeInstanceId;
         }
 
     }
@@ -47,7 +47,7 @@ namespace NodePen.Converters
         /// The number of milliseconds this node took to execute during a given solution.
         /// </summary>
         [JsonProperty("durationMs")]
-        public long DurationMs { get; set; } = 0;
+        public double DurationMs { get; set; } = 0;
 
         /// <summary>
         /// A collection of messages that may have been raised during this node's execution.
