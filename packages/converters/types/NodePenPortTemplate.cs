@@ -44,37 +44,4 @@ namespace NodePen.Converters
 
     }
 
-    public enum NodePenPortDirection
-    {
-        [EnumMember(Value = "input")]
-        Input,
-        [EnumMember(Value = "output")]
-        Output
-    }
-
-    public class PortDirectionConverter : JsonConverter
-    {
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
-        {
-            var direction = (NodePenPortDirection)value;
-            writer.WriteValue(direction == NodePenPortDirection.Input ? "input" : "output");
-        }
-
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
-        {
-            var direction = (string)existingValue;
-            return direction == "input" ? 0 : 1;
-        }
-
-        public override bool CanRead
-        {
-            get { return true; }
-        }
-
-        public override bool CanConvert(Type objectType)
-        {
-            return objectType == typeof(NodePenPortDirection);
-        }
-    }
-
 }

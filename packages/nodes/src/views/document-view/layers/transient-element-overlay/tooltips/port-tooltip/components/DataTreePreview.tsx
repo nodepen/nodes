@@ -9,7 +9,8 @@ type DataTreePreviewProps = {
 }
 
 export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
-  const { branches, structure } = dataTree
+  const { branches } = dataTree
+  const { treeStructure } = dataTree.stats
 
   const cutoffDivider = (
     <div className="np-col-span-full np-h-2 np-w-full np-flex np-justify-center np-items-center np-overflow-visible np-z-10">
@@ -26,7 +27,7 @@ export const DataTreePreview = ({ dataTree }: DataTreePreviewProps) => {
   )
 
   const getContent = () => {
-    switch (structure) {
+    switch (treeStructure) {
       case 'single': {
         const value = tryGetSingleValue(dataTree)
 

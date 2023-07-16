@@ -26,10 +26,10 @@ const PortConnectionWire = ({ from, to }: PortConnectionWireProps): React.ReactE
   return (
     <>
       <WirePortal>
-        <Wire start={fromPosition} end={toPosition} structure={sourceDataTree.structure} />
+        <Wire start={fromPosition} end={toPosition} structure={sourceDataTree.stats.treeStructure} />
       </WirePortal>
       <WiresMaskPortal>
-        <Wire start={fromPosition} end={toPosition} structure={sourceDataTree.structure} drawMask />
+        <Wire start={fromPosition} end={toPosition} structure={sourceDataTree.stats.treeStructure} drawMask />
       </WiresMaskPortal>
     </>
   )

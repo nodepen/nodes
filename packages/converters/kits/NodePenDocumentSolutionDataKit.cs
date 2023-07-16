@@ -2,12 +2,9 @@ using System.Collections.Generic;
 using Speckle.Core.Models;
 using Objects.Converter.RhinoGh;
 using Speckle.Core.Kits;
-using NodePen.Converters;
 using System;
 using Rhino;
 using Grasshopper.Kernel.Types;
-using Newtonsoft.Json;
-using Rhino.Geometry;
 
 namespace NodePen.Converters.Kits
 {
@@ -198,9 +195,8 @@ namespace NodePen.Converters.Kits
             {
                 Type = goo.TypeName.ToLower(),
                 Description = goo.ToString(),
-                NativeValue = nativeGeometry.ToString(),
-                NativeGeometry = nativeGeometry,
-                SpeckleGeometry = speckleGeometry,
+                Value = nativeGeometry.ToString(),
+                Geometry = speckleGeometry,
             };
 
             return entrySolutionValue;

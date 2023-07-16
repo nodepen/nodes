@@ -5,9 +5,9 @@ export const getDataTreeSummary = (tree?: DataTree | null): string => {
     return ''
   }
 
-  const { branchCount, valueCount, types } = tree.stats
+  const { branchCount, valueCount, valueTypes } = tree.stats
 
-  const commonTypeName = types.length > 0 && types.every((t) => t === types[0]) ? types[0] : 'value'
+  const commonTypeName = valueTypes.length > 0 && valueTypes.every((t) => t === valueTypes[0]) ? valueTypes[0] : 'value'
 
   return [
     `${branchCount} list${branchCount === 1 ? '' : 's'}`,

@@ -147,7 +147,6 @@ namespace Rhino.Compute.Endpoints
 
                 // Finalize port solution data
                 portSolutionData.DataTree.ComputeStats();
-                portSolutionData.DataTree.ComputeStructure();
 
                 // Add port solution data to node solution data
                 nodeSolutionData.PortSolutionData.Add(portSolutionData);

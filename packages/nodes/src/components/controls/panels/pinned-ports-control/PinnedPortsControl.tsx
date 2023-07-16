@@ -126,17 +126,18 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
                     {
                       type: 'number',
                       description: value.toString(),
-                      nativeValue: value.toString(),
+                      value: value.toString(),
                     },
                   ],
                 },
               ],
               stats: {
-                types: ['number'],
                 branchCount: 1,
+                branchValueCountDomain: [1, 1],
+                treeStructure: 'single',
+                valueTypes: ['number'],
                 valueCount: 1,
               },
-              structure: 'single',
             }
 
             expireSolution(state)

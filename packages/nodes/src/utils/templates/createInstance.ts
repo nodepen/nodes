@@ -43,8 +43,13 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
     node.inputs[inputInstanceId] = order
     node.values[inputInstanceId] = {
       branches: [],
-      stats: null,
-      structure: 'empty',
+      stats: {
+        branchCount: 0,
+        branchValueCountDomain: [0, 0],
+        treeStructure: 'empty',
+        valueCount: 0,
+        valueTypes: [],
+      },
     }
   }
 

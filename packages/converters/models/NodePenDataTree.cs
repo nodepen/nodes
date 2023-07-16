@@ -1,35 +1,54 @@
 using Speckle.Core.Models;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Speckle.Newtonsoft.Json;
 
 namespace NodePen.Converters
 {
 
+    /// <summary>
+    /// A collection of values of assorted types and structures.
+    /// </summary>
+    /// <remarks>
+    /// Modeled after Grasshopper's data tree structure. (ily David Rutten)
+    /// </remarks>
     public class NodePenDataTree : Base
     {
 
+        /// <summary>
+        /// A collection of branches of values for this data tree.
+        /// </summary>
         [DetachProperty]
         [JsonProperty("branches")]
         public List<NodePenDataTreeBranch> Branches { get; set; } = new List<NodePenDataTreeBranch>();
 
-        public NodePenDataTreeStats Stats { get; set; }
+        /// <summary>
+        /// Assorted metadata about this data tree's structure and values.
+        /// </summary>
+        [JsonProperty("stats")]
+        public NodePenDataTreeStats Stats { get; set; } = new NodePenDataTreeStats();
 
-        // "empty" | "single" | "list" | "tree"
-        public string Structure { get; set; }
-
-        // TODO
-        public void ComputeStats()
+        public NodePenDataTree()
         {
-            return;
+
         }
 
-        public void ComputeStructure()
+        /// <summary>
+        /// Update data tree stats to reflect the current collection of values.
+        /// </summary>
+        public void ComputeStats()
+        {
+            Stats = new NodePenDataTreeStats();
+
+            ComputeStructure();
+            // TODO: Compute other stats
+        }
+
+        private void ComputeStructure()
         {
             if (Branches == null || Branches.Count == 0)
             {
-                Structure = "empty";
+                Stats.TreeStructure = "empty";
                 return;
             }
 
@@ -39,68 +58,149 @@ namespace NodePen.Converters
 
                 if (branch.Values.Count == 1)
                 {
-                    Structure = "single";
+                    Stats.TreeStructure = "single";
                     return;
                 }
 
                 if (branch.Values.Count > 1)
                 {
-                    Structure = "list";
+                    Stats.TreeStructure = "list";
                     return;
                 }
             }
 
-            Structure = "tree";
+            Stats.TreeStructure = "tree";
         }
 
     }
 
+    /// <summary>
+    /// Assorted metadata about a given data tree's structure and values.
+    /// </summary>
     public class NodePenDataTreeStats : Base
     {
 
-        public int BranchCount { get; set; }
+        /// <summary>
+        /// The number of branches in this data tree.
+        /// </summary>
+        [JsonProperty("branchCount")]
+        public int BranchCount { get; set; } = 0;
 
-        public List<string> Types { get; set; } = new List<string>();
+        /// <summary>
+        /// The minimum and maximum number of values found in branches in this data tree.
+        /// </summary>
+        [JsonProperty("branchValueCountDomain")]
+        public (int, int) BranchValueCountDomain { get; set; } = (0, 0);
 
-        public int ValueCount { get; set; }
+        /// <summary>
+        /// A summary of the shape and number of branches in this data tree.
+        /// </summary>
+        /// <remarks>
+        /// Valid values: "empty" | "single" | "list" | "tree"
+        /// </remarks>
+        [JsonProperty("treeStructure")]
+        public string TreeStructure { get; set; } = "empty";
+
+        /// <summary>
+        /// The total number of values found within all branches in this data tree.
+        /// </summary>
+        [JsonProperty("valueCount")]
+        public int ValueCount { get; set; } = 0;
+
+        /// <summary>
+        /// The set of value types found within all branches in this data tree.
+        /// </summary>
+        [JsonProperty("valueTypes")]
+        public List<string> ValueTypes { get; set; } = new List<string>();
+
+        public NodePenDataTreeStats()
+        {
+
+        }
 
     }
 
+    /// <summary>
+    /// A specific list of values found within a given data tree.
+    /// </summary>
     public class NodePenDataTreeBranch : Base
     {
 
+        /// <summary>
+        /// The position of this branch in the list of all branches in this data tree.
+        /// </summary>
+        [JsonProperty("order")]
         public int Order { get; set; }
 
+        /// <summary>
+        /// The unique identifier for this branch in this data tree.
+        /// </summary>
+        /// <remarks>
+        /// Follows the pattern: {N;N}
+        /// </remarks>
+        [JsonProperty("path")]
         public string Path { get; set; }
 
+        /// <summary>
+        /// The collection of values associated with this branch.
+        /// </summary>
         [DetachProperty]
+        [JsonProperty("values")]
         public List<NodePenDataTreeValue> Values { get; set; } = new List<NodePenDataTreeValue>();
+
+        public NodePenDataTreeBranch()
+        {
+
+        }
 
     }
 
+    /// <summary>
+    /// A single value in a given branch in a given data tree.
+    /// </summary>
     public class NodePenDataTreeValue : Base
     {
 
-        // "integer" "curve" etc
+        /// <summary>
+        /// A string identifier for the native or shared type this value represents.
+        /// </summary>
+        [JsonProperty("type")]
         public string Type { get; set; }
 
-        // "Trimmed Curve"
+        /// <summary>
+        /// A brief string-based description of what this value represents. i.e. "Trimmed Curve"
+        /// </summary>
+        [JsonProperty("description")]
         public string Description { get; set; }
 
-        public string NativeValue { get; set; } = null;
+        /// <summary>
+        /// A JSON-serializable representation of the value.
+        /// </summary>
+        [JsonProperty("value")]
+        public string Value { get; set; } = null;
 
-        public dynamic NativeGeometry { get; set; } = null;
+        /// <summary>
+        /// An object that represents the geometric properties of the value.
+        /// </summary>
+        /// <remarks>
+        /// Currently, in all cases, this is the Speckle representation of the value's native geometry.
+        /// </remarks>
+        [JsonProperty("geometry")]
+        public Base Geometry { get; set; } = null;
 
-        public dynamic SpeckleGeometry { get; set; } = null;
+        public NodePenDataTreeValue()
+        {
+
+        }
 
         public double UnwrapAsDouble()
         {
-            return Convert.ToDouble(NativeValue);
+            return Convert.ToDouble(Value);
         }
 
         public int UnwrapAsInteger()
         {
-            return Convert.ToInt32(NativeValue);
+            return Convert.ToInt32(Value);
         }
 
     }
