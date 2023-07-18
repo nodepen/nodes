@@ -90,7 +90,7 @@ namespace NodePen.Converters
         /// The minimum and maximum number of values found in branches in this data tree.
         /// </summary>
         [JsonProperty("branchValueCountDomain")]
-        public (int, int) BranchValueCountDomain { get; set; } = (0, 0);
+        public List<int> BranchValueCountDomain { get; set; } = new List<int>();
 
         /// <summary>
         /// A summary of the shape and number of branches in this data tree.

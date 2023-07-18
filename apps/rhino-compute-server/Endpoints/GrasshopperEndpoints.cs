@@ -152,6 +152,9 @@ namespace Rhino.Compute.Endpoints
                 nodeSolutionData.PortSolutionData.Add(portSolutionData);
               }
 
+              // Add node solution data to document solution data
+              documentSolutionData.NodeSolutionData.Add(nodeSolutionData);
+
               break;
             }
           default:
@@ -200,18 +203,8 @@ namespace Rhino.Compute.Endpoints
       // Serialize and return response
       Client client = new Client(account);
 
-      Branch streamBranch = client.BranchGet(streamId, branchName, 1).Result;
-
-      Console.WriteLine("Solution:");
-
-      foreach (Commit item in streamBranch.commits.items)
-      {
-        Console.WriteLine("Object:");
-        Console.WriteLine(item.id);
-        Console.WriteLine(item.referencedObject);
-      }
-
-      string rootObjectId = streamBranch.commits.items[0].referencedObject;
+      var commit = client.CommitGet(streamId, commitId).Result;
+      var rootObjectId = commit.referencedObject;
 
       return Response.AsText(rootObjectId);
     }

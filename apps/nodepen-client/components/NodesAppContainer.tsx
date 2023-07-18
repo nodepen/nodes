@@ -21,7 +21,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   }
 
   const [document, setDocument] = useState(initialDocument)
-  const [solution, setSolution] = useState<NodePen.SolutionData>()
+  const [solution, setSolution] = useState<NodePen.DocumentSolutionData>()
 
   const handleDocumentChange = useCallback((state: NodesAppState): void => {
     console.log('Callback from app!')
@@ -46,7 +46,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   }, [])
 
   const handleExpireSolution = useCallback((state: NodesAppState): void => {
-    const solutionId = state.solution.id
+    const solutionId = state.solution.solutionId
 
     const requestSolution = async (): Promise<string> => {
       const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
@@ -64,17 +64,29 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
         query GetObjects(
           $streamId: String!
           $objectId: String!
-          $depth: Int!
+          $nodeSolutionDataTypeQuery: [JSONObject!]
           $portSolutionDataTypeQuery: [JSONObject!]
+          $dataTreeBranchTypeQuery: [JSONObject!]
         ) {
           stream(id: $streamId) {
             object(id: $objectId) {
               data
-              children(depth: $depth, query: $portSolutionDataTypeQuery) {
+              children(query: $nodeSolutionDataTypeQuery) {
                 totalCount
-                cursor
                 objects {
                   data
+                  children(query: $portSolutionDataTypeQuery) {
+                    totalCount
+                    objects {
+                      data
+                      children(query: $dataTreeBranchTypeQuery) {
+                        totalCount
+                        objects {
+                          data
+                        }
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -92,14 +104,27 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           query: print(query),
           operationName: 'GetObjects',
           variables: {
-            depth: 2,
             streamId: stream.id,
             objectId: objectId,
+            nodeSolutionDataTypeQuery: [
+              {
+                field: 'speckle_type',
+                operator: '=',
+                value: 'NodePen.Converters.NodePenNodeSolutionData',
+              },
+            ],
             portSolutionDataTypeQuery: [
               {
                 field: 'speckle_type',
-                value: 'NodePen.Converters.NodePenPortSolutionData',
                 operator: '=',
+                value: 'NodePen.Converters.NodePenPortSolutionData',
+              },
+            ],
+            dataTreeBranchTypeQuery: [
+              {
+                field: 'speckle_type',
+                operator: '=',
+                value: 'NodePen.Converters.NodePenDataTreeBranch',
               },
             ],
           },
