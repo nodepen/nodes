@@ -19,7 +19,6 @@
     "target": "esnext",
     "declaration": true,
     "resolveJsonModule": false,
-    "resolvePackageJsonExports": false,
     "moduleResolution": "bundler",
     "jsx": "react"
   }
