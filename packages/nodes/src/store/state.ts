@@ -116,9 +116,12 @@ export type NodesAppState = {
 }
 
 export type NodesAppCallbacks = {
-  onDocumentChange?: (state: NodesAppState) => void
   onExpireSolution?: (state: NodesAppState) => void
   onFileUpload?: (state: NodesAppState) => Promise<void> | void
+  getPortSolutionData?: (
+    nodeInstanceId: string,
+    portInstanceId: string
+  ) => Promise<NodePen.PortSolutionData> | NodePen.PortSolutionData
 }
 
 export const initialState: NodesAppState = {
@@ -191,12 +194,5 @@ export const initialState: NodesAppState = {
       },
     },
   },
-  callbacks: {
-    onDocumentChange: () => {
-      console.log('From library!')
-    },
-    onExpireSolution: () => {
-      console.log('From library!')
-    },
-  },
+  callbacks: {},
 }

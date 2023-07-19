@@ -23,9 +23,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   const [document, setDocument] = useState(initialDocument)
   const [solution, setSolution] = useState<NodePen.DocumentSolutionData>()
 
-  const handleDocumentChange = useCallback((state: NodesAppState): void => {
-    console.log('Callback from app!')
-  }, [])
+  const [streamRootObjectId, setStreamRootObjectId] = useState<string>()
 
   const handleFileUpload = useCallback(async (state: NodesAppState): Promise<void> => {
     const file = state.layout.fileUpload.activeFile
@@ -54,39 +52,19 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
         body: JSON.stringify({ solutionId, document: state.document }),
       })
 
-      const data = await response.text()
-
-      return data
+      return await response.text()
     }
 
-    const fetchObjects = async (objectId: string): Promise<void> => {
+    const fetchSolutionRuntimeData = async (rootObjectId: string): Promise<NodePen.DocumentSolutionData> => {
       const query = gql`
-        query GetObjects(
-          $streamId: String!
-          $objectId: String!
-          $nodeSolutionDataTypeQuery: [JSONObject!]
-          $portSolutionDataTypeQuery: [JSONObject!]
-          $dataTreeBranchTypeQuery: [JSONObject!]
-        ) {
+        query GetObjects($streamId: String!, $objectId: String!, $nodeSolutionDataTypeQuery: [JSONObject!]) {
           stream(id: $streamId) {
             object(id: $objectId) {
               data
-              children(query: $nodeSolutionDataTypeQuery) {
+              children(query: $nodeSolutionDataTypeQuery, select: ["NodeRuntimeData"]) {
                 totalCount
                 objects {
                   data
-                  children(query: $portSolutionDataTypeQuery) {
-                    totalCount
-                    objects {
-                      data
-                      children(query: $dataTreeBranchTypeQuery) {
-                        totalCount
-                        objects {
-                          data
-                        }
-                      }
-                    }
-                  }
                 }
               }
             }
@@ -105,7 +83,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           operationName: 'GetObjects',
           variables: {
             streamId: stream.id,
-            objectId: objectId,
+            objectId: rootObjectId,
             nodeSolutionDataTypeQuery: [
               {
                 field: 'speckle_type',
@@ -113,44 +91,37 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
                 value: 'NodePen.Converters.NodePenNodeSolutionData',
               },
             ],
-            portSolutionDataTypeQuery: [
-              {
-                field: 'speckle_type',
-                operator: '=',
-                value: 'NodePen.Converters.NodePenPortSolutionData',
-              },
-            ],
-            dataTreeBranchTypeQuery: [
-              {
-                field: 'speckle_type',
-                operator: '=',
-                value: 'NodePen.Converters.NodePenDataTreeBranch',
-              },
-            ],
           },
         }),
       })
 
-      const data = await response.json()
+      const { data } = await response.json()
 
-      console.log(data)
+      const { data: streamSolutionData, children: nodeSolutionData } = data.stream.object
+
+      const documentSolutionData = streamSolutionData['SolutionData']
+
+      console.log(documentSolutionData)
+
+      return data
     }
 
     requestSolution()
       .then((rootObjectId) => {
-        console.log(`🟢 Solution object id: ${rootObjectId}`)
-        return fetchObjects(rootObjectId)
+        setStreamRootObjectId(rootObjectId)
+        return fetchSolutionRuntimeData(rootObjectId)
       })
-      .then(() => {
+      .then((solutionData) => {
         // Do nothing
-      })
-      .catch((e) => {
-        console.log(e)
       })
   }, [])
 
+  // const handleGetPortSolutionData = useCallback(
+  //   async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData> => { },
+  //   []
+  // )
+
   const callbacks: NodesAppCallbacks = {
-    onDocumentChange: handleDocumentChange,
     onExpireSolution: handleExpireSolution,
     onFileUpload: handleFileUpload,
   }
@@ -158,7 +129,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   return (
     <NodesApp document={document} templates={templates} solution={solution} {...callbacks}>
       <DocumentView editable />
-      <SpeckleModelView stream={stream} />
+      <SpeckleModelView stream={stream} rootObjectId={streamRootObjectId} />
     </NodesApp>
   )
 }
