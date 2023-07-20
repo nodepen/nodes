@@ -195,7 +195,8 @@ namespace NodePen.Converters.Kits
             {
                 Type = goo.TypeName.ToLower(),
                 Description = goo.ToString(),
-                Value = nativeGeometry.ToString(),
+                // Value = nativeGeometry.ToString(),
+                Value = "",
                 Geometry = speckleGeometry,
             };
 

@@ -61,7 +61,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           stream(id: $streamId) {
             object(id: $objectId) {
               data
-              children(query: $nodeSolutionDataTypeQuery, select: ["NodeRuntimeData"]) {
+              children(query: $nodeSolutionDataTypeQuery, select: ["NodeInstanceId", "NodeRuntimeData"]) {
                 totalCount
                 objects {
                   data
@@ -99,11 +99,31 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
       const { data: streamSolutionData, children: nodeSolutionData } = data.stream.object
 
-      const documentSolutionData = streamSolutionData['SolutionData']
+      const documentSolutionData: NodePen.DocumentSolutionData = {
+        solutionId: streamSolutionData['SolutionData']['SolutionId'],
+        documentRuntimeData: {
+          durationMs: streamSolutionData['SolutionData']['DocumentRuntimeData']['DurationMs'],
+        },
+        nodeSolutionData: [],
+      }
 
-      console.log(documentSolutionData)
+      for (const node of nodeSolutionData.objects) {
+        const { data: currentNodeSolutionData } = node
 
-      return data
+        documentSolutionData.nodeSolutionData.push({
+          nodeInstanceId: currentNodeSolutionData['NodeInstanceId'],
+          nodeRuntimeData: {
+            durationMs: currentNodeSolutionData['NodeRuntimeData']['DurationMs'],
+            messages: currentNodeSolutionData['NodeRuntimeData']['Messages'].map((message: any) => ({
+              level: message['Level'],
+              message: message['Message'],
+            })),
+          },
+          portSolutionData: [],
+        })
+      }
+
+      return documentSolutionData
     }
 
     requestSolution()
@@ -111,8 +131,9 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
         setStreamRootObjectId(rootObjectId)
         return fetchSolutionRuntimeData(rootObjectId)
       })
-      .then((solutionData) => {
-        // Do nothing
+      .then((documentSolutionData) => {
+        console.log(documentSolutionData)
+        // TODO: Drop it into state
       })
   }, [])
 

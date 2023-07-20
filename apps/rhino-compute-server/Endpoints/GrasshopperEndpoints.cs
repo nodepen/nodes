@@ -59,18 +59,12 @@ namespace Rhino.Compute.Endpoints
       definition.Profiler = GH_ProfilerMode.Processor;
 
       // Solve Grasshopper document
-      Stopwatch documentSolutionTimer = new Stopwatch();
-
-      documentSolutionTimer.Start();
-
       definition.NewSolution(true, GH_SolutionMode.Silent);
-
-      documentSolutionTimer.Stop();
 
       // Collect document solution data
       var documentSolutionData = new NodePenDocumentSolutionData(requestData.SolutionId);
 
-      documentSolutionData.DocumentRuntimeData.DurationMs = documentSolutionTimer.ElapsedMilliseconds;
+      documentSolutionData.DocumentRuntimeData.DurationMs = definition.SolutionSpan.Milliseconds;
 
       // Collect node solution data
       foreach (IGH_DocumentObject documentObject in definition.Objects)
