@@ -1,5 +1,6 @@
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
+import { useEffect, useRef } from 'react'
 
 /**
  * Given a reference to a specific port, return its user-defined values or its current solution values.
@@ -8,29 +9,40 @@ import { useStore } from '$'
  * @param portInstanceId
  */
 export const usePortValues = (nodeInstanceId: string, portInstanceId: string): NodePen.DataTree | null => {
-  const values = useStore((state) => {
+  const getPortSolutionData = useStore((state) => state.callbacks.getPortSolutionData)
+
+  // The solution id associated with the latest values
+  const valuesSolutionId = useRef<string>()
+
+  // Values set directly on input ports in the current document
+  const localValues = useStore((state) => {
     const node = state.document.nodes[nodeInstanceId]
 
     if (!node) {
       return null
     }
 
-    const userValues = node.values[portInstanceId]
+    const localValues = node.values[portInstanceId]
 
-    if (userValues && Object.keys(userValues).length > 0) {
-      return userValues
+    if (!localValues || Object.keys(localValues).length === 0) {
+      return null
     }
 
-    const solutionData = state.solution.nodeSolutionData
-      .find(({ nodeInstanceId: id }) => id === nodeInstanceId)
-      ?.portSolutionData?.find(({ portInstanceId: id }) => id === portInstanceId)?.dataTree
-
-    if (solutionData) {
-      return solutionData
-    }
-
-    return null
+    return localValues
   })
 
-  return values
+  // Node solution data as-computed and stored in the current solution
+  const nodeSolutionData = useStore((state) => {
+    return state.solution.nodeSolutionData.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
+  })
+
+  useEffect(() => {
+    if (!nodeSolutionData) {
+    }
+  }, [nodeSolutionData])
+
+  // Port solution data as-computed and stored in the current solution
+  const portSolutionData = nodeSolutionData?.portSolutionData.find(({ portInstanceId: id }) => id === portInstanceId)
+
+  return localValues ?? portSolutionData?.dataTree ?? null
 }

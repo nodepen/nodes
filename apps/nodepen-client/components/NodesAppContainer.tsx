@@ -120,7 +120,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
       })
       .then((documentSolutionData) => {
         console.log(documentSolutionData)
-        // TODO: Drop it into state
+        setSolution(documentSolutionData)
       })
   }, [])
 
