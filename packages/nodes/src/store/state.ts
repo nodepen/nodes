@@ -118,10 +118,7 @@ export type NodesAppState = {
 export type NodesAppCallbacks = {
   onExpireSolution?: (state: NodesAppState) => void
   onFileUpload?: (state: NodesAppState) => Promise<void> | void
-  getPortSolutionData?: (
-    nodeInstanceId: string,
-    portInstanceId: string
-  ) => Promise<NodePen.PortSolutionData> | NodePen.PortSolutionData
+  getPortSolutionData?: (nodeInstanceId: string, portInstanceId: string) => Promise<NodePen.PortSolutionData>
 }
 
 export const initialState: NodesAppState = {

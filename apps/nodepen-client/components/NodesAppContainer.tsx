@@ -124,10 +124,49 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
       })
   }, [])
 
-  // const handleGetPortSolutionData = useCallback(
-  //   async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData> => { },
-  //   []
-  // )
+  const handleGetPortSolutionData = useCallback(
+    async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData> => {
+      const query = gql`
+        query GetObjects($streamId: String!, $objectId: String!) {
+          stream(id: $streamId) {
+            object(id: $objectId) {
+              data
+              # NodePenPortSolutionData queried by specific node & port reference
+              # Do: speckle_type, NodeInstanceId, PortInstanceId
+              children(query: $portSolutionDataQuery) {
+                objects {
+                  # NodePenDataTreeBranch ordered by Order
+                  children(orderBy: ["Order"]) {
+                    totalCount
+                    cursor
+                    data # The data we want
+                  }
+                }
+              }
+            }
+          }
+        }
+      `
+
+      const response = await fetch(`${stream.url}/graphql`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${stream.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: print(query),
+          operationName: 'GetObjects',
+          variables: {
+            streamId: stream.id,
+            objectId: streamRootObjectId,
+          },
+        }),
+      })
+    },
+
+    [stream.id, streamRootObjectId]
+  )
 
   const callbacks: NodesAppCallbacks = {
     onExpireSolution: handleExpireSolution,

@@ -1,6 +1,6 @@
 import type * as NodePen from '@nodepen/core'
-import { useStore } from '$'
-import { useEffect, useRef } from 'react'
+import { useDispatch, useStore } from '$'
+import { useEffect, useRef, useDeferredValue } from 'react'
 
 /**
  * Given a reference to a specific port, return its user-defined values or its current solution values.
@@ -11,8 +11,10 @@ import { useEffect, useRef } from 'react'
 export const usePortValues = (nodeInstanceId: string, portInstanceId: string): NodePen.DataTree | null => {
   const getPortSolutionData = useStore((state) => state.callbacks.getPortSolutionData)
 
+  const { apply } = useDispatch()
+
   // The solution id associated with the latest values
-  const valuesSolutionId = useRef<string>()
+  const solutionId = useStore((state) => state.solution.solutionId)
 
   // Values set directly on input ports in the current document
   const localValues = useStore((state) => {
@@ -36,13 +38,34 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     return state.solution.nodeSolutionData.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
   })
 
-  useEffect(() => {
-    if (!nodeSolutionData) {
-    }
-  }, [nodeSolutionData])
+  if (!nodeSolutionData) {
+    return null
+  }
 
   // Port solution data as-computed and stored in the current solution
   const portSolutionData = nodeSolutionData?.portSolutionData.find(({ portInstanceId: id }) => id === portInstanceId)
+
+  if (!portSolutionData && !!getPortSolutionData) {
+    const requestSolutionId = solutionId
+
+    getPortSolutionData(nodeInstanceId, portInstanceId).then((result) => {
+      apply((state) => {
+        if (state.solution.solutionId !== requestSolutionId) {
+          return
+        }
+
+        const currentNodeSolutionData = state.solution.nodeSolutionData.find(
+          ({ nodeInstanceId: id }) => id === nodeInstanceId
+        )
+
+        if (!currentNodeSolutionData) {
+          return
+        }
+
+        currentNodeSolutionData.portSolutionData.push(result)
+      })
+    })
+  }
 
   return localValues ?? portSolutionData?.dataTree ?? null
 }
