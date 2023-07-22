@@ -26,7 +26,6 @@ namespace NodePen.Converters
         /// <summary>
         /// A collection of solution data for a given document's child nodes.
         /// </summary>
-        [DetachProperty]
         [JsonProperty("nodeSolutionData")]
         public List<NodePenNodeSolutionData> NodeSolutionData { get; set; } = new List<NodePenNodeSolutionData>();
 

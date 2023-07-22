@@ -21,7 +21,7 @@ namespace NodePen.Converters.Kits
 
         public ProgressReport Report => BaseConverter.Report;
 
-        public ReceiveMode ReceiveMode { get; set; }
+        public ReceiveMode ReceiveMode { get; set; } = ReceiveMode.Update;
 
         public bool CanConvertToNative(Base @object)
         {
@@ -55,150 +55,174 @@ namespace NodePen.Converters.Kits
 
         public NodePenDataTreeValue ConvertToSpeckle(IGH_Goo goo)
         {
+            // Console.WriteLine($"{goo.TypeName} / {goo.GetType()}");
+
             switch (goo)
             {
                 case GH_Arc arcGoo:
                     {
-                        return ConvertToSpeckle(arcGoo);
+                        return ConvertGooToSpeckle(arcGoo);
                     }
                 case GH_Boolean booleanGoo:
                     {
-                        return ConvertToSpeckle(booleanGoo);
+                        return ConvertGooToSpeckle(booleanGoo);
                     }
                 case GH_Box boxGoo:
                     {
-                        return ConvertToSpeckle(boxGoo);
+                        return ConvertGooToSpeckle(boxGoo);
                     }
                 case GH_Brep brepGoo:
                     {
-                        return ConvertToSpeckle(brepGoo);
+                        return ConvertGooToSpeckle(brepGoo);
                     }
                 case GH_Circle circleGoo:
                     {
-                        return ConvertToSpeckle(circleGoo);
+                        return ConvertGooToSpeckle(circleGoo);
                     }
                 case GH_Colour colourGoo:
                     {
-                        return ConvertToSpeckle(colourGoo);
+                        return ConvertGooToSpeckle(colourGoo);
                     }
                 case GH_ComplexNumber complexNumberGoo:
                     {
-                        return ConvertToSpeckle(complexNumberGoo);
+                        return ConvertGooToSpeckle(complexNumberGoo);
                     }
                 case GH_Culture cultureGoo:
                     {
-                        return ConvertToSpeckle(cultureGoo);
+                        return ConvertGooToSpeckle(cultureGoo);
                     }
                 case GH_Curve curveGoo:
                     {
-                        return ConvertToSpeckle(curveGoo);
-                    }
-                case GH_Field fieldGoo:
-                    {
-                        return ConvertToSpeckle(fieldGoo);
+                        return ConvertGooToSpeckle(curveGoo);
                     }
                 case GH_Guid guidGoo:
                     {
-                        return ConvertToSpeckle(guidGoo);
+                        return ConvertGooToSpeckle(guidGoo);
                     }
                 case GH_Integer intGoo:
                     {
-                        return ConvertToSpeckle(intGoo);
+                        return ConvertGooToSpeckle(intGoo);
                     }
                 case GH_Interval intervalGoo:
                     {
-                        return ConvertToSpeckle(intervalGoo);
+                        return ConvertGooToSpeckle(intervalGoo);
                     }
                 case GH_Interval2D interval2dGoo:
                     {
-                        return ConvertToSpeckle(interval2dGoo);
+                        return ConvertGooToSpeckle(interval2dGoo);
                     }
                 case GH_Line lineGoo:
                     {
-                        return ConvertToSpeckle(lineGoo);
+                        return ConvertGooToSpeckle(lineGoo);
                     }
                 case GH_Material materialGoo:
                     {
-                        return ConvertToSpeckle(materialGoo);
+                        return ConvertGooToSpeckle(materialGoo);
                     }
                 case GH_Matrix matrixGoo:
                     {
-                        return ConvertToSpeckle(matrixGoo);
+                        return ConvertGooToSpeckle(matrixGoo);
                     }
                 case GH_Mesh meshGoo:
                     {
-                        return ConvertToSpeckle(meshGoo);
+                        return ConvertGooToSpeckle(meshGoo);
                     }
                 case GH_MeshFace meshFaceGoo:
                     {
-                        return ConvertToSpeckle(meshFaceGoo);
+                        return ConvertGooToSpeckle(meshFaceGoo);
                     }
                 case GH_MeshingParameters meshingParametersGoo:
                     {
-                        return ConvertToSpeckle(meshingParametersGoo);
+                        return ConvertGooToSpeckle(meshingParametersGoo);
                     }
                 case GH_Number numberGoo:
                     {
-                        return ConvertToSpeckle(numberGoo);
+                        return ConvertGooToSpeckle(numberGoo);
                     }
                 case GH_Plane planeGoo:
                     {
-                        return ConvertToSpeckle(planeGoo);
+                        return ConvertGooToSpeckle(planeGoo);
                     }
                 case GH_Point pointGoo:
                     {
-                        return ConvertToSpeckle(pointGoo);
+                        var entrySolutionValue = new NodePenDataTreeValue()
+                        {
+                            Type = pointGoo.TypeName.ToLower(),
+                            Description = pointGoo.ToString(),
+                            Value = pointGoo.Value.ToString(),
+                            Geometry = BaseConverter.PointToSpeckle(pointGoo.Value)
+                        };
+
+                        return entrySolutionValue;
                     }
                 case GH_Rectangle rectangleGoo:
                     {
-                        return ConvertToSpeckle(rectangleGoo);
+                        return ConvertGooToSpeckle(rectangleGoo);
                     }
                 case GH_String stringGoo:
                     {
-                        return ConvertToSpeckle(stringGoo);
+                        return ConvertGooToSpeckle(stringGoo);
                     }
                 case GH_SubD subdGoo:
                     {
-                        return ConvertToSpeckle(subdGoo);
+                        return ConvertGooToSpeckle(subdGoo);
                     }
                 case GH_Surface surfaceGoo:
                     {
-                        return ConvertToSpeckle(surfaceGoo);
+                        return ConvertGooToSpeckle(surfaceGoo);
                     }
                 case GH_Time timeGoo:
                     {
-                        return ConvertToSpeckle(timeGoo);
+                        return ConvertGooToSpeckle(timeGoo);
                     }
                 case GH_Transform transformGoo:
                     {
-                        return ConvertToSpeckle(transformGoo);
+                        return ConvertGooToSpeckle(transformGoo);
                     }
                 case GH_Vector vectorGoo:
                     {
-                        return ConvertToSpeckle(vectorGoo);
+                        return ConvertGooToSpeckle(vectorGoo);
                     }
                 default:
                     {
-                        throw new Exception($"Failed to convert {goo.TypeName} value!");
+                        Console.WriteLine($"Using default conversion for {goo.TypeName} value!");
+
+                        var entrySolutionValue = new NodePenDataTreeValue()
+                        {
+                            Type = goo.TypeName.ToLower(),
+                            Description = goo.ToString(),
+                            Value = null,
+                            Geometry = null,
+                        };
+
+                        return entrySolutionValue;
                     }
             }
 
             throw new Exception($"Failed to convert {goo.TypeName}");
         }
 
-        public NodePenDataTreeValue ConvertToSpeckle<T>(GH_Goo<T> goo)
+        public NodePenDataTreeValue ConvertGooToSpeckle<T>(GH_Goo<T> goo, bool serializeNative = true, bool serializeSpeckle = true)
         {
             var nativeGeometry = goo.Value;
-            var speckleGeometry = BaseConverter.ConvertToSpeckle(nativeGeometry);
 
             var entrySolutionValue = new NodePenDataTreeValue()
             {
                 Type = goo.TypeName.ToLower(),
                 Description = goo.ToString(),
-                // Value = nativeGeometry.ToString(),
-                Value = "",
-                Geometry = speckleGeometry,
+                Value = null,
+                Geometry = null,
             };
+
+            if (serializeNative)
+            {
+                entrySolutionValue.Value = nativeGeometry.ToString();
+            }
+
+            if (serializeSpeckle)
+            {
+                entrySolutionValue.Geometry = BaseConverter.ConvertToSpeckle(nativeGeometry);
+            }
 
             return entrySolutionValue;
         }

@@ -7,7 +7,6 @@ using Nancy.Routing;
 using NodePen.Converters;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
@@ -62,7 +61,7 @@ namespace Rhino.Compute.Endpoints
       definition.NewSolution(true, GH_SolutionMode.Silent);
 
       // Collect document solution data
-      var documentSolutionData = new NodePenDocumentSolutionData(requestData.SolutionId);
+      NodePenDocumentSolutionData documentSolutionData = new NodePenDocumentSolutionData(requestData.SolutionId);
 
       documentSolutionData.DocumentRuntimeData.DurationMs = definition.SolutionSpan.Milliseconds;
 
@@ -74,13 +73,13 @@ namespace Rhino.Compute.Endpoints
           case IGH_Component componentInstance:
             {
               // Convert Grasshopper component solution data to node solution data
-              var nodeSolutionData = new NodePenNodeSolutionData(componentInstance.InstanceGuid.ToString());
+              NodePenNodeSolutionData nodeSolutionData = new NodePenNodeSolutionData(componentInstance.InstanceGuid.ToString());
 
               nodeSolutionData.NodeRuntimeData.DurationMs = componentInstance.ProcessorTime.TotalMilliseconds;
 
-              foreach (var runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+              foreach (string runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Error))
               {
-                var nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
+                NodePenNodeRuntimeDataMessage nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
                 {
                   Level = "error",
                   Message = runtimeMessage
@@ -89,9 +88,9 @@ namespace Rhino.Compute.Endpoints
                 nodeSolutionData.NodeRuntimeData.Messages.Add(nodeRuntimeMessage);
               }
 
-              foreach (var runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+              foreach (string runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
               {
-                var nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
+                NodePenNodeRuntimeDataMessage nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
                 {
                   Level = "warn",
                   Message = runtimeMessage
@@ -108,7 +107,7 @@ namespace Rhino.Compute.Endpoints
               foreach (IGH_Param componentParam in componentParams)
               {
                 // Convert Grasshopper param solution data to port solution data
-                var portSolutionData = new NodePenPortSolutionData(componentParam.InstanceGuid.ToString());
+                NodePenPortSolutionData portSolutionData = new NodePenPortSolutionData(componentParam.InstanceGuid.ToString());
 
                 // Collect data tree branches and their values
                 for (int i = 0; i < componentParam.VolatileData.PathCount; i++)
@@ -132,7 +131,7 @@ namespace Rhino.Compute.Endpoints
                       continue;
                     }
 
-                    var entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
+                    NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
                     branchSolutionData.Values.Add(entrySolutionData);
                   }
 
@@ -177,7 +176,7 @@ namespace Rhino.Compute.Endpoints
         }
       };
 
-      var documentStreamData = new NodePenDocumentSpeckleStreamData()
+      NodePenDocumentSpeckleStreamData documentStreamData = new NodePenDocumentSpeckleStreamData()
       {
         Document = requestData.Document,
         SolutionData = documentSolutionData,
@@ -197,8 +196,8 @@ namespace Rhino.Compute.Endpoints
       // Serialize and return response
       Client client = new Client(account);
 
-      var commit = client.CommitGet(streamId, commitId).Result;
-      var rootObjectId = commit.referencedObject;
+      Commit commit = client.CommitGet(streamId, commitId).Result;
+      string rootObjectId = commit.referencedObject;
 
       return Response.AsText(rootObjectId);
     }

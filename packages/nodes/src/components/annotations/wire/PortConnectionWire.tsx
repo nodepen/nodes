@@ -19,17 +19,19 @@ const PortConnectionWire = ({ from, to }: PortConnectionWireProps): React.ReactE
 
   const sourceDataTree = usePortValues(fromNodeId, fromPortId)
 
-  if (!fromPosition || !toPosition || !sourceDataTree) {
+  if (!fromPosition || !toPosition) {
     return null
   }
+
+  const structure = sourceDataTree?.stats?.treeStructure ?? 'single'
 
   return (
     <>
       <WirePortal>
-        <Wire start={fromPosition} end={toPosition} structure={sourceDataTree.stats.treeStructure} />
+        <Wire start={fromPosition} end={toPosition} structure={structure} />
       </WirePortal>
       <WiresMaskPortal>
-        <Wire start={fromPosition} end={toPosition} structure={sourceDataTree.stats.treeStructure} drawMask />
+        <Wire start={fromPosition} end={toPosition} structure={structure} drawMask />
       </WiresMaskPortal>
     </>
   )

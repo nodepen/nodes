@@ -57,16 +57,10 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
     const fetchSolutionRuntimeData = async (rootObjectId: string): Promise<NodePen.DocumentSolutionData> => {
       const query = gql`
-        query GetObjects($streamId: String!, $objectId: String!, $nodeSolutionDataTypeQuery: [JSONObject!]) {
+        query GetObjects($streamId: String!, $objectId: String!) {
           stream(id: $streamId) {
             object(id: $objectId) {
               data
-              children(query: $nodeSolutionDataTypeQuery, select: ["NodeInstanceId", "NodeRuntimeData"]) {
-                totalCount
-                objects {
-                  data
-                }
-              }
             }
           }
         }
@@ -84,20 +78,13 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           variables: {
             streamId: stream.id,
             objectId: rootObjectId,
-            nodeSolutionDataTypeQuery: [
-              {
-                field: 'speckle_type',
-                operator: '=',
-                value: 'NodePen.Converters.NodePenNodeSolutionData',
-              },
-            ],
           },
         }),
       })
 
       const { data } = await response.json()
 
-      const { data: streamSolutionData, children: nodeSolutionData } = data.stream.object
+      const { data: streamSolutionData } = data.stream.object
 
       const documentSolutionData: NodePen.DocumentSolutionData = {
         solutionId: streamSolutionData['SolutionData']['SolutionId'],
@@ -107,20 +94,20 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
         nodeSolutionData: [],
       }
 
-      for (const node of nodeSolutionData.objects) {
-        const { data: currentNodeSolutionData } = node
-
-        documentSolutionData.nodeSolutionData.push({
-          nodeInstanceId: currentNodeSolutionData['NodeInstanceId'],
+      for (const entry of streamSolutionData['SolutionData']['NodeSolutionData']) {
+        const nodeSolutionData: NodePen.NodeSolutionData = {
+          nodeInstanceId: entry['NodeInstanceId'],
           nodeRuntimeData: {
-            durationMs: currentNodeSolutionData['NodeRuntimeData']['DurationMs'],
-            messages: currentNodeSolutionData['NodeRuntimeData']['Messages'].map((message: any) => ({
+            durationMs: entry['NodeRuntimeData']['DurationMs'],
+            messages: entry['NodeRuntimeData']['Messages'].map((message: any) => ({
               level: message['Level'],
               message: message['Message'],
             })),
           },
           portSolutionData: [],
-        })
+        }
+
+        documentSolutionData.nodeSolutionData.push(nodeSolutionData)
       }
 
       return documentSolutionData
