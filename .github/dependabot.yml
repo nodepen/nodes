@@ -9,6 +9,45 @@ updates:
     allow:
       - dependency-type: "direct"
     open-pull-requests-limit: 10
+    groups:
+      build:
+        patterns:
+          - "concurrently"
+          - "tsc-alias"
+          - "tsc-watch"
+          - "turbo"
+      eslint:
+        patterns:
+          - "@typescript-eslint/*"
+          - "eslint*"
+          - "prettier"
+      gql:
+        patterns:
+          - "graphql"
+          - "graphql-tag"
+      next:
+        patterns:
+          - "@tanstack/react-query"
+          - "next"
+          - "next-images"
+      react:
+        patterns:
+          - "@types/react"
+          - "@types/react-dom"
+      tailwind:
+        patterns:
+          - "autoprefixer"
+          - "postcss"
+          - "tailwindcss"
+      test:
+        patterns:
+          - "@types/jest"
+          - "jest"
+          - "ts-jest"
+      state:
+        patterns:
+          - "immer"
+          - "zustand"
     reviewers:
       - "cdriesler"
     versioning-strategy: "increase"
@@ -20,7 +59,12 @@ updates:
       day: "friday"
     allow:
       - dependency-name: "Speckle*"
+    groups:
+      speckle:
+        patterns:
+          - "Speckle*"
     open-pull-requests-limit: 1
     reviewers:
       - "cdriesler"
+    versioning-strategy: "increase"
 
