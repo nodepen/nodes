@@ -106,5 +106,9 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     })
   }, [value])
 
+  if (solutionStatus === 'expired') {
+    return null
+  }
+
   return cacheValue?.dataTree ?? value
 }

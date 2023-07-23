@@ -94,6 +94,36 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
 
   const valueString = currentValue?.description
 
+  const handleApplyValue = (value: number): void => {
+    apply((state) => {
+      state.document.nodes[nodeInstanceId].values[portInstanceId] = {
+        branches: [
+          {
+            order: 0,
+            path: '{0}',
+            values: [
+              {
+                type: 'number',
+                description: value.toString(),
+                order: 0,
+                value: value.toString(),
+              },
+            ],
+          },
+        ],
+        stats: {
+          branchCount: 1,
+          branchValueCountDomain: [1, 1],
+          treeStructure: 'single',
+          valueTypes: ['number'],
+          valueCount: 1,
+        },
+      }
+
+      expireSolution(state)
+    })
+  }
+
   return (
     <div className="np-relative np-w-full np-h-8 np-mt-3 first:np-mt-0 np-bg-pale np-rounded-sm">
       <div
@@ -112,36 +142,17 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
         className="np-absolute np-w-full np-h-full np-pr-2 np-font-sans np-text-md np-text-dark np-text-right np-bg-pale np-shadow-input"
         type="text"
         defaultValue={valueString}
+        placeholder={portTemplate.typeName}
         style={{ left: 0, top: 0, zIndex: 10 }}
         onBlur={(e) => {
           const value = Number.parseInt(e.target.value)
-
-          apply((state) => {
-            state.document.nodes[nodeInstanceId].values[portInstanceId] = {
-              branches: [
-                {
-                  order: 0,
-                  path: '{0}',
-                  values: [
-                    {
-                      type: 'number',
-                      description: value.toString(),
-                      order: 0,
-                    },
-                  ],
-                },
-              ],
-              stats: {
-                branchCount: 1,
-                branchValueCountDomain: [1, 1],
-                treeStructure: 'single',
-                valueTypes: ['number'],
-                valueCount: 1,
-              },
-            }
-
-            expireSolution(state)
-          })
+          handleApplyValue(value)
+        }}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter') {
+            const target = e.target as HTMLInputElement
+            target?.blur()
+          }
         }}
       />
     </div>
