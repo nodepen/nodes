@@ -10,9 +10,6 @@ type AsyncMemoResult<T> =
       value: T
     }
 
-// TODO: Cache key values in a synchronously-findable way. In the current implementation, even if the value is available,
-// we still flash a loading state briefly while its found in the asyncFactory invocation.
-
 export const useAsyncMemo = <T>(key: string, asyncFactory: () => Promise<T>): AsyncMemoResult<T> => {
   const internalKey = useRef<string>()
 

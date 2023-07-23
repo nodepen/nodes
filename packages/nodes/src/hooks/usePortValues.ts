@@ -19,7 +19,6 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
       solutionStatus: state.lifecycle.solution,
     }
   })
-  // TODO: Track solution lifecycle status to handle case where we inspect while a solution is running.
 
   const getLatestValues = useCallback(async (): Promise<NodePen.DataTree | null> => {
     // Use locally-set values, if available
@@ -60,10 +59,11 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     return dataTree
   }, [solutionId, nodeInstanceId, portInstanceId])
 
-  const { value, isLoading } = useAsyncMemo(
-    `${solutionId}:${solutionStatus}:${nodeInstanceId}:${portInstanceId}`,
-    getLatestValues
-  )
+  const cacheKey = `${solutionId}:${solutionStatus}:${nodeInstanceId}:${portInstanceId}`
+
+  const { value, isLoading } = useAsyncMemo(cacheKey, getLatestValues)
+
+  const cacheValue = useStore.getState().cache.portSolutionData[cacheKey]
 
   // Cache value in store
   useEffect(() => {
@@ -90,14 +90,21 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
 
     // Cache value in store
     apply((state) => {
+      const solutionData: NodePen.PortSolutionData = {
+        portInstanceId,
+        dataTree: value,
+      }
+
       state.solution.nodeSolutionData
         .find(({ nodeInstanceId: id }) => id === nodeInstanceId)
         ?.portSolutionData?.push({
           portInstanceId,
           dataTree: value,
         })
+
+      state.cache.portSolutionData[cacheKey] = solutionData
     })
   }, [value])
 
-  return value
+  return cacheValue?.dataTree ?? value
 }

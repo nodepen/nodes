@@ -115,6 +115,11 @@ export type NodesAppState = {
   lifecycle: {
     solution: 'expired' | 'ready'
   }
+  cache: {
+    portSolutionData: {
+      [cacheKey: string]: NodePen.PortSolutionData
+    }
+  }
   callbacks: NodesAppCallbacks
 }
 
@@ -196,6 +201,9 @@ export const initialState: NodesAppState = {
   },
   lifecycle: {
     solution: 'expired',
+  },
+  cache: {
+    portSolutionData: {},
   },
   callbacks: {},
 }
