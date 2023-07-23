@@ -125,11 +125,12 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   }, [])
 
   const fetchPortSolutionData = useCallback(
-    async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData> => {
+    async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData | null> => {
       const query = gql`
         query GetObjects(
           $streamId: String!
           $objectId: String!
+          $orderBy: JSONObject!
           $portSolutionDataQuery: [JSONObject!]
           $dataTreeBranchTypeQuery: [JSONObject!]
           $dataTreeValueTypeQuery: [JSONObject!]
@@ -142,12 +143,16 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
                 objects {
                   data
                   # NodePen.Converters.NodePenDataTreeBranch
-                  children(query: $dataTreeBranchTypeQuery) {
+                  children(query: $dataTreeBranchTypeQuery, orderBy: $orderBy) {
                     cursor
                     objects {
                       data
                       # NodePen.Converters.NodePenDataTreeValue
-                      children(query: $dataTreeValueTypeQuery, select: ["Type", "Description", "Order"]) {
+                      children(
+                        query: $dataTreeValueTypeQuery
+                        orderBy: $orderBy
+                        select: ["Type", "Description", "Order"]
+                      ) {
                         objects {
                           data
                         }
@@ -173,6 +178,10 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           variables: {
             streamId: stream.id,
             objectId: streamRootObjectId,
+            orderBy: {
+              field: 'Order',
+              direction: 'asc',
+            },
             portSolutionDataQuery: [
               {
                 field: 'PortInstanceId',
@@ -200,10 +209,13 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
       const data = await response.json()
 
-      console.log(data)
-
       const { data: portSolutionDataResponse, children: portSolutionDataChildren } =
-        data.data.stream.object.children.objects[0]
+        data.data.stream.object.children.objects[0] ?? {}
+
+      if (!portSolutionDataResponse) {
+        return null
+      }
+
       const statsResponse = portSolutionDataResponse['DataTree']['Stats']
 
       const portSolutionData: NodePen.PortSolutionData = {
@@ -237,12 +249,8 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           dataTreeBranch.values.push(dataTreeValue)
         }
 
-        dataTreeBranch.values.sort((a, b) => a.order - b.order)
-
         portSolutionData.dataTree.branches.push(dataTreeBranch)
       }
-
-      portSolutionData.dataTree.branches.sort((a, b) => a.order - b.order)
 
       return portSolutionData
     },

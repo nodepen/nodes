@@ -19,11 +19,8 @@ export const useAsyncMemo = <T>(key: string, asyncFactory: () => Promise<T>): As
   const [internalValue, setInternalValue] = useState<AsyncMemoResult<T>>({ isLoading: true, value: null })
 
   useEffect(() => {
-    console.log('Fetching...')
-
     if (internalKey.current === key) {
       // We have already fetched this value
-      console.log('Value already available.')
       return
     }
 
@@ -36,12 +33,8 @@ export const useAsyncMemo = <T>(key: string, asyncFactory: () => Promise<T>): As
       .then((result) => {
         if (requestKey !== internalKey.current) {
           // Value was invalidated during request. Discard results.
-          console.log('Value outdated.')
           return
         }
-
-        console.log('Updated value.')
-        console.log(result)
 
         setInternalValue({ isLoading: false, value: result })
       })

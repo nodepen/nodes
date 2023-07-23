@@ -46,7 +46,11 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
       return null
     }
 
-    const { dataTree } = await getPortSolutionData(nodeInstanceId, portInstanceId)
+    const { dataTree } = (await getPortSolutionData(nodeInstanceId, portInstanceId)) ?? {}
+
+    if (!dataTree) {
+      return null
+    }
 
     return dataTree
   }, [solutionId, nodeInstanceId, portInstanceId])
