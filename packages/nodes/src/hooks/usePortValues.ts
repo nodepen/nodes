@@ -67,7 +67,7 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
 
   // Cache value in store
   useEffect(() => {
-    if (!value) {
+    if (!value || solutionStatus === 'expired') {
       return
     }
 
@@ -77,6 +77,7 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
 
     if (!nodeSolutionData) {
       console.log(`🐍 Attempted to cache results for node that does not exist: [${nodeInstanceId}]`)
+      console.log(value)
       return
     }
 

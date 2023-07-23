@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useRef } from 'react'
+import type * as NodePen from '@nodepen/core'
 import type { NodePortReference } from '@/types'
 import { useNodeAnchorPosition, usePortValues } from '@/hooks'
 import { WirePortal, WiresMaskPortal } from './components'
@@ -19,19 +20,27 @@ const PortConnectionWire = ({ from, to }: PortConnectionWireProps): React.ReactE
 
   const sourceDataTree = usePortValues(fromNodeId, fromPortId)
 
+  const previousStructure = useRef<NodePen.DataTreeStructure>('single')
+
   if (!fromPosition || !toPosition) {
     return null
   }
 
-  const structure = sourceDataTree?.stats?.treeStructure ?? 'single'
+  const currentStructure = sourceDataTree?.stats?.treeStructure
+
+  if (currentStructure) {
+    previousStructure.current = currentStructure
+  }
+
+  const visibleStructure = currentStructure ?? previousStructure.current
 
   return (
     <>
       <WirePortal>
-        <Wire start={fromPosition} end={toPosition} structure={structure} />
+        <Wire start={fromPosition} end={toPosition} structure={visibleStructure} />
       </WirePortal>
       <WiresMaskPortal>
-        <Wire start={fromPosition} end={toPosition} structure={structure} drawMask />
+        <Wire start={fromPosition} end={toPosition} structure={visibleStructure} drawMask />
       </WiresMaskPortal>
     </>
   )
