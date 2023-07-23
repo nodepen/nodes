@@ -11,7 +11,7 @@
   "dependencies": {
     "@nodepen/core": "^2.0.0",
     "@nodepen/nodes": "^2.0.0",
-    "@tanstack/react-query": "^4.29.19",
+    "@tanstack/react-query": "^4.32.0",
     "graphql": "^16.7.1",
     "graphql-tag": "^2.12.6",
     "next": "13.4.9",
