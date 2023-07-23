@@ -59,11 +59,24 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
           {template.description}
         </p>
       </MenuSection>
-      <MenuSection title={`${valueCount} value${valueCount === 1 ? '' : 's'}`} icon={dataIcon} border>
-        <p className="np-mt-1 np-mb-2 np-font-sans np-font-medius np-text-dark np-text-xs">
-          {getDataTreeSummary(values)}
-        </p>
-        {values ? <DataTreePreview dataTree={values} /> : null}
+      <MenuSection
+        title={values ? `${valueCount} value${valueCount === 1 ? '' : 's'}` : 'Loading...'}
+        icon={dataIcon}
+        border
+      >
+        <div
+          className="np-w-full np-transition-all np-duration-300 np-overflow-hidden"
+          style={{ maxHeight: values ? (values.stats.treeStructure === 'single' ? 128 : 512) : 20 }}
+        >
+          {values ? (
+            <>
+              <p className="np-mt-1 np-mb-2 np-font-sans np-font-medius np-text-dark np-text-xs">
+                {getDataTreeSummary(values)}
+              </p>
+              <DataTreePreview dataTree={values} />
+            </>
+          ) : null}
+        </div>
       </MenuSection>
     </div>
   )
