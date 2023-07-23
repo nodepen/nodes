@@ -1,6 +1,7 @@
 import type * as NodePen from '@nodepen/core'
 import { useDispatch, useStore } from '$'
-import { useCallback, useEffect, useRef, useDeferredValue } from 'react'
+import { useCallback, useEffect } from 'react'
+import { useAsyncMemo } from '@/hooks'
 
 /**
  * Given a reference to a specific port, return its user-defined values or its current solution values.
@@ -9,67 +10,78 @@ import { useCallback, useEffect, useRef, useDeferredValue } from 'react'
  * @param portInstanceId
  */
 export const usePortValues = (nodeInstanceId: string, portInstanceId: string): NodePen.DataTree | null => {
-  const getPortSolutionData = useStore((state) => state.callbacks.getPortSolutionData)
-
   const { apply } = useDispatch()
 
   // The solution id associated with the latest values
   const solutionId = useStore((state) => state.solution.solutionId)
+  // TODO: Track solution lifecycle status to handle case where we inspect while a solution is running.
 
-  const getLatestValues = useCallback(async (): Promise<NodePen.DataTree> => {
-    //
+  const getLatestValues = useCallback(async (): Promise<NodePen.DataTree | null> => {
+    // Use locally-set values, if available
+    const documentNode = useStore.getState().document.nodes[nodeInstanceId]
+    const documentNodeValues = documentNode?.values?.[portInstanceId]
+
+    if (documentNodeValues) {
+      return documentNodeValues
+    }
+
+    // Use previously cached solution values, if available
+    const nodeSolutionData = useStore
+      .getState()
+      .solution.nodeSolutionData.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
+    const portSolutionData = nodeSolutionData?.portSolutionData?.find(({ portInstanceId: id }) => id === portInstanceId)
+    const portSolutionDataValues = portSolutionData?.dataTree
+
+    if (portSolutionDataValues) {
+      return portSolutionDataValues
+    }
+
+    // Fetch values with provided callback, if possible
+    const { getPortSolutionData } = useStore.getState().callbacks
+
+    if (!getPortSolutionData) {
+      return null
+    }
+
+    const { dataTree } = await getPortSolutionData(nodeInstanceId, portInstanceId)
+
+    return dataTree
   }, [solutionId, nodeInstanceId, portInstanceId])
 
-  // Values set directly on input ports in the current document
-  const localValues = useStore((state) => {
-    const node = state.document.nodes[nodeInstanceId]
+  const { value, isLoading } = useAsyncMemo(`${solutionId}:${nodeInstanceId}:${portInstanceId}`, getLatestValues)
 
-    if (!node) {
-      return null
+  // Cache value in store
+  useEffect(() => {
+    if (!value) {
+      return
     }
 
-    const localValues = node.values[portInstanceId]
+    const nodeSolutionData = useStore
+      .getState()
+      .solution.nodeSolutionData.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
 
-    if (!localValues || Object.keys(localValues).length === 0) {
-      return null
+    if (!nodeSolutionData) {
+      console.log(`🐍 Attempted to cache results for node that does not exist: [${nodeInstanceId}]`)
+      return
     }
 
-    return localValues
-  })
+    const portSolutionData = nodeSolutionData.portSolutionData.find(({ portInstanceId: id }) => id === portInstanceId)
 
-  // Node solution data as-computed and stored in the current solution
-  const nodeSolutionData = useStore((state) => {
-    return state.solution.nodeSolutionData.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
-  })
+    if (portSolutionData) {
+      // Value has already been cached
+      return
+    }
 
-  if (!nodeSolutionData) {
-    return null
-  }
-
-  // Port solution data as-computed and stored in the current solution
-  const portSolutionData = nodeSolutionData?.portSolutionData.find(({ portInstanceId: id }) => id === portInstanceId)
-
-  if (!portSolutionData && !!getPortSolutionData) {
-    const requestSolutionId = solutionId
-
-    getPortSolutionData(nodeInstanceId, portInstanceId).then((result) => {
-      apply((state) => {
-        if (state.solution.solutionId !== requestSolutionId) {
-          return
-        }
-
-        const currentNodeSolutionData = state.solution.nodeSolutionData.find(
-          ({ nodeInstanceId: id }) => id === nodeInstanceId
-        )
-
-        if (!currentNodeSolutionData) {
-          return
-        }
-
-        currentNodeSolutionData.portSolutionData.push(result)
-      })
+    // Cache value in store
+    apply((state) => {
+      state.solution.nodeSolutionData
+        .find(({ nodeInstanceId: id }) => id === nodeInstanceId)
+        ?.portSolutionData?.push({
+          portInstanceId,
+          dataTree: value,
+        })
     })
-  }
+  }, [value])
 
-  return localValues ?? portSolutionData?.dataTree ?? null
+  return value
 }
