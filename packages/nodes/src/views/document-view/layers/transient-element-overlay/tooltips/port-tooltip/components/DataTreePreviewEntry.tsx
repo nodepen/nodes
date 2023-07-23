@@ -11,7 +11,9 @@ export const DataTreePreviewEntry = ({ entryKey, entryValue, showBackground = fa
   const valueString = typeof entryValue === 'string' ? entryValue : entryValue.description
 
   return entryKey === undefined ? (
-    <div className="np-p-1 np-pb-0 np-font-semibold -np-translate-y-px">{valueString}</div>
+    <div className="np-p-1 np-pb-0 np-font-semibold -np-translate-y-px np-whitespace-nowrap np-overflow-hidden">
+      {valueString}
+    </div>
   ) : (
     <>
       <div
