@@ -1,6 +1,6 @@
 import type * as NodePen from '@nodepen/core'
 import { useDispatch, useStore } from '$'
-import { useEffect, useRef, useDeferredValue } from 'react'
+import { useCallback, useEffect, useRef, useDeferredValue } from 'react'
 
 /**
  * Given a reference to a specific port, return its user-defined values or its current solution values.
@@ -15,6 +15,10 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
 
   // The solution id associated with the latest values
   const solutionId = useStore((state) => state.solution.solutionId)
+
+  const getLatestValues = useCallback(async (): Promise<NodePen.DataTree> => {
+    //
+  }, [solutionId, nodeInstanceId, portInstanceId])
 
   // Values set directly on input ports in the current document
   const localValues = useStore((state) => {
