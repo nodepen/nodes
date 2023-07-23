@@ -9,7 +9,7 @@ export type NodesAppState = {
   templates: {
     [templateId: string]: NodePen.NodeTemplate
   }
-  solution: NodePen.SolutionData
+  solution: NodePen.DocumentSolutionData
   camera: {
     /** container div innerWidth / innerHeight in screen space */
     aspect: number
@@ -112,13 +112,21 @@ export type NodesAppState = {
       }
     }
   }
+  lifecycle: {
+    solution: 'expired' | 'ready'
+  }
+  cache: {
+    portSolutionData: {
+      [cacheKey: string]: NodePen.PortSolutionData
+    }
+  }
   callbacks: NodesAppCallbacks
 }
 
 export type NodesAppCallbacks = {
-  onDocumentChange?: (state: NodesAppState) => void
   onExpireSolution?: (state: NodesAppState) => void
   onFileUpload?: (state: NodesAppState) => Promise<void> | void
+  getPortSolutionData?: (nodeInstanceId: string, portInstanceId: string) => Promise<NodePen.PortSolutionData | null>
 }
 
 export const initialState: NodesAppState = {
@@ -132,12 +140,11 @@ export const initialState: NodesAppState = {
   },
   templates: freeze({}),
   solution: freeze({
-    id: 'initial',
-    manifest: {
-      runtimeMessages: {},
-      streamObjectIds: [],
+    solutionId: 'initial',
+    documentRuntimeData: {
+      durationMs: 0,
     },
-    values: {},
+    nodeSolutionData: [],
   }),
   camera: {
     aspect: 1.5,
@@ -192,12 +199,11 @@ export const initialState: NodesAppState = {
       },
     },
   },
-  callbacks: {
-    onDocumentChange: () => {
-      console.log('From library!')
-    },
-    onExpireSolution: () => {
-      console.log('From library!')
-    },
+  lifecycle: {
+    solution: 'expired',
   },
+  cache: {
+    portSolutionData: {},
+  },
+  callbacks: {},
 }

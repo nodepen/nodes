@@ -2,6 +2,8 @@
 
 import type React from 'react'
 import { useCallback, useState } from 'react'
+import { print } from 'graphql'
+import gql from 'graphql-tag'
 import type * as NodePen from '@nodepen/core'
 import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
 import type { NodesAppState, NodesAppCallbacks } from '@nodepen/nodes'
@@ -19,11 +21,9 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   }
 
   const [document, setDocument] = useState(initialDocument)
-  const [solution, setSolution] = useState<NodePen.SolutionData>()
+  const [solution, setSolution] = useState<NodePen.DocumentSolutionData>()
 
-  const handleDocumentChange = useCallback((state: NodesAppState): void => {
-    console.log('Callback from app!')
-  }, [])
+  const [streamRootObjectId, setStreamRootObjectId] = useState<string>()
 
   const handleFileUpload = useCallback(async (state: NodesAppState): Promise<void> => {
     const file = state.layout.fileUpload.activeFile
@@ -44,64 +44,230 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   }, [])
 
   const handleExpireSolution = useCallback((state: NodesAppState): void => {
-    const solutionId = state.solution.id
+    const solutionId = state.solution.solutionId
 
-    const fetchSolution = async (): Promise<NodePen.SolutionData> => {
+    const requestSolution = async (): Promise<string> => {
       const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
         method: 'POST',
         body: JSON.stringify({ solutionId, document: state.document }),
       })
 
-      const data = await response.json()
-
-      return data
+      return await response.text()
     }
 
-    const sanitize = (data: NodePen.SolutionData): NodePen.SolutionData => {
-      data.id = solutionId
+    const fetchSolutionRuntimeData = async (rootObjectId: string): Promise<NodePen.DocumentSolutionData> => {
+      const query = gql`
+        query GetObjects($streamId: String!, $objectId: String!) {
+          stream(id: $streamId) {
+            object(id: $objectId) {
+              data
+            }
+          }
+        }
+      `
 
-      for (const nodeData of Object.values(data.values)) {
-        for (const portData of Object.values(nodeData)) {
-          for (const branchData of Object.values(portData)) {
-            for (const dataTreeValue of branchData) {
-              const validKeys = ['type', 'value']
+      const response = await fetch(`${stream.url}/graphql`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${stream.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: print(query),
+          operationName: 'GetObjects',
+          variables: {
+            streamId: stream.id,
+            objectId: rootObjectId,
+          },
+        }),
+      })
 
-              for (const key of Object.keys(dataTreeValue)) {
-                if (validKeys.includes(key)) {
-                  continue
+      const { data } = await response.json()
+
+      const { data: streamSolutionData } = data.stream.object
+
+      const documentSolutionData: NodePen.DocumentSolutionData = {
+        solutionId: streamSolutionData['SolutionData']['SolutionId'],
+        documentRuntimeData: {
+          durationMs: streamSolutionData['SolutionData']['DocumentRuntimeData']['DurationMs'],
+        },
+        nodeSolutionData: [],
+      }
+
+      for (const entry of streamSolutionData['SolutionData']['NodeSolutionData']) {
+        const nodeSolutionData: NodePen.NodeSolutionData = {
+          nodeInstanceId: entry['NodeInstanceId'],
+          nodeRuntimeData: {
+            durationMs: entry['NodeRuntimeData']['DurationMs'],
+            messages: entry['NodeRuntimeData']['Messages'].map((message: any) => ({
+              level: message['Level'],
+              message: message['Message'],
+            })),
+          },
+          portSolutionData: [],
+        }
+
+        documentSolutionData.nodeSolutionData.push(nodeSolutionData)
+      }
+
+      return documentSolutionData
+    }
+
+    requestSolution()
+      .then((rootObjectId) => {
+        setStreamRootObjectId(rootObjectId)
+        return fetchSolutionRuntimeData(rootObjectId)
+      })
+      .then((documentSolutionData) => {
+        console.log(documentSolutionData)
+        setSolution(documentSolutionData)
+      })
+  }, [])
+
+  const fetchPortSolutionData = useCallback(
+    async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData | null> => {
+      const query = gql`
+        query GetObjects(
+          $streamId: String!
+          $objectId: String!
+          $orderBy: JSONObject!
+          $portSolutionDataQuery: [JSONObject!]
+          $dataTreeBranchTypeQuery: [JSONObject!]
+          $dataTreeValueTypeQuery: [JSONObject!]
+        ) {
+          stream(id: $streamId) {
+            object(id: $objectId) {
+              data
+              # NodePen.Converters.NodePenPortSolutionData
+              children(query: $portSolutionDataQuery) {
+                objects {
+                  data
+                  # NodePen.Converters.NodePenDataTreeBranch
+                  children(query: $dataTreeBranchTypeQuery, orderBy: $orderBy) {
+                    cursor
+                    objects {
+                      data
+                      # NodePen.Converters.NodePenDataTreeValue
+                      children(
+                        query: $dataTreeValueTypeQuery
+                        orderBy: $orderBy
+                        select: ["Type", "Description", "Order"]
+                      ) {
+                        objects {
+                          data
+                        }
+                      }
+                    }
+                  }
                 }
-
-                const proxy = dataTreeValue as any
-
-                delete proxy[key]
               }
             }
           }
         }
+      `
+
+      const response = await fetch(`${stream.url}/graphql`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${stream.token}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          query: print(query),
+          operationName: 'GetObjects',
+          variables: {
+            streamId: stream.id,
+            objectId: streamRootObjectId,
+            orderBy: {
+              field: 'Order',
+              direction: 'asc',
+            },
+            portSolutionDataQuery: [
+              {
+                field: 'PortInstanceId',
+                operator: '=',
+                value: portInstanceId,
+              },
+            ],
+            dataTreeBranchTypeQuery: [
+              {
+                field: 'speckle_type',
+                operator: '=',
+                value: 'NodePen.Converters.NodePenDataTreeBranch',
+              },
+            ],
+            dataTreeValueTypeQuery: [
+              {
+                field: 'speckle_type',
+                operator: '=',
+                value: 'NodePen.Converters.NodePenDataTreeValue',
+              },
+            ],
+          },
+        }),
+      })
+
+      const data = await response.json()
+
+      const { data: portSolutionDataResponse, children: portSolutionDataChildren } =
+        data.data.stream.object.children.objects[0] ?? {}
+
+      if (!portSolutionDataResponse) {
+        return null
       }
 
-      return data
-    }
+      const statsResponse = portSolutionDataResponse['DataTree']['Stats']
 
-    fetchSolution()
-      .then((data) => {
-        setSolution(sanitize(data))
-      })
-      .catch((e) => {
-        console.log(e)
-      })
-  }, [])
+      const portSolutionData: NodePen.PortSolutionData = {
+        portInstanceId,
+        dataTree: {
+          stats: {
+            branchCount: statsResponse['BranchCount'],
+            branchValueCountDomain: statsResponse['BranchValueCountDomain'],
+            treeStructure: statsResponse['TreeStructure'],
+            valueCount: statsResponse['ValueCount'],
+            valueTypes: statsResponse['ValueTypes'],
+          },
+          branches: [],
+        },
+      }
+
+      for (const { data: branchResponse, children: branchChildren } of portSolutionDataChildren.objects) {
+        const dataTreeBranch: NodePen.DataTreeBranch = {
+          order: branchResponse['Order'],
+          path: branchResponse['Path'],
+          values: [],
+        }
+
+        for (const { data: valueResponse } of branchChildren.objects) {
+          const dataTreeValue: NodePen.DataTreeValue = {
+            type: valueResponse['Type'],
+            description: valueResponse['Description'],
+            order: valueResponse['Order'],
+          }
+
+          dataTreeBranch.values.push(dataTreeValue)
+        }
+
+        portSolutionData.dataTree.branches.push(dataTreeBranch)
+      }
+
+      return portSolutionData
+    },
+
+    [stream.id, streamRootObjectId]
+  )
 
   const callbacks: NodesAppCallbacks = {
-    onDocumentChange: handleDocumentChange,
     onExpireSolution: handleExpireSolution,
     onFileUpload: handleFileUpload,
+    getPortSolutionData: fetchPortSolutionData,
   }
 
   return (
     <NodesApp document={document} templates={templates} solution={solution} {...callbacks}>
       <DocumentView editable />
-      <SpeckleModelView stream={stream} />
+      <SpeckleModelView stream={stream} rootObjectId={streamRootObjectId} />
     </NodesApp>
   )
 }

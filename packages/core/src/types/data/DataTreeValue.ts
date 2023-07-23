@@ -1,8 +1,9 @@
 import type { DataTreeValueType } from './DataTreeValueType'
 
-export type DataTreeValue = Readonly<{
-  type: DataTreeValueType
-  description: string
-  value?: unknown // Rhino JSON?
-  geometry?: unknown // Speckle
-}>
+export type DataTreeValue = {
+  readonly type: DataTreeValueType
+  readonly description: string
+  readonly order: number
+  readonly value?: string
+  readonly geometry?: unknown
+}

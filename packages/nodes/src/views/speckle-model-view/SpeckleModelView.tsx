@@ -2,7 +2,6 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { Viewer, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
-import { useStore } from '$'
 
 type SpeckleModelViewProps = {
   stream: {
@@ -10,11 +9,10 @@ type SpeckleModelViewProps = {
     url: string
     token: string
   }
+  rootObjectId?: string
 }
 
-const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement | null => {
-  const objectIds = useStore((state) => state.solution.manifest.streamObjectIds)
-
+const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): React.ReactElement | null => {
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -44,7 +42,7 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
     })
 
     viewer.on(ViewerEvent.LoadProgress, (arg) => {
-      console.log(arg)
+      // console.log(arg)
     })
 
     return () => {
@@ -55,25 +53,19 @@ const SpeckleModelView = ({ stream }: SpeckleModelViewProps): React.ReactElement
   const refreshObjects = useCallback(async () => {
     const viewer = viewerRef.current
 
-    if (!viewer) {
-      return
-    }
-
-    const objectId = objectIds[0]
-
-    if (!objectId) {
+    if (!viewer || !rootObjectId) {
       return
     }
 
     await viewer.unloadAll()
-    await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${objectId}`, stream.token)
-  }, [objectIds])
+    await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
+  }, [rootObjectId])
 
   const requestRefreshObjects = useDeferCallback(refreshObjects)
 
   useEffect(() => {
     requestRefreshObjects()
-  }, [objectIds])
+  }, [rootObjectId])
 
   return (
     <Layer id="np-model-layer" position={viewPosition ?? 1} z={10}>

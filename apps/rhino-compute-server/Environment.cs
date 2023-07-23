@@ -2,7 +2,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Rhino.Compute.Kits;
+using NodePen.Converters.Kits;
 
 namespace Rhino.Compute
 {
@@ -12,7 +12,7 @@ namespace Rhino.Compute
     public static string SpeckleToken { get; set; } = "";
     public static string SpeckleStreamId { get; set; } = "";
 
-    public static NodePenRhinoConverter Converter { get; set; } = new NodePenRhinoConverter();
+    public static NodePenDocumentSolutionDataKit Converter { get; set; } = new NodePenDocumentSolutionDataKit();
 
     public static void Configure()
     {

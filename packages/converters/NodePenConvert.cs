@@ -280,14 +280,15 @@ namespace NodePen.Converters
                                     Console.WriteLine($"🐍 Node [{node.InstanceId}] is missing values for input port [{inputInstanceId}]");
                                 }
 
-                                if (values.Keys.Count == 0)
+                                if (values.Branches.Count == 0)
                                 {
                                     // Node has no values to assign.
                                     continue;
                                 }
 
                                 // TODO: Handle more than single values
-                                var value = values["{0}"].FirstOrDefault();
+                                var firstPortBranch = values.Branches.FirstOrDefault();
+                                var value = firstPortBranch.Values.FirstOrDefault();
 
                                 if (value == null)
                                 {

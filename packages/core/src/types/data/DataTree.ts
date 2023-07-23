@@ -1,6 +1,7 @@
-import type { DataTreePath } from './DataTreePath'
-import type { DataTreeValue } from './DataTreeValue'
+import type { DataTreeBranch } from './DataTreeBranch'
+import type { DataTreeStats } from './DataTreeStats'
 
 export type DataTree = {
-  [key: DataTreePath]: DataTreeValue[]
+  branches: DataTreeBranch[]
+  stats: DataTreeStats
 }

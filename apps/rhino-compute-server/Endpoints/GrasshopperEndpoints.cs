@@ -7,12 +7,10 @@ using Nancy.Routing;
 using NodePen.Converters;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using Speckle.Core.Api;
 using Speckle.Core.Credentials;
 using Speckle.Core.Models;
-using Objects.Geometry;
 using Speckle.Newtonsoft.Json;
 using NJsonConvert = Newtonsoft.Json.JsonConvert;
 
@@ -28,21 +26,6 @@ namespace Rhino.Compute.Endpoints
       Post["/grasshopper/id/solution"] = _ => SolveGrasshopperDocument(Context);
     }
 
-    private string SID(string id)
-    {
-      return $"[{NodePenConvert.TruncateId(id)}]";
-    }
-
-    private void Log(string prefix, string id, string message, int tabCount = 0)
-    {
-      return;
-    }
-
-    private void Log(string prefix, Guid id, string message, int tabCount = 0)
-    {
-      Log(prefix, id.ToString(), message, tabCount);
-    }
-
     public class NodePenSolutionRequestBody
     {
       [JsonProperty("solutionId")]
@@ -52,111 +35,81 @@ namespace Rhino.Compute.Endpoints
       public NodePenDocument Document { get; set; }
     }
 
-    public class NodePenSolutionManifest
+    public class NodePenDocumentSpeckleStreamData : Base
     {
-      [JsonProperty("solutionId")]
-      public string SolutionId { get; set; }
-
-      [JsonProperty("solutionData")]
-      public NodePenSolutionData SolutionData { get; set; }
-
-      [JsonProperty("streamObjectIds")]
-      public List<string> StreamObjectIds { get; set; } = new List<string>();
-    }
-
-    public class NodePenSolutionData : Base
-    {
-      [JsonProperty("id")]
-      public string Id { get; set; }
-
-      [JsonProperty("manifest")]
-      public NodePenSolutionDataManifest Manifest { get; set; } = new NodePenSolutionDataManifest();
-
-      [JsonProperty("values")]
-      public NodePenSolutionDataSolutionValues Values { get; set; } = new NodePenSolutionDataSolutionValues();
-    }
-
-    public class NodePenSolutionDataSolutionValues : Dictionary<string, Dictionary<string, NodePenDataTree>>
-    {
-
-    }
-
-    public class NodePenSolutionDataManifest : Base
-    {
-      [JsonProperty("runtimeMessages")]
-      public Dictionary<string, string> RuntimeMessages { get; set; } = new Dictionary<string, string>();
-
-      [JsonProperty("streamObjectIds")]
-      public List<string> StreamObjectIds = new List<string>();
-    }
-
-    public class NodePenDocumentStream : Base
-    {
-      public string Id { get; set; }
-
-      public string Name { get; set; }
-
-      [DetachProperty]
       public NodePenDocument Document { get; set; }
 
-      [DetachProperty]
-      public NodePenSolutionData SolutionData { get; set; }
+      public NodePenDocumentSolutionData SolutionData { get; set; }
+
     }
 
     public Response SolveGrasshopperDocument(NancyContext context)
     {
+      // Parse request body
       string body = context.Request.Body.AsString();
       NodePenSolutionRequestBody requestData = NJsonConvert.DeserializeObject<NodePenSolutionRequestBody>(body);
 
-      Stopwatch timer = new Stopwatch();
-
-      timer.Start();
-
       // Create Grasshopper document
       GH_Archive archive = NodePenConvert.Deserialize<GH_Archive>(requestData.Document);
-
       GH_Document definition = new GH_Document();
       _ = archive.ExtractObject(definition, "definition");
 
-      Console.WriteLine(definition.ObjectCount);
+      definition.Enabled = true;
+      definition.Profiler = GH_ProfilerMode.Processor;
 
       // Solve Grasshopper document
-      definition.Enabled = true;
       definition.NewSolution(true, GH_SolutionMode.Silent);
 
-      timer.Stop();
+      // Collect document solution data
+      NodePenDocumentSolutionData documentSolutionData = new NodePenDocumentSolutionData(requestData.SolutionId);
 
-      // Extract solution data
-      Log(">>", requestData.Document.Id, "Document");
-      Log(" >", requestData.Document.Id, $"Created and solved document in {timer.ElapsedMilliseconds}ms");
+      documentSolutionData.DocumentRuntimeData.DurationMs = definition.SolutionSpan.Milliseconds;
 
-      NodePenSolutionData solutionData = new NodePenSolutionData();
-
+      // Collect node solution data
       foreach (IGH_DocumentObject documentObject in definition.Objects)
       {
-        Log(">>", documentObject.InstanceGuid, "Document Object", 1);
-
         switch (documentObject)
         {
           case IGH_Component componentInstance:
             {
-              Log(" >", componentInstance.InstanceGuid, "IGH_Component", 1);
-              Log(" >", componentInstance.InstanceGuid, componentInstance.Name, 1);
-              Dictionary<string, NodePenDataTree> componentSolutionData = new Dictionary<string, NodePenDataTree>();
+              // Convert Grasshopper component solution data to node solution data
+              NodePenNodeSolutionData nodeSolutionData = new NodePenNodeSolutionData(componentInstance.InstanceGuid.ToString());
 
-              Log(" >", componentInstance.InstanceGuid, $"{componentInstance.Params.Input.Count} input params", 1);
-              Log(" >", componentInstance.InstanceGuid, $"{componentInstance.Params.Output.Count} output params", 1);
+              nodeSolutionData.NodeRuntimeData.DurationMs = componentInstance.ProcessorTime.TotalMilliseconds;
 
+              foreach (string runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+              {
+                NodePenNodeRuntimeDataMessage nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
+                {
+                  Level = "error",
+                  Message = runtimeMessage
+                };
+
+                nodeSolutionData.NodeRuntimeData.Messages.Add(nodeRuntimeMessage);
+              }
+
+              foreach (string runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
+              {
+                NodePenNodeRuntimeDataMessage nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
+                {
+                  Level = "warn",
+                  Message = runtimeMessage
+                };
+
+                nodeSolutionData.NodeRuntimeData.Messages.Add(nodeRuntimeMessage);
+              }
+
+              // Collect child param solution data
               List<IGH_Param> componentParams = new List<IGH_Param>();
               componentParams.AddRange(componentInstance.Params.Input);
               componentParams.AddRange(componentInstance.Params.Output);
 
               foreach (IGH_Param componentParam in componentParams)
               {
-                Log(">>", componentParam.InstanceGuid, "IGH_Param", 2);
-                Log(" >", componentParam.InstanceGuid, $"Found {componentParam.VolatileData.PathCount} branch(es) of results.", 2);
-                NodePenDataTree paramSolutionData = new NodePenDataTree();
+                // Convert Grasshopper param solution data to port solution data
+                NodePenPortSolutionData portSolutionData = new NodePenPortSolutionData(componentParam.InstanceGuid.ToString());
 
+                // Collect data tree branches and their values
                 for (int i = 0; i < componentParam.VolatileData.PathCount; i++)
                 {
                   Grasshopper.Kernel.Data.GH_Path currentPath = componentParam.VolatileData.get_Path(i);
@@ -164,43 +117,51 @@ namespace Rhino.Compute.Endpoints
 
                   string branchKey = $"{{{string.Join(";", currentPath.Indices.Select((idx) => idx.ToString()))}}}";
 
-                  Log(">>", branchKey, $"Branch with {currentBranch.Count} entries", 3);
-
-                  List<NodePenDataTreeValue> branchSolutionData = new List<NodePenDataTreeValue>();
-
-                  foreach (object entry in currentBranch)
+                  NodePenDataTreeBranch branchSolutionData = new NodePenDataTreeBranch()
                   {
+                    Order = i,
+                    Path = branchKey,
+                  };
+
+                  for (int j = 0; j < currentBranch.Count; j++)
+                  {
+                    var entry = currentBranch[j];
+
                     if (!(entry is IGH_Goo goo))
                     {
                       // `goo` appears to be null, not absent, on invalid solutions
                       continue;
                     }
 
-                    var entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
-                    branchSolutionData.Add(entrySolutionData);
+                    NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
+
+                    entrySolutionData.Order = j;
+
+                    branchSolutionData.Values.Add(entrySolutionData);
                   }
 
-                  paramSolutionData.Add(branchKey, branchSolutionData);
-                  Log("--", branchKey, $"Wrote {branchSolutionData.Count} items to branch solution data.", 3);
+                  portSolutionData.DataTree.Branches.Add(branchSolutionData);
                 }
 
-                componentSolutionData.Add(componentParam.InstanceGuid.ToString(), paramSolutionData);
-                Log("--", componentParam.InstanceGuid, $"Wrote {paramSolutionData.Keys.Count} branches to param solution data.", 2);
+                // Finalize port solution data
+                portSolutionData.DataTree.ComputeStats();
+
+                // Add port solution data to node solution data
+                nodeSolutionData.PortSolutionData.Add(portSolutionData);
               }
 
-              solutionData.Values.Add(componentInstance.InstanceGuid.ToString(), componentSolutionData);
-              Log("--", componentInstance.InstanceGuid, $"Wrote {componentSolutionData.Keys.Count} params to component solution data.", 1);
+              // Add node solution data to document solution data
+              documentSolutionData.NodeSolutionData.Add(nodeSolutionData);
+
               break;
             }
           default:
             {
-              Log("XX", documentObject.InstanceGuid, $"Unhandled object type [{documentObject.GetType()}]", 1);
+              Console.WriteLine($"Unhandled object type [{documentObject.GetType()}]");
               break;
             }
         }
       }
-
-      Log("--", requestData.Document.Id, $"Wrote {solutionData.Values.Keys.Count} components to document solution data.");
 
       // Commit updated document and solution data to stream
       string streamId = Environment.SpeckleStreamId;
@@ -220,41 +181,30 @@ namespace Rhino.Compute.Endpoints
         }
       };
 
-      NodePenDocumentStream streamData = new NodePenDocumentStream()
+      NodePenDocumentSpeckleStreamData documentStreamData = new NodePenDocumentSpeckleStreamData()
       {
-        Id = requestData.Document.Id,
-        Name = "Test Stream Name",
         Document = requestData.Document,
-        SolutionData = solutionData
+        SolutionData = documentSolutionData,
       };
 
       string commitId = Helpers.Send(
           stream: $"{Environment.SpeckleEndpoint}/streams/{streamId}/branches/{branchName}",
-          data: streamData,
-          message: $"Solution ${SID(requestData.SolutionId)}",
+          data: documentStreamData,
+          message: $"Solution [{documentSolutionData.SolutionId}]",
           account: account,
-          sourceApplication: "nodepen"
+          sourceApplication: "NodePen"
       ).Result;
+
+      Console.WriteLine("Send response value:");
+      Console.WriteLine(commitId);
 
       // Serialize and return response
       Client client = new Client(account);
 
-      Branch streamBranch = client.BranchGet(streamId, branchName, 1).Result;
+      Commit commit = client.CommitGet(streamId, commitId).Result;
+      string rootObjectId = commit.referencedObject;
 
-      Console.WriteLine("Solution:");
-
-      foreach (Commit item in streamBranch.commits.items)
-      {
-        Console.WriteLine("Object:");
-        Console.WriteLine(item.id);
-        Console.WriteLine(item.referencedObject);
-      }
-      string objectId = streamBranch.commits.items[0].referencedObject;
-
-      solutionData["Id"] = requestData.SolutionId;
-      solutionData.Manifest.StreamObjectIds.Add(objectId);
-
-      return Response.AsJson(solutionData);
+      return Response.AsText(rootObjectId);
     }
 
     public Response HandleGrasshopperFileUpload(NancyContext context)
