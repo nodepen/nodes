@@ -48,6 +48,8 @@ export const NodesApp = ({
       }
 
       state.solution = freeze(solution)
+
+      state.lifecycle.solution = 'ready'
     })
   }, [solution?.solutionId])
 

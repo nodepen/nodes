@@ -112,6 +112,9 @@ export type NodesAppState = {
       }
     }
   }
+  lifecycle: {
+    solution: 'expired' | 'ready'
+  }
   callbacks: NodesAppCallbacks
 }
 
@@ -190,6 +193,9 @@ export const initialState: NodesAppState = {
         mode: null,
       },
     },
+  },
+  lifecycle: {
+    solution: 'expired',
   },
   callbacks: {},
 }

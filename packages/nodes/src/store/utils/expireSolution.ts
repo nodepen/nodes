@@ -11,6 +11,9 @@ export const expireSolution = (state: NodesAppState): void => {
     nodeSolutionData: [],
   }
 
+  // Update solution lifecycle flags
+  state.lifecycle.solution = 'expired'
+
   // Fire registered callback
   state.callbacks.onExpireSolution?.(state)
 }

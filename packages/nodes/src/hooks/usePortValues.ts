@@ -13,7 +13,12 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
   const { apply } = useDispatch()
 
   // The solution id associated with the latest values
-  const solutionId = useStore((state) => state.solution.solutionId)
+  const { solutionId, solutionStatus } = useStore((state) => {
+    return {
+      solutionId: state.solution.solutionId,
+      solutionStatus: state.lifecycle.solution,
+    }
+  })
   // TODO: Track solution lifecycle status to handle case where we inspect while a solution is running.
 
   const getLatestValues = useCallback(async (): Promise<NodePen.DataTree | null> => {
@@ -55,7 +60,10 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     return dataTree
   }, [solutionId, nodeInstanceId, portInstanceId])
 
-  const { value, isLoading } = useAsyncMemo(`${solutionId}:${nodeInstanceId}:${portInstanceId}`, getLatestValues)
+  const { value, isLoading } = useAsyncMemo(
+    `${solutionId}:${solutionStatus}:${nodeInstanceId}:${portInstanceId}`,
+    getLatestValues
+  )
 
   // Cache value in store
   useEffect(() => {
