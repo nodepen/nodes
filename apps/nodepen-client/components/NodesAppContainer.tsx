@@ -124,22 +124,34 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
       })
   }, [])
 
-  const handleGetPortSolutionData = useCallback(
+  const fetchPortSolutionData = useCallback(
     async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData> => {
       const query = gql`
-        query GetObjects($streamId: String!, $objectId: String!) {
+        query GetObjects(
+          $streamId: String!
+          $objectId: String!
+          $portSolutionDataQuery: [JSONObject!]
+          $dataTreeBranchTypeQuery: [JSONObject!]
+          $dataTreeValueTypeQuery: [JSONObject!]
+        ) {
           stream(id: $streamId) {
             object(id: $objectId) {
               data
-              # NodePenPortSolutionData queried by specific node & port reference
-              # Do: speckle_type, NodeInstanceId, PortInstanceId
+              # NodePen.Converters.NodePenPortSolutionData
               children(query: $portSolutionDataQuery) {
                 objects {
-                  # NodePenDataTreeBranch ordered by Order
-                  children(orderBy: ["Order"]) {
-                    totalCount
+                  # NodePen.Converters.NodePenDataTreeBranch
+                  children(query: $dataTreeBranchTypeQuery) {
                     cursor
-                    data # The data we want
+                    objects {
+                      data
+                      # NodePen.Converters.NodePenDataTreeValue
+                      children(query: $dataTreeValueTypeQuery) {
+                        objects {
+                          data
+                        }
+                      }
+                    }
                   }
                 }
               }
@@ -160,9 +172,50 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           variables: {
             streamId: stream.id,
             objectId: streamRootObjectId,
+            portSolutionDataQuery: [
+              {
+                field: 'PortInstanceId',
+                operator: '=',
+                value: portInstanceId,
+              },
+            ],
+            dataTreeBranchTypeQuery: [
+              {
+                field: 'speckle_type',
+                operator: '=',
+                value: 'NodePen.Converters.NodePenDataTreeBranch',
+              },
+            ],
+            dataTreeValueTypeQuery: [
+              {
+                field: 'speckle_type',
+                operator: '=',
+                value: 'NodePen.Converters.NodePenDataTreeValue',
+              },
+            ],
           },
         }),
       })
+
+      const data = await response.json()
+
+      console.log(data)
+
+      const portSolutionData: NodePen.PortSolutionData = {
+        portInstanceId,
+        dataTree: {
+          stats: {
+            branchCount: 0,
+            branchValueCountDomain: [0, 0],
+            treeStructure: 'single',
+            valueCount: 0,
+            valueTypes: [],
+          },
+          branches: [],
+        },
+      }
+
+      return portSolutionData
     },
 
     [stream.id, streamRootObjectId]
@@ -171,6 +224,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
   const callbacks: NodesAppCallbacks = {
     onExpireSolution: handleExpireSolution,
     onFileUpload: handleFileUpload,
+    getPortSolutionData: fetchPortSolutionData,
   }
 
   return (

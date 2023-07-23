@@ -10,4 +10,7 @@ export const expireSolution = (state: NodesAppState): void => {
     },
     nodeSolutionData: [],
   }
+
+  // Fire registered callback
+  state.callbacks.onExpireSolution?.(state)
 }
