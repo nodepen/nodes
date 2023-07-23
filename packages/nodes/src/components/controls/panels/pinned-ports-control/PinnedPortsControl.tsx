@@ -126,7 +126,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
                     {
                       type: 'number',
                       description: value.toString(),
-                      value: value.toString(),
+                      order: 0,
                     },
                   ],
                 },
@@ -145,12 +145,5 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
         }}
       />
     </div>
-    // <div className="np-mb-2 np-w-full np-flex np-flex-col">
-    //   <h1>{name}</h1>
-    //   <p>
-    //     {nickName} : {typeName}
-    //   </p>
-    //   <p>{valueString}</p>
-    // </div>
   )
 }

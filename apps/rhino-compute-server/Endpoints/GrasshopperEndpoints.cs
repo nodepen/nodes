@@ -123,8 +123,10 @@ namespace Rhino.Compute.Endpoints
                     Path = branchKey,
                   };
 
-                  foreach (object entry in currentBranch)
+                  for (int j = 0; j < currentBranch.Count; j++)
                   {
+                    var entry = currentBranch[j];
+
                     if (!(entry is IGH_Goo goo))
                     {
                       // `goo` appears to be null, not absent, on invalid solutions
@@ -132,6 +134,9 @@ namespace Rhino.Compute.Endpoints
                     }
 
                     NodePenDataTreeValue entrySolutionData = Environment.Converter.ConvertToSpeckle(goo);
+
+                    entrySolutionData.Order = j;
+
                     branchSolutionData.Values.Add(entrySolutionData);
                   }
 

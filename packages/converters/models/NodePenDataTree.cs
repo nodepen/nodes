@@ -90,7 +90,7 @@ namespace NodePen.Converters
         /// The minimum and maximum number of values found in branches in this data tree.
         /// </summary>
         [JsonProperty("branchValueCountDomain")]
-        public List<int> BranchValueCountDomain { get; set; } = new List<int>();
+        public List<int> BranchValueCountDomain { get; set; } = new List<int> { 0, 0 };
 
         /// <summary>
         /// A summary of the shape and number of branches in this data tree.
@@ -160,6 +160,12 @@ namespace NodePen.Converters
     /// </summary>
     public class NodePenDataTreeValue : Base
     {
+
+        /// <summary>
+        /// The position of this value in the list of all values in this branch.
+        /// </summary>
+        [JsonProperty("order")]
+        public int Order { get; set; }
 
         /// <summary>
         /// A string identifier for the native or shared type this value represents.

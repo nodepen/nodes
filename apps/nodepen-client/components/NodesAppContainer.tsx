@@ -140,13 +140,14 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
               # NodePen.Converters.NodePenPortSolutionData
               children(query: $portSolutionDataQuery) {
                 objects {
+                  data
                   # NodePen.Converters.NodePenDataTreeBranch
                   children(query: $dataTreeBranchTypeQuery) {
                     cursor
                     objects {
                       data
                       # NodePen.Converters.NodePenDataTreeValue
-                      children(query: $dataTreeValueTypeQuery) {
+                      children(query: $dataTreeValueTypeQuery, select: ["Type", "Description", "Order"]) {
                         objects {
                           data
                         }
@@ -199,21 +200,47 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
       const data = await response.json()
 
-      console.log(data)
+      const { data: portSolutionDataResponse, children: portSolutionDataChildren } =
+        data.data.stream.object.children.objects[0]
+      const statsResponse = portSolutionDataResponse['DataTree']['Stats']
 
       const portSolutionData: NodePen.PortSolutionData = {
         portInstanceId,
         dataTree: {
           stats: {
-            branchCount: 0,
-            branchValueCountDomain: [0, 0],
-            treeStructure: 'single',
-            valueCount: 0,
-            valueTypes: [],
+            branchCount: statsResponse['BranchCount'],
+            branchValueCountDomain: statsResponse['BranchValueCountDomain'],
+            treeStructure: statsResponse['TreeStructure'],
+            valueCount: statsResponse['ValueCount'],
+            valueTypes: statsResponse['ValueTypes'],
           },
           branches: [],
         },
       }
+
+      for (const { data: branchResponse, children: branchChildren } of portSolutionDataChildren.objects) {
+        const dataTreeBranch: NodePen.DataTreeBranch = {
+          order: branchResponse['Order'],
+          path: branchResponse['Path'],
+          values: [],
+        }
+
+        for (const { data: valueResponse } of branchChildren.objects) {
+          const dataTreeValue: NodePen.DataTreeValue = {
+            type: valueResponse['Type'],
+            description: valueResponse['Description'],
+            order: valueResponse['Order'],
+          }
+
+          dataTreeBranch.values.push(dataTreeValue)
+        }
+
+        dataTreeBranch.values.sort((a, b) => a.order - b.order)
+
+        portSolutionData.dataTree.branches.push(dataTreeBranch)
+      }
+
+      portSolutionData.dataTree.branches.sort((a, b) => a.order - b.order)
 
       return portSolutionData
     },
