@@ -21,7 +21,8 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     const documentNode = useStore.getState().document.nodes[nodeInstanceId]
     const documentNodeValues = documentNode?.values?.[portInstanceId]
 
-    if (documentNodeValues) {
+    if (documentNodeValues && documentNodeValues.stats.treeStructure !== 'empty') {
+      // Return locally-set values
       return documentNodeValues
     }
 
@@ -33,6 +34,7 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     const portSolutionDataValues = portSolutionData?.dataTree
 
     if (portSolutionDataValues) {
+      // Return cached values
       return portSolutionDataValues
     }
 
@@ -40,6 +42,7 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     const { getPortSolutionData } = useStore.getState().callbacks
 
     if (!getPortSolutionData) {
+      // No callback provided
       return null
     }
 

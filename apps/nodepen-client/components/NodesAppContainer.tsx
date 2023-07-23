@@ -200,6 +200,8 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
       const data = await response.json()
 
+      console.log(data)
+
       const { data: portSolutionDataResponse, children: portSolutionDataChildren } =
         data.data.stream.object.children.objects[0]
       const statsResponse = portSolutionDataResponse['DataTree']['Stats']
