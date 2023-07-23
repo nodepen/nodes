@@ -1,6 +1,7 @@
 using Speckle.Core.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Speckle.Newtonsoft.Json;
 
 namespace NodePen.Converters
@@ -41,7 +42,8 @@ namespace NodePen.Converters
             Stats = new NodePenDataTreeStats();
 
             ComputeStructure();
-            // TODO: Compute other stats
+            ComputeTotalCounts();
+            ComputeTypes();
         }
 
         private void ComputeStructure()
@@ -70,6 +72,45 @@ namespace NodePen.Converters
             }
 
             Stats.TreeStructure = "tree";
+        }
+
+        private void ComputeTotalCounts()
+        {
+            var valueCounts = new List<int>();
+
+            foreach (var branch in Branches)
+            {
+                valueCounts.Add(branch.Values.Count);
+            }
+
+            if (valueCounts.Count == 0)
+            {
+                Stats.BranchCount = Branches.Count;
+                Stats.ValueCount = 0;
+                return;
+            }
+
+            Stats.BranchCount = Branches.Count;
+            Stats.BranchValueCountDomain = new List<int>{
+              valueCounts.Min(),
+              valueCounts.Max()
+            };
+            Stats.ValueCount = valueCounts.Sum();
+        }
+
+        private void ComputeTypes()
+        {
+            var types = new HashSet<string>();
+
+            foreach (var branch in Branches)
+            {
+                foreach (var value in branch.Values)
+                {
+                    types.Add(value.Type.ToLower());
+                }
+            }
+
+            Stats.ValueTypes = types.ToList();
         }
 
     }
