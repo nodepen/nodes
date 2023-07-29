@@ -114,6 +114,11 @@ export type NodesAppState = {
   }
   lifecycle: {
     solution: 'expired' | 'ready'
+    model: {
+      status: 'expired' | 'loading' | 'ready'
+      /** A value between 0 & 1 */
+      progress: number
+    }
   }
   cache: {
     portSolutionData: {
@@ -201,6 +206,10 @@ export const initialState: NodesAppState = {
   },
   lifecycle: {
     solution: 'expired',
+    model: {
+      status: 'expired',
+      progress: 0,
+    },
   },
   cache: {
     portSolutionData: {},

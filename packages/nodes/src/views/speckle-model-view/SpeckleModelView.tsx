@@ -2,6 +2,7 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { Viewer, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
+import { useDispatch } from '@/store'
 
 type SpeckleModelViewProps = {
   stream: {
@@ -17,6 +18,16 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
 
   const containerRef = useRef<HTMLDivElement>(null)
   const viewerRef = useRef<Viewer>()
+
+  const { apply } = useDispatch()
+
+  const setModelLoadStatus = useCallback((progress: number) => {
+    apply((state) => {
+      state.lifecycle.model.progress = progress
+    })
+  }, [])
+
+  const safeSetModelLoadStatus = useThrottleCallback(setModelLoadStatus, 500)
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -42,7 +53,8 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
     })
 
     viewer.on(ViewerEvent.LoadProgress, (arg) => {
-      // console.log(arg)
+      const { progress } = arg
+      safeSetModelLoadStatus(progress)
     })
 
     return () => {
@@ -58,7 +70,16 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
     }
 
     await viewer.unloadAll()
+
+    apply((state) => {
+      state.lifecycle.model.status = 'loading'
+    })
+
     await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
+
+    apply((state) => {
+      state.lifecycle.model = { status: 'ready', progress: 1 }
+    })
   }, [rootObjectId])
 
   const requestRefreshObjects = useDeferCallback(refreshObjects)
@@ -103,6 +124,53 @@ const useDeferCallback = (callback: () => Promise<void>): (() => void) => {
   }, [callback])
 
   return requestInvoke
+}
+
+const useThrottleCallback = <T extends any[]>(
+  callback: (...args: T) => void,
+  intervalMs: number
+): ((...args: T) => void) => {
+  const internalCallback = useRef(callback)
+
+  useEffect(() => {
+    internalCallback.current = callback
+  }, [callback])
+
+  const nextArgs = useRef<T>()
+  const interval = useRef<ReturnType<typeof setInterval>>()
+
+  const handleInvoke = useCallback(() => {
+    if (!nextArgs.current) {
+      return
+    }
+
+    internalCallback.current(...nextArgs.current)
+
+    interval.current = setInterval(() => {
+      if (!nextArgs.current) {
+        clearInterval(interval.current)
+        return
+      }
+
+      const invokeArgs = nextArgs.current
+      nextArgs.current = undefined
+      internalCallback.current(...invokeArgs)
+    }, intervalMs)
+  }, [callback])
+
+  const throttleCallback = useCallback(
+    (...args: T): void => {
+      if (!nextArgs.current) {
+        nextArgs.current = args
+        handleInvoke()
+      } else {
+        nextArgs.current = args
+      }
+    },
+    [handleInvoke]
+  )
+
+  return throttleCallback
 }
 
 export default React.memo(SpeckleModelView)

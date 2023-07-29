@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'
+import React, { useState, useRef, useLayoutEffect } from 'react'
 import { COLORS } from '@/constants'
 import { getRoundedRectangleDash } from '@/utils/geometry'
 import { useReducedMotion } from '@/hooks'
@@ -33,8 +33,6 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
 
   useLayoutEffect(() => {
     const containerDimensions = getContainerDimensions() ?? { width: 0, height: 0 }
-
-    console.log({ containerDimensions })
 
     const { width, height } = containerDimensions
 
@@ -76,14 +74,14 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
             <rect
               x={-width + fillWidth - 8}
               y={-4}
-              width={width + 8}
+              width={width + 8 - 1}
               height={height + 8}
               style={{ transition: 'x', transitionDuration: '300ms', transitionTimingFunction: 'ease-out' }}
             />
           </clipPath>
           <clipPath id="dash-clip">
             <rect
-              x={fillWidth}
+              x={fillWidth + 1}
               y={-4}
               width={width + 8}
               height={height + 8}
@@ -120,7 +118,7 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
           strokeWidth={2}
           vectorEffect="non-scaling-stroke"
         />
-        <line
+        {/* <line
           x1={0}
           y1={-4}
           x2={0}
@@ -134,7 +132,7 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
             transitionDuration: '300ms',
             transitionTimingFunction: 'ease-out',
           }}
-        />
+        /> */}
       </svg>
     </div>
   )
