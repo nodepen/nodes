@@ -86,6 +86,8 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
       const { data: streamSolutionData } = data.stream.object
 
+      // console.log(streamSolutionData)
+
       const documentSolutionData: NodePen.DocumentSolutionData = {
         solutionId: streamSolutionData['SolutionData']['SolutionId'],
         documentRuntimeData: {

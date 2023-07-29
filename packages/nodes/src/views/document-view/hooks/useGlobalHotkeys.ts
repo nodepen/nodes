@@ -10,6 +10,7 @@ export const useGlobalHotkeys = () => {
       case 'Delete':
       case 'Backspace': {
         apply((state) => {
+          // TODO: Also clean up pinned ports
           for (const id of state.registry.selection.nodes) {
             delete state.document.nodes[id]
           }

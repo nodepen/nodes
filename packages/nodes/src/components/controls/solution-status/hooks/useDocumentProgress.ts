@@ -7,12 +7,14 @@ export const useDocumentProgress = (): ProgressStatus => {
     return state.lifecycle.solution === 'expired' ? 0 : 1
   })
 
-  const nodeCount = useMemo(() => Object.keys(useStore.getState().document), [progress])
+  const nodeCount = useMemo(() => Object.keys(useStore.getState().document.nodes).length, [progress])
 
   const statusMessage =
     progress === 0
-      ? `Solving ${nodeCount} nodes...`
-      : `Solved ${nodeCount} nodes in ${useStore.getState().solution.documentRuntimeData.durationMs}ms.`
+      ? `Solving ${nodeCount} node${nodeCount === 1 ? '' : 's'}...`
+      : `Solved ${nodeCount} node${nodeCount === 1 ? '' : 's'} in ${
+          useStore.getState().solution.documentRuntimeData.durationMs
+        }ms`
 
   const statusLevel: ProgressStatus['statusLevel'] = progress === 0 ? 'pending' : 'normal'
 

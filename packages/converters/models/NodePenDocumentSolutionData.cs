@@ -45,7 +45,7 @@ namespace NodePen.Converters
         /// The number of milliseconds the document took to execute during a given solution.
         /// </summary>
         [JsonProperty("durationMs")]
-        public int DurationMs { get; set; } = 0;
+        public double DurationMs { get; set; } = 0;
 
         public NodePenDocumentRuntimeData()
         {

@@ -27,7 +27,7 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
     })
   }, [])
 
-  const safeSetModelLoadStatus = useThrottleCallback(setModelLoadStatus, 500)
+  const safeSetModelLoadStatus = useThrottleCallback(setModelLoadStatus, 200)
 
   useEffect(() => {
     if (!containerRef.current) {

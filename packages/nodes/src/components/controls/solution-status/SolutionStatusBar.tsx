@@ -1,10 +1,20 @@
 import React, { useState, useEffect, useCallback } from 'react'
 import { usePseudoShadow } from '@/views/common/pseudo-shadow'
-import { COLORS } from '@/constants'
+import { COLORS, KEYS } from '@/constants'
 import { useDocumentProgress, useModelProgress } from './hooks'
 import { ProgressBar } from './components'
+import { useDispatch, useStore } from '@/store'
+import { usePageSpaceToOverlaySpace, useReducedMotion } from '@/hooks'
+
+const { PROGRESS_BAR_HOVER, PROGRESS_BAR_VIEW_DOCUMENT, PROGRESS_BAR_VIEW_MODEL } = KEYS.TOOLTIPS
 
 export const SolutionStatusBar = (): React.ReactElement => {
+  const { apply } = useDispatch()
+
+  const prefersReducedMotion = useReducedMotion()
+
+  const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
   const shadowTarget = usePseudoShadow(undefined, false)
 
   const documentProgressStatus = useDocumentProgress()
@@ -35,8 +45,92 @@ export const SolutionStatusBar = (): React.ReactElement => {
     )
   }
 
+  const handleMouseEnter = useCallback(() => {
+    const containerRef = shadowTarget.current
+
+    if (!containerRef) {
+      console.log('🐍 Attempted to create progress bar tooltips but could not find container element!')
+      return
+    }
+
+    const { left, top } = containerRef.getBoundingClientRect()
+    const [overlayX, overlayY] = pageSpaceToOverlaySpace(left, top)
+
+    apply((state) => {
+      state.registry.tooltips[PROGRESS_BAR_HOVER] = {
+        context: {
+          type: 'progress-bar',
+          data: {
+            [PROGRESS_BAR_VIEW_DOCUMENT]: {
+              order: 0,
+              viewKey: 'document',
+              statusLevel: documentProgressStatus.statusLevel,
+              statusMessage: documentProgressStatus.statusMessage,
+            },
+            [PROGRESS_BAR_VIEW_MODEL]: {
+              order: 1,
+              viewKey: 'model',
+              statusLevel: modelProgressStatus.statusLevel,
+              statusMessage: modelProgressStatus.statusMessage,
+            },
+          },
+        },
+        configuration: {
+          position: {
+            x: overlayX,
+            y: overlayY,
+          },
+          isSticky: true,
+        },
+      }
+    })
+  }, [documentProgressStatus, modelProgressStatus])
+
+  const handleMouseLeave = useCallback(() => {
+    apply((state) => {
+      delete state.registry.tooltips[PROGRESS_BAR_HOVER]
+    })
+  }, [])
+
+  useEffect(() => {
+    const currentTooltip = useStore.getState().registry.tooltips[PROGRESS_BAR_HOVER]
+
+    if (!currentTooltip) {
+      // Tooltip does not exist, do no work
+      return
+    }
+
+    apply((state) => {
+      const tooltip = state.registry.tooltips[PROGRESS_BAR_HOVER]
+
+      if (tooltip.context.type !== 'progress-bar') {
+        return
+      }
+
+      tooltip.context.data = {
+        [PROGRESS_BAR_VIEW_DOCUMENT]: {
+          order: 0,
+          viewKey: 'document',
+          statusLevel: documentProgressStatus.statusLevel,
+          statusMessage: documentProgressStatus.statusMessage,
+        },
+        [PROGRESS_BAR_VIEW_MODEL]: {
+          order: 1,
+          viewKey: 'model',
+          statusLevel: modelProgressStatus.statusLevel,
+          statusMessage: modelProgressStatus.statusMessage,
+        },
+      }
+    })
+  }, [documentProgressStatus, modelProgressStatus])
+
   return (
-    <div className="np-flex-grow np-h-8" ref={shadowTarget}>
+    <div
+      className="np-flex-grow np-h-8 np-pointer-events-auto"
+      ref={shadowTarget}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
       <div className="np-w-full np-h-full np-flex np-justify-start np-items-center np-rounded-md np-bg-light np-shadow-main">
         <div className="np-w-8 np-h-8 np-flex np-items-center np-justify-center">
           <div className="np-relative np-w-full np-h-full">
@@ -54,7 +148,7 @@ export const SolutionStatusBar = (): React.ReactElement => {
             >
               <svg
                 aria-hidden="true"
-                className="np-animate-march-rotate"
+                className={prefersReducedMotion ? '' : 'np-animate-march-rotate'}
                 style={{ width: 20, height: 20 }}
                 fill="none"
                 stroke={COLORS.DARK}
