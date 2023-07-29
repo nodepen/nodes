@@ -1,12 +1,16 @@
 import type React from 'react'
-import { useEffect, useRef, useId } from 'react'
-import { useDispatch } from '@/store'
+import { useEffect, useRef, useId, useCallback } from 'react'
+import { useDispatch } from '$'
+import { useImperativeEvent } from '@/hooks'
 
 /**
  * Registers a new element that should express the pseudo-shadow effect.
  * @returns The `RefObject` that should be associated with a `div` that represents the extents of the target element.
  */
-export const usePseudoShadow = (resizeProxyKey?: string): React.RefObject<HTMLDivElement> => {
+export const usePseudoShadow = (
+  resizeProxyKey?: string,
+  triggerOnAnimation = true
+): React.RefObject<HTMLDivElement> => {
   const shadowId = useId()
   const shadowTargetRef = useRef<HTMLDivElement>(null)
 
@@ -26,6 +30,25 @@ export const usePseudoShadow = (resizeProxyKey?: string): React.RefObject<HTMLDi
       })
     }
   }, [])
+
+  const handleTransitionStart = useCallback((e: TransitionEvent) => {
+    if (triggerOnAnimation) {
+      return
+    }
+
+    e.stopPropagation()
+  }, [])
+
+  const handleTransitionEnd = useCallback((e: TransitionEvent) => {
+    if (triggerOnAnimation) {
+      return
+    }
+
+    e.stopPropagation()
+  }, [])
+
+  useImperativeEvent(shadowTargetRef, 'transitionstart', handleTransitionStart, true, true)
+  useImperativeEvent(shadowTargetRef, 'transitionend', handleTransitionEnd, true, true)
 
   return shadowTargetRef
 }

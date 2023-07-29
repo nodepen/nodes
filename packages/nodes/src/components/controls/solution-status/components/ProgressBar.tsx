@@ -73,10 +73,22 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
       >
         <defs>
           <clipPath id="fill-clip">
-            <rect x={-4} y={-4} width={fillWidth + 4} height={height + 8} />
+            <rect
+              x={-width + fillWidth - 8}
+              y={-4}
+              width={width + 8}
+              height={height + 8}
+              style={{ transition: 'x', transitionDuration: '500ms', transitionTimingFunction: 'ease-out' }}
+            />
           </clipPath>
           <clipPath id="dash-clip">
-            <rect x={fillWidth} y={-4} width={width - fillWidth + 4} height={height + 8} />
+            <rect
+              x={fillWidth}
+              y={-4}
+              width={width + 8}
+              height={height + 8}
+              style={{ transition: 'x', transitionDuration: '500ms', transitionTimingFunction: 'ease-out' }}
+            />
           </clipPath>
         </defs>
         <rect
@@ -109,13 +121,19 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
           vectorEffect="non-scaling-stroke"
         />
         <line
-          x1={fillWidth}
+          x1={0}
           y1={-4}
-          x2={fillWidth}
+          x2={0}
           y2={height + 4}
           stroke={COLORS.LIGHT}
           strokeWidth={3}
           vectorEffect="non-scaling-stroke"
+          style={{
+            transform: `translateX(${fillWidth}px)`,
+            transition: 'transform',
+            transitionDuration: '500ms',
+            transitionTimingFunction: 'ease-out',
+          }}
         />
       </svg>
     </div>
