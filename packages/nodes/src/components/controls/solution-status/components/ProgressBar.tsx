@@ -78,7 +78,7 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
               y={-4}
               width={width + 8}
               height={height + 8}
-              style={{ transition: 'x', transitionDuration: '500ms', transitionTimingFunction: 'ease-out' }}
+              style={{ transition: 'x', transitionDuration: '300ms', transitionTimingFunction: 'ease-out' }}
             />
           </clipPath>
           <clipPath id="dash-clip">
@@ -87,7 +87,7 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
               y={-4}
               width={width + 8}
               height={height + 8}
-              style={{ transition: 'x', transitionDuration: '500ms', transitionTimingFunction: 'ease-out' }}
+              style={{ transition: 'x', transitionDuration: '300ms', transitionTimingFunction: 'ease-out' }}
             />
           </clipPath>
         </defs>
@@ -131,7 +131,7 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
           style={{
             transform: `translateX(${fillWidth}px)`,
             transition: 'transform',
-            transitionDuration: '500ms',
+            transitionDuration: '300ms',
             transitionTimingFunction: 'ease-out',
           }}
         />
