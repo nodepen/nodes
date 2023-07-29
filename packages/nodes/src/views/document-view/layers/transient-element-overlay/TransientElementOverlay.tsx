@@ -6,6 +6,7 @@ import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
 import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
 import { useCursorState } from './cursors/hooks'
+import { ProgressBarTooltip } from './tooltips/progress-bar-tooltip'
 
 const TransientElementOverlay = () => {
   const cursor = useCursorState()
@@ -35,6 +36,16 @@ const TransientElementOverlay = () => {
             return (
               <PortTooltip
                 key={`port-tooltip`}
+                tooltipKey={key}
+                configuration={tooltip.configuration}
+                context={tooltip.context}
+              />
+            )
+          }
+          case 'progress-bar': {
+            return (
+              <ProgressBarTooltip
+                key="progress-bar-tooltip"
                 tooltipKey={key}
                 configuration={tooltip.configuration}
                 context={tooltip.context}

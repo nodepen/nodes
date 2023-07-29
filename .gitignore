@@ -13,3 +13,4 @@ obj/
 coverage/
 
 appsettings.local.json
+appsettings.local.*.json

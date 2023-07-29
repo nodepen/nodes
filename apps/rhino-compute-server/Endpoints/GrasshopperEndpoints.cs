@@ -63,7 +63,7 @@ namespace Rhino.Compute.Endpoints
       // Collect document solution data
       NodePenDocumentSolutionData documentSolutionData = new NodePenDocumentSolutionData(requestData.SolutionId);
 
-      documentSolutionData.DocumentRuntimeData.DurationMs = definition.SolutionSpan.Milliseconds;
+      documentSolutionData.DocumentRuntimeData.DurationMs = Math.Ceiling(definition.SolutionSpan.TotalMilliseconds);
 
       // Collect node solution data
       foreach (IGH_DocumentObject documentObject in definition.Objects)
@@ -125,7 +125,7 @@ namespace Rhino.Compute.Endpoints
 
                   for (int j = 0; j < currentBranch.Count; j++)
                   {
-                    var entry = currentBranch[j];
+                    object entry = currentBranch[j];
 
                     if (!(entry is IGH_Goo goo))
                     {

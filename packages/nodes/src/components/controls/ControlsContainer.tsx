@@ -5,13 +5,14 @@ import { ActiveViewControl, PinnedPortsControl, TemplateLibraryControl } from '.
 
 const ControlsContainer = (): React.ReactElement => {
   const templates = useStore((state) => state.templates)
+  const activeViewKey = useStore((state) => state.layout.activeView)
 
   return (
     <ControlsContainerLayout>
       <ActiveViewControl />
       {/* <DocumentInfoControl /> */}
       <PinnedPortsControl />
-      <TemplateLibraryControl templates={templates} />
+      {activeViewKey === 'document' ? <TemplateLibraryControl templates={templates} /> : null}
     </ControlsContainerLayout>
   )
 }

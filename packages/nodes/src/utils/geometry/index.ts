@@ -1,0 +1,1 @@
+export { getRoundedRectangleDash } from './getRoundedRectangleDash'

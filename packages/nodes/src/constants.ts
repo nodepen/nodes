@@ -51,6 +51,9 @@ export const STYLES = {
 export const KEYS = {
   TOOLTIPS: {
     ADD_NODE_MENU_OPTION_HOVER: 'add-node-menu',
+    PROGRESS_BAR_HOVER: 'progress-bar',
+    PROGRESS_BAR_VIEW_DOCUMENT: 'progress-bar-document-progress',
+    PROGRESS_BAR_VIEW_MODEL: 'progress-bar-model-progress',
     TEMPLATE_LIBRARY_CONTROL_OPTION_HOVER: 'template-library-control',
   },
   ELEMENT_IDS: {

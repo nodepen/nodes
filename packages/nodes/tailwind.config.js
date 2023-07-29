@@ -22,11 +22,16 @@ module.exports = {
     extend: {
       animation: {
         'march': 'march 1000ms infinite ease-in-out',
+        'march-rotate': 'march-rotate 1000ms infinite ease-in-out',
         'menu-appear': 'menu-appear 125ms ease-in forwards'
       },
       keyframes: {
         'march': {
           'to': { 'stroke-dashoffset': '0' }
+        },
+        'march-rotate': {
+          'from': { 'transform': 'rotate(0)' },
+          'to': { 'transform': 'rotate(90deg)' }
         },
         'menu-appear': {
           '0%': { 'max-height': '0px' },

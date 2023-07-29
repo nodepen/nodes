@@ -3,4 +3,9 @@ export type { ContextMenuContext, PortContextMenuContext } from './ContextMenuCo
 export type { Cursor, CursorConfiguration, CursorContext, WireEditCursorContext } from './Cursor'
 export type { Tooltip } from './Tooltip'
 export type { TooltipConfiguration } from './TooltipConfiguration'
-export type { TooltipContext, NodeTemplateSummaryTooltipContext, PortTooltipContext } from './TooltipContext'
+export type {
+  TooltipContext,
+  NodeTemplateSummaryTooltipContext,
+  PortTooltipContext,
+  ProgressBarTooltipContext,
+} from './TooltipContext'

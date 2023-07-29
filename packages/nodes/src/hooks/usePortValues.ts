@@ -61,7 +61,7 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
 
   const cacheKey = `${solutionId}:${solutionStatus}:${nodeInstanceId}:${portInstanceId}`
 
-  const { value, isLoading } = useAsyncMemo(cacheKey, getLatestValues)
+  const { value, isLoading: _isLoading } = useAsyncMemo(cacheKey, getLatestValues)
 
   const cacheValue = useStore.getState().cache.portSolutionData[cacheKey]
 
