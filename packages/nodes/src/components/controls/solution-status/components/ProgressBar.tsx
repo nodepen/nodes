@@ -49,7 +49,7 @@ export const ProgressBar = ({ progress }: ProgressBarProps) => {
     const maximumProgressWidth = width - 8
 
     if (progress === 1) {
-      return width
+      return width + 4
     }
 
     return clamp(width * progress, minimumProgressWidth, maximumProgressWidth)
