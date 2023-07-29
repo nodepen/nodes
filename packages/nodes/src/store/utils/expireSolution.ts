@@ -18,5 +18,5 @@ export const expireSolution = (state: NodesAppState): void => {
   state.cache.portSolutionData = {}
 
   // Fire registered callback
-  state.callbacks.onExpireSolution?.(state)
+  // state.callbacks.onExpireSolution?.(state)
 }

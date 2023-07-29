@@ -1,12 +1,15 @@
-import React from 'react'
+import React, { useState, useLayoutEffect, useRef } from 'react'
 import { usePseudoShadow } from '@/views/common/pseudo-shadow'
 import { COLORS } from '@/constants'
 import { useSolutionData } from './hooks'
+import { ProgressBar } from './components'
 
 export const SolutionStatusBar = (): React.ReactElement => {
   const shadowTarget = usePseudoShadow()
 
   const { solutionId: _solutionId } = useSolutionData()
+
+  const [progress, setProgress] = useState(0.5)
 
   return (
     <div
@@ -29,8 +32,8 @@ export const SolutionStatusBar = (): React.ReactElement => {
           />
         </svg>
       </div>
-      <div className="np-h-8 np-flex-grow np-pr-2 np-flex np-items-center np-justify-start">
-        <div className="np-w-full np-h-4 np-rounded-sm np-border-2 np-border-dark np-bg-green" />
+      <div className="np-h-4 np-flex-grow np-pr-2 np-flex np-items-center np-justify-start np-overflow-visible">
+        <ProgressBar progress={progress} />
       </div>
     </div>
   )
