@@ -126,7 +126,7 @@ const useDeferCallback = (callback: () => Promise<void>): (() => void) => {
   return requestInvoke
 }
 
-const useThrottleCallback = <T extends any[]>(
+const useThrottleCallback = <T extends unknown[]>(
   callback: (...args: T) => void,
   intervalMs: number
 ): ((...args: T) => void) => {

@@ -1,12 +1,8 @@
 import React from 'react'
 import type { TooltipConfiguration, ProgressBarTooltipContext } from '../../types'
 import { usePseudoShadow } from '@/views/common/pseudo-shadow'
-import { MenuSection } from '../../common'
 import { useTooltip } from '../hooks'
-import { PortTypeIcon } from '@/components/icons'
-import { usePortValues } from '@/hooks'
 import { COLORS } from '@/constants'
-import { getDataTreeSummary } from '@/utils/data-trees'
 import { getViewIcon } from '@/utils/icons'
 
 type ProgressBarTooltipProps = {

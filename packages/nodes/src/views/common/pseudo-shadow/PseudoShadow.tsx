@@ -82,11 +82,11 @@ const PseudoShadow = ({ target, resizeProxyKey }: PseudoShadowProps): React.Reac
     animationFrameRef.current = requestAnimationFrame(animate)
   }, [handleShadowResize])
 
-  const handleTransitionStart = useCallback((e: TransitionEvent) => {
+  const handleTransitionStart = useCallback((_e: TransitionEvent) => {
     animationFrameRef.current = requestAnimationFrame(animate)
   }, [])
 
-  const handleTransitionEnd = useCallback((e: TransitionEvent) => {
+  const handleTransitionEnd = useCallback((_e: TransitionEvent) => {
     if (animationFrameRef.current) {
       cancelAnimationFrame(animationFrameRef.current)
       animationFrameRef.current = undefined
