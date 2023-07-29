@@ -11,10 +11,16 @@ export const useModelProgress = (): ProgressStatus => {
 
     const modelProgress = state.lifecycle.model.progress
 
-    return progress === 1 ? `Loaded model` : 'Downloading model...'
+    return modelProgress === 1 ? `Loaded model` : 'Downloading model...'
   })
 
-  const statusLevel: ProgressStatus['statusLevel'] = progress === 1 ? 'pending' : 'normal'
+  const statusLevel: ProgressStatus['statusLevel'] = useStore((state) => {
+    if (state.lifecycle.solution !== 'ready') {
+      return 'pending'
+    }
+
+    return state.lifecycle.model.progress === 1 ? 'normal' : 'pending'
+  })
 
   return { progress, statusMessage, statusLevel }
 }

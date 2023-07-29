@@ -56,6 +56,12 @@ type ProgressBarTooltipEntryProps = {
 const ProgressBarTooltipEntry = ({ icon, statusLevel, statusMessage }: ProgressBarTooltipEntryProps) => {
   const shadowTarget = usePseudoShadow()
 
+  const colors: Record<typeof statusLevel, string> = {
+    normal: COLORS.GREEN,
+    pending: COLORS.WARN,
+    error: COLORS.ERROR,
+  }
+
   return (
     <div className="np-w-48 np-mb-2 np-bg-light np-shadow-main np-rounded-md" ref={shadowTarget}>
       <div className="np-w-full np-flex np-justify-start np-items-start">
@@ -63,7 +69,7 @@ const ProgressBarTooltipEntry = ({ icon, statusLevel, statusMessage }: ProgressB
           {icon}
         </div>
         <div className="np-w-4 np-h-8 np-mr-1 np-flex np-justify-center np-items-center" style={{ minWidth: '1rem' }}>
-          <div className="np-w-3 np-h-3 np-rounded-full np-bg-green" />
+          <div className="np-w-3 np-h-3 np-rounded-full" style={{ backgroundColor: colors[statusLevel] }} />
         </div>
         <div className="np-pt-2 np-pb-2 np-pr-2 np-flex-grow np-flex np-flex-col np-justify-start">
           <p className="np-font-sans np-font-medium np-text-dark np-text-xs -np-translate-y-px np-select-none">

@@ -1,5 +1,6 @@
 import { useImperativeEvent } from '@/hooks'
 import { useDispatch } from '@/store'
+import { expireSolution } from '@/store/utils'
 import { useCallback, useRef } from 'react'
 
 export const useGlobalHotkeys = () => {
@@ -14,6 +15,8 @@ export const useGlobalHotkeys = () => {
           for (const id of state.registry.selection.nodes) {
             delete state.document.nodes[id]
           }
+
+          expireSolution(state)
         })
         break
       }

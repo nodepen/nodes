@@ -63,7 +63,7 @@ namespace Rhino.Compute.Endpoints
       // Collect document solution data
       NodePenDocumentSolutionData documentSolutionData = new NodePenDocumentSolutionData(requestData.SolutionId);
 
-      documentSolutionData.DocumentRuntimeData.DurationMs = Math.Round(definition.SolutionSpan.TotalMilliseconds);
+      documentSolutionData.DocumentRuntimeData.DurationMs = Math.Ceiling(definition.SolutionSpan.TotalMilliseconds);
 
       // Collect node solution data
       foreach (IGH_DocumentObject documentObject in definition.Objects)

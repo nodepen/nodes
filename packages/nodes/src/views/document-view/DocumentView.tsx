@@ -49,7 +49,7 @@ const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement |
       <Layer id="np-selection-region-overlay-layer" position={viewPosition} z={95}>
         <SelectionRegionOverlay />
       </Layer>
-      <Layer id="np-transient-element-overlay-layer" position={viewPosition} z={90}>
+      <Layer id="np-transient-element-overlay-layer" position={viewPosition} z={90} fixed>
         <TransientElementOverlay />
       </Layer>
       <Layer id="np-document-view-content-layer" position={viewPosition} z={70}>
