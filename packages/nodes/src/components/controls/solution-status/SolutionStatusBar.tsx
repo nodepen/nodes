@@ -9,7 +9,7 @@ export const SolutionStatusBar = (): React.ReactElement => {
 
   const { solutionId: _solutionId } = useSolutionData()
 
-  const [progress, setProgress] = useState(0.5)
+  const [progress, setProgress] = useState(0)
 
   return (
     <div
