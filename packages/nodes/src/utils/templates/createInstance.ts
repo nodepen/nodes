@@ -9,6 +9,8 @@ const { NODE_INTERNAL_PADDING } = DIMENSIONS
 export const createInstance = (template: NodePen.NodeTemplate): NodePen.DocumentNode => {
   const { guid, inputs: templateInputs, outputs: templateOutputs } = template
 
+  // const { dimensions, anchors } = computeNodeDimensions(node, nodeTemplate)
+
   const nodeWidth = getNodeWidth()
   const nodeHeight = getNodeHeight(template)
 
@@ -32,6 +34,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
     sources: {},
     inputs: {},
     outputs: {},
+    portConfigurations: {},
   }
 
   for (const input of templateInputs) {
@@ -50,6 +53,10 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
         valueCount: 0,
         valueTypes: [],
       },
+    }
+    node.portConfigurations[inputInstanceId] = {
+      label: null,
+      flags: [],
     }
   }
 
@@ -78,6 +85,10 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
     const outputInstanceId = newGuid()
 
     node.outputs[outputInstanceId] = order
+    node.portConfigurations[outputInstanceId] = {
+      label: null,
+      flags: [],
+    }
   }
 
   const outputInstanceIds = Object.keys(node.outputs)

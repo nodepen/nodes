@@ -1,4 +1,5 @@
 import type { DataTree } from './data'
+import type { PortConfiguration } from './ports'
 
 export type DocumentNode = {
   instanceId: string
@@ -44,5 +45,8 @@ export type DocumentNode = {
   }
   outputs: {
     [outputInstanceId: string]: number
+  }
+  portConfigurations: {
+    [portInstanceId: string]: PortConfiguration
   }
 }
