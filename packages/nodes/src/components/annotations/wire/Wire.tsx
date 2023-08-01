@@ -158,7 +158,7 @@ export const Wire = ({
 
     const template = useStore.getState().templates[templateId]
 
-    const nodeWidth = getNodeWidth()
+    const nodeWidth = getNodeWidth(node, template)
     const nodeHeight = getNodeHeight(template)
 
     return (
@@ -181,7 +181,7 @@ export const Wire = ({
 
     const template = useStore.getState().templates[templateId]
 
-    const nodeWidth = getNodeWidth()
+    const nodeWidth = getNodeWidth(node, template)
     const nodeHeight = getNodeHeight(template)
 
     return (

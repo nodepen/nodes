@@ -1,17 +1,7 @@
 import type * as NodePen from '@nodepen/core'
 import { DIMENSIONS } from '@/constants'
 import { clamp } from '@/utils/numerics'
-import { getLabelWidth } from './getLabelWidth'
-
-// Steps:
-// Collect node information (templates and port configurations)
-// Compute dimensions here
-// Set anchors and other dimensions
-// When rendering, *use those values* *reactively*, do not compute anything in components
-// ...
-// On a change that modifies dimensions, run this and update values in state.
-
-// labels: 12px per character, 22px per flag badge
+import { getNodeHeight, getNodeWidth } from '.'
 
 export const getNodeDimensions = (
   node: NodePen.DocumentNode,
@@ -25,69 +15,31 @@ export const getNodeDimensions = (
     },
   }
 
-  const inputs = Object.entries(node.inputs)
-  const inputLabelWidths: Record<string, number> = {}
-
-  for (const [instanceId, orderIndex] of inputs) {
-    const portTemplate = nodeTemplate.inputs[orderIndex]
-    const portConfiguration = node.portConfigurations[instanceId]
-
-    const labelWidth = getLabelWidth(portTemplate, portConfiguration)
-
-    inputLabelWidths[instanceId] = labelWidth
-  }
-
-  const inputLabelColumnWidth = Math.max(...Object.values(inputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
-
-  const outputs = Object.entries(node.outputs)
-  const outputLabelWidths: Record<string, number> = {}
-
-  for (const [instanceId, orderIndex] of outputs) {
-    const portTemplate = nodeTemplate.outputs[orderIndex]
-    const portConfiguration = node.portConfigurations[instanceId]
-
-    const labelWidth = getLabelWidth(portTemplate, portConfiguration)
-
-    outputLabelWidths[instanceId] = labelWidth
-  }
-
-  const outputLabelColumnWidth = Math.max(...Object.values(outputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
-
-  // Calculate overall width
-  const nodeWidth = [
-    DIMENSIONS.NODE_INTERNAL_PADDING,
-    inputLabelColumnWidth,
-    DIMENSIONS.NODE_INTERNAL_PADDING,
-    DIMENSIONS.NODE_LABEL_WIDTH,
-    DIMENSIONS.NODE_INTERNAL_PADDING,
-    outputLabelColumnWidth,
-    DIMENSIONS.NODE_INTERNAL_PADDING,
-  ].reduce((sum, n) => sum + n, 0)
-
+  // Calculate current extents
+  const nodeWidth = getNodeWidth(node, nodeTemplate)
   nodeDimensions.dimensions.width = nodeWidth
 
-  // Calculate overall height
-  const inputPortsHeight = nodeTemplate.inputs.length * DIMENSIONS.NODE_PORT_HEIGHT
-  const outputPortsHeight = nodeTemplate.inputs.length * DIMENSIONS.NODE_PORT_HEIGHT
-  const minimumLabelHeight = nodeTemplate.nickName.length * 12 // not monospace, estimate
-
-  const nodeHeight = Math.max(inputPortsHeight, outputPortsHeight, minimumLabelHeight)
-
+  const nodeHeight = getNodeHeight(nodeTemplate)
   nodeDimensions.dimensions.height = nodeHeight
 
   // Calculate port anchors (center based on height)
+  const inputInstanceIds = Object.keys(node.inputs)
+  const outputInstanceIds = Object.keys(node.outputs)
+
   const deltaYMax = (portCount: number): number => {
-    return ((clamp(portCount - 1, 0, Number.MIN_SAFE_INTEGER) - 1) * DIMENSIONS.NODE_PORT_HEIGHT) / 2
+    return ((clamp(portCount - 1, 0, Number.MAX_SAFE_INTEGER) - 1) * DIMENSIONS.NODE_PORT_HEIGHT) / 2
   }
 
   const deltaYStart = (portCount: number): number => {
-    return nodeHeight / 2 - deltaYMax(portCount)
+    return nodeHeight / 2 - deltaYMax(portCount) - DIMENSIONS.NODE_PORT_HEIGHT / 2
   }
 
-  const dyStartInputs = deltaYStart(inputs.length)
+  const dyStartInputs = deltaYStart(inputInstanceIds.length)
 
-  for (let i = 0; i < inputs.length; i++) {
-    const [instanceId] = inputs[i]
+  console.log(dyStartInputs)
+
+  for (let i = 0; i < inputInstanceIds.length; i++) {
+    const instanceId = inputInstanceIds[i]
 
     const dx = 0
     const dy = dyStartInputs + DIMENSIONS.NODE_PORT_HEIGHT * i
@@ -95,10 +47,10 @@ export const getNodeDimensions = (
     nodeDimensions.anchors[instanceId] = { dx, dy }
   }
 
-  const dyStartOutputs = deltaYStart(outputs.length)
+  const dyStartOutputs = deltaYStart(outputInstanceIds.length)
 
-  for (let i = 0; i < outputs.length; i++) {
-    const [instanceId] = outputs[i]
+  for (let i = 0; i < outputInstanceIds.length; i++) {
+    const instanceId = outputInstanceIds[i]
 
     const dx = nodeWidth
     const dy = dyStartOutputs + DIMENSIONS.NODE_PORT_HEIGHT * i

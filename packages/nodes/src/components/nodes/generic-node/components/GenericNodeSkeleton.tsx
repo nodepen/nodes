@@ -18,7 +18,7 @@ export const GenericNodeSkeleton = ({ node, template }: GenericNodeSkeletonProps
 
   const prefersReducedMotion = useReducedMotion()
 
-  const nodeWidth = useMemo(() => getNodeWidth(), [])
+  const nodeWidth = useMemo(() => getNodeWidth(node, template), [node, template])
   const nodeHeight = useMemo(() => getNodeHeight(template), [template])
 
   const NODE_CORNER_RADIUS = 7

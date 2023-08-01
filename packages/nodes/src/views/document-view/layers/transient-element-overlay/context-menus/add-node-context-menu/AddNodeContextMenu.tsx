@@ -99,7 +99,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
   const handleAddNode = (template: NodePen.NodeTemplate): void => {
     const nodeInstance = createInstance(template)
 
-    const nodeWidth = getNodeWidth()
+    const nodeWidth = getNodeWidth(nodeInstance, template)
     const nodeHeight = getNodeHeight(template)
 
     const [centerX, centerY] = overlaySpaceToWorldSpace(eventPosition.x, eventPosition.y)

@@ -14,7 +14,7 @@ type GenericNodeBodyProps = {
 export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
   const { position } = node
 
-  const nodeWidth = getNodeWidth()
+  const nodeWidth = getNodeWidth(node, template)
   const nodeHeight = getNodeHeight(template)
 
   const { apply } = useDispatch()

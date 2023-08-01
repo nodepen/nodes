@@ -13,7 +13,7 @@ type GenericNodeShadowProps = {
 export const GenericNodeShadow = ({ node, template }: GenericNodeShadowProps) => {
   const { position, inputs, outputs, anchors } = node
 
-  const nodeWidth = getNodeWidth()
+  const nodeWidth = getNodeWidth(node, template)
   const nodeHeight = getNodeHeight(template)
 
   const nodePortInstanceIds = [...Object.keys(inputs), ...Object.keys(outputs)]

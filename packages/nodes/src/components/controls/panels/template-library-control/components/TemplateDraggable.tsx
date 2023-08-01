@@ -26,12 +26,12 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
 
       const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
-      const nodeWidth = getNodeWidth()
+      const node = createInstance(template)
+
+      const nodeWidth = getNodeWidth(node, template)
       const nodeHeight = getNodeHeight(template)
 
       apply((state) => {
-        const node = createInstance(template)
-
         node.status.isProvisional = true
         node.position = {
           x: x - nodeWidth / 2,

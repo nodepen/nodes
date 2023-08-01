@@ -46,7 +46,7 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
 
   const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
-  const nodeWidth = getNodeWidth()
+  const nodeWidth = getNodeWidth(node, template)
   const nodeHeight = getNodeHeight(template)
 
   return (
@@ -67,9 +67,8 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
       <path
         id={`node-label-path-${id}`}
         fill="none"
-        d={`M ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 2} ${position.y + nodeHeight} L ${
-          position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3
-        } ${position.y}`}
+        d={`M ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 2} ${position.y + nodeHeight} L ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3
+          } ${position.y}`}
       />
       <text
         className="np-font-panel np-select-none np-pointer-events-none"
