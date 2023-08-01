@@ -1,6 +1,6 @@
 import type * as NodePen from '@nodepen/core'
 import { newGuid } from '../common'
-import { getNodeHeight, getNodeWidth } from '../node-dimensions'
+import { getNodeHeight, getNodeWidth, getNodeDimensions } from '../node-dimensions'
 import { divideDomain, remap } from '../numerics'
 import { DIMENSIONS } from '@/constants'
 
@@ -8,8 +8,6 @@ const { NODE_INTERNAL_PADDING } = DIMENSIONS
 
 export const createInstance = (template: NodePen.NodeTemplate): NodePen.DocumentNode => {
   const { guid, inputs: templateInputs, outputs: templateOutputs } = template
-
-  // const { dimensions, anchors } = computeNodeDimensions(node, nodeTemplate)
 
   const nodeWidth = getNodeWidth()
   const nodeHeight = getNodeHeight(template)
@@ -109,6 +107,12 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
       dy: deltaY,
     }
   }
+
+  // TODO: Did it work?? And remove redundant work here
+  const { dimensions, anchors } = getNodeDimensions(node, template)
+
+  node.dimensions = dimensions
+  node.anchors = anchors
 
   return node
 }

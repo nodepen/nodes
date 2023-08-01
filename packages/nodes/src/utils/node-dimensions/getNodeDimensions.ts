@@ -25,9 +25,10 @@ export const getNodeDimensions = (
     },
   }
 
+  const inputs = Object.entries(node.inputs)
   const inputLabelWidths: Record<string, number> = {}
 
-  for (const [instanceId, orderIndex] of Object.entries(node.inputs)) {
+  for (const [instanceId, orderIndex] of inputs) {
     const portTemplate = nodeTemplate.inputs[orderIndex]
     const portConfiguration = node.portConfigurations[instanceId]
 
@@ -38,9 +39,10 @@ export const getNodeDimensions = (
 
   const inputLabelColumnWidth = Math.max(...Object.values(inputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
 
+  const outputs = Object.entries(node.outputs)
   const outputLabelWidths: Record<string, number> = {}
 
-  for (const [instanceId, orderIndex] of Object.entries(node.outputs)) {
+  for (const [instanceId, orderIndex] of outputs) {
     const portTemplate = nodeTemplate.outputs[orderIndex]
     const portConfiguration = node.portConfigurations[instanceId]
 
@@ -62,6 +64,8 @@ export const getNodeDimensions = (
     DIMENSIONS.NODE_INTERNAL_PADDING,
   ].reduce((sum, n) => sum + n, 0)
 
+  nodeDimensions.dimensions.width = nodeWidth
+
   // Calculate overall height
   const inputPortsHeight = nodeTemplate.inputs.length * DIMENSIONS.NODE_PORT_HEIGHT
   const outputPortsHeight = nodeTemplate.inputs.length * DIMENSIONS.NODE_PORT_HEIGHT
@@ -69,7 +73,38 @@ export const getNodeDimensions = (
 
   const nodeHeight = Math.max(inputPortsHeight, outputPortsHeight, minimumLabelHeight)
 
+  nodeDimensions.dimensions.height = nodeHeight
+
   // Calculate port anchors (center based on height)
+  const deltaYMax = (portCount: number): number => {
+    return ((clamp(portCount - 1, 0, Number.MIN_SAFE_INTEGER) - 1) * DIMENSIONS.NODE_PORT_HEIGHT) / 2
+  }
+
+  const deltaYStart = (portCount: number): number => {
+    return nodeHeight / 2 - deltaYMax(portCount)
+  }
+
+  const dyStartInputs = deltaYStart(inputs.length)
+
+  for (let i = 0; i < inputs.length; i++) {
+    const [instanceId] = inputs[i]
+
+    const dx = 0
+    const dy = dyStartInputs + DIMENSIONS.NODE_PORT_HEIGHT * i
+
+    nodeDimensions.anchors[instanceId] = { dx, dy }
+  }
+
+  const dyStartOutputs = deltaYStart(outputs.length)
+
+  for (let i = 0; i < outputs.length; i++) {
+    const [instanceId] = outputs[i]
+
+    const dx = nodeWidth
+    const dy = dyStartOutputs + DIMENSIONS.NODE_PORT_HEIGHT * i
+
+    nodeDimensions.anchors[instanceId] = { dx, dy }
+  }
 
   // Calculate label axis anchor
 
