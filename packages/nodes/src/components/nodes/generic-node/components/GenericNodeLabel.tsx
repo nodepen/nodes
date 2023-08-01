@@ -46,8 +46,8 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
 
   const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
-  const nodeWidth = getNodeWidth(node, template)
-  const nodeHeight = getNodeHeight(template)
+  const nodeWidth = node.dimensions.width
+  const nodeHeight = node.dimensions.height
 
   return (
     <>

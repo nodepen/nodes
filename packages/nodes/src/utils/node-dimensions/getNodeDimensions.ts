@@ -36,8 +36,6 @@ export const getNodeDimensions = (
 
   const dyStartInputs = deltaYStart(inputInstanceIds.length)
 
-  console.log(dyStartInputs)
-
   for (let i = 0; i < inputInstanceIds.length; i++) {
     const instanceId = inputInstanceIds[i]
 

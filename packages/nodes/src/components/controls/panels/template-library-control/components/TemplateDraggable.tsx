@@ -28,14 +28,11 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
 
       const node = createInstance(template)
 
-      const nodeWidth = getNodeWidth(node, template)
-      const nodeHeight = getNodeHeight(template)
-
       apply((state) => {
         node.status.isProvisional = true
         node.position = {
-          x: x - nodeWidth / 2,
-          y: y - nodeHeight / 2,
+          x: x - node.dimensions.width / 2,
+          y: y - node.dimensions.height / 2,
         }
 
         state.document.nodes[node.instanceId] = node

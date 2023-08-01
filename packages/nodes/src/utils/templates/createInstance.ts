@@ -65,8 +65,6 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
 
   const { dimensions, anchors } = getNodeDimensions(node, template)
 
-  console.log(anchors)
-
   node.dimensions = dimensions
   node.anchors = anchors
 

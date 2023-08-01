@@ -14,8 +14,8 @@ type GenericNodeBodyProps = {
 export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
   const { position } = node
 
-  const nodeWidth = getNodeWidth(node, template)
-  const nodeHeight = getNodeHeight(template)
+  const nodeWidth = node.dimensions.width
+  const nodeHeight = node.dimensions.height
 
   const { apply } = useDispatch()
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()

@@ -14,9 +14,8 @@ const NodePlacementOverlay = () => {
     }
 
     const activeNode = useStore.getState().document.nodes[activeNodeId]
-    const activeNodeTemplate = useStore.getState().templates[activeNode.templateId]
 
-    return [getNodeWidth(activeNode, activeNodeTemplate), getNodeHeight(activeNodeTemplate)]
+    return [activeNode.dimensions.width, activeNode.dimensions.height]
   }, [activeNodeId])
 
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
