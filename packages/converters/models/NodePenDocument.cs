@@ -26,12 +26,15 @@ namespace NodePen.Converters
     public class NodePenDocumentConfiguration : Base
     {
 
-        [JsonProperty("pinnedPorts")]
-        public List<PinnedPortConfiguration> PinnedPorts { get; set; } = new List<PinnedPortConfiguration>();
+        [JsonProperty("inputs")]
+        public List<PortReference> Inputs { get; set; } = new List<PortReference>();
+
+        [JsonProperty("outputs")]
+        public List<PortReference> Outputs { get; set; } = new List<PortReference>();
 
     }
 
-    public class PinnedPortConfiguration : Base
+    public class PortReference : Base
     {
 
         [JsonProperty("nodeInstanceId")]

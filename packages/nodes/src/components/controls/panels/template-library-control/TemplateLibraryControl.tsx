@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { groupTemplatesByCategory } from '@/utils/templates'
-import { ControlPanel } from '../../common'
+import { ControlPanel, ControlPanelHeader } from '../../common'
 import { useDispatch } from '@/store'
 import { TemplateDraggable } from './components'
 import { KEYS } from '@/constants'
@@ -48,16 +48,18 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
         {templateCategories.map((category) => (
           <button
             key={`template-library-tab-button-${category.toLowerCase()}`}
-            className={`${
-              category === activeCategory
+            className={`${category === activeCategory
                 ? 'np-bg-green np-shadow-main np-sticky np-left-0 np-right-0 np-z-20 np-translate-y-[-2px]'
                 : 'np-z-10 np-translate-y-[-1px] hover:np-bg-grey'
-            } np-inline-block np-box-border np-mr-1 last:np-mr-2 np-rounded-sm`}
+              } np-inline-block np-box-border np-mr-1 last:np-mr-2 np-rounded-sm`}
             onClick={() => {
               setActiveCategory(category)
             }}
           >
-            <p className="np-pl-2 np-pr-2 np-font-sans np-text-sm np-text-dark np-select-none -np-translate-y-px">
+            <p
+              className={`${category === activeCategory ? 'np-text-darkgreen' : 'np-text-dark'
+                } np-pl-2 np-pr-2 np-font-sans np-text-sm np-select-none -np-translate-y-px`}
+            >
               {category}
             </p>
           </button>

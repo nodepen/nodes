@@ -4,7 +4,11 @@ export type Document = {
   id: string
   nodes: { [id: string]: DocumentNode }
   configuration: {
-    pinnedPorts: {
+    inputs: {
+      nodeInstanceId: string
+      portInstanceId: string
+    }[]
+    outputs: {
       nodeInstanceId: string
       portInstanceId: string
     }[]

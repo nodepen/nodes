@@ -6,12 +6,12 @@ import { ControlPanel, ControlPanelHeader } from '../../common'
 import { PortTypeIcon } from '@/components/icons'
 
 /**
- * Surfaces "pinned ports" in controls overlay for direct interaction.
+ * Surfaces "pinned inputs" in controls overlay for direct interaction.
  */
-export const PinnedPortsControl = (): React.ReactElement => {
-  const pinnedPorts = useStore((state) => state.document.configuration.pinnedPorts)
+export const PinnedInputsControl = (): React.ReactElement => {
+  const inputPorts = useStore((state) => state.document.configuration.inputs)
 
-  const icon = (
+  const inputsIcon = (
     <svg
       width={24}
       aria-hidden="true"
@@ -29,28 +29,11 @@ export const PinnedPortsControl = (): React.ReactElement => {
       />
     </svg>
   )
+
   return (
     <ControlPanel>
-      <ControlPanelHeader icon={icon} label="Pinned Inputs" onClickMenu={() => ''} />
-      {/* <div className="np-w-full np-flex np-justify-between np-items-center">
-        <h3 className="np-mb-1 np-font-sans np-text-md np-text-darkgreen">Pinned Controls</h3>
-        <div className="np-h-full np-w-4 np-flex np-flex-col np-justify-center np-items-center">
-          <svg width={8} height={4} viewBox="0 0 10 5" className="np-overflow-visible">
-            <polyline
-              points="0,0 5,5 10,0"
-              fill="none"
-              stroke={COLORS.DARKGREEN}
-              strokeWidth="2px"
-              vectorEffect="non-scaling-stroke"
-              strokeLinecap="round"
-            />
-          </svg>
-        </div>
-      </div> */}
-      {pinnedPorts.length === 0 ? (
-        <div className="np-w-full np-h-8 np-border-swampgreen np-border-2 np-rounded-sm np-border-dashed" />
-      ) : null}
-      {pinnedPorts.map((port, _i) => {
+      <ControlPanelHeader icon={inputsIcon} label="Inputs" onClickMenu={() => ''} />
+      {inputPorts.map((port, _i) => {
         const { nodeInstanceId, portInstanceId } = port
         return <PortControl key={`port-control-${nodeInstanceId}-${portInstanceId}`} portReference={port} />
       })}
@@ -64,13 +47,12 @@ import { tryGetSingleValue } from '@/utils/data-trees'
 import { expireSolution } from '@/store/utils'
 
 type PortControlProps = {
-  portReference: NodesAppState['document']['configuration']['pinnedPorts'][0]
+  portReference: NodesAppState['document']['configuration']['inputs'][0]
 }
 
 const PortControl = ({ portReference }: PortControlProps): React.ReactElement | null => {
   const { nodeInstanceId, portInstanceId } = portReference
 
-  // TODO: Create `tryGetPortSolutionData(documentSolutionData, portInstanceId)` util
   const solutionValues = useStore
     .getState()
     .solution.nodeSolutionData?.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
@@ -84,13 +66,15 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
   const nodeTemplate = templates?.[node?.templateId]
   const portTemplate = nodeTemplate?.inputs[node.inputs[portInstanceId]]
 
+  const label = useStore((state) => {
+    return node.portConfigurations[portInstanceId]?.label ?? portTemplate.name
+  })
+
   if (!nodeTemplate || !portTemplate) {
     return null
   }
 
   const currentValue = tryGetSingleValue(node.values[portInstanceId]) ?? tryGetSingleValue(solutionValues?.dataTree)
-
-  const { name } = portTemplate
 
   const valueString = currentValue?.description
 
@@ -136,7 +120,7 @@ const PortControl = ({ portReference }: PortControlProps): React.ReactElement | 
         className="np-absolute np-h-8 np-flex np-justify-start np-items-center"
         style={{ left: 32, top: 0, zIndex: 20 }}
       >
-        <h4 className="np-font-sans np-text-xs np-text-dark np-select-none">{name}</h4>
+        <h4 className="np-font-sans np-text-xs np-text-dark np-select-none">{label}</h4>
       </div>
       <input
         className="np-absolute np-w-full np-h-full np-pr-2 np-font-sans np-text-md np-text-dark np-text-right np-bg-pale np-shadow-input"

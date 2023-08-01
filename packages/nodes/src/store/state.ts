@@ -139,7 +139,8 @@ export const initialState: NodesAppState = {
     id: 'default-id',
     nodes: {},
     configuration: {
-      pinnedPorts: [],
+      inputs: [],
+      outputs: [],
     },
     version: 1,
   },

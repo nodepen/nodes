@@ -22,7 +22,8 @@ const fetchDocument = async (id: string): Promise<NodePen.Document> => {
     id,
     nodes: {},
     configuration: {
-      pinnedPorts: [],
+      inputs: [],
+      outputs: [],
     },
     version: 1,
   }
