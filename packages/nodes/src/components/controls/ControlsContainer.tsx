@@ -11,7 +11,6 @@ import {
 
 const ControlsContainer = (): React.ReactElement => {
   const templates = useStore((state) => state.templates)
-  const activeViewKey = useStore((state) => state.layout.activeView)
 
   return (
     <ControlsContainerLayout>
@@ -19,7 +18,7 @@ const ControlsContainer = (): React.ReactElement => {
       {/* <DocumentInfoControl /> */}
       <PinnedInputsControl />
       <PinnedOutputsControl />
-      {/* {activeViewKey === 'document' ? <TemplateLibraryControl templates={templates} /> : null} */}
+      <TemplateLibraryControl templates={templates} />
     </ControlsContainerLayout>
   )
 }
