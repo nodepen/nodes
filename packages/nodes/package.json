@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@nodepen/core": "^2.0.0",
-    "@speckle/viewer": "^2.15.0",
+    "@speckle/viewer": "^2.15.1",
     "immer": "^10.0.2",
     "zustand": "4.3.9"
   },
