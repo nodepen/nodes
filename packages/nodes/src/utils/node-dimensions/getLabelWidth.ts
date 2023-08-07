@@ -7,7 +7,7 @@ export const getLabelWidth = (
   portConfiguration: NodePen.PortConfiguration
 ): number => {
   const labelText = portConfiguration.label ?? portTemplate.nickName
-  const labelTextWidth = labelText.length * 12 // monospace
+  const labelTextWidth = labelText.length * 15 // monospace
 
   const flagBadgesWidth = portConfiguration.flags.length * 22 + 3 * clamp(portConfiguration.flags.length - 1, 0, 10)
 

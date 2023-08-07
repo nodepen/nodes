@@ -16,8 +16,10 @@ export const getNodeDimensions = (
   }
 
   // Calculate current extents
-  const nodeWidth = getNodeWidth(node, nodeTemplate)
+  const { totalWidth: nodeWidth, anchors } = getNodeWidth(node, nodeTemplate)
   nodeDimensions.dimensions.width = nodeWidth
+
+  nodeDimensions.anchors = { ...nodeDimensions.anchors, labelDeltaX: { dx: anchors.labelDeltaX, dy: 0 } }
 
   const nodeHeight = getNodeHeight(nodeTemplate)
   nodeDimensions.dimensions.height = nodeHeight

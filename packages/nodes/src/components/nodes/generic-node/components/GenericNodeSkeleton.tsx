@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { getRoundedRectangleDash } from '@/utils/geometry'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { COLORS } from '@/constants'
 import { useReducedMotion } from '@/hooks'
 

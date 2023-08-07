@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { useDispatch, useStore } from '$'
 import { usePageSpaceToWorldSpace } from '@/hooks'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { expireSolution } from '@/store/utils'
 
 const NodePlacementOverlay = () => {

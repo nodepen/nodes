@@ -3,7 +3,6 @@ import type { DataTreeStructure, DocumentNode } from '@nodepen/core'
 import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 
 type WireProps = {
   start: {
@@ -174,9 +173,11 @@ export const Wire = ({
   const getNodeLabelClipPath = (node: DocumentNode) => {
     const { position } = node
 
+    const { dx } = node.anchors['labelDeltaX']
+
     return (
       <rect
-        x={position.x + node.dimensions.width / 2 - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
+        x={position.x + dx - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
         y={position.y + DIMENSIONS.NODE_INTERNAL_PADDING - 1}
         width={DIMENSIONS.NODE_LABEL_WIDTH + 2}
         height={node.dimensions.height - DIMENSIONS.NODE_INTERNAL_PADDING * 2 + 2}

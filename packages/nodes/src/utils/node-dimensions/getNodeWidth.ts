@@ -2,7 +2,14 @@ import type * as NodePen from '@nodepen/core'
 import { DIMENSIONS } from '@/constants'
 import { getLabelWidth } from './getLabelWidth'
 
-export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.NodeTemplate): number => {
+type NodeWidthDimensions = {
+  totalWidth: number
+  anchors: {
+    labelDeltaX: number
+  }
+}
+
+export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.NodeTemplate): NodeWidthDimensions => {
   const inputs = Object.entries(node.inputs)
   const inputLabelWidths: Record<string, number> = {}
 
@@ -16,6 +23,8 @@ export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.N
   }
 
   const inputLabelColumnWidth = Math.max(...Object.values(inputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
+
+  console.log({ inputLabelColumnWidth })
 
   const outputs = Object.entries(node.outputs)
   const outputLabelWidths: Record<string, number> = {}
@@ -31,6 +40,8 @@ export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.N
 
   const outputLabelColumnWidth = Math.max(...Object.values(outputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
 
+  console.log({ outputLabelColumnWidth })
+
   // Calculate overall width
   const nodeWidth = [
     DIMENSIONS.NODE_INTERNAL_PADDING,
@@ -42,7 +53,20 @@ export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.N
     DIMENSIONS.NODE_INTERNAL_PADDING,
   ].reduce((sum, n) => sum + n, 0)
 
-  return nodeWidth
+  // Calculate label dx
+  const labelDeltaX = [
+    DIMENSIONS.NODE_INTERNAL_PADDING,
+    inputLabelColumnWidth,
+    DIMENSIONS.NODE_INTERNAL_PADDING,
+    DIMENSIONS.NODE_LABEL_WIDTH / 2,
+  ].reduce((sum, n) => sum + n, 0)
 
-  // return NODE_INTERNAL_PADDING * 4 + NODE_PORT_MINIMUM_WIDTH * 2 + NODE_LABEL_WIDTH
+  console.log({ nodeWidth })
+
+  return {
+    totalWidth: nodeWidth,
+    anchors: {
+      labelDeltaX,
+    },
+  }
 }

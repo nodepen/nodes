@@ -1,7 +1,6 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { COLORS, DIMENSIONS } from '@/constants'
-import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS
 

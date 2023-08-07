@@ -2,7 +2,6 @@ import React, { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
-import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
 import { GenericNodeLabel } from '.'
 
@@ -16,6 +15,8 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
 
   const nodeWidth = node.dimensions.width
   const nodeHeight = node.dimensions.height
+
+  console.log({ internal: nodeWidth })
 
   const { apply } = useDispatch()
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
