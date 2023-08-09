@@ -58,7 +58,5 @@ export const getNodeDimensions = (
     nodeDimensions.anchors[instanceId] = { dx, dy }
   }
 
-  // Calculate label axis anchor
-
   return nodeDimensions
 }

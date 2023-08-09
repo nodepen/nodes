@@ -24,8 +24,6 @@ export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.N
 
   const inputLabelColumnWidth = Math.max(...Object.values(inputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
 
-  console.log({ inputLabelColumnWidth })
-
   const outputs = Object.entries(node.outputs)
   const outputLabelWidths: Record<string, number> = {}
 
@@ -39,8 +37,6 @@ export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.N
   }
 
   const outputLabelColumnWidth = Math.max(...Object.values(outputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
-
-  console.log({ outputLabelColumnWidth })
 
   // Calculate overall width
   const nodeWidth = [
@@ -60,8 +56,6 @@ export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.N
     DIMENSIONS.NODE_INTERNAL_PADDING,
     DIMENSIONS.NODE_LABEL_WIDTH / 2,
   ].reduce((sum, n) => sum + n, 0)
-
-  console.log({ nodeWidth })
 
   return {
     totalWidth: nodeWidth,
