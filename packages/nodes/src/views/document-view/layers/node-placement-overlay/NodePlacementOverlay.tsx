@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { useDispatch, useStore } from '$'
 import { usePageSpaceToWorldSpace } from '@/hooks'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { expireSolution } from '@/store/utils'
 
 const NodePlacementOverlay = () => {
@@ -14,9 +13,8 @@ const NodePlacementOverlay = () => {
     }
 
     const activeNode = useStore.getState().document.nodes[activeNodeId]
-    const activeNodeTemplate = useStore.getState().templates[activeNode.templateId]
 
-    return [getNodeWidth(), getNodeHeight(activeNodeTemplate)]
+    return [activeNode.dimensions.width, activeNode.dimensions.height]
   }, [activeNodeId])
 
   const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()

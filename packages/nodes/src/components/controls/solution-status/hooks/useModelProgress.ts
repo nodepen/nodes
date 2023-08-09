@@ -10,8 +10,9 @@ export const useModelProgress = (): ProgressStatus => {
     }
 
     const modelProgress = state.lifecycle.model.progress
+    const objectCount = state.lifecycle.model.objectCount
 
-    return modelProgress === 1 ? `Loaded model` : 'Downloading model...'
+    return modelProgress === 1 ? `Displaying ${objectCount} objects` : 'Downloading model...'
   })
 
   const statusLevel: ProgressStatus['statusLevel'] = useStore((state) => {

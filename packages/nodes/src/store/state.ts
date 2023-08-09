@@ -118,6 +118,7 @@ export type NodesAppState = {
       status: 'expired' | 'loading' | 'ready'
       /** A value between 0 & 1 */
       progress: number
+      objectCount: number
     }
   }
   cache: {
@@ -139,7 +140,8 @@ export const initialState: NodesAppState = {
     id: 'default-id',
     nodes: {},
     configuration: {
-      pinnedPorts: [],
+      inputs: [],
+      outputs: [],
     },
     version: 1,
   },
@@ -209,6 +211,7 @@ export const initialState: NodesAppState = {
     model: {
       status: 'expired',
       progress: 0,
+      objectCount: 0,
     },
   },
   cache: {

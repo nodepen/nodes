@@ -11,8 +11,12 @@ type PinButtonProps = {
 export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) => {
   const { apply } = useDispatch()
 
+  const portDirection = Object.keys(useStore.getState().document.nodes[nodeInstanceId].inputs).includes(portInstanceId)
+    ? 'inputs'
+    : 'outputs'
+
   const isPinned = useStore((state) =>
-    state.document.configuration.pinnedPorts.some(
+    state.document.configuration[portDirection].some(
       (pin) => pin.nodeInstanceId === nodeInstanceId && pin.portInstanceId === portInstanceId
     )
   )
@@ -25,7 +29,7 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
 
   const handlePin = useCallback(() => {
     apply((state) => {
-      state.document.configuration.pinnedPorts.push({
+      state.document.configuration[portDirection].push({
         nodeInstanceId,
         portInstanceId,
       })
@@ -40,7 +44,7 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
 
   const handleUnpin = useCallback(() => {
     apply((state) => {
-      state.document.configuration.pinnedPorts = state.document.configuration.pinnedPorts.filter((pin) => {
+      state.document.configuration[portDirection] = state.document.configuration[portDirection].filter((pin) => {
         const sameNode = pin.nodeInstanceId === nodeInstanceId
         const samePort = pin.portInstanceId === portInstanceId
 
@@ -52,6 +56,6 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
   return isPinned ? (
     <MenuButton icon={unpinIcon} label="Unpin" action={handleUnpin} />
   ) : (
-    <MenuButton icon={pinIcon} label="Pin" action={handlePin} />
+    <MenuButton icon={pinIcon} label={`Pin to ${portDirection}`} action={handlePin} />
   )
 }

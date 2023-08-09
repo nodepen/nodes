@@ -6,9 +6,10 @@ import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
-import { getNodeExtents, getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
+import { getNodeExtents } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution } from './utils'
+import { createInstance } from '@/utils/templates'
 
 const { NODE_INTERNAL_PADDING } = DIMENSIONS
 
@@ -45,7 +46,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
         for (const node of Object.values(document.nodes)) {
           // Sanitize node properties
-          const { instanceId, templateId, inputs, outputs } = node
+          const { instanceId, templateId } = node
 
           const template = state.templates[templateId]
 
@@ -53,51 +54,54 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             console.log(`🐍 Could not find template [${templateId}] for document node [${instanceId}]`)
             continue
           }
-          const nodeWidth = getNodeWidth()
-          const nodeHeight = getNodeHeight(template)
 
-          node.dimensions = {
-            width: nodeWidth,
-            height: nodeHeight,
-          }
+          state.document.nodes[instanceId] = createInstance(template)
 
-          const inputInstanceIds = Object.keys(inputs)
-          const inputHeightSegments = divideDomain(
-            [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
-            inputInstanceIds.length > 0 ? inputInstanceIds.length : 1
-          )
+          // const nodeWidth = getNodeWidth()
+          // const nodeHeight = getNodeHeight(template)
 
-          for (let i = 0; i < inputInstanceIds.length; i++) {
-            const currentId = inputInstanceIds[i]
-            const currentDomain = inputHeightSegments[i]
+          // node.dimensions = {
+          //   width: nodeWidth,
+          //   height: nodeHeight,
+          // }
 
-            const deltaX = 0
-            const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
+          // const inputInstanceIds = Object.keys(inputs)
+          // const inputHeightSegments = divideDomain(
+          //   [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
+          //   inputInstanceIds.length > 0 ? inputInstanceIds.length : 1
+          // )
 
-            node.anchors[currentId] = {
-              dx: deltaX,
-              dy: deltaY,
-            }
-          }
+          // for (let i = 0; i < inputInstanceIds.length; i++) {
+          //   const currentId = inputInstanceIds[i]
+          //   const currentDomain = inputHeightSegments[i]
 
-          const outputInstanceIds = Object.keys(outputs)
-          const outputHeightSegments = divideDomain(
-            [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
-            outputInstanceIds.length > 0 ? outputInstanceIds.length : 1
-          )
+          //   const deltaX = 0
+          //   const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
 
-          for (let i = 0; i < outputInstanceIds.length; i++) {
-            const currentId = outputInstanceIds[i]
-            const currentDomain = outputHeightSegments[i]
+          //   node.anchors[currentId] = {
+          //     dx: deltaX,
+          //     dy: deltaY,
+          //   }
+          // }
 
-            const deltaX = nodeWidth
-            const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
+          // const outputInstanceIds = Object.keys(outputs)
+          // const outputHeightSegments = divideDomain(
+          //   [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
+          //   outputInstanceIds.length > 0 ? outputInstanceIds.length : 1
+          // )
 
-            node.anchors[currentId] = {
-              dx: deltaX,
-              dy: deltaY,
-            }
-          }
+          // for (let i = 0; i < outputInstanceIds.length; i++) {
+          //   const currentId = outputInstanceIds[i]
+          //   const currentDomain = outputHeightSegments[i]
+
+          //   const deltaX = nodeWidth
+          //   const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
+
+          //   node.anchors[currentId] = {
+          //     dx: deltaX,
+          //     dy: deltaY,
+          //   }
+          // }
         }
 
         expireSolution(state)

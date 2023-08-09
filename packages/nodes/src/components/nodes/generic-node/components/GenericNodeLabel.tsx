@@ -1,7 +1,6 @@
 import React, { useCallback } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { COLORS, DIMENSIONS } from '@/constants'
-import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { useDispatch } from '$'
 
@@ -13,7 +12,9 @@ type GenericNodeLabelProps = {
 }
 
 export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
-  const { instanceId: id, position } = node
+  const { instanceId: id, position, anchors } = node
+
+  const { dx } = anchors['labelDeltaX']
 
   const { apply } = useDispatch()
 
@@ -46,14 +47,14 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
 
   const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
-  const nodeWidth = getNodeWidth()
-  const nodeHeight = getNodeHeight(template)
+  const nodeWidth = node.dimensions.width
+  const nodeHeight = node.dimensions.height
 
   return (
     <>
       <g id={`node-label-${node.instanceId}`} ref={longHoverTarget} className=" np-pointer-events-auto">
         <rect
-          x={position.x + nodeWidth / 2 - NODE_LABEL_WIDTH / 2}
+          x={position.x + dx - NODE_LABEL_WIDTH / 2}
           y={position.y + NODE_INTERNAL_PADDING}
           width={NODE_LABEL_WIDTH}
           height={nodeHeight - NODE_INTERNAL_PADDING * 2}
@@ -67,8 +68,8 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
       <path
         id={`node-label-path-${id}`}
         fill="none"
-        d={`M ${position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 2} ${position.y + nodeHeight} L ${
-          position.x + nodeWidth / 2 + NODE_LABEL_FONT_SIZE / 2 - 3
+        d={`M ${position.x + dx + NODE_LABEL_FONT_SIZE / 2 - 2} ${position.y + nodeHeight} L ${
+          position.x + dx + NODE_LABEL_FONT_SIZE / 2 - 3
         } ${position.y}`}
       />
       <text

@@ -129,7 +129,7 @@ const FileUploadOverlayContainer = (): React.ReactElement => {
             cx={49.5}
             cy={50.5}
             stroke={COLORS.SWAMPGREEN}
-            strokeWidth={0.5}
+            strokeWidth={isActive ? 0.5 : 0}
             r={r - 0.25}
             fill="none"
             style={{

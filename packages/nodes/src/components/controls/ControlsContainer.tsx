@@ -1,18 +1,24 @@
 import React from 'react'
 import { Layer } from '@/views/common'
 import { useDispatch, useStore } from '$'
-import { ActiveViewControl, PinnedPortsControl, TemplateLibraryControl } from './panels'
+import {
+  ActiveViewControl,
+  DocumentInfoControl,
+  PinnedInputsControl,
+  PinnedOutputsControl,
+  TemplateLibraryControl,
+} from './panels'
 
 const ControlsContainer = (): React.ReactElement => {
   const templates = useStore((state) => state.templates)
-  const activeViewKey = useStore((state) => state.layout.activeView)
 
   return (
     <ControlsContainerLayout>
       <ActiveViewControl />
       {/* <DocumentInfoControl /> */}
-      <PinnedPortsControl />
-      {activeViewKey === 'document' ? <TemplateLibraryControl templates={templates} /> : null}
+      <PinnedInputsControl />
+      <PinnedOutputsControl />
+      <TemplateLibraryControl templates={templates} />
     </ControlsContainerLayout>
   )
 }

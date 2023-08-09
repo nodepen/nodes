@@ -1,6 +1,5 @@
 import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useLongHover, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { useDispatch } from '@/store'
@@ -26,16 +25,15 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
 
       const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
-      const nodeWidth = getNodeWidth()
-      const nodeHeight = getNodeHeight(template)
+      const node = createInstance(template)
 
       apply((state) => {
-        const node = createInstance(template)
+        state.layout.activeView = 'document'
 
         node.status.isProvisional = true
         node.position = {
-          x: x - nodeWidth / 2,
-          y: y - nodeHeight / 2,
+          x: x - node.dimensions.width / 2,
+          y: y - node.dimensions.height / 2,
         }
 
         state.document.nodes[node.instanceId] = node
