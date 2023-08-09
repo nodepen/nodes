@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { groupTemplatesByCategory } from '@/utils/templates'
-import { ControlPanel } from '../../common'
+import { ControlPanel, ControlPanelHeader } from '../../common'
 import { useDispatch } from '@/store'
 import { TemplateDraggable } from './components'
 import { KEYS } from '@/constants'
@@ -57,7 +57,11 @@ const TemplateLibraryControl = ({ templates }: TemplateLibraryControlProps): Rea
               setActiveCategory(category)
             }}
           >
-            <p className="np-pl-2 np-pr-2 np-font-sans np-text-sm np-text-dark np-select-none -np-translate-y-px">
+            <p
+              className={`${
+                category === activeCategory ? 'np-text-darkgreen' : 'np-text-dark'
+              } np-pl-2 np-pr-2 np-font-sans np-text-sm np-select-none -np-translate-y-px`}
+            >
               {category}
             </p>
           </button>

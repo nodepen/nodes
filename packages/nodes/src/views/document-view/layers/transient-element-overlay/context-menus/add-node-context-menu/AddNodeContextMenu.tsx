@@ -6,7 +6,6 @@ import { MenuBody } from '../../common'
 import { clamp } from '@/utils/numerics'
 import { createInstance } from '@/utils/templates'
 import { useTextSearch } from './hooks'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
 import { AddNodeButton } from './components'
 import { KEYS } from '@/constants'
@@ -99,8 +98,8 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
   const handleAddNode = (template: NodePen.NodeTemplate): void => {
     const nodeInstance = createInstance(template)
 
-    const nodeWidth = getNodeWidth()
-    const nodeHeight = getNodeHeight(template)
+    const nodeWidth = nodeInstance.dimensions.width
+    const nodeHeight = nodeInstance.dimensions.height
 
     const [centerX, centerY] = overlaySpaceToWorldSpace(eventPosition.x, eventPosition.y)
 

@@ -1,7 +1,6 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { COLORS, DIMENSIONS } from '@/constants'
-import { getNodeWidth, getNodeHeight } from '@/utils/node-dimensions'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS
 
@@ -13,8 +12,8 @@ type GenericNodeShadowProps = {
 export const GenericNodeShadow = ({ node, template }: GenericNodeShadowProps) => {
   const { position, inputs, outputs, anchors } = node
 
-  const nodeWidth = getNodeWidth()
-  const nodeHeight = getNodeHeight(template)
+  const nodeWidth = node.dimensions.width
+  const nodeHeight = node.dimensions.height
 
   const nodePortInstanceIds = [...Object.keys(inputs), ...Object.keys(outputs)]
 

@@ -2,7 +2,6 @@ import React, { useMemo } from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { getRoundedRectangleDash } from '@/utils/geometry'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 import { COLORS } from '@/constants'
 import { useReducedMotion } from '@/hooks'
 
@@ -18,8 +17,8 @@ export const GenericNodeSkeleton = ({ node, template }: GenericNodeSkeletonProps
 
   const prefersReducedMotion = useReducedMotion()
 
-  const nodeWidth = useMemo(() => getNodeWidth(), [])
-  const nodeHeight = useMemo(() => getNodeHeight(template), [template])
+  const nodeWidth = node.dimensions.width
+  const nodeHeight = node.dimensions.height
 
   const NODE_CORNER_RADIUS = 7
 

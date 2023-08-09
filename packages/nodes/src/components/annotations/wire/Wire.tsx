@@ -3,7 +3,6 @@ import type { DataTreeStructure, DocumentNode } from '@nodepen/core'
 import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
-import { getNodeHeight, getNodeWidth } from '@/utils/node-dimensions'
 
 type WireProps = {
   start: {
@@ -154,19 +153,14 @@ export const Wire = ({
   }
 
   const getNodeBodyClipPath = (node: DocumentNode) => {
-    const { position, templateId } = node
-
-    const template = useStore.getState().templates[templateId]
-
-    const nodeWidth = getNodeWidth()
-    const nodeHeight = getNodeHeight(template)
+    const { position } = node
 
     return (
       <rect
         x={position.x - 2}
         y={position.y - 2}
-        width={nodeWidth + 4}
-        height={nodeHeight + 6}
+        width={node.dimensions.width + 4}
+        height={node.dimensions.height + 6}
         rx={7}
         ry={7}
         fill="none"
@@ -177,19 +171,16 @@ export const Wire = ({
   }
 
   const getNodeLabelClipPath = (node: DocumentNode) => {
-    const { position, templateId } = node
+    const { position } = node
 
-    const template = useStore.getState().templates[templateId]
-
-    const nodeWidth = getNodeWidth()
-    const nodeHeight = getNodeHeight(template)
+    const { dx } = node.anchors['labelDeltaX']
 
     return (
       <rect
-        x={position.x + nodeWidth / 2 - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
+        x={position.x + dx - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
         y={position.y + DIMENSIONS.NODE_INTERNAL_PADDING - 1}
         width={DIMENSIONS.NODE_LABEL_WIDTH + 2}
-        height={nodeHeight - DIMENSIONS.NODE_INTERNAL_PADDING * 2 + 2}
+        height={node.dimensions.height - DIMENSIONS.NODE_INTERNAL_PADDING * 2 + 2}
         rx={7}
         ry={7}
         fill={COLORS.LIGHT}
