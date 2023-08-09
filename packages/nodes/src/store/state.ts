@@ -118,6 +118,7 @@ export type NodesAppState = {
       status: 'expired' | 'loading' | 'ready'
       /** A value between 0 & 1 */
       progress: number
+      objectCount: number
     }
   }
   cache: {
@@ -210,6 +211,7 @@ export const initialState: NodesAppState = {
     model: {
       status: 'expired',
       progress: 0,
+      objectCount: 0,
     },
   },
   cache: {

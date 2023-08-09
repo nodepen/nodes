@@ -77,8 +77,18 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
 
     await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
 
+    let visibleObjectCount = 0
+
+    viewer.getWorldTree().walk((node) => {
+      const isVisible = !!node.model.renderView
+      if (isVisible) {
+        visibleObjectCount++
+      }
+      return true
+    })
+
     apply((state) => {
-      state.lifecycle.model = { status: 'ready', progress: 1 }
+      state.lifecycle.model = { status: 'ready', progress: 1, objectCount: visibleObjectCount }
     })
   }, [rootObjectId])
 
