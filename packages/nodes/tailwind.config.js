@@ -12,6 +12,7 @@ module.exports = {
       "swampgreen": "#7BBFA5",
       "darkgreen": "#093824",
       "error": "#FF7171",
+      "error-2": "#DD6363",
       "warn": "#FFBE71"
     },
     fontFamily: {

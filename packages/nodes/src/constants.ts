@@ -18,6 +18,7 @@ export const COLORS = {
   DARKGREEN: '#093824',
   /* Special */
   ERROR: '#FF7171',
+  ERRORDARK: '#DD6363',
   WARN: '#FFBE71',
 } as const
 
