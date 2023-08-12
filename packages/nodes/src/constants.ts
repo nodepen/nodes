@@ -20,6 +20,7 @@ export const COLORS = {
   ERROR: '#FF7171',
   ERRORDARK: '#DD6363',
   WARN: '#FFBE71',
+  WARNDARK: '#E3AF71',
 } as const
 
 export const DIMENSIONS = {
@@ -32,6 +33,8 @@ export const DIMENSIONS = {
   NODE_PORT_HEIGHT: 40,
   NODE_PORT_MINIMUM_WIDTH: 50,
   NODE_PORT_RADIUS: 5,
+  /** NODE_LABEL_WIDTH + 2 */
+  NODE_RUNTIME_MESSAGE_BUBBLE_SIZE: 34,
 } as const
 
 export const STYLES = {

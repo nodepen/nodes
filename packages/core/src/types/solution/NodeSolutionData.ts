@@ -12,6 +12,6 @@ type NodeRuntimeData = {
 }
 
 type NodeRuntimeDataMessage = {
-  level: 'error' | 'war' | 'info'
+  level: 'error' | 'warn' | 'info'
   message: string
 }

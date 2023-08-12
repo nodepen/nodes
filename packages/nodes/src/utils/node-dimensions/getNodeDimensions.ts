@@ -8,7 +8,12 @@ export const getNodeDimensions = (
   nodeTemplate: NodePen.NodeTemplate
 ): Pick<NodePen.DocumentNode, 'anchors' | 'dimensions'> => {
   const nodeDimensions: Pick<NodePen.DocumentNode, 'anchors' | 'dimensions'> = {
-    anchors: {},
+    anchors: {
+      labelDeltaX: {
+        dx: 0,
+        dy: 0,
+      },
+    },
     dimensions: {
       width: 0,
       height: 0,

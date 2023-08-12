@@ -13,7 +13,8 @@ module.exports = {
       "darkgreen": "#093824",
       "error": "#FF7171",
       "error-2": "#DD6363",
-      "warn": "#FFBE71"
+      "warn": "#FFBE71",
+      "warn-2": "#E3AF71",
     },
     fontFamily: {
       'sans': ['Barlow', 'ui-sans-serif'],

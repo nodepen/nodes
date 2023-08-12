@@ -20,7 +20,12 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
       isEnabled: true,
       isProvisional: false,
     },
-    anchors: {},
+    anchors: {
+      labelDeltaX: {
+        dx: 0,
+        dy: 0,
+      },
+    },
     values: {},
     sources: {},
     inputs: {},
