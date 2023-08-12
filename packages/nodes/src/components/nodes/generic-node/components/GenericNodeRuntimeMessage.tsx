@@ -4,6 +4,7 @@ import { useRuntimeMessages } from '../../hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useImperativeEvent } from '@/hooks'
 import { getNodeRuntimeMessageBubble } from '@/utils/node-geometry'
+import { WiresMaskPortal } from '@/components/annotations/wire/components'
 
 type GenericNodeRuntimeMessageProps = {
   node: DocumentNode
@@ -20,7 +21,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
 
   const messageColor: Record<typeof messageLevel, string> = {
     error: COLORS.ERROR,
-    warn: COLORS.WARN,
+    warning: COLORS.WARN,
     info: COLORS.GREEN,
   }
 
@@ -30,27 +31,35 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
 
   const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE
 
-  const handlePointerDown = useCallback((e: PointerEvent) => {
-    e.stopPropagation()
-    console.log(messages[0]?.message)
+  const handlePointerDown = useCallback(
+    (e: PointerEvent) => {
+      e.stopPropagation()
+      console.log(messages[0]?.message)
 
-    // TODO: Show message somehow
-  }, [])
+      // TODO: Show message somehow
+    },
+    [messages]
+  )
 
   useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
 
   return (
-    <g ref={messageContainerRef}>
-      {getNodeRuntimeMessageBubble(node, COLORS.ERROR)}
-      <rect
-        className={`np-fill-error hover:np-fill-error-2 hover:np-cursor-pointer np-pointer-events-auto`}
-        x={x + dx + 3 - s / 2}
-        y={y + dy - 3 - s}
-        width={s - 6}
-        height={s - 6}
-        rx={3}
-        ry={3}
-      />
-    </g>
+    <>
+      <g ref={messageContainerRef}>
+        {getNodeRuntimeMessageBubble(node, COLORS.ERROR)}
+        <rect
+          className={`np-fill-error hover:np-fill-error-2 hover:np-cursor-pointer np-pointer-events-auto`}
+          x={x + dx + 3 - s / 2}
+          y={y + dy - 3 - s}
+          width={s - 6}
+          height={s - 6}
+          rx={3}
+          ry={3}
+        />
+      </g>
+      <WiresMaskPortal>
+        <g>{getNodeRuntimeMessageBubble(node, '#FFFFFF')}</g>
+      </WiresMaskPortal>
+    </>
   )
 }

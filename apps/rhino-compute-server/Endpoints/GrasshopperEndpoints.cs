@@ -77,26 +77,17 @@ namespace Rhino.Compute.Endpoints
 
               nodeSolutionData.NodeRuntimeData.DurationMs = componentInstance.ProcessorTime.TotalMilliseconds;
 
-              foreach (string runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Error))
+              if (componentInstance.RuntimeMessageLevel != GH_RuntimeMessageLevel.Blank)
               {
                 NodePenNodeRuntimeDataMessage nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
                 {
-                  Level = "error",
-                  Message = runtimeMessage
+                  Level = componentInstance.RuntimeMessageLevel.ToString().ToLower(),
+                  Message = componentInstance.RuntimeMessages(componentInstance.RuntimeMessageLevel)[0]
                 };
 
                 nodeSolutionData.NodeRuntimeData.Messages.Add(nodeRuntimeMessage);
-              }
 
-              foreach (string runtimeMessage in componentInstance.RuntimeMessages(GH_RuntimeMessageLevel.Warning))
-              {
-                NodePenNodeRuntimeDataMessage nodeRuntimeMessage = new NodePenNodeRuntimeDataMessage()
-                {
-                  Level = "warn",
-                  Message = runtimeMessage
-                };
-
-                nodeSolutionData.NodeRuntimeData.Messages.Add(nodeRuntimeMessage);
+                Console.WriteLine(nodeSolutionData.NodeRuntimeData.Messages.FirstOrDefault().Message);
               }
 
               // Collect child param solution data
