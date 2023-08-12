@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type { DocumentNode } from '@nodepen/core'
 import { useRuntimeMessages } from '../../hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
@@ -21,12 +21,6 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
   const currentMessage = messages[0]
   const currentMessageLevel = currentMessage?.level
 
-  const messageColors: Record<typeof currentMessageLevel, string> = {
-    error: COLORS.ERROR,
-    warning: COLORS.WARN,
-    info: COLORS.GREEN,
-  }
-
   // Position of bottom-middle arrow "point"
   const dx = anchors['labelDeltaX'].dx
   const dy = -9
@@ -45,16 +39,37 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
 
   useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
 
-  if (!currentMessage) {
-    return null
+  const [isVisible, setIsVisible] = useState(false)
+  const [visibleMessageLevel, setVisibleMessageLevel] = useState<typeof currentMessageLevel>('info')
+
+  useEffect(() => {
+    if (!currentMessage) {
+      setIsVisible(false)
+      return
+    }
+
+    setVisibleMessageLevel(currentMessage.level)
+    setIsVisible(true)
+  }, [currentMessage])
+
+  const messageColors: Record<typeof currentMessageLevel, string> = {
+    error: COLORS.ERROR,
+    warning: COLORS.WARN,
+    info: COLORS.GREEN,
   }
+
+  const tx = isVisible ? 0 : 80
 
   return (
     <>
-      <g ref={messageContainerRef}>
-        {getNodeRuntimeMessageBubble(node, messageColors[currentMessageLevel])}
+      <g
+        ref={messageContainerRef}
+        className="np-transition-transform np-duration-300 np-ease-out"
+        style={{ transform: `translateY(${tx}px)` }}
+      >
+        {getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])}
         <rect
-          className={`${currentMessageLevel === 'error'
+          className={`${visibleMessageLevel === 'error'
               ? 'np-fill-error hover:np-fill-error-2'
               : 'np-fill-warn hover:np-fill-warn-2'
             }  hover:np-cursor-pointer np-pointer-events-auto`}
@@ -67,7 +82,9 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
         />
       </g>
       <WiresMaskPortal>
-        <g>{getNodeRuntimeMessageBubble(node, '#FFFFFF')}</g>
+        <g className="np-transition-transform np-duration-300 np-ease-out" style={{ transform: `translateY(${tx}px)` }}>
+          {getNodeRuntimeMessageBubble(node, '#FFFFFF')}
+        </g>
       </WiresMaskPortal>
     </>
   )
