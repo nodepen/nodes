@@ -17,9 +17,11 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
   const messageContainerRef = useRef<SVGGElement>(null)
 
   const messages = useRuntimeMessages(instanceId)
-  const messageLevel = messages?.[0]?.level ?? 'info'
 
-  const messageColor: Record<typeof messageLevel, string> = {
+  const currentMessage = messages[0]
+  const currentMessageLevel = currentMessage?.level
+
+  const messageColors: Record<typeof currentMessageLevel, string> = {
     error: COLORS.ERROR,
     warning: COLORS.WARN,
     info: COLORS.GREEN,
@@ -43,12 +45,19 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
 
   useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
 
+  if (!currentMessage) {
+    return null
+  }
+
   return (
     <>
       <g ref={messageContainerRef}>
-        {getNodeRuntimeMessageBubble(node, COLORS.ERROR)}
+        {getNodeRuntimeMessageBubble(node, messageColors[currentMessageLevel])}
         <rect
-          className={`np-fill-error hover:np-fill-error-2 hover:np-cursor-pointer np-pointer-events-auto`}
+          className={`${currentMessageLevel === 'error'
+              ? 'np-fill-error hover:np-fill-error-2'
+              : 'np-fill-warn hover:np-fill-warn-2'
+            }  hover:np-cursor-pointer np-pointer-events-auto`}
           x={x + dx + 3 - s / 2}
           y={y + dy - 3 - s}
           width={s - 6}
