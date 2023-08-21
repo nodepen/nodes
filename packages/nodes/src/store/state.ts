@@ -42,6 +42,7 @@ export type NodesAppState = {
     contextMenus: {
       [menuKey: string]: ContextMenu
     }
+    dialogRoot: React.RefObject<HTMLDivElement>
     shadows: {
       containerRef: React.RefObject<HTMLDivElement> | null
       proxyRefs: {
@@ -180,6 +181,7 @@ export const initialState: NodesAppState = {
   registry: {
     canvasRoot: React.createRef<HTMLDivElement>(),
     contextMenus: {},
+    dialogRoot: React.createRef<HTMLDivElement>(),
     shadows: {
       containerRef: null,
       proxyRefs: {

@@ -5,6 +5,7 @@ import { COLORS, DIMENSIONS } from '@/constants'
 import { useImperativeEvent } from '@/hooks'
 import { getNodeRuntimeMessageBubble } from '@/utils/node-geometry'
 import { WiresMaskPortal } from '@/components/annotations/wire/components'
+import { Dialog } from '@/views/components'
 
 type GenericNodeRuntimeMessageProps = {
   node: DocumentNode
@@ -13,6 +14,8 @@ type GenericNodeRuntimeMessageProps = {
 export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessageProps) => {
   const { instanceId, anchors, position } = node
   const { x, y } = position
+
+  const [showDialog, setShowDialog] = useState(false)
 
   const messageContainerRef = useRef<SVGGElement>(null)
 
@@ -33,6 +36,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
       console.log(messages[0]?.message)
 
       // TODO: Show message somehow
+      setShowDialog(true)
     },
     [messages]
   )
@@ -86,6 +90,11 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
           {getNodeRuntimeMessageBubble(node, '#FFFFFF')}
         </g>
       </WiresMaskPortal>
+      {showDialog ? (
+        <Dialog onClose={() => setShowDialog(false)}>
+          <p>{messages[0].message}</p>
+        </Dialog>
+      ) : null}
     </>
   )
 }
