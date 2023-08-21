@@ -84,6 +84,28 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
           rx={3}
           ry={3}
         />
+        <svg
+          width={24}
+          height={24}
+          style={{
+            transform: `translate(${node.position.x + node.anchors['labelDeltaX'].dx - 12}px, ${node.position.y - 44
+              }px)`,
+          }}
+          aria-hidden="true"
+          fill="none"
+          stroke={COLORS.DARK}
+          strokeWidth="2"
+          viewBox="0 0 24 24"
+          xmlns="http://www.w3.org/2000/svg"
+          className="np-pointer-events-none"
+        >
+          <path
+            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            vectorEffect="non-scaling-stroke"
+          ></path>
+        </svg>
       </g>
       <WiresMaskPortal>
         <g className="np-transition-transform np-duration-300 np-ease-out" style={{ transform: `translateY(${tx}px)` }}>
@@ -92,7 +114,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
       </WiresMaskPortal>
       {showDialog ? (
         <Dialog onClose={() => setShowDialog(false)}>
-          <p>{messages[0].message}</p>
+          <p className="np-font-sans np-font-medium np-text-dark np-text-md">{messages[0].message}</p>
         </Dialog>
       ) : null}
     </>
