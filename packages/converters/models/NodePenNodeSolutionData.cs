@@ -72,7 +72,7 @@ namespace NodePen.Converters
         /// The severity of the message raised.
         /// </summary>
         /// <remarks>
-        /// Valid values: "error" | "warn" | "info"
+        /// Valid values: "error" | "warning" | "info"
         /// </remarks>
         public string Level { get; set; }
 

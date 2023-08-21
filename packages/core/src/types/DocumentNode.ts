@@ -28,6 +28,11 @@ export type DocumentNode = {
       dx: number
       dy: number
     }
+    /** The horizontal center of where the node label is drawn. */
+    labelDeltaX: {
+      dx: number
+      dy: 0
+    }
   }
   /** Data providers for inputs on this node. */
   sources: {

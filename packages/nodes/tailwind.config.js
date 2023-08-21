@@ -12,7 +12,9 @@ module.exports = {
       "swampgreen": "#7BBFA5",
       "darkgreen": "#093824",
       "error": "#FF7171",
-      "warn": "#FFBE71"
+      "error-2": "#DD6363",
+      "warn": "#FFBE71",
+      "warn-2": "#E3AF71",
     },
     fontFamily: {
       'sans': ['Barlow', 'ui-sans-serif'],
@@ -40,6 +42,7 @@ module.exports = {
       },
       boxShadow: {
         main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)',
+        modal: '-4px 4px 0 0 rgba(65, 65, 65, 0.3)',
         input: 'inset -2px 2px 0px 0px rgba(123, 191, 165, 0.3)'
       },
       height: {

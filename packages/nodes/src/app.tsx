@@ -6,6 +6,7 @@ import { useDispatch, useStore } from '$'
 import type { NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'
 import { FileUploadOverlayContainer, PseudoShadowsContainer } from './views/common'
+import { StaticDialogLayer } from './views/static/dialog-layer'
 
 type NodesAppProps = {
   document: NodePen.Document
@@ -89,6 +90,7 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
       <FileUploadOverlayContainer />
       <ControlsContainer />
       <PseudoShadowsContainer />
+      <StaticDialogLayer />
       {children}
     </div>
   )

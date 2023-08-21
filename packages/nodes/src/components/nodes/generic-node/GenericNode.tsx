@@ -5,6 +5,7 @@ import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import {
   GenericNodeBody,
   GenericNodePorts,
+  GenericNodeRuntimeMessage,
   GenericNodeShadow,
   GenericNodeSkeleton,
   GenericNodeWires,
@@ -39,6 +40,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
             </>
           ) : (
             <>
+              <GenericNodeRuntimeMessage node={node} />
               <GenericNodeShadow node={node} template={template} />
               <GenericNodeBody node={node} template={template} />
               <GenericNodePorts node={node} template={template} />
