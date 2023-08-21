@@ -16,6 +16,7 @@ export const Dialog = ({ title, onClose, children }: DialogProps) => {
           onClick={() => {
             onClose()
           }}
+          role="presentation"
         ></div>
         <div className="np-absolute np-left-0 np-top-0 np-w-full np-h-full np-z-10 np-pointer-events-none">
           <div className="np-w-full np-h-full np-flex np-justify-center np-items-center">

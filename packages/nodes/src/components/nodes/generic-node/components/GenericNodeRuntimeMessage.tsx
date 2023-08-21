@@ -73,10 +73,11 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
       >
         {getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])}
         <rect
-          className={`${visibleMessageLevel === 'error'
+          className={`${
+            visibleMessageLevel === 'error'
               ? 'np-fill-error hover:np-fill-error-2'
               : 'np-fill-warn hover:np-fill-warn-2'
-            }  hover:np-cursor-pointer np-pointer-events-auto`}
+          }  hover:np-cursor-pointer np-pointer-events-auto`}
           x={x + dx + 3 - s / 2}
           y={y + dy - 3 - s}
           width={s - 6}
@@ -88,8 +89,9 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
           width={24}
           height={24}
           style={{
-            transform: `translate(${node.position.x + node.anchors['labelDeltaX'].dx - 12}px, ${node.position.y - 44
-              }px)`,
+            transform: `translate(${node.position.x + node.anchors['labelDeltaX'].dx - 12}px, ${
+              node.position.y - 44
+            }px)`,
           }}
           aria-hidden="true"
           fill="none"
