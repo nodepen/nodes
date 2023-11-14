@@ -28,6 +28,9 @@ namespace Rhino.Compute.Endpoints
 
     public class NodePenSolutionRequestBody
     {
+      [JsonProperty("streamId")]
+      public string StreamId { get; set; }
+
       [JsonProperty("solutionId")]
       public string SolutionId { get; set; }
 
@@ -155,8 +158,8 @@ namespace Rhino.Compute.Endpoints
       }
 
       // Commit updated document and solution data to stream
-      string streamId = Environment.SpeckleStreamId;
-      string branchName = "main";
+      string streamId = requestData.StreamId;
+      string branchName = "np-model";
 
       Account account = new Account()
       {
