@@ -101,7 +101,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
           nodeInstanceId: entry['NodeInstanceId'],
           nodeRuntimeData: {
             durationMs: entry['NodeRuntimeData']['DurationMs'],
-            messages: entry['NodeRuntimeData']['Messages'].map((message: any) => ({
+            messages: entry['NodeRuntimeData']['Messages'].map((message: { Level: string; Message: string }) => ({
               level: message['Level'],
               message: message['Message'],
             })),

@@ -19,8 +19,8 @@ export const useNodePortTemplate = (nodeInstanceId: string, portInstanceId: stri
     const direction = Object.keys(node.inputs).includes(portInstanceId)
       ? 'input'
       : Object.keys(node.outputs).includes(portInstanceId)
-      ? 'output'
-      : null
+        ? 'output'
+        : null
 
     if (!direction) {
       return null

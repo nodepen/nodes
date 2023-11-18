@@ -11,10 +11,10 @@ type PickStringOrStringArrayValue<T extends Record<string, unknown>> = {
       ? Property
       : never
     : T[Property] extends string[]
-    ? Property extends string
-      ? Property
-      : never
-    : never]: string | string[]
+      ? Property extends string
+        ? Property
+        : never
+      : never]: string | string[]
 }
 
 /**
