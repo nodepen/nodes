@@ -95,33 +95,36 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     [internalSelection, searchResults]
   )
 
-  const handleAddNode = (template: NodePen.NodeTemplate): void => {
-    const nodeInstance = createInstance(template)
+  const handleAddNode = useCallback(
+    (template: NodePen.NodeTemplate): void => {
+      const nodeInstance = createInstance(template)
 
-    const nodeWidth = nodeInstance.dimensions.width
-    const nodeHeight = nodeInstance.dimensions.height
+      const nodeWidth = nodeInstance.dimensions.width
+      const nodeHeight = nodeInstance.dimensions.height
 
-    const [centerX, centerY] = overlaySpaceToWorldSpace(eventPosition.x, eventPosition.y)
+      const [centerX, centerY] = overlaySpaceToWorldSpace(eventPosition.x, eventPosition.y)
 
-    const nodePosition = {
-      x: centerX - nodeWidth / 2,
-      y: centerY - nodeHeight / 2,
-    }
+      const nodePosition = {
+        x: centerX - nodeWidth / 2,
+        y: centerY - nodeHeight / 2,
+      }
 
-    nodeInstance.position = nodePosition
+      nodeInstance.position = nodePosition
 
-    apply((state) => {
-      // Add node to document
-      state.document.nodes[nodeInstance.instanceId] = nodeInstance
+      apply((state) => {
+        // Add node to document
+        state.document.nodes[nodeInstance.instanceId] = nodeInstance
 
-      // Clear menu from interface
-      state.registry.contextMenus = {}
-      state.registry.tooltips = {}
+        // Clear menu from interface
+        state.registry.contextMenus = {}
+        state.registry.tooltips = {}
 
-      // Expire solution
-      expireSolution(state)
-    })
-  }
+        // Expire solution
+        expireSolution(state)
+      })
+    },
+    [overlaySpaceToWorldSpace]
+  )
 
   const handlePointerEnterOptions = useCallback(() => {
     setPreferHoverSelection(true)

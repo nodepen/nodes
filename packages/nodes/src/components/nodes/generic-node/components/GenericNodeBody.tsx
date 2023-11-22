@@ -22,30 +22,33 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
   const documentSelection = useStore((state) => state.registry.selection.nodes)
   const isSelected = documentSelection.includes(node.instanceId)
 
-  const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
-    e.stopPropagation()
-    e.preventDefault()
+  const handleContextMenu = useCallback(
+    (e: React.MouseEvent<SVGGElement>): void => {
+      e.stopPropagation()
+      e.preventDefault()
 
-    const { pageX, pageY } = e
+      const { pageX, pageY } = e
 
-    const key = `node-context-menu-${node.instanceId}`
+      const key = `node-context-menu-${node.instanceId}`
 
-    const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+      const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 
-    apply((state) => {
-      state.registry.contextMenus[key] = {
-        position: {
-          x,
-          y,
-        },
-        context: {
-          type: 'node',
-          nodeInstanceId: node.instanceId,
-          nodeTemplate: template,
-        },
-      }
-    })
-  }, [])
+      apply((state) => {
+        state.registry.contextMenus[key] = {
+          position: {
+            x,
+            y,
+          },
+          context: {
+            type: 'node',
+            nodeInstanceId: node.instanceId,
+            nodeTemplate: template,
+          },
+        }
+      })
+    },
+    [pageSpaceToOverlaySpace]
+  )
 
   return (
     <g id={`generic-node-body-${node.instanceId}`} onContextMenu={handleContextMenu}>

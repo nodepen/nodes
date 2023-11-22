@@ -49,7 +49,7 @@ export const AddNodeButton = ({ template, isSelected, action }: AddNodeButtonPro
         },
       }
     })
-  }, [])
+  }, [pageSpaceToOverlaySpace])
 
   const longHoverTarget = useLongHover<HTMLDivElement>(handleLongHover)
 

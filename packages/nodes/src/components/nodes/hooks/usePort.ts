@@ -17,32 +17,35 @@ export const usePort = (
 
   const { __direction: direction, nickName } = portTemplate
 
-  const handleContextMenu = useCallback((e: MouseEvent): void => {
-    e.stopPropagation()
-    e.preventDefault()
+  const handleContextMenu = useCallback(
+    (e: MouseEvent): void => {
+      e.stopPropagation()
+      e.preventDefault()
 
-    const { pageX, pageY } = e
+      const { pageX, pageY } = e
 
-    const key = `${nodeInstanceId}-${portInstanceId}-${direction}-${nickName}`
+      const key = `${nodeInstanceId}-${portInstanceId}-${direction}-${nickName}`
 
-    const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+      const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 
-    apply((state) => {
-      state.registry.contextMenus[key] = {
-        position: {
-          x,
-          y,
-        },
-        context: {
-          type: 'port',
-          direction,
-          nodeInstanceId,
-          portInstanceId,
-          portTemplate,
-        },
-      }
-    })
-  }, [])
+      apply((state) => {
+        state.registry.contextMenus[key] = {
+          position: {
+            x,
+            y,
+          },
+          context: {
+            type: 'port',
+            direction,
+            nodeInstanceId,
+            portInstanceId,
+            portTemplate,
+          },
+        }
+      })
+    },
+    [pageSpaceToOverlaySpace]
+  )
 
   const handlePointerDown = useCallback((e: PointerEvent): void => {
     const { pageX, pageY, pointerId } = e

@@ -75,7 +75,7 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
         }
       })
     },
-    [apply]
+    [apply, pageSpaceToOverlaySpace]
   )
 
   const longHoverTarget = useLongHover<HTMLDivElement>(handleLongHover)

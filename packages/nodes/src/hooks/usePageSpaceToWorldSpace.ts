@@ -1,4 +1,4 @@
-import { useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useStore, useStoreRef } from '$'
 
 // TODO:
@@ -15,10 +15,27 @@ export const usePageSpaceToWorldSpace = (): ((pageX: number, pageY: number) => [
 
   const canvas = useStore((state) => state.registry.canvasRoot)
 
+  const getCanvasDimensions = useCallback(() => {
+    return (canvas.current ?? document.documentElement).getBoundingClientRect()
+  }, [])
+
+  const [canvasDimensions, setCanvasDimensions] = useState(getCanvasDimensions())
+
+  const handleResize = useCallback((_e: UIEvent) => {
+    setCanvasDimensions(getCanvasDimensions())
+  }, [])
+
+  useEffect(() => {
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [])
+
   const callback = useCallback((pageX: number, pageY: number): [x: number, y: number] => {
     const { zoom, position } = camera.current
 
-    const { width, height, left, top } = (canvas.current ?? document.documentElement).getBoundingClientRect()
+    const { width, height, left, top } = canvasDimensions
 
     // Current camera position in page space (aka canvas div center)
     const absoluteCameraPositionPageSpace = {

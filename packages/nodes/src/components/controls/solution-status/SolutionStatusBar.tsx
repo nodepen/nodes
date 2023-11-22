@@ -84,7 +84,7 @@ export const SolutionStatusBar = (): React.ReactElement => {
         },
       }
     })
-  }, [documentProgressStatus, modelProgressStatus])
+  }, [documentProgressStatus, modelProgressStatus, pageSpaceToOverlaySpace])
 
   const handleMouseLeave = useCallback(() => {
     apply((state) => {
@@ -136,17 +136,15 @@ export const SolutionStatusBar = (): React.ReactElement => {
           <div className="np-relative np-w-full np-h-full">
             <div
               id="np-solution-status-icon"
-              className={`${
-                progress === 1 ? 'np-opacity-100' : 'np-opacity-0'
-              } np-absolute np-l-0 np-t-0 np-w-8 np-h-8 np-flex np-items-center np-justify-center`}
+              className={`${progress === 1 ? 'np-opacity-100' : 'np-opacity-0'
+                } np-absolute np-l-0 np-t-0 np-w-8 np-h-8 np-flex np-items-center np-justify-center`}
             >
               {getSolutionResultStatusIcon()}
             </div>
             <div
               id="np-solution-loading-icon"
-              className={`${
-                progress === 1 ? 'np-opacity-0' : 'np-opacity-100'
-              } np-absolute np-l-0 np-t-0 np-w-8 np-h-8 np-flex np-items-center np-justify-center`}
+              className={`${progress === 1 ? 'np-opacity-0' : 'np-opacity-100'
+                } np-absolute np-l-0 np-t-0 np-w-8 np-h-8 np-flex np-items-center np-justify-center`}
             >
               <svg
                 aria-hidden="true"

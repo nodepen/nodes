@@ -19,29 +19,32 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
   const { apply } = useDispatch()
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
-  const handleLongHover = useCallback((e: PointerEvent): void => {
-    const { pageX, pageY } = e
+  const handleLongHover = useCallback(
+    (e: PointerEvent): void => {
+      const { pageX, pageY } = e
 
-    const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+      const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
 
-    apply((state) => {
-      state.registry.tooltips[`port-tooltip-${nodeInstanceId}-${portInstanceId}`] = {
-        configuration: {
-          position: {
-            x: x + 8,
-            y: y + 8,
+      apply((state) => {
+        state.registry.tooltips[`port-tooltip-${nodeInstanceId}-${portInstanceId}`] = {
+          configuration: {
+            position: {
+              x: x + 8,
+              y: y + 8,
+            },
+            isSticky: false,
           },
-          isSticky: false,
-        },
-        context: {
-          type: 'port',
-          template,
-          nodeInstanceId,
-          portInstanceId,
-        },
-      }
-    })
-  }, [])
+          context: {
+            type: 'port',
+            template,
+            nodeInstanceId,
+            portInstanceId,
+          },
+        }
+      })
+    },
+    [pageSpaceToOverlaySpace]
+  )
 
   const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 

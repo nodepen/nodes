@@ -37,94 +37,97 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
     const payload = { method: 'POST', body }
 
-    const response = await fetch('http://localhost:6500/files/gh', payload)
+    const response = await fetch('http://localhost:4000/files/gh', payload)
     const data = await response.json()
 
     setDocument(data)
   }, [])
 
-  const handleExpireSolution = useCallback((state: NodesAppState): void => {
-    const solutionId = state.solution.solutionId
+  const handleExpireSolution = useCallback(
+    (state: NodesAppState): void => {
+      const solutionId = state.solution.solutionId
 
-    const requestSolution = async (): Promise<string> => {
-      const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
-        method: 'POST',
-        body: JSON.stringify({ solutionId, document: state.document }),
-      })
+      const requestSolution = async (): Promise<string> => {
+        const response = await fetch('http://localhost:4000/grasshopper/id/solution', {
+          method: 'POST',
+          body: JSON.stringify({ solutionId, document: state.document, streamId: stream.id }),
+        })
 
-      return await response.text()
-    }
+        return await response.text()
+      }
 
-    const fetchSolutionRuntimeData = async (rootObjectId: string): Promise<NodePen.DocumentSolutionData> => {
-      const query = gql`
-        query GetObjects($streamId: String!, $objectId: String!) {
-          stream(id: $streamId) {
-            object(id: $objectId) {
-              data
+      const fetchSolutionRuntimeData = async (rootObjectId: string): Promise<NodePen.DocumentSolutionData> => {
+        const query = gql`
+          query GetObjects($streamId: String!, $objectId: String!) {
+            stream(id: $streamId) {
+              object(id: $objectId) {
+                data
+              }
             }
           }
-        }
-      `
+        `
 
-      const response = await fetch(`${stream.url}/graphql`, {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${stream.token}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          query: print(query),
-          operationName: 'GetObjects',
-          variables: {
-            streamId: stream.id,
-            objectId: rootObjectId,
+        const response = await fetch(`${stream.url}/graphql`, {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${stream.token}`,
+            'Content-Type': 'application/json',
           },
-        }),
-      })
+          body: JSON.stringify({
+            query: print(query),
+            operationName: 'GetObjects',
+            variables: {
+              streamId: stream.id,
+              objectId: rootObjectId,
+            },
+          }),
+        })
 
-      const { data } = await response.json()
+        const { data } = await response.json()
 
-      const { data: streamSolutionData } = data.stream.object
+        const { data: streamSolutionData } = data.stream.object
 
-      // console.log(streamSolutionData)
+        // console.log(streamSolutionData)
 
-      const documentSolutionData: NodePen.DocumentSolutionData = {
-        solutionId: streamSolutionData['SolutionData']['SolutionId'],
-        documentRuntimeData: {
-          durationMs: streamSolutionData['SolutionData']['DocumentRuntimeData']['DurationMs'],
-        },
-        nodeSolutionData: [],
-      }
-
-      for (const entry of streamSolutionData['SolutionData']['NodeSolutionData']) {
-        const nodeSolutionData: NodePen.NodeSolutionData = {
-          nodeInstanceId: entry['NodeInstanceId'],
-          nodeRuntimeData: {
-            durationMs: entry['NodeRuntimeData']['DurationMs'],
-            messages: entry['NodeRuntimeData']['Messages'].map((message: { Level: string; Message: string }) => ({
-              level: message['Level'],
-              message: message['Message'],
-            })),
+        const documentSolutionData: NodePen.DocumentSolutionData = {
+          solutionId: streamSolutionData['SolutionData']['SolutionId'],
+          documentRuntimeData: {
+            durationMs: streamSolutionData['SolutionData']['DocumentRuntimeData']['DurationMs'],
           },
-          portSolutionData: [],
+          nodeSolutionData: [],
         }
 
-        documentSolutionData.nodeSolutionData.push(nodeSolutionData)
+        for (const entry of streamSolutionData['SolutionData']['NodeSolutionData']) {
+          const nodeSolutionData: NodePen.NodeSolutionData = {
+            nodeInstanceId: entry['NodeInstanceId'],
+            nodeRuntimeData: {
+              durationMs: entry['NodeRuntimeData']['DurationMs'],
+              messages: entry['NodeRuntimeData']['Messages'].map((message: { Level: string; Message: string }) => ({
+                level: message['Level'],
+                message: message['Message'],
+              })),
+            },
+            portSolutionData: [],
+          }
+
+          documentSolutionData.nodeSolutionData.push(nodeSolutionData)
+        }
+
+        return documentSolutionData
       }
 
-      return documentSolutionData
-    }
-
-    requestSolution()
-      .then((rootObjectId) => {
-        setStreamRootObjectId(rootObjectId)
-        return fetchSolutionRuntimeData(rootObjectId)
-      })
-      .then((documentSolutionData) => {
-        console.log(documentSolutionData)
-        setSolution(documentSolutionData)
-      })
-  }, [])
+      requestSolution()
+        .then((rootObjectId) => {
+          setStreamRootObjectId(rootObjectId)
+          return fetchSolutionRuntimeData(rootObjectId)
+        })
+        .then((documentSolutionData) => {
+          console.log(documentSolutionData)
+          setSolution(documentSolutionData)
+        })
+    },
+    [stream.id]
+  )
 
   const fetchPortSolutionData = useCallback(
     async (nodeInstanceId: string, portInstanceId: string): Promise<NodePen.PortSolutionData | null> => {
