@@ -28,12 +28,22 @@ namespace NodePen.Converters.Kits
             return BaseConverter.CanConvertToNative(@object);
         }
 
+        public bool CanConvertToNativeDisplayable(Base @object)
+        {
+            return BaseConverter.CanConvertToNativeDisplayable(@object);
+        }
+
         public bool CanConvertToSpeckle(object @object)
         {
             return BaseConverter.CanConvertToSpeckle(@object);
         }
 
         public object ConvertToNative(Base @object)
+        {
+            return BaseConverter.ConvertToNative(@object);
+        }
+
+        public object ConvertToNativeDisplayable(Base @object)
         {
             return BaseConverter.ConvertToNative(@object);
         }
