@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@nodepen/core": "^2.0.0",
-    "@speckle/viewer": "^2.17.1",
+    "@speckle/viewer": "^2.17.3",
     "immer": "^10.0.3",
     "zustand": "4.4.6"
   },
@@ -33,9 +33,8 @@
     "react-dom": "^18.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.37",
-    "@types/react-dom": "^18.2.15",
-    "@types/three": "^0.155.1",
+    "@types/react": "^18.2.38",
+    "@types/react-dom": "^18.2.17",
     "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
     "postcss": "^8.4.31",
