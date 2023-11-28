@@ -37,7 +37,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
 
     const payload = { method: 'POST', body }
 
-    const response = await fetch('http://localhost:6500/files/gh', payload)
+    const response = await fetch('http://localhost:4000/files/gh', payload)
     const data = await response.json()
 
     setDocument(data)
