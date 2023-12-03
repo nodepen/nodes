@@ -2,8 +2,10 @@ import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '$'
 import { shallow } from 'zustand/shallow'
+import { getNodeType } from '@/utils/templates'
 
 import { GenericNode } from './generic-node'
+import { Panel } from './panel'
 
 const NodesContainer = (): React.ReactElement => {
   const nodes = useDocumentNodes()
@@ -16,13 +18,13 @@ const NodesContainer = (): React.ReactElement => {
 
         const template = templates[templateId]
 
-        switch (getNodeTypeForTemplate(template)) {
+        switch (getNodeType(template)) {
           case 'generic-node':
             return <GenericNode key={`generic-node-${instanceId}`} id={instanceId} template={template} />
-          case 'generic-parameter':
-            return null
-          case 'unknown':
-            // TODO: `unknown-node` type
+          case 'panel':
+            return <Panel key={`panel-${instanceId}`} nodeInstanceId={instanceId} nodeTemplate={template} />
+          default:
+            console.log(`🐍 Could not render node of type \`${getNodeType(template)}\``)
             return null
         }
       })}
