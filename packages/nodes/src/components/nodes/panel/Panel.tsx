@@ -14,16 +14,15 @@ const Panel = ({ nodeInstanceId, nodeTemplate }: PanelProps) => {
 
   useDebugRender(node, nodeTemplate)
 
-  const PANEL_WIDTH = 150
-  const PANEL_HEIGHT = 150
+  const { width, height } = node.dimensions
 
   return (
     <g id={`panel-${node.instanceId}`}>
       <rect
         x={node.position.x - 4}
         y={node.position.y - 4}
-        width={PANEL_WIDTH + 8}
-        height={PANEL_HEIGHT + 8}
+        width={width + 8}
+        height={height + 8}
         rx={6}
         ry={6}
         fill={COLORS.PALE}
@@ -32,8 +31,8 @@ const Panel = ({ nodeInstanceId, nodeTemplate }: PanelProps) => {
         <rect
           x={node.position.x}
           y={node.position.y + 2}
-          width={PANEL_WIDTH}
-          height={PANEL_HEIGHT}
+          width={width}
+          height={height}
           rx={2}
           ry={2}
           stroke={COLORS.DARK}
@@ -43,8 +42,8 @@ const Panel = ({ nodeInstanceId, nodeTemplate }: PanelProps) => {
         <rect
           x={node.position.x}
           y={node.position.y}
-          width={PANEL_WIDTH}
-          height={PANEL_HEIGHT}
+          width={width}
+          height={height}
           rx={2}
           ry={2}
           stroke={COLORS.DARK}

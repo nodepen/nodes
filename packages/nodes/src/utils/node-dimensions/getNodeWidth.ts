@@ -1,6 +1,7 @@
 import type * as NodePen from '@nodepen/core'
 import { DIMENSIONS } from '@/constants'
 import { getLabelWidth } from './getLabelWidth'
+import { getNodeType } from '../templates'
 
 type NodeWidthDimensions = {
   totalWidth: number
@@ -10,6 +11,12 @@ type NodeWidthDimensions = {
 }
 
 export const getNodeWidth = (node: NodePen.DocumentNode, nodeTemplate: NodePen.NodeTemplate): NodeWidthDimensions => {
+  const nodeType = getNodeType(nodeTemplate)
+
+  if (nodeType === 'panel') {
+    return { totalWidth: 150, anchors: { labelDeltaX: 75 } }
+  }
+
   const inputs = Object.entries(node.inputs)
   const inputLabelWidths: Record<string, number> = {}
 
