@@ -88,7 +88,7 @@ export const getStaticProps: GetStaticProps<PageProps> = async () => {
   const document = await fetchDocument('test-id')
 
   const fetchTemplates = async (): Promise<NodePen.NodeTemplate[]> => {
-    const response = await fetch('http://localhost:6500/grasshopper', { cache: 'no-store' })
+    const response = await fetch('http://localhost:4000/grasshopper', { cache: 'no-store' })
     const templates = await response.json()
 
     return templates

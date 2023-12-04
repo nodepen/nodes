@@ -31,6 +31,17 @@ const Panel = ({ nodeInstanceId, nodeTemplate }: PanelProps) => {
       <g>
         <rect
           x={node.position.x}
+          y={node.position.y + 2}
+          width={PANEL_WIDTH}
+          height={PANEL_HEIGHT}
+          rx={2}
+          ry={2}
+          stroke={COLORS.DARK}
+          strokeWidth={2}
+          fill={COLORS.DARK}
+        />
+        <rect
+          x={node.position.x}
           y={node.position.y}
           width={PANEL_WIDTH}
           height={PANEL_HEIGHT}

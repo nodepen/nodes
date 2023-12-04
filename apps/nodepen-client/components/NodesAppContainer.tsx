@@ -47,7 +47,7 @@ const NodesAppContainer = ({ document: initialDocument, templates }: NodesAppCon
     const solutionId = state.solution.solutionId
 
     const requestSolution = async (): Promise<string> => {
-      const response = await fetch('http://localhost:6500/grasshopper/id/solution', {
+      const response = await fetch('http://localhost:4000/grasshopper/id/solution', {
         method: 'POST',
         body: JSON.stringify({ solutionId, document: state.document }),
       })
