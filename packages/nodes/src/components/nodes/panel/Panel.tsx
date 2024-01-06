@@ -1,7 +1,7 @@
 import React from 'react'
 import type * as NodePen from '@nodepen/core'
 import { useStore } from '@/store'
-import { useDebugRender } from '../hooks'
+import { useDebugRender, useDraggableNode, useNodeSelection, useSelectableNode } from '../hooks'
 import { COLORS } from '@/constants'
 
 type PanelProps = {
@@ -14,7 +14,12 @@ const Panel = ({ nodeInstanceId, nodeTemplate }: PanelProps) => {
 
   useDebugRender(node, nodeTemplate)
 
+  const draggableTargetRef = useDraggableNode(nodeInstanceId)
+  const selectableTargetRef = useSelectableNode(nodeInstanceId)
+
   const { width, height } = node.dimensions
+
+  const isSelected = useNodeSelection(nodeInstanceId)
 
   return (
     <g id={`panel-${node.instanceId}`}>
@@ -27,29 +32,31 @@ const Panel = ({ nodeInstanceId, nodeTemplate }: PanelProps) => {
         ry={6}
         fill={COLORS.PALE}
       />
-      <g>
-        <rect
-          x={node.position.x}
-          y={node.position.y + 2}
-          width={width}
-          height={height}
-          rx={2}
-          ry={2}
-          stroke={COLORS.DARK}
-          strokeWidth={2}
-          fill={COLORS.DARK}
-        />
-        <rect
-          x={node.position.x}
-          y={node.position.y}
-          width={width}
-          height={height}
-          rx={2}
-          ry={2}
-          stroke={COLORS.DARK}
-          strokeWidth={2}
-          fill={COLORS.LIGHT}
-        />
+      <g ref={draggableTargetRef}>
+        <g ref={selectableTargetRef}>
+          <rect
+            x={node.position.x}
+            y={node.position.y + 2}
+            width={width}
+            height={height}
+            rx={2}
+            ry={2}
+            stroke={COLORS.DARK}
+            strokeWidth={2}
+            fill={COLORS.DARK}
+          />
+          <rect
+            x={node.position.x}
+            y={node.position.y}
+            width={width}
+            height={height}
+            rx={2}
+            ry={2}
+            stroke={COLORS.DARK}
+            strokeWidth={2}
+            fill={isSelected ? COLORS.GREEN : COLORS.LIGHT}
+          />
+        </g>
       </g>
     </g>
   )

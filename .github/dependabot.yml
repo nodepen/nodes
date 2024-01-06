@@ -8,6 +8,8 @@ updates:
       day: "friday"
     allow:
       - dependency-type: "direct"
+    ignore:
+      - dependency-name: "@types/three"
     open-pull-requests-limit: 10
     groups:
       build:
