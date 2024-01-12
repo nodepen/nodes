@@ -33,7 +33,7 @@
     "react-dom": "^18.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.46",
+    "@types/react": "^18.2.47",
     "@types/react-dom": "^18.2.18",
     "autoprefixer": "^10.4.16",
     "concurrently": "^8.2.2",
