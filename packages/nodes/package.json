@@ -33,8 +33,8 @@
     "react-dom": "^18.0"
   },
   "devDependencies": {
-    "@types/react": "^18.2.69",
-    "@types/react-dom": "^18.2.22",
+    "@types/react": "^18.2.74",
+    "@types/react-dom": "^18.2.24",
     "autoprefixer": "^10.4.19",
     "concurrently": "^8.2.2",
     "postcss": "^8.4.38",
