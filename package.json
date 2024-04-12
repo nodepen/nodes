@@ -37,7 +37,7 @@
     "tsc-alias": "^1.8.8",
     "tsc-watch": "^6.0.4",
     "turbo": "^1.13.0",
-    "typescript": "^5.4.4"
+    "typescript": "^5.4.5"
   },
   "workspaces": [
     "packages/core",
