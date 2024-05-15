@@ -4,34 +4,13 @@ import { setAutoFreeze, freeze } from 'immer'
 import type * as NodePen from '@nodepen/core'
 import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
-import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeExtents } from '@/utils/node-dimensions'
-import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution } from './utils'
-import { createInstance } from '@/utils/templates'
-
-const { NODE_INTERNAL_PADDING } = DIMENSIONS
 
 type BaseAction = string | ({ type: string } & Record<string, unknown>)
 type BaseSetter = (callback: (state: NodesAppState) => void, replace?: boolean, action?: BaseAction) => void
 type BaseGetter = () => NodesAppState
-
-// export type NodesAppDispatch = {
-//   dispatch: {
-//     apply(callback: (state: NodesAppState, get: BaseGetter) => void): void
-//     loadDocument(document: NodePen.Document): void
-//     loadTemplates(templates: NodePen.NodeTemplate[]): void
-//     commitRegionSelection: (selectionMode: 'set' | 'add' | 'remove') => void
-//     commitLiveWireEdit: () => void
-//     setCameraAspect: (aspect: number) => void
-//     setCameraPosition: (x: number, y: number) => void
-//     setCameraZoom: (zoom: number) => void
-//     setNodePosition: (id: string, x: number, y: number) => void
-//     clearInterface: () => void
-//     clearSelection: () => void
-//   }
-// }
 
 export type NodesAppDispatch = ReturnType<typeof createDispatch>
 
@@ -39,72 +18,10 @@ setAutoFreeze(false)
 
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
   const dispatch = {
-    apply: (callback: (state: NodesAppState, get: BaseGetter) => void) => set((state) => callback(state, get)),
-    loadDocument: (document: NodePen.Document) =>
+    apply: (callback: (state: NodesAppState, get: BaseGetter) => void) =>
       set((state) => {
-        state.document = document
-
-        for (const node of Object.values(document.nodes)) {
-          // Sanitize node properties
-          const { instanceId, templateId } = node
-
-          const template = state.templates[templateId]
-
-          if (!template) {
-            console.log(`🐍 Could not find template [${templateId}] for document node [${instanceId}]`)
-            continue
-          }
-
-          state.document.nodes[instanceId] = createInstance(template)
-
-          // const nodeWidth = getNodeWidth()
-          // const nodeHeight = getNodeHeight(template)
-
-          // node.dimensions = {
-          //   width: nodeWidth,
-          //   height: nodeHeight,
-          // }
-
-          // const inputInstanceIds = Object.keys(inputs)
-          // const inputHeightSegments = divideDomain(
-          //   [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
-          //   inputInstanceIds.length > 0 ? inputInstanceIds.length : 1
-          // )
-
-          // for (let i = 0; i < inputInstanceIds.length; i++) {
-          //   const currentId = inputInstanceIds[i]
-          //   const currentDomain = inputHeightSegments[i]
-
-          //   const deltaX = 0
-          //   const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
-
-          //   node.anchors[currentId] = {
-          //     dx: deltaX,
-          //     dy: deltaY,
-          //   }
-          // }
-
-          // const outputInstanceIds = Object.keys(outputs)
-          // const outputHeightSegments = divideDomain(
-          //   [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
-          //   outputInstanceIds.length > 0 ? outputInstanceIds.length : 1
-          // )
-
-          // for (let i = 0; i < outputInstanceIds.length; i++) {
-          //   const currentId = outputInstanceIds[i]
-          //   const currentDomain = outputHeightSegments[i]
-
-          //   const deltaX = nodeWidth
-          //   const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
-
-          //   node.anchors[currentId] = {
-          //     dx: deltaX,
-          //     dy: deltaY,
-          //   }
-          // }
-        }
-
-        expireSolution(state)
+        callback(state, get)
+        state.callbacks?.onDocumentChanged?.(state.document)
       }),
     loadTemplates: (templates: NodePen.NodeTemplate[]) =>
       set(

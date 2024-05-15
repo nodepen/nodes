@@ -22,15 +22,17 @@ export const NodesApp = ({
   children,
   ...callbacks
 }: NodesAppProps): React.ReactElement => {
-  const { apply, loadDocument, loadTemplates } = useDispatch()
+  const { apply, loadTemplates } = useDispatch()
 
   useEffect(() => {
     loadTemplates(templates ?? [])
   }, [templates])
 
   useEffect(() => {
-    loadDocument(document)
-  }, [document.id])
+    apply((state) => {
+      state.document = document
+    })
+  }, [document])
 
   useEffect(() => {
     apply((state) => {

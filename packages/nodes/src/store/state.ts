@@ -59,23 +59,23 @@ export type NodesAppState = {
     selection: {
       nodes: string[]
       region:
-        | {
-            isActive: false
-          }
-        | {
-            isActive: true
-            /** World space */
-            from: {
-              x: number
-              y: number
-            }
-            /** World space */
-            to: {
-              x: number
-              y: number
-            }
-            pointerId: number
-          }
+      | {
+        isActive: false
+      }
+      | {
+        isActive: true
+        /** World space */
+        from: {
+          x: number
+          y: number
+        }
+        /** World space */
+        to: {
+          x: number
+          y: number
+        }
+        pointerId: number
+      }
     }
     tooltips: {
       [tooltipKey: string]: Tooltip
@@ -131,6 +131,8 @@ export type NodesAppState = {
 }
 
 export type NodesAppCallbacks = {
+  onDocumentChanged?: (document: NodePen.Document) => void
+  onDocumentSaved?: (document: NodePen.Document) => void
   onExpireSolution?: (state: NodesAppState) => void
   onFileUpload?: (state: NodesAppState) => Promise<void> | void
   getPortSolutionData?: (nodeInstanceId: string, portInstanceId: string) => Promise<NodePen.PortSolutionData | null>
