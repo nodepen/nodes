@@ -171,7 +171,7 @@ namespace Rhino.Compute.Endpoints
         },
         userInfo = new UserInfo()
         {
-          email = "chuck@nodepen.io"
+          email = "chuck@speckle.systems"
         }
       };
 

@@ -39,7 +39,7 @@ namespace Rhino.Compute
 
       // Start web server
       StartOptions options = new StartOptions();
-      options.Urls.Add("http://localhost:4000");
+      options.Urls.Add("http://localhost:6500");
 
       _ = WebApp.Start<Startup>(options);
 
