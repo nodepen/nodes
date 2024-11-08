@@ -36,7 +36,7 @@
     "ts-jest": "^29.1.4",
     "tsc-alias": "^1.8.10",
     "tsc-watch": "^6.2.0",
-    "turbo": "^1.13.3",
+    "turbo": "^2.2.3",
     "typescript": "^5.4.5"
   },
   "workspaces": [
