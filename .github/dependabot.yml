@@ -48,6 +48,8 @@ updates:
         patterns:
           - "immer"
           - "zustand"
+    ignore:
+      - dependency-name: "@types/three"
     reviewers:
       - "cdriesler"
     versioning-strategy: "increase"
