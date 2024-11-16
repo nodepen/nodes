@@ -15,7 +15,7 @@
   "scripts": {
     "build": "tsc",
     "dev": "tsc -w --preserveWatchOutput",
-    "lint": "eslint --ext .ts,.tsx .",
+    "lint": "eslint .",
     "test": "echo \"ok\""
   }
 }
