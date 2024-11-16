@@ -8,6 +8,7 @@
     "type": "git",
     "url": "https://github.com/nodepen/nodes.git"
   },
+  "packageManager": "npm@10.9.0",
   "license": "MIT",
   "scripts": {
     "build": "npx turbo run build --no-daemon",
