@@ -50,8 +50,6 @@ updates:
           - "zustand"
     ignore:
       - dependency-name: "@types/three"
-    reviewers:
-      - "cdriesler"
     versioning-strategy: "increase"
 
   - directory: "/packages/converters"
@@ -66,5 +64,3 @@ updates:
         patterns:
           - "Speckle*"
     open-pull-requests-limit: 1
-    reviewers:
-      - "cdriesler"
