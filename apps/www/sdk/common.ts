@@ -1,21 +1,26 @@
 import { DocumentNode, print } from "graphql"
+import { SpeckleRequestContext } from "./types"
 
-type SpeckleRequestContext = {
-  speckleServerUrl: string
-  speckleToken: string
-}
+export const issueSpeckleRequest =
+  (context: SpeckleRequestContext) =>
+    async (query: DocumentNode, variables: Record<string, unknown>) => {
+      const { speckleServerUrl, speckleToken } = context
 
-export const issueSpeckleRequest = async (query: DocumentNode, variables: Record<string, unknown>, context: SpeckleRequestContext) => {
-  const { speckleServerUrl, speckleToken } = context
+      console.log(context)
 
-  const res = await fetch(`${speckleServerUrl}/graphql`, {
-    method: 'POST',
-    headers: {
-      Authorization: speckleToken
-    },
-    body: JSON.stringify({
-      query: print(query),
-      variables
-    })
-  })
-}
+      const res = await fetch(`${speckleServerUrl}/graphql`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${speckleToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          query: print(query),
+          variables
+        })
+      })
+
+      const { data } = await res.json()
+
+      return data
+    }

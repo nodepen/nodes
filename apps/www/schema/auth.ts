@@ -72,7 +72,8 @@ export const speckleTokens = authSchema.table(
   {
     userId: text("userId")
       .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
+      .references(() => users.id, { onDelete: "cascade" })
+      .primaryKey(),
     token: text("token").notNull(),
     refreshToken: text("refresh_token").notNull()
   }
