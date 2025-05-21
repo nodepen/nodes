@@ -13,7 +13,7 @@ export const getActiveUser =
   (context: SpeckleRequestContext) =>
     async () => {
       const query = gql`
-        query {
+        query GetActiveUser {
           activeUser {
             id
             name

@@ -20,7 +20,14 @@ export const issueSpeckleRequest =
         })
       })
 
-      const { data } = await res.json()
+      const { data, error } = await res.json()
+
+      console.log(JSON.stringify(data, null, 2))
+
+      if (!!error) {
+        console.log(error)
+        throw new Error(error)
+      }
 
       return data
     }

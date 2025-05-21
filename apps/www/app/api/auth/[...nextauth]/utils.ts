@@ -79,46 +79,43 @@ export const config = {
           speckleServerUrl: env.SPECKLE_SERVER_URL
         })()
 
-        console.log({ activeUser })
-
         // Upsert user to users db & speckle tokens
-        try {
-          await db.insert(users).values({
-            id: activeUser.id,
+        await db.insert(users).values({
+          id: activeUser.id,
+          name: activeUser.name,
+          email: activeUser.email,
+          emailVerified: new Date(),
+          image: activeUser.avatar ?? null
+        }).onConflictDoUpdate({
+          target: [users.id],
+          set: {
             name: activeUser.name,
             email: activeUser.email,
-            emailVerified: new Date(),
-            image: activeUser.avatar ?? null
-          }).onConflictDoUpdate({
-            target: [users.id],
-            set: {
-              name: activeUser.name,
-              email: activeUser.email,
-              image: activeUser.avatar
-            }
-          })
+            image: activeUser.avatar
+          }
+        })
 
-          await db.insert(speckleTokens).values({
-            userId: activeUser.id,
+        await db.insert(speckleTokens).values({
+          userId: activeUser.id,
+          token,
+          refreshToken
+        }).onConflictDoUpdate({
+          target: [speckleTokens.userId],
+          set: {
             token,
             refreshToken
-          }).onConflictDoUpdate({
-            target: [speckleTokens.userId],
-            set: {
-              token,
-              refreshToken
-            }
-          })
-        } catch (e) {
-          console.log(e)
-        }
+          }
+        })
+
+        // Add them to the workspace
+
 
 
         const user = {
           id: activeUser.id,
           name: activeUser.name,
           email: activeUser.email,
-          image: '',
+          image: activeUser.avatar ?? '',
           // These live in a related table
           speckleToken: token,
           speckleRefreshToken: refreshToken

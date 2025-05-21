@@ -15,6 +15,13 @@
       "when": 1747695853181,
       "tag": "0001_round_dust",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1747786573430,
+      "tag": "0002_tiny_blonde_phantom",
+      "breakpoints": true
     }
   ]
 }

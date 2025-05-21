@@ -1,31 +1,37 @@
-// export const dynamic = 'force-dynamic'
-
-import { getDb } from "@/schema/db"
-import { getActiveUser } from "@/sdk/auth/auth"
-import { getSpeckleRequestContext } from "@/utils/auth"
-import { getToken } from "next-auth/jwt"
+import { acceptWorkspaceInvite, inviteToWorkspace, tryGetWorkspaceInvite } from "@/sdk/workspaces/invites"
+import { getSpeckleWorkspaceAdminRequestContext, getSpeckleRequestContext, getSpeckleUserId } from "@/utils/auth"
+import { getEnv } from "@/utils/env"
 import { NextRequest } from "next/server"
 
-const secret = process.env.AUTH_SECRET
-
 const handler = async (req: NextRequest) => {
-  const context = await getSpeckleRequestContext(req)
+  const env = getEnv()
+  const adminContext = getSpeckleWorkspaceAdminRequestContext()
 
-  if (!context) {
-    return Response.json({})
+  const userId = await getSpeckleUserId(req)
+  const userContext = await getSpeckleRequestContext(req)
+
+  if (!userContext || !userId) {
+    return Response.json({ message: 'oh no' })
   }
 
-  const activeUser = await getActiveUser(context)()
-
-  console.log({ activeUser })
-
-  const db = await getDb()
-
-  await db.query.users.findMany({
-    limit: 10
+  await inviteToWorkspace(adminContext)({
+    workspaceId: env.SPECKLE_WORKSPACE_ID,
+    userId,
   })
 
-  return Response.json({})
+  const invite = await tryGetWorkspaceInvite(userContext)({
+    workspaceId: env.SPECKLE_WORKSPACE_ID
+  })
+
+  if (!invite) {
+    return Response.json({ message: 'womp womp' })
+  }
+
+  await acceptWorkspaceInvite(userContext)({
+    token: invite.token
+  })
+
+  return Response.json({ ok: true })
 }
 
 export { handler as GET, handler as POST }
