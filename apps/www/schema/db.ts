@@ -1,10 +1,14 @@
 import { getEnv } from '@/utils/env'
 import * as authSchema from './auth'
+import * as documentsSchema from './documents'
+import * as speckleSchema from './speckle'
 import { Client, ClientConfig } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
 
 export const schema = {
-  ...authSchema
+  ...authSchema,
+  ...documentsSchema,
+  ...speckleSchema
 }
 
 const env = getEnv()

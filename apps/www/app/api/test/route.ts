@@ -4,32 +4,34 @@ import { getEnv } from "@/utils/env"
 import { NextRequest } from "next/server"
 
 const handler = async (req: NextRequest) => {
-  const env = getEnv()
-  const adminContext = getSpeckleWorkspaceAdminRequestContext()
+  // const env = getEnv()
+  // const adminContext = getSpeckleWorkspaceAdminRequestContext()
 
-  const userId = await getSpeckleUserId(req)
-  const userContext = await getSpeckleRequestContext(req)
+  // const userId = await getSpeckleUserId(req)
+  // const userContext = await getSpeckleRequestContext(req)
 
-  if (!userContext || !userId) {
-    return Response.json({ message: 'oh no' })
-  }
+  // console.log(userContext)
 
-  await inviteToWorkspace(adminContext)({
-    workspaceId: env.SPECKLE_WORKSPACE_ID,
-    userId,
-  })
+  // if (!userContext || !userId) {
+  //   return Response.json({ message: 'oh no' })
+  // }
 
-  const invite = await tryGetWorkspaceInvite(userContext)({
-    workspaceId: env.SPECKLE_WORKSPACE_ID
-  })
+  // await inviteToWorkspace(adminContext)({
+  //   workspaceId: env.SPECKLE_WORKSPACE_ID,
+  //   userId,
+  // })
 
-  if (!invite) {
-    return Response.json({ message: 'womp womp' })
-  }
+  // const invite = await tryGetWorkspaceInvite(userContext)({
+  //   workspaceId: env.SPECKLE_WORKSPACE_ID
+  // })
 
-  await acceptWorkspaceInvite(userContext)({
-    token: invite.token
-  })
+  // if (!invite) {
+  //   return Response.json({ message: 'womp womp' })
+  // }
+
+  // await acceptWorkspaceInvite(userContext)({
+  //   token: invite.token
+  // })
 
   return Response.json({ ok: true })
 }

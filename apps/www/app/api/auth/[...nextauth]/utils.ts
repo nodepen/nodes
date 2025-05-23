@@ -4,12 +4,13 @@ import { getEnv } from "@/utils/env"
 import { getActiveUser } from "@/sdk/auth/auth";
 import { getDb } from '@/schema/db'
 import { speckleTokens, users } from "@/schema/auth";
+import { ensureWorkspaceAccess } from "@/services/speckle";
 
 export const config = {
   callbacks: {
     async jwt({ token, user }) {
-      console.log({ token })
-      console.log({ user })
+      // console.log({ token })
+      // console.log({ user })
       token.id = (user as any)?.id
       token.speckleToken = (user as any)?.speckleToken
       return token
@@ -73,13 +74,13 @@ export const config = {
           return null
         }
 
-        // Get user info from token
+        // Get speckle user info from token
         const activeUser = await getActiveUser({
           speckleToken: token,
           speckleServerUrl: env.SPECKLE_SERVER_URL
         })()
 
-        // Upsert user to users db & speckle tokens
+        // Ensure nodepen user data
         await db.insert(users).values({
           id: activeUser.id,
           name: activeUser.name,
@@ -107,9 +108,14 @@ export const config = {
           }
         })
 
-        // Add them to the workspace
-
-
+        // Ensure speckle workspace access
+        await ensureWorkspaceAccess({
+          speckleServerUrl: env.SPECKLE_SERVER_URL,
+          speckleToken: token
+        })({
+          userId: activeUser.id,
+          userEmail: activeUser.email
+        })
 
         const user = {
           id: activeUser.id,
@@ -120,9 +126,6 @@ export const config = {
           speckleToken: token,
           speckleRefreshToken: refreshToken
         }
-
-        // Return user to jwt
-        // Requests can use speckle token on jwt (?)
 
         return user
       }

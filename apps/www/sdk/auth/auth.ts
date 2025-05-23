@@ -27,3 +27,32 @@ export const getActiveUser =
 
       return data.activeUser as User
     }
+
+export const getActiveUserRoles =
+  (context: SpeckleRequestContext) =>
+    async (params: { workspaceId: string, projectId: string }) => {
+      const { workspaceId, projectId } = params
+
+      const query = gql`
+          query EnsureNodePenConnection($workspaceId: String!, $projectId: String!) {
+            workspace(id: $workspaceId) {
+              id
+              role
+            }
+            project(id: $projectId) {
+              id
+              role
+            }
+          }
+        `
+
+      const data = await issueSpeckleRequest(context)(query, {
+        workspaceId,
+        projectId
+      })
+
+      return [
+        data?.workspace?.role,
+        data?.project?.role
+      ]
+    }

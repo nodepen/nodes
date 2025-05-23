@@ -1,4 +1,4 @@
-import { pgSchema, primaryKey, text } from "drizzle-orm/pg-core";
+import { pgSchema, text } from "drizzle-orm/pg-core";
 import { users } from "./auth";
 
 
@@ -8,8 +8,8 @@ export const speckleSchema = pgSchema("speckle")
 export const projects = speckleSchema.table(
   "projects",
   {
-    project_id: text("project_id").primaryKey(),
-    user_id: text("user_id")
+    projectId: text("project_id").primaryKey(),
+    userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" })
   }
@@ -19,9 +19,9 @@ export const projects = speckleSchema.table(
 export const models = speckleSchema.table(
   "models",
   {
-    model_id: text("model_id").primaryKey(),
-    project_id: text("project_id").references(() => projects.project_id, { onDelete: "set null" }),
-    user_id: text("user_id")
+    modelId: text("model_id").primaryKey(),
+    projectId: text("project_id").references(() => projects.projectId, { onDelete: "set null" }),
+    userId: text("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" })
   }
