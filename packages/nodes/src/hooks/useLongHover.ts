@@ -1,13 +1,13 @@
 import React, { useRef, useCallback } from 'react'
 import { useImperativeEvent } from './useImperativeEvent'
 
-export const useLongHover = <T extends HTMLDivElement | SVGGElement>(
+export const useLongHover = <T extends HTMLDivElement | SVGGElement | null>(
   onLongHoverCallback: (e: PointerEvent) => void,
   hoverDelay = 300
 ): React.RefObject<T> => {
   const targetRef = useRef<T>(null)
 
-  const delayTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const delayTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const handlePointerMove = useCallback(
     (e: PointerEvent): void => {
@@ -42,5 +42,5 @@ export const useLongHover = <T extends HTMLDivElement | SVGGElement>(
   useImperativeEvent(targetRef, 'pointermove', handlePointerMove)
   useImperativeEvent(targetRef, 'pointerleave', handlePointerLeave)
 
-  return targetRef
+  return targetRef as React.RefObject<T>
 }

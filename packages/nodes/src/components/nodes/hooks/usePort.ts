@@ -9,7 +9,7 @@ export const usePort = (
   nodeInstanceId: string,
   portInstanceId: string,
   portTemplate: NodePen.PortTemplate
-): React.RefObject<SVGGElement> => {
+): React.RefObject<SVGGElement | null> => {
   const portRef = useRef<SVGGElement>(null)
 
   const { apply } = useDispatch()

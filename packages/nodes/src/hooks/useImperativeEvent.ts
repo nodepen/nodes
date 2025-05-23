@@ -1,18 +1,20 @@
 import type React from 'react'
 import { useEffect } from 'react'
 
-type EventKey<T extends HTMLElement | SVGElement> = T extends HTMLElement
+type EventKey<T extends HTMLElement | SVGElement | null> =
+  T extends HTMLElement
   ? keyof HTMLElementEventMap
   : keyof SVGElementEventMap
 
-type EventHandler<T extends HTMLElement | SVGElement, U extends EventKey<T>> = T extends HTMLElement
+type EventHandler<T extends HTMLElement | SVGElement | null, U extends EventKey<T>> =
+  T extends HTMLElement
   ? (event: HTMLElementEventMap[U]) => void
   : (event: SVGElementEventMap[U]) => void
 
 /**
  * Utility function for imperatively keeping an event handler attached to the provided DOM element ref.
  */
-export const useImperativeEvent = <T extends HTMLElement | SVGElement, U extends EventKey<T>>(
+export const useImperativeEvent = <T extends HTMLElement | SVGElement | null, U extends EventKey<T>>(
   ref: React.RefObject<T>,
   eventName: U,
   eventHandler: EventHandler<T, U>,

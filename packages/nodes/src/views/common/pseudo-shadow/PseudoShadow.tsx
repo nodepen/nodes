@@ -4,7 +4,7 @@ import { useStore } from '$'
 import { useImperativeEvent } from '@/hooks'
 
 type PseudoShadowProps = {
-  target: React.RefObject<HTMLDivElement>
+  target: React.RefObject<HTMLDivElement | null>
   resizeProxyKey?: string
 }
 
@@ -20,7 +20,7 @@ const PseudoShadow = ({ target, resizeProxyKey }: PseudoShadowProps): React.Reac
   const resizeProxyRef = useStore((store) => store.registry.shadows.proxyRefs[resizeProxyKey ?? ''])
   const [dimensions, setDimensions] = useState<PseudoShadowDimensions>()
 
-  const resizeObserver = useRef<ResizeObserver>()
+  const resizeObserver = useRef<ResizeObserver>(null)
 
   const handleShadowResize = useCallback(() => {
     console.log(`⚙️⚙️⚙️ Resized shadow for [${target.current?.id?.length ?? 0 > 1 ? target.current?.id : 'anonymous'}]`)
@@ -75,7 +75,7 @@ const PseudoShadow = ({ target, resizeProxyKey }: PseudoShadowProps): React.Reac
   })
 
   // Keep shadow in sync with div transitions
-  const animationFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>()
+  const animationFrameRef = useRef<ReturnType<typeof requestAnimationFrame>>(undefined)
 
   const animate = useCallback(() => {
     handleShadowResize()

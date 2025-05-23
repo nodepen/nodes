@@ -160,7 +160,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 }
 
 const useDebounceCallback = (callback: () => void, delay: number): (() => void) => {
-  const internalTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const internalTimeout = useRef<ReturnType<typeof setTimeout>>(undefined)
 
   const internalCallback = useCallback(() => {
     if (internalTimeout.current) {

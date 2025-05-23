@@ -3,7 +3,7 @@ import { useCallback, useRef } from 'react'
 import { useDispatch, useStore, useStoreRef } from '$'
 import { useImperativeEvent } from '@/hooks'
 
-export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement> => {
+export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
   const nodeRef = useRef<SVGGElement>(null)
 
   const { setNodePosition } = useDispatch()
@@ -15,7 +15,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
   }
 
   const isDragging = useRef(false)
-  const initialPointerId = useRef<number>()
+  const initialPointerId = useRef<number>(undefined)
   const initialPointerPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const initialNodePosition = useRef<{ x: number; y: number }>(getCurrentNodePosition(nodeInstanceId))
 

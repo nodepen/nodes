@@ -3,7 +3,7 @@ import { useCallback, useRef } from 'react'
 import { useStore, useDispatch } from '$'
 import { useImperativeEvent } from '@/hooks'
 
-export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGElement> => {
+export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
   const nodeRef = useRef<SVGGElement>(null)
 
   const { apply } = useDispatch()

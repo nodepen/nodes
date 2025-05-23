@@ -10,7 +10,7 @@ import { useImperativeEvent } from '@/hooks'
 export const usePseudoShadow = (
   resizeProxyKey?: string,
   triggerOnAnimation = true
-): React.RefObject<HTMLDivElement> => {
+): React.RefObject<HTMLDivElement | null> => {
   const shadowId = useId()
   const shadowTargetRef = useRef<HTMLDivElement>(null)
 

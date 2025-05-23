@@ -13,6 +13,12 @@
   ],
   "main": "dist/index.js",
   "module": "dist/index.js",
+  "exports": {
+    ".": {
+      "default": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
   "scripts": {
     "prebuild": "tailwindcss build -i tailwind.css -o dist/styles.css && copyfiles assets/*.ttf dist",
     "build": "tsc",
@@ -24,18 +30,18 @@
   },
   "dependencies": {
     "@nodepen/core": "^2.0.0",
-    "@speckle/viewer": "^2.17.16",
+    "@speckle/viewer": "^2.24.2",
     "immer": "^10.1.1",
     "zustand": "4.5.5"
   },
   "peerDependencies": {
-    "react": "^18.0",
-    "react-dom": "^18.0"
+    "react": "^19",
+    "react-dom": "^19"
   },
   "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.2.25",
-    "@types/three": "^0.136.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@types/three": "0.140.0",
     "autoprefixer": "^10.4.20",
     "concurrently": "^9.1.0",
     "postcss": "^8.4.47",

@@ -38,19 +38,19 @@ export type NodesAppState = {
     objectIds: string[]
   }
   registry: {
-    canvasRoot: React.RefObject<HTMLDivElement>
+    canvasRoot: React.RefObject<HTMLDivElement | null>
     contextMenus: {
       [menuKey: string]: ContextMenu
     }
-    dialogRoot: React.RefObject<HTMLDivElement>
+    dialogRoot: React.RefObject<HTMLDivElement | null>
     shadows: {
-      containerRef: React.RefObject<HTMLDivElement> | null
+      containerRef: React.RefObject<HTMLDivElement | null> | null
       proxyRefs: {
-        [proxyKey: string]: React.RefObject<HTMLDivElement>
+        [proxyKey: string]: React.RefObject<HTMLDivElement | null>
       }
       targets: {
         [shadowId: string]: {
-          ref: React.RefObject<HTMLDivElement>
+          ref: React.RefObject<HTMLDivElement | null>
           /** The optional alternate element to observe for resize. */
           resizeProxyKey?: string
         }
@@ -59,23 +59,23 @@ export type NodesAppState = {
     selection: {
       nodes: string[]
       region:
-        | {
-            isActive: false
-          }
-        | {
-            isActive: true
-            /** World space */
-            from: {
-              x: number
-              y: number
-            }
-            /** World space */
-            to: {
-              x: number
-              y: number
-            }
-            pointerId: number
-          }
+      | {
+        isActive: false
+      }
+      | {
+        isActive: true
+        /** World space */
+        from: {
+          x: number
+          y: number
+        }
+        /** World space */
+        to: {
+          x: number
+          y: number
+        }
+        pointerId: number
+      }
     }
     tooltips: {
       [tooltipKey: string]: Tooltip
@@ -87,8 +87,8 @@ export type NodesAppState = {
       }
     }
     wires: {
-      underlayContainerRef: React.RefObject<SVGGElement>
-      maskRef: React.RefObject<SVGMaskElement>
+      underlayContainerRef: React.RefObject<SVGGElement | null>
+      maskRef: React.RefObject<SVGMaskElement | null>
       live: {
         /** The current position of the cursor pointer in page space. */
         cursor: {

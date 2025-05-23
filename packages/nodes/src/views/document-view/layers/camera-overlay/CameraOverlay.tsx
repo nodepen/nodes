@@ -22,7 +22,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
   const initialPagePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
   const initialWorldPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
 
-  const activePointerId = useRef<number>()
+  const activePointerId = useRef<number>(undefined)
   const isPanActive = useRef(false)
   const isRegionSelectActive = useRef(false)
 

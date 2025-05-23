@@ -1,4 +1,4 @@
-import { NextAuthOptions, getServerSession } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials"
 import { getEnv } from "@/utils/env"
 import { getActiveUser } from "@/sdk/auth/auth";
@@ -11,8 +11,8 @@ export const config = {
     async jwt({ token, user }) {
       // console.log({ token })
       // console.log({ user })
-      token.id = (user as any)?.id
-      token.speckleToken = (user as any)?.speckleToken
+      token.id = user?.id
+      token.speckleToken = (user as User & { speckleToken: string })?.speckleToken
       return token
     },
     async session({ session, token }) {
@@ -41,7 +41,7 @@ export const config = {
       credentials: {
         accessCode: { label: "Access Code", type: "text" },
       },
-      async authorize(credentials, req) {
+      async authorize(credentials) {
         const env = getEnv()
         const db = await getDb()
 

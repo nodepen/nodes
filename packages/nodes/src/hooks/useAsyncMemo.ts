@@ -2,16 +2,16 @@ import { useEffect, useRef, useState } from 'react'
 
 type AsyncMemoResult<T> =
   | {
-      isLoading: true
-      value: null
-    }
+    isLoading: true
+    value: null
+  }
   | {
-      isLoading: false
-      value: T
-    }
+    isLoading: false
+    value: T
+  }
 
 export const useAsyncMemo = <T>(key: string, asyncFactory: () => Promise<T>): AsyncMemoResult<T> => {
-  const internalKey = useRef<string>()
+  const internalKey = useRef<string>(undefined)
 
   const [internalValue, setInternalValue] = useState<AsyncMemoResult<T>>({ isLoading: true, value: null })
 

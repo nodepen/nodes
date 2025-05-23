@@ -3,12 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack -p 9000",
+    "dev": "next dev -p 9000",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
+    "@nodepen/nodes": "*",
     "crypto-random-string": "^5.0.0",
     "dotenv": "^16.5.0",
     "drizzle-orm": "^0.43.1",

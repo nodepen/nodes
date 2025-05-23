@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react'
-import { Viewer, ViewerEvent } from '@speckle/viewer'
+import { AssetType, Loader, Viewer, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 import { useDispatch } from '@/store'
@@ -17,7 +17,7 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
   const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const viewerRef = useRef<Viewer>()
+  const viewerRef = useRef<Viewer>(null)
 
   const { apply } = useDispatch()
 
@@ -41,9 +41,12 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
 
     const viewer = new Viewer(containerRef.current, {
       showStats: false,
-      environmentSrc: '',
+      environmentSrc: {
+        id: 'root',
+        src: '',
+        type: AssetType.TEXTURE_HDR
+      },
       verbose: false,
-      keepGeometryData: true,
     })
 
     viewerRef.current = viewer
@@ -52,9 +55,8 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
       viewerRef.current = viewer
     })
 
-    viewer.on(ViewerEvent.LoadProgress, (arg) => {
-      const { progress } = arg
-      safeSetModelLoadStatus(progress)
+    viewer.on(ViewerEvent.LoadComplete, (arg) => {
+      safeSetModelLoadStatus(1)
     })
 
     return () => {
@@ -75,7 +77,8 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
       state.lifecycle.model.status = 'loading'
     })
 
-    await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
+    // TODO: What changed
+    // await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
 
     let visibleObjectCount = 0
 
@@ -146,8 +149,8 @@ const useThrottleCallback = <T extends unknown[]>(
     internalCallback.current = callback
   }, [callback])
 
-  const nextArgs = useRef<T>()
-  const interval = useRef<ReturnType<typeof setInterval>>()
+  const nextArgs = useRef<T>(undefined)
+  const interval = useRef<ReturnType<typeof setInterval>>(undefined)
 
   const handleInvoke = useCallback(() => {
     if (!nextArgs.current) {
