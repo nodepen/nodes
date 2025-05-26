@@ -16,20 +16,20 @@ export const usePseudoShadow = (
 
   const { apply } = useDispatch()
 
-  useEffect(() => {
-    apply((state) => {
-      state.registry.shadows.targets[shadowId] = {
-        ref: shadowTargetRef,
-        resizeProxyKey,
-      }
-    })
+  // useEffect(() => {
+  //   apply((state) => {
+  //     state.registry.shadows.targets[shadowId] = {
+  //       ref: shadowTargetRef,
+  //       resizeProxyKey,
+  //     }
+  //   })
 
-    return () => {
-      apply((state) => {
-        delete state.registry.shadows.targets[shadowId]
-      })
-    }
-  }, [])
+  //   return () => {
+  //     apply((state) => {
+  //       delete state.registry.shadows.targets[shadowId]
+  //     })
+  //   }
+  // }, [])
 
   const handleTransitionStart = useCallback((e: TransitionEvent) => {
     if (triggerOnAnimation) {

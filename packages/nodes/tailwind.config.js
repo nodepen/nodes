@@ -41,9 +41,12 @@ module.exports = {
         }
       },
       boxShadow: {
-        main: '-2px 2px 0 0 rgba(123, 191, 165, 0.3)',
+        main: '0px 4px 0 0 rgba(123, 191, 165, 0.3)',
         modal: '-4px 4px 0 0 rgba(65, 65, 65, 0.3)',
         input: 'inset -2px 2px 0px 0px rgba(123, 191, 165, 0.3)'
+      },
+      padding: {
+        '0.5': '2px'
       },
       height: {
         vh: '100vh',

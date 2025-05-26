@@ -25,6 +25,7 @@ const ControlsContainer = (): React.ReactElement => {
 
 import { DownloadButton, HelpButton, LikeButton, ShareButton } from './navigation'
 import { SolutionStatusBar } from './solution-status'
+import ActiveUserControl from './users/ActiveUserControl'
 
 type LayoutProps = {
   children: React.ReactNode
@@ -38,22 +39,14 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
   return (
     <Layer fixed id="np-controls-layer" z={90}>
       <div className="np-w-full np-h-full np-relative">
-        <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-row np-justify-start np-items-center np-pointer-events-none np-z-50">
-          <div className="np-h-full np-w-72 np-p-4 np-flex np-flex-col" onPointerDownCapture={clearInterface}>
-            <div id="np-control-panels" className="np-w-full np-flex-grow np-flex np-flex-col">
-              <div ref={shadowResizeProxyRef} className="np-w-full np-flex np-flex-col">
-                {children}
-              </div>
+        <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-end np-items-center np-pointer-events-none np-z-50">
+          <div className='np-w-full np-pb-8 np-flex np-flex-row np-justify-between np-items-center'>
+            <ActiveUserControl />
+            <div className='np-h-16 np-w-32 np-p-0.5 np-rounded-lg np-bg-light np-shadow-main'>
+              controls
             </div>
-            <div
-              id="np-navigation-panels"
-              className="np-w-full np-h-8 np-flex np-justify-between np-items-center np-gap-2"
-            >
-              <LikeButton />
-              <ShareButton />
-              <DownloadButton />
-              <SolutionStatusBar />
-              <HelpButton />
+            <div className='np-w-8 np-h-8 np-bg-light np-shadow-main'>
+              X
             </div>
           </div>
         </div>
