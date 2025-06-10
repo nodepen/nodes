@@ -88,7 +88,7 @@ const DocumentViewToggle = () => {
   return (
     <div className='np-h-full np-flex np-items-center np-justify-between np-border-2 np-border-dark np-rounded-md np-pointer-events-auto'>
       <button className='np-w-12 np-h-12 np-ml-1 np-mr-3 np-flex np-items-center np-justify-center np-rounded-sm hover:np-cursor-pointer np-group np-overflow-visible' onClick={() => setViewParameter(0)}>
-        <div style={{ width: `calc(2rem * ${leftScale})`, height: `calc(2rem * ${leftScale})` }} className='np-flex np-items-center np-border-2 np-border-dark np-justify-center np-bg-light group-hover:np-bg-grey-2 np-rounded-full'>
+        <div style={{ width: `calc(2rem * ${leftScale})`, height: `calc(2rem * ${leftScale})` }} className={`${isDragging ? '' : 'group-hover:np-bg-grey-2'} np-flex np-items-center np-border-2 np-border-dark np-justify-center np-bg-light np-rounded-full`}>
           <svg width={18 * leftScale} height={18 * leftScale} fill="none" strokeWidth="2" stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" vectorEffect="non-scaling-stroke"></path>
           </svg>
@@ -102,7 +102,7 @@ const DocumentViewToggle = () => {
         </g>
       </svg>
       <button className='np-w-12 np-h-12 np-ml-3 np-mr-1 np-flex np-items-center np-justify-center np-rounded-sm hover:np-cursor-pointer np-group np-overflow-visible' onClick={() => setViewParameter(1)}>
-        <div style={{ width: `calc(2rem * ${rightScale})`, height: `calc(2rem * ${rightScale})` }} className='np-flex np-items-center np-border-2 np-border-dark np-justify-center np-bg-light group-hover:np-bg-grey-2 np-rounded-full'>
+        <div style={{ width: `calc(2rem * ${rightScale})`, height: `calc(2rem * ${rightScale})` }} className={`${isDragging ? '' : 'group-hover:np-bg-grey-2'} np-flex np-items-center np-border-2 np-border-dark np-justify-center np-bg-light np-rounded-full`}>
           <svg width={18 * rightScale} height={18 * rightScale} fill="none" strokeWidth="2" stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path strokeLinecap="round" strokeLinejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" vectorEffect="non-scaling-stroke" />
           </svg>
