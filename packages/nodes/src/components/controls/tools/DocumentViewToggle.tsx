@@ -1,19 +1,25 @@
 import { COLORS } from '@/constants'
+import { useLerpState } from '@/hooks/useLerpState'
 import React from 'react'
 
 const DocumentViewToggle = () => {
 
+  // 0 = left, 1 = right
+  const [viewParameter, setViewParameter] = useLerpState(0.5, 0.15)
+
+  const dialRotation = 180 * viewParameter - 90
+
   return (
-    <div className='np-h-full np-w-64 np-flex np-items-center np-justify-between np-border-2 np-border-dark np-rounded-md'>
-      <div className='np-w-8 np-h-8 np-border-2 np-border-dark np-rounded-md' />
+    <div className='np-h-full np-w-64 np-flex np-items-center np-justify-between np-border-2 np-border-dark np-rounded-md np-pointer-events-auto'>
+      <div className='np-w-8 np-h-8 np-border-2 np-border-dark np-rounded-md' onClick={() => setViewParameter(0)} />
       <svg width="80" height="40" className='np-overflow-visible' viewBox="0 0 20 10">
         <path d="M 0 10 A 10 10 0 0 1 20 10" fill="none" stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" strokeLinecap="square" />
         <IncrementMarkers />
-        <g style={{ transform: 'rotate(-45deg)', transformOrigin: '50% 100%' }}>
+        <g style={{ transform: `rotate(${dialRotation}deg)`, transformOrigin: '50% 100%' }}>
           <path d="M 11 10 A 1 1 0 0 1 9 10 L 9.5 0 A 0.5 0.5 0 0 1 10.5 0 Z" fill={COLORS.LIGHT} stroke={COLORS.DARK} strokeWidth={2} vectorEffect="non-scaling-stroke" />
         </g>
       </svg>
-      <div className='np-w-8 np-h-8 np-border-2 np-border-dark np-rounded-md' />
+      <div className='np-w-8 np-h-8 np-border-2 np-border-dark np-rounded-md' onClick={() => setViewParameter(1)} />
     </div>
   )
 }

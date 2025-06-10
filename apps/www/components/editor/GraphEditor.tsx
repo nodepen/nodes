@@ -14,11 +14,11 @@ type NodesAppContainerProps = {
 }
 
 const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): React.ReactElement => {
-  // const stream = {
-  //   id: process.env.NEXT_PUBLIC_STREAM_ID!,
-  //   url: process.env.NEXT_PUBLIC_STREAM_URL!,
-  //   token: process.env.NEXT_PUBLIC_STREAM_TOKEN!,
-  // }
+  const stream = {
+    id: process.env.NEXT_PUBLIC_STREAM_ID!,
+    url: process.env.NEXT_PUBLIC_STREAM_URL!,
+    token: process.env.NEXT_PUBLIC_STREAM_TOKEN!,
+  }
 
   // const document: NodePen.Document = {
   //   id: '',
@@ -35,7 +35,7 @@ const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): Rea
   return (
     <NodesApp document={document} templates={templates} solution={solution}>
       <DocumentView editable />
-      {/* <SpeckleModelView stream={stream} rootObjectId={streamRootObjectId} /> */}
+      <SpeckleModelView stream={stream} rootObjectId={undefined} />
     </NodesApp>
   )
 }
