@@ -15,7 +15,7 @@ type ViewState = {
  * Given information about a view in the current app, register it in global
  * state and emit information about its relationship to other views.
  */
-export const useViewRegistry = (config: ViewConfig): ViewState => {
+export const useViewRegistry = (config: ViewConfig): [position: number, width: number] => {
   const { key, label } = config
 
   const { apply } = useDispatch()
@@ -38,14 +38,11 @@ export const useViewRegistry = (config: ViewConfig): ViewState => {
         label,
         order: nextViewIndex,
       }
-
-      if (!state.layout.activeView) {
-        state.layout.activeView = key
-      }
+      state.layout.viewConfiguration[nextViewIndex] = nextViewIndex === 0 ? 1 : 0
     })
   })
 
   const viewPosition = useViewPosition(key)
 
-  return { viewPosition }
+  return viewPosition
 }

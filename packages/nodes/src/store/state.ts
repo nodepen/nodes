@@ -31,7 +31,8 @@ export type NodesAppState = {
       isActive: boolean
       activeNodeId: string | null
     }
-    activeView: string | null
+    viewConfiguration: Record<number, number>
+    // activeView: string | null
   }
   stream: {
     id: string
@@ -172,7 +173,10 @@ export const initialState: NodesAppState = {
       isActive: false,
       activeNodeId: null,
     },
-    activeView: null,
+    viewConfiguration: {
+      0: 1,
+      1: 0
+    }
   },
   stream: {
     id: 'b0d3a3c122',

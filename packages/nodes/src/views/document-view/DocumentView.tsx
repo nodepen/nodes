@@ -14,7 +14,7 @@ const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement |
 
   const { setCameraPosition } = useDispatch()
 
-  const { viewPosition } = useViewRegistry({ key: 'document', label: 'Document' })
+  const [position, width] = useViewRegistry({ key: 'document', label: 'Document' })
 
   useEffect(() => {
     const canvas = canvasRootRef.current
@@ -37,25 +37,21 @@ const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement |
     setCameraPosition(width / 2 + offset, height / -2 - offset)
   }, [])
 
-  if (viewPosition === null) {
-    return <></>
-  }
-
   return (
     <>
-      <Layer id="np-node-placement-overlay-layer" position={viewPosition} z={95}>
+      <Layer id="np-node-placement-overlay-layer" crop position={position} width={width} z={95}>
         <NodePlacementOverlay />
       </Layer>
-      <Layer id="np-selection-region-overlay-layer" position={viewPosition} z={95}>
+      <Layer id="np-selection-region-overlay-layer" crop position={position} width={width} z={95}>
         <SelectionRegionOverlay />
       </Layer>
-      <Layer id="np-transient-element-overlay-layer" position={viewPosition} z={90} fixed>
+      <Layer id="np-transient-element-overlay-layer" crop position={position} width={width} z={90} fixed>
         <TransientElementOverlay />
       </Layer>
-      <Layer id="np-document-view-content-layer" position={viewPosition} z={70}>
+      <Layer id="np-document-view-content-layer" crop position={position} width={width} z={70}>
         <DocumentViewContent />
       </Layer>
-      <Layer id="np-grid-canvas-layer" position={viewPosition} z={20}>
+      <Layer id="np-grid-canvas-layer" crop position={position} width={width} z={20}>
         <CanvasGridUnderlay />
       </Layer>
     </>

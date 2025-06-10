@@ -14,7 +14,7 @@ type SpeckleModelViewProps = {
 }
 
 const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): React.ReactElement | null => {
-  const { viewPosition } = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
+  const [position, width] = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
   const containerRef = useRef<HTMLDivElement>(null)
   const viewerRef = useRef<Viewer>(null)
@@ -102,7 +102,7 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
   }, [rootObjectId])
 
   return (
-    <Layer id="np-model-layer" position={viewPosition ?? 1} z={10}>
+    <Layer id="np-model-layer" position={position} z={10}>
       <div className="np-w-full np-h-full np-pointer-events-auto np-bg-pale" ref={containerRef} />
     </Layer>
   )

@@ -1,11 +1,22 @@
 import { COLORS } from '@/constants'
 import { useLerpState } from '@/hooks/useLerpState'
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch } from '$'
 
 const DocumentViewToggle = () => {
+  const { apply } = useDispatch()
 
-  // 0 = left, 1 = right
-  const [viewParameter, setViewParameter] = useLerpState(0.5, 0.15)
+  // 0 = left, 1 = rightt
+  const [viewParameter, setViewParameter] = useLerpState(0, 0.15)
+
+  useEffect(() => {
+    apply((state) => {
+      state.layout.viewConfiguration = {
+        0: 1 - viewParameter,
+        1: viewParameter
+      }
+    })
+  }, [viewParameter])
 
   const dialRotation = 180 * viewParameter - 90
 

@@ -28,7 +28,7 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
       const node = createInstance(template)
 
       apply((state) => {
-        state.layout.activeView = 'document'
+        // state.layout.activeView = 'document'
 
         node.status.isProvisional = true
         node.position = {

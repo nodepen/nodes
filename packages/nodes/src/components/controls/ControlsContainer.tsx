@@ -2,7 +2,6 @@ import React from 'react'
 import { Layer } from '@/views/common'
 import { useDispatch, useStore } from '$'
 import {
-  ActiveViewControl,
   DocumentInfoControl,
   PinnedInputsControl,
   PinnedOutputsControl,
@@ -14,7 +13,6 @@ const ControlsContainer = (): React.ReactElement => {
 
   return (
     <ControlsContainerLayout>
-      <ActiveViewControl />
       {/* <DocumentInfoControl /> */}
       <PinnedInputsControl />
       <PinnedOutputsControl />

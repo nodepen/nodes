@@ -1,33 +1,24 @@
 import { useStore } from '$'
 
 /**
- * Given the key for a certain registered view, return its integer "position" relative to the active view.
- * @returns Integer based position or `null` if `viewKey` is not registered.
+ * Given the key for a certain registered view, return its current view position offset and width
  */
-export const useViewPosition = (viewKey: string): number | null => {
+export const useViewPosition = (viewKey: string): [position: number, width: number] => {
   const currentViewPosition = useStore((state) => {
-    const registeredViewConfigurations = state.registry.views
-    const activeView = state.layout.activeView
+    const { order } = state.registry.views[viewKey] ?? {}
 
-    if (!activeView) {
-      return null
+    if (order === undefined) {
+      return [0, 0]
     }
 
-    const activeViewConfiguration = registeredViewConfigurations[activeView]
-    const currentViewConfiguration = registeredViewConfigurations[viewKey]
+    const [documentViewFactor, modelViewFactor] = Object.values(state.layout.viewConfiguration)
 
-    if (!activeViewConfiguration) {
-      console.log(`🐍 View configuration not found for active view [${activeView}]`)
-      return null
-    }
-
-    if (!currentViewConfiguration) {
-      console.log(`🐍 View configuration not found for target view [${viewKey}]`)
-      return null
-    }
-
-    return currentViewConfiguration.order - activeViewConfiguration.order
+    // This is arcane and unholy and will piss me off when I revisit it in 6 months
+    return [
+      [0, 1 - modelViewFactor],
+      [documentViewFactor, 1 - documentViewFactor]
+    ][order]
   })
 
-  return currentViewPosition
+  return currentViewPosition as [number, number]
 }
