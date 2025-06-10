@@ -1,6 +1,11 @@
 import { useCallback, useEffect, useRef, useState } from "react"
 
-export const useLerpState = (initialValue: number, rate = 0.2): [value: number, setValue: (value: number) => void] => {
+type SetValueOptions = {
+  // If true, skip interpolation and immediately set state to value
+  immediate: boolean
+}
+
+export const useLerpState = (initialValue: number, rate = 0.2): [value: number, setValue: (value: number, opts?: SetValueOptions) => void] => {
   const targetValue = useRef(initialValue)
   const [currentValue, setCurrentValue] = useState(initialValue)
 
@@ -21,8 +26,11 @@ export const useLerpState = (initialValue: number, rate = 0.2): [value: number, 
     }
   }, [])
 
-  const setTargetValue = useCallback((nextTargetValue: number) => {
+  const setTargetValue = useCallback((nextTargetValue: number, options?: SetValueOptions) => {
     targetValue.current = nextTargetValue
+    if (options?.immediate) {
+      setCurrentValue(nextTargetValue)
+    }
   }, [])
 
   return [currentValue, setTargetValue]

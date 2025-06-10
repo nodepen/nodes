@@ -49,7 +49,7 @@ const ActiveUserControl = () => {
       </div>
       <div className="np-w-full np-h-full np-absolute np-top-0 np-left-0 np-flex np-items-center np-justify-center z-10">
         <div className='np-w-12 np-h-12 np-rounded-full np-flex np-items-center np-justify-center np-bg-light np-shadow-main' ref={buttonRef}>
-          <button className="np-w-10 np-h-10 np-border-2 np-border-dark hover:np-bg-grey hover:np-cursor-pointer np-rounded-full np-flex np-justify-center np-items-center np-pointer-events-auto" style={{ transform: `rotate(${(photoAngle - 45) * -1}deg)` }}>
+          <button className="np-w-10 np-h-10 np-border-2 np-border-dark hover:np-bg-grey hover:np-cursor-pointer np-rounded-full np-flex np-justify-center np-items-center np-pointer-events-auto np-select-none" style={{ transform: `rotate(${(photoAngle - 45) * -1}deg)` }}>
             <img className="np-w-8 np-h-8 np-rounded-full hover:np-opacity-80" src="https://lh3.googleusercontent.com/ogw/AF2bZyjARiTEo5fZHy57Q0yN9_yrrTLAPuAsPX3cGMeHYWhzq1aA=s32-c-mo" />
           </button>
         </div>
