@@ -11,6 +11,17 @@ import { StaticDialogLayer } from './views/static/dialog-layer'
 type NodesAppProps = {
   document: NodePen.Document
   templates: NodePen.NodeTemplate[]
+  user?: {
+    name?: string
+    email?: string
+    image?: string
+    token?: string
+  }
+  speckle?: {
+    serverUrl: string
+    appId: string
+    appChallenge: string
+  }
   solution?: NodePen.DocumentSolutionData
   children: React.ReactNode
 } & NodesAppCallbacks
@@ -18,6 +29,8 @@ type NodesAppProps = {
 export const NodesApp = ({
   document,
   templates,
+  user,
+  speckle,
   solution,
   children,
   ...callbacks
@@ -27,6 +40,18 @@ export const NodesApp = ({
   useEffect(() => {
     loadTemplates(templates ?? [])
   }, [templates])
+
+  useEffect(() => {
+    apply((state) => {
+      state.user = user
+    })
+  }, [user])
+
+  useEffect(() => {
+    apply((state) => {
+      state.speckle = speckle
+    })
+  }, [speckle])
 
   useEffect(() => {
     loadDocument(document)

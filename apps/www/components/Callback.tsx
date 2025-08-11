@@ -1,24 +1,15 @@
 'use client'
 
-import { signIn, signOut, useSession } from "next-auth/react"
+import { useNodepenSession } from "@/hooks/useNodepenSession"
+import { signOut } from "next-auth/react"
 
-type AuthPageCallbackProps = {
-  accessCode: string
-}
 
-export const AuthPageCallback = ({ accessCode }: AuthPageCallbackProps) => {
-  const session = useSession()
-
-  if (session.status !== 'authenticated' && session.status !== 'loading') {
-    if (!!accessCode) {
-      signIn('credentials', { redirect: false, accessCode })
-    }
-  }
-
-  console.log(session)
+export const AuthPageCallback = () => {
+  const { user, speckle } = useNodepenSession()
 
   return <div>
-    <div>{session.data?.user?.name ?? 'No user'}</div>
+    <div>{user?.name ?? 'No user'}</div>
+    <div>{speckle.token}</div>
     <button onClick={() => signOut({ redirect: false })}>Sign out</button>
   </div>
 }

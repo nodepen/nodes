@@ -2,7 +2,7 @@ import { getEnv } from '@/utils/env'
 import * as authSchema from './auth'
 import * as documentsSchema from './documents'
 import * as speckleSchema from './speckle'
-import { Client, ClientConfig } from 'pg'
+import { Client, ClientConfig, Pool, PoolConfig } from 'pg'
 import { drizzle } from 'drizzle-orm/node-postgres'
 
 export const schema = {
@@ -13,7 +13,7 @@ export const schema = {
 
 const env = getEnv()
 
-const config: ClientConfig = {
+const config: PoolConfig = {
   host: env.POSTGRES_HOST,
   port: env.POSTGRES_PORT,
   user: env.POSTGRES_USER,
@@ -21,18 +21,11 @@ const config: ClientConfig = {
   database: env.POSTGRES_DATABASE,
   ssl: {
     rejectUnauthorized: false
-  }
+  },
+  max: 5
 }
 
-let cachedClient: Client | null = null
-
 export const getDb = async () => {
-  const client = cachedClient ?? new Client(config)
-
-  if (!cachedClient) {
-    await client.connect()
-    cachedClient = client
-  }
-
-  return drizzle(client, { schema })
+  const pool = new Pool(config)
+  return drizzle(pool, { schema })
 }

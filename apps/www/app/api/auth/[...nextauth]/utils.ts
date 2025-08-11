@@ -20,6 +20,9 @@ export const config = {
         return session
       }
 
+      // console.log({ token })
+      // console.log({ session })
+
       if (token.id && token.speckleToken) {
         console.log('Adding auth info to user!')
         Object.assign(session.user, {

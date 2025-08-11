@@ -9,6 +9,17 @@ export type NodesAppState = {
   templates: {
     [templateId: string]: NodePen.NodeTemplate
   }
+  user?: {
+    name?: string
+    email?: string
+    image?: string
+    token?: string
+  }
+  speckle?: {
+    serverUrl: string
+    appId: string
+    appChallenge: string
+  }
   solution: NodePen.DocumentSolutionData
   camera: {
     /** container div innerWidth / innerHeight in screen space */
@@ -135,6 +146,7 @@ export type NodesAppCallbacks = {
   onExpireSolution?: (state: NodesAppState) => void
   onFileUpload?: (state: NodesAppState) => Promise<void> | void
   getPortSolutionData?: (nodeInstanceId: string, portInstanceId: string) => Promise<NodePen.PortSolutionData | null>
+  onSignOut?: () => Promise<void>
 }
 
 export const initialState: NodesAppState = {

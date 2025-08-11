@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react'
-import { AssetType, Loader, Viewer, ViewerEvent } from '@speckle/viewer'
+import { AssetType, Loader, SpeckleLoader, Viewer, ViewerEvent } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 import { useDispatch } from '@/store'
@@ -79,6 +79,7 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
 
     // TODO: What changed
     // await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
+    // new SpeckleLoader(viewer, 'url', 'token')
 
     let visibleObjectCount = 0
 
