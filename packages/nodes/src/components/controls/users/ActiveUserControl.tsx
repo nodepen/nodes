@@ -49,7 +49,7 @@ const ActiveUserControl = () => {
 
   return (
     <>
-      <div className="np-w-16 np-h-16 np-ml-4 np-relative">
+      <div className="np-w-16 np-h-16 np-ml-4 np-relative np-z-0">
         <div className="np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-top-0 np-left-0 z-0" style={{ transform: `rotate(${arrowAngle * -1}deg)` }}>
           <svg width={24} height={24} viewBox="0 0 10 10" vectorEffect={"non-scaling-stroke"} style={{ transform: `translateX(${arrowTransform}px)` }} className="np-overflow-visible">
             <path d="M 0 0 L 2.5 5 L 0 10" stroke="#414141" fill="none" strokeLinecap="round" strokeWidth={2} vectorEffect={"non-scaling-stroke"} />

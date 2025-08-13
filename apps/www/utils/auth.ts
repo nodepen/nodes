@@ -34,12 +34,12 @@ export const getSpeckleUserId = async (req: NextRequest): Promise<string | null>
   return jwt.sub ?? null
 }
 
-export const getSpeckleRequestContext = async (req: NextRequest): Promise<SpeckleRequestContext | null> => {
+export const getSpeckleRequestContext = async (req: NextRequest): Promise<SpeckleRequestContext & { speckleUserId: string } | null> => {
   const env = getEnv()
 
   const jwt = await getToken({ req, secret: env.AUTH_SECRET })
 
-  if (!jwt) {
+  if (!jwt || !jwt.sub) {
     return null
   }
 
@@ -50,6 +50,7 @@ export const getSpeckleRequestContext = async (req: NextRequest): Promise<Speckl
   }
 
   return {
+    speckleUserId: jwt.sub,
     speckleToken,
     speckleServerUrl: env.SPECKLE_SERVER_URL
   }

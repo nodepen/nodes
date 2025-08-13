@@ -147,6 +147,7 @@ export type NodesAppCallbacks = {
   onFileUpload?: (state: NodesAppState) => Promise<void> | void
   getPortSolutionData?: (nodeInstanceId: string, portInstanceId: string) => Promise<NodePen.PortSolutionData | null>
   onSignOut?: () => Promise<void>
+  onOpenDocumentSettings?: () => void
 }
 
 export const initialState: NodesAppState = {

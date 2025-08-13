@@ -15,15 +15,3 @@ export const projects = speckleSchema.table(
   }
 )
 
-// Speckle models are scoped to a single nodepen document
-export const models = speckleSchema.table(
-  "models",
-  {
-    modelId: text("model_id").primaryKey(),
-    projectId: text("project_id").references(() => projects.projectId, { onDelete: "set null" }),
-    userId: text("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" })
-  }
-)
-

@@ -5,18 +5,18 @@ import { useCallback, useState } from 'react'
 import { print } from 'graphql'
 import gql from 'graphql-tag'
 import type * as NodePen from '@nodepen/core'
-import { NodesApp, DocumentView, SpeckleModelView } from '@nodepen/nodes'
-import type { NodesAppState, NodesAppCallbacks } from '@nodepen/nodes'
+import { NodesApp, DocumentView, SpeckleModelView, NodesDialog } from '@nodepen/nodes'
+import type { NodesAppState, NodesAppCallbacks, } from '@nodepen/nodes'
 import { useNodepenSession } from '@/hooks/useNodepenSession'
 import { getPublicEnv } from '@/utils/env'
 import { signOut } from 'next-auth/react'
+import DocumentSelectionModal from './modals/DocumentSelectionModal'
 
 type NodesAppContainerProps = {
-  document: NodePen.Document
   templates: NodePen.NodeTemplate[]
 }
 
-const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): React.ReactElement => {
+const NodesAppContainer = ({ templates }: NodesAppContainerProps): React.ReactElement => {
   const { user, speckle } = useNodepenSession()
 
   const {
@@ -31,20 +31,34 @@ const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): Rea
     token: process.env.NEXT_PUBLIC_STREAM_TOKEN!,
   }
 
-  // const document: NodePen.Document = {
-  //   id: '',
-  //   version: 1,
-  //   nodes: {},
-  //   configuration: {
-  //     inputs: [],
-  //     outputs: []
-  //   }
-  // }
+  const initialDocument: NodePen.Document = {
+    id: '',
+    version: 1,
+    nodes: {},
+    meta: {
+      name: 'My cool document',
+      speckle: {
+        model: {
+          id: '',
+          name: '',
+          rootObjectId: ''
+        }
+      }
+    },
+    configuration: {
+      inputs: [],
+      outputs: []
+    }
+  }
+  const [document, setDocument] = useState(initialDocument)
+
+  const [showDialog, setShowDialog] = useState(false)
 
   const callbacks: NodesAppCallbacks = {
     onSignOut: async () => {
       await signOut({ redirect: false })
-    }
+    },
+    onOpenDocumentSettings: () => setShowDialog(true)
   }
 
   const solution: NodePen.DocumentSolutionData | undefined = undefined
@@ -62,10 +76,16 @@ const NodesAppContainer = ({ document, templates }: NodesAppContainerProps): Rea
     appChallenge: NEXT_PUBLIC_SPECKLE_APP_CHALLENGE
   }
 
+
   return (
     <NodesApp document={document} templates={templates} solution={solution} user={userData} speckle={speckleConfig} {...callbacks} >
       <DocumentView editable />
       <SpeckleModelView stream={stream} rootObjectId={undefined} />
+      {showDialog ? (
+        <NodesDialog onClose={() => setShowDialog(false)}>
+          <DocumentSelectionModal />
+        </NodesDialog>
+      ) : null}
     </NodesApp>
   )
 }

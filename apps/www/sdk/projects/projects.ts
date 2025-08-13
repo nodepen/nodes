@@ -37,3 +37,57 @@ export const createProject =
 
       return projectId
     }
+
+type ProjectModel = {
+  id: string
+  name: string
+  childrenTree: {
+    name: string
+    model: {
+      id: string
+      versions: {
+        items: {
+          id: string
+          referencedObject: string
+        }[]
+      }
+    }
+  }[]
+}
+
+export const getProjectModels =
+  (context: SpeckleRequestContext) =>
+    async (params: { projectId: string }): Promise<ProjectModel[]> => {
+      const { projectId } = params
+
+      const query = gql`
+          query GetProjectModels($projectId: String!) {
+              project(id: $projectId) {
+                models {
+                  items {
+                    id
+                    name
+                    childrenTree {
+                      name
+                      model {
+                        id
+                        versions(limit: 1){
+                          items {
+                            id
+                            referencedObject
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+          }
+        `
+
+      const data = await issueSpeckleRequest(context)(query, {
+        projectId
+      })
+
+      return data?.project?.models?.items ?? []
+    }

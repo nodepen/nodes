@@ -25,6 +25,7 @@ import { DownloadButton, HelpButton, LikeButton, ShareButton } from './navigatio
 import { SolutionStatusBar } from './solution-status'
 import ActiveUserControl from './users/ActiveUserControl'
 import DocumentToolsControl from './tools/DocumentToolsControl'
+import ActiveDocumentControl from './document/ActiveDocumentControl'
 
 type LayoutProps = {
   children: React.ReactNode
@@ -42,15 +43,13 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
           <div className='np-w-full np-pb-8 np-grid np-grid-cols-3'>
             <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-start np-items-center'>
               <ActiveUserControl />
+              <div className='np-w-8 np-h-8 np-rounded-full np-bg-light np-shadow-main np-z-10' />
             </div>
             <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-center np-items-center'>
               <DocumentToolsControl />
-
             </div>
             <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-end np-items-center'>
-              <div className='np-w-16 np-h-8 np-bg-light np-shadow-main'>
-                X
-              </div>
+              <ActiveDocumentControl />
             </div>
           </div>
         </div>
