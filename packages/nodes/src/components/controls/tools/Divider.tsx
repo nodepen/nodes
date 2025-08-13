@@ -5,10 +5,9 @@ export const Divider = () => {
   return (
     <div className="np-w-6 np-h-full np-flex np-flex-col np-items-center np-justify-center">
       <svg width="20" height="60" viewBox='0 0 20 60'>
-
-        <Cross at={[10, 15]} size={3} />
+        <Cross at={[10, 13]} size={3} />
         <Cross at={[10, 30]} size={3} />
-        <Cross at={[10, 45]} size={3} />
+        <Cross at={[10, 47]} size={3} />
       </svg>
     </div>
   )

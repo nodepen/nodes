@@ -1,8 +1,8 @@
-import React, { useRef, useEffect, useCallback } from 'react'
-import { AssetType, Loader, SpeckleLoader, Viewer, ViewerEvent } from '@speckle/viewer'
+import React, { useRef, useEffect, useCallback, useMemo } from 'react'
+import { AssetType, LegacyViewer, Loader, SpeckleLoader, ViewerEvent, SelectionExtension, StencilOutlineType, DefaultViewerParams } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
-import { useDispatch } from '@/store'
+import { useDispatch, useStore } from '@/store'
 
 type SpeckleModelViewProps = {
   stream: {
@@ -14,10 +14,14 @@ type SpeckleModelViewProps = {
 }
 
 const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): React.ReactElement | null => {
-  const [position, width] = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
+  const [position, preciseWidth] = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
+
+  const width = Math.round(preciseWidth * 1000) / 1000
+
+  const user = useStore((state) => state.user)
 
   const containerRef = useRef<HTMLDivElement>(null)
-  const viewerRef = useRef<Viewer>(null)
+  const viewerRef = useRef<LegacyViewer>(null)
 
   const { apply } = useDispatch()
 
@@ -27,7 +31,19 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
     })
   }, [])
 
+  const widthBreakpoints = [0, 0.25, 0.5, 0.75, 1]
+
+  // const safeResize = useThrottleCallback(() => {
+  //   viewerRef.current?.resize()
+  // }, 100)
+
+  // useEffect(() => {
+  //   safeResize()
+  // }, [width])
+
   const safeSetModelLoadStatus = useThrottleCallback(setModelLoadStatus, 200)
+
+  const currentSelection = useRef<string[]>([])
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -39,21 +55,68 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
       return
     }
 
-    const viewer = new Viewer(containerRef.current, {
-      showStats: false,
-      environmentSrc: {
-        id: 'root',
-        src: '',
-        type: AssetType.TEXTURE_HDR
-      },
-      verbose: false,
+    const viewer = new LegacyViewer(containerRef.current, DefaultViewerParams)
+
+    viewer.on(ViewerEvent.ObjectClicked, (e) => {
+      const nextSelection = new Set(currentSelection.current)
+      const hitObjectId = e?.hits.at(0)?.node.model.id
+
+      console.log({ hitObjectId })
+
+      const getMode = (e: PointerEvent | undefined) => {
+        if (e?.shiftKey) return 'add'
+        if (e?.ctrlKey) return 'remove'
+        return 'set'
+      }
+
+      if (!hitObjectId) {
+        nextSelection.clear()
+      } else {
+        switch (getMode(e?.event)) {
+          case 'add': {
+            nextSelection.add(hitObjectId)
+            break
+          }
+          case 'remove': {
+            nextSelection.delete(hitObjectId)
+            break
+          }
+          case 'set': {
+            nextSelection.clear()
+            nextSelection.add(hitObjectId)
+          }
+        }
+      }
+
+      const selectedObjectIds = [...nextSelection]
+
+      currentSelection.current = selectedObjectIds
+      viewer.selectObjects(selectedObjectIds)
     })
 
     viewerRef.current = viewer
 
+    // const extension = viewer.createExtension(SelectionExtension)
+    // extension.options.selectionMaterialData = {
+    //   id: 'foo',
+    //   color: 0x04cbfb,
+    //   emissive: 0x0,
+    //   opacity: 1,
+    //   roughness: 1,
+    //   metalness: 0,
+    //   vertexColors: false,
+    //   lineWeight: 1,
+    //   stencilOutlines: StencilOutlineType.OVERLAY,
+    //   pointSize: 4
+    // }
+    // extension.on('object-clicked', (e: any) => {
+    //   console.log(e)
+    // })
+
     void viewer.init().then(() => {
       viewerRef.current = viewer
     })
+
 
     viewer.on(ViewerEvent.LoadComplete, (arg) => {
       safeSetModelLoadStatus(1)
@@ -67,7 +130,7 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
   const refreshObjects = useCallback(async () => {
     const viewer = viewerRef.current
 
-    if (!viewer || !rootObjectId) {
+    if (!viewer || !user?.token) {
       return
     }
 
@@ -79,7 +142,8 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
 
     // TODO: What changed
     // await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
-    // new SpeckleLoader(viewer, 'url', 'token')
+    const loader = new SpeckleLoader(viewer.getWorldTree(), 'https://app.speckle.systems/streams/82de80f91f/objects/c0685dcb41e7993972e850525cb7b29e', user.token)
+    await viewer.loadObject(loader, true)
 
     let visibleObjectCount = 0
 
@@ -94,17 +158,19 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
     apply((state) => {
       state.lifecycle.model = { status: 'ready', progress: 1, objectCount: visibleObjectCount }
     })
-  }, [rootObjectId])
+  }, [rootObjectId, user])
 
   const requestRefreshObjects = useDeferCallback(refreshObjects)
 
   useEffect(() => {
     requestRefreshObjects()
-  }, [rootObjectId])
+  }, [rootObjectId, user])
+
+  const translation = (100 - (width * 100)) / -2
 
   return (
     <Layer id="np-model-layer" position={position} z={10}>
-      <div className="np-w-full np-h-full np-pointer-events-auto np-bg-pale" ref={containerRef} />
+      <div className="np-w-full np-h-full np-pointer-events-auto np-bg-pale" ref={containerRef} style={{ transform: `translateX(${translation}%)` }} />
     </Layer>
   )
 }

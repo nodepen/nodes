@@ -42,3 +42,11 @@
 input:focus {
   outline: 1px solid #7bbfa5;
 }
+
+#np-model-layer {
+  border-left: 2px solid #98E2C6;
+}
+
+#np-model-layer.active {
+  border-left: none;
+}

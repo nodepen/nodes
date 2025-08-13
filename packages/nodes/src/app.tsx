@@ -108,7 +108,7 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
   return (
     <div
       id="np-app-root"
-      className="np-w-full np-h-full np-relative np-overflow-hidden np-rounded-md"
+      className="np-w-full np-h-full np-relative np-overflow-hidden"
       ref={canvasRootRef}
       onDragEnter={handleDragEnter}
     >

@@ -17,14 +17,16 @@ export const Layer = ({ id, position = 0, width = 1, z, crop = false, fixed = fa
   const transform = fixed ? 0 : position * 100
   const vw = width * 100
 
+  const roundedTransform = Math.round(transform * 1000) / 1000
+
   return (
     <div
       id={id}
-      className={`${crop ? 'np-w-full' : ''} np-h-full np-absolute np-pointer-events-none np-overflow-hidden`}
+      className={`${crop ? 'np-w-full' : ''} ${roundedTransform < 0.1 ? 'active' : ''} np-h-full np-pointer-events-none np-absolute np-overflow-hidden`}
       style={{
         zIndex: z,
         transform: `translateX(${transform}%)`,
-        width: crop ? undefined : `${vw}%`
+        width: crop ? undefined : `${vw}%`,
       }}
     >
       {crop
