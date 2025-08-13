@@ -1,17 +1,22 @@
+import { NodePenDocumentManifest } from '@/sdk/types'
 import React from 'react'
 import useSWR from 'swr'
 
-const fetchDocuments = async () => {
-  const data = await fetch('/api/documents')
-  return await data.json()
+type Props = {
+  onSelectDocument: (manifest: NodePenDocumentManifest) => Promise<void>
 }
 
-const DocumentSelectionModal = () => {
+const fetchDocuments = async () => {
+  const data = await fetch('/api/documents')
+  return await data.json() as { documents: NodePenDocumentManifest[] }
+}
+
+const DocumentSelectionModal = ({ onSelectDocument }: Props) => {
   const { data } = useSWR('/documents', fetchDocuments)
 
   return <div>
-    HEY THERE
-    {data?.documents?.map((doc: any) => <p key={doc.meta.name}>{doc.meta.name}</p>)}
+    {data?.documents?.length === 0 ? 'No documents ):' : ''}
+    {data?.documents?.map((doc) => <button key={doc.meta.name} onClick={() => onSelectDocument(doc)}>{doc.meta.name}</button>)}
   </div>
 }
 

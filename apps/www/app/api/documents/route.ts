@@ -1,31 +1,10 @@
 import { getDb } from '@/schema/db'
 import { projects } from '@/schema/speckle'
 import { getProjectModels } from '@/sdk/projects/projects'
+import { NodePenDocumentManifest } from '@/sdk/types'
 import { getSpeckleRequestContext } from '@/utils/auth'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
-
-
-type NodePenDocument = {
-  meta: {
-    name: string
-  }
-  speckle: {
-    rootModelId: string
-    documentModel: {
-      id: string
-      rootObjectId?: string
-    }
-    outputGeometryModel: {
-      id: string
-      rootObjectId?: string
-    }
-    referenceGeometryModel: {
-      id: string
-      rootObjectId?: string
-    }
-  }
-}
 
 const handler = async (req: NextRequest) => {
   const context = await getSpeckleRequestContext(req)
@@ -47,7 +26,7 @@ const handler = async (req: NextRequest) => {
 
   const models = await getProjectModels(context)({ projectId: userProjectId.projectId })
 
-  const documents: NodePenDocument[] = []
+  const documents: NodePenDocumentManifest[] = []
 
   for (const model of models) {
     if (model.childrenTree.length === 0) {
@@ -67,6 +46,7 @@ const handler = async (req: NextRequest) => {
         name: model.name
       },
       speckle: {
+        rootProjectId: userProjectId.projectId,
         rootModelId: model.id,
         documentModel: {
           id: documentModel.model.id,

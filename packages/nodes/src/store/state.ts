@@ -153,6 +153,9 @@ export type NodesAppCallbacks = {
 export const initialState: NodesAppState = {
   document: {
     id: 'default-id',
+    meta: {
+      name: 'default name'
+    },
     nodes: {},
     configuration: {
       inputs: [],

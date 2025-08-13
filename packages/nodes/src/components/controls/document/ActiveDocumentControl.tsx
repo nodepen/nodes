@@ -1,16 +1,19 @@
 import { COLORS } from '@/constants'
-import { useCallbacks } from '@/store'
+import { useCallbacks, useStore } from '@/store'
 import React from 'react'
 
 const ActiveDocumentControl = () => {
+  const documentMeta = useStore((state) => state.document.meta)
   const { onOpenDocumentSettings } = useCallbacks()
+
+  console.log(documentMeta)
 
   return <div className="np-h-12 np-w-40 np-mr-4 np-p-1 np-rounded-md np-bg-light np-shadow-main">
     <div className='np-w-full np-h-full np-p-1 np-flex np-items-center np-rounded-sm np-pointer-events-auto hover:np-cursor-pointer hover:np-bg-grey' onClick={() => onOpenDocumentSettings?.()}>
       <div className="np-h-full np-mr-2 np-flex-grow np-flex np-flex-col np-items-start np-justify-center np-overflow-hidden">
         <div className="np-h-6 np-mb-1 np-pr-2 np-flex np-items-center np-rounded-sm np-pointer-events-auto np-group hover:np-cursor-pointer">
           <p className="np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3 -np-translate-y-1" style={{ textDecorationThickness: '2px' }}>
-            My document
+            {documentMeta.name}
           </p>
         </div>
         <div className="np-h-6 np-pr-2 np-flex np-items-center np-rounded-sm np-pointer-events-auto np-group hover:np-cursor-pointer">

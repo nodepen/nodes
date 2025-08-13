@@ -9,6 +9,8 @@ import { updateWorkspaceSeat } from "@/sdk/workspaces/seats";
 import { getSpeckleWorkspaceAdminRequestContext } from "@/utils/auth";
 import { getEnv } from "@/utils/env";
 import { eq } from "drizzle-orm";
+import { Base, send } from '@speckle/objectsender'
+import { createVersion } from "@/sdk/versions/versions";
 
 /**
  * Ensure the authenticated speckle user can interact with required workspace data
@@ -88,4 +90,28 @@ export const ensureWorkspaceAccess =
       }
 
       // TODO: If project not found, heal somehow. But this is only if Speckle folks fuck with their project.
+    }
+
+
+
+export const commitObject =
+  (context: SpeckleRequestContext) =>
+    async <T extends Record<string, unknown>>(params: { data: T, projectId: string, modelId: string }) => {
+      const { data, projectId, modelId } = params
+
+      const obj = new Base(data)
+
+      const { hash: objectId } = await send(obj, {
+        serverUrl: context.speckleServerUrl,
+        token: context.speckleToken,
+        projectId
+      })
+
+      const version = await createVersion(context)({
+        projectId,
+        modelId,
+        objectId
+      })
+
+      return version
     }
