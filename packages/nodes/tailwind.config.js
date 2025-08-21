@@ -24,7 +24,7 @@ module.exports = {
     extend: {
       animation: {
         'march': 'march 1000ms infinite ease-in-out',
-        'march-rotate': 'march-rotate 1000ms infinite ease-in-out',
+        'march-rotate': 'march-rotate 5000ms infinite linear',
         'menu-appear': 'menu-appear 125ms ease-in forwards'
       },
       keyframes: {
@@ -33,7 +33,7 @@ module.exports = {
         },
         'march-rotate': {
           'from': { 'transform': 'rotate(0)' },
-          'to': { 'transform': 'rotate(90deg)' }
+          'to': { 'transform': 'rotate(360deg)' }
         },
         'menu-appear': {
           '0%': { 'max-height': '0px' },

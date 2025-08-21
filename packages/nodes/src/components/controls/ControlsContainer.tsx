@@ -21,11 +21,11 @@ const ControlsContainer = (): React.ReactElement => {
   )
 }
 
-import { DownloadButton, HelpButton, LikeButton, ShareButton } from './navigation'
 import { SolutionStatusBar } from './solution-status'
 import ActiveUserControl from './users/ActiveUserControl'
 import DocumentToolsControl from './tools/DocumentToolsControl'
 import ActiveDocumentControl from './document/ActiveDocumentControl'
+import HelpButton from './HelpButton'
 
 type LayoutProps = {
   children: React.ReactNode
@@ -49,7 +49,8 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
               <DocumentToolsControl />
             </div>
             <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-end np-items-center'>
-              <ActiveDocumentControl />
+              <HelpButton />
+              {/* <ActiveDocumentControl /> */}
             </div>
           </div>
         </div>
