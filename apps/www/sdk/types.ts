@@ -9,17 +9,13 @@ export type NodePenDocumentManifest = {
     name: string
   }
   speckle: {
-    rootProjectId: string
-    rootModelId: string
+    projectId: string
+    modelId: string
     documentModel: {
       id: string
       rootObjectId?: string
     }
-    outputGeometryModel: {
-      id: string
-      rootObjectId?: string
-    }
-    referenceGeometryModel: {
+    outputModel: {
       id: string
       rootObjectId?: string
     }

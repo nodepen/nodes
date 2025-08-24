@@ -10,6 +10,8 @@ export const createModel =
     }): Promise<string> => {
       const { projectId, modelName } = params
 
+      console.log(params)
+
       const query = gql`
         mutation CreateModel($input: CreateModelInput!) {
           modelMutations {
@@ -34,4 +36,42 @@ export const createModel =
       }
 
       return modelId
+    }
+
+export const getModelLatestVersion =
+  (context: SpeckleRequestContext) =>
+    async (params: {
+      projectId: string,
+      modelId: string
+    }): Promise<{ versionId: string, rootObjectId: string, previewUrl?: string }> => {
+      const { projectId, modelId } = params
+
+      const query = gql`
+          query GetModelLatestVersion($projectId: String!, $modelId: String!) {
+            project(id: $projectId) {
+              model(id: $modelId) {
+                versions(limit: 1) {
+                  items {
+                    versionId:id
+                    rootObjectId:referencedObject
+                    previewUrl
+                  }
+                }
+              }
+            }
+          }
+        `
+
+      const data = await issueSpeckleRequest(context)(query, {
+        projectId,
+        modelId
+      })
+
+      const version = data?.project?.model?.versions?.items?.at(0)
+
+      if (!version) {
+        throw new Error('Failed to fetch model version!')
+      }
+
+      return version
     }

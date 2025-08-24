@@ -32,8 +32,10 @@ export const inviteToWorkspace =
 type PendingInvite = {
   token: string
   inviteId: string
-  workspaceId: string
-  workspaceName: string
+  workspace: {
+    id: string
+    name: string
+  }
 }
 
 /**
@@ -50,8 +52,10 @@ export const tryGetWorkspaceInvite =
               workspaceInvites {
                 token
                 inviteId
-                workspaceId
-                workspaceName
+                workspace {
+                  id
+                  name
+                }
               }
             }
           }
@@ -59,7 +63,7 @@ export const tryGetWorkspaceInvite =
 
       const data = await issueSpeckleRequest(context)(query, {})
 
-      return data.activeUser?.workspaceInvites?.find((invite: PendingInvite) => invite.workspaceId === workspaceId) ?? null
+      return data.activeUser?.workspaceInvites?.find((invite: PendingInvite) => invite.workspace.id === workspaceId) ?? null
     }
 
 export const acceptWorkspaceInvite =

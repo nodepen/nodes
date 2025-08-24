@@ -5,29 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1747689132384,
-      "tag": "0000_wild_gladiator",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1747695853181,
-      "tag": "0001_round_dust",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1747786573430,
-      "tag": "0002_tiny_blonde_phantom",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1747952265837,
-      "tag": "0003_light_kingpin",
+      "when": 1756051825944,
+      "tag": "0000_many_loki",
       "breakpoints": true
     }
   ]

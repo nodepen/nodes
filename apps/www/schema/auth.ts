@@ -8,6 +8,8 @@ import {
 } from "drizzle-orm/pg-core"
 import type { AdapterAccount } from "next-auth/adapters"
 import cryptoRandomString from "crypto-random-string"
+import { relations } from "drizzle-orm"
+import { projects } from "./speckle"
 
 export const authSchema = pgSchema("auth")
 
@@ -99,3 +101,10 @@ export const authenticators = authSchema.table(
     })
   ]
 )
+
+export const userRelations = relations(users, ({ one }) => ({
+  project: one(projects, {
+    fields: [users.id],
+    references: [projects.userId]
+  })
+}))

@@ -1,1 +1,0 @@
-ALTER TABLE "auth"."speckle_tokens" ADD PRIMARY KEY ("userId");

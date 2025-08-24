@@ -1,7 +1,8 @@
 import { getDb } from '@/schema/db'
+import { documents } from '@/schema/documents'
 import { projects } from '@/schema/speckle'
-import { getProjectModels } from '@/sdk/projects/projects'
 import { NodePenDocumentManifest } from '@/sdk/types'
+import { createDocument } from '@/services/nodepen'
 import { getSpeckleRequestContext } from '@/utils/auth'
 import { eq } from 'drizzle-orm'
 import { NextRequest, NextResponse } from 'next/server'
@@ -24,47 +25,56 @@ const handler = async (req: NextRequest) => {
     return NextResponse.json([])
   }
 
-  const models = await getProjectModels(context)({ projectId: userProjectId.projectId })
+  const documentManifests: NodePenDocumentManifest[] = []
 
-  const documents: NodePenDocumentManifest[] = []
+  const docs = await db.query.documents.findMany({
+    where: eq(documents.authorId, context.speckleUserId),
+    orderBy: (documents, { desc }) => [desc(documents.createdAt)]
+  })
 
-  for (const model of models) {
-    if (model.childrenTree.length === 0) {
-      continue
-    }
-
-    const documentModel = model.childrenTree.find((child) => child.name === 'document')
-    const outputGeometryModel = model.childrenTree.find((child) => child.name === 'outputgeometry')
-    const referenceGeometryModel = model.childrenTree.find((child) => child.name === 'referencegeometry')
-
-    if (!documentModel || !outputGeometryModel || !referenceGeometryModel) {
-      continue
-    }
-
-    documents.push({
+  for (const doc of docs) {
+    documentManifests.push({
       meta: {
-        name: model.name
+        name: doc.name
       },
       speckle: {
-        rootProjectId: userProjectId.projectId,
-        rootModelId: model.id,
+        projectId: userProjectId.projectId,
+        modelId: doc.rootModelId,
         documentModel: {
-          id: documentModel.model.id,
-          rootObjectId: documentModel.model.versions.items.at(0)?.referencedObject
+          id: doc.documentModelId
         },
-        outputGeometryModel: {
-          id: outputGeometryModel.model.id,
-          rootObjectId: outputGeometryModel.model.versions.items.at(0)?.referencedObject
-        },
-        referenceGeometryModel: {
-          id: referenceGeometryModel.model.id,
-          rootObjectId: referenceGeometryModel.model.versions.items.at(0)?.referencedObject
+        outputModel: {
+          id: doc.outputModelId
         }
       }
     })
   }
 
-  return NextResponse.json({ documents, models })
+
+  return NextResponse.json({ documents })
 }
 
-export { handler as GET }
+const handlePost = async (req: NextRequest) => {
+  const context = await getSpeckleRequestContext(req)
+  const db = await getDb()
+
+  if (!context) {
+    console.log('🐍 NO CONTEXT')
+    return NextResponse.json([])
+  }
+
+  const userProjectId = await db.query.projects.findFirst({
+    where: eq(projects.userId, context?.speckleUserId)
+  })
+
+  if (!userProjectId) {
+    console.log('🐍 NO ROOT PROJECT')
+    return NextResponse.json([])
+  }
+
+  const doc = await createDocument(context)({ userId: context.speckleUserId })
+
+  return NextResponse.json({ document: doc })
+}
+
+export { handler as GET, handlePost as POST }
