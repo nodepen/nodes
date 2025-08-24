@@ -38,12 +38,12 @@ export const createModel =
       return modelId
     }
 
-export const getModelLatestVersion =
+export const tryGetModelLatestVersion =
   (context: SpeckleRequestContext) =>
     async (params: {
       projectId: string,
       modelId: string
-    }): Promise<{ versionId: string, rootObjectId: string, previewUrl?: string }> => {
+    }): Promise<{ versionId?: string, rootObjectId?: string, previewUrl?: string }> => {
       const { projectId, modelId } = params
 
       const query = gql`
@@ -69,9 +69,5 @@ export const getModelLatestVersion =
 
       const version = data?.project?.model?.versions?.items?.at(0)
 
-      if (!version) {
-        throw new Error('Failed to fetch model version!')
-      }
-
-      return version
+      return version ?? {}
     }

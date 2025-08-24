@@ -6,6 +6,7 @@ export type SpeckleRequestContext = {
 
 export type NodePenDocumentManifest = {
   meta: {
+    id: string
     name: string
   }
   speckle: {

@@ -39,6 +39,11 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
   return (
     <Layer fixed id="np-controls-layer" z={90}>
       <div className="np-w-full np-h-full np-relative">
+        <div className='np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-start np-items-center np-pointer-events-none np-z-50'>
+          <div className='np-w-full np-pt-8 np-pl-6 np-flex np-justify-start np-items-center'>
+            <ActiveDocumentControl />
+          </div>
+        </div>
         <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-end np-items-center np-pointer-events-none np-z-50">
           <div className='np-w-full np-pb-8 np-grid np-grid-cols-3'>
             <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-start np-items-center'>

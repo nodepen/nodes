@@ -3,7 +3,7 @@
 import type React from 'react'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import type * as NodePen from '@nodepen/core'
-import { NodesApp, DocumentView, SpeckleModelView, NodesDialog } from '@nodepen/nodes'
+import { NodesApp, DocumentView, SpeckleModelView, NodesDialog, NodesLayer } from '@nodepen/nodes'
 import type { NodesAppState, NodesAppCallbacks, } from '@nodepen/nodes'
 import { useNodepenSession } from '@/hooks/useNodepenSession'
 import { getPublicEnv } from '@/utils/env'
@@ -55,7 +55,7 @@ const NodesAppContainer = ({ templates }: NodesAppContainerProps): React.ReactEl
   const [document, setDocument] = useState(initialDocument)
   const documentManifest = useRef<NodePenDocumentManifest>(undefined)
 
-  const [showDialog, setShowDialog] = useState(false)
+  const [showDialog, setShowDialog] = useState(true)
 
   const handleExpireSolution = useCallback(async (state: NodesAppState) => {
     if (!speckle.serverUrl || !speckle.token || !documentManifest.current) {
@@ -64,7 +64,7 @@ const NodesAppContainer = ({ templates }: NodesAppContainerProps): React.ReactEl
 
     console.log(`Sending document to: ${documentManifest.current?.speckle.documentModel.id}`)
 
-    const res = await fetch(`/api/documents/${documentManifest.current.speckle.rootProjectId}`, {
+    const res = await fetch(`/api/documents/${documentManifest.current.speckle.projectId}`, {
       method: 'POST',
       body: JSON.stringify({
         document: state.document,
@@ -105,7 +105,7 @@ const NodesAppContainer = ({ templates }: NodesAppContainerProps): React.ReactEl
 
     console.log(manifest)
 
-    const documentRootProjectId = manifest.speckle.rootProjectId
+    const documentRootProjectId = manifest.speckle.projectId
     const documentRootObjectId = manifest.speckle.documentModel.rootObjectId
 
     documentManifest.current = manifest
@@ -133,7 +133,13 @@ const NodesAppContainer = ({ templates }: NodesAppContainerProps): React.ReactEl
       return
     }
 
-    setDocument(initialDocument)
+    setDocument({
+      ...initialDocument,
+      id: documentManifest.current.meta.id,
+      meta: {
+        name: documentManifest.current.meta.name
+      }
+    })
   }, [speckle, initialDocument])
 
 

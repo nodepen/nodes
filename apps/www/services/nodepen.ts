@@ -1,7 +1,7 @@
 import { getDb } from "@/schema/db";
 import { documents } from "@/schema/documents";
 import { projects } from "@/schema/speckle";
-import { createModel } from "@/sdk/models/models";
+import { createModel, tryGetModelLatestVersion } from "@/sdk/models/models";
 import { NodePenDocumentManifest, SpeckleRequestContext } from "@/sdk/types";
 import cryptoRandomString from "crypto-random-string";
 import { eq } from "drizzle-orm";
@@ -49,6 +49,7 @@ export const createDocument =
 
       return {
         meta: {
+          id: newDocument.id,
           name: newDocument.name
         },
         speckle: {
@@ -80,3 +81,60 @@ export const getActiveUserProject =
 
     return project.projectId
   }
+
+export const getDocument =
+  (context: SpeckleRequestContext) =>
+    async (params: { documentId: string }): Promise<NodePenDocumentManifest> => {
+      const { documentId } = params
+
+      const db = await getDb()
+
+      const doc = await db.query.documents.findFirst({
+        where: eq(documents.id, documentId),
+        with: {
+          author: {
+            with: {
+              project: {
+                columns: {
+                  projectId: true
+                }
+              }
+            }
+          }
+        }
+      })
+
+      if (!doc) {
+        throw new Error('Failed to find doc')
+      }
+
+      const projectId = doc.author.project.projectId
+
+      if (!projectId) {
+        throw new Error('Missing project id')
+      }
+
+      const documentModelVersion = await tryGetModelLatestVersion(context)({ projectId, modelId: doc.documentModelId })
+      const outputModelVersion = await tryGetModelLatestVersion(context)({ projectId, modelId: doc.outputModelId })
+
+      const manifest: NodePenDocumentManifest = {
+        meta: {
+          id: doc.id,
+          name: doc.name
+        },
+        speckle: {
+          projectId,
+          modelId: doc.rootModelId,
+          documentModel: {
+            id: doc.documentModelId,
+            rootObjectId: documentModelVersion?.rootObjectId
+          },
+          outputModel: {
+            id: doc.outputModelId,
+            rootObjectId: outputModelVersion?.rootObjectId
+          }
+        }
+      }
+
+      return manifest
+    }

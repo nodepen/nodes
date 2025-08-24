@@ -35,6 +35,7 @@ const handler = async (req: NextRequest) => {
   for (const doc of docs) {
     documentManifests.push({
       meta: {
+        id: doc.id,
         name: doc.name
       },
       speckle: {
@@ -51,7 +52,7 @@ const handler = async (req: NextRequest) => {
   }
 
 
-  return NextResponse.json({ documents })
+  return NextResponse.json({ documents: documentManifests })
 }
 
 const handlePost = async (req: NextRequest) => {
