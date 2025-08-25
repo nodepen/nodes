@@ -6,6 +6,8 @@ import { NodePenDocumentManifest, SpeckleRequestContext } from "@/sdk/types";
 import cryptoRandomString from "crypto-random-string";
 import { eq } from "drizzle-orm";
 import { adjectives, animals, uniqueNamesGenerator } from "unique-names-generator";
+import { commitObject } from "./speckle";
+import * as NodePen from '@nodepen/core'
 
 export const createDocument =
   (userContext: SpeckleRequestContext) =>
@@ -47,6 +49,29 @@ export const createDocument =
         throw new Error('Failed to make document!')
       }
 
+      // Write initial document data
+      const initialDocument: NodePen.Document = {
+        id: newDocument.id,
+        meta: {
+          name: newDocument.name
+        },
+        nodes: {},
+        version: 1,
+        configuration: {
+          inputs: [],
+          outputs: []
+        }
+      }
+
+      const version = await commitObject(userContext)({
+        data: {
+          ...initialDocument,
+          speckle_type: 'NodePen_Document'
+        },
+        projectId,
+        modelId: documentModelId,
+      })
+
       return {
         meta: {
           id: newDocument.id,
@@ -56,7 +81,8 @@ export const createDocument =
           projectId: projectId,
           modelId: rootModelId,
           documentModel: {
-            id: documentModelId
+            id: documentModelId,
+            rootObjectId: version.referencedObject
           },
           outputModel: {
             id: outputModelId

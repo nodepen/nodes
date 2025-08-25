@@ -9,7 +9,7 @@ export const documentLanguage = pgEnum("document_language", ["gh", "ghz"])
 export const documents = pgTable("documents", {
   id: text("id")
     .primaryKey()
-    .$defaultFn(() => cryptoRandomString({ length: 9, type: 'url-safe' })),
+    .$defaultFn(() => cryptoRandomString({ length: 9, type: 'alphanumeric' })),
   name: text("name")
     .notNull()
     .$defaultFn(() => uniqueNamesGenerator({
@@ -48,5 +48,5 @@ export const documentRelations = relations(documents, ({ one, many }) => ({
     references: [users.id],
     relationName: "document_author"
   }),
-  links: many(documentLinks)
+  links: many(documentLinks, { relationName: "document_links" })
 }))
