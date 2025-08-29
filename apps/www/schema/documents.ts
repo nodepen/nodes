@@ -48,5 +48,15 @@ export const documentRelations = relations(documents, ({ one, many }) => ({
     references: [users.id],
     relationName: "document_author"
   }),
-  links: many(documentLinks, { relationName: "document_links" })
+  links: many(documentLinks, {
+    relationName: "document_links_document"
+  })
+}))
+
+export const documentLinkRelations = relations(documentLinks, ({ one }) => ({
+  document: one(documents, {
+    fields: [documentLinks.documentId],
+    references: [documents.id],
+    relationName: "document_links_document"
+  })
 }))

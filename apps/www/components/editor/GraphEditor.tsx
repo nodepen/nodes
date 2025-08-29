@@ -12,6 +12,7 @@ import DocumentSelectionModal from './modals/DocumentSelectionModal'
 import { NodePenDocumentManifest } from '@/sdk/types'
 import ObjectLoader from '@speckle/objectloader'
 import { useRouter } from 'next/navigation'
+import cryptoRandomString from 'crypto-random-string'
 
 type NodesAppContainerProps = {
   templates: NodePen.NodeTemplate[],
@@ -37,11 +38,11 @@ const NodesAppContainer = ({ templates, manifest, initialDocument }: NodesAppCon
   }
 
   const fallbackDocument: NodePen.Document = useMemo(() => ({
-    id: '',
+    id: cryptoRandomString({ length: 9, type: 'alphanumeric' }),
     version: 1,
     nodes: {},
     meta: {
-      name: 'unset',
+      name: 'My Document',
       speckle: {
         linkedModel: {
           id: '',
@@ -57,8 +58,6 @@ const NodesAppContainer = ({ templates, manifest, initialDocument }: NodesAppCon
   }), [])
 
 
-  const [document, setDocument] = useState(initialDocument ?? fallbackDocument)
-
   const [showDialog, setShowDialog] = useState(false)
 
   const handleExpireSolution = useCallback(async (state: NodesAppState) => {
@@ -66,7 +65,12 @@ const NodesAppContainer = ({ templates, manifest, initialDocument }: NodesAppCon
       return
     }
 
-    console.log(`Sending document to: ${manifest.speckle.documentModel.id}`)
+    console.log({
+      manifest,
+      document: JSON.parse(JSON.stringify(state.document))
+    })
+
+    console.log(`Sending document to: ID ${manifest.meta.id} MODEL ${manifest.speckle.documentModel.id}`)
 
     const res = await fetch(`/api/documents/${manifest.meta.id}`, {
       method: 'POST',
@@ -76,9 +80,9 @@ const NodesAppContainer = ({ templates, manifest, initialDocument }: NodesAppCon
       })
     })
 
-    const data = await res.json()
+    // const data = await res.json()
 
-    console.log(data)
+    // console.log(data)
   }, [speckle.serverUrl, speckle.token, manifest])
 
   const callbacks: NodesAppCallbacks = useMemo(() => ({
@@ -111,7 +115,7 @@ const NodesAppContainer = ({ templates, manifest, initialDocument }: NodesAppCon
 
 
   return (
-    <NodesApp document={document} templates={templates} solution={solution} user={userData} speckle={speckleConfig} {...callbacks} >
+    <NodesApp document={initialDocument ?? fallbackDocument} templates={templates} solution={solution} user={userData} speckle={speckleConfig} {...callbacks} >
       <DocumentView editable />
       <SpeckleModelView stream={stream} rootObjectId={undefined} />
       {showDialog ? (

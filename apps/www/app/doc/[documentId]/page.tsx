@@ -48,7 +48,5 @@ export default async function Page({
 
   const document = await tryLoadDocument(manifest.speckle.documentModel.rootObjectId)
 
-  return <div style={{ width: '100vw', height: '100vh' }}>
-    <NodesAppContainer templates={templates} manifest={manifest} initialDocument={document} />
-  </div>
+  return <NodesAppContainer templates={templates} manifest={manifest} initialDocument={document} />
 }

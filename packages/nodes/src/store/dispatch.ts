@@ -104,7 +104,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         //   // }
         // }
 
-        expireSolution(state)
+        // expireSolution(state)
       }),
     loadTemplates: (templates: NodePen.NodeTemplate[]) =>
       set(
