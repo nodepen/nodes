@@ -5,7 +5,7 @@ import { commitObject } from '@/services/speckle'
 import { getDb } from '@/schema/db'
 import { eq } from 'drizzle-orm'
 import { documents } from '@/schema/documents'
-import { getDocument } from '@/services/nodepen'
+import { deleteDocument, getDocument } from '@/services/nodepen'
 
 
 const handleGet = async (
@@ -22,6 +22,23 @@ const handleGet = async (
   const manifest = await getDocument(context)({ documentId })
 
   return NextResponse.json({ document: manifest })
+}
+
+const handleDelete = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ documentId: string }> }
+) => {
+  const context = await getSpeckleRequestContext(req)
+
+  if (!context) {
+    throw new Error('Not authenticated!')
+  }
+
+  const { documentId } = await params
+
+  await deleteDocument(context)({ documentId })
+
+  return new NextResponse(null, { status: 200 })
 }
 
 type RequestBody = {
@@ -76,4 +93,4 @@ const handlePost = async (
   return NextResponse.json({ version })
 }
 
-export { handleGet as GET, handlePost as POST }
+export { handleGet as GET, handleDelete as DELETE, handlePost as POST }

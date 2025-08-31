@@ -1,7 +1,7 @@
 import { getDb } from "@/schema/db";
 import { documents } from "@/schema/documents";
 import { projects } from "@/schema/speckle";
-import { createModel, tryGetModelLatestVersion } from "@/sdk/models/models";
+import { createModel, deleteModel, tryGetModelLatestVersion } from "@/sdk/models/models";
 import { NodePenDocumentManifest, SpeckleRequestContext } from "@/sdk/types";
 import cryptoRandomString from "crypto-random-string";
 import { eq } from "drizzle-orm";
@@ -89,6 +89,29 @@ export const createDocument =
           }
         }
       }
+    }
+
+export const deleteDocument =
+  (context: SpeckleRequestContext) =>
+    async (params: { documentId: string }) => {
+      const { documentId } = params
+
+      const db = await getDb()
+
+      const manifest = await getDocument(context)({ documentId })
+
+      const modelIds = [
+        manifest.speckle.modelId,
+        manifest.speckle.documentModel.id,
+        manifest.speckle.outputModel.id
+      ]
+
+      await Promise.all(modelIds.map((id) => deleteModel(context)({
+        projectId: manifest.speckle.projectId,
+        modelId: id
+      })))
+
+      await db.delete(documents).where(eq(documents.id, documentId))
     }
 
 export const getActiveUserProject =

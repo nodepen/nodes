@@ -20,6 +20,12 @@ const createNewDocument = async () => {
   return await data.json() as { document: NodePenDocumentManifest }
 }
 
+const deleteDocument = async (documentId: string) => {
+  await fetch(`/api/documents/${documentId}`, {
+    method: 'DELETE'
+  })
+}
+
 const DocumentSelectionModal = ({ onSelectDocument }: Props) => {
   const { data, mutate } = useSWR('/documents', fetchDocuments)
 
@@ -35,6 +41,13 @@ const DocumentSelectionModal = ({ onSelectDocument }: Props) => {
     })
   }, [data, mutate])
 
+  const handleDeleteDocument = useCallback(async (documentId: string) => {
+    await deleteDocument(documentId)
+    mutate({
+      documents: data?.documents.filter((doc) => doc.meta.id !== documentId) ?? []
+    })
+  }, [data, mutate])
+
   return <div className='w-full flex flex-col justify-start'>
     <div className='w-full mb-2 flex justify-between items-center'>
       <div>SEARCH</div>
@@ -42,8 +55,13 @@ const DocumentSelectionModal = ({ onSelectDocument }: Props) => {
     </div>
     <div className='w-full flex flex-col justify-start'>
       {documents.map((doc) => (
-        <div key={doc.meta.id} className='w-full h-10 mb-2 border-2 rounded-md border-black' onClick={() => onSelectDocument(doc)}>
-          {doc.meta.name}
+        <div key={doc.meta.id} className='w-full h-10 mb-2 flex justify-between items-center border-2 rounded-md border-black'>
+          <p className="text-black" onClick={() => onSelectDocument(doc)}>
+            {doc.meta.name}
+          </p>
+          <button onClick={() => handleDeleteDocument(doc.meta.id)}>
+            DELETE
+          </button>
         </div>
       ))}
     </div>
