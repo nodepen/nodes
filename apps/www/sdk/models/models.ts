@@ -38,6 +38,34 @@ export const createModel =
       return modelId
     }
 
+export const deleteModel =
+  (context: SpeckleRequestContext) =>
+    async (params: {
+      projectId: string
+      modelId: string
+    }): Promise<void> => {
+      const { projectId, modelId } = params
+
+      const query = gql`
+          mutation DeleteModel($input: DeleteModelInput!) {
+            modelMutations {
+              delete(input: $input)
+            }
+          }
+        `
+
+      const data = await issueSpeckleRequest(context)(query, {
+        input: {
+          projectId,
+          id: modelId
+        }
+      })
+
+      if (!data.modelMutations.delete) {
+        throw new Error('Failed to delete speckle model')
+      }
+    }
+
 export const tryGetModelLatestVersion =
   (context: SpeckleRequestContext) =>
     async (params: {

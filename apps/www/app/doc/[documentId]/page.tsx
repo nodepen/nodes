@@ -21,7 +21,7 @@ export default async function Page({
   params: Promise<{ documentId: string }>
 }) {
   const session = await getServerSession(config)
-  console.log(session)
+  // console.log(session)
   const { documentId } = await params
   const { getAll } = await cookies()
   const context = await getSpeckleRequestContextFromCookies(getAll())
