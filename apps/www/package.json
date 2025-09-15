@@ -17,6 +17,7 @@
     "drizzle-orm": "^0.43.1",
     "graphql": "^16.11.0",
     "graphql-tag": "^2.12.6",
+    "lodash": "^4.17.21",
     "next": "15.3.2",
     "next-auth": "^4.24.11",
     "pg": "^8.15.6",
@@ -29,6 +30,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@tailwindcss/postcss": "^4.1.6",
+    "@types/lodash": "^4.17.20",
     "@types/node": "^22.15.17",
     "@types/pg": "^8.15.1",
     "@types/react": "^19",
