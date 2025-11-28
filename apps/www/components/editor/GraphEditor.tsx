@@ -127,4 +127,4 @@ const NodesAppContainer = ({ templates, manifest, initialDocument }: NodesAppCon
   )
 }
 
-export default React.memo(NodesAppContainer, (prev, next) => prev.manifest.meta.id === next.manifest.meta.id)
+export default React.memo(NodesAppContainer, (prev, next) => prev?.manifest?.meta?.id === next?.manifest?.meta?.id)
