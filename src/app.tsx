@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect } from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { freeze } from 'immer'
-import '@/styles.css'
 import { useDispatch, useStore } from '$'
 import type { NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'

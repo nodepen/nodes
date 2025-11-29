@@ -1,5 +1,5 @@
 import { useEffect } from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 
 export const useDebugRender = (node: NodePen.DocumentNode, template: NodePen.NodeTemplate): void => {
   useEffect(() => {

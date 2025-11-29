@@ -1,4 +1,4 @@
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 
 export type TooltipContext = NodeTemplateSummaryTooltipContext | PortTooltipContext | ProgressBarTooltipContext
 

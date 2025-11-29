@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { MenuButton } from '../../../common'
 import { getIconAsImage } from '@/utils/templates'

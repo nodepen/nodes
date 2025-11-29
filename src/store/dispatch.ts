@@ -1,7 +1,7 @@
 import type { NodesAppState } from './state'
 import { startTransition } from 'react'
 import { setAutoFreeze, freeze } from 'immer'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'

@@ -1,4 +1,4 @@
-import type { DataTree } from '@nodepen/core'
+import type { DataTree } from '@/types'
 
 export const getDataTreeSummary = (tree?: DataTree | null): string => {
   if (!tree || !tree.stats) {

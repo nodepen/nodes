@@ -1,4 +1,4 @@
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 
 /**
  * Given a data tree, return a single value if there is only one value. Otherwise, return `undefined`

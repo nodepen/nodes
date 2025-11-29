@@ -1,7 +1,7 @@
 import type React from 'react'
 import { useCallback, useRef } from 'react'
 import { useDispatch } from '$'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getWireEditModalityFromEvent } from '@/utils/wires'
 

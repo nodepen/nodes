@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useLongHover, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { useDispatch } from '@/store'

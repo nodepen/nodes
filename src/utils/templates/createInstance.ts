@@ -1,4 +1,4 @@
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { newGuid } from '../common'
 import { getNodeDimensions } from '../node-dimensions'
 

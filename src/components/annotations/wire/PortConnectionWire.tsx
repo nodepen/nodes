@@ -1,5 +1,5 @@
 import React, { useRef } from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import type { NodePortReference } from '@/types'
 import { useNodeAnchorPosition, usePortValues } from '@/hooks'
 import { WirePortal, WiresMaskPortal } from './components'

@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
 import { usePageSpaceToOverlaySpace } from '@/hooks'

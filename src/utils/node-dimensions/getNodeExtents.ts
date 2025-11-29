@@ -1,4 +1,4 @@
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 
 export const getNodeExtents = (node: NodePen.DocumentNode) => {
   const { position, dimensions } = node

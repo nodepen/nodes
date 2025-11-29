@@ -1,6 +1,6 @@
 import React from 'react'
 import { freeze } from 'immer'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
 import type { NodePortReference, WireEditMode } from '@/types'
 

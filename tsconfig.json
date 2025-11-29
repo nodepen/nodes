@@ -1,0 +1,28 @@
+{
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "src/**/*"
+, "packages/nodes/src/components", "packages/nodes/src/hooks", "packages/nodes/src/store", "packages/nodes/src/utils", "packages/nodes/src/views", "packages/nodes/src/app.tsx", "packages/nodes/src/constants.ts", "packages/nodes/src/index.ts", "packages/nodes/src/types.ts"  ],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "src/**/*.spec.ts"
+  ],
+  "compilerOptions": {
+    "outDir": "dist",
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/types": ["./src/types/index.ts"],
+      "$": ["./src/store"],
+    },
+    "lib": ["DOM"],
+    "module": "esnext",
+    "target": "esnext",
+    "declaration": true,
+    "resolveJsonModule": false,
+    "moduleResolution": "bundler",
+    "jsx": "react",
+    "skipLibCheck": true
+  }
+}

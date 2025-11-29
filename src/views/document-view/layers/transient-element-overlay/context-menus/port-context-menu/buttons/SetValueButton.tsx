@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { MenuButton } from '../../../common'
 import { STYLES } from '@/constants'
 

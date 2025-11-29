@@ -1,4 +1,4 @@
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 

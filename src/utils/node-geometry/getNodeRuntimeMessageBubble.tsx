@@ -1,5 +1,5 @@
 import React from 'react'
-import type { DocumentNode } from '@nodepen/core'
+import type { DocumentNode } from '@/types'
 import { DIMENSIONS } from '@/constants'
 
 export const getNodeRuntimeMessageBubble = (node: DocumentNode, fillColor: string) => {

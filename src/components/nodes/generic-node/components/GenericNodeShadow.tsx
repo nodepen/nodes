@@ -1,5 +1,5 @@
 import React from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS

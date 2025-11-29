@@ -1,5 +1,5 @@
 import React from 'react'
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 import GenericNodePort from './GenericNodePort'
 
 type GenericNodePortsProps = {

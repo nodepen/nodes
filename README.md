@@ -36,7 +36,7 @@ NodePen currently supports three core libraries:
 
 A React component library that exports the main NodePen client-side "app" for interacting with nodes and viewing results. It also exports the individual "views" which may be included and configured as necessary.
 
-#### @nodepen/core
+#### @/types
 
 A typescript library that exports types and utilities for NodePen concepts. Useful if you need to perform operations with NodePen-shaped data but do not need to include the client-side logic.
 

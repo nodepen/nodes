@@ -1,4 +1,4 @@
-import type * as NodePen from '@nodepen/core'
+import type * as NodePen from '@/types'
 
 export const isDataTreePath = (path: string): path is NodePen.DataTreePath => {
   const isValidStartCharacter = path[0] === '{'

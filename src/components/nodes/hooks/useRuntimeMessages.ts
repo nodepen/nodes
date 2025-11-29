@@ -1,5 +1,5 @@
 import { useRef } from 'react'
-import type { NodeSolutionData } from '@nodepen/core'
+import type { NodeSolutionData } from '@/types'
 import { useStore } from '$'
 
 /**

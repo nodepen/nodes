@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import type { DataTreeStructure, DocumentNode } from '@nodepen/core'
+import type { DataTreeStructure, DocumentNode } from '@/types'
 import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
