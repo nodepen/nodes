@@ -1,5 +1,11 @@
-import { useRef } from 'react'
+import { useLayoutEffect, useRef } from 'react'
 
 export const useDocumentRef = (): React.MutableRefObject<HTMLDivElement> => {
-  return useRef(document as unknown as HTMLDivElement)
+  const doc = useRef<HTMLDivElement>(null)
+
+  useLayoutEffect(() => {
+    doc.current = window.document as unknown as HTMLDivElement
+  }, [])
+
+  return doc as React.MutableRefObject<HTMLDivElement>
 }

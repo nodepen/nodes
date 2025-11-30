@@ -22,7 +22,6 @@
     "declaration": true,
     "resolveJsonModule": false,
     "moduleResolution": "bundler",
-    "jsx": "react",
     "skipLibCheck": true
   }
 }

@@ -1,10 +1,10 @@
 import { defineConfig } from "tsup"
-import path from "node:path"
+import { execSync } from 'child_process'
 import fs from "node:fs"
 
 export default defineConfig({
   entry: ["src/index.ts"],
-  format: ["esm", "cjs"],
+  format: ["esm"],
   dts: true,
   sourcemap: false,
   clean: true,
@@ -25,6 +25,7 @@ export default defineConfig({
   onSuccess: async () => {
     fs.mkdirSync("dist", { recursive: true })
     fs.cpSync("src/assets", "dist/assets", { recursive: true })
+    execSync('npm run postbuild', { stdio: 'inherit' })
   },
   watch: process.env.WATCH === "1",
 })

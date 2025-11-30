@@ -13,18 +13,18 @@
   "files": [
     "dist/**/*"
   ],
+  "types": "dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.mjs",
-      "require": "./dist/index.cjs.js"
+      "types": "./dist/index.d.ts"
     },
     "./styles.css": "./dist/styles.css"
   },
   "scripts": {
     "postbuild": "tailwindcss build -i tailwind.css -o dist/styles.css",
     "build": "tsup",
-    "predev": "npm run postbuild",
-    "dev": "concurrently \"tsup --watch\" \"tailwindcss build -i tailwind.css -o dist/styles.css\" \"vite --config dev/vite.config.ts\"",
+    "dev": "tsup --watch",
     "lint": "eslint --ext .ts,.tsx .",
     "lint:fix": "eslint --fix --ext .ts,.tsx .",
     "test": "jest"

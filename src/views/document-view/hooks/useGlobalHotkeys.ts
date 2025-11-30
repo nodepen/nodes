@@ -1,4 +1,4 @@
-import { useImperativeEvent } from '@/hooks'
+import { useDocumentRef, useImperativeEvent } from '@/hooks'
 import { useDispatch } from '@/store'
 import { expireSolution } from '@/store/utils'
 import { useCallback, useRef } from 'react'
@@ -26,7 +26,7 @@ export const useGlobalHotkeys = () => {
     }
   }, [])
 
-  const documentRef = useRef(document as unknown as HTMLElement)
+  const documentRef = useDocumentRef()
 
   useImperativeEvent(documentRef, 'keydown', handleKeyDown)
 }
