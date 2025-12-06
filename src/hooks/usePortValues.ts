@@ -2,6 +2,60 @@ import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { useCallback, useEffect } from 'react'
 import { useAsyncMemo } from '@/hooks'
+import { useSpeckleObjectLoader } from '@/context'
+
+type SolutionData = {
+  SolutionId: string
+  DocumentRuntimeData: {
+    DurationMs: number
+  }
+  NodeSolutionData: {
+    NodeInstanceId: string
+    NodeRuntimeData: {
+      DurationMs: number
+    }
+    PortSolutionData: {
+      DataTree: {
+        Stats: {
+          BranchCount: number
+          BranchValueCountDomain: [min: number, max: number]
+          TreeStructure: 'single' | 'list' | 'tree'
+          ValueCount: number
+          ValueTypes: NodePen.DataTreeValueType[]
+        }
+        Branches: {
+          Order: number
+          Path: string
+          Values: {
+            Order: number
+            Type: string
+            Value: string
+            Geometry: any | undefined
+          }[]
+        }[]
+      }
+      PortInstanceId: string
+    }[]
+  }[]
+}
+
+const lowerFirstLetterDeep = (value: any): any => {
+  if (Array.isArray(value)) {
+    return value.map(lowerFirstLetterDeep);
+  }
+
+  if (value && typeof value === "object" && value.constructor === Object) {
+    const result: Record<string, any> = {};
+    for (const [key, val] of Object.entries(value)) {
+      const newKey = key.charAt(0).toLowerCase() + key.slice(1);
+      result[newKey] = lowerFirstLetterDeep(val);
+    }
+    return result;
+  }
+
+  // primitives, dates, functions, etc.
+  return value;
+}
 
 /**
  * Given a reference to a specific port, return its user-defined values or its current solution values.
@@ -20,6 +74,8 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     }
   })
 
+  const objectLoader = useSpeckleObjectLoader()
+
   const getLatestValues = useCallback(async (): Promise<NodePen.DataTree | null> => {
     // Use locally-set values, if available
     const documentNode = useStore.getState().document.nodes[nodeInstanceId]
@@ -30,33 +86,23 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
       return documentNodeValues
     }
 
-    // Use previously cached solution values, if available
-    const nodeSolutionData = useStore
-      .getState()
-      .solution.nodeSolutionData.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
-    const portSolutionData = nodeSolutionData?.portSolutionData?.find(({ portInstanceId: id }) => id === portInstanceId)
-    const portSolutionDataValues = portSolutionData?.dataTree
-
-    if (portSolutionDataValues) {
-      // Return cached values
-      return portSolutionDataValues
-    }
-
-    // Fetch values with provided callback, if possible
-    const { getPortSolutionData } = useStore.getState().callbacks
-
-    if (!getPortSolutionData) {
-      // No callback provided
+    // Load result data
+    if (!objectLoader) {
+      console.log('🐍 Could not find object loader')
       return null
     }
 
-    const { dataTree } = (await getPortSolutionData(nodeInstanceId, portInstanceId)) ?? {}
+    const rootObject = await objectLoader.getRootObject()
+    const solutionData = rootObject?.base! as unknown as SolutionData
+
+    const dataTree = solutionData.NodeSolutionData?.find((node) => node.NodeInstanceId === nodeInstanceId)?.PortSolutionData?.find((port) => port.PortInstanceId === portInstanceId)?.DataTree
 
     if (!dataTree) {
       return null
     }
 
-    return dataTree
+    // TODO: This should serialize in camelCase...
+    return lowerFirstLetterDeep(dataTree)
   }, [solutionId, nodeInstanceId, portInstanceId])
 
   const cacheKey = `${solutionId}:${solutionStatus}:${nodeInstanceId}:${portInstanceId}`
@@ -70,39 +116,8 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     if (!value || solutionStatus === 'expired') {
       return
     }
-
-    const nodeSolutionData = useStore
-      .getState()
-      .solution.nodeSolutionData.find(({ nodeInstanceId: id }) => id === nodeInstanceId)
-
-    if (!nodeSolutionData) {
-      console.log(`🐍 Attempted to cache results for node that does not exist: [${nodeInstanceId}]`)
-      console.log(value)
-      return
-    }
-
-    const portSolutionData = nodeSolutionData.portSolutionData.find(({ portInstanceId: id }) => id === portInstanceId)
-
-    if (portSolutionData) {
-      // Value has already been cached
-      return
-    }
-
-    // Cache value in store
     apply((state) => {
-      const solutionData: NodePen.PortSolutionData = {
-        portInstanceId,
-        dataTree: value,
-      }
-
-      state.solution.nodeSolutionData
-        .find(({ nodeInstanceId: id }) => id === nodeInstanceId)
-        ?.portSolutionData?.push({
-          portInstanceId,
-          dataTree: value,
-        })
-
-      state.cache.portSolutionData[cacheKey] = solutionData
+      state.cache.portSolutionData[cacheKey] = value
     })
   }, [value])
 
@@ -110,5 +125,5 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     return null
   }
 
-  return cacheValue?.dataTree ?? value
+  return cacheValue ?? value ?? null
 }

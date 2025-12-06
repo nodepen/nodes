@@ -1,29 +1,35 @@
-import React, { useRef, useEffect, useCallback, useMemo } from 'react'
+import React, { useRef, useEffect, useCallback, useMemo, useContext } from 'react'
 import { AssetType, LegacyViewer, Loader, SpeckleLoader, ViewerEvent, SelectionExtension, StencilOutlineType, DefaultViewerParams } from '@speckle/viewer'
 import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 import { useDispatch, useStore } from '@/store'
+import { SpeckleObjectLoaderContext } from '@/context'
 
 type SpeckleModelViewProps = {
-  stream: {
-    id: string
-    url: string
-    token: string
+  speckle: {
+    serverUrl: string
+    serverToken: string
   }
-  rootObjectId?: string
+  model: {
+
+    projectId: string
+    rootObjectId?: string
+  }
 }
 
-const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): React.ReactElement | null => {
+const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.ReactElement | null => {
   const [position, preciseWidth] = useViewRegistry({ key: 'speckle-viewer', label: 'Model' })
 
-  const width = Math.round(preciseWidth * 1000) / 1000
+  const { serverUrl, serverToken } = speckle
+  const { projectId, rootObjectId } = model
 
-  const user = useStore((state) => state.user)
+  const width = Math.round(preciseWidth * 1000) / 1000
 
   const containerRef = useRef<HTMLDivElement>(null)
   const viewerRef = useRef<LegacyViewer>(null)
 
   const { apply } = useDispatch()
+  const context = useContext(SpeckleObjectLoaderContext)
 
   const setModelLoadStatus = useCallback((progress: number) => {
     apply((state) => {
@@ -54,7 +60,6 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
     if (viewerRef.current) {
       return
     }
-
     const viewer = new LegacyViewer(containerRef.current, DefaultViewerParams)
 
     viewer.on(ViewerEvent.ObjectClicked, (e) => {
@@ -117,7 +122,6 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
       viewerRef.current = viewer
     })
 
-
     viewer.on(ViewerEvent.LoadComplete, (arg) => {
       safeSetModelLoadStatus(1)
     })
@@ -130,7 +134,7 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
   const refreshObjects = useCallback(async () => {
     const viewer = viewerRef.current
 
-    if (!viewer || !user?.token) {
+    if (!viewer) {
       return
     }
 
@@ -140,31 +144,48 @@ const SpeckleModelView = ({ stream, rootObjectId }: SpeckleModelViewProps): Reac
       state.lifecycle.model.status = 'loading'
     })
 
+    if (!rootObjectId) {
+      return
+    }
+
+
+    context?.setObjectLoader({
+      serverUrl,
+      projectId,
+      objectId: rootObjectId,
+      token: serverToken
+    })
+
+    apply((state) => {
+      state.lifecycle.solution = 'ready'
+    })
+
     // TODO: What changed
     // await viewer.loadObject(`${stream.url}/streams/${stream.id}/objects/${rootObjectId}`, stream.token)
-    const loader = new SpeckleLoader(viewer.getWorldTree(), 'https://app.speckle.systems/streams/82de80f91f/objects/c0685dcb41e7993972e850525cb7b29e', user.token)
+    const url = `${serverUrl}/streams/${projectId}/objects/${rootObjectId}`
+    const loader = new SpeckleLoader(viewer.getWorldTree(), url, serverToken)
     await viewer.loadObject(loader, true)
 
     let visibleObjectCount = 0
 
-    viewer.getWorldTree().walk((node) => {
-      const isVisible = !!node.model.renderView
-      if (isVisible) {
-        visibleObjectCount++
-      }
-      return true
-    })
+    // viewer.getWorldTree().walk((node) => {
+    //   const isVisible = !!node.model.renderView
+    //   if (isVisible) {
+    //     visibleObjectCount++
+    //   }
+    //   return true
+    // })
 
     apply((state) => {
       state.lifecycle.model = { status: 'ready', progress: 1, objectCount: visibleObjectCount }
     })
-  }, [rootObjectId, user])
+  }, [serverUrl, serverToken, projectId, rootObjectId])
 
   const requestRefreshObjects = useDeferCallback(refreshObjects)
 
   useEffect(() => {
     requestRefreshObjects()
-  }, [rootObjectId, user])
+  }, [refreshObjects])
 
   const translation = (100 - (width * 100)) / -2
 

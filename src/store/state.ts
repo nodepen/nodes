@@ -3,6 +3,7 @@ import { freeze } from 'immer'
 import type * as NodePen from '@/types'
 import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
 import type { NodePortReference, WireEditMode } from '@/types'
+import type { LegacyViewer } from '@speckle/viewer'
 
 export type NodesAppState = {
   document: NodePen.Document
@@ -136,7 +137,7 @@ export type NodesAppState = {
   }
   cache: {
     portSolutionData: {
-      [cacheKey: string]: NodePen.PortSolutionData
+      [cacheKey: string]: NodePen.DataTree
     }
   }
   callbacks: NodesAppCallbacks

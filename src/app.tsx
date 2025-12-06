@@ -6,6 +6,7 @@ import type { NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'
 import { FileUploadOverlayContainer, PseudoShadowsContainer } from './views/common'
 import { StaticDialogLayer } from './views/static/dialog-layer'
+import { SpeckleObjectLoaderProvider } from './context'
 
 type NodesAppProps = {
   document: NodePen.Document
@@ -105,17 +106,19 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
   }, [])
 
   return (
-    <div
-      id="np-app-root"
-      className="np-w-full np-h-full np-relative np-overflow-hidden"
-      ref={canvasRootRef}
-      onDragEnter={handleDragEnter}
-    >
-      <FileUploadOverlayContainer />
-      <ControlsContainer />
-      <PseudoShadowsContainer />
-      <StaticDialogLayer />
-      {children}
-    </div>
+    <SpeckleObjectLoaderProvider>
+      <div
+        id="np-app-root"
+        className="np-w-full np-h-full np-relative np-overflow-hidden"
+        ref={canvasRootRef}
+        onDragEnter={handleDragEnter}
+      >
+        <FileUploadOverlayContainer />
+        <ControlsContainer />
+        <PseudoShadowsContainer />
+        <StaticDialogLayer />
+        {children}
+      </div>
+    </SpeckleObjectLoaderProvider>
   )
 })
