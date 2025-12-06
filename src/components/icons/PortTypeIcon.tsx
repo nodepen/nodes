@@ -1,7 +1,13 @@
 import React from 'react'
 import { COLORS } from '@/constants'
 
-export const PortTypeIcon = (): React.ReactElement => {
+type PortTypeIconProps = {
+  position?: { x: number, y: number }
+}
+
+export const PortTypeIcon = ({ position }: PortTypeIconProps): React.ReactElement => {
+  const { x, y } = position ?? {}
+
   const r = 20
 
   const px = `${r}px`
@@ -13,7 +19,7 @@ export const PortTypeIcon = (): React.ReactElement => {
   const points = `${a},0 ${b},-${f} -${b},-${f} -${a},0 -${b},${f} ${b},${f}`
 
   return (
-    <svg width={px} height={px} viewBox={`0 0 ${s * 2} ${s * 2}`}>
+    <svg x={x} y={y} width={px} height={px} viewBox={`0 0 ${s * 2} ${s * 2}`}>
       <defs>
         <clipPath id="annoying">
           <polygon points={points} />

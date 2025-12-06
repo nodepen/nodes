@@ -25,6 +25,7 @@
     "postbuild": "tailwindcss build -i tailwind.css -o dist/styles.css",
     "build": "tsup",
     "dev": "tsup --watch",
+    "preview": "vite --config dev/vite.config.ts",
     "lint": "eslint --ext .ts,.tsx .",
     "lint:fix": "eslint --fix --ext .ts,.tsx .",
     "test": "jest"

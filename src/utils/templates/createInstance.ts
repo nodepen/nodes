@@ -1,9 +1,11 @@
 import type * as NodePen from '@/types'
 import { newGuid } from '../common'
 import { getNodeDimensions } from '../node-dimensions'
+import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
+import { DIMENSIONS } from '@/constants'
 
 export const createInstance = (template: NodePen.NodeTemplate): NodePen.DocumentNode => {
-  const { guid, inputs: templateInputs, outputs: templateOutputs } = template
+  const { guid, category, inputs: templateInputs, outputs: templateOutputs } = template
 
   const node: NodePen.DocumentNode = {
     instanceId: newGuid(),
@@ -33,45 +35,74 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
     portConfigurations: {},
   }
 
-  for (const input of templateInputs) {
-    const { __order: order } = input
+  switch (getNodeTypeForTemplate(template)) {
+    case 'generic-node': {
+      for (const input of templateInputs) {
+        const { __order: order } = input
 
-    const inputInstanceId = newGuid()
+        const inputInstanceId = newGuid()
 
-    node.sources[inputInstanceId] = []
-    node.inputs[inputInstanceId] = order
-    node.values[inputInstanceId] = {
-      branches: [],
-      stats: {
-        branchCount: 0,
-        branchValueCountDomain: [0, 0],
-        treeStructure: 'empty',
-        valueCount: 0,
-        valueTypes: [],
-      },
+        node.sources[inputInstanceId] = []
+        node.inputs[inputInstanceId] = order
+        node.values[inputInstanceId] = {
+          branches: [],
+          stats: {
+            branchCount: 0,
+            branchValueCountDomain: [0, 0],
+            treeStructure: 'empty',
+            valueCount: 0,
+            valueTypes: [],
+          },
+        }
+        node.portConfigurations[inputInstanceId] = {
+          label: null,
+          flags: [],
+        }
+      }
+
+      for (const output of templateOutputs) {
+        const { __order: order } = output
+
+        const outputInstanceId = newGuid()
+
+        node.outputs[outputInstanceId] = order
+        node.portConfigurations[outputInstanceId] = {
+          label: null,
+          flags: [],
+        }
+      }
+
+      const { dimensions, anchors } = getNodeDimensions(node, template)
+
+      node.dimensions = dimensions
+      node.anchors = anchors
+
+      break
     }
-    node.portConfigurations[inputInstanceId] = {
-      label: null,
-      flags: [],
+    case 'generic-parameter': {
+      node.outputs['output'] = 0
+      node.portConfigurations['output'] = {
+        label: null,
+        flags: []
+      }
+      node.dimensions = {
+        width: 2 * DIMENSIONS.NODE_PORT_MINIMUM_WIDTH + DIMENSIONS.NODE_LABEL_WIDTH + 4 * DIMENSIONS.NODE_INTERNAL_PADDING,
+        height: DIMENSIONS.NODE_LABEL_WIDTH
+      }
+      node.anchors = {
+        'labelDeltaX': {
+          dx: 0,
+          dy: 0
+        },
+        'output': {
+          dx: node.dimensions.width,
+          dy: node.dimensions.height / 2
+        }
+      }
+
+      break
     }
   }
-
-  for (const output of templateOutputs) {
-    const { __order: order } = output
-
-    const outputInstanceId = newGuid()
-
-    node.outputs[outputInstanceId] = order
-    node.portConfigurations[outputInstanceId] = {
-      label: null,
-      flags: [],
-    }
-  }
-
-  const { dimensions, anchors } = getNodeDimensions(node, template)
-
-  node.dimensions = dimensions
-  node.anchors = anchors
 
   return node
 }

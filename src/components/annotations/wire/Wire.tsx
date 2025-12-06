@@ -3,6 +3,7 @@ import type { DataTreeStructure, DocumentNode } from '@/types'
 import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 
 type WireProps = {
   start: {
@@ -175,19 +176,29 @@ export const Wire = ({
 
     const { dx } = node.anchors['labelDeltaX']
 
-    return (
-      <rect
-        x={position.x + dx - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
-        y={position.y + DIMENSIONS.NODE_INTERNAL_PADDING - 1}
-        width={DIMENSIONS.NODE_LABEL_WIDTH + 2}
-        height={node.dimensions.height - DIMENSIONS.NODE_INTERNAL_PADDING * 2 + 2}
-        rx={7}
-        ry={7}
-        fill={COLORS.LIGHT}
-        stroke={COLORS.DARK}
-        strokeWidth={2}
-      />
-    )
+    const nodeTemplate = useStore.getState().templates[node.templateId]
+    const nodeType = getNodeTypeForTemplate(nodeTemplate)
+
+    switch (nodeType) {
+      case 'generic-node': {
+        return (
+          <rect
+            x={position.x + dx - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
+            y={position.y + DIMENSIONS.NODE_INTERNAL_PADDING - 1}
+            width={DIMENSIONS.NODE_LABEL_WIDTH + 2}
+            height={node.dimensions.height - DIMENSIONS.NODE_INTERNAL_PADDING * 2 + 2}
+            rx={7}
+            ry={7}
+            fill={COLORS.LIGHT}
+            stroke={COLORS.DARK}
+            strokeWidth={2}
+          />
+        )
+      }
+      default: {
+        return <></>
+      }
+    }
   }
 
   const nodeBackgroundClipPath = useMemo(() => {
@@ -209,7 +220,11 @@ export const Wire = ({
             return (
               <>
                 {isSelected ? getNodeLabelClipPath(node) : getNodeBodyClipPath(node)}
-                {Object.values(anchors).map((anchor) => {
+                {Object.entries(anchors).map(([key, anchor]) => {
+                  if (key === 'labelDeltaX') {
+                    return <></>
+                  }
+
                   const { x, y } = position
                   const { dx, dy } = anchor
 

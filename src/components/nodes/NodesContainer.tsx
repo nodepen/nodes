@@ -4,6 +4,8 @@ import { useStore } from '$'
 import { shallow } from 'zustand/shallow'
 
 import { GenericNode } from './generic-node'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { GenericParameter } from './generic-parameter'
 
 const NodesContainer = (): React.ReactElement => {
   const nodes = useDocumentNodes()
@@ -20,7 +22,7 @@ const NodesContainer = (): React.ReactElement => {
           case 'generic-node':
             return <GenericNode key={`generic-node-${instanceId}`} id={instanceId} template={template} />
           case 'generic-parameter':
-            return null
+            return <GenericParameter key={`generic-parameter-${instanceId}`} id={instanceId} template={template} />
           case 'unknown':
             // TODO: `unknown-node` type
             return null
@@ -45,23 +47,6 @@ const useDocumentNodes = (): NodePen.DocumentNode[] => {
   )
 
   return Object.values(nodes)
-}
-
-type NodePenNodeType = 'generic-node' | 'generic-parameter' | 'unknown'
-
-const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
-  if (!template) {
-    return 'unknown'
-  }
-
-  switch (template.category) {
-    case 'params': {
-      return 'generic-parameter'
-    }
-    default: {
-      return 'generic-node'
-    }
-  }
 }
 
 export default React.memo(NodesContainer)

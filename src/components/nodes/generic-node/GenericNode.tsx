@@ -8,8 +8,8 @@ import {
   GenericNodeRuntimeMessage,
   GenericNodeShadow,
   GenericNodeSkeleton,
-  GenericNodeWires,
 } from './components'
+import { GenericNodeWires } from '../wire'
 
 type GenericNodeProps = {
   id: string
