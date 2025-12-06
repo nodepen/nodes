@@ -148,6 +148,7 @@ const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.Reac
       return
     }
 
+    context?.objectLoader?.current?.disposeAsync()
 
     context?.setObjectLoader({
       serverUrl,
