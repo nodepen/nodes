@@ -7,13 +7,15 @@ type SetValueButtonProps = {
   nodeInstanceId: string
   portInstanceId: string
   portTemplate: NodePen.PortTemplate
+  onClick: (pageY: number) => void,
 }
 
-export const SetValueButton = ({ nodeInstanceId: _nid, portInstanceId: _pid, portTemplate }: SetValueButtonProps) => {
+export const SetValueButton = ({ nodeInstanceId, portInstanceId, portTemplate, onClick }: SetValueButtonProps) => {
   const { typeName } = portTemplate
 
-  const handleSetValue = useCallback(() => {
-    console.log('🐍 Not yet implemented!')
+  const handleSetValue = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+    const { top } = e.currentTarget.getBoundingClientRect()
+    onClick(top)
   }, [])
 
   const icon = (

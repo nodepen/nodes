@@ -5,6 +5,7 @@ export type ContextMenuContext =
   | DocumentContextMenuContext
   | NodeContextMenuContext
   | PortContextMenuContext
+  | PortValueContextMenuContext
 
 export type AddNodeContextMenu = {
   type: 'add-node'
@@ -26,4 +27,11 @@ export type PortContextMenuContext = {
   nodeInstanceId: string
   portInstanceId: string
   portTemplate: NodePen.PortTemplate
+}
+
+export type PortValueContextMenuContext = {
+  type: 'port-value',
+  valueType: string
+  nodeInstanceId: string
+  portInstanceId: string
 }

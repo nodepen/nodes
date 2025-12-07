@@ -30,6 +30,9 @@ export const getMenuHeight = (context: ContextMenuContext): number => {
         }
       }
     }
+    case 'port-value': {
+      return 200
+    }
     default: {
       console.warn(`🐍 Unhandled context menu type [${context.type}] when setting active menu height.`)
       return 500

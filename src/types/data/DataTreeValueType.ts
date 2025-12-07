@@ -1,1 +1,1 @@
-export type DataTreeValueType = 'boolean' | 'box' | 'circle' | 'curve' | 'integer' | 'number' | 'string' | 'surface'
+export type DataTreeValueType = 'boolean' | 'box' | 'circle' | 'curve' | 'integer' | 'number' | 'string' | 'text' | 'surface'

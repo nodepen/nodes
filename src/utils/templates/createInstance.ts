@@ -3,6 +3,7 @@ import { newGuid } from '../common'
 import { getNodeDimensions } from '../node-dimensions'
 import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
 import { DIMENSIONS } from '@/constants'
+import { createSingleValue } from '../data-trees/createSingleValue'
 
 export const createInstance = (template: NodePen.NodeTemplate): NodePen.DocumentNode => {
   const { guid, category, inputs: templateInputs, outputs: templateOutputs } = template
@@ -98,6 +99,11 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
           dx: node.dimensions.width,
           dy: node.dimensions.height / 2
         }
+      }
+
+      // Trying to stay positive
+      if (template.name.toLowerCase() === 'boolean') {
+        node.values['output'] = createSingleValue('true', 'boolean')
       }
 
       break

@@ -74,18 +74,13 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     }
   })
 
+  const parameterValues = useStore((state) => {
+    return state.document.nodes[nodeInstanceId].values[portInstanceId]
+  })
+
   const objectLoader = useSpeckleObjectLoader()
 
   const getLatestValues = useCallback(async (): Promise<NodePen.DataTree | null> => {
-    // Use locally-set values, if available
-    const documentNode = useStore.getState().document.nodes[nodeInstanceId]
-    const documentNodeValues = documentNode?.values?.[portInstanceId]
-
-    if (documentNodeValues && documentNodeValues.stats.treeStructure !== 'empty') {
-      // Return locally-set values
-      return documentNodeValues
-    }
-
     // Load result data
     if (!objectLoader) {
       console.log('🐍 Could not find object loader')
@@ -121,9 +116,8 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
     })
   }, [value])
 
-  if (solutionStatus === 'expired') {
-    return null
-  }
 
-  return cacheValue ?? value ?? null
+  const fallbackValues = solutionStatus === 'expired' ? null : cacheValue ?? value ?? null
+
+  return parameterValues ?? fallbackValues
 }

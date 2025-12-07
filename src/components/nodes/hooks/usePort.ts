@@ -4,6 +4,7 @@ import { useDispatch } from '$'
 import type * as NodePen from '@/types'
 import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getWireEditModalityFromEvent } from '@/utils/wires'
+import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 
 export const usePort = (
   nodeInstanceId: string,
@@ -23,7 +24,7 @@ export const usePort = (
 
     const { pageX, pageY } = e
 
-    const key = `${nodeInstanceId}-${portInstanceId}-${direction}-${nickName}`
+    const key = getPortContextMenuKey(nodeInstanceId, portInstanceId)
 
     const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 

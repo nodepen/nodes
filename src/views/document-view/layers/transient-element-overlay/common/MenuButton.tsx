@@ -4,15 +4,14 @@ type MenuButtonProps = {
   icon: React.ReactNode
   label: string
   isSelected?: boolean
-  action: () => void
+  action: (e: React.PointerEvent<HTMLButtonElement>) => void
 }
 
 export const MenuButton = ({ icon, label, isSelected = false, action }: MenuButtonProps) => {
   return (
     <button
-      className={`${
-        isSelected ? 'np-bg-grey' : 'np-bg-light'
-      } np-w-full np-h-8 np-pl-[6px] np-mb-1 last:np-mb-0 np-flex np-items-center np-rounded-sm hover:np-bg-grey`}
+      className={`${isSelected ? 'np-bg-grey' : 'np-bg-light'
+        } np-w-full np-h-8 np-pl-[6px] np-mb-1 last:np-mb-0 np-flex np-items-center np-rounded-sm hover:np-bg-grey`}
       onClick={action}
     >
       <div className="np-h-full np-w-5 np-min-w-[20px] np-flex np-flex-col np-items-center np-justify-center">

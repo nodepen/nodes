@@ -9,8 +9,16 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
   const { portTemplate } = context
   const { __direction: direction, typeName } = portTemplate
 
+  const supportedTypeNames = [
+    'number',
+    'integer',
+    'boolean',
+    'text',
+    'string'
+  ]
+
   const enablePin = direction === 'input'
-  const enableSetValue = direction === 'input' && (typeName === 'number' || typeName === 'integer')
+  const enableSetValue = direction === 'input' && supportedTypeNames.includes(typeName)
 
   return { enablePin, enableSetValue }
 }

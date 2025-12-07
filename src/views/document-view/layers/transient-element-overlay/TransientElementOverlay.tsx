@@ -7,6 +7,7 @@ import { useReducedMotion } from '@/hooks'
 import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
 import { useCursorState } from './cursors/hooks'
 import { ProgressBarTooltip } from './tooltips/progress-bar-tooltip'
+import { PortValueContextMenu } from './context-menus/port-value-context-menu'
 
 const TransientElementOverlay = () => {
   const cursor = useCursorState()
@@ -77,7 +78,10 @@ const TransientElementOverlay = () => {
             return <NodeContextMenu key={`node-context-menu-${key}`} position={menu.position} context={menu.context} />
           }
           case 'port': {
-            return <PortContextMenu key={`node-context-menu-${key}`} position={menu.position} context={menu.context} />
+            return <PortContextMenu key={`port-context-menu-${key}`} position={menu.position} context={menu.context} />
+          }
+          case 'port-value': {
+            return <PortValueContextMenu key={`port-value-context-menu-${key}`} position={menu.position} context={menu.context} />
           }
           default: {
             console.log(`🐍 Unhandled context menu type [${contextType}]`)
