@@ -47,7 +47,7 @@ export const MenuInput = ({ initialValue, valueType, onSubmit }: MenuInputProps)
     queueMicrotask(() => { el.focus() })
   }, [])
 
-  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault()
 
     const el = inputRef.current
@@ -74,7 +74,7 @@ export const MenuInput = ({ initialValue, valueType, onSubmit }: MenuInputProps)
         <input ref={inputRef} onChange={handleChange} className={`${isValid ? 'np-text-dark' : 'np-text-error'} np-h-full np-w-32 np-font-sans np-font-medium np-text-sm focus:np-outline-none`} placeholder={`Set ${valueType}...`} />
       </form>
       <button className="np-h-full np-min-w-8 np-rounded-sm hover:np-bg-grey np-flex np-flex-col np-items-center np-justify-center" onClick={handleSubmit}>
-        <svg className="np-w-5 np-h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK}>
+        <svg className="np-w-5 np-h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} vectorEffect="non-scaling-stroke">
           <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
         </svg>
       </button>

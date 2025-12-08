@@ -104,6 +104,17 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
       // Trying to stay positive
       if (template.name.toLowerCase() === 'boolean') {
         node.values['output'] = createSingleValue('true', 'boolean')
+      } else {
+        node.values['output'] = {
+          branches: [],
+          stats: {
+            branchCount: 0,
+            branchValueCountDomain: [0, 0],
+            treeStructure: 'empty',
+            valueCount: 0,
+            valueTypes: [],
+          },
+        }
       }
 
       break

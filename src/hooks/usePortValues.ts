@@ -75,7 +75,7 @@ export const usePortValues = (nodeInstanceId: string, portInstanceId: string): N
   })
 
   const parameterValues = useStore((state) => {
-    return state.document.nodes[nodeInstanceId].values[portInstanceId]
+    return state.document.nodes[nodeInstanceId].values[portInstanceId] ?? null
   })
 
   const objectLoader = useSpeckleObjectLoader()
