@@ -74,8 +74,8 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
         {getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])}
         <rect
           className={`${visibleMessageLevel === 'error'
-              ? 'np-fill-error hover:np-fill-error-2'
-              : 'np-fill-warn hover:np-fill-warn-2'
+            ? 'np-fill-error hover:np-fill-error-2'
+            : 'np-fill-warn hover:np-fill-warn-2'
             }  hover:np-cursor-pointer np-pointer-events-auto`}
           x={x + dx + 3 - s / 2}
           y={y + dy - 3 - s}

@@ -11,7 +11,10 @@ export const useGlobalHotkeys = () => {
     console.log
     switch (e.key) {
       case ' ': {
-        console.log(useStore.getState().document)
+        console.log({
+          document: useStore.getState().document,
+          solution: useStore.getState().solution
+        })
         break
       }
       case 'Delete':

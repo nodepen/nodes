@@ -14,9 +14,7 @@ export const useRuntimeMessages = (nodeInstanceId: string): NodeSolutionData['no
       return previousMessages.current
     }
 
-    const nodeSolutionData = state.solution.nodeSolutionData.find(
-      (nodeSolution) => nodeSolution.nodeInstanceId === nodeInstanceId
-    )
+    const nodeSolutionData = state.solution.nodeSolutionData.find((data) => data.nodeInstanceId === nodeInstanceId)
 
     if (!nodeSolutionData) {
       return []

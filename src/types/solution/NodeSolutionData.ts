@@ -1,6 +1,8 @@
 import type { PortSolutionData } from './PortSolutionData'
 
 export type NodeSolutionData = {
+  /** Speckle object id */
+  id: string
   nodeInstanceId: string
   nodeRuntimeData: NodeRuntimeData
   portSolutionData: PortSolutionData[]

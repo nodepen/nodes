@@ -4,6 +4,8 @@ import { Layer } from '../common'
 import { useViewRegistry } from '../common/hooks'
 import { useDispatch, useStore } from '@/store'
 import { SpeckleObjectLoaderContext } from '@/context'
+import { lowercaseFirstLetterDeep } from '@/utils/common/lowercaseFirstLetterDeep'
+import { useSpeckleViewer } from '@/hooks/useSpeckleViewer'
 
 type SpeckleModelViewProps = {
   speckle: {
@@ -22,6 +24,8 @@ const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.Reac
 
   const { serverUrl, serverToken } = speckle
   const { projectId, rootObjectId } = model
+
+  useSpeckleViewer()
 
   const width = Math.round(preciseWidth * 1000) / 1000
 
@@ -120,6 +124,7 @@ const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.Reac
 
     void viewer.init().then(() => {
       viewerRef.current = viewer
+      context?.setViewer(viewerRef.current)
     })
 
     viewer.on(ViewerEvent.LoadComplete, (arg) => {
@@ -157,8 +162,13 @@ const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.Reac
       token: serverToken
     })
 
+    const res = await context?.objectLoader.current?.getRootObject()
+
     apply((state) => {
       state.lifecycle.solution = 'ready'
+      if (res?.base) {
+        state.solution = lowercaseFirstLetterDeep(res.base)
+      }
     })
 
     // TODO: What changed
