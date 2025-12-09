@@ -8,6 +8,7 @@ import { usePortValues } from '@/hooks'
 import { COLORS } from '@/constants'
 import { DataTreePreview } from './components'
 import { getDataTreeSummary } from '@/utils/data-trees'
+import { usePortLabel } from '@/hooks/usePortLabel'
 
 type PortTooltipProps = {
   tooltipKey: string
@@ -22,6 +23,7 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
   useTooltip(tooltipKey, configuration)
 
   const shadowTarget = usePseudoShadow()
+  const { currentLabel } = usePortLabel(nodeInstanceId, portInstanceId)
 
   const { x: left, y: top } = position
 
@@ -54,7 +56,7 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
       className="np-absolute np-w-48 np-p-1 np-flex np-flex-col np-bg-light np-shadow-main np-transition-all np-rounded-md"
       style={{ left, top }}
     >
-      <MenuSection title={template.name} icon={<PortTypeIcon />}>
+      <MenuSection title={currentLabel} icon={<PortTypeIcon />}>
         <p className="np-mt-1 np-mb-2 np-font-sans np-font-medium np-text-dark np-text-xs -np-translate-y-px">
           {template.description}
         </p>

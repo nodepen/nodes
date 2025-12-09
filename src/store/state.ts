@@ -145,8 +145,8 @@ export type NodesAppState = {
 
 export type NodesAppCallbacks = {
   onExpireSolution?: (state: NodesAppState) => void
+  onSaveDocument?: (state: NodesAppState) => void
   onFileUpload?: (state: NodesAppState) => Promise<void> | void
-  getPortSolutionData?: (nodeInstanceId: string, portInstanceId: string) => Promise<NodePen.PortSolutionData | null>
   onSignOut?: () => Promise<void>
   onOpenDocumentSettings?: () => void
 }

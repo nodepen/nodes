@@ -1,22 +1,22 @@
 import React, { useCallback } from 'react'
 import { MenuButton } from '../../../common'
 import { STYLES } from '@/constants'
+import { SimplifyFlagIcon } from '@/components/icons/SimplifyFlagIcon'
+import { useDispatch } from '@/store'
+import type { PortFlag } from '@/types'
 
 type SimplifyButtonProps = {
-  nodeInstanceId: string
-  portInstanceId: string
+  onClick: (flag: PortFlag) => void
 }
 
-export const SimplifyButton = ({ nodeInstanceId: _nid, portInstanceId: _pid }: SimplifyButtonProps) => {
+export const SimplifyButton = ({ onClick }: SimplifyButtonProps) => {
   const handleSimplify = useCallback(() => {
-    console.log('🐍 Not yet implemented!')
+    onClick('simplify')
   }, [])
 
   const icon = (
     <div className="np-w-[18px] np-h-[18px] np-rounded-sm np-bg-light np-border-2 np-border-dark np-flex np-justify-center np-items-center">
-      <svg {...STYLES.BUTTON.SMALL} width={14} height={14}>
-        <path strokeLinecap="round" strokeLinejoin="round" d="M 18 12 H 12 L 6 6 M 12 12 L 6 18" />
-      </svg>
+      <SimplifyFlagIcon />
     </div>
   )
 

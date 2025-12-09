@@ -6,6 +6,7 @@ export type ContextMenuContext =
   | NodeContextMenuContext
   | PortContextMenuContext
   | PortValueContextMenuContext
+  | PortLabelContextMenuContext
 
 export type AddNodeContextMenu = {
   type: 'add-node'
@@ -32,6 +33,12 @@ export type PortContextMenuContext = {
 export type PortValueContextMenuContext = {
   type: 'port-value',
   valueType: string
+  nodeInstanceId: string
+  portInstanceId: string
+}
+
+export type PortLabelContextMenuContext = {
+  type: 'port-label',
   nodeInstanceId: string
   portInstanceId: string
 }

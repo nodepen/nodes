@@ -3,7 +3,10 @@ import type * as NodePen from '@/types'
 import { useLongHover, useNodeAnchorPosition, usePageSpaceToOverlaySpace } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePort } from '../../hooks'
-import { useDispatch } from '$'
+import { useDispatch, useStore } from '$'
+import { FlattenFlagIcon } from '@/components/icons/FlattenFlagIcon'
+import { GraftFlagIcon } from '@/components/icons/GraftFlagIcon'
+import { SimplifyFlagIcon } from '@/components/icons/SimplifyFlagIcon'
 
 const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_LABEL_OFFSET, NODE_PORT_RADIUS, NODE_PORT_MINIMUM_WIDTH } = DIMENSIONS
 
@@ -46,6 +49,7 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
   const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
   const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
+  const flags = useStore((state) => state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.flags?.sort() ?? [])
 
   if (!position) {
     console.log(`🐍 Missing port position for node [${nodeInstanceId}]`)
@@ -95,6 +99,36 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
       >
         {template.nickName}
       </text>
+      {flags.map((flag, i) => {
+        const key = `${direction}-flag-${flag}`
+
+        const x = labelPosition.x + (direction === 'input' ? 4 : 0) + (((template.nickName.length * 15) + ((i + (direction === 'input' ? 0 : 1)) * 22)) * (direction === 'input' ? 1 : -1))
+        const y = labelPosition.y - 15
+
+        return (
+          <>
+            <rect x={x} y={y} width={18} height={18} stroke={COLORS.DARK} strokeWidth={2} rx={2} ry={2} fill={COLORS.LIGHT} />
+            {(() => {
+              const position = { x: x + 2, y: y + 2 }
+              switch (flag) {
+                case 'flatten': {
+                  return <FlattenFlagIcon key={key} position={position} />
+                }
+                case 'graft': {
+                  return <GraftFlagIcon key={key} position={position} />
+                }
+                case 'simplify': {
+                  return <SimplifyFlagIcon key={key} position={position} />
+                }
+                default: {
+                  return <></>
+                }
+              }
+            })()}
+          </>
+        )
+
+      })}
       <g ref={longHoverTarget}>
         <rect
           x={eventTargetAreaPosition.x}

@@ -6,7 +6,7 @@ import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
-import { getNodeExtents } from '@/utils/node-dimensions'
+import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution } from './utils'
 import { createInstance } from '@/utils/templates'
@@ -342,6 +342,67 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
           payload: { id, x, y },
         }
       ),
+    toggleFlag: (nodeInstanceId: string, portInstanceId: string, flag: NodePen.PortFlag) => set((state) => {
+      const currentFlags = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.flags
+
+      if (!currentFlags) {
+        return
+      }
+
+      const nextFlags: NodePen.PortFlag[] = []
+
+      switch (flag) {
+        case 'simplify': {
+          if (currentFlags.includes('simplify')) {
+            nextFlags.push(...currentFlags.filter((flag) => flag !== 'simplify'))
+          } else {
+            nextFlags.push(...currentFlags)
+            nextFlags.push('simplify')
+          }
+          break
+        }
+        case 'flatten': {
+          if (currentFlags.includes('flatten')) {
+            nextFlags.push(...currentFlags.filter((flag) => flag !== 'flatten'))
+          } else {
+            nextFlags.push(...currentFlags.filter((flag) => flag !== 'graft'))
+            nextFlags.push('flatten')
+          }
+          break
+        }
+        case 'graft': {
+          if (currentFlags.includes('graft')) {
+            nextFlags.push(...currentFlags.filter((flag) => flag !== 'graft'))
+          } else {
+            nextFlags.push(...currentFlags.filter((flag) => flag !== 'flatten'))
+            nextFlags.push('graft')
+          }
+        }
+      }
+
+      state.document.nodes[nodeInstanceId].portConfigurations[portInstanceId].flags = nextFlags
+
+      // Recompute node dimensions based on flag placement
+      const node = state.document.nodes[nodeInstanceId]
+      const template = state.templates[node.templateId]
+
+      const { anchors, dimensions } = getNodeDimensions(node, template)
+
+      node.anchors = {
+        ...node.anchors,
+        ...anchors
+      }
+      node.dimensions = {
+        ...node.dimensions,
+        ...dimensions
+      }
+
+      // Solution required
+      expireSolution(state)
+    },
+      false,
+      'port/toggleFlag'
+    ),
     clearInterface: () =>
       set(
         (state) => {
