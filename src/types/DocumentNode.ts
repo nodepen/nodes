@@ -13,6 +13,8 @@ export type DocumentNode = {
   status: {
     /** If false, the node should not be allowed to run during solutions. */
     isEnabled: boolean
+    /** If false, the node's results should not be visible in the 3D view. */
+    isVisible: boolean
     /** If true, the node has not yet been committed to the document and should not be included in solutions. */
     isProvisional: boolean
   }

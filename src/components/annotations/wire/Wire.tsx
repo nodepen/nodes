@@ -216,10 +216,13 @@ export const Wire = ({
             const { instanceId, position, anchors } = node
 
             const isSelected = selection.includes(instanceId)
+            const isVisible = node.status.isVisible
+
+            const clipToLabel = isSelected ? true : isVisible ? false : true
 
             return (
               <>
-                {isSelected ? getNodeLabelClipPath(node) : getNodeBodyClipPath(node)}
+                {clipToLabel ? getNodeLabelClipPath(node) : getNodeBodyClipPath(node)}
                 {Object.entries(anchors).map(([key, anchor]) => {
                   if (key === 'labelDeltaX') {
                     return <></>
@@ -242,6 +245,7 @@ export const Wire = ({
         <clipPath id="live-wire-background-clip-green">
           {nodes.map((node) => {
             const { instanceId } = node
+            const { isVisible } = node.status
 
             const isSelected = selection.includes(instanceId)
 
@@ -249,7 +253,41 @@ export const Wire = ({
               return <></>
             }
 
+            if (!isVisible) {
+              return <></>
+            }
+
             return getNodeBodyClipPath(node)
+          })}
+        </clipPath>
+        <clipPath id="live-wire-background-clip-grey">
+          {nodes.map((node) => {
+            const { instanceId } = node
+            const { isVisible } = node.status
+            const isSelected = selection.includes(instanceId)
+
+            if (isVisible) {
+              return <></>
+            }
+
+            if (isSelected) {
+              return <></>
+            }
+
+            return getNodeBodyClipPath(node)
+          })}
+        </clipPath>
+        <clipPath id="live-wire-background-clip-swampgreen">
+          {nodes.map((node) => {
+            const { instanceId } = node
+            const { isVisible } = node.status
+            const isSelected = selection.includes(instanceId)
+
+            if (!isVisible && isSelected) {
+              return getNodeBodyClipPath(node)
+            }
+
+            return <></>
           })}
         </clipPath>
       </defs>
@@ -280,6 +318,46 @@ export const Wire = ({
               strokeLinecap="round"
               strokeLinejoin="round"
               fill={COLORS.GREEN}
+            />
+          ) : null}
+        </g>
+        <g clipPath="url(#live-wire-background-clip-grey)">
+          <path
+            d={d}
+            stroke={COLORS.GREY}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          {drawArrows ? (
+            <polyline
+              points={getArrowPolylinePoints(true)}
+              stroke={COLORS.GREY}
+              strokeWidth={NODE_BACKGROUND_STROKE}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill={COLORS.GREY}
+            />
+          ) : null}
+        </g>
+        <g clipPath="url(#live-wire-background-clip-swampgreen)">
+          <path
+            d={d}
+            stroke={COLORS.SWAMPGREEN}
+            strokeWidth={NODE_BACKGROUND_STROKE}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            fill="none"
+          />
+          {drawArrows ? (
+            <polyline
+              points={getArrowPolylinePoints(true)}
+              stroke={COLORS.SWAMPGREEN}
+              strokeWidth={NODE_BACKGROUND_STROKE}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill={COLORS.SWAMPGREEN}
             />
           ) : null}
         </g>

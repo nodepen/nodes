@@ -66,42 +66,43 @@ const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.Reac
     }
     const viewer = new LegacyViewer(containerRef.current, DefaultViewerParams)
 
-    viewer.on(ViewerEvent.ObjectClicked, (e) => {
-      const nextSelection = new Set(currentSelection.current)
-      const hitObjectId = e?.hits.at(0)?.node.model.id
+    // TODO: Selection of existing data
+    // viewer.on(ViewerEvent.ObjectClicked, (e) => {
+    //   const nextSelection = new Set(currentSelection.current)
+    //   const hitObjectId = e?.hits.at(0)?.node.model.id
 
-      console.log({ hitObjectId })
+    //   console.log({ hitObjectId })
 
-      const getMode = (e: PointerEvent | undefined) => {
-        if (e?.shiftKey) return 'add'
-        if (e?.ctrlKey) return 'remove'
-        return 'set'
-      }
+    //   const getMode = (e: PointerEvent | undefined) => {
+    //     if (e?.shiftKey) return 'add'
+    //     if (e?.ctrlKey) return 'remove'
+    //     return 'set'
+    //   }
 
-      if (!hitObjectId) {
-        nextSelection.clear()
-      } else {
-        switch (getMode(e?.event)) {
-          case 'add': {
-            nextSelection.add(hitObjectId)
-            break
-          }
-          case 'remove': {
-            nextSelection.delete(hitObjectId)
-            break
-          }
-          case 'set': {
-            nextSelection.clear()
-            nextSelection.add(hitObjectId)
-          }
-        }
-      }
+    //   if (!hitObjectId) {
+    //     nextSelection.clear()
+    //   } else {
+    //     switch (getMode(e?.event)) {
+    //       case 'add': {
+    //         nextSelection.add(hitObjectId)
+    //         break
+    //       }
+    //       case 'remove': {
+    //         nextSelection.delete(hitObjectId)
+    //         break
+    //       }
+    //       case 'set': {
+    //         nextSelection.clear()
+    //         nextSelection.add(hitObjectId)
+    //       }
+    //     }
+    //   }
 
-      const selectedObjectIds = [...nextSelection]
+    //   const selectedObjectIds = [...nextSelection]
 
-      currentSelection.current = selectedObjectIds
-      viewer.selectObjects(selectedObjectIds)
-    })
+    //   currentSelection.current = selectedObjectIds
+    //   viewer.selectObjects(selectedObjectIds)
+    // })
 
     viewerRef.current = viewer
 

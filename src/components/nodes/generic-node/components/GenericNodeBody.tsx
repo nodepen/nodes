@@ -19,33 +19,42 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
   const { apply } = useDispatch()
   const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
-  const documentSelection = useStore((state) => state.registry.selection.nodes)
-  const isSelected = documentSelection.includes(node.instanceId)
+  const isSelected = useStore((state) => state.registry.selection.nodes.includes(node.instanceId))
+  const isHidden = useStore((state) => !state.document.nodes[node.instanceId].status.isVisible)
 
   const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
     e.stopPropagation()
     e.preventDefault()
 
-    const { pageX, pageY } = e
+    // TODO: Re-enable when context menu has options
+    // const { pageX, pageY } = e
 
-    const key = `node-context-menu-${node.instanceId}`
+    // const key = `node-context-menu-${node.instanceId}`
 
-    const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+    // const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 
-    apply((state) => {
-      state.registry.contextMenus[key] = {
-        position: {
-          x,
-          y,
-        },
-        context: {
-          type: 'node',
-          nodeInstanceId: node.instanceId,
-          nodeTemplate: template,
-        },
-      }
-    })
+    // apply((state) => {
+    //   state.registry.contextMenus[key] = {
+    //     position: {
+    //       x,
+    //       y,
+    //     },
+    //     context: {
+    //       type: 'node',
+    //       nodeInstanceId: node.instanceId,
+    //       nodeTemplate: template,
+    //     },
+    //   }
+    // })
   }, [])
+
+  const fill = (isSelected && isHidden)
+    ? COLORS.SWAMPGREEN
+    : isSelected
+      ? COLORS.GREEN
+      : isHidden
+        ? COLORS.GREY
+        : COLORS.LIGHT
 
   return (
     <g id={`generic-node-body-${node.instanceId}`} onContextMenu={handleContextMenu}>
@@ -56,7 +65,7 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
         height={nodeHeight}
         rx={7}
         ry={7}
-        fill={isSelected ? COLORS.GREEN : COLORS.LIGHT}
+        fill={fill}
         stroke={COLORS.DARK}
         strokeWidth={2}
         pointerEvents="auto"

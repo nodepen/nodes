@@ -20,6 +20,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
       height: 0,
     },
     status: {
+      isVisible: true,
       isEnabled: true,
       isProvisional: false,
     },

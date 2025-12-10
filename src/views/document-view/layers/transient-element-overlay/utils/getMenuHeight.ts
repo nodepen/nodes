@@ -1,41 +1,43 @@
 import type { ContextMenuContext } from '../types'
 import { getPortContextMenuButtons } from '../context-menus/port-context-menu/utils'
 
+// Deprecated feature
 export const getMenuHeight = (context: ContextMenuContext): number => {
-  switch (context.type) {
-    case 'add-node': {
-      return 185
-    }
-    case 'node': {
-      return 85
-    }
-    case 'port': {
-      const { direction } = context
+  return 500
+  // switch (context.type) {
+  //   case 'add-node': {
+  //     return 185
+  //   }
+  //   case 'node': {
+  //     return 85
+  //   }
+  //   case 'port': {
+  //     const { direction } = context
 
-      const baseHeight = 150
+  //     const baseHeight = 150
 
-      switch (direction) {
-        case 'input': {
-          const { enablePin, enableSetValue } = getPortContextMenuButtons(context)
+  //     switch (direction) {
+  //       case 'input': {
+  //         const { enablePin, enableSetValue } = getPortContextMenuButtons(context)
 
-          const multiplier = [enablePin, enableSetValue].filter((check) => !!check).length
+  //         const multiplier = [enablePin, enableSetValue].filter((check) => !!check).length
 
-          return baseHeight + 36 * multiplier
-        }
-        case 'output': {
-          return baseHeight
-        }
-        default: {
-          return baseHeight
-        }
-      }
-    }
-    case 'port-value': {
-      return 200
-    }
-    default: {
-      console.warn(`🐍 Unhandled context menu type [${context.type}] when setting active menu height.`)
-      return 500
-    }
-  }
+  //         return baseHeight + 36 * multiplier
+  //       }
+  //       case 'output': {
+  //         return baseHeight
+  //       }
+  //       default: {
+  //         return baseHeight
+  //       }
+  //     }
+  //   }
+  //   case 'port-value': {
+  //     return 200
+  //   }
+  //   default: {
+  //     console.warn(`🐍 Unhandled context menu type [${context.type}] when setting active menu height.`)
+  //     return 500
+  //   }
+  // }
 }

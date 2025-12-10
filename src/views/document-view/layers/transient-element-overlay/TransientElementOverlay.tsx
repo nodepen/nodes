@@ -15,7 +15,7 @@ const TransientElementOverlay = () => {
   const menus = useStore((state) => Object.entries(state.registry.contextMenus))
   const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
 
-  const prefersReducedMotion = useReducedMotion()
+  const prefersReducedMotion = true
 
   return (
     <div className="np-w-full np-h-full np-pointer-events-none np-relative">

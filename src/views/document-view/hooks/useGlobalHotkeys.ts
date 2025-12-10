@@ -32,6 +32,20 @@ export const useGlobalHotkeys = () => {
         })
         break
       }
+      case 'q':
+      case 'Q': {
+        if (!e.ctrlKey) {
+          return
+        }
+
+        apply((state) => {
+          for (const nodeInstanceId of state.registry.selection.nodes) {
+            console.log({ nodeInstanceId })
+            state.document.nodes[nodeInstanceId].status.isVisible = !state.document.nodes[nodeInstanceId].status.isVisible
+          }
+        })
+        break
+      }
       default: {
         // console.log(`Unhandled keypress [${e.key}]`)
       }

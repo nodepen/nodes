@@ -75,10 +75,15 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
       {enableSetValue ? (
         <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
       ) : null}
-      {enableSetLabel || enableSetValue ? <MenuDivider /> : null}
-      <FlattenButton onClick={handleToggleFlag} />
-      <GraftButton onClick={handleToggleFlag} />
-      <SimplifyButton onClick={handleToggleFlag} />
+      {nodeType === 'generic-node' ? (
+        <>
+          {enableSetLabel || enableSetValue ? <MenuDivider /> : null}
+          <FlattenButton onClick={handleToggleFlag} />
+          <GraftButton onClick={handleToggleFlag} />
+          <SimplifyButton onClick={handleToggleFlag} />
+        </>
+      ) : null}
+
     </MenuBody>
   )
 }
