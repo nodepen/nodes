@@ -6,47 +6,51 @@ import { shallow } from 'zustand/shallow'
 import { GenericNode } from './generic-node'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { GenericParameter } from './generic-parameter'
+import NumberSlider from './number-slider/NumberSlider'
 
 const NodesContainer = (): React.ReactElement => {
-  const nodes = useDocumentNodes()
-  const templates = useStore((store) => store.templates, shallow)
+    const nodes = useDocumentNodes()
+    const templates = useStore((store) => store.templates, shallow)
 
-  return (
-    <g id="np-nodes" className="np-pointer-events-auto">
-      {nodes.map((node) => {
-        const { instanceId, templateId } = node
+    return (
+        <g id="np-nodes" className="np-pointer-events-auto">
+            {nodes.map((node) => {
+                const { instanceId, templateId } = node
 
-        const template = templates[templateId]
+                const template = templates[templateId]
 
-        switch (getNodeTypeForTemplate(template)) {
-          case 'generic-node':
-            return <GenericNode key={`generic-node-${instanceId}`} id={instanceId} template={template} />
-          case 'generic-parameter':
-            return <GenericParameter key={`generic-parameter-${instanceId}`} id={instanceId} template={template} />
-          case 'unknown':
-            // TODO: `unknown-node` type
-            return null
-        }
-      })}
-    </g>
-  )
+                switch (getNodeTypeForTemplate(template)) {
+                    case 'generic-node':
+                        return <GenericNode key={`generic-node-${instanceId}`} id={instanceId} template={template} />
+                    case 'generic-parameter':
+                        return <GenericParameter key={`generic-parameter-${instanceId}`} id={instanceId} template={template} />
+                    case 'number-slider':
+                        return <NumberSlider key={`number-slider-${instanceId}`} id={instanceId} template={template} />
+                    // TODO: `unknown-node` type
+                    case 'unknown':
+                    default:
+                        return null
+                }
+            })}
+        </g>
+    )
 }
 
 const useDocumentNodes = (): NodePen.DocumentNode[] => {
-  const nodes = useStore<NodePen.Document['nodes']>(
-    (store) => store.document.nodes,
-    (previousNodes, currentNodes) => {
-      const previousNodeIds = Object.keys(previousNodes)
-      const currentNodeIds = Object.keys(currentNodes)
+    const nodes = useStore<NodePen.Document['nodes']>(
+        (store) => store.document.nodes,
+        (previousNodes, currentNodes) => {
+            const previousNodeIds = Object.keys(previousNodes)
+            const currentNodeIds = Object.keys(currentNodes)
 
-      const isSameLength = () => previousNodeIds.length === currentNodeIds.length
-      const isSameValues = () => previousNodeIds.every((id) => currentNodeIds.includes(id))
+            const isSameLength = () => previousNodeIds.length === currentNodeIds.length
+            const isSameValues = () => previousNodeIds.every((id) => currentNodeIds.includes(id))
 
-      return isSameLength() && isSameValues()
-    }
-  )
+            return isSameLength() && isSameValues()
+        }
+    )
 
-  return Object.values(nodes)
+    return Object.values(nodes)
 }
 
 export default React.memo(NodesContainer)

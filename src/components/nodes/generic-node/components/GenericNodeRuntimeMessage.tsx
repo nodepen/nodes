@@ -8,115 +8,122 @@ import { WiresMaskPortal } from '@/components/annotations/wire/components'
 import { Dialog } from '@/views/components'
 
 type GenericNodeRuntimeMessageProps = {
-  node: DocumentNode
+    node: DocumentNode
 }
 
 export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessageProps) => {
-  const { instanceId, anchors, position } = node
-  const { x, y } = position
+    const { instanceId, anchors, position } = node
+    const { x, y } = position
 
-  const [showDialog, setShowDialog] = useState(false)
+    const [showDialog, setShowDialog] = useState(false)
 
-  const messageContainerRef = useRef<SVGGElement>(null)
+    const messageContainerRef = useRef<SVGGElement>(null)
 
-  const messages = useRuntimeMessages(instanceId)
+    const messages = useRuntimeMessages(instanceId)
 
-  const currentMessage = messages[0]
-  const currentMessageLevel = currentMessage?.level
+    const currentMessage = messages[0]
+    const currentMessageLevel = currentMessage?.level
 
-  // Position of bottom-middle arrow "point"
-  const dx = anchors['labelDeltaX'].dx
-  const dy = -9
+    // Position of bottom-middle arrow "point"
+    const dx = anchors['labelDeltaX'].dx
+    const dy = -9
 
-  const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE
+    const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE
 
-  const handlePointerDown = useCallback(
-    (e: PointerEvent) => {
-      e.stopPropagation()
-      console.log(messages[0]?.message)
+    const handlePointerDown = useCallback(
+        (e: PointerEvent) => {
+            e.stopPropagation()
+            console.log(messages[0]?.message)
 
-      // TODO: Show message somehow
-      setShowDialog(true)
-    },
-    [messages]
-  )
+            // TODO: Show message somehow
+            setShowDialog(true)
+        },
+        [messages]
+    )
 
-  useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
+    useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
 
-  const [isVisible, setIsVisible] = useState(false)
-  const [visibleMessageLevel, setVisibleMessageLevel] = useState<typeof currentMessageLevel>('info')
+    const [isVisible, setIsVisible] = useState(false)
+    const [visibleMessageLevel, setVisibleMessageLevel] = useState<typeof currentMessageLevel>('info')
 
-  useEffect(() => {
-    if (!currentMessage) {
-      setIsVisible(false)
-      return
+    useEffect(() => {
+        if (!currentMessage) {
+            setIsVisible(false)
+            return
+        }
+
+        setVisibleMessageLevel(currentMessage.level)
+        setIsVisible(true)
+    }, [currentMessage])
+
+    const messageColors: Record<typeof currentMessageLevel, string> = {
+        error: COLORS.ERROR,
+        warning: COLORS.WARN,
+        info: COLORS.GREEN,
     }
 
-    setVisibleMessageLevel(currentMessage.level)
-    setIsVisible(true)
-  }, [currentMessage])
+    const tx = isVisible ? 0 : 80
 
-  const messageColors: Record<typeof currentMessageLevel, string> = {
-    error: COLORS.ERROR,
-    warning: COLORS.WARN,
-    info: COLORS.GREEN,
-  }
+    return (
+        <>
+            <g
+                ref={messageContainerRef}
+                className="np-transition-transform np-duration-300 np-ease-out"
+                style={{ transform: `translateY(${tx}px)` }}
+            >
+                {getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])}
+                <rect
+                    className={`${visibleMessageLevel === 'error'
+                        ? 'np-fill-error hover:np-fill-error-2'
+                        : 'np-fill-warn hover:np-fill-warn-2'
+                        }  hover:np-cursor-pointer np-pointer-events-auto`}
+                    x={x + dx + 3 - s / 2}
+                    y={y + dy - 3 - s}
+                    width={s - 6}
+                    height={s - 6}
+                    rx={3}
+                    ry={3}
+                />
+                <svg
+                    width={24}
+                    height={24}
+                    style={{
+                        transform: `translate(${node.position.x + node.anchors['labelDeltaX'].dx - 12}px, ${node.position.y - 44
+                            }px)`,
+                    }}
+                    aria-hidden="true"
+                    fill="none"
+                    stroke={COLORS.DARK}
+                    strokeWidth="2"
+                    viewBox="0 0 24 24"
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="np-pointer-events-none"
+                >
+                    <path
+                        d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                    ></path>
+                </svg>
+            </g>
+            <WiresMaskPortal>
+                <g className="np-transition-transform np-duration-300 np-ease-out" style={{ transform: `translateY(${tx}px)` }}>
+                    {getNodeRuntimeMessageBubble(node, '#FFFFFF')}
+                </g>
+            </WiresMaskPortal>
+            {showDialog ? (
+                <Dialog onClose={() => setShowDialog(false)}>
+                    <div className="np-w-full np-flex np-items-center np-justify-between np-pointer-events-auto">
+                        <p className="np-font-sans np-font-medium np-text-dark np-text-md">{messages[0].message}</p>
+                        <div className="np-w-4 np-h-full np-flex np-items-center np-justify-center" onClick={() => setShowDialog(false)}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-5">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" vectorEffect="non-scaling-stroke" />
+                            </svg>
 
-  const tx = isVisible ? 0 : 80
-
-  return (
-    <>
-      <g
-        ref={messageContainerRef}
-        className="np-transition-transform np-duration-300 np-ease-out"
-        style={{ transform: `translateY(${tx}px)` }}
-      >
-        {getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])}
-        <rect
-          className={`${visibleMessageLevel === 'error'
-            ? 'np-fill-error hover:np-fill-error-2'
-            : 'np-fill-warn hover:np-fill-warn-2'
-            }  hover:np-cursor-pointer np-pointer-events-auto`}
-          x={x + dx + 3 - s / 2}
-          y={y + dy - 3 - s}
-          width={s - 6}
-          height={s - 6}
-          rx={3}
-          ry={3}
-        />
-        <svg
-          width={24}
-          height={24}
-          style={{
-            transform: `translate(${node.position.x + node.anchors['labelDeltaX'].dx - 12}px, ${node.position.y - 44
-              }px)`,
-          }}
-          aria-hidden="true"
-          fill="none"
-          stroke={COLORS.DARK}
-          strokeWidth="2"
-          viewBox="0 0 24 24"
-          xmlns="http://www.w3.org/2000/svg"
-          className="np-pointer-events-none"
-        >
-          <path
-            d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            vectorEffect="non-scaling-stroke"
-          ></path>
-        </svg>
-      </g>
-      <WiresMaskPortal>
-        <g className="np-transition-transform np-duration-300 np-ease-out" style={{ transform: `translateY(${tx}px)` }}>
-          {getNodeRuntimeMessageBubble(node, '#FFFFFF')}
-        </g>
-      </WiresMaskPortal>
-      {showDialog ? (
-        <Dialog onClose={() => setShowDialog(false)}>
-          <p className="np-font-sans np-font-medium np-text-dark np-text-md">{messages[0].message}</p>
-        </Dialog>
-      ) : null}
-    </>
-  )
+                        </div>
+                    </div>
+                </Dialog>
+            ) : null}
+        </>
+    )
 }
