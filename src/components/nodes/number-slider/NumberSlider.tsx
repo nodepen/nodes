@@ -6,6 +6,7 @@ import { NumberSliderBody } from './components/NumberSliderBody'
 import { NumberSliderShadow } from './components/NumberSliderShadow'
 import { NumberSliderSlider } from './components/NumberSliderSlider'
 import { NumberSliderInteractionArea } from './components/NumberSliderInteractionArea'
+import { NumberSliderPorts } from './components/NumberSliderPorts'
 
 type NumberSliderProps = {
     id: string
@@ -65,6 +66,7 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
                     </g>
                 </g>
                 <NumberSliderSlider node={node} config={config} />
+                <NumberSliderPorts node={node} />
             </g>
         </>
 

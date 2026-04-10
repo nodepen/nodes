@@ -7,18 +7,35 @@ import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
  * does not emit input/output port templates like it does for other components.
  * */
 export const getGenericParameterPortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
-  if (getNodeTypeForTemplate(template) !== 'generic-parameter') {
-    throw new Error(`Cannot generate implicit port template from non-parameter node`)
-  }
+    if (getNodeTypeForTemplate(template) !== 'generic-parameter') {
+        throw new Error(`Cannot generate implicit port template from non-parameter node`)
+    }
 
-  return {
-    __order: 0,
-    __direction: direction,
-    name: template.name,
-    nickName: template.nickName,
-    description: template.description,
-    typeName: template.name.toLowerCase(),
-    keywords: [],
-    isOptional: false
-  }
+    return {
+        __order: 0,
+        __direction: direction,
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: template.name.toLowerCase(),
+        keywords: [],
+        isOptional: false
+    }
+}
+
+export const getNumberSliderPortTemplate = (template: NodePen.NodeTemplate): NodePen.PortTemplate => {
+    if (getNodeTypeForTemplate(template) !== 'number-slider') {
+        throw new Error(`Cannot generate implicit port template for this thing that isn't a number slider!`)
+    }
+
+    return {
+        __order: 0,
+        __direction: 'output',
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: template.name.toLowerCase(),
+        keywords: [],
+        isOptional: false
+    }
 }
