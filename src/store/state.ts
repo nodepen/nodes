@@ -52,6 +52,7 @@ export type NodesAppState = {
     }
     registry: {
         canvasRoot: React.RefObject<HTMLDivElement | null>
+        numberSliderInputRef: React.RefObject<HTMLInputElement | null>
         contextMenus: {
             [menuKey: string]: ContextMenu
         }
@@ -202,6 +203,7 @@ export const initialState: NodesAppState = {
     },
     registry: {
         canvasRoot: React.createRef<HTMLDivElement>(),
+        numberSliderInputRef: React.createRef<HTMLInputElement>(),
         contextMenus: {},
         dialogRoot: React.createRef<HTMLDivElement>(),
         shadows: {

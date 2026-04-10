@@ -1,32 +1,123 @@
-import React from "react"
+import React, { useCallback, type ReactElement } from "react"
+import type * as NodePen from '@/types'
 import type { ContextMenu } from "../../types"
 import type { NumberSliderValueContextMenuContext } from "../../types/ContextMenuContext"
-import { useStore } from '$'
+import { useDispatch, useStore } from '$'
 import { tryGetSingleValue } from "@/utils/data-trees"
-import { usePageSpaceToOverlaySpace } from "@/hooks"
+import { usePageSpaceToOverlaySpace, useWorldSpaceToPageSpace } from "@/hooks"
+import { DIMENSIONS } from "@/constants"
+import { createSingleValue } from "@/utils/data-trees/createSingleValue"
+import { clamp } from "@/utils"
+import { expireSolution } from "@/store/utils"
+import { getDomainParameter } from "@/utils/numerics/domain"
+
+const { INTERACTION_BUFFER } = DIMENSIONS
 
 type ContextMenuProps = {
     context: NumberSliderValueContextMenuContext
 }
 
 const NumberSliderContextMenu = ({ context }: ContextMenuProps) => {
-    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+    const worldSpaceToPageSpace = useWorldSpaceToPageSpace()
 
+    const { apply } = useDispatch()
+
+    const ref = useStore((state) => state.registry.numberSliderInputRef)
+
+    const zoom = useStore((state) => state.camera.zoom)
     const slider = useStore((state) => state.document.nodes[context.nodeInstanceId])
 
     const { x, y } = slider.position
-    const { dx, dy } = slider.anchors['handle']
+    const { width, height } = slider.dimensions
+    const { min, max, precision } = slider.nodeConfiguration as NodePen.NumberSliderConfig
 
-    const cx = x + dx
-    const cy = y + dy - 24
+    const currentValue = tryGetSingleValue(slider.values['output'])?.value
+    const t = getDomainParameter([min, max], Number.parseFloat(currentValue ?? '0'))
 
-    const [px, py] = pageSpaceToOverlaySpace(cx, cy)
+    const topLeft = {
+        x: x - INTERACTION_BUFFER,
+        y: y - INTERACTION_BUFFER
+    }
 
-    const value = tryGetSingleValue(slider.values['output'])?.value
+    const topRight = {
+        x: x + width + INTERACTION_BUFFER,
+        y: y - INTERACTION_BUFFER
+    }
+
+    const center = {
+        x: x + ((width - (2 * INTERACTION_BUFFER)) * t) + (INTERACTION_BUFFER),
+        y: y + height / 2
+    }
+
+    const bottomRight = {
+        x: x + width + INTERACTION_BUFFER,
+        y: y + height + INTERACTION_BUFFER
+    }
+
+    const [outerLeft, outerTop] = worldSpaceToPageSpace(topLeft.x, topLeft.y)
+    const [outerRight] = worldSpaceToPageSpace(topRight.x, topRight.y)
+    const [, outerBottom] = worldSpaceToPageSpace(bottomRight.x, bottomRight.y)
+
+    const outerWidth = outerRight - outerLeft
+    const outerHeight = outerBottom - outerTop
+
+    const [anchorX, anchorY] = worldSpaceToPageSpace(center.x, center.y)
+
+    const innerWidth = 150
+    const innerHeight = 48
+
+    const offsetTop = 48 * zoom
+
+    const innerLeft = anchorX - outerLeft - innerWidth / 2
+    const innerTop = anchorY - outerTop - offsetTop - innerHeight / 2
+
+    const inputEl = ref.current
+    if (inputEl && currentValue) {
+        inputEl.value = currentValue
+    }
+
+    const handleFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+        e.currentTarget.select()
+    }, [])
+
+    const commitValue = useCallback((newValue: string) => {
+        const numericValue = Number.parseFloat(newValue)
+
+        // Invalid number
+        if (inputEl && currentValue && Number.isNaN(numericValue)) {
+            inputEl.value = currentValue
+            return
+        }
+
+        // Valid number
+        apply((state) => {
+            state.document.nodes[context.nodeInstanceId].values['output'] = createSingleValue(clamp(numericValue, min, max).toFixed(precision), 'number')
+            expireSolution(state)
+        })
+    }, [currentValue, min, max, precision])
+
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key.toLowerCase() !== 'enter') {
+            return
+        }
+        commitValue(e.currentTarget.value)
+    }, [commitValue])
+
+    const handleBlur = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+        commitValue(e.currentTarget.value)
+    }, [commitValue])
 
     return (
-        <div className="np-absolute np-z-50" style={{ left: px, top: py }}>
-            {value}
+        <div className="np-absolute np-z-50 np-overflow-visible"
+            style={{ pointerEvents: 'none', width: `${outerWidth}px`, height: `${outerHeight}px`, left: outerLeft, top: outerTop }}
+        >
+            <div className="np-w-full np-h-full np-relative">
+                <div className="np-absolute" style={{ width: `${innerWidth}px`, height: `${innerHeight}px`, left: innerLeft, top: innerTop }}>
+                    <div className="np-w-full np-h-full np-flex np-flex-col np-justify-end np-items-center">
+                        <input ref={ref} defaultValue={currentValue} onFocus={handleFocus} onKeyDown={handleKeyDown} onBlur={handleBlur} className="np-text-center np-pointer-events-auto" />
+                    </div>
+                </div>
+            </div>
         </div>
     )
 }

@@ -1,10 +1,11 @@
 import type * as NodePen from '@/types'
-import { useStore } from '$'
+import { useDispatch, useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import React, { useCallback } from 'react'
 import { NumberSliderBody } from './components/NumberSliderBody'
 import { NumberSliderShadow } from './components/NumberSliderShadow'
 import { NumberSliderSlider } from './components/NumberSliderSlider'
+import { NumberSliderInteractionArea } from './components/NumberSliderInteractionArea'
 
 type NumberSliderProps = {
     id: string
@@ -15,6 +16,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
     const config = node.nodeConfiguration as NodePen.NumberSliderConfig
+
+    const { apply } = useDispatch()
 
     // Attach debug behaviors
     useDebugRender(node, template)
@@ -27,19 +30,44 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
         e.stopPropagation()
         e.nativeEvent.stopImmediatePropagation()
 
-        console.log('dbl!')
+        useStore.getState().registry.numberSliderInputRef.current?.focus?.()
+    }, [])
+
+    const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>) => {
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
+    }, [])
+
+    const handlePointerEnter = useCallback((e: React.PointerEvent<SVGGElement>) => {
+        apply((state) => {
+            if ((state.registry.contextMenus['number-slider']?.context as any)?.nodeInstanceId === node.instanceId) {
+                return
+            }
+
+            state.registry.contextMenus['number-slider'] = {
+                position: { x: 0, y: 0 },
+                context: {
+                    type: 'number-slider-value',
+                    nodeInstanceId: node.instanceId
+                }
+            }
+        })
     }, [])
 
     return (
-        <g id={`number-slider-${id}`} onDoubleClick={handleDoubleClick}>
-            <g ref={draggableTargetRef}>
-                <g ref={selectableTargetRef}>
-                    <NumberSliderShadow node={node} />
-                    <NumberSliderBody node={node} />
+        <>
+            <g id={`number-slider-${id}`} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown} onPointerEnter={handlePointerEnter}>
+                <NumberSliderInteractionArea node={node} />
+                <g ref={draggableTargetRef}>
+                    <g ref={selectableTargetRef}>
+                        <NumberSliderShadow node={node} />
+                        <NumberSliderBody node={node} />
+                    </g>
                 </g>
+                <NumberSliderSlider node={node} config={config} />
             </g>
-            <NumberSliderSlider node={node} config={config} />
-        </g>
+        </>
+
     )
 }
 

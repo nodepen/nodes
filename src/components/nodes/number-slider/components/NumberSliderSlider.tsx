@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
@@ -34,17 +34,16 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
     const start = x + padding
     const end = x + width - padding
 
-    const initialValue = Number.parseFloat(tryGetSingleValue(node.values['output'])?.value ?? '0')
-    const [internalValue, setInternalValue] = useState(initialValue)
+    const currentValue = Number.parseFloat(tryGetSingleValue(node.values['output'])?.value ?? '0')
 
-    const t = getDomainParameter([config.min, config.max], internalValue)
+    const t = getDomainParameter([config.min, config.max], currentValue)
     const dx = t * (end - start)
     const dy = height / 2
 
     const activePointerId = useRef<number>(-1)
     const [isActive, setIsActive] = useState(false)
 
-    const initialSliderValue = useRef<number>(initialValue)
+    const initialSliderValue = useRef<number>(currentValue)
     const initialPointerPageX = useRef<number>(0)
     const [sliderPageXDomain, setSliderPageXDomain] = useState<[minX: number, maxX: number]>([0, 0])
 
@@ -79,16 +78,14 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
 
         const currentNumericValue = Number.parseFloat(currentValue)
 
+        console.log({ currentNumericValue })
+
         setIsActive(true)
         activePointerId.current = pointerId
         initialSliderValue.current = currentNumericValue
         initialPointerPageX.current = pageX
 
         apply((state) => {
-            state.document.nodes[node.instanceId].anchors['handle'] = {
-                dx: start + dx - x,
-                dy: dy
-            }
             state.registry.contextMenus['number-slider'] = {
                 position: { x: 0, y: 0 },
                 context: {
@@ -97,7 +94,7 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
                 }
             }
         })
-    }, [isActive, dy, dy, start, x])
+    }, [isActive, currentValue, dy, dy, start, x])
 
     const handlePointerMove = useCallback((e: React.PointerEvent<SVGRectElement>) => {
         if (!isActive || e.pointerId !== activePointerId.current) {
@@ -114,14 +111,8 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
         const p = Math.pow(10, precision)
         const nextValue = clamp(Math.round((initialSliderValue.current + valueDelta) * p) / p, min, max)
 
-        setInternalValue(nextValue)
-
         apply((state) => {
-            state.document.nodes[node.instanceId].values['output'] = createSingleValue(nextValue.toString(), 'number')
-            state.document.nodes[node.instanceId].anchors['handle'] = {
-                dx: start + dx - x,
-                dy: dy
-            }
+            state.document.nodes[node.instanceId].values['output'] = createSingleValue(nextValue.toFixed(precision), 'number')
         })
     }, [isActive, sliderPageXDomain, max, min, dx, dy, x])
 
@@ -134,13 +125,11 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
 
         // Commit value
         apply((state) => {
-            state.document.nodes[node.instanceId].values['output'] = createSingleValue(internalValue.toString(), 'number')
-            delete state.registry.contextMenus['number-slider']
-            if (internalValue !== initialSliderValue.current) {
+            if (currentValue !== initialSliderValue.current) {
                 expireSolution(state)
             }
         })
-    }, [isActive, internalValue])
+    }, [isActive, currentValue])
 
     return (
         <g>
