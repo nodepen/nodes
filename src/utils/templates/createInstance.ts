@@ -138,9 +138,18 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
                 'output': {
                     dx: node.dimensions.width,
                     dy: node.dimensions.height / 2
+                },
+                'handle': {
+                    dx: 0,
+                    dy: 0
                 }
             }
             node.values['output'] = createSingleValue('5', 'number')
+            node.nodeConfiguration = {
+                min: 0,
+                max: 10,
+                precision: 2
+            } as NodePen.NumberSliderConfig
 
             break
         }

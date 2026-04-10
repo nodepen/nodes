@@ -4,6 +4,7 @@ import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import React from 'react'
 import { NumberSliderBody } from './components/NumberSliderBody'
 import { NumberSliderShadow } from './components/NumberSliderShadow'
+import { NumberSliderSlider } from './components/NumberSliderSlider'
 
 type NumberSliderProps = {
     id: string
@@ -13,7 +14,7 @@ type NumberSliderProps = {
 const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
-    const slider = node.nodeConfiguration as NodePen.NumberSliderConfig
+    const config = node.nodeConfiguration as NodePen.NumberSliderConfig
 
     // Attach debug behaviors
     useDebugRender(node, template)
@@ -23,12 +24,15 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     const selectableTargetRef = useSelectableNode(id)
 
     return (
-        <g id={`number-slider-${id}`} ref={draggableTargetRef}>
-            <g ref={selectableTargetRef}>
-                <NumberSliderShadow node={node} />
-                <NumberSliderBody node={node} />
+        <>
+            <g id={`number-slider-${id}`} ref={draggableTargetRef}>
+                <g ref={selectableTargetRef}>
+                    <NumberSliderShadow node={node} />
+                    <NumberSliderBody node={node} />
+                </g>
             </g>
-        </g>
+            <NumberSliderSlider node={node} config={config} />
+        </>
     )
 }
 
