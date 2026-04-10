@@ -86,11 +86,18 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
 
         apply((state) => {
             state.document.nodes[node.instanceId].anchors['handle'] = {
-                dx: start + dx,
-                dy: y + dy
+                dx: start + dx - x,
+                dy: dy
+            }
+            state.registry.contextMenus['number-slider'] = {
+                position: { x: 0, y: 0 },
+                context: {
+                    type: 'number-slider-value',
+                    nodeInstanceId: node.instanceId
+                }
             }
         })
-    }, [isActive, dy, dy])
+    }, [isActive, dy, dy, start, x])
 
     const handlePointerMove = useCallback((e: React.PointerEvent<SVGRectElement>) => {
         if (!isActive || e.pointerId !== activePointerId.current) {
@@ -104,17 +111,19 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
         const pixelDelta = pageX - initialPointerPageX.current
         const valueDelta = pixelToValue * pixelDelta
 
-        const nextValue = clamp(initialSliderValue.current + valueDelta, min, max)
+        const p = Math.pow(10, precision)
+        const nextValue = clamp(Math.round((initialSliderValue.current + valueDelta) * p) / p, min, max)
 
         setInternalValue(nextValue)
 
         apply((state) => {
+            state.document.nodes[node.instanceId].values['output'] = createSingleValue(nextValue.toString(), 'number')
             state.document.nodes[node.instanceId].anchors['handle'] = {
-                dx: start + dx,
-                dy: y + dy
+                dx: start + dx - x,
+                dy: dy
             }
         })
-    }, [isActive, sliderPageXDomain, max, min, dx, dy])
+    }, [isActive, sliderPageXDomain, max, min, dx, dy, x])
 
     const handlePointerUp = useCallback((e: React.PointerEvent<SVGRectElement>) => {
         if (!isActive || e.pointerId !== activePointerId.current) {
@@ -126,7 +135,10 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
         // Commit value
         apply((state) => {
             state.document.nodes[node.instanceId].values['output'] = createSingleValue(internalValue.toString(), 'number')
-            expireSolution(state)
+            delete state.registry.contextMenus['number-slider']
+            if (internalValue !== initialSliderValue.current) {
+                expireSolution(state)
+            }
         })
     }, [isActive, internalValue])
 
