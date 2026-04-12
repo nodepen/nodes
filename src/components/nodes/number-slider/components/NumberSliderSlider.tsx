@@ -16,7 +16,8 @@ type NumberSliderSliderProps = {
 const {
     NODE_INTERNAL_PADDING,
     NUMBER_SLIDER_HANDLE_HEIGHT,
-    NUMBER_SLIDER_HANDLE_WIDTH
+    NUMBER_SLIDER_HANDLE_WIDTH,
+    NUMBER_SLIDER_VALUE_WIDTH,
 } = DIMENSIONS
 
 // ComponentBuilderBuilder
@@ -31,7 +32,7 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
     const { apply } = useDispatch()
 
     const padding = NODE_INTERNAL_PADDING * 2
-    const start = x + padding
+    const start = x + padding + NUMBER_SLIDER_VALUE_WIDTH + NODE_INTERNAL_PADDING
     const end = x + width - padding
 
     const currentValue = Number.parseFloat(tryGetSingleValue(node.values['output'])?.value ?? '0')
@@ -78,22 +79,10 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
 
         const currentNumericValue = Number.parseFloat(currentValue)
 
-        console.log({ currentNumericValue })
-
         setIsActive(true)
         activePointerId.current = pointerId
         initialSliderValue.current = currentNumericValue
         initialPointerPageX.current = pageX
-
-        apply((state) => {
-            state.registry.contextMenus['number-slider'] = {
-                position: { x: 0, y: 0 },
-                context: {
-                    type: 'number-slider-value',
-                    nodeInstanceId: node.instanceId
-                }
-            }
-        })
     }, [isActive, currentValue, dy, dy, start, x])
 
     const handlePointerMove = useCallback((e: React.PointerEvent<SVGRectElement>) => {
@@ -125,6 +114,10 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
 
         // Commit value
         apply((state) => {
+            state.document.nodes[node.instanceId].anchors['handle'] = {
+                dx: start + dx + NUMBER_SLIDER_HANDLE_WIDTH / 2,
+                dy: y + dy - NUMBER_SLIDER_HANDLE_HEIGHT / 2
+            }
             if (currentValue !== initialSliderValue.current) {
                 expireSolution(state)
             }

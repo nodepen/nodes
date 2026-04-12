@@ -127,7 +127,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
                 flags: []
             }
             node.dimensions = {
-                width: DIMENSIONS.NUMBER_SLIDER_WIDTH,
+                width: DIMENSIONS.NUMBER_SLIDER_VALUE_WIDTH + DIMENSIONS.NUMBER_SLIDER_SLIDER_WIDTH + 5 * DIMENSIONS.NODE_INTERNAL_PADDING,
                 height: DIMENSIONS.NUMBER_SLIDER_HEIGHT
             }
             node.anchors = {

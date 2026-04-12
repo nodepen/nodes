@@ -111,7 +111,7 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
                 id="np-app-root"
                 className="np-w-full np-h-full np-relative np-overflow-hidden no-drag"
                 ref={canvasRootRef}
-                onDragEnter={handleDragEnter}
+                onDragStart={(e) => e.preventDefault()}
             >
                 {/* <FileUploadOverlayContainer /> */}
                 <ControlsContainer />

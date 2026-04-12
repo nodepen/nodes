@@ -3,6 +3,7 @@ import { useDispatch } from '@/store'
 import { expireSolution } from '@/store/utils'
 import { useCallback, useRef } from 'react'
 import { useStore } from '$'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 
 export const useGlobalHotkeys = () => {
     const { apply } = useDispatch()
@@ -44,8 +45,19 @@ export const useGlobalHotkeys = () => {
 
                 apply((state) => {
                     for (const nodeInstanceId of state.registry.selection.nodes) {
-                        console.log({ nodeInstanceId })
-                        state.document.nodes[nodeInstanceId].status.isVisible = !state.document.nodes[nodeInstanceId].status.isVisible
+                        const node = state.document.nodes[nodeInstanceId]
+                        const template = state.templates[node.templateId]
+
+                        switch (getNodeTypeForTemplate(template)) {
+                            case 'generic-node': {
+                                state.document.nodes[nodeInstanceId].status.isVisible = !state.document.nodes[nodeInstanceId].status.isVisible
+                                break;
+                            }
+                            default: {
+                                // Cannot enable/disable some components
+                                break;
+                            }
+                        }
                     }
                 })
                 break

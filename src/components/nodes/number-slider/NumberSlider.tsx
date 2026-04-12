@@ -1,12 +1,14 @@
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { NumberSliderBody } from './components/NumberSliderBody'
 import { NumberSliderShadow } from './components/NumberSliderShadow'
 import { NumberSliderSlider } from './components/NumberSliderSlider'
 import { NumberSliderInteractionArea } from './components/NumberSliderInteractionArea'
 import { NumberSliderPorts } from './components/NumberSliderPorts'
+import { Dialog } from '@/views/components'
+import { NumberSliderValue } from './components/NumberSliderValue'
 
 type NumberSliderProps = {
     id: string
@@ -23,6 +25,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Attach debug behaviors
     useDebugRender(node, template)
 
+    const [showModal, setShowModal] = useState(false)
+
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)
@@ -32,6 +36,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
         e.nativeEvent.stopImmediatePropagation()
 
         useStore.getState().registry.numberSliderInputRef.current?.focus?.()
+
+        setShowModal(true)
     }, [])
 
     const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>) => {
@@ -39,25 +45,25 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
         e.nativeEvent.stopImmediatePropagation()
     }, [])
 
-    const handlePointerEnter = useCallback((e: React.PointerEvent<SVGGElement>) => {
-        apply((state) => {
-            if ((state.registry.contextMenus['number-slider']?.context as any)?.nodeInstanceId === node.instanceId) {
-                return
-            }
+    // const handlePointerEnter = useCallback((e: React.PointerEvent<SVGGElement>) => {
+    //     apply((state) => {
+    //         if ((state.registry.contextMenus['number-slider']?.context as any)?.nodeInstanceId === node.instanceId) {
+    //             return
+    //         }
 
-            state.registry.contextMenus['number-slider'] = {
-                position: { x: 0, y: 0 },
-                context: {
-                    type: 'number-slider-value',
-                    nodeInstanceId: node.instanceId
-                }
-            }
-        })
-    }, [])
+    //         state.registry.contextMenus['number-slider'] = {
+    //             position: { x: 0, y: 0 },
+    //             context: {
+    //                 type: 'number-slider-value',
+    //                 nodeInstanceId: node.instanceId
+    //             }
+    //         }
+    //     })
+    // }, [])
 
     return (
         <>
-            <g id={`number-slider-${id}`} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown} onPointerEnter={handlePointerEnter}>
+            <g id={`number-slider-${id}`} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown}>
                 <NumberSliderInteractionArea node={node} />
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
@@ -67,7 +73,13 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
                 </g>
                 <NumberSliderSlider node={node} config={config} />
                 <NumberSliderPorts node={node} />
+                <NumberSliderValue node={node} onClick={() => setShowModal(true)} />
             </g>
+            {showModal ? (
+                <Dialog onClose={() => setShowModal(false)}>
+                    Test
+                </Dialog>
+            ) : null}
         </>
 
     )
