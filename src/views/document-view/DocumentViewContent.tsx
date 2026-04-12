@@ -4,17 +4,17 @@ import { CameraOverlay } from './layers'
 import { AnnotationsOverlayContainer, AnnotationsUnderlayContainer, NodesContainer } from '@/components'
 
 export const DocumentViewContent = () => {
-  const cameraProps = useCameraProps()
+    const cameraProps = useCameraProps()
 
-  useGlobalHotkeys()
+    useGlobalHotkeys()
 
-  return (
-    <CameraOverlay>
-      <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
-        <AnnotationsUnderlayContainer />
-        <NodesContainer />
-        <AnnotationsOverlayContainer />
-      </svg>
-    </CameraOverlay>
-  )
+    return (
+        <CameraOverlay>
+            <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
+                <AnnotationsUnderlayContainer />
+                <NodesContainer />
+                <AnnotationsOverlayContainer />
+            </svg>
+        </CameraOverlay>
+    )
 }

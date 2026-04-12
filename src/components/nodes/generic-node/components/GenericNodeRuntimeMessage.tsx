@@ -30,18 +30,21 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
 
     const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE
 
-    const handlePointerDown = useCallback(
-        (e: PointerEvent) => {
-            e.stopPropagation()
-            console.log(messages[0]?.message)
+    const handlePointerDown = useCallback((e: React.PointerEvent<SVGRectElement>) => {
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
+        setShowDialog(true)
+    }, [])
 
-            // TODO: Show message somehow
-            setShowDialog(true)
-        },
-        [messages]
-    )
+    // const handlePointerDown = useCallback(
+    //     (e: PointerEvent) => {
+    //         e.stopPropagation()
+    //         setShowDialog(true)
+    //     },
+    //     []
+    // )
 
-    useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
+    // useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
 
     const [isVisible, setIsVisible] = useState(false)
     const [visibleMessageLevel, setVisibleMessageLevel] = useState<typeof currentMessageLevel>('info')
@@ -76,7 +79,9 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
                     className={`${visibleMessageLevel === 'error'
                         ? 'np-fill-error hover:np-fill-error-2'
                         : 'np-fill-warn hover:np-fill-warn-2'
-                        }  hover:np-cursor-pointer np-pointer-events-auto`}
+                        }  hover:np-cursor-pointer`}
+                    style={{ pointerEvents: 'all' }}
+                    onPointerDown={handlePointerDown}
                     x={x + dx + 3 - s / 2}
                     y={y + dy - 3 - s}
                     width={s - 6}
@@ -114,12 +119,11 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
             {showDialog ? (
                 <Dialog onClose={() => setShowDialog(false)}>
                     <div className="np-w-full np-flex np-items-center np-justify-between np-pointer-events-auto">
-                        <p className="np-font-sans np-font-medium np-text-dark np-text-md">{messages[0].message}</p>
+                        <p className="np-font-sans np-font-medium np-text-dark np-text-md">{currentMessage?.message}</p>
                         <div className="np-w-4 np-h-full np-flex np-items-center np-justify-center" onClick={() => setShowDialog(false)}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" vectorEffect="non-scaling-stroke" />
                             </svg>
-
                         </div>
                     </div>
                 </Dialog>

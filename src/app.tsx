@@ -9,116 +9,116 @@ import { StaticDialogLayer } from './views/static/dialog-layer'
 import { SpeckleObjectLoaderProvider } from './context'
 
 type NodesAppProps = {
-  document: NodePen.Document
-  templates: NodePen.NodeTemplate[]
-  user?: {
-    name?: string
-    email?: string
-    image?: string
-    token?: string
-  }
-  speckle?: {
-    serverUrl: string
-    appId: string
-    appChallenge: string
-  }
-  solution?: NodePen.DocumentSolutionData
-  children: React.ReactNode
+    document: NodePen.Document
+    templates: NodePen.NodeTemplate[]
+    user?: {
+        name?: string
+        email?: string
+        image?: string
+        token?: string
+    }
+    speckle?: {
+        serverUrl: string
+        appId: string
+        appChallenge: string
+    }
+    solution?: NodePen.DocumentSolutionData
+    children: React.ReactNode
 } & NodesAppCallbacks
 
 export const NodesApp = ({
-  document,
-  templates,
-  user,
-  speckle,
-  solution,
-  children,
-  ...callbacks
+    document,
+    templates,
+    user,
+    speckle,
+    solution,
+    children,
+    ...callbacks
 }: NodesAppProps): React.ReactElement => {
-  const { apply, loadDocument, loadTemplates } = useDispatch()
+    const { apply, loadDocument, loadTemplates } = useDispatch()
 
-  useEffect(() => {
-    loadTemplates(templates ?? [])
-  }, [templates])
+    useEffect(() => {
+        loadTemplates(templates ?? [])
+    }, [templates])
 
-  useEffect(() => {
-    apply((state) => {
-      state.user = user
-    })
-  }, [user])
+    useEffect(() => {
+        apply((state) => {
+            state.user = user
+        })
+    }, [user])
 
-  useEffect(() => {
-    apply((state) => {
-      state.speckle = speckle
-    })
-  }, [speckle])
+    useEffect(() => {
+        apply((state) => {
+            state.speckle = speckle
+        })
+    }, [speckle])
 
-  useEffect(() => {
-    loadDocument(document)
-  }, [document.id])
+    useEffect(() => {
+        loadDocument(document)
+    }, [document.id])
 
-  useEffect(() => {
-    apply((state) => {
-      state.callbacks = callbacks
-    })
-  }, [callbacks])
+    useEffect(() => {
+        apply((state) => {
+            state.callbacks = callbacks
+        })
+    }, [callbacks])
 
-  useEffect(() => {
-    if (!solution) {
-      return
-    }
+    useEffect(() => {
+        if (!solution) {
+            return
+        }
 
-    apply((state) => {
-      if (state.solution.solutionId !== solution.solutionId) {
-        return
-      }
+        apply((state) => {
+            if (state.solution.solutionId !== solution.solutionId) {
+                return
+            }
 
-      state.solution = freeze(solution)
+            state.solution = freeze(solution)
 
-      state.lifecycle.solution = 'ready'
-    })
-  }, [solution?.solutionId])
+            state.lifecycle.solution = 'ready'
+        })
+    }, [solution?.solutionId])
 
-  return <NodesAppInternal children={children} />
+    return <NodesAppInternal children={children} />
 }
 
 type NodesAppInternalProps = {
-  children: React.ReactNode
+    children: React.ReactNode
 }
 
 const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
-  const canvasRootRef = useStore((state) => state.registry.canvasRoot)
+    const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
-  const { apply } = useDispatch()
+    const { apply } = useDispatch()
 
-  const handleDragEnter = useCallback((_e: React.DragEvent<HTMLDivElement>) => {
-    apply((state) => {
-      if (state.layout.fileUpload.isActive) {
-        return
-      }
+    const handleDragEnter = useCallback((_e: React.DragEvent<HTMLDivElement>) => {
+        apply((state) => {
+            if (state.layout.fileUpload.isActive) {
+                return
+            }
 
-      state.layout.fileUpload = {
-        isActive: true,
-        activeFile: null,
-        uploadStatus: 'none',
-      }
-    })
-  }, [])
+            state.layout.fileUpload = {
+                isActive: true,
+                activeFile: null,
+                uploadStatus: 'none',
+            }
+        })
+    }, [])
 
-  return (
-    <SpeckleObjectLoaderProvider>
-      <div
-        id="np-app-root"
-        className="np-w-full np-h-full np-relative np-overflow-hidden"
-        ref={canvasRootRef}
-        onDragEnter={handleDragEnter}
-      >
-        <FileUploadOverlayContainer />
-        <ControlsContainer />
-        <PseudoShadowsContainer />
-        <StaticDialogLayer />
-        {children}
-      </div>
-    </SpeckleObjectLoaderProvider>
-  )
+    return (
+        <SpeckleObjectLoaderProvider>
+            <div
+                id="np-app-root"
+                className="np-w-full np-h-full np-relative np-overflow-hidden no-drag"
+                ref={canvasRootRef}
+                onDragEnter={handleDragEnter}
+            >
+                {/* <FileUploadOverlayContainer /> */}
+                <ControlsContainer />
+                <PseudoShadowsContainer />
+                <StaticDialogLayer />
+                {children}
+            </div>
+        </SpeckleObjectLoaderProvider>
+    )
 })
