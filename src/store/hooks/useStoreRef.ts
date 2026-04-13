@@ -8,17 +8,17 @@ import type { NodesAppStore } from '$'
  * @param selector
  */
 export const useStoreRef = <T>(selector: (store: NodesAppStore) => T): React.MutableRefObject<T> => {
-  // Initialize ref with value at time of first hook call
-  const ref = useRef<T>(selector(useStore.getState()))
+    // Initialize ref with value at time of first hook call
+    const ref = useRef<T>(selector(useStore.getState()))
 
-  // Subscribe to state with provided selector callback
-  useEffect(() => {
-    const unsubscribe = useStore.subscribe((state) => {
-      ref.current = selector(state)
-    })
+    // Subscribe to state with provided selector callback
+    useEffect(() => {
+        const unsubscribe = useStore.subscribe((state) => {
+            ref.current = selector(state)
+        })
 
-    return unsubscribe
-  })
+        return unsubscribe
+    }, [])
 
-  return ref
+    return ref
 }

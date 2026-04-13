@@ -227,7 +227,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
         return () => {
             container.removeEventListener('wheel', handleWheel)
         }
-    })
+    }, [])
 
     const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>): void => {
         e.preventDefault()

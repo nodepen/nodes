@@ -7,6 +7,7 @@ import { GenericNode } from './generic-node'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { GenericParameter } from './generic-parameter'
 import NumberSlider from './number-slider/NumberSlider'
+import Panel from './panel/Panel'
 
 const NodesContainer = (): React.ReactElement => {
     const nodes = useDocumentNodes()
@@ -26,6 +27,8 @@ const NodesContainer = (): React.ReactElement => {
                         return <GenericParameter key={`generic-parameter-${instanceId}`} id={instanceId} template={template} />
                     case 'number-slider':
                         return <NumberSlider key={`number-slider-${instanceId}`} id={instanceId} template={template} />
+                    case 'panel':
+                        return <Panel key={`panel-${instanceId}`} id={instanceId} template={template} />
                     // TODO: `unknown-node` type
                     case 'unknown':
                     default:

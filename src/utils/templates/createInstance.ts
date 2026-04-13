@@ -153,6 +153,36 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
 
             break
         }
+        case 'panel': {
+            node.inputs['input'] = 0
+            node.outputs['output'] = 0
+            node.portConfigurations['output'] = {
+                label: null,
+                flags: []
+            }
+            node.dimensions = {
+                width: DIMENSIONS.PANEL_DEFAULT_WIDTH,
+                height: DIMENSIONS.PANEL_DEFAULT_HEIGHT
+            }
+            node.anchors = {
+                'labelDeltaX': {
+                    dx: 0,
+                    dy: 0
+                },
+                'input': {
+                    dx: 0,
+                    dy: DIMENSIONS.PANEL_DEFAULT_HEIGHT / 2
+                },
+                'output': {
+                    dx: DIMENSIONS.PANEL_DEFAULT_WIDTH,
+                    dy: DIMENSIONS.PANEL_DEFAULT_HEIGHT / 2
+                }
+            }
+            node.nodeConfiguration = {
+                textContent: null,
+                dataAccess: 'item'
+            } as NodePen.PanelConfig
+        }
     }
 
     return node

@@ -9,6 +9,7 @@ import { NumberSliderInteractionArea } from './components/NumberSliderInteractio
 import { NumberSliderPorts } from './components/NumberSliderPorts'
 import { Dialog } from '@/views/components'
 import { NumberSliderValue } from './components/NumberSliderValue'
+import { NumberSliderConfigForm } from './forms/NumberSliderConfigForm'
 
 type NumberSliderProps = {
     id: string
@@ -77,7 +78,7 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
             </g>
             {showModal ? (
                 <Dialog onClose={() => setShowModal(false)}>
-                    Test
+                    <NumberSliderConfigForm node={node} config={config} onClose={() => setShowModal(false)} />
                 </Dialog>
             ) : null}
         </>

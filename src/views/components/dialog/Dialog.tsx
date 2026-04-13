@@ -36,7 +36,7 @@ export const Dialog = ({ title, onClose, children }: DialogProps) => {
                 <div className="np-absolute np-left-0 np-top-0 np-w-full np-h-full np-z-10 np-pointer-events-none">
                     <div className="np-w-full np-h-full np-flex np-justify-center np-items-center">
                         <div
-                            className="np-w-96 np-p-4 np-bg-light np-rounded-md np-shadow-modal np-pointer-events-auto"
+                            className="np-bg-light np-rounded-lg np-shadow-modal np-pointer-events-auto"
                             onPointerDown={(e) => e.stopPropagation()}
                             onDoubleClick={(e) => e.stopPropagation()}
                         >

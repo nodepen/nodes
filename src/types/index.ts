@@ -1,6 +1,6 @@
 export type { Document } from './Document'
 export type { DocumentNode } from './DocumentNode'
-export type { NumberSliderConfig } from './config'
+export type { NumberSliderConfig, PanelConfig } from './config'
 export type {
     DataTree,
     DataTreeBranch,

@@ -1,3 +1,4 @@
 export type PanelConfig = {
-    textContent: string
+    textContent: string | null
+    dataAccess: 'item' | 'list'
 }

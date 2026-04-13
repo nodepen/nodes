@@ -50,8 +50,6 @@ const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.Reac
     //   safeResize()
     // }, [width])
 
-    const safeSetModelLoadStatus = useThrottleCallback(setModelLoadStatus, 200)
-
     const currentSelection = useRef<string[]>([])
 
     useEffect(() => {
@@ -127,9 +125,9 @@ const SpeckleModelView = ({ speckle, model }: SpeckleModelViewProps): React.Reac
             context?.setViewer(viewerRef.current)
         })
 
-        viewer.on(ViewerEvent.LoadComplete, (arg) => {
-            safeSetModelLoadStatus(1)
-        })
+        // viewer.on(ViewerEvent.LoadComplete, (arg) => {
+        //     safeSetModelLoadStatus(1)
+        // })
 
         return () => {
             viewer.dispose()
