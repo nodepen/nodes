@@ -39,3 +39,20 @@ export const getNumberSliderPortTemplate = (template: NodePen.NodeTemplate): Nod
         isOptional: false
     }
 }
+
+export const getPanelPortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
+    if (getNodeTypeForTemplate(template) !== 'panel') {
+        throw new Error('Cannot generate port template for non-panel thing here!')
+    }
+
+    return {
+        __order: 0,
+        __direction: direction,
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: 'string',
+        keywords: [],
+        isOptional: false
+    }
+}

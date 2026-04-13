@@ -9,41 +9,52 @@ const {
 
 type PanelInputProps = {
     node: NodePen.DocumentNode
+    isActive: boolean
+    onSubmit: (value: string) => void
 }
 
-export const PanelInput = ({ node }: PanelInputProps) => {
+export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
     const { position, dimensions } = node
+    const { textContent, multilineData } = node.nodeConfiguration as NodePen.PanelConfig
 
-    const { textContent, dataAccess } = node.nodeConfiguration as NodePen.PanelConfig
+    const isSelected = useStore((state) => state.registry.selection.nodes.includes(node.instanceId))
 
     const inputRef = useRef<HTMLTextAreaElement | null>(null)
-
-    const [isActive, setIsActive] = useState(false)
 
     useEffect(() => {
         if (isActive) {
             inputRef.current?.focus?.()
+            inputRef.current?.select?.()
         }
     }, [isActive])
+
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        switch (e.key.toLowerCase()) {
+            case 'backspace':
+            case 'del':
+            case 'delete': {
+                e.stopPropagation()
+                e.nativeEvent.stopImmediatePropagation()
+                break
+            }
+            case 'enter': {
+                if (e.shiftKey) {
+                    return
+                }
+                e.currentTarget.blur()
+                break
+            }
+            case 'escape': {
+                e.currentTarget.blur()
+                break
+            }
+        }
+    }, [])
 
     const x = position.x + NODE_INTERNAL_PADDING * 2
     const y = position.y + NODE_INTERNAL_PADDING * 2
     const width = dimensions.width - NODE_INTERNAL_PADDING * 4
     const height = dimensions.height - NODE_INTERNAL_PADDING * 4
-
-    const handlePointerDown = useCallback((e: React.PointerEvent<SVGRectElement>) => {
-        e.stopPropagation()
-        e.nativeEvent.stopImmediatePropagation()
-    }, [])
-
-    const handlePointerUp = useCallback((e: React.PointerEvent<SVGRectElement>) => {
-        e.stopPropagation()
-        e.nativeEvent.stopImmediatePropagation()
-    }, [])
-
-    const handleClick = useCallback((e: React.MouseEvent<SVGRectElement>) => {
-        setIsActive(true)
-    }, [])
 
     return isActive
         ? (
@@ -54,9 +65,11 @@ export const PanelInput = ({ node }: PanelInputProps) => {
                     width={width}
                     height={height}>
                     <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
-                        className='np-w-full np-h-full np-overflow-hidden np-border-none'
+                        className='np-w-full np-h-full np-overflow-hidden np-border-none focus:np-outline-none np-text-sm np-font-panel'
                         style={{ resize: 'none', background: 'transparent' }}
-                    // onBlur={() => setIsActive(false)}
+                        defaultValue={textContent ?? ''}
+                        onKeyDown={handleKeyDown}
+                        onBlur={(e) => onSubmit(e.currentTarget.value)}
                     />
                 </foreignObject>
             </>
@@ -64,7 +77,7 @@ export const PanelInput = ({ node }: PanelInputProps) => {
         : (
             <>
                 <rect
-                    className='np-fill-light hover:np-fill-grey hover:np-cursor-pointer'
+                    className={`${isSelected ? 'hover:np-fill-swampgreen' : 'hover:np-fill-grey'} np-fill-none hover:np-cursor-pointer`}
                     style={{ pointerEvents: 'all' }}
                     x={x}
                     y={y}
@@ -72,10 +85,20 @@ export const PanelInput = ({ node }: PanelInputProps) => {
                     height={height}
                     rx={4}
                     ry={4}
-                    onPointerDown={handlePointerDown}
-                    onPointerUp={handlePointerUp}
-                    onClick={handleClick}
                 />
+                <foreignObject
+                    x={x}
+                    y={y}
+                    width={width}
+                    height={height}
+                    className='np-pointer-events-none'>
+                    <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
+                        className='np-w-full np-h-full np-overflow-hidden np-border-none np-pointer-events-none np-text-sm np-font-panel'
+                        style={{ resize: 'none', background: 'transparent' }}
+                        value={textContent ?? ''}
+                        readOnly
+                    />
+                </foreignObject>
             </>
         )
 

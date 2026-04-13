@@ -180,8 +180,12 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
             }
             node.nodeConfiguration = {
                 textContent: null,
-                dataAccess: 'item'
+                multilineData: false
             } as NodePen.PanelConfig
+            node.sources['input'] = []
+            node.values['output'] = createSingleValue('', 'string')
+
+            break
         }
     }
 
