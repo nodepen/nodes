@@ -180,7 +180,7 @@ export const initialState: NodesAppState = {
             x: 0,
             y: 0,
         },
-        zoom: 1,
+        zoom: 1
     },
     layout: {
         fileUpload: {

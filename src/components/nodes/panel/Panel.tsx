@@ -9,6 +9,9 @@ import { expireSolution } from '@/store/utils'
 import { PanelPorts } from './components/PanelPorts'
 import { GenericNodeWires } from '../wire'
 import { PanelResizeTargets } from './components/PanelResizeTargets'
+import { usePortValues } from '@/hooks'
+import { Dialog } from '@/views/components'
+import { DataTreeTable } from '@/components/trees/DataTreeTable'
 
 type PanelProps = {
     id: string
@@ -22,6 +25,8 @@ const Panel = ({ id, template }: PanelProps) => {
 
     const { apply } = useDispatch()
 
+    const values = usePortValues(node.instanceId, 'output')
+
     // Attach debug behaviors
     useDebugRender(node, template)
 
@@ -31,9 +36,15 @@ const Panel = ({ id, template }: PanelProps) => {
     // const { tr, tl, bl, br } = useResizableNode(id)
 
     const [isActive, setIsActive] = useState(false)
+    const [isDialogOpen, setIsDialogOpen] = useState(false)
     const handleDoubleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
         e.stopPropagation()
-        setIsActive(true)
+
+        if (node.sources['input'].length) {
+            setIsDialogOpen(true)
+        } else {
+            setIsActive(true)
+        }
     }, [])
 
     const handleSubmit = useCallback((value: string) => {
@@ -66,6 +77,17 @@ const Panel = ({ id, template }: PanelProps) => {
                 <PanelPorts node={node} template={template} />
             </g>
             <GenericNodeWires node={node} />
+            {isDialogOpen
+                ? <Dialog onClose={() => setIsDialogOpen(false)}>
+                    <div className='np-p-4 np-w-96 np-h-48'>
+                        {values
+                            ? <DataTreeTable data={values} />
+                            : null
+                        }
+                    </div>
+                </Dialog>
+                : null
+            }
         </>
     )
 }
