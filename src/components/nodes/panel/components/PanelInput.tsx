@@ -65,7 +65,7 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
                     width={width}
                     height={height}>
                     <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
-                        className='np-w-full np-h-full np-overflow-hidden np-border-none focus:np-outline-none np-text-sm np-font-panel'
+                        className='np-w-full np-h-full np-overflow-hidden np-border-none focus:np-outline-none np-text-sm np-text-center np-font-panel'
                         style={{ resize: 'none', background: 'transparent' }}
                         defaultValue={textContent ?? ''}
                         onKeyDown={handleKeyDown}
@@ -93,7 +93,7 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
                     height={height}
                     className='np-pointer-events-none'>
                     <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
-                        className='np-w-full np-h-full np-overflow-hidden np-border-none np-pointer-events-none np-text-sm np-font-panel'
+                        className='np-w-full np-h-full np-overflow-hidden np-border-none np-pointer-events-none np-text-sm np-text-center np-font-panel'
                         style={{ resize: 'none', background: 'transparent' }}
                         value={textContent ?? ''}
                         readOnly

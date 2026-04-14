@@ -4,6 +4,7 @@ import { expireSolution } from '@/store/utils'
 import { useCallback, useRef } from 'react'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { saveDocument } from '@/store/utils/saveDocument'
 
 export const useGlobalHotkeys = () => {
     const { apply } = useDispatch()
@@ -37,6 +38,31 @@ export const useGlobalHotkeys = () => {
                 })
                 break
             }
+            case 'a':
+            case 'A': {
+                if (!e.ctrlKey) {
+                    return
+                }
+
+                apply((state) => {
+                    const selection: string[] = []
+                    for (const node of Object.values(state.document.nodes)) {
+                        const template = state.templates[node.templateId]
+
+                        switch (getNodeTypeForTemplate(template)) {
+                            case 'generic-node':
+                            case 'generic-parameter':
+                            case 'number-slider':
+                            case 'panel': {
+                                selection.push(node.instanceId)
+                            }
+                        }
+                    }
+                    state.registry.selection.nodes = selection
+                })
+
+                break
+            }
             case 'q':
             case 'Q': {
                 if (!e.ctrlKey) {
@@ -59,6 +85,7 @@ export const useGlobalHotkeys = () => {
                             }
                         }
                     }
+                    saveDocument(state)
                 })
                 break
             }

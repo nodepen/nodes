@@ -8,6 +8,7 @@ import { PanelInput } from './components/PanelInput'
 import { expireSolution } from '@/store/utils'
 import { PanelPorts } from './components/PanelPorts'
 import { GenericNodeWires } from '../wire'
+import { PanelResizeTargets } from './components/PanelResizeTargets'
 
 type PanelProps = {
     id: string
@@ -58,10 +59,11 @@ const Panel = ({ id, template }: PanelProps) => {
                     <g ref={selectableTargetRef}>
                         <PanelShadow node={node} />
                         <PanelBody node={node} />
-                        <PanelPorts node={node} template={template} />
                         <PanelInput node={node} isActive={isActive} onSubmit={handleSubmit} />
                     </g>
                 </g>
+                <PanelResizeTargets node={node} />
+                <PanelPorts node={node} template={template} />
             </g>
             <GenericNodeWires node={node} />
         </>

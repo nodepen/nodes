@@ -10,6 +10,7 @@ import { NumberSliderPorts } from './components/NumberSliderPorts'
 import { Dialog } from '@/views/components'
 import { NumberSliderValue } from './components/NumberSliderValue'
 import { NumberSliderConfigForm } from './forms/NumberSliderConfigForm'
+import { useResizableNode } from '../hooks/useResizableNode'
 
 type NumberSliderProps = {
     id: string
@@ -26,11 +27,25 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Attach debug behaviors
     useDebugRender(node, template)
 
+    const computeAnchors = useCallback((next: NodePen.DocumentNode): NodePen.DocumentNode['anchors'] => {
+        return {
+            'labelDeltaX': {
+                dx: 0,
+                dy: 0
+            },
+            'output': {
+                dx: next.dimensions.width,
+                dy: next.dimensions.height / 2
+            }
+        }
+    }, [])
+
     const [showModal, setShowModal] = useState(false)
 
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)
+    const { left } = useResizableNode(id, { computeAnchors })
 
     const handleDoubleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
         e.stopPropagation()
@@ -62,6 +77,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     //     })
     // }, [])
 
+    const s = 20
+
     return (
         <>
             <g id={`number-slider-${id}`} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown}>
@@ -75,6 +92,15 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
                 <NumberSliderSlider node={node} config={config} />
                 <NumberSliderPorts node={node} />
                 <NumberSliderValue node={node} onClick={() => setShowModal(true)} />
+                <g ref={left}>
+                    <rect
+                        x={node.position.x - s / 2}
+                        y={node.position.y}
+                        width={s}
+                        height={node.dimensions.height}
+                        fill="transparent"
+                    />
+                </g>
             </g>
             {showModal ? (
                 <Dialog onClose={() => setShowModal(false)}>

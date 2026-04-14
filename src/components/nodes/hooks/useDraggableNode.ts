@@ -2,6 +2,7 @@ import type React from 'react'
 import { useCallback, useRef } from 'react'
 import { useDispatch, useStore, useStoreRef } from '$'
 import { useImperativeEvent } from '@/hooks'
+import { saveDocument } from '@/store/utils/saveDocument'
 
 export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
     const nodeRef = useRef<SVGGElement>(null)
@@ -78,7 +79,6 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
         const { x: initialPointerX, y: initialPointerY } = initialPointerPosition.current
 
-        // TODO: Include zoom
         const dx = (currentPointerX - initialPointerX) / zoom.current
         const dy = (currentPointerY - initialPointerY) / zoom.current
 
@@ -99,6 +99,8 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
         isDragging.current = false
         initialPointerId.current = undefined
+
+        saveDocument(useStore.getState())
     }, [])
 
     useImperativeEvent(nodeRef, 'pointerdown', handlePointerDown)
