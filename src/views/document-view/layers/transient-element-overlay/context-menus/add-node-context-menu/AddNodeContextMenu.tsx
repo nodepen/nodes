@@ -7,10 +7,11 @@ import { clamp } from '@/utils/numerics'
 import { createInstance } from '@/utils/templates'
 import { useTextSearch } from './hooks'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
-import { AddNodeButton } from './components'
+import { AddNodeButton, ShortcutMatchInfo } from './components'
 import { COMPONENTS, KEYS } from '@/constants'
 import { expireSolution } from '@/store/utils'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
+import { tryMatchTextSearch } from '@/utils/templates/tryMatchTextSearch'
 
 type AddNodeContextMenuProps = {
     position: ContextMenu['position']
@@ -31,9 +32,10 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
     const searchQueryInputRef = useRef<HTMLInputElement>(null)
     const [searchQuery, setSearchQuery] = useState<string>()
-    const [_isPending, startTransition] = useTransition()
 
-    const candidates = useTextSearch(templates, searchQuery ?? '', ['name', 'nickName', 'keywords'], 'jw')
+    const [activeSearchQuery, setActiveSearchQuery] = useState<string>()
+
+    const candidates = useTextSearch(templates, activeSearchQuery ?? '', ['name', 'nickName', 'keywords'], 'jw')
 
     const updateSearchQuery = useCallback(() => {
         const element = searchQueryInputRef.current
@@ -42,12 +44,90 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
             return
         }
 
-        startTransition(() => {
-            setSearchQuery(element.value)
-        })
+        setSearchQuery(element.value)
     }, [])
 
-    const debounceUpdateSearchQuery = useDebounceCallback(updateSearchQuery, 200)
+    const updateActiveSearchQuery = useCallback(() => {
+        setActiveSearchQuery(searchQuery)
+    }, [searchQuery])
+    const debounceUpdateActiveSearchQuery = useDebounceCallback(updateActiveSearchQuery, 200)
+
+    useEffect(() => {
+        debounceUpdateActiveSearchQuery()
+    }, [searchQuery])
+
+    const shortcutMatch = useMemo(() => {
+        return tryMatchTextSearch(searchQuery ?? '')
+    }, [searchQuery, templates])
+
+    const handleAddNodeFromShortcut = useCallback(() => {
+        if (!shortcutMatch) {
+            return
+        }
+
+        const template = templates.find((t) => t.guid === shortcutMatch.templateId)
+
+        if (!template) {
+            return
+        }
+
+        let node: NodePen.DocumentNode | null = null
+
+        switch (shortcutMatch.type) {
+            case 'panel': {
+                node = createInstance(template)
+                node.nodeConfiguration = shortcutMatch.config
+
+                if (shortcutMatch.config.textContent?.length && shortcutMatch.config.textContent.length < 5) {
+                    node.dimensions.width = 100
+                    node.dimensions.height = 40
+                    node.anchors['input'] = {
+                        dx: 0,
+                        dy: node.dimensions.height / 2
+                    }
+                    node.anchors['output'] = {
+                        dx: node.dimensions.width,
+                        dy: node.dimensions.height / 2
+                    }
+                }
+
+                break
+            }
+            case 'number-slider': {
+                node = createInstance(template)
+                node.values['output'] = createSingleValue(shortcutMatch.value, 'number')
+                node.nodeConfiguration = shortcutMatch.config
+
+                break
+            }
+        }
+
+        if (!node) {
+            console.log(`Failed to create node from shortcut!`)
+            return
+        }
+
+        const [centerX, centerY] = overlaySpaceToWorldSpace(eventPosition.x, eventPosition.y)
+
+        const nodePosition = {
+            x: centerX - node.dimensions.width / 2,
+            y: centerY - node.dimensions.height / 2,
+        }
+
+        node.position = nodePosition
+
+        apply((state) => {
+            // Add node to document
+            state.document.nodes[node.instanceId] = node
+
+            // Clear menu from interface
+            state.registry.contextMenus = {}
+            state.registry.tooltips = {}
+
+            // Expire solution
+            expireSolution(state)
+        })
+    }, [shortcutMatch, templates])
 
     const searchResults = useMemo(() => {
         const numericQuery = Number.parseFloat(searchQuery ?? '')
@@ -78,6 +158,9 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
     const handleKeyDown = useCallback(
         (e: React.KeyboardEvent<HTMLDivElement>): void => {
+            e.stopPropagation()
+            e.nativeEvent.stopImmediatePropagation()
+
             switch (e.key) {
                 case 'ArrowUp': {
                     e.preventDefault()
@@ -94,6 +177,11 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
                     break
                 }
                 case 'Enter': {
+                    if (shortcutMatch) {
+                        handleAddNodeFromShortcut()
+                        return
+                    }
+
                     if (preferHoverSelection) {
                         return
                     }
@@ -104,7 +192,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
                 }
             }
         },
-        [internalSelection, searchResults]
+        [internalSelection, searchResults, handleAddNodeFromShortcut]
     )
 
     const handleAddNode = (template: NodePen.NodeTemplate): void => {
@@ -121,28 +209,6 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         }
 
         nodeInstance.position = nodePosition
-
-        if (template.guid === COMPONENTS.NUMBER_SLIDER) {
-            // Parse search query for implicit params
-            const fragments = searchQuery?.split('.')
-
-            const value = fragments?.at(0) ?? '0'
-            const decimals = fragments?.at(1) ?? ''
-
-            const precision = clamp(decimals.length, 0, 4)
-
-            const numericValue = clamp(Number.parseFloat(value), -1_000_00, 1_000_000)
-
-            const maxAbs = Math.pow(10, numericValue.toString().length)
-
-            nodeInstance.nodeConfiguration = {
-                min: numericValue > 0 ? 0 : -maxAbs,
-                max: numericValue > 0 ? maxAbs : 0,
-                precision
-            } as NodePen.NumberSliderConfig
-
-            nodeInstance.values['output'] = createSingleValue(Number.parseFloat(searchQuery ?? '0').toFixed(precision), 'number')
-        }
 
         apply((state) => {
             // Add node to document
@@ -172,21 +238,32 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
     return (
         <MenuBody position={menuPosition} animate={false}>
-            <div onPointerEnter={handlePointerEnterOptions} onPointerLeave={handlePointerLeaveOptions}>
-                {searchResults.map((template, i) => (
-                    <AddNodeButton
-                        key={`add-node-menu-entry-${i}-${template.guid}`}
-                        template={template}
-                        isSelected={i === visibleSelection}
-                        action={() => handleAddNode(template)}
-                    />
-                ))}
-            </div>
+            {
+                !!shortcutMatch
+                    ? <>
+                        <AddNodeButton
+                            key={`add-node-shortcut`}
+                            template={templates.find((t) => t.guid === shortcutMatch.templateId)!}
+                            isSelected={false}
+                            action={() => ''}
+                        />
+                        <ShortcutMatchInfo match={shortcutMatch} />
+                    </>
+                    : <div onPointerEnter={handlePointerEnterOptions} onPointerLeave={handlePointerLeaveOptions}>
+                        {searchResults.map((template, i) => (
+                            <AddNodeButton
+                                key={`add-node-menu-entry-${i}-${template.guid}`}
+                                template={template}
+                                isSelected={i === visibleSelection}
+                                action={() => handleAddNode(template)}
+                            />
+                        ))}
+                    </div>}
             <input
                 ref={searchQueryInputRef}
                 className="np-w-full np-h-8 np-pl-2 np-pr-2 np-mt-1 np-font-sans np-text-md np-text-dark np-text-left np-bg-pale np-shadow-input no-focus"
                 type="text"
-                onChange={debounceUpdateSearchQuery}
+                onChange={updateSearchQuery}
                 onKeyDown={handleKeyDown}
             />
         </MenuBody>

@@ -9,8 +9,6 @@ type DataTreeTable = {
 export const DataTreeTable = ({ data }: DataTreeTable) => {
     const { apply } = useDispatch()
 
-    console.log({ data })
-
     return (
         <div className='np-w-full np-grid np-grid-cols-[min-content_min-content_1fr] np-relative np-pointer-events-auto'
         >
