@@ -21,9 +21,6 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
 
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(node.instanceId))
 
-    const sources = node.sources['input']
-    const values = usePortValues(node.instanceId, 'output')
-
     const inputRef = useRef<HTMLTextAreaElement | null>(null)
 
     useEffect(() => {
@@ -69,17 +66,12 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
                     y={y}
                     width={width}
                     height={height}>
-                    {sources.length
-                        ? values
-                            ? <DataTreeTable data={values} />
-                            : null
-                        : <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
-                            className='np-w-full np-h-full np-overflow-hidden np-border-none focus:np-outline-none np-text-sm np-text-center np-font-panel'
-                            style={{ resize: 'none', background: 'transparent' }}
-                            defaultValue={textContent ?? ''}
-                            onKeyDown={handleKeyDown}
-                            onBlur={(e) => onSubmit(e.currentTarget.value)} />
-                    }
+                    <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
+                        className='np-w-full np-h-full np-overflow-hidden np-border-none focus:np-outline-none np-text-sm np-text-center np-font-panel'
+                        style={{ resize: 'none', background: 'transparent' }}
+                        defaultValue={textContent ?? ''}
+                        onKeyDown={handleKeyDown}
+                        onBlur={(e) => onSubmit(e.currentTarget.value)} />
                 </foreignObject>
             </>
         )
@@ -101,16 +93,11 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
                     width={width}
                     height={height}
                     className='np-pointer-events-none'>
-                    {sources.length
-                        ? values
-                            ? <DataTreeTable data={values} />
-                            : null
-                        : <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
-                            className='np-w-full np-h-full np-overflow-hidden np-border-none np-pointer-events-none np-text-sm np-text-center np-font-panel'
-                            style={{ resize: 'none', background: 'transparent' }}
-                            value={textContent ?? ''}
-                            readOnly />
-                    }
+                    <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
+                        className='np-w-full np-h-full np-overflow-hidden np-border-none np-pointer-events-none np-text-sm np-text-center np-font-panel'
+                        style={{ resize: 'none', background: 'transparent' }}
+                        value={textContent ?? ''}
+                        readOnly />
                 </foreignObject>
             </>
         )

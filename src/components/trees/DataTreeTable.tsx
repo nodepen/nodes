@@ -9,21 +9,9 @@ type DataTreeTable = {
 export const DataTreeTable = ({ data }: DataTreeTable) => {
     const { apply } = useDispatch()
 
-    const handlePointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
-        console.log('ptrdown')
-    }, [])
-
-    const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
-        apply((state) => {
-            state.registry.selection.nodes = []
-        })
-        console.log('scroll')
-    }, [])
-
     return (
-        <div className='np-w-full np-h-full np-grid np-grid-cols-[min-content_min-content_1fr] np-overflow-y-auto np-relative np-pointer-events-auto'
-            onPointerDown={handlePointerDown}
-            onScroll={handleScroll}>
+        <div className='np-w-full np-grid np-grid-cols-[min-content_min-content_1fr] np-relative np-pointer-events-auto'
+        >
             {data.branches.sort((a, b) => a.order - b.order).map((branch) => (
                 <>
                     <div className='np-w-full np-sticky np-top-0 np-p-2 np-bg-light'>

@@ -4,6 +4,7 @@ import { CAMERA } from '@/constants'
 import { clamp } from '@/utils'
 import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { distance } from '@/utils/numerics'
+import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
 
 type CameraControlProps = {
     children?: React.ReactNode
@@ -182,6 +183,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     const handleWheel = (e: WheelEvent): void => {
         // e.stopPropagation()
         // e.preventDefault()
+
+        if (targetIsScrollable(e)) {
+            return
+        }
 
         if (useStore.getState().layout.fileUpload.isActive) {
             // Disable scroll zoom while drag-and-drop overlay is active.

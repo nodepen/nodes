@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
@@ -12,6 +12,7 @@ import { PanelResizeTargets } from './components/PanelResizeTargets'
 import { usePortValues } from '@/hooks'
 import { Dialog } from '@/views/components'
 import { DataTreeTable } from '@/components/trees/DataTreeTable'
+import { PanelDataTree } from './components/PanelDataTree'
 
 type PanelProps = {
     id: string
@@ -25,7 +26,7 @@ const Panel = ({ id, template }: PanelProps) => {
 
     const { apply } = useDispatch()
 
-    const values = usePortValues(node.instanceId, 'output')
+    const containerRef = useRef<SVGGElement>(null)
 
     // Attach debug behaviors
     useDebugRender(node, template)
@@ -33,18 +34,11 @@ const Panel = ({ id, template }: PanelProps) => {
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)
-    // const { tr, tl, bl, br } = useResizableNode(id)
 
     const [isActive, setIsActive] = useState(false)
-    const [isDialogOpen, setIsDialogOpen] = useState(false)
     const handleDoubleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
         e.stopPropagation()
-
-        if (node.sources['input'].length) {
-            setIsDialogOpen(true)
-        } else {
-            setIsActive(true)
-        }
+        setIsActive(true)
     }, [])
 
     const handleSubmit = useCallback((value: string) => {
@@ -63,31 +57,31 @@ const Panel = ({ id, template }: PanelProps) => {
         setIsActive(false)
     }, [id])
 
+    const handleScrollStart = useCallback(() => {
+        containerRef.current?.setAttribute('data-scrolling', '')
+    }, [])
+
+    const handleScrollEnd = useCallback(() => {
+        containerRef.current?.removeAttribute('data-scrolling')
+    }, [])
+
     return (
         <>
-            <g id={`panel-${id}`} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick}>
+            <g id={`panel-${id}`} ref={containerRef} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick}>
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
                         <PanelShadow node={node} />
                         <PanelBody node={node} />
-                        <PanelInput node={node} isActive={isActive} onSubmit={handleSubmit} />
+                        {node.sources['input'].length
+                            ? <PanelDataTree node={node} onScrollStart={handleScrollStart} onScrollEnd={handleScrollEnd} />
+                            : <PanelInput node={node} isActive={isActive} onSubmit={handleSubmit} />
+                        }
                     </g>
                 </g>
                 <PanelResizeTargets node={node} />
                 <PanelPorts node={node} template={template} />
             </g>
             <GenericNodeWires node={node} />
-            {isDialogOpen
-                ? <Dialog onClose={() => setIsDialogOpen(false)}>
-                    <div className='np-p-4 np-w-96 np-h-48'>
-                        {values
-                            ? <DataTreeTable data={values} />
-                            : null
-                        }
-                    </div>
-                </Dialog>
-                : null
-            }
         </>
     )
 }

@@ -3,6 +3,8 @@ import { useCallback, useRef } from 'react'
 import { useDispatch, useStore, useStoreRef } from '$'
 import { useImperativeEvent } from '@/hooks'
 import { saveDocument } from '@/store/utils/saveDocument'
+import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
+import { targetIsScrolling } from '@/utils/dom/targetIsScrolling'
 
 export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
     const nodeRef = useRef<SVGGElement>(null)
@@ -74,6 +76,10 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
         const { pageX: currentPointerX, pageY: currentPointerY, pointerId } = e
 
         if (!isDragging.current || pointerId !== initialPointerId.current) {
+            return
+        }
+
+        if (targetIsScrolling(e)) {
             return
         }
 
