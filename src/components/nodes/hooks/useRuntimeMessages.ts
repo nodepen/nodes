@@ -7,23 +7,23 @@ import { useStore } from '$'
  * @remarks While solution lifecycle status is `expired`, returns a cached version of the previous solution's messages.
  */
 export const useRuntimeMessages = (nodeInstanceId: string): NodeSolutionData['nodeRuntimeData']['messages'] => {
-  const previousMessages = useRef<NodeSolutionData['nodeRuntimeData']['messages']>([])
+    const previousMessages = useRef<NodeSolutionData['nodeRuntimeData']['messages']>([])
 
-  return useStore((state) => {
-    if (state.lifecycle.solution === 'expired') {
-      return previousMessages.current
-    }
+    return useStore((state) => {
+        if (state.solution.isExpired) {
+            return previousMessages.current
+        }
 
-    const nodeSolutionData = state.solution.nodeSolutionData.find((data) => data.nodeInstanceId === nodeInstanceId)
+        const nodeSolutionData = state.solution.nodeSolutionData[nodeInstanceId]
 
-    if (!nodeSolutionData) {
-      return []
-    }
+        if (!nodeSolutionData) {
+            return []
+        }
 
-    const nodeRuntimeMessages = nodeSolutionData.nodeRuntimeData.messages
+        const nodeRuntimeMessages = nodeSolutionData.nodeRuntimeData.messages
 
-    previousMessages.current = nodeRuntimeMessages
+        previousMessages.current = nodeRuntimeMessages
 
-    return nodeRuntimeMessages
-  })
+        return nodeRuntimeMessages
+    })
 }

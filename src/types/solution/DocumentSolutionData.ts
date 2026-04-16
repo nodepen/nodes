@@ -1,11 +1,14 @@
 import type { NodeSolutionData } from './NodeSolutionData'
 
 export type DocumentSolutionData = {
-  solutionId: string
-  documentRuntimeData: DocumentRuntimeData
-  nodeSolutionData: NodeSolutionData[]
+    solutionId: string
+    isExpired: boolean
+    documentRuntimeData: DocumentRuntimeData
+    nodeSolutionData: {
+        [nodeInstanceId: string]: NodeSolutionData
+    }
 }
 
 type DocumentRuntimeData = {
-  durationMs: number
+    durationMs: number
 }

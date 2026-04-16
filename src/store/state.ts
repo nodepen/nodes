@@ -3,10 +3,10 @@ import { freeze } from 'immer'
 import type * as NodePen from '@/types'
 import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
 import type { NodePortReference, WireEditMode } from '@/types'
-import type { LegacyViewer } from '@speckle/viewer'
 
 export type NodesAppState = {
     document: NodePen.Document
+    solution: NodePen.DocumentSolutionData
     templates: {
         [templateId: string]: NodePen.NodeTemplate
     }
@@ -16,12 +16,6 @@ export type NodesAppState = {
         image?: string
         token?: string
     }
-    speckle?: {
-        serverUrl: string
-        appId: string
-        appChallenge: string
-    }
-    solution: NodePen.DocumentSolutionData
     camera: {
         /** container div innerWidth / innerHeight in screen space */
         aspect: number
@@ -45,10 +39,6 @@ export type NodesAppState = {
         }
         viewConfiguration: Record<number, number>
         // activeView: string | null
-    }
-    stream: {
-        id: string
-        objectIds: string[]
     }
     registry: {
         canvasRoot: React.RefObject<HTMLDivElement | null>
@@ -127,20 +117,6 @@ export type NodesAppState = {
             }
         }
     }
-    lifecycle: {
-        solution: 'expired' | 'ready'
-        model: {
-            status: 'expired' | 'loading' | 'ready'
-            /** A value between 0 & 1 */
-            progress: number
-            objectCount: number
-        }
-    }
-    cache: {
-        portSolutionData: {
-            [cacheKey: string]: NodePen.DataTree
-        }
-    }
     callbacks: NodesAppCallbacks
 }
 
@@ -169,10 +145,11 @@ export const initialState: NodesAppState = {
     templates: freeze({}),
     solution: freeze({
         solutionId: 'initial',
+        isExpired: false,
         documentRuntimeData: {
             durationMs: 0,
         },
-        nodeSolutionData: [],
+        nodeSolutionData: {},
     }),
     camera: {
         aspect: 1.5,
@@ -196,10 +173,6 @@ export const initialState: NodesAppState = {
             0: 1,
             1: 0
         }
-    },
-    stream: {
-        id: 'b0d3a3c122',
-        objectIds: [],
     },
     registry: {
         canvasRoot: React.createRef<HTMLDivElement>(),
@@ -231,17 +204,6 @@ export const initialState: NodesAppState = {
                 mode: null,
             },
         },
-    },
-    lifecycle: {
-        solution: 'expired',
-        model: {
-            status: 'expired',
-            progress: 0,
-            objectCount: 0,
-        },
-    },
-    cache: {
-        portSolutionData: {},
     },
     callbacks: {},
 }

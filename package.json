@@ -31,8 +31,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@speckle/objectloader2": "^2.26.8",
-    "@speckle/viewer": "2.25.8",
     "immer": "^10.1.1",
     "react-hook-form": "^7.72.1",
     "zustand": "4.5.5"

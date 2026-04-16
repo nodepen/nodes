@@ -21,7 +21,6 @@ const ControlsContainer = (): React.ReactElement => {
     )
 }
 
-import { SolutionStatusBar } from './solution-status'
 import ActiveUserControl from './users/ActiveUserControl'
 import DocumentToolsControl from './tools/DocumentToolsControl'
 import ActiveDocumentControl from './document/ActiveDocumentControl'
