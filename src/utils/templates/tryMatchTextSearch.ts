@@ -19,6 +19,7 @@ const NUM = '(-?\\d+(?:\\.\\d+)?)'
 
 const patterns = {
     panel: /^"(.*)$/,
+    panel2: /^\/\/(.*)$/,
     numberSliderValue: new RegExp(`${NUM}`),
     numberSliderMaximum: new RegExp(`^${NUM}<${NUM}$`),
     numberSliderRange: new RegExp(`^${NUM}<${NUM}<${NUM}$`),
@@ -31,6 +32,19 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
     let m: RegExpMatchArray | null
 
     if ((m = s.match(patterns.panel))) {
+        const textContent = m[1]
+
+        return {
+            type: 'panel',
+            templateId: COMPONENTS.PANEL,
+            config: {
+                textContent,
+                multilineData: false
+            }
+        }
+    }
+
+    if ((m = s.match(patterns.panel2))) {
         const textContent = m[1]
 
         return {
