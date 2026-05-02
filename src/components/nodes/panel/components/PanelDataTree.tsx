@@ -20,7 +20,8 @@ export const PanelDataTree = ({ node, onScrollStart, onScrollEnd }: PanelDataPro
 
     const containerRef = useRef<HTMLDivElement>(null)
 
-    const values = usePortValues(node.instanceId, 'output')
+    const source = node.sources['input'].at(0)
+    const values = usePortValues(source?.nodeInstanceId, source?.portInstanceId)
 
     const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -61,7 +62,7 @@ export const PanelDataTree = ({ node, onScrollStart, onScrollEnd }: PanelDataPro
                     onScrollEnd={handleScrollEnd}
                 >
                     {values
-                        ? <DataTreeTable data={values} />
+                        ? <DataTreeTable nodeInstanceId={source?.nodeInstanceId ?? ''} portInstanceId={source?.portInstanceId ?? ''} data={values} />
                         : null
                     }
                 </div>
@@ -70,7 +71,7 @@ export const PanelDataTree = ({ node, onScrollStart, onScrollEnd }: PanelDataPro
                 ? <Dialog onClose={() => setIsDialogOpen(false)}>
                     <div className='np-p-4 np-w-96 np-h-48'>
                         {values
-                            ? <DataTreeTable data={values} />
+                            ? <DataTreeTable nodeInstanceId={source?.nodeInstanceId ?? ''} portInstanceId={source?.portInstanceId ?? ''} data={values} />
                             : null
                         }
                     </div>

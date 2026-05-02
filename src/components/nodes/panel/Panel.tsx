@@ -9,9 +9,6 @@ import { expireSolution } from '@/store/utils'
 import { PanelPorts } from './components/PanelPorts'
 import { GenericNodeWires } from '../wire'
 import { PanelResizeTargets } from './components/PanelResizeTargets'
-import { usePortValues } from '@/hooks'
-import { Dialog } from '@/views/components'
-import { DataTreeTable } from '@/components/trees/DataTreeTable'
 import { PanelDataTree } from './components/PanelDataTree'
 
 type PanelProps = {

@@ -2,8 +2,6 @@ import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { usePortValues } from '@/hooks'
-import { DataTreeTable } from '@/components/trees/DataTreeTable'
 
 const {
     NODE_INTERNAL_PADDING

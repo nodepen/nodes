@@ -60,6 +60,14 @@ export type NodesAppState = {
                 }
             }
         }
+        hover: {
+            nodeInstanceId: string | null
+            portInstanceId: string | null
+            branch: {
+                path: string
+                entryIndex: string
+            } | null
+        }
         selection: {
             nodes: string[]
             region:
@@ -185,6 +193,11 @@ export const initialState: NodesAppState = {
                 controls: React.createRef<HTMLDivElement>(),
             },
             targets: {},
+        },
+        hover: {
+            nodeInstanceId: null,
+            portInstanceId: null,
+            branch: null
         },
         selection: {
             nodes: [],

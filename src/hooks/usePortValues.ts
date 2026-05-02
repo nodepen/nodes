@@ -7,7 +7,7 @@ import { useStore } from '$'
  * @param nodeInstanceId
  * @param portInstanceId
  */
-export const usePortValues = (nodeInstanceId: string, portInstanceId: string): NodePen.DataTree | null => {
+export const usePortValues = (nodeInstanceId: string = '', portInstanceId: string = ''): NodePen.DataTree | null => {
     return useStore((state) => {
         const solutionValues = state.solution.nodeSolutionData[nodeInstanceId]?.portSolutionData[portInstanceId]?.dataTree
         const internalValues = state.document.nodes[nodeInstanceId]?.values[portInstanceId]

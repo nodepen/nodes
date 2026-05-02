@@ -416,6 +416,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             set(
                 (state) => {
                     state.registry.selection.nodes = []
+                    state.registry.hover.branch = null
                 },
                 false,
                 'ui/clearSelection'
