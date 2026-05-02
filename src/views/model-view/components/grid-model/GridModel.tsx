@@ -3,7 +3,7 @@ import { LINE } from "../../materials"
 import * as THREE from "three"
 
 const GridModel = () => {
-    const material = LINE.DARK
+    const material = LINE.GRID
 
     // Create 10x10 grid geometry
     const vertices: number[] = []

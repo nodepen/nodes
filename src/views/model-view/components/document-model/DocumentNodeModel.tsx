@@ -13,6 +13,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
 
     const isVisible = node.status.isVisible
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(id))
+    const isExpired = useStore((state) => state.solution.isExpired)
 
     if (!isVisible) {
         return null
@@ -25,13 +26,13 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
         }
 
         if (o instanceof THREE.Line) {
-            const material = isSelected ? LINE.SELECTED : LINE.DEFAULT
+            const material = isExpired ? LINE.EXPIRED : isSelected ? LINE.SELECTED : LINE.DEFAULT
             // @ts-expect-error react-three-fibre line vs svg line
             return <line key={`${id}-${o.id}`} geometry={o.geometry} material={material} />
         }
 
         if (o instanceof THREE.Mesh) {
-            const material = isSelected ? MESH.SELECTED : MESH.DEFAULT
+            const material = isExpired ? MESH.EXPIRED : isSelected ? MESH.SELECTED : MESH.DEFAULT
             return <mesh key={`${id}-${o.id}`} geometry={o.geometry} material={material} />
         }
 

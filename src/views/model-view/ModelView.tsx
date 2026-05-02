@@ -1,6 +1,6 @@
 "use client"
 
-import React, { Suspense } from "react"
+import React, { Suspense, useMemo } from "react"
 import * as THREE from 'three'
 import { Canvas } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei"
@@ -8,6 +8,7 @@ import { Layer } from "../common"
 import { useViewRegistry } from "../common/hooks"
 import DocumentModel from "./components/document-model/DocumentModel"
 import GridModel from "./components/grid-model/GridModel"
+import ModelCanvas from "./ModelCanvas"
 
 // @ts-expect-error This is correct actually
 THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
@@ -30,23 +31,7 @@ const ModelView = ({ solutionModelUrl }: ModelViewProps) => {
                 className="np-w-full np-h-full np-pointer-events-auto np-bg-pale"
                 style={{ transform: `translateX(${translation}%)` }}
             >
-                <Canvas
-                    className="np-w-full np-h-full"
-                    style={{ display: 'block' }}
-                    onCreated={({ camera, scene }) => {
-                        scene.up.set(0, 0, 1)
-                        camera.up.set(0, 0, 1)
-                        camera.lookAt(0, 0, 0)
-                    }}
-                >
-                    <color attach="background" args={[0.937, 0.949, 0.949]} />
-                    <ambientLight intensity={0.4} />
-                    <Suspense fallback={null}>
-                        <GridModel />
-                        <DocumentModel modelUrl={solutionModelUrl} />
-                        <OrbitControls enableDamping />
-                    </Suspense>
-                </Canvas>
+                <ModelCanvas solutionModelUrl={solutionModelUrl} />
             </div>
         </Layer>
     )

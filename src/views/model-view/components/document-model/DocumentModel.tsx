@@ -1,9 +1,11 @@
 import { useStore } from '$'
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
+import * as THREE from 'three'
 import DocumentNodeModel from './DocumentNodeModel'
 import { useLoader } from '@react-three/fiber'
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader'
 import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
+import { shallow } from 'zustand/shallow'
 
 type DocumentModel = {
     modelUrl: string | null
@@ -30,7 +32,28 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
         return res
     }, [documentObject])
 
-    const nodeIds = useStore((state) => Object.keys(state.document.nodes))
+    // Dispose of geometry when new model laoded
+    useEffect(() => {
+        return () => {
+            if (documentObject) {
+                documentObject.traverse((obj) => {
+                    if (obj instanceof THREE.Mesh) {
+                        obj.geometry?.dispose()
+                        if (Array.isArray(obj.material)) {
+                            obj.material.forEach(m => m.dispose())
+                        } else {
+                            obj.material?.dispose()
+                        }
+                    }
+                })
+            }
+            if (modelUrl) {
+                useLoader.clear(Rhino3dmLoader, modelUrl)
+            }
+        }
+    }, [modelUrl])
+
+    const nodeIds = useStore((state) => Object.keys(state.document.nodes), shallow)
 
     if (!modelUrl) {
         return null

@@ -3,6 +3,8 @@ import type * as Three from 'three'
 type UserStringData = {
     nodeInstanceId?: string
     portInstanceId?: string
+    branchPath?: string
+    branchEntryIndex?: string
 }
 
 type UserString = [key: string, value: string]

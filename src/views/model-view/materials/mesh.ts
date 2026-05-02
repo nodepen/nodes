@@ -14,3 +14,10 @@ export const SELECTED = new THREE.MeshStandardMaterial({
     transparent: true,
     opacity: 0.6
 })
+
+export const EXPIRED = new THREE.MeshStandardMaterial({
+    color: HEX.DARK,
+    side: THREE.DoubleSide,
+    transparent: true,
+    opacity: 0.15
+})
