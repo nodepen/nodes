@@ -8,11 +8,11 @@ import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
 import { shallow } from 'zustand/shallow'
 
 type DocumentModel = {
-    modelUrl: string | null
+    modelUrl: string
 }
 
 const DocumentModel = ({ modelUrl }: DocumentModel) => {
-    const documentObject = useLoader(Rhino3dmLoader, modelUrl ?? '', (loader) => {
+    const documentObject = useLoader(Rhino3dmLoader, modelUrl, (loader) => {
         loader.setLibraryPath('https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1/')
     })
 

@@ -1,8 +1,13 @@
-import React, { Suspense, useMemo } from "react"
-import { Canvas } from "@react-three/fiber"
+import React, { Suspense, useDeferredValue, useMemo } from "react"
+import * as THREE from 'three'
+import { Canvas, extend } from "@react-three/fiber"
+import type { ThreeElement } from '@react-three/fiber'
 import { OrbitControls } from "@react-three/drei"
 import DocumentModel from "./components/document-model/DocumentModel"
 import GridModel from "./components/grid-model/GridModel"
+
+// @ts-expect-error This is correct actually
+THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
 
 type ModelCanvasProps = {
     solutionModelUrl: string | null
@@ -38,9 +43,9 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
         <ambientLight intensity={0.4} />
         <GridModel />
         <Suspense fallback={null}>
-            <DocumentModel modelUrl={solutionModelUrl} />
+            {solutionModelUrl ? <DocumentModel modelUrl={solutionModelUrl} /> : null}
         </Suspense>
-        <OrbitControls enableDamping />
+        <OrbitControls />
     </Canvas>
 }
 

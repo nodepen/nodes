@@ -1,8 +1,10 @@
 import * as THREE from 'three'
 import { useStore, useStoreRef } from "@/store"
 import React from 'react'
+import { Line } from '@react-three/drei'
 import { LINE, MESH } from '../../materials'
 import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
+import { useThree } from '@react-three/fiber'
 
 type DocumentNodeModelProps = {
     id: string
@@ -11,6 +13,8 @@ type DocumentNodeModelProps = {
 
 const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
     const node = useStore((state) => state.document.nodes[id])
+
+    const { size } = useThree()
 
     const isVisible = node.status.isVisible
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(id))
@@ -43,8 +47,10 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
         }
 
         if (o instanceof THREE.Line) {
-            if (isHoverActive && !isPortHovered) {
-                return null
+            const array = o.geometry.attributes.position.array
+            const out: THREE.Vector3[] = []
+            for (let i = 0; i < array.length; i += 3) {
+                out.push(new THREE.Vector3(array[i], array[i + 1], array[i + 2]))
             }
 
             const material =
@@ -55,6 +61,19 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
                         : isSelected
                             ? LINE.SELECTED
                             : LINE.DEFAULT
+
+            // return <Line
+            //     key={`${id}-${o.id}`}
+            //     points={out}
+            //     lineWidth={1}
+            //     transparent
+            //     opacity={0.2}
+            //     polygonOffset
+            //     polygonOffsetFactor={-1}
+            //     polygonOffsetUnits={-1}
+            //     {...material}
+            // />
+
             // @ts-expect-error react-three-fibre line vs svg line
             return <line key={`${id}-${o.id}`} geometry={o.geometry} material={material} />
         }

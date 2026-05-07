@@ -1,17 +1,9 @@
 "use client"
 
-import React, { Suspense, useMemo } from "react"
-import * as THREE from 'three'
-import { Canvas } from "@react-three/fiber"
-import { OrbitControls } from "@react-three/drei"
+import React from "react"
 import { Layer } from "../common"
 import { useViewRegistry } from "../common/hooks"
-import DocumentModel from "./components/document-model/DocumentModel"
-import GridModel from "./components/grid-model/GridModel"
 import ModelCanvas from "./ModelCanvas"
-
-// @ts-expect-error This is correct actually
-THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
 
 type ModelViewProps = {
     backgroundModelUrls: string[]
