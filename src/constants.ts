@@ -65,7 +65,11 @@ export const STYLES = {
 
 export const COMPONENTS = {
     NUMBER_SLIDER: '57da07bd-ecab-415d-9d86-af36d7073abc',
-    PANEL: '59e0b89a-e487-49f8-bab8-b5bab16be14c'
+    PANEL: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
+    ADDITION: 'a0d62394-a118-422d-abb3-6af115c75b25',
+    SUBTRACTION: '9c007a04-d0d9-48e4-9da3-9ba142bc4d46',
+    MULTIPLICATION: 'ce46b74e-00c9-43c4-805a-193b69ea4a11',
+    DIVISION: '9c85271f-89fa-4e9f-9f4a-d75802120ccc'
 }
 
 export const KEYS = {

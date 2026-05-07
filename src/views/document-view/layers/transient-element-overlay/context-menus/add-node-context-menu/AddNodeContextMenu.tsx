@@ -35,7 +35,10 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
     const [activeSearchQuery, setActiveSearchQuery] = useState<string>()
 
-    const candidates = useTextSearch(templates, activeSearchQuery ?? '', ['name', 'nickName', 'keywords'], 'jw')
+    const candidates = useTextSearch(templates, activeSearchQuery ?? '', ['name', 'nickName'], 'jw')
+    const keywordMatches = useMemo(() => {
+        return templates.filter((template) => template.keywords.some((keyword) => keyword.toLowerCase() === activeSearchQuery?.toLowerCase()))
+    }, [activeSearchQuery])
 
     const updateSearchQuery = useCallback(() => {
         const element = searchQueryInputRef.current
@@ -100,6 +103,23 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
                 break
             }
+            case 'addition':
+            case 'subtraction':
+            case 'multiplication':
+            case 'division': {
+                node = createInstance(template)
+
+                if (shortcutMatch.value) {
+                    const inputInstanceId = Object.entries(node.inputs).find(([, i]) => i === 1)?.[0]
+
+                    if (!inputInstanceId) {
+                        console.log('🐍 Could not find input param for math component!')
+                        break
+                    }
+
+                    node.values[inputInstanceId] = createSingleValue(shortcutMatch.value, 'number')
+                }
+            }
         }
 
         if (!node) {
@@ -130,15 +150,9 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     }, [shortcutMatch, templates])
 
     const searchResults = useMemo(() => {
-        const numericQuery = Number.parseFloat(searchQuery ?? '')
-        const isNumericQuery = !Number.isNaN(numericQuery)
-
-        if (isNumericQuery) {
-            return numberSlider ? [numberSlider] : []
-        }
-
-        return candidates.slice(0, 4).reverse()
-    }, [candidates, searchQuery, numberSlider])
+        return [...keywordMatches, ...candidates].slice(0, 4).reverse()
+        // return candidates.slice(0, 4).reverse()
+    }, [candidates])
 
     useEffect(() => {
         const element = searchQueryInputRef.current

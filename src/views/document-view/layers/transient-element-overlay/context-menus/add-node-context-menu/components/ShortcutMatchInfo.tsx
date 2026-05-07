@@ -58,6 +58,37 @@ export const ShortcutMatchInfo = ({ match }: Props) => {
                     </>
                 )
             }
+            case 'addition':
+            case 'subtraction':
+            case 'multiplication':
+            case 'division': {
+                const { value } = match
+
+                const messages = {
+                    'addition': 'Add',
+                    'subtraction': 'Subtract',
+                    'multiplication': 'Multiply by',
+                    'division': 'Divide by'
+                }
+
+                if (!value) {
+                    return (
+                        <>
+                            <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                                {`${messages[match.type].replace(' by', '')} two numbers`}
+                            </div>
+                        </>
+                    )
+                }
+
+                return (
+                    <>
+                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                            {`${messages[match.type]} ${value}`}
+                        </div>
+                    </>
+                )
+            }
             default: {
                 return <></>
             }

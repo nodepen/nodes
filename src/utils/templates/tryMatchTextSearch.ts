@@ -14,6 +14,12 @@ export type TemplateMatch =
         value: string
         config: NodePen.NumberSliderConfig
     }
+    | {
+        type: 'addition' | 'subtraction' | 'multiplication' | 'division',
+        templateId: string
+        // The value to set as the "B" value
+        value?: string
+    }
 
 const NUM = '(-?\\d+(?:\\.\\d+)?)'
 
@@ -23,6 +29,10 @@ const patterns = {
     numberSliderValue: new RegExp(`${NUM}`),
     numberSliderMaximum: new RegExp(`^${NUM}<${NUM}$`),
     numberSliderRange: new RegExp(`^${NUM}<${NUM}<${NUM}$`),
+    addition: /^\+(-?\d+(\.\d+)?)?$/,
+    subraction: /^\-(-?\d+(\.\d+)?)?$/,
+    multiplication: /^\*(-?\d+(\.\d+)?)?$/,
+    division: /^\/(-?\d+(\.\d+)?)?$/
     // domain: new RegExp(`^${NUM}\\s+[Tt]o\\s+${NUM}$`),
 }
 
@@ -54,6 +64,46 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
                 textContent,
                 multilineData: false
             }
+        }
+    }
+
+    if ((m = s.match(patterns.addition))) {
+        const value = m[1]
+
+        return {
+            type: 'addition',
+            templateId: COMPONENTS.ADDITION,
+            value
+        }
+    }
+
+    if ((m = s.match(patterns.subraction))) {
+        const value = m[1]
+
+        return {
+            type: 'subtraction',
+            templateId: COMPONENTS.SUBTRACTION,
+            value
+        }
+    }
+
+    if ((m = s.match(patterns.multiplication))) {
+        const value = m[1]
+
+        return {
+            type: 'multiplication',
+            templateId: COMPONENTS.MULTIPLICATION,
+            value
+        }
+    }
+
+    if ((m = s.match(patterns.division))) {
+        const value = m[1]
+
+        return {
+            type: 'division',
+            templateId: COMPONENTS.DIVISION,
+            value
         }
     }
 
