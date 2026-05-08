@@ -3,11 +3,12 @@ import { useDispatch } from '@/store'
 import { expireSolution } from '@/store/utils'
 import { useCallback, useRef } from 'react'
 import { useStore } from '$'
+import { current } from 'immer'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { saveDocument } from '@/store/utils/saveDocument'
 
 export const useGlobalHotkeys = () => {
-    const { apply } = useDispatch()
+    const { apply, pasteFromClipboard } = useDispatch()
 
     const handleKeyDown = useCallback((e: KeyboardEvent): void => {
         console.log
@@ -63,6 +64,19 @@ export const useGlobalHotkeys = () => {
 
                 break
             }
+            case 'c':
+            case 'C': {
+                if (!e.ctrlKey) {
+                    return
+                }
+
+                apply((state) => {
+                    state.clipboard.pasteCount = 0
+                    state.clipboard.nodes = state.registry.selection.nodes.map((id) => current(state.document.nodes[id]))
+                })
+
+                break
+            }
             case 'q':
             case 'Q': {
                 if (!e.ctrlKey) {
@@ -87,6 +101,16 @@ export const useGlobalHotkeys = () => {
                     }
                     saveDocument(state)
                 })
+                break
+            }
+            case 'v':
+            case 'V': {
+                if (!e.ctrlKey) {
+                    return
+                }
+
+                pasteFromClipboard()
+
                 break
             }
             default: {

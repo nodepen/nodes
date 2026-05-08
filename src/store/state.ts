@@ -40,6 +40,10 @@ export type NodesAppState = {
         viewConfiguration: Record<number, number>
         // activeView: string | null
     }
+    clipboard: {
+        pasteCount: number,
+        nodes: NodePen.DocumentNode[]
+    }
     registry: {
         canvasRoot: React.RefObject<HTMLDivElement | null>
         numberSliderInputRef: React.RefObject<HTMLInputElement | null>
@@ -181,6 +185,10 @@ export const initialState: NodesAppState = {
             0: 1,
             1: 0
         }
+    },
+    clipboard: {
+        pasteCount: 0,
+        nodes: []
     },
     registry: {
         canvasRoot: React.createRef<HTMLDivElement>(),
