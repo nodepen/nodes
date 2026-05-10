@@ -5,11 +5,12 @@ import { useImperativeEvent } from '@/hooks'
 import { saveDocument } from '@/store/utils/saveDocument'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
 import { targetIsScrolling } from '@/utils/dom/targetIsScrolling'
+import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 
 export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
     const nodeRef = useRef<SVGGElement>(null)
 
-    const { setNodePosition } = useDispatch()
+    const { apply, endDrag, setNodePosition } = useDispatch()
 
     const zoom = useStoreRef((state) => state.camera.zoom)
 
@@ -21,6 +22,13 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
     const initialPointerId = useRef<number>(undefined)
     const initialPointerPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
     const initialNodePosition = useRef<{ x: number; y: number }>(getCurrentNodePosition(nodeInstanceId))
+
+    const setIsDragging = useCallback((isActive: boolean): void => {
+        isDragging.current = isActive
+        apply((state) => {
+            state.registry.drag.isActive = true
+        })
+    }, [])
 
     const handlePointerDown = useCallback((e: PointerEvent): void => {
         const container = nodeRef.current
@@ -53,7 +61,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
                         container.setPointerCapture(pointerId)
 
                         // Begin motion
-                        isDragging.current = true
+                        setIsDragging(true)
                         initialNodePosition.current = getCurrentNodePosition(nodeInstanceId)
                         initialPointerPosition.current = { x: pageX, y: pageY }
 
@@ -88,12 +96,49 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
         const dx = (currentPointerX - initialPointerX) / zoom.current
         const dy = (currentPointerY - initialPointerY) / zoom.current
 
+        apply((state) => {
+            state.registry.drag.dx = dx
+            state.registry.drag.dy = dy
+        })
+
         const { x: initialNodeX, y: initialNodeY } = initialNodePosition.current
 
         const currentNodeX = initialNodeX + dx
         const currentNodeY = initialNodeY + dy
 
+
+        if (useStore.getState().registry.drag.isCopyActive) {
+            const { x: previousNodeX, y: previousNodeY } = getCurrentNodePosition(getProvisionalId(nodeInstanceId))
+
+            const stepX = currentNodeX - previousNodeX
+            const stepY = currentNodeY - previousNodeY
+
+            apply((state) => {
+                for (const instanceId of useStore.getState().clipboard.nodes.map((node) => node.instanceId)) {
+                    const provisionalNode = state.document.nodes[getProvisionalId(instanceId)]
+
+                    if (!provisionalNode) {
+                        continue
+                    }
+
+                    provisionalNode.position = {
+                        x: provisionalNode.position.x + stepX,
+                        y: provisionalNode.position.y + stepY
+                    }
+                }
+            })
+
+            // Do not move nodes while drag copy is active
+            return
+        }
+
         setNodePosition(nodeInstanceId, currentNodeX, currentNodeY)
+    }, [])
+
+    const resetState = useCallback((): void => {
+        endDrag()
+        setIsDragging(false)
+        initialPointerId.current = undefined
     }, [])
 
     const handlePointerUp = useCallback((e: PointerEvent): void => {
@@ -103,15 +148,23 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
             return
         }
 
-        isDragging.current = false
-        initialPointerId.current = undefined
+        resetState()
+    }, [resetState])
 
-        saveDocument(useStore.getState())
+    const handlePointerCancel = useCallback((e: PointerEvent): void => {
+        const { pointerId } = e
+
+        if (pointerId !== initialPointerId.current) {
+            return
+        }
+
+        resetState()
     }, [])
 
     useImperativeEvent(nodeRef, 'pointerdown', handlePointerDown)
     useImperativeEvent(nodeRef, 'pointermove', handlePointerMove)
     useImperativeEvent(nodeRef, 'pointerup', handlePointerUp)
+    useImperativeEvent(nodeRef, 'pointercancel', handlePointerCancel)
 
     return nodeRef
 }

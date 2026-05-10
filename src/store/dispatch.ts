@@ -11,6 +11,9 @@ import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution } from './utils'
 import { createInstance } from '@/utils/templates'
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
+import { commitPaste } from './utils/commitPaste'
+import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
+import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -301,53 +304,115 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 false,
                 'camera/setZoom'
             ),
+        copySelectionToClipboard: () =>
+            set(
+                (state) => {
+                    copySelectionToClipboard(state)
+                },
+                false,
+                'clipboard/copy'
+            ),
         pasteFromClipboard: () =>
             set(
                 (state) => {
-                    const newInstances: NodePen.DocumentNode[] = []
-                    const newInstanceIdMap: Record<string, string> = {
-                        'input': 'input',
-                        'output': 'output'
-                    }
+                    const dy = (NODE_MINIMUM_HEIGHT + 25) * state.clipboard.pasteCount
 
-                    state.clipboard.pasteCount = state.clipboard.pasteCount + 1
-
-                    // Copy literal instance data
-                    for (const node of current(state.clipboard.nodes)) {
-                        const { instance, instanceIds } = duplicateInstance(node)
-                        newInstances.push(instance)
-                        Object.assign(newInstanceIdMap, instanceIds)
-                    }
-
-                    // Mutate new instances
-                    const OFFSET = (NODE_MINIMUM_HEIGHT + 25) * state.clipboard.pasteCount
-
-                    for (const node of newInstances) {
-                        // Move by some offset
-                        node.position = {
-                            x: node.position.x,
-                            y: node.position.y + OFFSET
-                        }
-
-                        // Update sources
-                        for (const inputInstanceId of Object.keys(node.sources)) {
-                            node.sources[inputInstanceId] = node.sources[inputInstanceId].map((source) => ({
-                                nodeInstanceId: newInstanceIdMap[source.nodeInstanceId],
-                                portInstanceId: newInstanceIdMap[source.portInstanceId]
-                            }))
-                        }
-
-                        // Add final copies to document
-                        state.document.nodes[node.instanceId] = node
-                    }
-
-                    // Update selection to new copies
-                    state.registry.selection.nodes = newInstances.map((node) => node.instanceId)
+                    commitPaste(state, { dx: 0, dy })
 
                     expireSolution(state)
                 },
                 false,
                 'clipboard/paste'
+            ),
+        toggleDragCopy: (isCopyActive: boolean) =>
+            set(
+                (state) => {
+                    state.registry.drag.isCopyActive = isCopyActive
+
+                    if (isCopyActive) {
+                        copySelectionToClipboard(state)
+
+                        const { dx, dy } = state.registry.drag
+
+                        state.clipboard.nodes = state.clipboard.nodes.map((node) => ({
+                            ...node,
+                            position: {
+                                x: node.position.x - dx,
+                                y: node.position.y - dy
+                            }
+                        }))
+
+                        for (const instanceId of state.registry.selection.nodes) {
+                            const currentInstance = current(state.document.nodes[instanceId])
+
+                            state.document.nodes[getProvisionalId(instanceId)] = {
+                                ...currentInstance,
+                                instanceId: getProvisionalId(instanceId),
+                                // position: {
+                                //     x: currentInstance.position.x + dx,
+                                //     y: currentInstance.position.y + dy
+                                // },
+                                status: {
+                                    ...currentInstance.status,
+                                    isProvisional: true
+                                }
+                            }
+                        }
+                    } else {
+                        for (const instanceId of state.registry.selection.nodes) {
+                            delete state.document.nodes[getProvisionalId(instanceId)]
+                        }
+                        clearClipboard(state)
+                    }
+
+                    const direction = isCopyActive ? -1 : 1
+
+                    const dx = state.registry.drag.dx * direction
+                    const dy = state.registry.drag.dy * direction
+
+                    // Apply or reset drag to selected nodes
+                    for (const nodeInstanceId of state.registry.selection.nodes) {
+                        const selectedNode = state.document.nodes[nodeInstanceId]
+
+                        if (!selectedNode) {
+                            console.log('🐍 Could not update position of node because node not found!')
+                            continue
+                        }
+
+                        state.document.nodes[nodeInstanceId].position = {
+                            x: selectedNode.position.x + dx,
+                            y: selectedNode.position.y + dy,
+                        }
+                    }
+                },
+                false,
+                'clipboard/drag'
+            ),
+        endDrag: () =>
+            set(
+                (state) => {
+                    if (state.registry.drag.isCopyActive) {
+                        // Create copies and place at new position
+                        commitPaste(state, {
+                            dx: state.registry.drag.dx,
+                            dy: state.registry.drag.dy
+                        })
+                        for (const instanceId of state.clipboard.nodes.map((node) => node.instanceId)) {
+                            delete state.document.nodes[getProvisionalId(instanceId)]
+                        }
+                        clearClipboard(state)
+                        expireSolution(state)
+                    }
+
+                    state.registry.drag = {
+                        isActive: false,
+                        isCopyActive: false,
+                        dx: 0,
+                        dy: 0
+                    }
+                },
+                false,
+                'node/endDrag'
             ),
         setNodePosition: (id: string, x: number, y: number) =>
             set(

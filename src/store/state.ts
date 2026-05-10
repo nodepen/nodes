@@ -72,6 +72,13 @@ export type NodesAppState = {
                 entryIndex: string
             } | null
         }
+        drag: {
+            isActive: boolean
+            // If true, the active drag should be creating a copy of the selected items
+            isCopyActive: boolean
+            dx: number
+            dy: number
+        }
         selection: {
             nodes: string[]
             region:
@@ -206,6 +213,12 @@ export const initialState: NodesAppState = {
             nodeInstanceId: null,
             portInstanceId: null,
             branch: null
+        },
+        drag: {
+            isActive: false,
+            isCopyActive: false,
+            dx: 0,
+            dy: 0
         },
         selection: {
             nodes: [],

@@ -6,20 +6,32 @@ import { useStore } from '$'
 import { current } from 'immer'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { saveDocument } from '@/store/utils/saveDocument'
+import { isCtrl } from '@/utils/dom/isCtrl'
 
 export const useGlobalHotkeys = () => {
-    const { apply, pasteFromClipboard } = useDispatch()
+    const { apply, toggleDragCopy, pasteFromClipboard } = useDispatch()
 
     const handleKeyDown = useCallback((e: KeyboardEvent): void => {
-        console.log
         switch (e.key) {
             case ' ': {
                 console.log({
                     document: useStore.getState().document,
                     solution: useStore.getState().solution
                 })
+
                 break
             }
+            case 'Control':
+            case 'Meta':
+
+                break
+            case 'Alt':
+                if (useStore.getState().registry.drag.isActive) {
+                    e.preventDefault()
+                    toggleDragCopy(!useStore.getState().registry.drag.isCopyActive)
+                }
+
+                break
             case 'Delete':
             case 'Backspace': {
                 apply((state) => {
@@ -37,11 +49,12 @@ export const useGlobalHotkeys = () => {
 
                     expireSolution(state)
                 })
+
                 break
             }
             case 'a':
             case 'A': {
-                if (!e.ctrlKey) {
+                if (!isCtrl(e)) {
                     return
                 }
 
@@ -66,7 +79,7 @@ export const useGlobalHotkeys = () => {
             }
             case 'c':
             case 'C': {
-                if (!e.ctrlKey) {
+                if (!isCtrl(e)) {
                     return
                 }
 
@@ -79,7 +92,7 @@ export const useGlobalHotkeys = () => {
             }
             case 'q':
             case 'Q': {
-                if (!e.ctrlKey) {
+                if (!isCtrl(e)) {
                     return
                 }
 
@@ -101,11 +114,12 @@ export const useGlobalHotkeys = () => {
                     }
                     saveDocument(state)
                 })
+
                 break
             }
             case 'v':
             case 'V': {
-                if (!e.ctrlKey) {
+                if (!isCtrl(e)) {
                     return
                 }
 
@@ -119,7 +133,16 @@ export const useGlobalHotkeys = () => {
         }
     }, [])
 
+    const handleKeyUp = useCallback((e: KeyboardEvent): void => {
+        switch (e.key) {
+            case 'Alt': {
+                e.preventDefault()
+            }
+        }
+    }, [])
+
     const documentRef = useDocumentRef()
 
     useImperativeEvent(documentRef, 'keydown', handleKeyDown)
+    useImperativeEvent(documentRef, 'keyup', handleKeyUp)
 }

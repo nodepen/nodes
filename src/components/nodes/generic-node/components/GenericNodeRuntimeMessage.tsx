@@ -67,6 +67,10 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
 
     const tx = isVisible ? 0 : 80
 
+    if (node.status.isProvisional) {
+        return null
+    }
+
     return (
         <>
             <g

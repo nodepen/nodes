@@ -48,7 +48,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
                     )}
                 </g>
             </g>
-            <GenericNodeWires node={node} />
+            {node.status.isProvisional ? null : <GenericNodeWires node={node} />}
         </>
     )
 }
