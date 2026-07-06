@@ -50,6 +50,9 @@ export type NodesAppState = {
         contextMenus: {
             [menuKey: string]: ContextMenu
         }
+        documentControls: {
+            activeDrawer: 'components' | 'params' | null
+        }
         dialogRoot: React.RefObject<HTMLDivElement | null>
         shadows: {
             containerRef: React.RefObject<HTMLDivElement | null> | null
@@ -140,7 +143,6 @@ export type NodesAppState = {
 }
 
 export type NodesAppCallbacks = {
-    onExpireSolution?: (state: NodesAppState) => void
     onSaveDocument?: (state: NodesAppState) => void
     onFileUpload?: (state: NodesAppState) => Promise<void> | void
     onClickHome?: (state: NodesAppState) => void
@@ -152,10 +154,10 @@ export const initialState: NodesAppState = {
     document: {
         id: 'default-id',
         meta: {
-            name: 'default name'
+            name: 'default'
         },
         nodes: {},
-        configuration: {
+        controls: {
             inputs: [],
             outputs: [],
         },
@@ -201,6 +203,9 @@ export const initialState: NodesAppState = {
         canvasRoot: React.createRef<HTMLDivElement>(),
         numberSliderInputRef: React.createRef<HTMLInputElement>(),
         contextMenus: {},
+        documentControls: {
+            activeDrawer: null
+        },
         dialogRoot: React.createRef<HTMLDivElement>(),
         shadows: {
             containerRef: null,

@@ -521,6 +521,9 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             set(
                 (state) => {
                     state.registry.contextMenus = {}
+                    state.registry.documentControls = {
+                        activeDrawer: null
+                    }
                     state.registry.tooltips = {}
                 },
                 false,
