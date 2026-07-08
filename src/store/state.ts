@@ -144,6 +144,7 @@ export type NodesAppState = {
 
 export type NodesAppCallbacks = {
     onSaveDocument?: (state: NodesAppState) => void
+    onExpireSolution?: (state: NodesAppState) => void
     onFileUpload?: (state: NodesAppState) => Promise<void> | void
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void
