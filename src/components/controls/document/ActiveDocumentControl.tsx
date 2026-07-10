@@ -15,9 +15,11 @@ const ActiveDocumentControl = () => {
     return (
         <div className='np-flex np-items-center np-h-12 np-rounded-full np-flex np-items-center np-shadow-main np-select-none np-pointer-events-auto'>
             <div className='np-h-12 np-rounded-full np-flex np-items-center np-justify-center np-bg-light np-shadow-main'>
-                <button className="np-w-11 np-h-11 np-ml-0.5 np-p-0.5 np-border-2 np-border-dark np-rounded-full np-flex np-justify-center np-items-center np-pointer-events-auto np-select-none np-group">
+                <button className="np-w-11 np-h-11 np-ml-0.5 np-p-0.5 np-border-2 np-border-dark np-rounded-full np-flex np-justify-center np-items-center np-pointer-events-auto np-select-none np-group" onClick={handleClickHome}>
                     <div className="np-w-full np-h-full np-rounded-full np-flex np-items-center np-justify-center group-hover:np-bg-grey group-hover:np-cursor-pointer">
-                        {/*  */}
+                        <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
+                            <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                        </svg>
                     </div>
                 </button>
                 <div className='np-h-full np-w-48 np-pl-1 np-pr-2 np-flex np-flex-col np-justify-between np-items-start'>
@@ -32,7 +34,7 @@ const ActiveDocumentControl = () => {
                             <path clip-rule="evenodd" d="M3 6h10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Zm3 2.75A.75.75 0 0 1 6.75 8h2.5a.75.75 0 0 1 0 1.5h-2.5A.75.75 0 0 1 6 8.75Z" fill-rule="evenodd"></path>
                         </svg> */}
                         <p className='np-text-xs np-text-dark np-font-panel np-translate-y-px'>
-                            Collection Name
+                            Personal Scripts
                         </p>
                     </div>
                 </div>

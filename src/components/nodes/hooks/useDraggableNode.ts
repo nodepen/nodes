@@ -139,6 +139,9 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
         endDrag()
         setIsDragging(false)
         initialPointerId.current = undefined
+        apply((state) => {
+            saveDocument(state)
+        })
     }, [])
 
     const handlePointerUp = useCallback((e: PointerEvent): void => {

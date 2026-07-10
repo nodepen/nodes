@@ -2,8 +2,7 @@ import type { NodeSolutionData } from './NodeSolutionData'
 
 export type DocumentSolutionData = {
     solutionId: string
-    isExpired: boolean
-    documentRuntimeData: DocumentRuntimeData
+    documentRuntimeData: DocumentRuntimeData | null
     nodeSolutionData: {
         [nodeInstanceId: string]: NodeSolutionData
     }

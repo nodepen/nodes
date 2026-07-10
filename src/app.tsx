@@ -58,7 +58,7 @@ export const NodesApp = ({
         apply((state) => {
             state.solution = freeze(solution)
         })
-    }, [solution?.solutionId, solution?.isExpired])
+    }, [solution])
 
     return <NodesAppInternal children={children} />
 }

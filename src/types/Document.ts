@@ -4,7 +4,7 @@ export type Document<DocumentMetadata = {}> = {
     id: string
     meta: {
         name: string
-    } & DocumentMetadata
+    } & DocumentMetadata & Record<string, any>
     nodes: { [id: string]: DocumentNode }
     controls: {
         inputs: {

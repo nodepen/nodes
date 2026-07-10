@@ -144,45 +144,6 @@ const DocumentToolsControl = () => {
                 <Divider />
                 <DocumentViewToggle />
                 <Divider />
-                {/* <div className='np-h-full np-flex np-flex-col np-justify-start np-items-center np-pointer-events-auto'>
-                    <div className='np-flex np-mb-0.5 np-items-center'>
-                        <div className='np-w-[29px] np-h-[29px] np-rounded-tl-md np-border-2 np-border-dark np-mr-0.5 np-p-0.5 np-group np-overflow-hidden hover:np-cursor-pointer' >
-                            <div className='np-w-full np-h-full np-flex np-items-center np-justify-center np-rounded-tl-sm group-hover:np-bg-grey'>
-                                <svg fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-5'>
-                                    <path d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                                    <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                                </svg>
-                            </div>
-                        </div>
-                        <div className='np-w-[29px] np-h-[29px] np-border-2 np-border-dark np-mr-0.5 np-p-0.5 np-group np-overflow-hidden hover:np-cursor-pointer' >
-                            <div className='np-w-full np-h-full np-flex np-items-center np-justify-center group-hover:np-bg-grey'>
-                                x
-                            </div>
-                        </div>
-                        <div className='np-w-[29px] np-h-[29px] np-rounded-tr-md np-border-2 np-border-dark np-mr-0.5 np-p-0.5 np-group np-overflow-hidden hover:np-cursor-pointer' >
-                            <div className='np-w-full np-h-full np-flex np-items-center np-justify-center np-rounded-tr-sm group-hover:np-bg-grey'>
-                                x
-                            </div>
-                        </div>
-                    </div>
-                    <div className='np-flex np-items-center'>
-                        <div className='np-w-[29px] np-h-[29px] np-rounded-bl-md np-border-2 np-border-dark np-mr-0.5 np-p-0.5 np-group np-overflow-hidden hover:np-cursor-pointer' >
-                            <div className='np-w-full np-h-full np-flex np-items-center np-justify-center np-rounded-bl-sm group-hover:np-bg-grey'>
-                                x
-                            </div>
-                        </div>
-                        <div className='np-w-[29px] np-h-[29px] np-border-2 np-border-dark np-mr-0.5 np-p-0.5 np-group np-overflow-hidden hover:np-cursor-pointer' >
-                            <div className='np-w-full np-h-full np-flex np-items-center np-justify-center group-hover:np-bg-grey'>
-                                x
-                            </div>
-                        </div>
-                        <div className='np-w-[29px] np-h-[29px] np-rounded-br-md np-border-2 np-border-dark np-mr-0.5 np-p-0.5 np-group np-overflow-hidden hover:np-cursor-pointer' >
-                            <div className='np-w-full np-h-full np-flex np-items-center np-justify-center np-rounded-br-sm group-hover:np-bg-grey'>
-                                x
-                            </div>
-                        </div>
-                    </div>
-                </div> */}
                 <div className='np-h-full np-mr-1 np-flex np-flex-col np-justify-between np-items-center np-pointer-events-auto'>
                     <div className='np-flex np-items-center np-gap-0.5'>
                         <CircleButton>
