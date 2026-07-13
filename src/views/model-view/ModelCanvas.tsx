@@ -32,14 +32,15 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
 
     return <Canvas
         className="np-w-full np-h-full"
-        style={{ display: 'block' }}
+        // style={{ display: 'block' }}
         onCreated={({ camera, scene }) => {
             scene.up.set(0, 0, 1)
             camera.up.set(0, 0, 1)
             camera.lookAt(0, 0, 0)
+            camera.position.set(0, -4, 1)
         }}
     >
-        <color attach="background" args={[0.937, 0.949, 0.949]} />
+        <color attach="background" args={[0.9333333333, 0.9490196078, 0.9490196078]} />
         <ambientLight intensity={0.4} />
         <GridModel />
         <Suspense fallback={null}>

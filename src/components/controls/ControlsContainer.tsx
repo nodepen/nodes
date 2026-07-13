@@ -38,7 +38,7 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
     const { clearInterface } = useDispatch()
 
     return (
-        <Layer fixed id="np-controls-layer" z={90}>
+        <Layer id="np-controls-layer" z={90}>
             <div className="np-w-full np-h-full np-relative">
                 <div className='np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-start np-items-center np-pointer-events-none np-z-50'>
                     <div className='np-w-full np-pt-9 np-pl-9 np-pr-9 np-flex np-justify-between np-items-center'>
@@ -64,6 +64,11 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                                     </div>
                                 </div>
                             </div>
+                            <CircleButton size="lg" shadow>
+                                <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-6">
+                                    <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                </svg>
+                            </CircleButton>
                         </div>
                     </div>
                 </div>
@@ -73,7 +78,7 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                             <ActiveUserControl />
                         </div>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-center np-items-center'>
-                            <DocumentToolsControl />
+                            {/* <DocumentToolsControl /> */}
                         </div>
                         <div className='np-w-full np-h-full np-pr-1 np-flex np-flex-grow np-justify-end np-items-center'>
                             <div className='np-flex np-flex-col np-pr-0.5'>

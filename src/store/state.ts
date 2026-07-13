@@ -166,7 +166,7 @@ export const initialState: NodesAppState = {
     templates: freeze({}),
     solution: freeze({
         solutionId: 'initial',
-        isExpired: false,
+        solutionModelUrl: null,
         documentRuntimeData: {
             durationMs: 0,
         },

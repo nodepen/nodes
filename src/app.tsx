@@ -6,6 +6,7 @@ import type { NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'
 import { FileUploadOverlayContainer, PseudoShadowsContainer } from './views/common'
 import { StaticDialogLayer } from './views/static/dialog-layer'
+import { DocumentView, ModelView } from './views'
 
 type NodesAppProps = {
     document: NodePen.Document
@@ -17,7 +18,6 @@ type NodesAppProps = {
         image?: string
         token?: string
     }
-    children: React.ReactNode
 } & NodesAppCallbacks
 
 export const NodesApp = ({
@@ -25,7 +25,6 @@ export const NodesApp = ({
     templates,
     user,
     solution,
-    children,
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
     const { apply, loadDocument, loadTemplates } = useDispatch()
@@ -60,14 +59,10 @@ export const NodesApp = ({
         })
     }, [solution])
 
-    return <NodesAppInternal children={children} />
+    return <NodesAppInternal />
 }
 
-type NodesAppInternalProps = {
-    children: React.ReactNode
-}
-
-const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
+const NodesAppInternal = React.memo(() => {
     const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
     const { apply } = useDispatch()
@@ -97,7 +92,8 @@ const NodesAppInternal = React.memo(({ children }: NodesAppInternalProps) => {
             <ControlsContainer />
             <PseudoShadowsContainer />
             <StaticDialogLayer />
-            {children}
+            <DocumentView />
+            <ModelView />
         </div>
     )
 })

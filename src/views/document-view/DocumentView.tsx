@@ -1,61 +1,54 @@
 import React, { useEffect } from 'react'
 import { useStore, useDispatch } from '$'
 import { Layer } from '../common'
-import { useViewRegistry } from '../common/hooks'
 import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay, SelectionRegionOverlay } from './layers'
 import { DocumentViewContent } from './DocumentViewContent'
 
-type DocumentViewProps = {
-  editable: boolean
-}
+const DocumentView = (): React.ReactElement | null => {
+    const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
-const DocumentView = ({ editable: _e }: DocumentViewProps): React.ReactElement | null => {
-  const canvasRootRef = useStore((state) => state.registry.canvasRoot)
+    const { setCameraPosition } = useDispatch()
 
-  const { setCameraPosition } = useDispatch()
+    useEffect(() => {
+        const canvas = canvasRootRef.current
 
-  const [position, width] = useViewRegistry({ key: 'document', label: 'Document' })
+        if (!canvas) {
+            return
+        }
 
-  useEffect(() => {
-    const canvas = canvasRootRef.current
+        const { x, y } = useStore.getState().camera.position
 
-    if (!canvas) {
-      return
-    }
+        if (x !== 0 || y !== 0) {
+            // Do not reset camera if it has already been moved
+            return
+        }
 
-    const { x, y } = useStore.getState().camera.position
+        const { width, height } = canvas.getBoundingClientRect()
 
-    if (x !== 0 || y !== 0) {
-      // Do not reset camera if it has already been moved
-      return
-    }
+        const offset = 25
 
-    const { width, height } = canvas.getBoundingClientRect()
+        setCameraPosition(width / 2 + offset, height / -2 - offset)
+    }, [])
 
-    const offset = 25
-
-    setCameraPosition(width / 2 + offset, height / -2 - offset)
-  }, [])
-
-  return (
-    <>
-      <Layer id="np-node-placement-overlay-layer" crop position={position} width={width} z={95}>
-        <NodePlacementOverlay />
-      </Layer>
-      <Layer id="np-selection-region-overlay-layer" crop position={position} width={width} z={95}>
-        <SelectionRegionOverlay />
-      </Layer>
-      <Layer id="np-transient-element-overlay-layer" crop position={position} width={width} z={90} fixed>
-        <TransientElementOverlay />
-      </Layer>
-      <Layer id="np-document-view-content-layer" crop position={position} width={width} z={70}>
-        <DocumentViewContent />
-      </Layer>
-      <Layer id="np-grid-canvas-layer" crop position={position} width={width} z={20}>
-        <CanvasGridUnderlay />
-      </Layer>
-    </>
-  )
+    return (
+        <>
+            <Layer id="np-node-placement-overlay-layer" z={95}>
+                <NodePlacementOverlay />
+            </Layer>
+            <Layer id="np-selection-region-overlay-layer" z={95}>
+                <SelectionRegionOverlay />
+            </Layer>
+            <Layer id="np-transient-element-overlay-layer" z={90}>
+                <TransientElementOverlay />
+            </Layer>
+            <Layer id="np-document-view-content-layer" z={70}>
+                <DocumentViewContent />
+            </Layer>
+            <Layer id="np-grid-canvas-layer" z={20}>
+                <CanvasGridUnderlay />
+            </Layer>
+        </>
+    )
 }
 
 export default React.memo(DocumentView)

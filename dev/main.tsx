@@ -1,26 +1,19 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { NodesApp, DocumentView } from "../dist/index.mjs"
+import { NodesApp, type Document as NodePenDocument } from "../dist/index.mjs"
 import "../dist/styles.css";
 
 const rootEl = document.getElementById("root")!
 const root = createRoot(rootEl)
 
-const doc = {
+const doc: NodePenDocument = {
     id: 'voronoi',
     version: 1 as const,
     nodes: {},
     meta: {
         name: 'My Document',
-        speckle: {
-            linkedModel: {
-                id: '',
-                name: '',
-                rootObjectId: undefined
-            }
-        }
     },
-    configuration: {
+    controls: {
         inputs: [],
         outputs: []
     }
@@ -158,9 +151,7 @@ const templates = [
 root.render(
     <StrictMode>
         <div style={{ width: '100vw', height: '100vh' }}>
-            <NodesApp document={doc} templates={templates as any}>
-                <DocumentView editable />
-            </NodesApp>
+            <NodesApp document={doc} templates={templates as any} solution={null} />
         </div>
     </StrictMode>
 )
