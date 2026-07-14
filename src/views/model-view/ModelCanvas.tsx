@@ -40,7 +40,7 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
             camera.position.set(0, -4, 1)
         }}
     >
-        <color attach="background" args={[0.9333333333, 0.9490196078, 0.9490196078]} />
+        {/* <color attach="background" args={[0.9333333333, 0.9490196078, 0.9490196078]} /> */}
         <ambientLight intensity={0.4} />
         <GridModel />
         <Suspense fallback={null}>

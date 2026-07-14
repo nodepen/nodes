@@ -4,38 +4,49 @@ import React from 'react'
 
 const ActiveDocumentControl = () => {
     const documentMeta = useStore((state) => state.document.meta)
-    const { onClickHome } = useCallbacks()
 
-    //   console.log(documentMeta)
-    const handleClickHome = () => {
-        const state = useStore.getState()
-        onClickHome?.(state)
-    }
+    const documentCollection = documentMeta?.collection?.name
+    const documentOwner = documentMeta?.owner?.name ?? "John NodePen"
 
     return (
-        <div className='np-flex np-items-center np-h-12 np-rounded-full np-flex np-items-center np-shadow-main np-select-none np-pointer-events-auto'>
-            <div className='np-h-12 np-rounded-full np-flex np-items-center np-justify-center np-bg-light np-shadow-main'>
-                <button className="np-w-11 np-h-11 np-ml-0.5 np-p-0.5 np-border-2 np-border-dark np-rounded-full np-flex np-justify-center np-items-center np-pointer-events-auto np-select-none np-group" onClick={handleClickHome}>
-                    <div className="np-w-full np-h-full np-rounded-full np-flex np-items-center np-justify-center group-hover:np-bg-grey group-hover:np-cursor-pointer">
-                        <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
-                            <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                        </svg>
-                    </div>
-                </button>
-                <div className='np-h-full np-w-48 np-pl-1 np-pr-2 np-flex np-flex-col np-justify-between np-items-start'>
-                    <div className='np-p-1 np-mt-1.5 np-w-full np-rounded-sm hover:np-bg-grey'>
+        <div className='np-flex np-items-center np-h-12 np-rounded-full np-flex np-items-center np-select-none np-pointer-events-auto'>
+            <div className='np-h-12 np-rounded-tl-md np-rounded-bl-md np-rounded-tr-[32px] np-rounded-br-[32px] np-flex np-items-center np-justify-center np-bg-light np-shadow-main'>
+                <div className='np-h-full np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
+                    <div className='np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-w-full np-rounded-sm hover:np-bg-grey'>
                         <p className="np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3" style={{ textDecorationThickness: '2px' }}>
                             {documentMeta.name}
                         </p>
                     </div>
-                    <div className='np-pl-1 np-grow np-flex np-items-center np-justify-start -np-translate-y-1'>
-                        {/* <svg data-slot="icon" aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-size-4 np-mr-0.5'>
-                            <path d="M3 2a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H3Z"></path>
-                            <path clip-rule="evenodd" d="M3 6h10v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V6Zm3 2.75A.75.75 0 0 1 6.75 8h2.5a.75.75 0 0 1 0 1.5h-2.5A.75.75 0 0 1 6 8.75Z" fill-rule="evenodd"></path>
-                        </svg> */}
+                    <div className='np-pl-1 np-grow np-flex np-items-center np-justify-start -np-translate-y-px'>
+                        {documentCollection ? (<>
+                            <div className='np-w-3 np-h-3 np-mr-1 np-rounded-sm np-bg-dark np-flex np-items-center np-justify-center'>
+                                <svg aria-hidden="true" fill={COLORS.LIGHT} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h2.879a1.5 1.5 0 0 1 1.06.44l1.122 1.12A1.5 1.5 0 0 0 9.62 4H12.5A1.5 1.5 0 0 1 14 5.5v1.401a2.986 2.986 0 0 0-1.5-.401h-9c-.546 0-1.059.146-1.5.401V3.5ZM2 9.5v3A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-3A1.5 1.5 0 0 0 12.5 8h-9A1.5 1.5 0 0 0 2 9.5Z" />
+                                </svg>
+                            </div>
+                            <p className='np-mr-2 np-whitespace-nowrap np-overflow-hidden np-text-xs np-text-dark np-font-panel np-translate-y-px'>
+                                Collection Name
+                            </p>
+                        </>) : null}
+                        {documentOwner ? (<>
+                            <div className='np-w-3 np-h-3 np-mr-1 np-rounded-sm np-bg-dark np-flex np-items-center np-justify-center'>
+                                <svg aria-hidden="true" fill={COLORS.LIGHT} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-size-3'>
+                                    <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
+                                </svg>
+                            </div>
+                            <p className='np-whitespace-nowrap np-overflow-hidden np-text-xs np-text-dark np-font-panel np-translate-y-px'>
+                                {documentOwner}
+                            </p>
+                        </>) : null}
+                        {/* <div className='np-w-3 np-h-3 np-ml-2 np-mr-0.5 np-rounded-sm np-bg-dark np-flex np-items-center np-justify-center'>
+                            <svg aria-hidden="true" fill={COLORS.LIGHT} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
+                                <path clipRule="evenodd" d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" fillRule="evenodd" />
+                            </svg>
+                        </div>
                         <p className='np-text-xs np-text-dark np-font-panel np-translate-y-px'>
-                            Personal Scripts
-                        </p>
+                            24
+                        </p> */}
                     </div>
                 </div>
                 <div className='np-h-full np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>

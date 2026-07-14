@@ -1,6 +1,6 @@
 import React from 'react'
 import { Layer } from '@/views/common'
-import { useDispatch, useStore } from '$'
+import { useCallbacks, useDispatch, useStore } from '$'
 import {
     DocumentInfoControl,
     PinnedInputsControl,
@@ -33,16 +33,27 @@ type LayoutProps = {
 }
 
 const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement => {
-    const shadowResizeProxyRef = useStore((state) => state.registry.shadows.proxyRefs['controls'])
+    const { onClickHome } = useCallbacks()
 
-    const { clearInterface } = useDispatch()
+    const handleClickHome = () => {
+        onClickHome?.(useStore.getState())
+    }
 
     return (
         <Layer id="np-controls-layer" z={90}>
             <div className="np-w-full np-h-full np-relative">
                 <div className='np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-start np-items-center np-pointer-events-none np-z-50'>
                     <div className='np-w-full np-pt-9 np-pl-9 np-pr-9 np-flex np-justify-between np-items-center'>
-                        <ActiveDocumentControl />
+                        <div className='np-flex np-items-center'>
+                            <div className='np-mr-1 np-bg-light np-rounded-tl-[32px] np-rounded-bl-[32px] np-rounded-tr-md np-rounded-br-md np-shadow-main'>
+                                <CircleButton size="lg" onClick={handleClickHome}>
+                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
+                                        <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                </CircleButton>
+                            </div>
+                            <ActiveDocumentControl />
+                        </div>
                         <div className='np-flex np-items-center'>
                             <div className='np-ml-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
                                 <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer'>
@@ -54,7 +65,7 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                                     </div>
                                 </div>
                             </div>
-                            <div className='np-ml-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
+                            <div className='np-ml-2 np-mr-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
                                 <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer'>
                                     <div className='np-h-full np-flex np-items-center np-justify-center np-rounded-full group-hover:np-bg-grey'>
                                         <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
@@ -73,15 +84,36 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                     </div>
                 </div>
                 <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-end np-items-center np-pointer-events-none np-z-50">
-                    <div className='np-w-full np-pb-8 np-pl-7 np-pr-7 np-grid np-grid-cols-3'>
+                    <div className='np-w-full np-pb-4 np-pl-4 np-pr-4 np-grid np-grid-cols-3'>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-start np-items-center'>
-                            <ActiveUserControl />
+                            <div className='np-p-8 np-flex np-items-center  np-gap-1'>
+                                <CircleButton shadow>
+                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6 np-mb-0.5'>
+                                        <path d="M5.25 11.75A2.25 2.25 0 0 1 7.5 9.5h9a2.25 2.25 0 0 1 2.25 2.25v4.5a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-4.5Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                        <path d="M5.25 9.75A2.25 2.25 0 0 1 7.5 7.5h9a2.25 2.25 0 0 1 2.25 2.25v4.5a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-4.5Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" fill={COLORS.LIGHT} />
+                                    </svg>
+                                </CircleButton>
+                                <CircleButton shadow>
+                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-5 np-mb-0.5'>
+                                        <path d="M9.443 7.072 L14.557 7.072 A2.5 2.5 0 0 1 16.722 8.322 L19.278 12.75 A2.5 2.5 0 0 1 19.278 15.25 L16.722 19.678 A2.5 2.5 0 0 1 14.557 20.928 L9.443 20.928 A2.5 2.5 0 0 1 7.278 19.678 L4.722 15.25 A2.5 2.5 0 0 1 4.722 12.75 L7.278 8.322 A2.5 2.5 0 0 1 9.443 7.072 Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                        <path d="M9.443 5.072 L14.557 5.072 A2.5 2.5 0 0 1 16.722 6.322 L19.278 10.75 A2.5 2.5 0 0 1 19.278 13.25 L16.722 17.678 A2.5 2.5 0 0 1 14.557 18.928 L9.443 18.928 A2.5 2.5 0 0 1 7.278 17.678 L4.722 13.25 A2.5 2.5 0 0 1 4.722 10.75 L7.278 6.322 A2.5 2.5 0 0 1 9.443 5.072 Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" fill={COLORS.PALE} />
+                                    </svg>
+                                </CircleButton>
+                            </div>
+                            {/* <ActiveUserControl /> */}
                         </div>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-center np-items-center'>
                             {/* <DocumentToolsControl /> */}
                         </div>
-                        <div className='np-w-full np-h-full np-pr-1 np-flex np-flex-grow np-justify-end np-items-center'>
-                            <div className='np-flex np-flex-col np-pr-0.5'>
+                        <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-end np-items-center'>
+                            <div className='np-p-8 np-flex np-items-center np-justify-end'>
+                                <CircleButton shadow>
+                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-4'>
+                                        <path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                </CircleButton>
+                            </div>
+                            {/* <div className='np-flex np-flex-col np-pr-0.5'>
                                 <div className='np-ml-2 np-mb-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
                                     <div className='np-flex np-items-center np-justify-center np-rounded-full np-overflow-hidden'>
                                         <CircleButton>
@@ -93,7 +125,7 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                                         <div className='np-h-3 np-w-12 np-rounded-full np-border-2 np-border-dark' />
                                     </div>
                                 </div>
-                            </div>
+                            </div> */}
                             {/* <HelpButton /> */}
                         </div>
                     </div>
