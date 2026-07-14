@@ -27,6 +27,9 @@ export type NodesAppState = {
         /** ratio of screen space pixel to graph space unit */
         zoom: number
     }
+    geometry: {
+        showGrid: boolean
+    }
     layout: {
         fileUpload: {
             isActive: boolean
@@ -179,6 +182,9 @@ export const initialState: NodesAppState = {
             y: 0,
         },
         zoom: 1
+    },
+    geometry: {
+        showGrid: true
     },
     layout: {
         fileUpload: {

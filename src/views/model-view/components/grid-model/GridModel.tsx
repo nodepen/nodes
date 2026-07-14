@@ -1,8 +1,15 @@
 import React from "react"
 import { LINE } from "../../materials"
 import * as THREE from "three"
+import { useStore } from "@/store"
 
 const GridModel = () => {
+    const showGrid = useStore((state) => state.geometry.showGrid)
+
+    if (!showGrid) {
+        return null
+    }
+
     const material = LINE.GRID
 
     // Create 10x10 grid geometry
