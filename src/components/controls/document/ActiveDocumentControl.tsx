@@ -1,22 +1,58 @@
 import { COLORS } from '@/constants'
-import { useCallbacks, useStore } from '@/store'
-import React from 'react'
+import { useCallbacks, useDispatch, useStore } from '@/store'
+import { saveDocument } from '@/store/utils/saveDocument'
+import React, { useEffect, useState } from 'react'
 
 const ActiveDocumentControl = () => {
     const documentMeta = useStore((state) => state.document.meta)
+    const [internalName, setInternalName] = useState(documentMeta.name ?? '')
+
+    const { apply } = useDispatch()
+
+    useEffect(() => {
+        setInternalName(documentMeta.name ?? '')
+    }, [documentMeta.name])
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setInternalName(e.currentTarget.value)
+    }
+
+    const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key.toLowerCase() === 'enter') {
+            e.currentTarget.blur()
+        }
+    }
+
+    const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
+        const nextName = e.currentTarget.value
+
+        setInternalName(nextName)
+
+        e.currentTarget.scroll(0, 0)
+
+        if (nextName !== documentMeta.name) {
+            apply((state) => {
+                state.document.meta.name = nextName
+                saveDocument(state)
+            })
+        }
+    }
 
     const documentCollection = documentMeta?.collection?.name
     const documentOwner = documentMeta?.owner?.name ?? "John NodePen"
 
     return (
-        <div className='np-flex np-items-center np-h-12 np-rounded-full np-flex np-items-center np-select-none np-pointer-events-auto'>
+        <div className='np-flex np-items-center np-h-12 np-rounded-full  np-select-none np-pointer-events-auto'>
             <div className='np-h-12 np-rounded-tl-md np-rounded-bl-md np-rounded-tr-[32px] np-rounded-br-[32px] np-flex np-items-center np-justify-center np-bg-light np-shadow-main'>
                 <div className='np-h-full np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
-                    <div className='np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-w-full np-rounded-sm hover:np-bg-grey'>
-                        <p className="np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3" style={{ textDecorationThickness: '2px' }}>
-                            {documentMeta.name}
-                        </p>
-                    </div>
+                    <input
+                        className="np-h-5 np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm hover:np-bg-grey np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3"
+                        value={internalName}
+                        style={{ textDecorationThickness: '2px' }}
+                        onChange={handleChange}
+                        onKeyUp={handleKeyUp}
+                        onBlur={handleBlur}
+                    />
                     <div className='np-pl-1 np-grow np-flex np-items-center np-justify-start -np-translate-y-px'>
                         {documentCollection ? (<>
                             <div className='np-w-3 np-h-3 np-mr-1 np-rounded-sm np-bg-dark np-flex np-items-center np-justify-center'>
