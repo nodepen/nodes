@@ -42,12 +42,13 @@ const ModelView = () => {
     const [width, setWidth] = useState(0.5)
     const isDragging = useRef(false)
 
-    const containerRef = useRef<HTMLDivElement>(null)
+    const windowContainerRef = useRef<HTMLDivElement>(null)
     const handleRef = useRef<HTMLDivElement>(null)
 
     const dragDomain = useRef<[min: number, max: number]>([0, 1920])
 
     const handleHeight = 32
+    const handleContainerHeight = useRef(0)
     const handleStartY = useRef(0)
     const [handleTop, setHandleTop] = useState(0)
 
@@ -57,10 +58,12 @@ const ModelView = () => {
         }
 
         const { pageY } = e
-        const { top } = e.currentTarget.getBoundingClientRect()
+        const { top, height } = e.currentTarget.getBoundingClientRect()
 
         setHandleTop(pageY - top - (handleHeight / 2))
         handleStartY.current = pageY
+
+        handleContainerHeight.current = height
     }, [isExpanded])
 
     const handleDragAreaPointerMove = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
@@ -78,8 +81,11 @@ const ModelView = () => {
 
         const dy = pageY - handleStartY.current
 
-        handleEl.style.transform = `translateY(${dy}px)`
-    }, [])
+        const minDy = -handleTop
+        const maxDy = handleContainerHeight.current - handleTop - handleHeight
+
+        handleEl.style.transform = `translateY(${clamp(dy, minDy, maxDy)}px)`
+    }, [handleTop])
 
     const handleDragAreaPointerLeave = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
         const handleEl = handleRef.current
@@ -95,7 +101,7 @@ const ModelView = () => {
     const handleDragPointerDown = useCallback((e: React.PointerEvent<HTMLDivElement>) => {
         isDragging.current = true
 
-        const { left, width } = containerRef.current?.getBoundingClientRect() ?? { left: 0, width: 1920 }
+        const { left, width } = windowContainerRef.current?.getBoundingClientRect() ?? { left: 0, width: 1920 }
         dragDomain.current = [left, left + width]
 
         e.currentTarget.setPointerCapture(e.pointerId)
@@ -132,7 +138,7 @@ const ModelView = () => {
     return (
         <Layer id="np-model-layer" z={85}>
             <div className="np-w-full np-h-full np-p-4 np-flex np-flex-col np-justify-end np-pointer-events-none">
-                <div ref={containerRef} className={`${isExpanded ? 'np-h-full' : 'np-h-20'} np-ease-out np-w-full np-relative np-transition-all np-duration-[350ms] `} onTransitionStart={handleTransitionStart} onTransitionEnd={handleTransitionEnd}>
+                <div ref={windowContainerRef} className={`${isExpanded ? 'np-h-full' : 'np-h-20'} np-ease-out np-w-full np-relative np-transition-all np-duration-[350ms] `} onTransitionStart={handleTransitionStart} onTransitionEnd={handleTransitionEnd}>
                     <div className={`${isExpanded ? 'np-rounded-[34px]' : 'np-rounded-lg'} np-ease-out np-h-full np-bg-pale np-p-0.5 np-absolute np-transition-all np-duration-[350ms] np-pointer-events-auto np-group/container`} style={{ width: isExpanded ? `${width * 100}%` : '102px', bottom: isExpanded ? "0px" : "8px", right: isExpanded ? "0" : "calc(50% - 51px)" }}>
                         <div className={`${isExpanded ? 'np-rounded-[32px]' : 'np-rounded-lg'} np-w-full np-h-full np-p-0.5 np-border-2 np-border-green np-transition-all np-duration-[350ms]`}>
                             <div className={`${isExpanded ? 'np-rounded-[30px]' : 'np-rounded-md'} np-w-full np-h-full np-relative`}>
