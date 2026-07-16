@@ -1,13 +1,15 @@
 import { COLORS } from '@/constants'
 import { useCallbacks, useDispatch, useStore } from '@/store'
 import { saveDocument } from '@/store/utils/saveDocument'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 
 const ActiveDocumentControl = () => {
     const documentMeta = useStore((state) => state.document.meta)
     const [internalName, setInternalName] = useState(documentMeta.name ?? '')
 
     const { apply } = useDispatch()
+
+    const inputRef = useRef<HTMLInputElement>(null)
 
     useEffect(() => {
         setInternalName(documentMeta.name ?? '')
@@ -17,10 +19,19 @@ const ActiveDocumentControl = () => {
         setInternalName(e.currentTarget.value)
     }
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
+    }
+
     const handleKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key.toLowerCase() === 'enter') {
             e.currentTarget.blur()
         }
+    }
+
+    const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
+        e.currentTarget.select()
     }
 
     const handleBlur = (e: React.FocusEvent<HTMLInputElement>) => {
@@ -39,7 +50,7 @@ const ActiveDocumentControl = () => {
     }
 
     const documentCollection = documentMeta?.collection?.name
-    const documentOwner = documentMeta?.owner?.name ?? "John NodePen"
+    const documentOwner = documentMeta?.owner?.name ?? "John Grasshopper"
 
     return (
         <div className='np-flex np-items-center np-h-12 np-rounded-full  np-select-none np-pointer-events-auto'>
@@ -47,10 +58,13 @@ const ActiveDocumentControl = () => {
                 <div className='np-h-full np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
                     <input
                         className="np-h-5 np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm hover:np-bg-grey np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3"
+                        ref={inputRef}
                         value={internalName}
                         style={{ textDecorationThickness: '2px' }}
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown}
                         onKeyUp={handleKeyUp}
+                        onFocus={handleFocus}
                         onBlur={handleBlur}
                     />
                     <div className='np-pl-1 np-grow np-flex np-items-center np-justify-start -np-translate-y-px'>
