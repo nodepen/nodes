@@ -50,7 +50,7 @@ const ActiveDocumentControl = () => {
     }
 
     const documentCollection = documentMeta?.collection?.name
-    const documentOwner = documentMeta?.owner?.name ?? "John Grasshopper"
+    const documentOwner = documentMeta?.owner?.name ?? "Jack Grasshopper"
 
     return (
         <div className='np-flex np-items-center np-h-12 np-rounded-full  np-select-none np-pointer-events-auto'>

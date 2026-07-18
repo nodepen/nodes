@@ -129,6 +129,7 @@ const ModelView = () => {
 
     const controlsMarginLeft = clamp((containerWidth - modelWindowWidth - gutterLeft) * -1, 0, gutterLeft)
 
+    const gridButtonTooltip = useStore((state) => state.geometry.showGrid ? 'Hide Grid' : 'Show Grid')
     const toggleGrid = useCallback(() => {
         apply((state) => {
             state.geometry.showGrid = !state.geometry.showGrid
@@ -142,7 +143,7 @@ const ModelView = () => {
                     <div className={`${isExpanded ? 'np-rounded-[34px]' : 'np-rounded-lg'} np-ease-out np-h-full np-bg-pale np-p-0.5 np-absolute np-transition-all np-duration-[350ms] np-pointer-events-auto np-group/container`} style={{ width: isExpanded ? `${width * 100}%` : '102px', bottom: isExpanded ? "0px" : "8px", right: isExpanded ? "0" : "calc(50% - 51px)" }}>
                         <div className={`${isExpanded ? 'np-rounded-[32px]' : 'np-rounded-lg'} np-w-full np-h-full np-p-0.5 np-border-2 np-border-green np-transition-all np-duration-[350ms]`}>
                             <div className={`${isExpanded ? 'np-rounded-[30px]' : 'np-rounded-md'} np-w-full np-h-full np-relative`}>
-                                <div className={`${isExpanded ? 'np-rounded-[30px]' : 'np-rounded-md'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden`} onPointerDownCapture={(e) => {
+                                <div className={`${isExpanded ? 'np-rounded-[28px]' : 'np-rounded-[4px]'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden`} onPointerDownCapture={(e) => {
                                     if (isExpanded) {
                                         return
                                     }
@@ -154,7 +155,7 @@ const ModelView = () => {
                                 <div className="np-w-full np-h-full np-absolute np-flex np-flex-col np-items-start np-justify-end np-invisible group-hover/container:np-visible np-z-30 np-pointer-events-none">
                                     <div className={`${isExpanded ? 'np-w-full np-pl-6 np-pb-6' : 'np-w-16 np-pl-[29px] np-pb-4'} np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5`} style={{ marginLeft: `${controlsMarginLeft}px` }}>
                                         <div className="np-flex np-items-center np-gap-1">
-                                            <CircleButton shadow onClick={() => setIsExpanded((value) => !value)}>
+                                            <CircleButton shadow tooltip={isExpanded ? 'Hide 3D Model' : 'Show 3D Model'} onClick={() => setIsExpanded((value) => !value)}>
                                                 {isExpanded ? (
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                                                         <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -166,7 +167,7 @@ const ModelView = () => {
                                                 )}
                                             </CircleButton>
                                             {isExpanded ? (<>
-                                                <CircleButton shadow onClick={toggleGrid}>
+                                                <CircleButton shadow onClick={toggleGrid} tooltip={gridButtonTooltip}>
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-5">
                                                         <path d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                                         <line x1={5} y1={12} x2={19} y2={12} strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />

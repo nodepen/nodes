@@ -525,6 +525,13 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         activeDrawer: null
                     }
                     state.registry.tooltips = {}
+
+                    // TODO: This is sloppy. It should not be possible for provisional nodes to get left on the canvas.
+                    for (const nodeId of Object.keys(state.document.nodes)) {
+                        if (state.document.nodes[nodeId].status.isProvisional) {
+                            delete state.document.nodes[nodeId]
+                        }
+                    }
                 },
                 false,
                 'ui/clearInterface'

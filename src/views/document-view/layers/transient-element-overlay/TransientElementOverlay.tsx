@@ -10,6 +10,7 @@ import { ProgressBarTooltip } from './tooltips/progress-bar-tooltip'
 import { PortValueContextMenu } from './context-menus/port-value-context-menu'
 import { PortLabelContextMenu } from './context-menus/port-label-context.menu/PortLabelContextMenu'
 import { NumberSliderContextMenu } from './context-menus/number-slider-context-menu'
+import { GenericTextTooltip } from './tooltips/generic-text/GenericTextTooltip'
 
 const TransientElementOverlay = () => {
     const cursor = useCursorState()
@@ -41,6 +42,16 @@ const TransientElementOverlay = () => {
                                 key={`port-tooltip`}
                                 tooltipKey={key}
                                 configuration={tooltip.configuration}
+                                context={tooltip.context}
+                            />
+                        )
+                    }
+                    case 'generic-text': {
+                        return (
+                            <GenericTextTooltip
+                                key={`generic-text-tooltip`}
+                                tooltipKey={key}
+                                config={tooltip.configuration}
                                 context={tooltip.context}
                             />
                         )
