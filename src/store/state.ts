@@ -143,6 +143,9 @@ export type NodesAppState = {
         }
     }
     callbacks: NodesAppCallbacks
+    internalCallbacks: {
+        zoomToExtents?: () => void
+    }
 }
 
 export type NodesAppCallbacks = {
@@ -251,4 +254,5 @@ export const initialState: NodesAppState = {
         },
     },
     callbacks: {},
+    internalCallbacks: {}
 }
