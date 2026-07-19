@@ -69,7 +69,8 @@ export const COMPONENTS = {
     ADDITION: 'a0d62394-a118-422d-abb3-6af115c75b25',
     SUBTRACTION: '9c007a04-d0d9-48e4-9da3-9ba142bc4d46',
     MULTIPLICATION: 'ce46b74e-00c9-43c4-805a-193b69ea4a11',
-    DIVISION: '9c85271f-89fa-4e9f-9f4a-d75802120ccc'
+    DIVISION: '9c85271f-89fa-4e9f-9f4a-d75802120ccc',
+    CONSTRUCT_POINT: '3581f42a-9592-4549-bd6b-1c0fc39d067b'
 }
 
 export const KEYS = {

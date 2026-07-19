@@ -18,7 +18,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
 
     const isVisible = node.status.isVisible
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(id))
-    const isExpired = useStore((state) => state.solution.isExpired)
+    const isExpired = useStore((state) => !state.solution.solutionModelUrl)
 
     const currentHover = useStore((state) => state.registry.hover)
 
@@ -43,7 +43,17 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
             && portInstanceId === currentHover.portInstanceId
 
         if (o instanceof THREE.Points) {
-            return <></>
+            const pointColor = isExpired
+                ? 0xFCFCFC
+                : isSelected
+                    ? 0x4caf7d
+                    : 0xe05a5a
+
+            return (
+                <points key={`${id}-${o.id}`} geometry={o.geometry}>
+                    <pointsMaterial color={pointColor} size={7} sizeAttenuation={false} />
+                </points>
+            )
         }
 
         if (o instanceof THREE.Line) {

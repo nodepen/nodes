@@ -96,6 +96,25 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
                 break
             }
+            case 'point': {
+                node = createInstance(template)
+                const [x, y, z] = shortcutMatch.value
+
+                const inputIds: string[] = []
+
+                for (const [id, i] of Object.entries(node.inputs)) {
+                    inputIds[i] = id
+                }
+
+                const [ix, iy, iz] = inputIds
+
+                console.log({ ix, iy, iz })
+
+                node.values[ix] = createSingleValue(x.toString(), 'number')
+                node.values[iy] = createSingleValue(y.toString(), 'number')
+                node.values[iz] = createSingleValue(z.toString(), 'number')
+                break
+            }
             case 'number-slider': {
                 node = createInstance(template)
                 node.values['output'] = createSingleValue(shortcutMatch.value, 'number')
@@ -259,7 +278,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
                             key={`add-node-shortcut`}
                             template={templates.find((t) => t.guid === shortcutMatch.templateId)!}
                             isSelected={false}
-                            action={() => ''}
+                            action={handleAddNodeFromShortcut}
                         />
                         <ShortcutMatchInfo match={shortcutMatch} />
                     </>

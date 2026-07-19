@@ -15,6 +15,11 @@ export type TemplateMatch =
         config: NodePen.NumberSliderConfig
     }
     | {
+        type: 'point'
+        templateId: string
+        value: [x: number, y: number, z: number]
+    }
+    | {
         type: 'addition' | 'subtraction' | 'multiplication' | 'division',
         templateId: string
         // The value to set as the "B" value
@@ -32,8 +37,9 @@ const patterns = {
     addition: /^\+(-?\d+(\.\d+)?)?$/,
     subraction: /^\-(-?\d+(\.\d+)?)?$/,
     multiplication: /^\*(-?\d+(\.\d+)?)?$/,
-    division: /^\/(-?\d+(\.\d+)?)?$/
-    // domain: new RegExp(`^${NUM}\\s+[Tt]o\\s+${NUM}$`),
+    division: /^\/(-?\d+(\.\d+)?)?$/,
+    point2d: new RegExp(`^${NUM},${NUM},?$`),
+    point3d: new RegExp(`^${NUM},${NUM},${NUM}$`)
 }
 
 export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
@@ -64,6 +70,29 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
                 textContent,
                 multilineData: false
             }
+        }
+    }
+
+    if ((m = s.match(patterns.point2d))) {
+        const x = Number.parseFloat(m[1] ?? '0')
+        const y = Number.parseFloat(m[2] ?? '0')
+
+        return {
+            type: 'point',
+            templateId: COMPONENTS.CONSTRUCT_POINT,
+            value: [x, y, 0]
+        }
+    }
+
+    if ((m = s.match(patterns.point3d))) {
+        const x = Number.parseFloat(m[1] ?? '0')
+        const y = Number.parseFloat(m[2] ?? '0')
+        const z = Number.parseFloat(m[3] ?? '0')
+
+        return {
+            type: 'point',
+            templateId: COMPONENTS.CONSTRUCT_POINT,
+            value: [x, y, z]
         }
     }
 

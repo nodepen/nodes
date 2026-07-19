@@ -43,6 +43,26 @@ export const ShortcutMatchInfo = ({ match }: Props) => {
                     </>
                 )
             }
+            case 'point': {
+                const [x, y, z] = match.value
+
+                return (
+                    <>
+                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                            {`w/ coordinates`}
+                        </div>
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                            {`X: ${x}`}
+                        </div>
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                            {`Y: ${y}`}
+                        </div>
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                            {`Z: ${z}`}
+                        </div>
+                    </>
+                )
+            }
             case 'panel': {
                 const { textContent } = match.config
 
