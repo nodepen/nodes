@@ -1,22 +1,18 @@
-import React from 'react'
+import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
 import { Layer } from '@/views/common'
 import { useCallbacks, useDispatch, useStore } from '$'
 import {
     DocumentInfoControl,
     PinnedInputsControl,
     PinnedOutputsControl,
-    TemplateLibraryControl,
 } from './panels'
 
 const ControlsContainer = (): React.ReactElement => {
-    const templates = useStore((state) => state.templates)
-
     return (
         <ControlsContainerLayout>
             {/* <DocumentInfoControl /> */}
             <PinnedInputsControl />
             <PinnedOutputsControl />
-            <TemplateLibraryControl templates={templates} />
         </ControlsContainerLayout>
     )
 }
@@ -28,6 +24,8 @@ import HelpButton from './HelpButton'
 import { COLORS } from '@/constants'
 import { CircleButton } from '../layout/CircleButton'
 import { expireSolution } from '@/store/utils'
+import { SidebarPanel } from './common/SidebarPanel'
+import { TemplateLibrary } from './template-library/TemplateLibrary'
 
 type LayoutProps = {
     children: React.ReactNode
@@ -46,10 +44,36 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
         onClickProfile?.(useStore.getState())
     }
 
+    const showComponentLibraryPanel = useStore((state) => state.ui.sidebar.isComponentLibraryOpen)
+    const [componentLibraryPosition, setComponentLibraryPosition] = useState<[number, number]>([0, 0])
+    const handleClickComponentLibrary = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        const { pageX, pageY } = e
+        setComponentLibraryPosition([pageX, pageY])
+        apply((state) => {
+            state.ui.sidebar.isComponentLibraryOpen = true
+        })
+    }, [])
+    const componentLibraryButtonRef = useRef<SVGSVGElement>(null)
+    useLayoutEffect(() => {
+        const el = componentLibraryButtonRef.current
+        if (!el) {
+            return
+        }
+        const { left, width, top, height } = el.getBoundingClientRect()
+        setComponentLibraryPosition([left + width / 2, top + height / 2])
+    }, [])
+
     return (
         <Layer id="np-controls-layer" z={90}>
             <div className="np-w-full np-h-full np-relative">
-                <div className='np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-start np-items-center np-pointer-events-none np-z-50'>
+                <div className='np-w-full np-h-full np-absolute np-z-50 np-top-0 np-left-0'>
+                    <div className='np-w-full np-h-full np-relative'>
+                        <SidebarPanel isOpen={showComponentLibraryPanel} from={componentLibraryPosition} height={240} bottom={38}>
+                            <TemplateLibrary />
+                        </SidebarPanel>
+                    </div>
+                </div>
+                <div className='np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-start np-items-center np-pointer-events-none np-z-40'>
                     <div className='np-w-full np-pt-9 np-pl-9 np-pr-9 np-flex np-justify-between np-items-center'>
                         <div className='np-flex np-items-center'>
                             <div className='np-mr-1 np-bg-light np-rounded-tl-[32px] np-rounded-bl-[32px] np-rounded-tr-md np-rounded-br-md np-shadow-main'>
@@ -90,12 +114,12 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                         </div>
                     </div>
                 </div>
-                <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-end np-items-center np-pointer-events-none np-z-50">
+                <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-end np-items-center np-pointer-events-none np-z-40">
                     <div className='np-w-full np-pb-4 np-pl-4 np-pr-4 np-grid np-grid-cols-3'>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-start np-items-center'>
                             <div className='np-p-8 np-flex np-items-center np-gap-1'>
-                                <CircleButton shadow tooltip='Component Library'>
-                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6 np-mb-0.5'>
+                                <CircleButton shadow tooltip='Component Library' onClick={handleClickComponentLibrary} >
+                                    <svg ref={componentLibraryButtonRef} aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6 np-mb-0.5'>
                                         <path d="M5.25 11.75A2.25 2.25 0 0 1 7.5 9.5h9a2.25 2.25 0 0 1 2.25 2.25v4.5a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-4.5Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                         <path d="M5.25 9.75A2.25 2.25 0 0 1 7.5 7.5h9a2.25 2.25 0 0 1 2.25 2.25v4.5a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-4.5Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" fill={COLORS.LIGHT} />
                                     </svg>

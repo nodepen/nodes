@@ -1,6 +1,6 @@
 import type * as NodePen from '@/types'
 import { tryGetSingleValue } from '@/utils/data-trees'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { PrecisionInput } from './PrecisionInput'
 import { clamp } from '@/utils'
@@ -32,6 +32,7 @@ export const NumberSliderConfigForm = ({ node, config, onClose }: ConfigProps) =
         handleSubmit,
         getValues,
         setValue,
+        setFocus
     } = useForm<ConfigFormData>({
         defaultValues: {
             min: min.toFixed(precision),
@@ -39,6 +40,10 @@ export const NumberSliderConfigForm = ({ node, config, onClose }: ConfigProps) =
             value: initialValue,
         }
     })
+
+    useEffect(() => {
+        setFocus('value')
+    }, [])
 
     const [internalPrecision, setInternalPrecision] = useState(precision)
     const setPrecision = useCallback((value: typeof precision) => {
@@ -58,9 +63,18 @@ export const NumberSliderConfigForm = ({ node, config, onClose }: ConfigProps) =
         e.currentTarget.select()
     }, [])
     const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === 'Enter') {
-            e.preventDefault();
-            e.currentTarget.blur();
+        switch (e.key.toLowerCase()) {
+            case 'enter': {
+                e.preventDefault();
+                e.currentTarget.blur();
+                break
+            }
+            case 'del':
+            case 'delete': {
+                e.stopPropagation()
+                e.nativeEvent.stopImmediatePropagation()
+                break
+            }
         }
     }, [])
     const handleBlur = useCallback(() => {

@@ -5,6 +5,7 @@ import type { ThreeElement } from '@react-three/fiber'
 import { OrbitControls } from "@react-three/drei"
 import DocumentModel from "./components/document-model/DocumentModel"
 import GridModel from "./components/grid-model/GridModel"
+import { useDispatch } from "@/store"
 
 // @ts-expect-error This is correct actually
 THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
@@ -14,21 +15,7 @@ type ModelCanvasProps = {
 }
 
 const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
-    // const fitCameraToObject = (object: THREE.Object3D) => {
-    //         const box = new THREE.Box3().setFromObject(object)
-    //         const center = new THREE.Vector3()
-    //         const size = new THREE.Vector3()
-    //         box.getCenter(center)
-    //         box.getSize(size)
-    //         const maxSize = Math.max(size.x, size.y, size.z)
-    //         const fitDistance = Math.max(maxSize * 1.5, 1)
-
-    //         camera.position.copy(center).add(new THREE.Vector3(fitDistance, fitDistance, fitDistance))
-    //         camera.lookAt(center)
-    //         camera.updateProjectionMatrix()
-    //         controls.target.copy(center)
-    //         controls.update()
-    //     }
+    const { clearInterface } = useDispatch()
 
     return <Canvas
         className="np-w-full np-h-full"
@@ -38,6 +25,9 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
             camera.up.set(0, 0, 1)
             camera.lookAt(0, 0, 0)
             camera.position.set(0, -4, 1)
+        }}
+        onPointerDown={() => {
+            clearInterface()
         }}
     >
         {/* <color attach="background" args={[0.9333333333, 0.9490196078, 0.9490196078]} /> */}

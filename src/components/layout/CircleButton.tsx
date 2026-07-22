@@ -9,7 +9,7 @@ type Props = React.PropsWithChildren<{
     tooltip?: string
     tooltipHotkeys?: string[]
     shadow?: boolean
-    onClick?: () => void
+    onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
 }>
 
 export const CircleButton = ({ children, ...props }: Props) => {
@@ -24,7 +24,7 @@ export const CircleButton = ({ children, ...props }: Props) => {
     const buttonRef = useRef<HTMLDivElement>(null)
     const tooltipKey = useRef(`circle-button-${newGuid()}`)
 
-    const { apply } = useDispatch()
+    const { apply, clearInterface } = useDispatch()
 
     const activeTimeout = useRef<ReturnType<typeof setTimeout>>(null)
     const tooltipIsVisible = useRef(false)
@@ -91,7 +91,14 @@ export const CircleButton = ({ children, ...props }: Props) => {
         tooltipIsVisible.current = false
     }, [])
 
-    return <div ref={buttonRef} className={`${size === 'sm' ? 'np-w-8 np-h-8' : 'np-w-12 np-h-12'} ${shadow ? 'np-shadow-main' : ''} np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-bg-light np-pointer-events-auto np-group hover:np-cursor-pointer`} onClick={onClick} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave} >
+    const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
+        clearInterface()
+        onClick?.(e)
+    }, [onClick])
+
+    return <div ref={buttonRef} className={`${size === 'sm' ? 'np-w-8 np-h-8' : 'np-w-12 np-h-12'} ${shadow ? 'np-shadow-main' : ''} np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-bg-light np-pointer-events-auto np-group hover:np-cursor-pointer`} onClick={handleClick} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave} >
         <div className="np-w-full np-h-full np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark ">
             <div className="np-w-full np-h-full np-flex np-items-center np-justify-center np-rounded-full group-hover:np-bg-grey">
                 {children}

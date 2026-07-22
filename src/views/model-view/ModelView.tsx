@@ -122,7 +122,9 @@ const ModelView = () => {
         isDragging.current = false
     }, [])
 
-    const gutterLeft = 74
+    const gutterLeft = useStore((state) => {
+        return state.ui.sidebar.isComponentLibraryOpen ? 280 : 74
+    })
 
     const containerWidth = dragDomain.current[1] - dragDomain.current[0]
     const modelWindowWidth = isExpanded ? containerWidth * width : 0

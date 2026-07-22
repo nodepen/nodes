@@ -315,7 +315,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         pasteFromClipboard: () =>
             set(
                 (state) => {
-                    const dy = (NODE_MINIMUM_HEIGHT + 25) * state.clipboard.pasteCount
+                    const dy = (NODE_MINIMUM_HEIGHT + 36) * (state.clipboard.pasteCount + 1)
 
                     commitPaste(state, { dx: 0, dy })
 
@@ -525,6 +525,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         activeDrawer: null
                     }
                     state.registry.tooltips = {}
+
+                    state.ui.sidebar.isComponentLibraryOpen = false
 
                     // TODO: This is sloppy. It should not be possible for provisional nodes to get left on the canvas.
                     for (const nodeId of Object.keys(state.document.nodes)) {

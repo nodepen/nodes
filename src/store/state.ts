@@ -27,6 +27,11 @@ export type NodesAppState = {
         /** ratio of screen space pixel to graph space unit */
         zoom: number
     }
+    ui: {
+        sidebar: {
+            isComponentLibraryOpen: boolean
+        }
+    }
     geometry: {
         showGrid: boolean
     }
@@ -185,6 +190,11 @@ export const initialState: NodesAppState = {
             y: 0,
         },
         zoom: 1
+    },
+    ui: {
+        sidebar: {
+            isComponentLibraryOpen: true
+        }
     },
     geometry: {
         showGrid: true

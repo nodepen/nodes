@@ -32,7 +32,7 @@ const patterns = {
     panel: /^"(.*)$/,
     panel2: /^\/\/(.*)$/,
     numberSliderValue: new RegExp(`${NUM}`),
-    numberSliderMaximum: new RegExp(`^${NUM}<${NUM}$`),
+    numberSliderMaximum: new RegExp(`^${NUM}(?:<|\.\.)${NUM}$`),
     numberSliderRange: new RegExp(`^${NUM}<${NUM}<${NUM}$`),
     addition: /^\+(-?\d+(\.\d+)?)?$/,
     subraction: /^\-(-?\d+(\.\d+)?)?$/,
@@ -193,15 +193,15 @@ const decomposeNumber = (valueString: string): NodePen.NumberSliderConfig & { va
 
     const precision = clamp(decimals.length, 0, 4) as 0 | 1 | 2 | 3
 
-    const numericValue = clamp(Number.parseFloat(value), -1_000_00, 1_000_000)
+    const numericValue = clamp(Number.parseFloat(value), -1_000_000, 1_000_000)
 
-    const maxAbs = Math.pow(10, numericValue.toString().length)
+    const maxAbs = Math.pow(10, numericValue === 0 ? 0 : numericValue.toString().length)
 
     const n = Number.parseFloat(valueString)
 
     return {
-        min: numericValue > 0 ? 0 : -maxAbs,
-        max: numericValue > 0 ? maxAbs : 0,
+        min: numericValue >= 0 ? 0 : -maxAbs,
+        max: numericValue >= 0 ? maxAbs : 0,
         precision,
         value: n.toFixed(precision)
     }
