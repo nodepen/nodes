@@ -179,6 +179,7 @@ export const initialState: NodesAppState = {
     solution: freeze({
         solutionId: 'initial',
         solutionModelUrl: null,
+        solutionStatusMessages: [],
         documentRuntimeData: {
             durationMs: 0,
         },

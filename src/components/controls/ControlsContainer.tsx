@@ -83,6 +83,16 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
         setParameterLibraryPosition([left + width / 2, top + height / 2])
     }, [])
 
+    const statusMessages = useStore((state) => state.solution?.solutionStatusMessages ?? [])
+    const [activeStatusMessage, setActiveStatusMessage] = useState<string | null>(null)
+
+    const statusColors = {
+        'ok': COLORS.GREEN,
+        'idle': COLORS.GREY,
+        'pending': COLORS.WARN,
+        'error': COLORS.ERROR
+    }
+
     return (
         <Layer id="np-controls-layer" z={90}>
             <div className="np-w-full np-h-full np-relative">
@@ -161,10 +171,14 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                         </div>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-end np-items-center'>
                             <div className='np-p-8 np-flex np-items-center np-justify-end'>
-                                <div className='np-rounded-full np-bg-light np-shadow-main np-flex np-items-center'>
+                                <div className='np-h-8 np-flex np-items-center np-mr-0.5 np-rounded-full np-bg-pale'>
+                                    <p className='np-text-xs np-pl-2 np-pr-2 np-font-panel np-font-semibold np-text-dark'>
+                                        {activeStatusMessage}
+                                    </p>
+                                </div>
+                                <div className='np-rounded-full np-bg-light np-shadow-main np-flex np-items-center np-pointer-events-auto'>
                                     <div className='np-rounded-full np-h-full np-pl-2 np-pr-1 np-flex np-items-center np-justify-center np-gap-1'>
-                                        <div className='np-w-3 np-h-3 np-rounded-full np-bg-green' />
-                                        <div className='np-w-3 np-h-3 np-rounded-full np-bg-green' />
+                                        {statusMessages.map((message, i) => (<div key={`status-${i}`} className='np-w-3 np-h-3 np-rounded-full' style={{ background: statusColors[message.status] }} onPointerEnter={() => setActiveStatusMessage(message.message)} onPointerLeave={() => setActiveStatusMessage(null)} />))}
                                     </div>
                                     <CircleButton tooltip='Recompute' onClick={() => {
                                         apply((state) => {
@@ -176,7 +190,6 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                                         </svg>
                                     </CircleButton>
                                 </div>
-
                             </div>
                             {/* <div className='np-flex np-flex-col np-pr-0.5'>
                                 <div className='np-ml-2 np-mb-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>

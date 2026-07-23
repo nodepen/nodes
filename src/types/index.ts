@@ -10,7 +10,7 @@ export type {
     DataTreeValueType,
 } from './data'
 export type { PortConfiguration, PortFlag } from './ports'
-export type { DocumentSolutionData, NodeSolutionData, PortSolutionData } from './solution'
+export type { DocumentSolutionData, DocumentSolutionStatusMessage, NodeSolutionData, PortSolutionData } from './solution'
 export type { NodeTemplate, PortTemplate } from './templates'
 
 // TODO: non-schema types

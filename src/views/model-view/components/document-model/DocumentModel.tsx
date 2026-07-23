@@ -20,6 +20,25 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
         loader.setLibraryPath('https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1/')
     })
 
+    useEffect(() => {
+        apply((state) => {
+
+            state.solution = {
+                ...state.solution,
+                solutionStatusMessages: [
+                    {
+                        status: 'ok',
+                        message: `Solved ${Object.keys(state.document.nodes).length} nodes.`
+                    },
+                    {
+                        status: 'ok',
+                        message: 'Loaded geometry.'
+                    }
+                ]
+            }
+        })
+    }, [documentObject])
+
     const zoomToExtents = useCallback(() => {
         const box = new THREE.Box3().setFromObject(documentObject)
         const center = new THREE.Vector3()

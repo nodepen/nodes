@@ -1,4 +1,4 @@
-import React, { Suspense, useDeferredValue, useMemo } from "react"
+import React, { Suspense, useDeferredValue, useEffect, useMemo } from "react"
 import * as THREE from 'three'
 import { Canvas, extend } from "@react-three/fiber"
 import type { ThreeElement } from '@react-three/fiber'

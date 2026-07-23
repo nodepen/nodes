@@ -148,10 +148,35 @@ const templates = [
     },
 ]
 
+const solution = {
+    solutionId: '',
+    solutionModelUrl: null,
+    solutionStatusMessages: [
+        {
+            status: 'ok' as const,
+            message: 'Ok message here.'
+        },
+        {
+            status: 'error' as const,
+            message: 'Failed to do something!'
+        },
+        {
+            status: 'pending' as const,
+            message: 'Downloading model...'
+        },
+        {
+            status: 'idle' as const,
+            message: 'Waiting for solution...'
+        }
+    ],
+    documentRuntimeData: null,
+    nodeSolutionData: {}
+}
+
 root.render(
     <StrictMode>
         <div style={{ width: '100vw', height: '100vh' }}>
-            <NodesApp document={doc} templates={templates as any} solution={null} />
+            <NodesApp document={doc} templates={templates as any} solution={solution} />
         </div>
     </StrictMode>
 )
