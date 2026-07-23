@@ -526,7 +526,10 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     }
                     state.registry.tooltips = {}
 
-                    state.ui.sidebar.isComponentLibraryOpen = false
+                    state.ui.sidebar = {
+                        isComponentLibraryOpen: false,
+                        isParameterLibraryOpen: false
+                    }
 
                     // TODO: This is sloppy. It should not be possible for provisional nodes to get left on the canvas.
                     for (const nodeId of Object.keys(state.document.nodes)) {

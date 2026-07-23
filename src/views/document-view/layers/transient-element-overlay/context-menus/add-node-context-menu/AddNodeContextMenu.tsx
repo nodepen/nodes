@@ -81,7 +81,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
                 node = createInstance(template)
                 node.nodeConfiguration = shortcutMatch.config
 
-                if (shortcutMatch.config.textContent?.length && shortcutMatch.config.textContent.length < 5) {
+                if (shortcutMatch.config.textContent?.length && shortcutMatch.config.textContent.length < 8) {
                     node.dimensions.width = 100
                     node.dimensions.height = 40
                     node.anchors['input'] = {

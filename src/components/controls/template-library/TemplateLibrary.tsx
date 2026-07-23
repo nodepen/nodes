@@ -89,7 +89,7 @@ export const TemplateLibrary = () => {
             </div>
         </div>
         <div className="np-w-full np-h-full np-pl-0.5 np-pr-0.5 np-pb-0.5 np-grid np-grid-cols-[repeat(auto-fill,minmax(30px,1fr))] np-gap-2 np-content-start np-overflow-y-auto">
-            {activeTemplates.map((template) => <TemplateLibraryDraggable key={template.guid} template={template} />)}
+            {activeTemplates.map((template) => <TemplateLibraryDraggable key={template.guid} template={template} showTooltip />)}
         </div>
     </div>
 }

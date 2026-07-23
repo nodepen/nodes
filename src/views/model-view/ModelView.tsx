@@ -123,7 +123,8 @@ const ModelView = () => {
     }, [])
 
     const gutterLeft = useStore((state) => {
-        return state.ui.sidebar.isComponentLibraryOpen ? 280 : 74
+        const { isComponentLibraryOpen, isParameterLibraryOpen } = state.ui.sidebar
+        return isComponentLibraryOpen || isParameterLibraryOpen ? 280 : 74
     })
 
     const containerWidth = dragDomain.current[1] - dragDomain.current[0]

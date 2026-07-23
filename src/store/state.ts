@@ -30,6 +30,7 @@ export type NodesAppState = {
     ui: {
         sidebar: {
             isComponentLibraryOpen: boolean
+            isParameterLibraryOpen: boolean
         }
     }
     geometry: {
@@ -193,7 +194,8 @@ export const initialState: NodesAppState = {
     },
     ui: {
         sidebar: {
-            isComponentLibraryOpen: true
+            isComponentLibraryOpen: false,
+            isParameterLibraryOpen: false
         }
     },
     geometry: {

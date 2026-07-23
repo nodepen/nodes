@@ -7,9 +7,10 @@ import { KEYS } from '@/constants'
 
 type TemplateDraggableProps = {
     template: NodePen.NodeTemplate
+    showTooltip?: boolean
 }
 
-const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
+const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) => {
     const buttonRef = useRef<HTMLButtonElement>(null)
 
     const { apply, clearInterface } = useDispatch()
@@ -51,7 +52,7 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
         (_e: PointerEvent): void => {
             const element = buttonRef.current
 
-            if (!element) {
+            if (!element || !showTooltip) {
                 return
             }
 
@@ -64,7 +65,7 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
                     configuration: {
                         position: {
                             x: 318,
-                            y: y - 4,
+                            y: y - 6,
                         },
                         isSticky: false,
                     },
@@ -75,7 +76,7 @@ const TemplateDraggable = ({ template }: TemplateDraggableProps) => {
                 }
             })
         },
-        [apply]
+        [apply, showTooltip]
     )
 
     const longHoverTarget = useLongHover<HTMLDivElement>(handleLongHover)

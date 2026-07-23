@@ -26,6 +26,7 @@ import { CircleButton } from '../layout/CircleButton'
 import { expireSolution } from '@/store/utils'
 import { SidebarPanel } from './common/SidebarPanel'
 import { TemplateLibrary } from './template-library/TemplateLibrary'
+import { ParameterLibrary } from './template-library/ParameterLibrary'
 
 type LayoutProps = {
     children: React.ReactNode
@@ -63,13 +64,35 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
         setComponentLibraryPosition([left + width / 2, top + height / 2])
     }, [])
 
+    const showParameterLibraryPanel = useStore((state) => state.ui.sidebar.isParameterLibraryOpen)
+    const [parameterLibraryPosition, setParameterLibraryPosition] = useState<[number, number]>([0, 0])
+    const handleClickParameterLibrary = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        const { pageX, pageY } = e
+        setParameterLibraryPosition([pageX, pageY])
+        apply((state) => {
+            state.ui.sidebar.isParameterLibraryOpen = true
+        })
+    }, [])
+    const parameterLibraryButtonRef = useRef<SVGSVGElement>(null)
+    useLayoutEffect(() => {
+        const el = parameterLibraryButtonRef.current
+        if (!el) {
+            return
+        }
+        const { left, width, top, height } = el.getBoundingClientRect()
+        setParameterLibraryPosition([left + width / 2, top + height / 2])
+    }, [])
+
     return (
         <Layer id="np-controls-layer" z={90}>
             <div className="np-w-full np-h-full np-relative">
                 <div className='np-w-full np-h-full np-absolute np-z-50 np-top-0 np-left-0'>
                     <div className='np-w-full np-h-full np-relative'>
-                        <SidebarPanel isOpen={showComponentLibraryPanel} from={componentLibraryPosition} height={240} bottom={38}>
+                        <SidebarPanel isOpen={showComponentLibraryPanel} from={componentLibraryPosition} height={220} bottom={38}>
                             <TemplateLibrary />
+                        </SidebarPanel>
+                        <SidebarPanel isOpen={showParameterLibraryPanel} from={parameterLibraryPosition} height={120} bottom={38}>
+                            <ParameterLibrary />
                         </SidebarPanel>
                     </div>
                 </div>
@@ -124,8 +147,8 @@ const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement 
                                         <path d="M5.25 9.75A2.25 2.25 0 0 1 7.5 7.5h9a2.25 2.25 0 0 1 2.25 2.25v4.5a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-4.5Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" fill={COLORS.LIGHT} />
                                     </svg>
                                 </CircleButton>
-                                <CircleButton shadow tooltip='Param Library'>
-                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-5 np-mb-0.5'>
+                                <CircleButton shadow tooltip='Param Library' onClick={handleClickParameterLibrary}>
+                                    <svg ref={parameterLibraryButtonRef} aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-5 np-mb-0.5'>
                                         <path d="M9.443 7.072 L14.557 7.072 A2.5 2.5 0 0 1 16.722 8.322 L19.278 12.75 A2.5 2.5 0 0 1 19.278 15.25 L16.722 19.678 A2.5 2.5 0 0 1 14.557 20.928 L9.443 20.928 A2.5 2.5 0 0 1 7.278 19.678 L4.722 15.25 A2.5 2.5 0 0 1 4.722 12.75 L7.278 8.322 A2.5 2.5 0 0 1 9.443 7.072 Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                         <path d="M9.443 5.072 L14.557 5.072 A2.5 2.5 0 0 1 16.722 6.322 L19.278 10.75 A2.5 2.5 0 0 1 19.278 13.25 L16.722 17.678 A2.5 2.5 0 0 1 14.557 18.928 L9.443 18.928 A2.5 2.5 0 0 1 7.278 17.678 L4.722 13.25 A2.5 2.5 0 0 1 4.722 10.75 L7.278 6.322 A2.5 2.5 0 0 1 9.443 5.072 Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" fill={COLORS.PALE} />
                                     </svg>
