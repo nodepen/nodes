@@ -1,1 +1,0 @@
-export { PinnedInputsControl } from './PinnedInputsControl'

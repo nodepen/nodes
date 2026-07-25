@@ -14,7 +14,7 @@ type DocumentModel = {
 
 const DocumentModel = ({ modelUrl }: DocumentModel) => {
     const { apply } = useDispatch()
-    const { camera, controls } = useThree()
+    const { camera, controls, scene } = useThree()
 
     const documentObject = useLoader(Rhino3dmLoader, modelUrl, (loader) => {
         loader.setLibraryPath('https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1/')
@@ -22,9 +22,13 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
 
     useEffect(() => {
         apply((state) => {
+            if (!documentObject) {
+                return
+            }
 
             state.solution = {
                 ...state.solution,
+                isExpired: false,
                 solutionStatusMessages: [
                     {
                         status: 'ok',
@@ -58,16 +62,14 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
         c?.update()
     }, [documentObject])
 
-    useEffect(() => {
-        apply((state) => {
-            state.internalCallbacks.zoomToExtents = zoomToExtents
-        })
-    }, [zoomToExtents])
+    // useEffect(() => {
+    //     apply((state) => {
+    //         state.internalCallbacks.zoomToExtents = zoomToExtents
+    //     })
+    // }, [zoomToExtents])
 
     const objectsByDocumentNodeId = useMemo(() => {
         const res: Record<string, THREE.Object3D[]> = {}
-
-        console.log(modelUrl)
 
         documentObject.traverse((object) => {
             const { nodeInstanceId } = tryParseUserStrings(object)

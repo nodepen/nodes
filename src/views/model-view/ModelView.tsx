@@ -3,7 +3,7 @@
 import React, { useCallback, useRef, useState } from "react"
 import { Layer } from "../common"
 import ModelCanvas from "./ModelCanvas"
-import { useDispatch, useStore } from "@/store"
+import { useCallbacks, useDispatch, useStore } from "@/store"
 import { getDomainParameter } from "@/utils/numerics/domain"
 import { clamp } from "@/utils"
 import { CircleButton } from "@/components/layout/CircleButton"
@@ -13,6 +13,7 @@ const ModelView = () => {
     const solutionModelUrl = useStore((state) => state.solution.solutionModelUrl)
 
     const { apply } = useDispatch()
+    const { onModelUpload } = useCallbacks()
 
     const [isExpanded, setIsExpanded] = useState(false)
     const [isSceneVisible, setIsSceneVisible] = useState(true)
@@ -170,6 +171,11 @@ const ModelView = () => {
                                                 )}
                                             </CircleButton>
                                             {isExpanded ? (<>
+                                                <CircleButton shadow onClick={() => onModelUpload?.(useStore.getState())} tooltip={'Upload Model'}>
+                                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
+                                                        <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect='non-scaling-stroke' />
+                                                    </svg>
+                                                </CircleButton>
                                                 <CircleButton shadow onClick={toggleGrid} tooltip={gridButtonTooltip}>
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-5">
                                                         <path d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />

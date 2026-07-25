@@ -115,7 +115,7 @@ const NumberSliderContextMenu = ({ context }: ContextMenuProps) => {
                 <div className="np-absolute" style={{ width: `${innerWidth}px`, height: `${innerHeight}px`, left: innerLeft, top: innerTop }}>
                     <div className="np-w-full np-h-full np-flex np-flex-col np-justify-end np-items-center">
                         <div className="np-h-8 np-p-2 np-rounded-md np-bg-green np-flex np-items-center np-justify-center">
-                            <input ref={ref} className="np-text-sm np-font-semibold np-text-darkgreen np-rounded-sm hover:np-bg-swampgreen" size={currentValue?.toString().length || 1} defaultValue={currentValue} onFocus={handleFocus} onKeyDown={handleKeyDown} onBlur={handleBlur} className="np-text-center np-pointer-events-auto" />
+                            <input ref={ref} className="np-text-sm np-font-semibold np-text-darkgreen np-text-center np-pointer-events-auto np-rounded-sm hover:np-bg-swampgreen" size={currentValue?.toString().length || 1} defaultValue={currentValue} onFocus={handleFocus} onKeyDown={handleKeyDown} onBlur={handleBlur} />
                         </div>
                     </div>
                 </div>

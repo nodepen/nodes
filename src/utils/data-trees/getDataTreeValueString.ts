@@ -1,24 +1,28 @@
 import type * as NodePen from '@/types'
 
 export const getDataTreeValueString = (value?: NodePen.DataTreeValue): string => {
-  if (!value?.value) {
-    return ''
-  }
+    if (value?.type === 'reference') {
+        return value.description
+    }
 
-  switch (value.type) {
-    case 'string':
-    case 'text': {
-      return value.value
+    if (!value?.value) {
+        return ''
     }
-    case 'number':
-    case 'integer': {
-      return value.value
+
+    switch (value.type) {
+        case 'string':
+        case 'text': {
+            return value.value
+        }
+        case 'number':
+        case 'integer': {
+            return value.value
+        }
+        case 'boolean': {
+            return value.value
+        }
+        default: {
+            return `${value.value}`
+        }
     }
-    case 'boolean': {
-      return value.value
-    }
-    default: {
-      return `${value.value}`
-    }
-  }
 }

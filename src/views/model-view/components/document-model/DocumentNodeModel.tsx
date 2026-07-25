@@ -18,7 +18,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
 
     const isVisible = node.status.isVisible
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(id))
-    const isExpired = useStore((state) => !state.solution.solutionModelUrl)
+    const isExpired = useStore((state) => state.solution.isExpired)
 
     const currentHover = useStore((state) => state.registry.hover)
 

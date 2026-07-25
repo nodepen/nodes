@@ -2,6 +2,7 @@ import type { NodeSolutionData } from './NodeSolutionData'
 
 export type DocumentSolutionData = {
     solutionId: string
+    isExpired: boolean
     solutionModelUrl: string | null
     solutionStatusMessages: DocumentSolutionStatusMessage[]
     documentRuntimeData: DocumentRuntimeData | null

@@ -6,6 +6,11 @@ export const expireSolution = (state: NodesAppState): void => {
     // Flag solution as expired
     state.solution = {
         solutionId: ulid(),
+        isExpired: true,
+        solutionModelUrl: state.solution.solutionModelUrl,
+        solutionStatusMessages: [
+            ...state.solution.solutionStatusMessages
+        ],
         documentRuntimeData: null,
         nodeSolutionData: {}
     }

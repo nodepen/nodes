@@ -4,7 +4,7 @@ import { freeze } from 'immer'
 import { useDispatch, useStore } from '$'
 import type { NodesAppCallbacks } from '$'
 import { ControlsContainer } from '@/components'
-import { FileUploadOverlayContainer, PseudoShadowsContainer } from './views/common'
+import { PseudoShadowsContainer } from './views/common'
 import { StaticDialogLayer } from './views/static/dialog-layer'
 import { DocumentView, ModelView } from './views'
 
@@ -12,6 +12,7 @@ type NodesAppProps = {
     document: NodePen.Document
     solution: NodePen.DocumentSolutionData | null
     templates: NodePen.NodeTemplate[]
+    assets: NodePen.DocumentAssets
     user?: {
         name?: string
         email?: string
@@ -25,6 +26,7 @@ export const NodesApp = ({
     templates,
     user,
     solution,
+    assets,
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
     const { apply, loadDocument, loadTemplates } = useDispatch()
@@ -32,6 +34,12 @@ export const NodesApp = ({
     useEffect(() => {
         loadDocument(document)
     }, [document.id])
+
+    useEffect(() => {
+        apply((state) => {
+            state.assets = assets
+        })
+    }, [assets])
 
     useEffect(() => {
         loadTemplates(templates ?? [])

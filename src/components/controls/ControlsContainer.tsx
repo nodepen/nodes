@@ -3,20 +3,7 @@ import { Layer } from '@/views/common'
 import { useCallbacks, useDispatch, useStore } from '$'
 import {
     DocumentInfoControl,
-    PinnedInputsControl,
-    PinnedOutputsControl,
 } from './panels'
-
-const ControlsContainer = (): React.ReactElement => {
-    return (
-        <ControlsContainerLayout>
-            {/* <DocumentInfoControl /> */}
-            <PinnedInputsControl />
-            <PinnedOutputsControl />
-        </ControlsContainerLayout>
-    )
-}
-
 import ActiveUserControl from './users/ActiveUserControl'
 import DocumentToolsControl from './tools/DocumentToolsControl'
 import ActiveDocumentControl from './document/ActiveDocumentControl'
@@ -28,11 +15,7 @@ import { SidebarPanel } from './common/SidebarPanel'
 import { TemplateLibrary } from './template-library/TemplateLibrary'
 import { ParameterLibrary } from './template-library/ParameterLibrary'
 
-type LayoutProps = {
-    children: React.ReactNode
-}
-
-const ControlsContainerLayout = ({ children }: LayoutProps): React.ReactElement => {
+const ControlsContainer = (): React.ReactElement => {
     const { apply } = useDispatch()
 
     const { onClickHome, onClickProfile } = useCallbacks()

@@ -7,6 +7,7 @@ import type { NodePortReference, WireEditMode } from '@/types'
 export type NodesAppState = {
     document: NodePen.Document
     solution: NodePen.DocumentSolutionData
+    assets: NodePen.DocumentAssets
     templates: {
         [templateId: string]: NodePen.NodeTemplate
     }
@@ -156,7 +157,7 @@ export type NodesAppState = {
 
 export type NodesAppCallbacks = {
     onSaveDocument?: (state: NodesAppState) => void
-    onFileUpload?: (state: NodesAppState) => Promise<void> | void
+    onModelUpload?: (state: NodesAppState) => void
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
@@ -178,6 +179,7 @@ export const initialState: NodesAppState = {
     templates: freeze({}),
     solution: freeze({
         solutionId: 'initial',
+        isExpired: false,
         solutionModelUrl: null,
         solutionStatusMessages: [],
         documentRuntimeData: {
@@ -185,6 +187,9 @@ export const initialState: NodesAppState = {
         },
         nodeSolutionData: {},
     }),
+    assets: {
+        models: {}
+    },
     camera: {
         aspect: 1.5,
         position: {

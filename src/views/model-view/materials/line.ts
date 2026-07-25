@@ -19,8 +19,12 @@ export const EXPIRED = new THREE.LineBasicMaterial({
     color: HEX.LIGHT
 })
 
+export const CONTEXT = new THREE.LineBasicMaterial({
+    color: HEX.DARK
+})
+
 export const GRID = new THREE.LineBasicMaterial({
-    color: HEX.DARK,
+    color: HEX.DARKGREY,
     depthTest: false,
     depthWrite: false,
     transparent: true

@@ -12,8 +12,8 @@ export type {
 export type { PortConfiguration, PortFlag } from './ports'
 export type { DocumentSolutionData, DocumentSolutionStatusMessage, NodeSolutionData, PortSolutionData } from './solution'
 export type { NodeTemplate, PortTemplate } from './templates'
+export type { DocumentAssets } from './assets'
 
-// TODO: non-schema types
 export type NodePortReference = {
     nodeInstanceId: string
     portInstanceId: string
