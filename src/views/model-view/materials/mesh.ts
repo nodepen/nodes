@@ -23,8 +23,10 @@ export const EXPIRED = new THREE.MeshStandardMaterial({
 })
 
 export const CONTEXT = new THREE.MeshStandardMaterial({
-    color: HEX.DARK,
-    side: THREE.DoubleSide
+    color: HEX.DARKGREY,
+    side: THREE.DoubleSide,
+    flatShading: false,
+    opacity: 0.8
 })
 
 export const GHOSTED = new THREE.MeshStandardMaterial({

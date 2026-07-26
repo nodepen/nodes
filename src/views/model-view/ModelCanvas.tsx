@@ -16,7 +16,6 @@ type ModelCanvasProps = {
 
 const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
     const { clearInterface } = useDispatch()
-    const zoomToExtents = useRef<() => void>(() => { })
 
     return <Canvas
         className="np-w-full np-h-full"
@@ -68,20 +67,27 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
 
                 const maxDim = Math.max(size.x, size.y, size.z)
                 const fitDistance = Math.max(maxDim * 1.6, 4)
-                const cornerOffset = new THREE.Vector3(1, -1, 0.6).multiplyScalar(fitDistance)
 
-                camera.position.copy(center).add(cornerOffset)
+                const orbitControls = controls as any
+                const currentTarget = orbitControls?.target ? orbitControls.target.clone() : center.clone()
+                const viewDirection = camera.position.clone().sub(currentTarget)
+
+                if (viewDirection.lengthSq() < 1e-8) {
+                    viewDirection.set(1, -1, 0.6)
+                } else {
+                    viewDirection.normalize()
+                }
+
+                camera.position.copy(center).add(viewDirection.multiplyScalar(fitDistance))
                 camera.lookAt(center)
                 camera.updateProjectionMatrix()
 
-                const orbitControls = controls as any
                 if (orbitControls) {
                     orbitControls.target.copy(center)
                     orbitControls.update()
                 }
             }
 
-            zoomToExtents.current = fitCameraToScene
             useStore.getState().internalCallbacks.zoomToExtents = fitCameraToScene
         }}
         onPointerDown={() => {

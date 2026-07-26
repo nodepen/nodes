@@ -42,6 +42,19 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
         const objects: THREE.Object3D[] = []
 
         documentObject.traverse((object) => {
+            if (object instanceof THREE.Mesh && object.geometry) {
+                const geometry = object.geometry
+
+                if (geometry.isBufferGeometry) {
+                    geometry.computeVertexNormals()
+                    geometry.computeBoundingSphere()
+
+                    if (geometry.attributes.normal) {
+                        geometry.attributes.normal.needsUpdate = true
+                    }
+                }
+            }
+
             objects.push(object)
         })
 
@@ -66,8 +79,6 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
             if (o instanceof THREE.Mesh) {
                 return <mesh key={`${modelKey}-${o.geometry?.uuid ?? o.uuid ?? o.id}`} geometry={o.geometry} material={MESH.CONTEXT} />
             }
-
-            console.log(o.type)
 
             return null
         })}
