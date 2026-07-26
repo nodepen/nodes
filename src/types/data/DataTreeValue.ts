@@ -13,6 +13,6 @@ export type DataTreeValue =
         readonly description: string
         readonly order: string
         readonly value?: never
-        readonly sourceKey: string // Source file key
-        readonly sourceGuid: string // Guid of geometry in file
+        readonly sourceFileKey: string // Bucket key
+        readonly sourceFileGuid: string // Guid of geometry in file
     }

@@ -10,6 +10,8 @@ import { DIMENSIONS } from '@/constants'
 import { clearMenus } from '@/store/utils/clearMenus'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import type { PortFlag } from '@/types'
+import { PickGeometryButton } from './buttons/PickGeometryButton'
+import { getValidGeometryForType } from '@/utils/geometry-types'
 
 type PortContextMenuProps = {
     position: ContextMenu['position']
@@ -66,7 +68,23 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     }, [])
 
     const enableSetLabel = nodeType === 'generic-parameter'
-    const { enableSetValue } = getPortContextMenuButtons(context)
+    const { enableSetValue, enablePickGeometry } = getPortContextMenuButtons(context)
+
+    const handlePickGeometry = useCallback(() => {
+        const validGeometryTypes = getValidGeometryForType(portTemplate.typeName)
+        apply((state) => {
+            state.ui.model = {
+                mode: 'select',
+                selection: [],
+                selectionFilter: validGeometryTypes,
+                source: {
+                    nodeInstanceId,
+                    portInstanceId
+                }
+            }
+        })
+        clearInterface()
+    }, [nodeInstanceId, portInstanceId, portTemplate])
 
     return (
         <MenuBody position={position}>
@@ -74,6 +92,9 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
             {enableSetLabel ? <SetLabelButton onClick={handleEditNameClick} /> : null}
             {enableSetValue ? (
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
+            ) : null}
+            {enablePickGeometry ? (
+                <PickGeometryButton portTemplate={portTemplate} onClick={handlePickGeometry} />
             ) : null}
             {nodeType === 'generic-node' ? (
                 <>

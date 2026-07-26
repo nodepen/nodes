@@ -9,7 +9,7 @@ import { saveDocument } from '@/store/utils/saveDocument'
 import { isCtrl } from '@/utils/dom/isCtrl'
 
 export const useGlobalHotkeys = () => {
-    const { apply, toggleDragCopy, pasteFromClipboard } = useDispatch()
+    const { apply, clearInterface, clearSelection, clearModelState, toggleDragCopy, pasteFromClipboard, commitModelSelection } = useDispatch()
 
     const handleKeyDown = useCallback((e: KeyboardEvent): void => {
         switch (e.key) {
@@ -23,7 +23,6 @@ export const useGlobalHotkeys = () => {
             }
             case 'Control':
             case 'Meta':
-
                 break
             case 'Alt':
                 if (useStore.getState().registry.drag.isActive) {
@@ -50,6 +49,17 @@ export const useGlobalHotkeys = () => {
                     expireSolution(state)
                 })
 
+                break
+            }
+            case 'Enter': {
+                commitModelSelection()
+                break
+            }
+            case 'Esc':
+            case 'Escape': {
+                clearInterface()
+                clearSelection()
+                clearModelState()
                 break
             }
             case 'a':

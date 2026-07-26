@@ -1,24 +1,30 @@
 import type { PortContextMenuContext } from '../../../types'
 
 type PortContextMenuButtons = {
-  enablePin: boolean
-  enableSetValue: boolean
+    enablePin: boolean
+    enableSetValue: boolean
+    enablePickGeometry: boolean
 }
 
 export const getPortContextMenuButtons = (context: PortContextMenuContext): PortContextMenuButtons => {
-  const { portTemplate } = context
-  const { __direction: direction, typeName } = portTemplate
+    const { portTemplate } = context
+    const { __direction: direction, typeName } = portTemplate
 
-  const supportedTypeNames = [
-    'number',
-    'integer',
-    'boolean',
-    'text',
-    'string'
-  ]
+    const supportedPrimitiveTypeNames = [
+        'number',
+        'integer',
+        'boolean',
+        'text',
+        'string'
+    ]
 
-  const enablePin = direction === 'input'
-  const enableSetValue = direction === 'input' && supportedTypeNames.includes(typeName)
+    const supportedGeometricTypeNames = [
+        'point'
+    ]
 
-  return { enablePin, enableSetValue }
+    const enablePin = direction === 'input'
+    const enableSetValue = direction === 'input' && supportedPrimitiveTypeNames.includes(typeName)
+    const enablePickGeometry = direction === 'input' && supportedGeometricTypeNames.includes(typeName)
+
+    return { enablePin, enableSetValue, enablePickGeometry }
 }

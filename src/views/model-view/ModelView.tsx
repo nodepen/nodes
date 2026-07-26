@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback, useRef, useState } from "react"
+import React, { useCallback, useEffect, useRef, useState } from "react"
 import { Layer } from "../common"
 import ModelCanvas from "./ModelCanvas"
 import { useCallbacks, useDispatch, useStore } from "@/store"
@@ -42,6 +42,34 @@ const ModelView = () => {
     // Ratio between 0 and 1
     const [width, setWidth] = useState(0.5)
     const isDragging = useRef(false)
+
+    const previousExpanded = useRef<boolean | null>(null)
+    const previousWidth = useRef<number | null>(null)
+
+    const activeMode = useStore((state) => state.ui.model.mode)
+
+    useEffect(() => {
+        if (activeMode === 'default') {
+            if (previousExpanded.current !== null) {
+                setIsExpanded(previousExpanded.current)
+                previousExpanded.current = null
+            }
+
+            if (previousWidth.current !== null) {
+                setWidth(previousWidth.current)
+                previousWidth.current = null
+            }
+        }
+
+        if (activeMode === 'select') {
+            if (!isExpanded) {
+                previousExpanded.current = isExpanded
+                previousWidth.current = width
+                setIsExpanded(true)
+                setWidth(1)
+            }
+        }
+    }, [activeMode, isExpanded, width])
 
     const windowContainerRef = useRef<HTMLDivElement>(null)
     const handleRef = useRef<HTMLDivElement>(null)

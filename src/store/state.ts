@@ -33,6 +33,25 @@ export type NodesAppState = {
             isComponentLibraryOpen: boolean
             isParameterLibraryOpen: boolean
         }
+        model: {
+            selection: {
+                [sourceKey: string]: string[]
+            }
+        } & (
+            | {
+                mode: 'default'
+            }
+            | {
+                mode: 'select'
+                // Geometric types that can be selected
+                selectionFilter: string[]
+                source: {
+                    nodeInstanceId: string
+                    portInstanceId: string
+                }
+            }
+        )
+
     }
     geometry: {
         showGrid: boolean
@@ -202,6 +221,10 @@ export const initialState: NodesAppState = {
         sidebar: {
             isComponentLibraryOpen: false,
             isParameterLibraryOpen: false
+        },
+        model: {
+            mode: 'default',
+            selection: {}
         }
     },
     geometry: {

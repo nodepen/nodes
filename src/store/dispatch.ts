@@ -550,6 +550,51 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 false,
                 'ui/clearSelection'
             ),
+        clearModelState: () =>
+            set(
+                (state) => {
+                    const nextSelection = current(state.ui.model.selection)
+
+                    for (const key of Object.keys(nextSelection)) {
+                        nextSelection[key] = []
+                    }
+
+                    state.ui.model = {
+                        mode: 'default',
+                        selection: nextSelection
+                    }
+                },
+                false,
+                'ui/clearModelState'
+            ),
+        commitModelSelection: () =>
+            set(
+                (state) => {
+                    const modelState = state.ui.model
+                    switch (modelState.mode) {
+                        case 'select': {
+                            const { selection, source } = current(modelState)
+
+                            console.log(source)
+                            console.log(selection)
+
+                            // TODO: Set these references on param
+
+                            state.ui.model = {
+                                mode: 'default',
+                                selection: {}
+                            }
+                            break
+                        }
+                        case 'default':
+                        default: {
+                            break
+                        }
+                    }
+                },
+                false,
+                'port/commitModelSelection'
+            )
     }
 
     return { dispatch }

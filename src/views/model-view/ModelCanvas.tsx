@@ -96,6 +96,12 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
     >
         {/* <color attach="background" args={[0.9333333333, 0.9490196078, 0.9490196078]} /> */}
         <ambientLight intensity={0.4} />
+        <directionalLight
+            color={0xffffff}
+            intensity={1.2}
+            position={[4, -6, 8]}
+            castShadow={false}
+        />
         <GridModel />
         <Suspense fallback={null}>
             <ContextModel />
