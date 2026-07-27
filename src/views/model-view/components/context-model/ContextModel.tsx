@@ -5,6 +5,7 @@ import React, { act, memo, useCallback, useEffect, useState } from 'react'
 import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader'
 import { LINE, MESH } from '../../materials'
 import { DARK, DARKGREY, GREEN } from '../../materials/colors'
+import { isGeometryType } from '@/utils/three/isGeometryType'
 
 const ContextModel = () => {
     const model = useStore((state) => {
@@ -68,12 +69,12 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
     }, [documentObject])
 
     const handleClickGeometry = useCallback((e: ThreeEvent<MouseEvent>, o: THREE.Object3D<THREE.Event>) => {
+        e.stopPropagation()
+
         const modelState = useStore.getState().ui.model
 
         const guid = o.userData?.attributes?.id
         const type = o.userData?.objectType
-
-        // console.log(e)
 
         switch (modelState.mode) {
             case 'default': {
@@ -84,11 +85,12 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
             case 'select': {
                 const { selectionFilter } = modelState
 
-                const selectionMode = e.shiftKey ? 'add' : e.ctrlKey ? 'remove' : 'set'
-
-                if (!selectionFilter.includes(type)) {
+                const isSelectable = selectionFilter.some((type) => isGeometryType(o, type))
+                if (!isSelectable) {
                     return
                 }
+
+                const selectionMode = e.shiftKey ? 'add' : e.ctrlKey ? 'remove' : 'set'
 
                 const nextSelection = new Set<string>(useStore.getState().ui.model.selection[modelKey])
 
@@ -121,9 +123,8 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
     return <>
         {sceneObjects.map((o) => {
             const guid = o.userData?.attributes?.id
-            const type = o.userData?.objectType
 
-            const isSelectable = modelState.mode === 'select' ? modelState.selectionFilter.includes(type) : true
+            const isSelectable = modelState.mode === 'select' ? modelState.selectionFilter.some((type) => isGeometryType(o, type)) : true
             const isSelected = activeSelection.includes(guid)
 
             if (o instanceof THREE.Points) {
@@ -137,13 +138,13 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
             }
 
             if (o instanceof THREE.Line) {
-                const material = isSelectable ? LINE.CONTEXT : LINE.EXPIRED
+                const material = isSelected ? LINE.SELECTED : isSelectable ? LINE.CONTEXT : LINE.EXPIRED
                 // @ts-expect-error react-three-fibre line vs svg line
                 return <line key={`${modelKey}-${o.geometry?.uuid ?? o.uuid ?? o.id}`} geometry={o.geometry} material={material} onClick={(e) => handleClickGeometry(e, o)} />
             }
 
             if (o instanceof THREE.Mesh) {
-                const material = isSelectable ? MESH.CONTEXT : MESH.EXPIRED
+                const material = isSelected ? MESH.SELECTED : isSelectable ? MESH.CONTEXT : MESH.EXPIRED
 
                 return <mesh key={`${modelKey}-${o.geometry?.uuid ?? o.uuid ?? o.id}`} geometry={o.geometry} material={material} onClick={(e) => handleClickGeometry(e, o)} />
             }

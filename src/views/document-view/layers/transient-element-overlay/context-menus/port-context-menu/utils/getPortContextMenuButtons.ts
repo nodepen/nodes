@@ -19,7 +19,13 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
     ]
 
     const supportedGeometricTypeNames = [
-        'point'
+        'point',
+        'circle',
+        'curve',
+        'line',
+        'mesh',
+        'surface',
+        'extrusion',
     ]
 
     const enablePin = direction === 'input'

@@ -3,6 +3,7 @@ import { freeze } from 'immer'
 import type * as NodePen from '@/types'
 import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
 import type { NodePortReference, WireEditMode } from '@/types'
+import type { ModelGeometryType } from '@/types/geometry'
 
 export type NodesAppState = {
     document: NodePen.Document
@@ -43,15 +44,13 @@ export type NodesAppState = {
             }
             | {
                 mode: 'select'
-                // Geometric types that can be selected
-                selectionFilter: string[]
+                selectionFilter: ModelGeometryType[]
                 source: {
                     nodeInstanceId: string
                     portInstanceId: string
                 }
             }
         )
-
     }
     geometry: {
         showGrid: boolean

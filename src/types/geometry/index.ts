@@ -1,0 +1,1 @@
+export type { ModelGeometryType } from './ModelGeometryType'

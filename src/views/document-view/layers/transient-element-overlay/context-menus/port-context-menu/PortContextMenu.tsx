@@ -75,7 +75,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
         apply((state) => {
             state.ui.model = {
                 mode: 'select',
-                selection: [],
+                selection: {},
                 selectionFilter: validGeometryTypes,
                 source: {
                     nodeInstanceId,
