@@ -14,6 +14,7 @@ import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
+import { createList } from '@/utils/data-trees'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -575,15 +576,28 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         case 'select': {
                             const { selection, source } = current(modelState)
 
-                            console.log(source)
-                            console.log(selection)
+                            const values: NodePen.DataTreeValue[] = []
 
-                            // TODO: Set these references on param
+                            for (const [sourceKey, guids] of Object.entries(selection)) {
+                                for (const guid of guids) {
+                                    values.push({
+                                        type: 'reference',
+                                        description: 'Referenced geometry',
+                                        order: values.length,
+                                        sourceFileKey: sourceKey,
+                                        sourceFileGuid: guid
+                                    })
+                                }
+                            }
+
+                            state.document.nodes[source.nodeInstanceId].values[source.portInstanceId] = createList(values)
 
                             state.ui.model = {
                                 mode: 'default',
                                 selection: {}
                             }
+
+                            expireSolution(state)
                             break
                         }
                         case 'default':

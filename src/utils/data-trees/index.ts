@@ -1,3 +1,5 @@
 export { getDataTreeSummary } from './getDataTreeSummary'
 export { isDataTreePath } from './isDataTreePath'
 export { tryGetSingleValue } from './tryGetSingleValue'
+export { createSingleValue } from './createSingleValue'
+export { createList } from './createList'
