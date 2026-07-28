@@ -1,6 +1,6 @@
 import React from 'react'
 import { useStore } from '$'
-import { AddNodeContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
+import { AddNodeContextMenu, DocumentContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
 import { CursorContainer } from './cursors'
 import { getMenuHeight } from './utils'
 import { useReducedMotion } from '@/hooks'
@@ -85,7 +85,7 @@ const TransientElementOverlay = () => {
                         return <AddNodeContextMenu key={`add-node-menu`} position={menu.position} />
                     }
                     case 'document': {
-                        return null
+                        return <DocumentContextMenu key={`document-menu`} position={menu.position} />
                     }
                     case 'node': {
                         return <NodeContextMenu key={`node-context-menu-${key}`} position={menu.position} context={menu.context} />

@@ -3,6 +3,7 @@ import type * as NodePen from '@/types'
 export type ContextMenuContext =
     | AddNodeContextMenu
     | DocumentContextMenuContext
+    | CanvasContextMenuContext
     | NodeContextMenuContext
     | PortContextMenuContext
     | PortValueContextMenuContext
@@ -15,6 +16,10 @@ export type AddNodeContextMenu = {
 
 export type DocumentContextMenuContext = {
     type: 'document'
+}
+
+export type CanvasContextMenuContext = {
+    type: 'canvas'
 }
 
 export type NodeContextMenuContext = {

@@ -93,7 +93,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
             {enableSetValue ? (
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
             ) : null}
-            {enablePickGeometry ? (
+            {nodeType === 'generic-parameter' && enablePickGeometry ? (
                 <PickGeometryButton portTemplate={portTemplate} onClick={handlePickGeometry} />
             ) : null}
             {nodeType === 'generic-node' ? (

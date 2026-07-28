@@ -139,19 +139,27 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
         endDrag()
         setIsDragging(false)
         initialPointerId.current = undefined
-        apply((state) => {
-            saveDocument(state)
-        })
     }, [])
 
     const handlePointerUp = useCallback((e: PointerEvent): void => {
-        const { pointerId } = e
+        const { pointerId, pageX: currentPointerX, pageY: currentPointerY } = e
 
         if (pointerId !== initialPointerId.current) {
             return
         }
 
+        const { x: initialPointerX, y: initialPointerY } = initialPointerPosition.current
+
+        const dx = (currentPointerX - initialPointerX)
+        const dy = (currentPointerY - initialPointerY)
+
         resetState()
+
+        if (dx > 0 || dy > 0) {
+            apply((state) => {
+                saveDocument(state)
+            })
+        }
     }, [resetState])
 
     const handlePointerCancel = useCallback((e: PointerEvent): void => {

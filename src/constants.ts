@@ -61,6 +61,15 @@ export const STYLES = {
             vectorEffect: 'non-scaling-stroke',
             stroke: COLORS.DARK,
         },
+        MEDIUM: {
+            xmlns: 'http://www.w3.org/2000/svg',
+            width: 20,
+            height: 20,
+            fill: 'none',
+            viewBox: '0 0 24 24',
+            strokeWidth: 2,
+            stroke: COLORS.DARK,
+        },
     },
 } as const
 

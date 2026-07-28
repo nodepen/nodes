@@ -1,7 +1,7 @@
 import { COLORS } from '@/constants'
 import { useCallbacks, useDispatch, useStore } from '@/store'
 import { saveDocument } from '@/store/utils/saveDocument'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 const ActiveDocumentControl = () => {
     const documentMeta = useStore((state) => state.document.meta)
@@ -10,6 +10,7 @@ const ActiveDocumentControl = () => {
     const { apply } = useDispatch()
 
     const inputRef = useRef<HTMLInputElement>(null)
+    const menuButtonRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         setInternalName(documentMeta.name ?? '')
@@ -48,6 +49,31 @@ const ActiveDocumentControl = () => {
             })
         }
     }
+
+    const handleOpenMenu = useCallback(() => {
+        const el = menuButtonRef.current
+
+        if (!el) {
+            return
+        }
+
+        const { left, width, top, height } = el.getBoundingClientRect()
+
+        const x = left + (width / 2)
+        const y = top + (height / 2)
+
+        apply((state) => {
+            state.registry.contextMenus['document-menu'] = {
+                position: {
+                    x: x + 32,
+                    y: y - 20
+                },
+                context: {
+                    type: 'document'
+                }
+            }
+        })
+    }, [apply])
 
     const documentCollection = documentMeta?.collection?.name
     const documentOwner = documentMeta?.owner?.name ?? "Jack Grasshopper"
@@ -100,7 +126,7 @@ const ActiveDocumentControl = () => {
                     </div>
                 </div>
                 <div className='np-h-full np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>
-                    <div className='np-w-6 np-h-6 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer'>
+                    <div ref={menuButtonRef} className='np-w-6 np-h-6 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
                         <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="2" stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                             <path d="m19.5 8.25-7.5 7.5-7.5-7.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"></path>
                         </svg>
