@@ -15,6 +15,7 @@ import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 import { createList } from '@/utils/data-trees'
+import { clamp } from 'three/src/math/MathUtils'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -48,6 +49,12 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         loadDocument: (document: NodePen.Document) =>
             set((state) => {
                 state.document = document
+                state.history = {
+                    stack: [structuredClone(document)],
+                    isActive: false,
+                    currentDepth: 0,
+                    maximumDepth: 10
+                }
 
                 // for (const node of Object.values(document.nodes)) {
                 //   // Sanitize node properties
@@ -567,6 +574,54 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 },
                 false,
                 'ui/clearModelState'
+            ),
+        undo: () =>
+            set(
+                (state) => {
+                    const { stack, currentDepth, maximumDepth } = state.history
+
+                    const nextDepth = clamp(currentDepth + 1, 0, maximumDepth)
+                    const nextDocument = stack[nextDepth]
+
+                    if (!nextDocument) {
+                        return
+                    }
+
+                    state.document = nextDocument
+
+                    state.history.isActive = true
+                    state.history.currentDepth = nextDepth
+
+                    expireSolution(state)
+
+                    state.history.isActive = false
+                },
+                false,
+                'history/undo'
+            ),
+        redo: () =>
+            set(
+                (state) => {
+                    const { stack, currentDepth, maximumDepth } = state.history
+
+                    const nextDepth = clamp(currentDepth - 1, 0, maximumDepth)
+                    const nextDocument = stack[nextDepth]
+
+                    if (!nextDocument) {
+                        return
+                    }
+
+                    state.document = nextDocument
+
+                    state.history.isActive = true
+                    state.history.currentDepth = nextDepth
+
+                    expireSolution(state)
+
+                    state.history.isActive = false
+                },
+                false,
+                'history/redo'
             ),
         commitModelSelection: () =>
             set(

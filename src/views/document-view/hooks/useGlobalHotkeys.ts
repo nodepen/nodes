@@ -9,7 +9,17 @@ import { saveDocument } from '@/store/utils/saveDocument'
 import { isCtrl } from '@/utils/dom/isCtrl'
 
 export const useGlobalHotkeys = () => {
-    const { apply, clearInterface, clearSelection, clearModelState, toggleDragCopy, pasteFromClipboard, commitModelSelection } = useDispatch()
+    const {
+        apply,
+        clearInterface,
+        clearSelection,
+        clearModelState,
+        toggleDragCopy,
+        pasteFromClipboard,
+        commitModelSelection,
+        undo,
+        redo
+    } = useDispatch()
 
     const handleKeyDown = useCallback((e: KeyboardEvent): void => {
         switch (e.key) {
@@ -23,13 +33,6 @@ export const useGlobalHotkeys = () => {
             }
             case 'Control':
             case 'Meta':
-                break
-            case 'Alt':
-                if (useStore.getState().registry.drag.isActive) {
-                    e.preventDefault()
-                    toggleDragCopy(!useStore.getState().registry.drag.isCopyActive)
-                }
-
                 break
             case 'Delete':
             case 'Backspace': {
@@ -137,6 +140,26 @@ export const useGlobalHotkeys = () => {
 
                 break
             }
+            case 'y':
+            case 'Y': {
+                if (!isCtrl(e)) {
+                    return
+                }
+
+                redo()
+
+                break
+            }
+            case 'z':
+            case 'Z': {
+                if (!isCtrl(e)) {
+                    return
+                }
+
+                undo()
+
+                break
+            }
             default: {
                 // console.log(`Unhandled keypress [${e.key}]`)
             }
@@ -147,6 +170,12 @@ export const useGlobalHotkeys = () => {
         switch (e.key) {
             case 'Alt': {
                 e.preventDefault()
+
+                if (useStore.getState().registry.drag.isActive) {
+                    toggleDragCopy(!useStore.getState().registry.drag.isCopyActive)
+                }
+
+                break
             }
         }
     }, [])

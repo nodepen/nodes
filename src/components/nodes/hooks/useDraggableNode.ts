@@ -155,7 +155,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
         resetState()
 
-        if (dx > 0 || dy > 0) {
+        if (Math.abs(dx) > 0 || Math.abs(dy) > 0) {
             apply((state) => {
                 saveDocument(state)
             })

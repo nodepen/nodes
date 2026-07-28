@@ -52,6 +52,14 @@ export type NodesAppState = {
             }
         )
     }
+    history: {
+        stack: NodePen.Document[]
+        // IF true, still resolving undo/redo changes
+        isActive: boolean
+        // If undo is called, increment and apply that value
+        currentDepth: number
+        maximumDepth: number
+    }
     geometry: {
         showGrid: boolean
     }
@@ -225,6 +233,12 @@ export const initialState: NodesAppState = {
             mode: 'default',
             selection: {}
         }
+    },
+    history: {
+        stack: [],
+        isActive: false,
+        currentDepth: 0,
+        maximumDepth: 10
     },
     geometry: {
         showGrid: true
