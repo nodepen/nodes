@@ -1,11 +1,12 @@
 import React, { Suspense, useRef } from "react"
 import * as THREE from 'three'
-import { Canvas } from "@react-three/fiber"
+import { Canvas, useLoader } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei"
 import DocumentModel from "./components/document-model/DocumentModel"
 import GridModel from "./components/grid-model/GridModel"
 import { useDispatch, useStore } from "@/store"
 import ContextModel from "./components/context-model/ContextModel"
+import { Rhino3dmLoader } from "three/examples/jsm/loaders/3DMLoader"
 
 // @ts-expect-error This is correct actually
 THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
@@ -16,6 +17,10 @@ type ModelCanvasProps = {
 
 const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
     const { clearInterface } = useDispatch()
+
+    // useLoader.preload(Rhino3dmLoader, solutionModelUrl, (loader) => {
+    //     loader.setLibraryPath('https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1/')
+    // })
 
     return <Canvas
         className="np-w-full np-h-full"
@@ -105,7 +110,9 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
         <GridModel />
         <Suspense fallback={null}>
             <ContextModel />
-            {solutionModelUrl ? <DocumentModel modelUrl={solutionModelUrl} /> : null}
+        </Suspense>
+        <Suspense fallback={null}>
+            <DocumentModel modelUrl={solutionModelUrl} />
         </Suspense>
         <OrbitControls />
     </Canvas>

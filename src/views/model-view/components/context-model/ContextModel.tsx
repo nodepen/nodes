@@ -36,6 +36,8 @@ type ContextModelGeometryProps = {
 const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps) => {
     const documentObject = useLoader(Rhino3dmLoader, modelUrl, (loader) => {
         loader.setLibraryPath('https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1/')
+    }, (e) => {
+        // console.log(`${e.loaded} / ${e.total}`)
     })
 
     const { apply } = useDispatch()
@@ -120,7 +122,7 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
         }
     }, [modelKey])
 
-    return <>
+    return <group dispose={null}>
         {sceneObjects.map((o) => {
             const guid = o.userData?.attributes?.id
 
@@ -151,7 +153,7 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
 
             return null
         })}
-    </>
+    </group>
 }
 
 export default memo(ContextModel)

@@ -169,14 +169,19 @@ const solution = {
             message: 'Waiting for solution...'
         }
     ],
+    isExpired: false,
     documentRuntimeData: null,
     nodeSolutionData: {}
+}
+
+const assets = {
+    models: {}
 }
 
 root.render(
     <StrictMode>
         <div style={{ width: '100vw', height: '100vh' }}>
-            <NodesApp document={doc} templates={templates as any} solution={solution} />
+            <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} />
         </div>
     </StrictMode>
 )

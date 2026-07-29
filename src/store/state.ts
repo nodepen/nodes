@@ -187,6 +187,8 @@ export type NodesAppCallbacks = {
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
+    onUndo?: (state: NodesAppState) => void
+    onRedo?: (state: NodesAppState) => void
 }
 
 export const initialState: NodesAppState = {
