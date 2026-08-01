@@ -49,12 +49,6 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         loadDocument: (document: NodePen.Document) =>
             set((state) => {
                 state.document = document
-                state.history = {
-                    stack: [structuredClone(document)],
-                    isActive: false,
-                    currentDepth: 0,
-                    maximumDepth: 10
-                }
 
                 // for (const node of Object.values(document.nodes)) {
                 //   // Sanitize node properties
@@ -578,23 +572,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         undo: () =>
             set(
                 (state) => {
-                    const { stack, currentDepth, maximumDepth } = state.history
-
-                    const nextDepth = clamp(currentDepth + 1, 0, maximumDepth)
-                    const nextDocument = stack[nextDepth]
-
-                    if (!nextDocument) {
-                        return
-                    }
-
-                    state.document = nextDocument
-
-                    state.history.isActive = true
-                    state.history.currentDepth = nextDepth
-
-                    expireSolution(state)
-
-                    state.history.isActive = false
+                    state.callbacks.onUndo?.(state)
                 },
                 false,
                 'history/undo'
@@ -602,23 +580,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         redo: () =>
             set(
                 (state) => {
-                    const { stack, currentDepth, maximumDepth } = state.history
-
-                    const nextDepth = clamp(currentDepth - 1, 0, maximumDepth)
-                    const nextDocument = stack[nextDepth]
-
-                    if (!nextDocument) {
-                        return
-                    }
-
-                    state.document = nextDocument
-
-                    state.history.isActive = true
-                    state.history.currentDepth = nextDepth
-
-                    expireSolution(state)
-
-                    state.history.isActive = false
+                    state.callbacks.onRedo?.(state)
                 },
                 false,
                 'history/redo'

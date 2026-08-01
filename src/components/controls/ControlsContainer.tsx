@@ -18,7 +18,7 @@ import { ParameterLibrary } from './template-library/ParameterLibrary'
 const ControlsContainer = (): React.ReactElement => {
     const { apply } = useDispatch()
 
-    const { onClickHome, onClickProfile } = useCallbacks()
+    const { onClickHome, onClickProfile, onClickFeedback } = useCallbacks()
 
     const handleClickHome = () => {
         onClickHome?.(useStore.getState())
@@ -26,6 +26,10 @@ const ControlsContainer = (): React.ReactElement => {
 
     const handleClickProfile = () => {
         onClickProfile?.(useStore.getState())
+    }
+
+    const handleClickFeedback = () => {
+        onClickFeedback?.(useStore.getState())
     }
 
     const showComponentLibraryPanel = useStore((state) => state.ui.sidebar.isComponentLibraryOpen)
@@ -103,7 +107,7 @@ const ControlsContainer = (): React.ReactElement => {
                         </div>
                         <div className='np-flex np-items-center'>
                             <div className='np-ml-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
-                                <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer'>
+                                <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer' onClick={handleClickFeedback}>
                                     <div className='np-h-full np-flex np-items-center np-justify-center np-rounded-full group-hover:np-bg-grey'>
                                         <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
                                             <path d="M2 6.342a3.375 3.375 0 0 1 6-2.088 3.375 3.375 0 0 1 5.997 2.26c-.063 2.134-1.618 3.76-2.955 4.784a14.437 14.437 0 0 1-2.676 1.61c-.02.01-.038.017-.05.022l-.014.006-.004.002h-.002a.75.75 0 0 1-.592.001h-.002l-.004-.003-.015-.006a5.528 5.528 0 0 1-.232-.107 14.395 14.395 0 0 1-2.535-1.557C3.564 10.22 1.999 8.558 1.999 6.38L2 6.342Z" />

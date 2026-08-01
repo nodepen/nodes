@@ -52,14 +52,6 @@ export type NodesAppState = {
             }
         )
     }
-    history: {
-        stack: NodePen.Document[]
-        // IF true, still resolving undo/redo changes
-        isActive: boolean
-        // If undo is called, increment and apply that value
-        currentDepth: number
-        maximumDepth: number
-    }
     geometry: {
         showGrid: boolean
     }
@@ -187,6 +179,7 @@ export type NodesAppCallbacks = {
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
+    onClickFeedback?: (state: NodesAppState) => void
     onUndo?: (state: NodesAppState) => void
     onRedo?: (state: NodesAppState) => void
 }
@@ -235,12 +228,6 @@ export const initialState: NodesAppState = {
             mode: 'default',
             selection: {}
         }
-    },
-    history: {
-        stack: [],
-        isActive: false,
-        currentDepth: 0,
-        maximumDepth: 10
     },
     geometry: {
         showGrid: true

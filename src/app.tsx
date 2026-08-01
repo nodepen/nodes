@@ -33,6 +33,10 @@ export const NodesApp = ({
 
     useEffect(() => {
         loadDocument(document)
+    }, [document])
+
+    useEffect(() => {
+        // Resets on new document
     }, [document.id])
 
     useEffect(() => {
