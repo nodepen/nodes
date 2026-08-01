@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useStore } from '$'
 
 type CameraProps = Pick<React.SVGProps<SVGElement>, 'viewBox' | 'width' | 'height'>
@@ -9,32 +9,55 @@ type CameraProps = Pick<React.SVGProps<SVGElement>, 'viewBox' | 'width' | 'heigh
  * @returns `viewBox` `width` `height`
  */
 export const useCameraProps = (): CameraProps => {
-  const containerRef = useStore((state) => state.registry.canvasRoot)
+    const containerRef = useStore((state) => state.registry.canvasRoot)
 
-  const { position, zoom } = useStore((state) => state.camera)
+    const { position, zoom } = useStore((state) => state.camera)
 
-  const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
-    width: 1920,
-    height: 1080,
-  })
+    const [containerDimensions, setContainerDimensions] = useState<{ width: number; height: number }>({
+        width: 1920,
+        height: 1080,
+    })
 
-  useEffect(() => {
-    if (!containerRef.current) {
-      return
-    }
+    const resizeObserver = useRef<ResizeObserver>(null)
 
-    const { width, height } = containerRef.current.getBoundingClientRect()
+    useEffect(() => {
+        resizeObserver.current = new ResizeObserver(() => {
+            if (!containerRef.current) {
+                return
+            }
 
-    setContainerDimensions({ width, height })
-  }, [])
+            const { width, height } = containerRef.current.getBoundingClientRect()
 
-  const { width: w, height: h } = containerDimensions
-  const { x, y } = position
+            setContainerDimensions({ width, height })
+        })
 
-  const viewBox = [w / 2 / -zoom + x, h / 2 / -zoom - y, w / zoom, h / zoom].join(' ')
+        return () => {
+            resizeObserver.current?.disconnect()
+        }
+    }, [])
 
-  const width = `${w}px`
-  const height = `${h}px`
+    useEffect(() => {
+        const element = containerRef.current
+        const observer = resizeObserver.current
 
-  return { width, height, viewBox }
+        if (!element || !observer) {
+            return
+        }
+
+        observer.observe(element)
+
+        return () => {
+            observer.unobserve(element)
+        }
+    })
+
+    const { width: w, height: h } = containerDimensions
+    const { x, y } = position
+
+    const viewBox = [w / 2 / -zoom + x, h / 2 / -zoom - y, w / zoom, h / zoom].join(' ')
+
+    const width = `${w}px`
+    const height = `${h}px`
+
+    return { width, height, viewBox }
 }

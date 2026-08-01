@@ -55,6 +55,7 @@ export type NodesAppState = {
     geometry: {
         showGrid: boolean
     }
+    presence: NodePen.DocumentPresence
     layout: {
         fileUpload: {
             isActive: boolean
@@ -210,6 +211,11 @@ export const initialState: NodesAppState = {
     }),
     assets: {
         models: {}
+    },
+    presence: {
+        sessions: {},
+        cursors: {},
+        cameras: {}
     },
     camera: {
         aspect: 1.5,

@@ -3,7 +3,7 @@ import { useStore } from '$'
 import { AddNodeContextMenu, DocumentContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
 import { CursorContainer } from './cursors'
 import { getMenuHeight } from './utils'
-import { useReducedMotion } from '@/hooks'
+import { usePageSpaceToOverlaySpace, useReducedMotion, useWorldSpaceToPageSpace } from '@/hooks'
 import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
 import { useCursorState } from './cursors/hooks'
 import { ProgressBarTooltip } from './tooltips/progress-bar-tooltip'
@@ -16,6 +16,11 @@ const TransientElementOverlay = () => {
     const cursor = useCursorState()
     const menus = useStore((state) => Object.entries(state.registry.contextMenus))
     const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
+
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+    const worldSpaceToPageSpace = useWorldSpaceToPageSpace()
+
+    const presence = useStore((state) => Object.entries(state.presence.cursors))
 
     const prefersReducedMotion = true
 

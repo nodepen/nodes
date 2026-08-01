@@ -178,10 +178,27 @@ const assets = {
     models: {}
 }
 
+const presence = {
+    sessions: {
+        ['demo-id']: {
+            userId: 'fake-id',
+            color: '#79D3F6',
+            name: 'John Grasshopper'
+        }
+    },
+    cursors: {
+        ['demo-id']: {
+            x: 100,
+            y: 100
+        }
+    },
+    cameras: {}
+}
+
 root.render(
     <StrictMode>
         <div style={{ width: '100vw', height: '100vh' }}>
-            <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} />
+            <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} />
         </div>
     </StrictMode>
 )

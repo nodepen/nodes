@@ -3,6 +3,7 @@ import { useStore, useDispatch } from '$'
 import { Layer } from '../common'
 import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay, SelectionRegionOverlay } from './layers'
 import { DocumentViewContent } from './DocumentViewContent'
+import { PresenceOverlay } from './layers/presence-overlay'
 
 const DocumentView = (): React.ReactElement | null => {
     const canvasRootRef = useStore((state) => state.registry.canvasRoot)
@@ -32,14 +33,17 @@ const DocumentView = (): React.ReactElement | null => {
 
     return (
         <>
-            <Layer id="np-node-placement-overlay-layer" z={95}>
-                <NodePlacementOverlay />
-            </Layer>
-            <Layer id="np-selection-region-overlay-layer" z={95}>
-                <SelectionRegionOverlay />
-            </Layer>
             <Layer id="np-transient-element-overlay-layer" z={90}>
                 <TransientElementOverlay />
+            </Layer>
+            <Layer id="np-presence-layer" z={85}>
+                <PresenceOverlay />
+            </Layer>
+            <Layer id="np-node-placement-overlay-layer" z={80}>
+                <NodePlacementOverlay />
+            </Layer>
+            <Layer id="np-selection-region-overlay-layer" z={80}>
+                <SelectionRegionOverlay />
             </Layer>
             <Layer id="np-document-view-content-layer" z={70}>
                 <DocumentViewContent />

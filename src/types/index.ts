@@ -13,6 +13,7 @@ export type { PortConfiguration, PortFlag } from './ports'
 export type { DocumentSolutionData, DocumentSolutionStatusMessage, NodeSolutionData, PortSolutionData } from './solution'
 export type { NodeTemplate, PortTemplate } from './templates'
 export type { DocumentAssets } from './assets'
+export type { DocumentPresence } from './presence'
 
 export type NodePortReference = {
     nodeInstanceId: string

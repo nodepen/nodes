@@ -13,20 +13,15 @@ type NodesAppProps = {
     solution: NodePen.DocumentSolutionData | null
     templates: NodePen.NodeTemplate[]
     assets: NodePen.DocumentAssets
-    user?: {
-        name?: string
-        email?: string
-        image?: string
-        token?: string
-    }
+    presence?: NodePen.DocumentPresence
 } & NodesAppCallbacks
 
 export const NodesApp = ({
     document,
     templates,
-    user,
     solution,
     assets,
+    presence,
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
     const { apply, loadDocument, loadTemplates } = useDispatch()
@@ -51,12 +46,6 @@ export const NodesApp = ({
 
     useEffect(() => {
         apply((state) => {
-            state.user = user
-        })
-    }, [user])
-
-    useEffect(() => {
-        apply((state) => {
             state.callbacks = callbacks
         })
     }, [callbacks])
@@ -70,6 +59,24 @@ export const NodesApp = ({
             state.solution = freeze(solution)
         })
     }, [solution])
+
+    useEffect(() => {
+        apply((state) => {
+            state.presence.sessions = presence?.sessions ?? {}
+        })
+    }, [presence?.sessions])
+
+    useEffect(() => {
+        apply((state) => {
+            state.presence.cursors = presence?.cursors ?? {}
+        })
+    }, [presence?.cursors])
+
+    useEffect(() => {
+        apply((state) => {
+            state.presence.cameras = presence?.cameras ?? {}
+        })
+    }, [presence?.cameras])
 
     return <NodesAppInternal />
 }
