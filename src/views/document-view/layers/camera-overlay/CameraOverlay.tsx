@@ -5,6 +5,7 @@ import { clamp } from '@/utils'
 import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { distance } from '@/utils/numerics'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
+import { current } from 'immer'
 
 type CameraControlProps = {
     children?: React.ReactNode
@@ -100,6 +101,18 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     //   }
 
     const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
+        if (e.pointerType === 'mouse') {
+            const { pageX, pageY } = e
+            const [px, py] = pageSpaceToWorldSpace(pageX, pageY)
+            apply((state) => {
+                state.ui.cursor = {
+                    x: px,
+                    y: py
+                }
+                state.callbacks?.onCursorMove?.(current(state))
+            })
+        }
+
         if (e.pointerId !== activePointerId.current) {
             return
         }
@@ -111,7 +124,6 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
                 if (isPanActive.current) {
                     // Continue panning
-
                     const totalDeltaX = currentScreenX - initialScreenX
                     const totalDeltaY = currentScreenY - initialScreenY
 

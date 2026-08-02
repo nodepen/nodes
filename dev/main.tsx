@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { NodesApp, type Document as NodePenDocument } from "../dist/index.mjs"
 import "../dist/styles.css";
@@ -178,7 +178,7 @@ const assets = {
     models: {}
 }
 
-const presence = {
+let presence = {
     sessions: {
         ['demo-id']: {
             userId: 'fake-id',
@@ -195,10 +195,8 @@ const presence = {
     cameras: {}
 }
 
-root.render(
-    <StrictMode>
-        <div style={{ width: '100vw', height: '100vh' }}>
-            <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} />
-        </div>
-    </StrictMode>
-)
+root.render(<StrictMode>
+    <div style={{ width: '100vw', height: '100vh' }}>
+        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} />
+    </div>
+</StrictMode>)

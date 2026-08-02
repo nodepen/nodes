@@ -30,6 +30,10 @@ export type NodesAppState = {
         zoom: number
     }
     ui: {
+        cursor: {
+            x: number
+            y: number
+        }
         sidebar: {
             isComponentLibraryOpen: boolean
             isParameterLibraryOpen: boolean
@@ -181,6 +185,7 @@ export type NodesAppCallbacks = {
     onClickProfile?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
     onClickFeedback?: (state: NodesAppState) => void
+    onCursorMove?: (state: NodesAppState) => void,
     onUndo?: (state: NodesAppState) => void
     onRedo?: (state: NodesAppState) => void
 }
@@ -213,6 +218,7 @@ export const initialState: NodesAppState = {
         models: {}
     },
     presence: {
+        sessionId: '',
         sessions: {},
         cursors: {},
         cameras: {}
@@ -226,6 +232,10 @@ export const initialState: NodesAppState = {
         zoom: 1
     },
     ui: {
+        cursor: {
+            x: 0,
+            y: 0
+        },
         sidebar: {
             isComponentLibraryOpen: false,
             isParameterLibraryOpen: false

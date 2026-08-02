@@ -3,12 +3,13 @@ import React from 'react'
 import PresenceOverlayCursor from './PresenceOverlayCursor'
 
 const PresenceOverlay = () => {
-    const cursors = useStore((state) => state.presence.cursors)
+    // Filter out active session from presence
+    const sessionIds = useStore((state) => Object.keys(state.presence.sessions).filter((id) => id !== state.presence.sessionId))
 
     return <div className='np-w-full np-h-full np-relative'>
-        {Object.keys(cursors).map((sessionId) => {
-            return <PresenceOverlayCursor key={`presence-${sessionId}-cursor`} sessionId={sessionId} />
-        })}
+        {sessionIds.map((sessionId) => (<>
+            <PresenceOverlayCursor key={`presence-${sessionId}-cursor`} sessionId={sessionId} />
+        </>))}
     </div>
 }
 

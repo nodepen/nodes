@@ -1,5 +1,7 @@
 
 export type DocumentPresence = {
+    // Current session's id
+    sessionId: string
     sessions: {
         [sessionId: string]: {
             userId: string,
@@ -11,7 +13,7 @@ export type DocumentPresence = {
         [sessionId: string]: {
             x: number
             y: number
-        }
+        } | null
     }
     cameras: {
         [sessionId: string]: {
@@ -20,4 +22,5 @@ export type DocumentPresence = {
             zoom: number
         }
     }
+
 }
