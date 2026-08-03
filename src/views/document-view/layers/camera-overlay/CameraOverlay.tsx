@@ -154,6 +154,8 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                             }
                         })
 
+                        useStore.getState().callbacks.onSelectionRegionUpdated?.(useStore.getState())
+
                         resetLocalState()
                         break
                     }

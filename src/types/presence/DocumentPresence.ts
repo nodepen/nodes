@@ -22,5 +22,20 @@ export type DocumentPresence = {
             zoom: number
         }
     }
+    selection: {
+        [sessionId: string]: string[]
+    }
+    selectionRegions: {
+        [sessionId: string]: {
+            from: {
+                x: number
+                y: number
+            }
+            to: {
+                x: number
+                y: number
+            }
+        } | null
+    }
 
 }

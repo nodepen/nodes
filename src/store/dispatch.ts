@@ -192,6 +192,9 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
                     // Reset state to unset value
                     state.registry.selection.region = { isActive: false }
+
+                    state.callbacks.onSelectionRegionUpdated?.(state)
+                    state.callbacks.onSelectionUpdated?.(state)
                 },
                 false,
                 'selection/region/commit'
@@ -548,6 +551,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 (state) => {
                     state.registry.selection.nodes = []
                     state.registry.hover.branch = null
+
+                    state.callbacks.onSelectionUpdated?.(current(state))
                 },
                 false,
                 'ui/clearSelection'

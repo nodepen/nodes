@@ -186,6 +186,8 @@ export type NodesAppCallbacks = {
     onClickShare?: (state: NodesAppState) => void
     onClickFeedback?: (state: NodesAppState) => void
     onCursorMove?: (state: NodesAppState) => void,
+    onSelectionUpdated?: (state: NodesAppState) => void,
+    onSelectionRegionUpdated?: (state: NodesAppState) => void,
     onUndo?: (state: NodesAppState) => void
     onRedo?: (state: NodesAppState) => void
 }
@@ -221,7 +223,9 @@ export const initialState: NodesAppState = {
         sessionId: '',
         sessions: {},
         cursors: {},
-        cameras: {}
+        cameras: {},
+        selection: {},
+        selectionRegions: {}
     },
     camera: {
         aspect: 1.5,

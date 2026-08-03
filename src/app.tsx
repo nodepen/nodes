@@ -78,6 +78,18 @@ export const NodesApp = ({
         })
     }, [presence?.cameras])
 
+    useEffect(() => {
+        apply((state) => {
+            state.presence.selection = presence?.selection ?? {}
+        })
+    }, [presence?.selection])
+
+    useEffect(() => {
+        apply((state) => {
+            state.presence.selectionRegions = presence?.selectionRegions ?? {}
+        })
+    }, [presence?.selectionRegions])
+
     return <NodesAppInternal />
 }
 

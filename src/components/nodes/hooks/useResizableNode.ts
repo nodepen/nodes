@@ -274,8 +274,6 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
         isResizing.current = false
         activePointerId.current = -1
         resetDocumentCursor()
-
-        // saveDocument(useStore.getState())
     }, [resetDocumentCursor, onSaveDocument])
 
     const handlePointerUp = useCallback((e: PointerEvent, type: keyof typeof handles) => {
