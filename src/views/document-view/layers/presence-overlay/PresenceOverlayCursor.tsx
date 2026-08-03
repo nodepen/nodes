@@ -4,6 +4,7 @@ import { useStore, useStoreRef } from "@/store"
 import { useEffect, useState } from "react"
 import { useLerpState } from '@/hooks/useLerpState'
 import { COLORS } from '@/constants'
+import { lerpPoint2d, useInterpolatedState } from '@/hooks/useInteroplatedState'
 
 type Props = {
     sessionId: string
@@ -16,23 +17,19 @@ const PresenceOverlayCursor = ({ sessionId }: Props) => {
     const cameraPosition = useStore((state) => state.camera.position)
     const cameraZoom = useStore((state) => state.camera.zoom)
 
-    const [cursorX, setCursorX] = useLerpState(cursor?.x ?? 0, 0.09)
-    const [cursorY, setCursorY] = useLerpState(cursor?.y ?? 0, 0.09)
+    const [visibleCursor, setVisibleCursor] = useInterpolatedState(cursor ?? { x: 0, y: 0 }, lerpPoint2d)
 
     useEffect(() => {
         if (!cursor) {
             return
         }
-        startTransition(() => {
-            setCursorX(cursor.x)
-            setCursorY(cursor.y)
-        })
+        setVisibleCursor(cursor)
     }, [cursor?.x, cursor?.y])
 
     const worldSpaceToPageSpace = useWorldSpaceToPageSpace()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
-    const [pageX, pageY] = worldSpaceToPageSpace(cursorX, cursorY)
+    const [pageX, pageY] = worldSpaceToPageSpace(visibleCursor.x, visibleCursor.y)
     const [left, top] = pageSpaceToOverlaySpace(pageX, pageY)
 
     if (!cursor) return null

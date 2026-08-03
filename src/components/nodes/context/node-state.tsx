@@ -1,6 +1,8 @@
+import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInteroplatedState";
 import { useLerpState } from "@/hooks/useLerpState";
 import { useDispatch, useStore } from "@/store";
 import React, { startTransition, useEffect } from "react"
+import type * as NodePen from '@/types'
 
 export type NodeInternalState = {
     position: {
@@ -29,27 +31,22 @@ export const useNodeInternalState = () => {
     return context;
 }
 
-export const usePresenceState = (nodeInstanceId: string): NodeInternalState => {
-    const node = useStore((state) => state.document.nodes[nodeInstanceId])
+export const usePresenceState = (nodeInstanceId: string | null): NodeInternalState => {
+    const node = useStore<NodePen.DocumentNode | null>((state) => state.document.nodes[nodeInstanceId ?? ''] ?? null)
 
     const { apply } = useDispatch()
 
-    const [x, setX] = useLerpState(node?.position?.x ?? 0, 0.09)
-    const [y, setY] = useLerpState(node?.position?.y ?? 0, 0.09)
+    const [position, setPosition] = useInterpolatedState(node?.position ?? { x: 0, y: 0 }, lerpPoint2d)
 
     const internalPosition = useStore((state) => {
-        return Object.keys(state.presence.sessions).map((sessionId) => (state.presence.drag[nodeInstanceId]?.[sessionId] ?? null)).filter((drag) => !!drag).at(0) ?? null
+        return Object.keys(state.presence.sessions).map((sessionId) => (state.presence.drag[nodeInstanceId ?? '']?.[sessionId] ?? null)).filter((drag) => !!drag).at(0) ?? null
     })
 
     useEffect(() => {
         if (!internalPosition) {
             return
         }
-
-        startTransition(() => {
-            setX(internalPosition.x)
-            setY(internalPosition.y)
-        })
+        setPosition(internalPosition)
     }, [internalPosition?.x, internalPosition?.y])
 
     useEffect(() => {
@@ -58,21 +55,15 @@ export const usePresenceState = (nodeInstanceId: string): NodeInternalState => {
         }
 
         apply((state) => {
-            for (const [sessionId, dragData] of Object.entries((state.presence.drag[nodeInstanceId] ?? {}))) {
+            for (const [sessionId, dragData] of Object.entries((state.presence.drag[nodeInstanceId ?? ''] ?? {}))) {
                 if (dragData?.isFinal) {
-                    delete state.presence.drag[nodeInstanceId][sessionId]
+                    delete state.presence.drag[nodeInstanceId ?? '']?.[sessionId]
                 }
             }
         })
 
-        setX(node.position.x, { immediate: true })
-        setY(node.position.y, { immediate: true })
-    }, [node?.position?.x, node?.position?.y])
+        setPosition(node.position, { immediate: true })
+    }, [node, node?.position?.x, node?.position?.y])
 
-    return {
-        position: {
-            x,
-            y
-        }
-    }
+    return { position }
 }
