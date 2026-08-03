@@ -4,6 +4,7 @@ import { usePortValues } from '@/hooks'
 import type * as NodePen from '@/types'
 import { Dialog } from '@/views/components'
 import React, { useCallback, useRef, useState } from 'react'
+import { useNodeInternalState } from '../../context/node-state'
 
 const {
     NODE_INTERNAL_PADDING
@@ -16,7 +17,9 @@ type PanelDataProps = {
 }
 
 export const PanelDataTree = ({ node, onScrollStart, onScrollEnd }: PanelDataProps) => {
-    const { dimensions, position } = node
+    const { position } = useNodeInternalState()
+
+    const { dimensions } = node
 
     const containerRef = useRef<HTMLDivElement>(null)
 

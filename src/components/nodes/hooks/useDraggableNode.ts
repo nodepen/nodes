@@ -1,11 +1,12 @@
 import type React from 'react'
 import { useCallback, useRef } from 'react'
 import { useDispatch, useStore, useStoreRef } from '$'
-import { useImperativeEvent } from '@/hooks'
+import { useImperativeEvent, usePageSpaceToWorldSpace } from '@/hooks'
 import { saveDocument } from '@/store/utils/saveDocument'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
 import { targetIsScrolling } from '@/utils/dom/targetIsScrolling'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
+import { current } from 'immer'
 
 export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
     const nodeRef = useRef<SVGGElement>(null)
@@ -13,6 +14,8 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
     const { apply, endDrag, setNodePosition } = useDispatch()
 
     const zoom = useStoreRef((state) => state.camera.zoom)
+
+    const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
     const getCurrentNodePosition = (id: string): { x: number; y: number } => {
         return useStore.getState().document.nodes[id].position
@@ -99,13 +102,22 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
         apply((state) => {
             state.registry.drag.dx = dx
             state.registry.drag.dy = dy
+
+            const [cx, cy] = pageSpaceToWorldSpace(currentPointerX, currentPointerY)
+
+            state.ui.cursor = {
+                x: cx,
+                y: cy
+            }
+
+            state.callbacks.onCursorMove?.(current(state))
+            state.callbacks.onDrag?.(current(state))
         })
 
         const { x: initialNodeX, y: initialNodeY } = initialNodePosition.current
 
         const currentNodeX = initialNodeX + dx
         const currentNodeY = initialNodeY + dy
-
 
         if (useStore.getState().registry.drag.isCopyActive) {
             const { x: previousNodeX, y: previousNodeY } = getCurrentNodePosition(getProvisionalId(nodeInstanceId))

@@ -1,3 +1,4 @@
+import { useNodeInternalState } from '@/components/nodes/context/node-state'
 import { DIMENSIONS } from '@/constants'
 import type * as NodePen from '@/types'
 
@@ -14,10 +15,10 @@ const {
     NUMBER_SLIDER_HEIGHT,
 } = DIMENSIONS
 
-export const getNumberSliderValuePosition = (node: NodePen.DocumentNode): NodeExtents => {
+export const useNumberSliderValuePosition = (nodePosition: NodePen.DocumentNode['position']): NodeExtents => {
     return {
-        x: node.position.x + NODE_INTERNAL_PADDING,
-        y: node.position.y + NODE_INTERNAL_PADDING,
+        x: nodePosition.x + NODE_INTERNAL_PADDING,
+        y: nodePosition.y + NODE_INTERNAL_PADDING,
         width: NUMBER_SLIDER_VALUE_WIDTH,
         height: NUMBER_SLIDER_HEIGHT - NODE_INTERNAL_PADDING * 2 - 1,
     }

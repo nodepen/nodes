@@ -409,6 +409,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         expireSolution(state)
                     }
 
+                    state.callbacks.onDragEnd?.(current(state))
+
                     state.registry.drag = {
                         isActive: false,
                         isCopyActive: false,

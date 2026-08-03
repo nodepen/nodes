@@ -3,7 +3,8 @@ import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { tryGetSingleValue } from '@/utils/data-trees'
-import { getNumberSliderValuePosition } from '@/utils/node-dimensions/getNumberSliderValueExtents'
+import { useNumberSliderValuePosition } from '@/utils/node-dimensions/getNumberSliderValueExtents'
+import { useNodeInternalState } from '../../context/node-state'
 
 type NumberSliderValueProps = {
     node: NodePen.DocumentNode
@@ -18,9 +19,11 @@ const {
 // TODO: How to handle large number overflow?
 
 export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => {
+    const { position } = useNodeInternalState()
+
     const currentValue = useStore((state) => tryGetSingleValue(state.document.nodes[node.instanceId].values['output'])?.value)
 
-    const { x, y, width, height } = getNumberSliderValuePosition(node)
+    const { x, y, width, height } = useNumberSliderValuePosition(position)
 
     const start = {
         x: x + NODE_INTERNAL_PADDING,

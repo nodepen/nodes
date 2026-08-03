@@ -90,6 +90,23 @@ export const NodesApp = ({
         })
     }, [presence?.selectionRegions])
 
+    useEffect(() => {
+        apply((state) => {
+            for (const [nodeInstanceId, currentSessionData] of Object.entries(state.presence.drag)) {
+                const nextSessionData = presence?.drag?.[nodeInstanceId] ?? {}
+                if (JSON.stringify(currentSessionData) !== JSON.stringify(nextSessionData)) {
+                    state.presence.drag[nodeInstanceId] = nextSessionData
+                }
+            }
+            for (const [nodeInstanceId, nextSessionData] of Object.entries(presence?.drag ?? {})) {
+                const currentSessionData = state.presence.drag[nodeInstanceId] ?? {}
+                if (JSON.stringify(currentSessionData) !== JSON.stringify(nextSessionData)) {
+                    state.presence.drag[nodeInstanceId] = nextSessionData
+                }
+            }
+        })
+    }, [presence?.drag])
+
     return <NodesAppInternal />
 }
 

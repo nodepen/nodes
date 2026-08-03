@@ -11,6 +11,7 @@ import { Dialog } from '@/views/components'
 import { NumberSliderValue } from './components/NumberSliderValue'
 import { NumberSliderConfigForm } from './forms/NumberSliderConfigForm'
 import { useResizableNode } from '../hooks/useResizableNode'
+import { NodeInternalStateProvider, useNodeInternalState, usePresenceState } from '../context/node-state'
 
 type NumberSliderProps = {
     id: string
@@ -21,6 +22,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
     const config = node.nodeConfiguration as NodePen.NumberSliderConfig
+
+    const internalState = usePresenceState(id)
 
     const { apply } = useDispatch()
 
@@ -80,7 +83,7 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     const s = 20
 
     return (
-        <>
+        <NodeInternalStateProvider value={internalState}>
             <g id={`number-slider-${id}`} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown}>
                 <NumberSliderInteractionArea node={node} />
                 <g ref={draggableTargetRef}>
@@ -94,8 +97,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
                 <NumberSliderValue node={node} onClick={() => setShowModal(true)} />
                 <g ref={left}>
                     <rect
-                        x={node.position.x - s / 2}
-                        y={node.position.y}
+                        x={internalState.position.x - s / 2}
+                        y={internalState.position.y}
                         width={s}
                         height={node.dimensions.height}
                         fill="transparent"
@@ -107,7 +110,7 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
                     <NumberSliderConfigForm node={node} config={config} onClose={() => setShowModal(false)} />
                 </Dialog>
             ) : null}
-        </>
+        </NodeInternalStateProvider>
 
     )
 }

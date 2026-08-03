@@ -2,6 +2,7 @@ import type React from 'react'
 import { useCallback, useRef } from 'react'
 import { useStore, useDispatch } from '$'
 import { useImperativeEvent } from '@/hooks'
+import { current } from 'immer'
 
 export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
     const nodeRef = useRef<SVGGElement>(null)
@@ -38,6 +39,8 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
                                 // Set node as selected in registry
                                 const currentSelection = state.registry.selection.nodes
                                 state.registry.selection.nodes = currentSelection.filter((id) => id !== nodeInstanceId)
+
+                                state.callbacks.onSelectionUpdated?.(current(state))
                             })
 
                             return
@@ -57,6 +60,8 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
                                 if (!state.registry.selection.nodes.includes(nodeInstanceId)) {
                                     state.registry.selection.nodes.push(nodeInstanceId)
                                 }
+
+                                state.callbacks.onSelectionUpdated?.(current(state))
                             })
 
                             return
@@ -78,13 +83,13 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
 
                             // Set node as selected in registry
                             state.registry.selection.nodes = [nodeInstanceId]
+
+                            state.callbacks.onSelectionUpdated?.(current(state))
                         })
                     }
                 }
             }
         }
-
-        useStore.getState().callbacks.onSelectionUpdated?.(useStore.getState())
     }, [])
 
     useImperativeEvent(nodeRef, 'pointerdown', handlePointerDown)

@@ -2,6 +2,7 @@ import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useNodeInternalState } from '../../context/node-state'
 
 const {
     NODE_INTERNAL_PADDING
@@ -14,7 +15,9 @@ type PanelInputProps = {
 }
 
 export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
-    const { position, dimensions } = node
+    const { position } = useNodeInternalState()
+
+    const { dimensions } = node
     const { textContent, multilineData } = node.nodeConfiguration as NodePen.PanelConfig
 
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(node.instanceId))

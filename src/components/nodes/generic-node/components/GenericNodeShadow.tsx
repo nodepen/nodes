@@ -2,6 +2,7 @@ import React from 'react'
 import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
+import { useNodeInternalState } from '../../context/node-state'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS
 
@@ -11,7 +12,9 @@ type GenericNodeShadowProps = {
 }
 
 export const GenericNodeShadow = ({ node, template }: GenericNodeShadowProps) => {
-    const { position, inputs, outputs, anchors } = node
+    const { inputs, outputs, anchors } = node
+
+    const { position } = useNodeInternalState()
 
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height

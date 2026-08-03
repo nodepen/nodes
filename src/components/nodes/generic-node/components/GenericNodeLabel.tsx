@@ -4,6 +4,7 @@ import { COLORS, DIMENSIONS } from '@/constants'
 import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { useDispatch } from '$'
 import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
+import { useNodeInternalState } from '../../context/node-state'
 
 const { NODE_INTERNAL_PADDING, NODE_LABEL_FONT_SIZE, NODE_LABEL_WIDTH } = DIMENSIONS
 
@@ -13,7 +14,9 @@ type GenericNodeLabelProps = {
 }
 
 export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
-    const { instanceId: id, position, anchors } = node
+    const { position } = useNodeInternalState()
+
+    const { instanceId: id, anchors } = node
 
     const { dx } = anchors['labelDeltaX']
 

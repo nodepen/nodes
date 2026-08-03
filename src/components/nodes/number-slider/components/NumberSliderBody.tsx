@@ -2,17 +2,19 @@ import React, { useCallback } from 'react'
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { COLORS } from '@/constants'
+import { useSelectionColor } from '@/hooks/useSelectionColor'
+import { useNodeInternalState } from '../../context/node-state'
 
 type NumberSliderBodyProps = {
     node: NodePen.DocumentNode
 }
 
 export const NumberSliderBody = ({ node }: NumberSliderBodyProps) => {
-    const { position } = node
+    const { position } = useNodeInternalState()
+
     const { width, height } = node.dimensions
 
-    const documentSelection = useStore((state) => state.registry.selection.nodes)
-    const isSelected = documentSelection.includes(node.instanceId)
+    const fill = useSelectionColor(node.instanceId)
 
     return (
         <g id={`number-slider-body-${node.instanceId}`}>
@@ -23,7 +25,7 @@ export const NumberSliderBody = ({ node }: NumberSliderBodyProps) => {
                 height={height}
                 rx={7}
                 ry={7}
-                fill={isSelected ? COLORS.GREEN : COLORS.LIGHT}
+                fill={fill}
                 stroke={COLORS.DARK}
                 strokeWidth={2}
                 pointerEvents="auto"

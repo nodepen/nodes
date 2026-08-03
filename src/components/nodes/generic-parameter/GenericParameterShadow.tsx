@@ -1,62 +1,65 @@
 import React from 'react'
 import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
+import { useNodeInternalState } from '../context/node-state'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS
 
 type GenericParameterShadowProps = {
-  node: NodePen.DocumentNode
-  template: NodePen.NodeTemplate
+    node: NodePen.DocumentNode
+    template: NodePen.NodeTemplate
 }
 
 export const GenericParameterShadow = ({ node, template }: GenericParameterShadowProps) => {
-  const { position, anchors } = node
+    const { position } = useNodeInternalState()
 
-  const nodeWidth = node.dimensions.width
-  const nodeHeight = node.dimensions.height
+    const { anchors } = node
 
-  const nodePortInstanceIds = ['output']
+    const nodeWidth = node.dimensions.width
+    const nodeHeight = node.dimensions.height
 
-  return (
-    <>
-      <rect
-        x={position.x}
-        y={position.y + 2}
-        width={nodeWidth}
-        height={nodeHeight}
-        rx={7}
-        ry={7}
-        fill={COLORS.DARK}
-        stroke={COLORS.DARK}
-        strokeWidth={2}
-      />
-      {nodePortInstanceIds.map((portInstanceId) => {
-        const portAnchor = anchors[portInstanceId]
+    const nodePortInstanceIds = ['output']
 
-        if (!portAnchor) {
-          return null
-        }
+    return (
+        <>
+            <rect
+                x={position.x}
+                y={position.y + 2}
+                width={nodeWidth}
+                height={nodeHeight}
+                rx={7}
+                ry={7}
+                fill={COLORS.DARK}
+                stroke={COLORS.DARK}
+                strokeWidth={2}
+            />
+            {nodePortInstanceIds.map((portInstanceId) => {
+                const portAnchor = anchors[portInstanceId]
 
-        const portPosition = {
-          x: position.x + portAnchor.dx - NODE_PORT_RADIUS,
-          y: position.y + portAnchor.dy - NODE_PORT_RADIUS,
-        }
+                if (!portAnchor) {
+                    return null
+                }
 
-        return (
-          <rect
-            key={`port-shadow-${portInstanceId}`}
-            x={portPosition.x}
-            y={portPosition.y}
-            width={NODE_PORT_RADIUS * 2}
-            height={NODE_PORT_RADIUS * 2 + 2}
-            rx={NODE_PORT_RADIUS}
-            ry={NODE_PORT_RADIUS}
-            fill={COLORS.DARK}
-            stroke={COLORS.DARK}
-            strokeWidth={2}
-          />
-        )
-      })}
-    </>
-  )
+                const portPosition = {
+                    x: position.x + portAnchor.dx - NODE_PORT_RADIUS,
+                    y: position.y + portAnchor.dy - NODE_PORT_RADIUS,
+                }
+
+                return (
+                    <rect
+                        key={`port-shadow-${portInstanceId}`}
+                        x={portPosition.x}
+                        y={portPosition.y}
+                        width={NODE_PORT_RADIUS * 2}
+                        height={NODE_PORT_RADIUS * 2 + 2}
+                        rx={NODE_PORT_RADIUS}
+                        ry={NODE_PORT_RADIUS}
+                        fill={COLORS.DARK}
+                        stroke={COLORS.DARK}
+                        strokeWidth={2}
+                    />
+                )
+            })}
+        </>
+    )
 }

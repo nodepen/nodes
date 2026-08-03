@@ -5,6 +5,8 @@ import { COLORS } from '@/constants'
 import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getGenericParameterPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
+import { useSelectionColor } from '@/hooks/useSelectionColor'
+import { useNodeInternalState } from '../context/node-state'
 
 type GenericParameterBodyProps = {
     node: NodePen.DocumentNode
@@ -12,15 +14,14 @@ type GenericParameterBodyProps = {
 }
 
 export const GenericParameterBody = ({ node, template }: GenericParameterBodyProps) => {
-    const { position } = node
+    const { position } = useNodeInternalState()
 
     const { width, height } = node.dimensions
 
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
-    const documentSelection = useStore((state) => state.registry.selection.nodes)
-    const isSelected = documentSelection.includes(node.instanceId)
+    const fill = useSelectionColor(node.instanceId)
 
     const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
         e.stopPropagation()
@@ -81,7 +82,7 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
                 height={height}
                 rx={7}
                 ry={7}
-                fill={isSelected ? COLORS.GREEN : COLORS.LIGHT}
+                fill={fill}
                 stroke={COLORS.DARK}
                 strokeWidth={2}
                 pointerEvents="auto"

@@ -4,7 +4,7 @@ import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { getNumberSliderValuePosition } from '@/utils/node-dimensions/getNumberSliderValueExtents'
+import { useNumberSliderValuePosition } from '@/utils/node-dimensions/getNumberSliderValueExtents'
 
 type WireProps = {
     start: {
@@ -197,7 +197,7 @@ export const Wire = ({
                 )
             }
             case 'number-slider': {
-                const { x, y, width, height } = getNumberSliderValuePosition(node)
+                const { x, y, width, height } = useNumberSliderValuePosition(node)
                 const { dx, dy } = node.anchors['handle'] ?? { dx: 0, dy: 0 }
 
                 const sx = DIMENSIONS.NUMBER_SLIDER_HANDLE_WIDTH / 2

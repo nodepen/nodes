@@ -1,5 +1,6 @@
 import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
+import { useNodeInternalState } from '../../context/node-state'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS
 
@@ -8,7 +9,9 @@ type NumberSliderProps = {
 }
 
 export const NumberSliderShadow = ({ node }: NumberSliderProps) => {
-    const { position, anchors } = node
+    const { position } = useNodeInternalState()
+
+    const { anchors } = node
 
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height

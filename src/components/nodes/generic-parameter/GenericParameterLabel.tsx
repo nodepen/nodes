@@ -1,6 +1,7 @@
 import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePortLabel } from '@/hooks/usePortLabel'
+import { useNodeInternalState } from '../context/node-state'
 
 const { NODE_INTERNAL_PADDING, NODE_LABEL_FONT_SIZE, NODE_LABEL_WIDTH, NODE_PORT_MINIMUM_WIDTH } = DIMENSIONS
 
@@ -10,7 +11,9 @@ type GenericParameterLabelProps = {
 }
 
 export const GenericParameterLabel = ({ node, template }: GenericParameterLabelProps) => {
-    const { instanceId: id, position, dimensions } = node
+    const { position } = useNodeInternalState()
+
+    const { instanceId: id, dimensions } = node
 
     const { currentLabel } = usePortLabel(node.instanceId, 'output')
 

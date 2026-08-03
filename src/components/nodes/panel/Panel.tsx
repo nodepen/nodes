@@ -10,6 +10,7 @@ import { PanelPorts } from './components/PanelPorts'
 import { GenericNodeWires } from '../wire'
 import { PanelResizeTargets } from './components/PanelResizeTargets'
 import { PanelDataTree } from './components/PanelDataTree'
+import { NodeInternalStateProvider, useNodeInternalState, usePresenceState } from '../context/node-state'
 
 type PanelProps = {
     id: string
@@ -20,6 +21,8 @@ const Panel = ({ id, template }: PanelProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
     const config = node.nodeConfiguration as NodePen.NumberSliderConfig
+
+    const internalState = usePresenceState(id)
 
     const { apply } = useDispatch()
 
@@ -63,7 +66,7 @@ const Panel = ({ id, template }: PanelProps) => {
     }, [])
 
     return (
-        <>
+        <NodeInternalStateProvider value={internalState}>
             <g id={`panel-${id}`} ref={containerRef} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick}>
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
@@ -79,7 +82,7 @@ const Panel = ({ id, template }: PanelProps) => {
                 <PanelPorts node={node} template={template} />
             </g>
             <GenericNodeWires node={node} />
-        </>
+        </NodeInternalStateProvider>
     )
 }
 

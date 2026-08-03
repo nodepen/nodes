@@ -5,6 +5,8 @@ import { COLORS } from '@/constants'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
 import { GenericNodeLabel } from '.'
 import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
+import { useSelectionColor } from '@/hooks/useSelectionColor'
+import { useNodeInternalState } from '../../context/node-state'
 
 type GenericNodeBodyProps = {
     node: NodePen.DocumentNode
@@ -12,13 +14,12 @@ type GenericNodeBodyProps = {
 }
 
 export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
-    const { position } = node
+    const { position } = useNodeInternalState()
+
+    const fill = useSelectionColor(node.instanceId)
 
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
-
-    const isSelected = useStore((state) => state.registry.selection.nodes.includes(node.instanceId))
-    const isHidden = useStore((state) => !state.document.nodes[node.instanceId].status.isVisible)
 
     const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
         e.stopPropagation()
@@ -45,18 +46,6 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
         //   }
         // })
     }, [])
-
-    const presenceFill = usePresenceSelectionColor(node.instanceId)
-
-    const sessionFill = (isSelected && isHidden)
-        ? COLORS.SWAMPGREEN
-        : isSelected
-            ? COLORS.GREEN
-            : isHidden
-                ? COLORS.GREY
-                : COLORS.LIGHT
-
-    const fill = (isSelected ? sessionFill : presenceFill) ?? COLORS.LIGHT
 
     return (
         <g id={`generic-node-body-${node.instanceId}`} onContextMenu={handleContextMenu}>

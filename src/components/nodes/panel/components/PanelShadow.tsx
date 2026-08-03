@@ -1,5 +1,6 @@
 import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
+import { useNodeInternalState } from '../../context/node-state'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS
 
@@ -8,9 +9,11 @@ type PanelShadowProps = {
 }
 
 export const PanelShadow = ({ node }: PanelShadowProps) => {
+    const { position } = useNodeInternalState()
+
     const { anchors } = node
 
-    const { x, y } = node.position
+    const { x, y } = position
     const { width, height } = node.dimensions
 
     const nodePortInstanceIds = ['input', 'output']

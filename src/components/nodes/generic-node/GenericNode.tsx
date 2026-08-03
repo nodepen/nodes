@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
@@ -10,6 +10,7 @@ import {
     GenericNodeSkeleton,
 } from './components'
 import { GenericNodeWires } from '../wire'
+import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
 
 type GenericNodeProps = {
     id: string
@@ -23,6 +24,8 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
 
+    const internalState = usePresenceState(id)
+
     // Attach debug behaviors
     useDebugRender(node, template)
 
@@ -31,7 +34,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
     const selectableTargetRef = useSelectableNode(id)
 
     return (
-        <>
+        <NodeInternalStateProvider value={internalState}>
             <GenericNodeRuntimeMessage node={node} />
             <g id={`generic-node-${id}`} ref={draggableTargetRef}>
                 <g ref={selectableTargetRef}>
@@ -49,7 +52,7 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
                 </g>
             </g>
             {node.status.isProvisional ? null : <GenericNodeWires node={node} />}
-        </>
+        </NodeInternalStateProvider>
     )
 }
 

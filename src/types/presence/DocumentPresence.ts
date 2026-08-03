@@ -37,5 +37,16 @@ export type DocumentPresence = {
             }
         } | null
     }
+    drag: {
+        [nodeInstanceId: string]: {
+            [sessionId: string]: {
+                // The literal position on the session's document
+                x: number
+                y: number
+                // The drag is over, clear on position change
+                isFinal: boolean
+            }
+        }
+    }
 
 }

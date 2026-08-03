@@ -2,6 +2,7 @@ import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useDispatch } from '@/store'
 import React, { useCallback } from 'react'
+import { useNodeInternalState } from '../../context/node-state'
 
 type InteractionAreaProps = {
     node: NodePen.DocumentNode
@@ -10,7 +11,9 @@ type InteractionAreaProps = {
 const { INTERACTION_BUFFER } = DIMENSIONS
 
 export const NumberSliderInteractionArea = ({ node }: InteractionAreaProps) => {
-    const { x, y } = node.position
+    const { position } = useNodeInternalState()
+
+    const { x, y } = position
     const { width, height } = node.dimensions
 
     return (

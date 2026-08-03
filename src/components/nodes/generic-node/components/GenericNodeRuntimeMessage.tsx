@@ -6,13 +6,16 @@ import { useImperativeEvent } from '@/hooks'
 import { getNodeRuntimeMessageBubble } from '@/utils/node-geometry'
 import { WiresMaskPortal } from '@/components/annotations/wire/components'
 import { Dialog } from '@/views/components'
+import { useNodeInternalState } from '../../context/node-state'
 
 type GenericNodeRuntimeMessageProps = {
     node: DocumentNode
 }
 
 export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessageProps) => {
-    const { instanceId, anchors, position } = node
+    const { position } = useNodeInternalState()
+
+    const { instanceId, anchors } = node
     const { x, y } = position
 
     const [showDialog, setShowDialog] = useState(false)
@@ -97,7 +100,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
                     width={24}
                     height={24}
                     style={{
-                        transform: `translate(${node.position.x + node.anchors['labelDeltaX'].dx - 12}px, ${node.position.y - 44
+                        transform: `translate(${position.x + node.anchors['labelDeltaX'].dx - 12}px, ${position.y - 44
                             }px)`,
                     }}
                     aria-hidden="true"

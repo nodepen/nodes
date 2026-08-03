@@ -1,13 +1,16 @@
 import type * as NodePen from '@/types'
 import { useResizableNode } from '../../hooks/useResizableNode'
 import { useCallback } from 'react'
+import { useNodeInternalState } from '../../context/node-state'
 
 type ResizeTargetsProps = {
     node: NodePen.DocumentNode
 }
 
 export const PanelResizeTargets = ({ node }: ResizeTargetsProps) => {
-    const { x, y } = node.position
+    const { position } = useNodeInternalState()
+
+    const { x, y } = position
     const { width, height } = node.dimensions
 
     const computeAnchors = useCallback((next: NodePen.DocumentNode): NodePen.DocumentNode['anchors'] => {

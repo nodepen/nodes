@@ -7,6 +7,7 @@ import { getDomainParameter } from '@/utils/numerics/domain'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
 import { expireSolution } from '@/store/utils'
 import { clamp } from '@/utils'
+import { useNodeInternalState } from '../../context/node-state'
 
 type NumberSliderSliderProps = {
     node: NodePen.DocumentNode
@@ -22,7 +23,9 @@ const {
 
 // ComponentBuilderBuilder
 export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) => {
-    const { x, y } = node.position
+    const { position } = useNodeInternalState()
+
+    const { x, y } = position
     const { width, height } = node.dimensions
     const { min, max, precision } = config
 

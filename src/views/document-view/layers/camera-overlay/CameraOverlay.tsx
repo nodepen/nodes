@@ -152,9 +152,14 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                                 from: { x: ax, y: ay },
                                 to: { x: bx, y: by },
                             }
-                        })
+                            state.ui.cursor = {
+                                x: bx,
+                                y: by
+                            }
 
-                        useStore.getState().callbacks.onSelectionRegionUpdated?.(useStore.getState())
+                            state.callbacks.onCursorMove?.(current(state))
+                            state.callbacks.onSelectionRegionUpdated?.(current(state))
+                        })
 
                         resetLocalState()
                         break

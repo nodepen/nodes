@@ -8,37 +8,40 @@ import { GenericParameterIcon } from './GenericParameterIcon'
 import { GenericParameterShadow } from './GenericParameterShadow'
 import { GenericParameterPorts } from './GenericParameterPorts'
 import { GenericParameterLabel } from './GenericParameterLabel'
+import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
 
 type GenericParameterProps = {
-  id: string
-  template: NodePen.NodeTemplate
+    id: string
+    template: NodePen.NodeTemplate
 }
 
 const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactElement => {
-  // Subscribe to current node state
-  const node = useStore((store) => store.document.nodes[id])
+    // Subscribe to current node state
+    const node = useStore((store) => store.document.nodes[id])
 
-  // Attach interactive behaviors
-  const draggableTargetRef = useDraggableNode(id)
-  const selectableTargetRef = useSelectableNode(id)
+    const internalState = usePresenceState(id)
 
-  return (
-    <>
-      <g id={`generic-parameter-${id}`} ref={draggableTargetRef}>
-        <g ref={selectableTargetRef}>
-          <GenericParameterShadow node={node} template={template} />
-          <GenericParameterBody node={node} template={template} />
-          <GenericParameterIcon node={node} template={template} />
-          <GenericParameterLabel node={node} template={template} />
-          <GenericParameterPorts node={node} />
-        </g>
-      </g>
-    </>
-  )
+    // Attach interactive behaviors
+    const draggableTargetRef = useDraggableNode(id)
+    const selectableTargetRef = useSelectableNode(id)
+
+    return (
+        <NodeInternalStateProvider value={internalState}>
+            <g id={`generic-parameter-${id}`} ref={draggableTargetRef}>
+                <g ref={selectableTargetRef}>
+                    <GenericParameterShadow node={node} template={template} />
+                    <GenericParameterBody node={node} template={template} />
+                    <GenericParameterIcon node={node} template={template} />
+                    <GenericParameterLabel node={node} template={template} />
+                    <GenericParameterPorts node={node} />
+                </g>
+            </g>
+        </NodeInternalStateProvider>
+    )
 }
 
 const propsAreEqual = (prev: Readonly<GenericParameterProps>, next: Readonly<GenericParameterProps>): boolean => {
-  return prev.id === next.id
+    return prev.id === next.id
 }
 
 export default React.memo(GenericParameter, propsAreEqual)
