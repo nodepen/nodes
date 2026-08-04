@@ -171,6 +171,10 @@ export type NodesAppState = {
                 mode: WireEditMode | null
             }
         }
+        annotations: {
+            overlayContainerRef: React.RefObject<SVGGElement | null>
+            underlayContainerRef: React.RefObject<SVGGElement | null>
+        }
     }
     callbacks: NodesAppCallbacks
     internalCallbacks: {
@@ -190,6 +194,7 @@ export type NodesAppCallbacks = {
     onDragEnd?: (state: NodesAppState) => void,
     onSelectionUpdated?: (state: NodesAppState) => void,
     onSelectionRegionUpdated?: (state: NodesAppState) => void,
+    onWiresUpdated?: (state: NodesAppState) => void,
     onUndo?: (state: NodesAppState) => void
     onRedo?: (state: NodesAppState) => void
 }
@@ -228,7 +233,8 @@ export const initialState: NodesAppState = {
         cameras: {},
         selection: {},
         selectionRegions: {},
-        drag: {}
+        drag: {},
+        wires: {}
     },
     camera: {
         aspect: 1.5,
@@ -318,6 +324,10 @@ export const initialState: NodesAppState = {
                 mode: null,
             },
         },
+        annotations: {
+            overlayContainerRef: React.createRef<SVGGElement>(),
+            underlayContainerRef: React.createRef<SVGGElement>()
+        }
     },
     callbacks: {},
     internalCallbacks: {}

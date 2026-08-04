@@ -37,6 +37,18 @@ export type DocumentPresence = {
             }
         } | null
     }
+    wires: {
+        [sessionId: string]: {
+            portAnchor: {
+                nodeInstanceId: string
+                portInstanceId: string
+            }
+            targetAnchor: {
+                nodeInstanceId: string
+                portInstanceId: string
+            } | null
+        }[]
+    }
     drag: {
         [nodeInstanceId: string]: {
             [sessionId: string]: {

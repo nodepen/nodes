@@ -5,6 +5,7 @@ import type * as NodePen from '@/types'
 import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getWireEditModalityFromEvent } from '@/utils/wires'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
+import { current } from 'immer'
 
 export const usePort = (
     nodeInstanceId: string,
@@ -81,6 +82,7 @@ export const usePort = (
                                 target: null,
                                 mode: getWireEditModalityFromEvent(e),
                             }
+                            state.callbacks.onWiresUpdated?.(current(state))
                         })
                         break
                     }
@@ -128,6 +130,8 @@ export const usePort = (
                         nodeInstanceId,
                         portInstanceId,
                     }
+
+                    state.callbacks.onWiresUpdated?.(current(state))
                 })
             }
         }
@@ -165,6 +169,8 @@ export const usePort = (
                 apply((state) => {
                     // Release live wire capture
                     state.registry.wires.live.target = null
+
+                    state.callbacks.onWiresUpdated?.(current(state))
 
                     if (Object.keys(state.registry.wires.live.connections).length > 0) {
                         return

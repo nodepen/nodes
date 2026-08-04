@@ -16,7 +16,7 @@ type GenericNodeBodyProps = {
 export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
     const { position } = useNodeInternalState()
 
-    const fill = useSelectionColor(node.instanceId)
+    const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
@@ -47,6 +47,8 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
         // })
     }, [])
 
+    const o = 4
+
     return (
         <g id={`generic-node-body-${node.instanceId}`} onContextMenu={handleContextMenu}>
             <rect
@@ -56,11 +58,23 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
                 height={nodeHeight}
                 rx={7}
                 ry={7}
-                fill={fill}
+                fill={sessionColor}
                 stroke={COLORS.DARK}
                 strokeWidth={2}
                 pointerEvents="auto"
             />
+            {presenceColor ? (
+                <rect
+                    x={position.x + o}
+                    y={position.y + o}
+                    width={nodeWidth - (o * 2)}
+                    height={nodeHeight - (o * 2)}
+                    fill={presenceColor}
+                    rx={5}
+                    ry={5}
+                    pointerEvents={"auto"}
+                />
+            ) : null}
             <GenericNodeLabel node={node} template={template} />
         </g>
     )

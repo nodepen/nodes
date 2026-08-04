@@ -17,11 +17,6 @@ const TransientElementOverlay = () => {
     const menus = useStore((state) => Object.entries(state.registry.contextMenus))
     const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
 
-    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
-    const worldSpaceToPageSpace = useWorldSpaceToPageSpace()
-
-    const presence = useStore((state) => Object.entries(state.presence.cursors))
-
     const prefersReducedMotion = true
 
     return (

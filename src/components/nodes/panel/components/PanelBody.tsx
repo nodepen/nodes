@@ -13,7 +13,7 @@ export const PanelBody = ({ node }: PanelBodyProps) => {
 
     const { width, height } = node.dimensions
 
-    const fill = useSelectionColor(node.instanceId)
+    const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
     return (
         <g id={`panel-body-${node.instanceId}`}>
@@ -24,7 +24,7 @@ export const PanelBody = ({ node }: PanelBodyProps) => {
                 height={height}
                 rx={7}
                 ry={7}
-                fill={fill}
+                fill={presenceColor ?? sessionColor}
                 stroke={COLORS.DARK}
                 strokeWidth={2}
                 pointerEvents="auto"

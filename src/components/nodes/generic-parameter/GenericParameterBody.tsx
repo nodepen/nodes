@@ -21,7 +21,7 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
-    const fill = useSelectionColor(node.instanceId)
+    const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
     const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
         e.stopPropagation()
@@ -82,7 +82,7 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
                 height={height}
                 rx={7}
                 ry={7}
-                fill={fill}
+                fill={presenceColor ?? sessionColor}
                 stroke={COLORS.DARK}
                 strokeWidth={2}
                 pointerEvents="auto"

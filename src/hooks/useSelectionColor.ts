@@ -2,7 +2,12 @@ import { useStore } from '$'
 import { COLORS } from '@/constants'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 
-export const useSelectionColor = (nodeInstanceId: string): string => {
+type SelectionColorData = {
+    sessionColor: string
+    presenceColor: string | null
+}
+
+export const useSelectionColor = (nodeInstanceId: string): SelectionColorData => {
     const nodeType = getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId]?.templateId])
 
     const presenceColor = useStore((state) => {
@@ -46,5 +51,10 @@ export const useSelectionColor = (nodeInstanceId: string): string => {
 
     const hiddenColor = isHidden ? COLORS.GREY : null
 
-    return sessionColor ?? presenceColor ?? hiddenColor ?? COLORS.LIGHT
+    return {
+        sessionColor: sessionColor ?? hiddenColor ?? COLORS.LIGHT,
+        presenceColor
+    }
+
+    // return sessionColor ?? presenceColor ?? hiddenColor ?? COLORS.LIGHT
 }

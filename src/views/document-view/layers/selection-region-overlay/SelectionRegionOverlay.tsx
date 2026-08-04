@@ -46,6 +46,7 @@ const SelectionRegionOverlay = () => {
                         state.ui.cursor = { x, y }
 
                         state.callbacks.onCursorMove?.(current(state))
+                        state.callbacks.onSelectionRegionUpdated?.(current(state))
                     })
                 }
             }

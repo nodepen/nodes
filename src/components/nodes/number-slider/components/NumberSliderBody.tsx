@@ -14,7 +14,7 @@ export const NumberSliderBody = ({ node }: NumberSliderBodyProps) => {
 
     const { width, height } = node.dimensions
 
-    const fill = useSelectionColor(node.instanceId)
+    const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
     return (
         <g id={`number-slider-body-${node.instanceId}`}>
@@ -25,7 +25,7 @@ export const NumberSliderBody = ({ node }: NumberSliderBodyProps) => {
                 height={height}
                 rx={7}
                 ry={7}
-                fill={fill}
+                fill={presenceColor ?? sessionColor}
                 stroke={COLORS.DARK}
                 strokeWidth={2}
                 pointerEvents="auto"

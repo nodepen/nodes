@@ -214,6 +214,9 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     if (!target) {
                         // No potential connection made, reset state to unset state
                         state.registry.wires.live = unsetLiveWireState
+
+                        state.callbacks.onWiresUpdated?.(current(state))
+
                         return
                     }
 
@@ -270,6 +273,9 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                                 break
                             }
                         }
+
+                        state.registry.wires.live = unsetLiveWireState
+                        state.callbacks.onWiresUpdated?.(current(state))
                     }
 
                     // Connections changed, expire solution

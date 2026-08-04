@@ -92,6 +92,12 @@ export const NodesApp = ({
 
     useEffect(() => {
         apply((state) => {
+            state.presence.wires = presence?.wires ?? {}
+        })
+    }, [presence?.wires])
+
+    useEffect(() => {
+        apply((state) => {
             for (const [nodeInstanceId, currentSessionData] of Object.entries(state.presence.drag)) {
                 const nextSessionData = presence?.drag?.[nodeInstanceId] ?? {}
                 if (JSON.stringify(currentSessionData) !== JSON.stringify(nextSessionData)) {
