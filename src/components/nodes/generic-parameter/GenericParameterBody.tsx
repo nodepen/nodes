@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
@@ -23,9 +23,19 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
 
     const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
+    const lastPointerType = useRef<'mouse' | 'pen' | 'touch'>('mouse')
+    const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>): void => {
+        console.log(e.pointerType)
+        lastPointerType.current = e.pointerType
+    }, [])
+
     const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
         e.stopPropagation()
         e.preventDefault()
+
+        if (lastPointerType.current !== 'mouse') {
+            return
+        }
 
         const { pageX, pageY } = e
 
@@ -74,7 +84,7 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
     const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
     return (
-        <g id={`generic-param-body-${node.instanceId}`} ref={longHoverTarget} onContextMenu={handleContextMenu}>
+        <g id={`generic-param-body-${node.instanceId}`} ref={longHoverTarget} onPointerDown={handlePointerDown} onContextMenu={handleContextMenu}>
             <rect
                 x={position.x}
                 y={position.y}

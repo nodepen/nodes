@@ -81,7 +81,7 @@ const ActiveDocumentControl = () => {
     const documentOwner = documentMeta?.owner?.name ?? "Jack Grasshopper"
 
     return (
-        <div className='np-flex np-items-center np-h-12 np-rounded-full np-select-none np-pointer-events-auto'>
+        <div className='np-flex np-items-center np-grow md:np-grow-0 np-h-12 np-rounded-full np-select-none np-pointer-events-auto'>
             <div className='np-h-12 np-rounded-full np-flex np-items-center np-justify-center np-bg-light np-shadow-main'>
                 <CircleButton size="lg" onClick={() => onClickHome?.(useStore.getState())}>
                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
@@ -90,7 +90,7 @@ const ActiveDocumentControl = () => {
                 </CircleButton>
                 <div className='np-h-full np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
                     <input
-                        className="np-h-5 np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm hover:np-bg-grey np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3"
+                        className="np-h-5 np-hidden md:np-inline np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm hover:np-bg-grey np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3"
                         ref={inputRef}
                         value={internalName}
                         style={{ textDecorationThickness: '2px' }}
@@ -100,6 +100,9 @@ const ActiveDocumentControl = () => {
                         onFocus={handleFocus}
                         onBlur={handleBlur}
                     />
+                    <p className='np-h-full np-inline md:np-hidden np-w-full np-p-1 np-pt-1.5 np-pb-1 mp-mb-0.5 np-text-sm np-font-light np-font-panel np-text-dark np-whitespace-nowrap np-leading-3'>
+                        {internalName}
+                    </p>
                     <div className='np-pl-1 np-grow np-flex np-items-center np-justify-start -np-translate-y-px'>
                         {documentCollection ? (<>
                             <div className='np-w-3 np-h-3 np-mr-1 np-rounded-sm np-bg-dark np-flex np-items-center np-justify-center'>
@@ -132,8 +135,8 @@ const ActiveDocumentControl = () => {
                         </p> */}
                     </div>
                 </div>
-                <div className='np-h-full np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>
-                    <div ref={menuButtonRef} className='np-w-6 np-h-6 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
+                <div className='np-h-full np-w-6 np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>
+                    <div ref={menuButtonRef} className='np-w-6 np-h-6 np-hidden md:np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
                         <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="2" stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                             <path d="m19.5 8.25-7.5 7.5-7.5-7.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"></path>
                         </svg>

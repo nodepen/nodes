@@ -20,6 +20,11 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
     const zoom = useStoreRef((state) => state.camera.zoom)
 
+    const lastPointerType = useRef<'mouse' | 'touch' | 'pen'>('mouse')
+
+    const activeTouches = useRef(new Map<number, { x: number; y: number }>());
+    const previousPinch = useRef<{ dist: number; mid: { x: number, y: number } } | null>(null);
+
     const initialCameraPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
     const initialPagePosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
     const initialWorldPosition = useRef<{ x: number; y: number }>({ x: 0, y: 0 })
@@ -31,6 +36,8 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>): void => {
         e.stopPropagation()
         clearInterface()
+
+        lastPointerType.current = e.pointerType
 
         if (isPanActive.current) {
             return
@@ -91,6 +98,24 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
             }
             case 'pen':
             case 'touch': {
+                const { clientX, clientY, pageX, pageY } = e
+                activeTouches.current.set(e.pointerId, { x: clientX, y: clientY })
+
+                cameraElement.setPointerCapture(e.pointerId)
+
+                if (activeTouches.current.size === 1) {
+                    // Initialize motion
+                    initialPagePosition.current = { x: pageX, y: pageY }
+                    initialCameraPosition.current = { ...useStore.getState().camera.position }
+                } else if (activeTouches.current.size === 2) {
+                    // Initialize motion based on pinch
+                    const pts = [...activeTouches.current.values()]
+                    const mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+
+                    initialPagePosition.current = { x: mid.x, y: mid.y }
+                    initialCameraPosition.current = { ...useStore.getState().camera.position }
+                }
+
                 break
             }
         }
@@ -113,25 +138,26 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
             })
         }
 
-        if (e.pointerId !== activePointerId.current) {
-            return
-        }
-
         switch (e.pointerType) {
             case 'mouse': {
+                if (e.pointerId !== activePointerId.current) {
+                    return
+                }
+
+                // Calculate pan
                 const { pageX: currentScreenX, pageY: currentScreenY } = e
                 const { x: initialScreenX, y: initialScreenY } = initialPagePosition.current
 
+                const totalDeltaX = currentScreenX - initialScreenX
+                const totalDeltaY = currentScreenY - initialScreenY
+
+                const { x, y } = initialCameraPosition.current
+
+                const dx = -totalDeltaX / zoom.current
+                const dy = totalDeltaY / zoom.current
+
                 if (isPanActive.current) {
                     // Continue panning
-                    const totalDeltaX = currentScreenX - initialScreenX
-                    const totalDeltaY = currentScreenY - initialScreenY
-
-                    const { x, y } = initialCameraPosition.current
-
-                    const dx = -totalDeltaX / zoom.current
-                    const dy = totalDeltaY / zoom.current
-
                     setCameraPosition(x + dx, y + dy)
                     break
                 }
@@ -172,6 +198,61 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
             }
             case 'pen':
             case 'touch': {
+                const { clientX, clientY, pointerId } = e
+
+                if (!activeTouches.current.has(pointerId)) {
+                    return
+                }
+
+                activeTouches.current.set(pointerId, { x: clientX, y: clientY })
+
+                const pts = [...activeTouches.current.values()]
+
+                switch (pts.length) {
+                    case 1: {
+                        // Drag
+                        const { pageX: currentScreenX, pageY: currentScreenY } = e
+                        const { x: initialScreenX, y: initialScreenY } = initialPagePosition.current
+
+                        const totalDeltaX = currentScreenX - initialScreenX
+                        const totalDeltaY = currentScreenY - initialScreenY
+
+                        const { x, y } = initialCameraPosition.current
+
+                        const dx = -totalDeltaX / zoom.current
+                        const dy = totalDeltaY / zoom.current
+
+                        setCameraPosition(x + dx, y + dy)
+                        break
+                    }
+                    case 2: {
+                        // Pinch
+                        const dist = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+                        const mid = { x: (pts[0].x + pts[1].x) / 2, y: (pts[0].y + pts[1].y) / 2 }
+
+                        const { x: initialScreenX, y: initialScreenY } = initialPagePosition.current
+
+                        const totalDeltaX = mid.x - initialScreenX
+                        const totalDeltaY = mid.y - initialScreenY
+
+                        const { x, y } = initialCameraPosition.current
+
+                        const dx = -totalDeltaX / zoom.current
+                        const dy = totalDeltaY / zoom.current
+
+                        setCameraPosition(x + dx, y + dy)
+
+                        if (previousPinch.current) {
+                            const scaleDelta = dist / previousPinch.current.dist
+                            // console.log(scaleDelta)
+                            const nextZoom = clamp(zoom.current * scaleDelta, CAMERA.MINIMUM_ZOOM, CAMERA.MAXIMUM_ZOOM)
+                            setCameraZoom(nextZoom)
+                        }
+
+                        previousPinch.current = { dist, mid }
+                        break
+                    }
+                }
                 break
             }
         }
@@ -184,19 +265,74 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     }, [])
 
     const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
-        if (e.pointerId !== activePointerId.current) {
-            return
+        switch (e.pointerType) {
+            case 'mouse': {
+                if (e.pointerId !== activePointerId.current) {
+                    return
+                }
+
+                resetLocalState()
+
+                break
+            }
+            case 'pen':
+            case 'touch': {
+                const { pointerId, pageX, pageY } = e
+
+                activeTouches.current.delete(pointerId);
+
+                if (activeTouches.current.size < 2) {
+                    previousPinch.current = null;
+                }
+
+                if (activeTouches.current.size === 1) {
+                    // Reset position based on last pointer
+                    const lastTouch = activeTouches.current.values().next().value
+
+                    if (!lastTouch) {
+                        break
+                    }
+
+                    initialPagePosition.current = { x: lastTouch.x, y: lastTouch.y }
+                    initialCameraPosition.current = { ...useStore.getState().camera.position }
+                }
+
+                break
+            }
         }
 
-        resetLocalState()
     }
 
     const handlePointerLeave = (e: React.PointerEvent<HTMLDivElement>): void => {
-        if (e.pointerId !== activePointerId.current) {
-            return
-        }
+        switch (e.pointerType) {
+            case 'mouse': {
+                if (e.pointerId !== activePointerId.current) {
+                    return
+                }
 
-        resetLocalState()
+                resetLocalState()
+
+                break
+            }
+            case 'pen':
+            case 'touch': {
+
+            }
+        }
+    }
+
+    const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>): void => {
+        switch (e.pointerType) {
+            case 'mouse': {
+                resetLocalState()
+                break
+            }
+            case 'pen':
+            case 'touch': {
+                activeTouches.current.clear()
+                break
+            }
+        }
     }
 
     const handleWheel = (e: WheelEvent): void => {
@@ -259,6 +395,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     }
 
     const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
+        if (lastPointerType.current !== 'mouse') {
+            return
+        }
+
         switch (e.button) {
             case 0: {
                 // Handle left mouse double click
@@ -291,7 +431,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     return (
         <div
             id="camera-control-overlay"
-            className="np-w-full np-h-full np-pointer-events-auto"
+            className="np-w-full np-h-full np-pointer-events-auto np-touch-none"
             ref={cameraControlOverlayRef}
             onContextMenu={handleContextMenu}
             onDoubleClick={handleDoubleClick}
@@ -300,6 +440,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
             onPointerLeave={handlePointerLeave}
+            onPointerCancel={handlePointerCancel}
         >
             {children}
         </div>
