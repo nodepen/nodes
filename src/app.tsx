@@ -24,7 +24,7 @@ export const NodesApp = ({
     presence,
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
-    const { apply, loadDocument, loadTemplates } = useDispatch()
+    const { apply, loadDocument, loadTemplates, loadSolutionData } = useDispatch()
 
     useEffect(() => {
         loadDocument(document)
@@ -51,13 +51,7 @@ export const NodesApp = ({
     }, [callbacks])
 
     useEffect(() => {
-        if (!solution) {
-            return
-        }
-
-        apply((state) => {
-            state.solution = freeze(solution)
-        })
+        loadSolutionData(solution)
     }, [solution])
 
     useEffect(() => {

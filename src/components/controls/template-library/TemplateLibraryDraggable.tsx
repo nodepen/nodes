@@ -20,30 +20,39 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
 
     const handlePointerDown = useCallback(
         (e: React.PointerEvent<HTMLButtonElement>): void => {
-            e.stopPropagation()
+            switch (e.pointerType) {
+                case 'mouse': {
+                    e.stopPropagation()
 
-            clearInterface()
+                    clearInterface()
 
-            const { pageX, pageY } = e
+                    const { pageX, pageY } = e
 
-            const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+                    const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
-            const node = createInstance(template)
+                    const node = createInstance(template)
 
-            apply((state) => {
-                node.status.isProvisional = true
-                node.position = {
-                    x: x - node.dimensions.width / 2,
-                    y: y - node.dimensions.height / 2,
+                    apply((state) => {
+                        node.status.isProvisional = true
+                        node.position = {
+                            x: x - node.dimensions.width / 2,
+                            y: y - node.dimensions.height / 2,
+                        }
+
+                        state.document.nodes[node.instanceId] = node
+
+                        state.layout.nodePlacement = {
+                            isActive: true,
+                            activeNodeId: node.instanceId,
+                        }
+                    })
+                    break
                 }
+                case 'pen':
+                case 'touch': {
 
-                state.document.nodes[node.instanceId] = node
-
-                state.layout.nodePlacement = {
-                    isActive: true,
-                    activeNodeId: node.instanceId,
                 }
-            })
+            }
         },
         [apply, pageSpaceToWorldSpace]
     )

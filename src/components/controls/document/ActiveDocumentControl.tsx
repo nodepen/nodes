@@ -82,13 +82,13 @@ const ActiveDocumentControl = () => {
 
     return (
         <div className='np-flex np-items-center np-grow md:np-grow-0 np-h-12 np-rounded-full np-select-none np-pointer-events-auto'>
-            <div className='np-h-12 np-rounded-full np-flex np-items-center np-justify-center np-bg-light np-shadow-main'>
+            <div className='np-h-12 np-w-full md:np-w-min np-rounded-full np-flex np-items-center np-justify-start np-bg-light np-shadow-main'>
                 <CircleButton size="lg" onClick={() => onClickHome?.(useStore.getState())}>
                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
                         <path d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                     </svg>
                 </CircleButton>
-                <div className='np-h-full np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
+                <div className='np-h-full md:np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
                     <input
                         className="np-h-5 np-hidden md:np-inline np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm hover:np-bg-grey np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3"
                         ref={inputRef}

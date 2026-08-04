@@ -9,7 +9,7 @@ import { useStore } from '$'
  */
 export const usePortValues = (nodeInstanceId: string = '', portInstanceId: string = ''): NodePen.DataTree | null => {
     return useStore((state) => {
-        const solutionValues = state.solution.nodeSolutionData[nodeInstanceId]?.portSolutionData[portInstanceId]?.dataTree
+        const solutionValues = state.solution.data?.nodeSolutionData?.[nodeInstanceId]?.portSolutionData?.[portInstanceId]?.dataTree
         const internalValues = state.document.nodes[nodeInstanceId]?.values[portInstanceId]
 
         return solutionValues ?? internalValues ?? null

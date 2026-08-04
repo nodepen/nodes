@@ -10,7 +10,7 @@ import { CircleButton } from "@/components/layout/CircleButton"
 import { COLORS } from "@/constants"
 
 const ModelView = () => {
-    const solutionModelUrl = useStore((state) => state.solution.solutionModelUrl)
+    const solutionModelUrl = useStore((state) => state.solution.data?.solutionModelUrl ?? null)
 
     const { apply } = useDispatch()
     const { onModelUpload } = useCallbacks()

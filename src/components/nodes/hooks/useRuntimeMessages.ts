@@ -10,11 +10,11 @@ export const useRuntimeMessages = (nodeInstanceId: string): NodeSolutionData['no
     const previousMessages = useRef<NodeSolutionData['nodeRuntimeData']['messages']>([])
 
     return useStore((state) => {
-        if (state.solution.isExpired) {
+        if (state.solution.flags.isExpired) {
             return previousMessages.current
         }
 
-        const nodeSolutionData = state.solution.nodeSolutionData[nodeInstanceId]
+        const nodeSolutionData = state.solution.data?.nodeSolutionData[nodeInstanceId]
 
         if (!nodeSolutionData) {
             return []

@@ -126,6 +126,90 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 false,
                 'templates/loadTemplates'
             ),
+        loadSolutionData: (data: NodePen.DocumentSolutionData | null) =>
+            set(
+                (state) => {
+                    if (!data && !state.solution.data) {
+                        return
+                    }
+
+                    if (!data && state.solution.data) {
+                        // Client has cleared solution data
+                        // Assume we're waiting for a new one, eventually...
+                        // And refuse to let go of the past
+                        state.solution.flags = {
+                            isExpired: true,
+                            isModelExpired: true,
+                            isFailed: false,
+                        }
+                        state.solution.messages = {
+                            document: {
+                                status: 'pending',
+                                message: 'Solving document...'
+                            },
+                            model: {
+                                status: 'idle',
+                                message: 'Waiting for solution...'
+                            }
+                        }
+                        return
+                    }
+
+                    if (!data) {
+                        // Appease typescript
+                        return
+                    }
+
+                    // New solution delivered, set values and kick off loading
+                    const isNewSolution = state.solution.id !== data.solutionId
+
+                    state.solution.data = freeze(data)
+
+                    if (!isNewSolution) {
+                        return
+                    }
+
+                    state.solution.id = data.solutionId
+                    state.solution.flags = {
+                        isExpired: false,
+                        isModelExpired: true,
+                        isFailed: false
+                    }
+
+                    if (data.documentRuntimeData.exceptionMessages?.length) {
+                        // Solution failed catastrophically
+                        state.solution.messages = {
+                            document: {
+                                status: 'error',
+                                message: 'Failed to solve document!'
+                            },
+                            model: {
+                                status: 'error',
+                                message: 'Failed to create model!'
+                            }
+                        }
+                        state.solution.flags.isFailed = true
+
+                        for (const message of data.documentRuntimeData.exceptionMessages) {
+                            console.error(message)
+                        }
+                    } else {
+                        // Solution succeeded glamorously
+                        state.solution.messages = {
+                            document: {
+                                status: 'ok',
+                                message: `Solved ${Object.keys(state.document.nodes).length} nodes.`
+                            },
+                            model: {
+                                status: 'pending',
+                                message: 'Loading model...'
+                            }
+                        }
+                    }
+                },
+                false,
+                'solution/loadSolution'
+            ),
         commitRegionSelection: (selectionMode: 'set' | 'add' | 'remove') =>
             set(
                 (state) => {

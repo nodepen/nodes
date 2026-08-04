@@ -2,13 +2,17 @@ import type { NodeSolutionData } from './NodeSolutionData'
 
 export type DocumentSolutionData = {
     solutionId: string
-    isExpired: boolean
     solutionModelUrl: string | null
-    solutionStatusMessages: DocumentSolutionStatusMessage[]
-    documentRuntimeData: DocumentRuntimeData | null
+    documentRuntimeData: DocumentRuntimeData
     nodeSolutionData: {
         [nodeInstanceId: string]: NodeSolutionData
     }
+}
+
+export type DocumentSolutionFlags = {
+    isExpired: boolean
+    isModelExpired: boolean
+    isFailed: boolean
 }
 
 export type DocumentSolutionStatusMessage = {
@@ -17,5 +21,6 @@ export type DocumentSolutionStatusMessage = {
 }
 
 type DocumentRuntimeData = {
+    exceptionMessages?: string[]
     durationMs: number
 }

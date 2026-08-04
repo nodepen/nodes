@@ -7,11 +7,24 @@ import type { ModelGeometryType } from '@/types/geometry'
 
 export type NodesAppState = {
     document: NodePen.Document
-    solution: NodePen.DocumentSolutionData
-    assets: NodePen.DocumentAssets
     templates: {
         [templateId: string]: NodePen.NodeTemplate
     }
+    solution: {
+        // Internal id of latest tacked solution
+        id: string
+        // Externally-supplied solution data
+        data: NodePen.DocumentSolutionData | null
+        // Internally-set flags computed from above
+        flags: NodePen.DocumentSolutionFlags
+        // Internally-set details about overall status
+        messages: {
+            document: NodePen.DocumentSolutionStatusMessage
+            model: NodePen.DocumentSolutionStatusMessage
+        }
+    }
+    assets: NodePen.DocumentAssets
+
     user?: {
         name?: string
         email?: string
@@ -214,16 +227,25 @@ export const initialState: NodesAppState = {
         version: 1,
     },
     templates: freeze({}),
-    solution: freeze({
-        solutionId: 'initial',
-        isExpired: false,
-        solutionModelUrl: null,
-        solutionStatusMessages: [],
-        documentRuntimeData: {
-            durationMs: 0,
+    solution: {
+        id: 'initial',
+        data: null,
+        flags: {
+            isExpired: false,
+            isModelExpired: false,
+            isFailed: false
         },
-        nodeSolutionData: {},
-    }),
+        messages: {
+            document: {
+                status: 'idle',
+                message: 'Waiting for document...'
+            },
+            model: {
+                status: 'idle',
+                message: 'Waiting for model...'
+            }
+        }
+    },
     assets: {
         models: {}
     },

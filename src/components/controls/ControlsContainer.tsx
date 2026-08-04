@@ -71,7 +71,10 @@ const ControlsContainer = (): React.ReactElement => {
         setParameterLibraryPosition([left + width / 2, top + height / 2])
     }, [])
 
-    const statusMessages = useStore((state) => state.solution?.solutionStatusMessages ?? [])
+    const statusMessages = useStore((state) => {
+        const { document, model } = state.solution.messages ?? {}
+        return [document, model].filter((message) => !!message)
+    })
     const [activeStatusMessage, setActiveStatusMessage] = useState<string | null>(null)
 
     const statusColors = {
@@ -96,7 +99,7 @@ const ControlsContainer = (): React.ReactElement => {
                 </div>
                 <div className='np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-start np-items-center np-pointer-events-none np-z-40'>
                     <div className='np-w-full np-pt-3 md:np-pt-9 np-pl-3 md:np-pl-9 np-pr-3 md:np-pr-9 np-flex np-justify-between np-items-center'>
-                        <div className='np-flex np-grow md:np-grow-0 np-items-center np-gap-2'>
+                        <div className='np-flex np-grow md:np-grow-0 np-items-center'>
                             {/* <div className='np-mr-1 np-bg-light np-rounded-tl-[32px] np-rounded-bl-[32px] np-rounded-tr-md np-rounded-br-md np-shadow-main'>
                                 <CircleButton size="lg" onClick={handleClickHome}>
                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
@@ -105,7 +108,7 @@ const ControlsContainer = (): React.ReactElement => {
                                 </CircleButton>
                             </div> */}
                             <ActiveDocumentControl />
-                            <div className='np-flex md:np-hidden np-items-center np-gap-2'>
+                            <div className='np-flex md:np-hidden np-items-center np-ml-1 np-gap-1'>
                                 <CircleButton size="lg" shadow onClick={() => useStore.getState().callbacks?.onClickShare?.(useStore.getState())}>
                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
                                         <path d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -168,9 +171,9 @@ const ControlsContainer = (): React.ReactElement => {
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-end np-items-center'>
                             <div className='np-p-8 np-flex np-items-center np-justify-end'>
                                 <div className='np-h-8 np-flex np-items-center np-mr-0.5 np-rounded-full np-bg-pale'>
-                                    <p className='np-text-xs np-pl-2 np-pr-2 np-font-panel np-font-semibold np-text-dark'>
+                                    {activeStatusMessage ? (<p className='np-text-xs np-pl-2 np-pr-2 np-font-panel np-font-semibold np-text-dark'>
                                         {activeStatusMessage}
-                                    </p>
+                                    </p>) : null}
                                 </div>
                                 <div className='np-rounded-full np-bg-light np-shadow-main np-flex np-items-center np-pointer-events-auto'>
                                     <div className='np-rounded-full np-h-full np-pl-2 np-pr-1 np-flex np-items-center np-justify-center np-gap-1'>
