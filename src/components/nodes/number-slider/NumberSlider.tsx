@@ -1,7 +1,7 @@
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useRef, useState } from 'react'
 import { NumberSliderBody } from './components/NumberSliderBody'
 import { NumberSliderShadow } from './components/NumberSliderShadow'
 import { NumberSliderSlider } from './components/NumberSliderSlider'
@@ -50,19 +50,27 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     const selectableTargetRef = useSelectableNode(id)
     const { left } = useResizableNode(id, { computeAnchors })
 
+    const lastPointerType = useRef<'mouse' | 'pen' | 'touch'>('mouse')
+    const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>) => {
+        lastPointerType.current = e.pointerType
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
+    }, [])
+
     const handleDoubleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
         e.stopPropagation()
         e.nativeEvent.stopImmediatePropagation()
+
+        if (lastPointerType.current !== 'mouse') {
+            return
+        }
 
         useStore.getState().registry.numberSliderInputRef.current?.focus?.()
 
         setShowModal(true)
     }, [])
 
-    const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>) => {
-        e.stopPropagation()
-        e.nativeEvent.stopImmediatePropagation()
-    }, [])
+
 
     // const handlePointerEnter = useCallback((e: React.PointerEvent<SVGGElement>) => {
     //     apply((state) => {

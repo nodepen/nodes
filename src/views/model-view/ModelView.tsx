@@ -8,6 +8,7 @@ import { getDomainParameter } from "@/utils/numerics/domain"
 import { clamp } from "@/utils"
 import { CircleButton } from "@/components/layout/CircleButton"
 import { COLORS } from "@/constants"
+import ModelErrorBoundary from "./ModelErrorBoundary"
 
 const ModelView = () => {
     const solutionModelUrl = useStore((state) => state.solution.data?.solutionModelUrl ?? null)
@@ -173,22 +174,32 @@ const ModelView = () => {
             <div className="np-w-full np-h-full np-p-0 md:np-p-4 np-flex np-flex-col np-justify-end np-pointer-events-none">
                 <div className="np-w-full np-h-full np-relative md:np-hidden">
                     <div className="np-w-full np-h-full np-p-5 np-absolute np-top-0 np-flex np-flex-col np-justify-end np-z-20">
-                        <CircleButton size="sm" shadow onClick={() => setIsExpanded((value) => !value)}>
-                            {isExpanded ? (
+                        <div className="np-w-full np-flex np-justify-start np-gap-1">
+                            <CircleButton size="sm" shadow onClick={() => setIsExpanded((value) => !value)}>
+                                {isExpanded ? (
+                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
+                                        <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                ) : (
+                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
+                                        <path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                )}
+                            </CircleButton>
+                            <CircleButton shadow onClick={() => useStore.getState().internalCallbacks.zoomToExtents?.()}>
                                 <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
-                                    <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    <path d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                 </svg>
-                            ) : (
-                                <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
-                                    <path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                                </svg>
-                            )}
-                        </CircleButton>
+                            </CircleButton>
+                        </div>
+
                     </div>
                     <div className="np-w-full np-h-full np-p-1.5 np-absolute np-top-0 np-flex np-flex-col np-justify-end np-z-10">
                         <div className="np-w-full np-rounded-lg np-p-0.5 np-border-2 np-border-green np-bg-pale np-overflow-hidden np-transition-[height] np-ease-out np-duration-[350ms]" style={{ height: isExpanded ? '100%' : '33%' }}>
                             <div className="np-w-full np-h-full np-rounded-md np-relative np-overflow-hidden">
-                                <ModelCanvas solutionModelUrl={solutionModelUrl} />
+                                <ModelErrorBoundary resetKeys={[solutionModelUrl]}>
+                                    <ModelCanvas solutionModelUrl={solutionModelUrl} />
+                                </ModelErrorBoundary>
                             </div>
                         </div>
                     </div>
@@ -204,7 +215,9 @@ const ModelView = () => {
 
                                     e.stopPropagation()
                                 }}>
-                                    <ModelCanvas solutionModelUrl={solutionModelUrl} />
+                                    <ModelErrorBoundary resetKeys={[solutionModelUrl]}>
+                                        <ModelCanvas solutionModelUrl={solutionModelUrl} />
+                                    </ModelErrorBoundary>
                                 </div>
                                 <div className="np-w-full np-h-full np-absolute np-flex np-flex-col np-items-start np-justify-end np-invisible group-hover/container:np-visible np-z-30 np-pointer-events-none">
                                     <div className={`${isExpanded ? 'np-w-full np-pl-6 np-pb-6' : 'np-w-16 np-pl-[29px] np-pb-4'} np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5`} style={{ marginLeft: `${controlsMarginLeft}px` }}>

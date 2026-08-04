@@ -12,6 +12,7 @@ import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import type { PortFlag } from '@/types'
 import { PickGeometryButton } from './buttons/PickGeometryButton'
 import { getValidGeometryForType } from '@/utils/geometry-types'
+import { ZoomToGeometryButton } from './buttons/ZoomToGeometryButton'
 
 type PortContextMenuProps = {
     position: ContextMenu['position']
@@ -68,7 +69,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     }, [])
 
     const enableSetLabel = nodeType === 'generic-parameter'
-    const { enableSetValue, enablePickGeometry } = getPortContextMenuButtons(context)
+    const { enableSetValue, enablePickGeometry, enableZoomToGeometry } = getPortContextMenuButtons(context)
 
     const handlePickGeometry = useCallback(() => {
         const validGeometryTypes = getValidGeometryForType(portTemplate.typeName)
@@ -93,12 +94,16 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
             {enableSetValue ? (
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
             ) : null}
+            {enableSetLabel || enableSetValue ? <MenuDivider /> : null}
             {nodeType === 'generic-parameter' && enablePickGeometry ? (
                 <PickGeometryButton portTemplate={portTemplate} onClick={handlePickGeometry} />
             ) : null}
+            {enableZoomToGeometry ? (<>
+                <ZoomToGeometryButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+                <MenuDivider />
+            </>) : null}
             {nodeType === 'generic-node' ? (
                 <>
-                    {enableSetLabel || enableSetValue ? <MenuDivider /> : null}
                     <FlattenButton onClick={handleToggleFlag} />
                     <GraftButton onClick={handleToggleFlag} />
                     <SimplifyButton onClick={handleToggleFlag} />

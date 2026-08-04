@@ -11,11 +11,11 @@ const SessionUsers = () => {
 
     const handleClickProfile = useCallback(() => {
         onClickProfile?.(useStore.getState())
-    }, [])
+    }, [onClickProfile])
 
     const handleClickPresence = useCallback(() => {
         onClickShare?.(useStore.getState())
-    }, [])
+    }, [onClickShare])
 
     return <div className='np-flex np-items-center np-rounded-full np-bg-light np-shadow-main np-pointer-events-auto'>
         {sessions.length ? (<div className='np-h-8 np-ml-1 np-relative' style={{ width: `${32 + (16 * clamp(sessions.length - 1, 0, 2))}px` }}>

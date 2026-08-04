@@ -42,6 +42,17 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
             && nodeInstanceId === currentHover.nodeInstanceId
             && portInstanceId === currentHover.portInstanceId
 
+        const userData = {
+            attributes: {
+                userStrings: [
+                    ['nodeInstanceId', nodeInstanceId],
+                    ['portInstanceId', portInstanceId],
+                    ['branchPath', branchPath],
+                    ['branchEntryIndex', branchEntryIndex]
+                ]
+            }
+        }
+
         if (o instanceof THREE.Points) {
             const pointColor = isExpired
                 ? 0xFCFCFC
@@ -50,7 +61,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
                     : 0xe05a5a
 
             return (
-                <points key={`${id}-${o.id}`} geometry={o.geometry}>
+                <points key={`${id}-${o.id}`} geometry={o.geometry} userData={userData}>
                     <pointsMaterial color={pointColor} size={7} sizeAttenuation={false} />
                 </points>
             )
@@ -85,7 +96,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
             // />
 
             // @ts-expect-error react-three-fibre line vs svg line
-            return <line key={`${id}-${o.id}`} geometry={o.geometry} material={material} />
+            return <line key={`${id}-${o.id}`} geometry={o.geometry} material={material} userData={userData} />
         }
 
         if (o instanceof THREE.Mesh) {
@@ -97,7 +108,8 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
                         : isSelected
                             ? MESH.SELECTED
                             : MESH.DEFAULT
-            return <mesh key={`${id}-${o.id}`} geometry={o.geometry} material={material} />
+
+            return <mesh key={`${id}-${o.id}`} geometry={o.geometry} material={material} userData={userData} />
         }
 
         return null

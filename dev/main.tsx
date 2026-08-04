@@ -149,7 +149,6 @@ const templates = [
 ]
 
 const solution = {
-    solutionId: '',
     solutionModelUrl: null,
     solutionStatusMessages: {
         document: {
@@ -159,18 +158,12 @@ const solution = {
         model: {
             status: 'error' as const,
             message: 'Failed to do something!'
-        },
-        'foo': {
-            status: 'pending' as const,
-            message: 'Downloading model...'
-        },
-        'bar': {
-            status: 'idle' as const,
-            message: 'Waiting for solution...'
         }
     },
-    isExpired: false,
-    documentRuntimeData: null,
+    documentRuntimeData: {
+        durationMs: 100,
+        exceptionMessages: []
+    },
     nodeSolutionData: {}
 }
 

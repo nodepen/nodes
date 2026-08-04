@@ -191,7 +191,7 @@ export type NodesAppState = {
     }
     callbacks: NodesAppCallbacks
     internalCallbacks: {
-        zoomToExtents?: () => void
+        zoomToExtents?: (nodeInstanceId?: string, portInstanceId?: string) => void
     }
 }
 

@@ -1,4 +1,4 @@
-import React, { Suspense, useRef } from "react"
+import React, { Suspense, useEffect, useRef } from "react"
 import * as THREE from 'three'
 import { Canvas, useLoader } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei"
@@ -7,6 +7,7 @@ import GridModel from "./components/grid-model/GridModel"
 import { useDispatch, useStore } from "@/store"
 import ContextModel from "./components/context-model/ContextModel"
 import { Rhino3dmLoader } from "three/examples/jsm/loaders/3DMLoader"
+import { tryParseUserStrings } from "@/utils/three/tryParseUserStrings"
 
 // @ts-expect-error This is correct actually
 THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
@@ -31,8 +32,10 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
             camera.lookAt(0, 0, 0)
             camera.position.set(0, -4, 1)
 
-            const fitCameraToScene = () => {
+            const fitCameraToScene = (nodeInstanceId?: string, portInstanceId?: string) => {
                 scene.updateMatrixWorld(true)
+
+                console.log({ nodeInstanceId, portInstanceId })
 
                 const bounds = new THREE.Box3()
                 const tempBounds = new THREE.Box3()
@@ -46,6 +49,16 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
 
                     const geometry = (object as THREE.Object3D & { geometry?: THREE.BufferGeometry }).geometry
                     if (!geometry) {
+                        return
+                    }
+
+                    const userStrings = tryParseUserStrings(object)
+
+                    if (!!nodeInstanceId && userStrings.nodeInstanceId !== nodeInstanceId) {
+                        return
+                    }
+
+                    if (!!portInstanceId && userStrings.portInstanceId !== portInstanceId) {
                         return
                     }
 

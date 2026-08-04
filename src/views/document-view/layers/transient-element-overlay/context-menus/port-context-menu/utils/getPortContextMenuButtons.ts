@@ -4,6 +4,7 @@ type PortContextMenuButtons = {
     enablePin: boolean
     enableSetValue: boolean
     enablePickGeometry: boolean
+    enableZoomToGeometry: boolean
 }
 
 export const getPortContextMenuButtons = (context: PortContextMenuContext): PortContextMenuButtons => {
@@ -30,7 +31,9 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
 
     const enablePin = direction === 'input'
     const enableSetValue = direction === 'input' && supportedPrimitiveTypeNames.includes(typeName)
-    const enablePickGeometry = direction === 'input' && supportedGeometricTypeNames.includes(typeName)
 
-    return { enablePin, enableSetValue, enablePickGeometry }
+    const enablePickGeometry = direction === 'input' && supportedGeometricTypeNames.includes(typeName)
+    const enableZoomToGeometry = direction === 'output'
+
+    return { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry }
 }
