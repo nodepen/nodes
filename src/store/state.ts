@@ -189,6 +189,7 @@ export type NodesAppCallbacks = {
     onClickProfile?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
     onClickFeedback?: (state: NodesAppState) => void
+    onClickSettings?: (state: NodesAppState) => void
     onCursorMove?: (state: NodesAppState) => void,
     onDrag?: (state: NodesAppState) => void,
     onDragEnd?: (state: NodesAppState) => void,

@@ -26,7 +26,7 @@ export const SidebarPanel = ({ children, ...props }: Props) => {
 
     const [px, py] = from ?? []
 
-    const width = isOpen ? 276 : 0
+    const width = isOpen ? 272 : 0
     const height = isOpen ? props.height : 0
 
     const left = isOpen ? 36 : px

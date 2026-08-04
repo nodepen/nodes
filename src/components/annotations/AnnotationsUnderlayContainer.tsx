@@ -16,7 +16,8 @@ const AnnotationsUnderlayContainer = (): React.ReactElement => {
     const selectionRegionState = useStore((state) => state.registry.selection.region)
 
     return (
-        <g id="np-annotations-underlay" ref={containerRef}>
+        <g id="np-annotations-underlay">
+            <g ref={containerRef} />
             <g id="np-regions-underlay">
                 {selectionRegionState.isActive ? (
                     <Region isFill from={selectionRegionState.from} to={selectionRegionState.to} />

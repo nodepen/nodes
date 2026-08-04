@@ -193,8 +193,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     // Reset state to unset value
                     state.registry.selection.region = { isActive: false }
 
-                    state.callbacks.onSelectionRegionUpdated?.(state)
-                    state.callbacks.onSelectionUpdated?.(state)
+                    state.callbacks.onSelectionRegionUpdated?.(current(state))
+                    state.callbacks.onSelectionUpdated?.(current(state))
                 },
                 false,
                 'selection/region/commit'
@@ -585,7 +585,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         undo: () =>
             set(
                 (state) => {
-                    state.callbacks.onUndo?.(state)
+                    state.callbacks.onUndo?.(current(state))
                 },
                 false,
                 'history/undo'
@@ -593,7 +593,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         redo: () =>
             set(
                 (state) => {
-                    state.callbacks.onRedo?.(state)
+                    state.callbacks.onRedo?.(current(state))
                 },
                 false,
                 'history/redo'

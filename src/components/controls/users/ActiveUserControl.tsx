@@ -48,8 +48,7 @@ const ActiveUserControl = () => {
     const [showDialog, setShowDialog] = useState(false)
 
     const handleClick = () => {
-        const state = useStore.getState()
-        callbacks.onClickProfile?.(state)
+        callbacks.onClickProfile?.(useStore.getState())
     }
 
     const [showAvatar, setShowAvatar] = useState(!!user?.image)
