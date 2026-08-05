@@ -32,6 +32,9 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
     }, [isActive])
 
     const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
+
         switch (e.key.toLowerCase()) {
             case 'backspace':
             case 'del':
@@ -95,7 +98,7 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
                     height={height}
                     className='np-pointer-events-none'>
                     <textarea ref={inputRef} xmlns="http://www.w3.org/1999/xhtml"
-                        className='np-w-full np-h-full np-overflow-hidden np-border-none np-pointer-events-none np-text-sm np-text-center np-font-panel'
+                        className='np-w-full np-h-full np-overflow-hidden np-border-none np-pointer-events-none np-text-sm np-text-center np-font-panel np-text-dark'
                         style={{ resize: 'none', background: 'transparent' }}
                         value={textContent ?? ''}
                         readOnly />

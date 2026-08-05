@@ -36,9 +36,22 @@ export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => 
 
     const pathId = `number-slider-value-${node.instanceId}`
 
+    const handlePointerDown = useCallback((e: React.PointerEvent<SVGRectElement>) => {
+        switch (e.pointerType) {
+            case 'mouse': {
+                onClick()
+                break
+            }
+            case 'pen':
+            case 'touch': {
+                break
+            }
+        }
+    }, [onClick])
+
     return <>
         <rect x={x} y={y} width={width} height={height} rx={4} ry={4} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} />
-        <rect x={x} y={y + 1} width={width} height={height} rx={4} ry={4} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} className='hover:cursor-pointer hover:np-fill-grey' onClick={onClick} />
+        <rect x={x} y={y + 1} width={width} height={height} rx={4} ry={4} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} className='hover:cursor-pointer hover:np-fill-grey' onPointerDown={handlePointerDown} />
         <path id={pathId} d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`} stroke="none" className='np-pointer-events-none' />
         <text
             className="np-font-panel np-select-none np-pointer-events-none"

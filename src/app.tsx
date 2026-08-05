@@ -56,6 +56,12 @@ export const NodesApp = ({
 
     useEffect(() => {
         apply((state) => {
+            state.presence.sessionId = presence?.sessionId ?? ''
+        })
+    }, [presence?.sessionId])
+
+    useEffect(() => {
+        apply((state) => {
             state.presence.sessions = presence?.sessions ?? {}
         })
     }, [presence?.sessions])

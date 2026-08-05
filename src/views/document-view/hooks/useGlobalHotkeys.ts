@@ -26,7 +26,8 @@ export const useGlobalHotkeys = () => {
             case ' ': {
                 console.log({
                     document: useStore.getState().document,
-                    solution: useStore.getState().solution
+                    solution: useStore.getState().solution,
+                    presence: useStore.getState().presence
                 })
 
                 break

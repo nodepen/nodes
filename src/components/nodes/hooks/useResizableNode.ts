@@ -48,7 +48,6 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
     }, [])
 
     const { apply, clearSelection } = useDispatch()
-    const { onSaveDocument } = useCallbacks()
 
     const zoom = useStoreRef((state) => state.camera.zoom)
 
@@ -274,7 +273,11 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
         isResizing.current = false
         activePointerId.current = -1
         resetDocumentCursor()
-    }, [resetDocumentCursor, onSaveDocument])
+
+        apply((state) => {
+            saveDocument(state)
+        })
+    }, [resetDocumentCursor])
 
     const handlePointerUp = useCallback((e: PointerEvent, type: keyof typeof handles) => {
         resetInternalState()

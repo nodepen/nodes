@@ -29,7 +29,8 @@ export type TemplateMatch =
 const NUM = '(-?\\d+(?:\\.\\d+)?)'
 
 const patterns = {
-    panel: /^"(.*)$/,
+    panel: /"([^"]*)"?$/,
+    // panel: /^"(.*)$/,
     panel2: /^\/\/(.*)$/,
     numberSliderValue: new RegExp(`${NUM}`),
     numberSliderMaximum: new RegExp(`^${NUM}(?:<|\.\.)${NUM}$`),

@@ -55,7 +55,7 @@ class ModelErrorBoundary extends React.Component<ModelErrorBoundaryProps, ModelE
 
         return (
             <div className="np-w-full np-h-full np-flex np-items-center np-justify-center np-bg-pale np-select-none">
-                <div className="np-max-w-[260px] np-flex np-flex-col np-items-center np-gap-2 np-text-center np-font-mono">
+                <div className="np-max-w-[260px] np-flex np-flex-col np-items-center np-gap-1 np-text-center np-font-mono">
                     <svg width="36px" height="36px" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20" className="size-6">
                         <rect x={1} y={1} width={18} height={18} rx={3} ry={3} fill="none" stroke={COLORS.GREEN} stroke-width="2" vectorEffect="non-scaling-stroke" />
                         <path d="M 5,15 L 5,14 A 2 2 0 0 1 7,12 L 13,12 A 2 2 0 0 1 15,14 L 15,15" stroke={COLORS.GREEN} stroke-width="2" vectorEffect="non-scaling-stroke" />
@@ -63,12 +63,16 @@ class ModelErrorBoundary extends React.Component<ModelErrorBoundaryProps, ModelE
                         <line x1={12} y1={5} x2={12} y2={10} stroke={COLORS.GREEN} stroke-width="2" vectorEffect="non-scaling-stroke" />
                     </svg>
 
-                    <div className="np-text-xs np-tracking-[0.2em] np-uppercase np-text-dark np-font-panel">
-                        3D GEOMETRY ERROR
+                    <div className="np-text-xs np-uppercase np-text-dark np-font-panel">
+                        ERROR
                     </div>
 
-                    <p className="np-text-[11px] np-leading-relaxed np-text-dark np-font-panel">
-                        Failed to render 3D model. (Or your environment does not support showing 3D models!)
+                    <p className="np-text-[11px] np-mt-2 np-text-dark np-font-panel">
+                        Failed to load geometry.
+                    </p>
+
+                    <p className="np-text-[11px] np-text-dark/60 np-font-panel">
+                        (Or your environment does not support it!)
                     </p>
                 </div>
             </div>

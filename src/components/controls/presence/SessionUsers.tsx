@@ -5,7 +5,7 @@ import { clamp } from '@/utils'
 import React, { useCallback } from 'react'
 
 const SessionUsers = () => {
-    const sessions = useStore((state) => Object.entries((state.presence.sessions)))
+    const sessions = useStore((state) => Object.entries((state.presence.sessions)).filter(([sessionId]) => state.presence.sessionId !== sessionId))
 
     const { onClickProfile, onClickShare } = useCallbacks()
 
