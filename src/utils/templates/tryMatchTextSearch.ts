@@ -157,6 +157,7 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
 
     if ((m = s.match(patterns.numberSliderMaximum))) {
         const n = Number.parseFloat(m[1])
+        const min = Number.parseFloat(m[1])
         const max = Number.parseFloat(m[2])
         const config = decomposeNumber(m[1])
 
@@ -166,6 +167,7 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
             value: n.toFixed(config.precision),
             config: {
                 ...config,
+                min,
                 max
             }
         }

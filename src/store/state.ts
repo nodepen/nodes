@@ -237,12 +237,12 @@ export const initialState: NodesAppState = {
         },
         messages: {
             document: {
-                status: 'idle',
-                message: 'Waiting for document...'
+                status: 'ok',
+                message: 'Solver ready.'
             },
             model: {
-                status: 'idle',
-                message: 'Waiting for model...'
+                status: 'ok',
+                message: 'Model ready.'
             }
         }
     },
