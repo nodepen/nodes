@@ -15,7 +15,9 @@ type GenericNodeRuntimeMessageProps = {
 export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessageProps) => {
     const { position } = useNodeInternalState()
 
-    const { instanceId, anchors } = node
+    const instanceId = node?.instanceId ?? ''
+    const anchors = node?.anchors
+
     const { x, y } = position
 
     const [showDialog, setShowDialog] = useState(false)
@@ -28,7 +30,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
     const currentMessageLevel = currentMessage?.level
 
     // Position of bottom-middle arrow "point"
-    const dx = anchors['labelDeltaX'].dx
+    const dx = anchors?.['labelDeltaX']?.dx ?? 0
     const dy = -9
 
     const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE
@@ -38,16 +40,6 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
         e.nativeEvent.stopImmediatePropagation()
         setShowDialog(true)
     }, [])
-
-    // const handlePointerDown = useCallback(
-    //     (e: PointerEvent) => {
-    //         e.stopPropagation()
-    //         setShowDialog(true)
-    //     },
-    //     []
-    // )
-
-    // useImperativeEvent(messageContainerRef, 'pointerdown', handlePointerDown)
 
     const [isVisible, setIsVisible] = useState(false)
     const [visibleMessageLevel, setVisibleMessageLevel] = useState<typeof currentMessageLevel>('info')
@@ -70,7 +62,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
 
     const tx = isVisible ? 0 : 80
 
-    if (node.status.isProvisional) {
+    if (!node || node.status.isProvisional) {
         return null
     }
 

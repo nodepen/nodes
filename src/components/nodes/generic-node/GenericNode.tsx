@@ -20,7 +20,7 @@ type GenericNodeProps = {
 /**
  * Renders most common node types with a static number of inputs and outputs.
  */
-const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => {
+const GenericNode = ({ id, template }: GenericNodeProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
 
@@ -32,6 +32,10 @@ const GenericNode = ({ id, template }: GenericNodeProps): React.ReactElement => 
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)
+
+    if (!node) {
+        return null
+    }
 
     return (
         <NodeInternalStateProvider value={internalState}>

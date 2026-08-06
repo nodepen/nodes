@@ -10,7 +10,7 @@ export const getNodeRuntimeMessageBubble = (node: DocumentNode, fillColor: strin
     const { x, y } = position
 
     // Position of bottom-middle arrow "point"
-    const dx = anchors['labelDeltaX'].dx
+    const dx = anchors?.['labelDeltaX']?.dx ?? 0
     const dy = -9
 
     const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE

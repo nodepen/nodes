@@ -18,7 +18,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
     const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
     const getCurrentNodePosition = (id: string): { x: number; y: number } => {
-        return useStore.getState().document.nodes[id].position
+        return useStore.getState().document.nodes[id]?.position ?? { x: 0, y: 0 }
     }
 
     const isDragging = useRef(false)
