@@ -92,7 +92,7 @@ const ControlsContainer = (): React.ReactElement => {
                         <SidebarPanel isOpen={showComponentLibraryPanel} from={componentLibraryPosition} height={220} bottom={38}>
                             <TemplateLibrary />
                         </SidebarPanel>
-                        <SidebarPanel isOpen={showParameterLibraryPanel} from={parameterLibraryPosition} height={120} bottom={38}>
+                        <SidebarPanel isOpen={showParameterLibraryPanel} from={parameterLibraryPosition} height={228} bottom={38}>
                             <ParameterLibrary />
                         </SidebarPanel>
                     </div>

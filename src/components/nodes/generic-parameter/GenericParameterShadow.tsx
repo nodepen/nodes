@@ -18,7 +18,7 @@ export const GenericParameterShadow = ({ node, template }: GenericParameterShado
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
 
-    const nodePortInstanceIds = ['output']
+    const nodePortInstanceIds = ['input', 'output']
 
     return (
         <>

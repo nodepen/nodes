@@ -48,69 +48,17 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         apply: (callback: (state: NodesAppState, get: BaseGetter) => void) => set((state) => callback(state, get)),
         loadDocument: (document: NodePen.Document) =>
             set((state) => {
+                // Budget migrations
+                document.controls ??= {
+                    input: [],
+                    output: []
+                }
+                document.settings ??= {
+                    units: 'mm'
+                }
+
+                // Apply to internal state
                 state.document = document
-
-                // for (const node of Object.values(document.nodes)) {
-                //   // Sanitize node properties
-                //   const { instanceId, templateId } = node
-
-                //   const template = state.templates[templateId]
-
-                //   if (!template) {
-                //     console.log(`🐍 Could not find template [${templateId}] for document node [${instanceId}]`)
-                //     continue
-                //   }
-
-                //   state.document.nodes[instanceId] = createInstance(template)
-
-                //   // const nodeWidth = getNodeWidth()
-                //   // const nodeHeight = getNodeHeight(template)
-
-                //   // node.dimensions = {
-                //   //   width: nodeWidth,
-                //   //   height: nodeHeight,
-                //   // }
-
-                //   // const inputInstanceIds = Object.keys(inputs)
-                //   // const inputHeightSegments = divideDomain(
-                //   //   [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
-                //   //   inputInstanceIds.length > 0 ? inputInstanceIds.length : 1
-                //   // )
-
-                //   // for (let i = 0; i < inputInstanceIds.length; i++) {
-                //   //   const currentId = inputInstanceIds[i]
-                //   //   const currentDomain = inputHeightSegments[i]
-
-                //   //   const deltaX = 0
-                //   //   const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
-
-                //   //   node.anchors[currentId] = {
-                //   //     dx: deltaX,
-                //   //     dy: deltaY,
-                //   //   }
-                //   // }
-
-                //   // const outputInstanceIds = Object.keys(outputs)
-                //   // const outputHeightSegments = divideDomain(
-                //   //   [0, nodeHeight - NODE_INTERNAL_PADDING * 2],
-                //   //   outputInstanceIds.length > 0 ? outputInstanceIds.length : 1
-                //   // )
-
-                //   // for (let i = 0; i < outputInstanceIds.length; i++) {
-                //   //   const currentId = outputInstanceIds[i]
-                //   //   const currentDomain = outputHeightSegments[i]
-
-                //   //   const deltaX = nodeWidth
-                //   //   const deltaY = remap(0.5, [0, 1], currentDomain) + NODE_INTERNAL_PADDING
-
-                //   //   node.anchors[currentId] = {
-                //   //     dx: deltaX,
-                //   //     dy: deltaY,
-                //   //   }
-                //   // }
-                // }
-
-                // expireSolution(state)
             }),
         loadTemplates: (templates: NodePen.NodeTemplate[]) =>
             set(

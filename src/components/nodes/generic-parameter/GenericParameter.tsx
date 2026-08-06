@@ -9,6 +9,7 @@ import { GenericParameterShadow } from './GenericParameterShadow'
 import { GenericParameterPorts } from './GenericParameterPorts'
 import { GenericParameterLabel } from './GenericParameterLabel'
 import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { GenericNodeWires } from '../wire'
 
 type GenericParameterProps = {
     id: string
@@ -36,6 +37,7 @@ const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactE
                     <GenericParameterPorts node={node} />
                 </g>
             </g>
+            <GenericNodeWires node={node} />
         </NodeInternalStateProvider>
     )
 }

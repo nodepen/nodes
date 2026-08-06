@@ -15,10 +15,10 @@ export const GenericParameterLabel = ({ node, template }: GenericParameterLabelP
 
     const { instanceId: id, dimensions } = node
 
-    const { currentLabel } = usePortLabel(node.instanceId, 'output')
+    const { currentLabel } = usePortLabel(node.instanceId, 'input')
 
     const labelY = position.y + dimensions.height - NODE_INTERNAL_PADDING * 2
-    const labelX = position.x + 9 + 18 + 9
+    const labelX = position.x + 11 + 18 + 9
 
     return (
         <>

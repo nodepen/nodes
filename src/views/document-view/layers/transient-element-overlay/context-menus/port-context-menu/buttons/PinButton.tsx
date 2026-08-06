@@ -2,6 +2,7 @@ import React, { useCallback } from 'react'
 import { MenuButton } from '../../../common'
 import { useDispatch, useStore } from '$'
 import { STYLES } from '@/constants'
+import { getPortDirection } from '@/utils/ports/getPortDirection'
 
 type PinButtonProps = {
     nodeInstanceId: string
@@ -11,13 +12,11 @@ type PinButtonProps = {
 export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) => {
     const { apply } = useDispatch()
 
-    const portDirection = Object.keys(useStore.getState().document.nodes[nodeInstanceId].inputs).includes(portInstanceId)
-        ? 'inputs'
-        : 'outputs'
+    const portDirection = getPortDirection(useStore.getState().document.nodes[nodeInstanceId], portInstanceId)
 
     const isPinned = useStore((state) =>
         state.document.controls[portDirection].some(
-            (pin) => pin.nodeInstanceId === nodeInstanceId && pin.portInstanceId === portInstanceId
+            (control) => control.ref.nodeInstanceId === nodeInstanceId && control.ref.portInstanceId === portInstanceId
         )
     )
 
@@ -30,9 +29,12 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
     const handlePin = useCallback(() => {
         apply((state) => {
             state.document.controls[portDirection].push({
-                label: '',
-                nodeInstanceId,
-                portInstanceId,
+                order: state.document.controls[portDirection].length,
+                description: "",
+                ref: {
+                    nodeInstanceId,
+                    portInstanceId,
+                }
             })
         })
     }, [])
@@ -45,9 +47,9 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
 
     const handleUnpin = useCallback(() => {
         apply((state) => {
-            state.document.controls[portDirection] = state.document.controls[portDirection].filter((pin) => {
-                const sameNode = pin.nodeInstanceId === nodeInstanceId
-                const samePort = pin.portInstanceId === portInstanceId
+            state.document.controls[portDirection] = state.document.controls[portDirection].filter((control) => {
+                const sameNode = control.ref.nodeInstanceId === nodeInstanceId
+                const samePort = control.ref.portInstanceId === portInstanceId
 
                 return !sameNode && !samePort
             })
@@ -55,8 +57,8 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
     }, [])
 
     return isPinned ? (
-        <MenuButton icon={unpinIcon} label="Unpin" action={handleUnpin} />
+        <MenuButton icon={unpinIcon} label="Remove from controls" action={handleUnpin} />
     ) : (
-        <MenuButton icon={pinIcon} label={`Pin to ${portDirection}`} action={handlePin} />
+        <MenuButton icon={pinIcon} label={`Add to controls`} action={handlePin} />
     )
 }

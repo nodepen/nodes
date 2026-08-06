@@ -25,7 +25,6 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
 
     const lastPointerType = useRef<'mouse' | 'pen' | 'touch'>('mouse')
     const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>): void => {
-        console.log(e.pointerType)
         lastPointerType.current = e.pointerType
     }, [])
 
@@ -39,7 +38,7 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
 
         const { pageX, pageY } = e
 
-        const key = getPortContextMenuKey(node.instanceId, 'output')
+        const key = getPortContextMenuKey(node.instanceId, 'input')
 
         const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 
@@ -48,9 +47,9 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
                 position: { x, y },
                 context: {
                     type: 'port',
-                    direction: 'output',
+                    direction: 'input',
                     nodeInstanceId: node.instanceId,
-                    portInstanceId: 'output',
+                    portInstanceId: 'input',
                     portTemplate: getGenericParameterPortTemplate(template, 'input')
                 }
             }

@@ -70,24 +70,6 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
         setShowModal(true)
     }, [])
 
-
-
-    // const handlePointerEnter = useCallback((e: React.PointerEvent<SVGGElement>) => {
-    //     apply((state) => {
-    //         if ((state.registry.contextMenus['number-slider']?.context as any)?.nodeInstanceId === node.instanceId) {
-    //             return
-    //         }
-
-    //         state.registry.contextMenus['number-slider'] = {
-    //             position: { x: 0, y: 0 },
-    //             context: {
-    //                 type: 'number-slider-value',
-    //                 nodeInstanceId: node.instanceId
-    //             }
-    //         }
-    //     })
-    // }, [])
-
     const s = 20
 
     return (

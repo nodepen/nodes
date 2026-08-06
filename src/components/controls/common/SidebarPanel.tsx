@@ -35,7 +35,7 @@ export const SidebarPanel = ({ children, ...props }: Props) => {
 
     return <div className={`${isOpen ? 'np-shadow-main' : ''} np-absolute np-transition-[width,height,left,top,bottom] np-bg-light np-rounded-md np-overflow-hidden np-pointer-events-auto np-duration-300 np-ease-out`} style={{ width: `${width}px`, height: `${height}px`, left: `${left}px`, top: top ? `${top}px` : undefined, bottom: bottom ? `${bottom}px` : undefined }}>
         <div className='np-w-full np-h-full np-p-0.5'>
-            <div className='np-rounded-md np-overflow-hidden' style={{ width: `${width - 4}px`, height: `${props.height - 4}px` }}>
+            <div className='np-rounded-sm np-overflow-hidden' style={{ width: `${width - 4}px`, height: `${props.height - 4}px` }}>
                 {children}
             </div>
         </div>

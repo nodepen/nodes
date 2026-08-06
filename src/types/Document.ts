@@ -1,4 +1,6 @@
+import type { DocumentControls } from './controls/DocumentControls'
 import type { DocumentNode } from './DocumentNode'
+import type { DocumentSettings } from './settings/DocumentSettings'
 
 export type Document<DocumentMetadata = {}> = {
     id: string
@@ -6,19 +8,7 @@ export type Document<DocumentMetadata = {}> = {
         name: string
     } & DocumentMetadata & Record<string, any>
     nodes: { [id: string]: DocumentNode }
-    controls: {
-        inputs: {
-            label: string
-            description?: string
-            nodeInstanceId: string
-            portInstanceId: string
-        }[]
-        outputs: {
-            label: string
-            description?: string
-            nodeInstanceId: string
-            portInstanceId: string
-        }[]
-    }
+    controls: DocumentControls
+    settings: DocumentSettings
     version: 1
 }

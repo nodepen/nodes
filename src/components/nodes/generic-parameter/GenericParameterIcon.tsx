@@ -18,5 +18,5 @@ export const GenericParameterIcon = ({ node }: GenericParameterIconProps) => {
     // TODO: Get icon based on template type
     // const icon = getParameterIcon()
 
-    return <PortTypeIcon position={{ x: x + 9, y: y + 6 }} />
+    return <PortTypeIcon position={{ x: x + 11, y: y + 6 }} />
 }

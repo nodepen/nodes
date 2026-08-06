@@ -18,6 +18,10 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
 
     const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
+    const { apply } = useDispatch()
+
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
 
@@ -25,26 +29,25 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
         e.stopPropagation()
         e.preventDefault()
 
-        // TODO: Re-enable when context menu has options
-        // const { pageX, pageY } = e
+        const { pageX, pageY } = e
 
-        // const key = `node-context-menu-${node.instanceId}`
+        const key = `node-context-menu-${node.instanceId}`
 
-        // const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+        const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 
-        // apply((state) => {
-        //   state.registry.contextMenus[key] = {
-        //     position: {
-        //       x,
-        //       y,
-        //     },
-        //     context: {
-        //       type: 'node',
-        //       nodeInstanceId: node.instanceId,
-        //       nodeTemplate: template,
-        //     },
-        //   }
-        // })
+        apply((state) => {
+            state.registry.contextMenus[key] = {
+                position: {
+                    x,
+                    y,
+                },
+                context: {
+                    type: 'node',
+                    nodeInstanceId: node.instanceId,
+                    nodeTemplate: template,
+                },
+            }
+        })
     }, [])
 
     const o = 4

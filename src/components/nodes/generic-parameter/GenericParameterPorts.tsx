@@ -5,17 +5,18 @@ import { getGenericParameterPortTemplate } from '@/utils/templates/getGenericPar
 import { useStore } from '$'
 
 type GenericParameterPortsProps = {
-  node: NodePen.DocumentNode
+    node: NodePen.DocumentNode
 }
 
 export const GenericParameterPorts = ({ node }: GenericParameterPortsProps) => {
-  const { instanceId: id } = node
+    const { instanceId: id } = node
 
-  const template = useStore.getState().templates[node.templateId]
+    const template = useStore.getState().templates[node.templateId]
 
-  return (
-    <>
-      <GenericParameterPort nodeInstanceId={id} portInstanceId='output' template={getGenericParameterPortTemplate(template, 'output')} />
-    </>
-  )
+    return (
+        <>
+            <GenericParameterPort nodeInstanceId={id} portInstanceId='input' template={getGenericParameterPortTemplate(template, 'input')} />
+            <GenericParameterPort nodeInstanceId={id} portInstanceId='output' template={getGenericParameterPortTemplate(template, 'output')} />
+        </>
+    )
 }

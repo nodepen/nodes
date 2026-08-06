@@ -221,8 +221,11 @@ export const initialState: NodesAppState = {
         },
         nodes: {},
         controls: {
-            inputs: [],
-            outputs: [],
+            input: [],
+            output: [],
+        },
+        settings: {
+            units: 'mm'
         },
         version: 1,
     },

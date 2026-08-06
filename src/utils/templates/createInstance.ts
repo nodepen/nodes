@@ -83,9 +83,16 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
         }
         case 'generic-parameter': {
             node.outputs['output'] = 0
-            node.portConfigurations['output'] = {
-                label: null,
-                flags: []
+            node.inputs['input'] = 0
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
             }
             node.dimensions = {
                 width: 2 * DIMENSIONS.NODE_PORT_MINIMUM_WIDTH + DIMENSIONS.NODE_LABEL_WIDTH + 4 * DIMENSIONS.NODE_INTERNAL_PADDING,
@@ -93,13 +100,20 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
             }
             node.anchors = {
                 'labelDeltaX': {
-                    dx: 0,
+                    dx: node.dimensions.width / 2,
                     dy: 0
                 },
                 'output': {
                     dx: node.dimensions.width,
                     dy: node.dimensions.height / 2
+                },
+                'input': {
+                    dx: 0,
+                    dy: node.dimensions.height / 2
                 }
+            }
+            node.sources = {
+                'input': []
             }
 
             // Trying to stay positive
@@ -122,9 +136,15 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
         }
         case 'number-slider': {
             node.outputs['output'] = 0
-            node.portConfigurations['output'] = {
-                label: null,
-                flags: []
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
             }
             node.dimensions = {
                 width: DIMENSIONS.NUMBER_SLIDER_VALUE_WIDTH + DIMENSIONS.NUMBER_SLIDER_SLIDER_WIDTH + 5 * DIMENSIONS.NODE_INTERNAL_PADDING,
@@ -156,9 +176,15 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
         case 'panel': {
             node.inputs['input'] = 0
             node.outputs['output'] = 0
-            node.portConfigurations['output'] = {
-                label: null,
-                flags: []
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
             }
             node.dimensions = {
                 width: DIMENSIONS.PANEL_DEFAULT_WIDTH,
