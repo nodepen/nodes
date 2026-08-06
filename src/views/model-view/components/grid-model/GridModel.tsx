@@ -35,7 +35,7 @@ const GridModel = () => {
     geometry.setAttribute('position', new THREE.BufferAttribute(new Float32Array(vertices), 3))
 
     return <>
-        <lineSegments geometry={geometry} material={material} renderOrder={-1} />
+        <lineSegments geometry={geometry} material={material} renderOrder={1} />
     </>
 }
 

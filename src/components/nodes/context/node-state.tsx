@@ -36,19 +36,46 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
 
     const { apply } = useDispatch()
 
-    const [position, setPosition] = useInterpolatedState(node?.position ?? { x: 0, y: 0 }, lerpPoint2d)
+    const [presencePosition, setPresencePosition] = useInterpolatedState(node?.position ?? { x: 0, y: 0 }, lerpPoint2d)
 
+    // Position of instance based on active session drags
     const internalPosition = useStore((state) => {
+        if (!state.registry.selection.nodes.includes(nodeInstanceId ?? '')) {
+            return
+        }
+
+        const { isActive, isCopyActive, dx, dy } = state.registry.drag
+
+        if (!isActive || isCopyActive) {
+            return null
+        }
+
+        const node = state.document.nodes[nodeInstanceId ?? '']
+
+        if (!node) {
+            return null
+        }
+
+        return {
+            x: node.position.x + dx,
+            y: node.position.y + dy
+        }
+    })
+
+    // Position of instance based on external drag presence state
+    const latestPresencePosition = useStore((state) => {
         return Object.keys(state.presence.sessions).map((sessionId) => (state.presence.drag[nodeInstanceId ?? '']?.[sessionId] ?? null)).filter((drag) => !!drag).at(0) ?? null
     })
 
+    // Sync presence drags
     useEffect(() => {
-        if (!internalPosition) {
+        if (!latestPresencePosition) {
             return
         }
-        setPosition(internalPosition)
-    }, [internalPosition?.x, internalPosition?.y])
+        setPresencePosition(latestPresencePosition)
+    }, [latestPresencePosition?.x, latestPresencePosition?.y])
 
+    // Clean up session-based drag on next node update
     useEffect(() => {
         if (!node) {
             return
@@ -61,9 +88,11 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
                 }
             }
         })
-
-        setPosition(node.position, { immediate: true })
     }, [node, node?.position?.x, node?.position?.y])
 
-    return { position }
+    // console.log(latestPresencePosition?.x, latestPresencePosition?.y)
+    // console.log(presencePosition.x, presencePosition.y)
+    // console.log({ presencePosition, position: presencePosition })
+
+    return { position: internalPosition ?? (latestPresencePosition && presencePosition) ?? node?.position ?? { x: 0, y: 0 } }
 }

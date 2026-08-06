@@ -499,7 +499,15 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         expireSolution(state)
                     }
 
-                    state.callbacks.onDragEnd?.(current(state))
+                    const { dx, dy } = state.registry.drag
+
+                    for (const nodeInstanceId of state.registry.selection.nodes) {
+                        const node = state.document.nodes[nodeInstanceId]
+                        node.position = {
+                            x: node.position.x + dx,
+                            y: node.position.y + dy
+                        }
+                    }
 
                     state.registry.drag = {
                         isActive: false,
@@ -507,6 +515,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         dx: 0,
                         dy: 0
                     }
+
+                    state.callbacks.onDragEnd?.(current(state))
                 },
                 false,
                 'node/endDrag'

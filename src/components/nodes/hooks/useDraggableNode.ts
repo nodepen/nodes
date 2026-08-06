@@ -143,8 +143,6 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
             // Do not move nodes while drag copy is active
             return
         }
-
-        setNodePosition(nodeInstanceId, currentNodeX, currentNodeY)
     }, [])
 
     const resetState = useCallback((): void => {
@@ -162,8 +160,8 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
         const { x: initialPointerX, y: initialPointerY } = initialPointerPosition.current
 
-        const dx = (currentPointerX - initialPointerX)
-        const dy = (currentPointerY - initialPointerY)
+        const dx = (currentPointerX - initialPointerX) / zoom.current
+        const dy = (currentPointerY - initialPointerY) / zoom.current
 
         resetState()
 
