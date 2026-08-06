@@ -10,7 +10,7 @@ type PinButtonProps = {
 }
 
 export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) => {
-    const { apply } = useDispatch()
+    const { addControl, removeControl, clearInterface } = useDispatch()
 
     const portDirection = getPortDirection(useStore.getState().document.nodes[nodeInstanceId], portInstanceId)
 
@@ -27,16 +27,8 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
     )
 
     const handlePin = useCallback(() => {
-        apply((state) => {
-            state.document.controls[portDirection].push({
-                order: state.document.controls[portDirection].length,
-                description: "",
-                ref: {
-                    nodeInstanceId,
-                    portInstanceId,
-                }
-            })
-        })
+        addControl('input', nodeInstanceId, portInstanceId)
+        clearInterface()
     }, [])
 
     const unpinIcon = (
@@ -46,14 +38,8 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
     )
 
     const handleUnpin = useCallback(() => {
-        apply((state) => {
-            state.document.controls[portDirection] = state.document.controls[portDirection].filter((control) => {
-                const sameNode = control.ref.nodeInstanceId === nodeInstanceId
-                const samePort = control.ref.portInstanceId === portInstanceId
-
-                return !sameNode && !samePort
-            })
-        })
+        removeControl('input', nodeInstanceId, portInstanceId)
+        clearInterface()
     }, [])
 
     return isPinned ? (

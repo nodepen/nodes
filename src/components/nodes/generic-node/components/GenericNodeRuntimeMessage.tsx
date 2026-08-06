@@ -117,13 +117,13 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
             </WiresMaskPortal>
             {showDialog ? (
                 <Dialog onClose={() => setShowDialog(false)}>
-                    <div className="np-w-full np-p-2 np-flex np-items-center np-justify-between np-pointer-events-auto">
+                    <div className="np-w-full np-p-2 np-pl-4 np-pr-4 np-flex np-items-center np-justify-between np-pointer-events-auto">
                         <p className="np-font-sans np-font-medium np-text-dark np-text-md">{currentMessage?.message}</p>
-                        <div className="np-w-4 np-h-full np-flex np-items-center np-justify-center" onClick={() => setShowDialog(false)}>
+                        {/* <div className="np-w-4 np-h-full np-flex np-items-center np-justify-center" onClick={() => setShowDialog(false)}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-5">
                                 <path strokeLinecap="round" strokeLinejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" vectorEffect="non-scaling-stroke" />
                             </svg>
-                        </div>
+                        </div> */}
                     </div>
                 </Dialog>
             ) : null}

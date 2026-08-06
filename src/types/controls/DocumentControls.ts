@@ -4,7 +4,7 @@ export type DocumentControls = {
     output: DocumentControl[]
 }
 
-type DocumentControl = {
+export type DocumentControl = {
     order: number
     description?: string
     ref: {

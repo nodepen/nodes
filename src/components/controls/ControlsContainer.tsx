@@ -14,7 +14,9 @@ import { expireSolution } from '@/store/utils'
 import { SidebarPanel } from './common/SidebarPanel'
 import { TemplateLibrary } from './template-library/TemplateLibrary'
 import { ParameterLibrary } from './template-library/ParameterLibrary'
+import { DocumentControls } from './document/DocumentControls'
 import SessionUsers from './presence/SessionUsers'
+import { clamp } from '@/utils'
 
 const ControlsContainer = (): React.ReactElement => {
     const { apply } = useDispatch()
@@ -71,6 +73,28 @@ const ControlsContainer = (): React.ReactElement => {
         setParameterLibraryPosition([left + width / 2, top + height / 2])
     }, [])
 
+    const showDocumentControlsPanel = useStore((state) => state.ui.sidebar.isDocumentControlsOpen)
+    const [documentControlsPosition, setDocumentControlsPosition] = useState<[number, number]>([0, 0])
+    const handleClickDocumentControls = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        const { pageX, pageY } = e
+        setDocumentControlsPosition([pageX, pageY])
+        apply((state) => {
+            state.ui.sidebar.isDocumentControlsOpen = true
+        })
+    }, [])
+    const documentControlsButtonRef = useRef<HTMLSpanElement>(null)
+    useLayoutEffect(() => {
+        const el = documentControlsButtonRef.current
+        if (!el) {
+            return
+        }
+        const { left, width, top, height } = el.getBoundingClientRect()
+        setDocumentControlsPosition([left + width / 2, top + height / 2])
+    }, [])
+    const documentControlsHeight = useStore((state) => {
+        return 2 + 32 + 8 + (clamp(state.document.controls.input.length, 1, 5) * 48) + 8 + 2
+    })
+
     const statusMessages = useStore((state) => {
         const { document, model } = state.solution.messages ?? {}
         return [document, model].filter((message) => !!message)
@@ -94,6 +118,9 @@ const ControlsContainer = (): React.ReactElement => {
                         </SidebarPanel>
                         <SidebarPanel isOpen={showParameterLibraryPanel} from={parameterLibraryPosition} height={228} bottom={38}>
                             <ParameterLibrary />
+                        </SidebarPanel>
+                        <SidebarPanel isOpen={showDocumentControlsPanel} from={documentControlsPosition} height={documentControlsHeight} top={96}>
+                            <DocumentControls />
                         </SidebarPanel>
                     </div>
                 </div>
@@ -145,9 +172,25 @@ const ControlsContainer = (): React.ReactElement => {
                             <SessionUsers />
                         </div>
                     </div>
+                    <div className='np-w-full np-flex-grow np-flex np-flex-col np-justify-end md:np-justify-start'>
+                        <div className='np-w-full np-pl-11 np-pt-4 np-hidden md:np-flex np-justify-start'>
+                            <CircleButton size="sm" shadow tooltip='Show Controls' tooltipDirection='right' onClick={handleClickDocumentControls}>
+                                <span ref={documentControlsButtonRef}>
+                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-4'>
+                                        <path d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                                    </svg>
+                                </span>
+                            </CircleButton>
+                        </div>
+                        <div className='np-w-full np-p-3 np-pb-4 np-inline md:np-hidden'>
+                            {/* <div className='np-w-full np-h-32 np-rounded-md np-bg-light np-shadow-main'>
+                                <DocumentControls hideHeader />
+                            </div> */}
+                        </div>
+                    </div>
                 </div>
                 <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-end np-items-center np-pointer-events-none np-z-40">
-                    <div className='np-w-full np-pb-4 np-pl-4 np-pr-4 np-hidden md:np-grid np-grid-cols-3'>
+                    <div className='np-w-full np-pb-4 np-pl-3 np-pr-3 np-hidden md:np-grid np-grid-cols-3'>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-start np-items-center'>
                             <div className='np-p-8 np-flex np-items-center np-gap-1'>
                                 <CircleButton shadow tooltip='Component Library' onClick={handleClickComponentLibrary} >

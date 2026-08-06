@@ -192,10 +192,9 @@ const ModelView = () => {
                                 </svg>
                             </CircleButton>
                         </div>
-
                     </div>
                     <div className="np-w-full np-h-full np-p-1.5 np-absolute np-top-0 np-flex np-flex-col np-justify-end np-z-10">
-                        <div className="np-w-full np-rounded-lg np-p-0.5 np-border-2 np-border-green np-bg-pale np-overflow-hidden np-transition-[height] np-ease-out np-duration-[350ms]" style={{ height: isExpanded ? '100%' : '33%' }}>
+                        <div className="np-w-full np-rounded-lg np-p-0.5 np-border-2 np-border-green np-bg-pale np-overflow-hidden np-transition-[height] np-ease-out np-duration-[350ms]" style={{ height: isExpanded ? '100%' : '50%' }}>
                             <div className="np-w-full np-h-full np-rounded-md np-relative np-overflow-hidden">
                                 <ModelErrorBoundary resetKeys={[solutionModelUrl]}>
                                     <ModelCanvas solutionModelUrl={solutionModelUrl} />

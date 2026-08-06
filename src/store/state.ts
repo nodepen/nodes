@@ -50,6 +50,7 @@ export type NodesAppState = {
         sidebar: {
             isComponentLibraryOpen: boolean
             isParameterLibraryOpen: boolean
+            isDocumentControlsOpen: boolean
         }
         model: {
             selection: {
@@ -277,7 +278,8 @@ export const initialState: NodesAppState = {
         },
         sidebar: {
             isComponentLibraryOpen: false,
-            isParameterLibraryOpen: false
+            isParameterLibraryOpen: false,
+            isDocumentControlsOpen: false
         },
         model: {
             mode: 'default',

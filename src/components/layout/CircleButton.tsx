@@ -7,6 +7,7 @@ import React, { useCallback, useEffect, useId, useRef } from "react"
 type Props = React.PropsWithChildren<{
     size?: 'sm' | 'lg'
     tooltip?: string
+    tooltipDirection?: 'top' | 'right'
     tooltipHotkeys?: string[]
     shadow?: boolean
     onClick?: (e: React.MouseEvent<HTMLDivElement>) => void
@@ -17,6 +18,7 @@ export const CircleButton = ({ children, ...props }: Props) => {
         size = 'sm',
         shadow = false,
         tooltip = '',
+        tooltipDirection = 'top',
         tooltipHotkeys,
         onClick
     } = props
@@ -45,14 +47,15 @@ export const CircleButton = ({ children, ...props }: Props) => {
         const cx = left + (width / 2)
         const cy = top + (height / 2)
 
-        const dy = (height / -2) - 20
+        const x = tooltipDirection === 'top' ? cx : cx + 72
+        const y = tooltipDirection === 'top' ? cy + ((height / -2) - 20) : cy
 
         apply((state) => {
             state.registry.tooltips[tooltipKey.current] = {
                 configuration: {
                     position: {
-                        x: cx,
-                        y: cy + dy
+                        x,
+                        y
                     },
                     isSticky: true
                 },

@@ -135,12 +135,12 @@ const ActiveDocumentControl = () => {
                         </p> */}
                     </div>
                 </div>
-                <div className='np-h-full np-w-6 np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>
-                    {/* <div ref={menuButtonRef} className='np-w-6 np-h-6 np-hidden md:np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
+                <div className='np-h-full np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>
+                    <div ref={menuButtonRef} className='np-w-6 np-h-6 np-hidden md:np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
                         <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="2" stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                             <path d="m19.5 8.25-7.5 7.5-7.5-7.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"></path>
                         </svg>
-                    </div> */}
+                    </div>
                 </div>
             </div>
         </div>

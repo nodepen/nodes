@@ -41,7 +41,10 @@ const MenuInputComponent = ({ initialValue, valueType, onSubmit }: MenuInputProp
             return
         }
 
-        queueMicrotask(() => { el.focus() })
+        queueMicrotask(() => {
+            el.focus()
+            el.select()
+        })
     }, [])
 
     useEffect(() => {
@@ -56,6 +59,11 @@ const MenuInputComponent = ({ initialValue, valueType, onSubmit }: MenuInputProp
         }
 
         focusSelf()
+    }, [])
+
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
     }, [])
 
     const handleSubmit = useCallback((e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
@@ -83,7 +91,7 @@ const MenuInputComponent = ({ initialValue, valueType, onSubmit }: MenuInputProp
     return (
         <div className="np-w-full np-max-w-full np-h-8 np-pl-[6px] np-flex np-items-center np-justify-between">
             <form onSubmit={handleSubmit}>
-                <input ref={inputRef} onChange={handleChange} className={`${isValid ? 'np-text-dark' : 'np-text-error'} np-h-full np-w-32 np-font-sans np-font-medium np-text-sm focus:np-outline-none`} placeholder={`Set ${valueType}...`} />
+                <input ref={inputRef} className={`${isValid ? 'np-text-dark' : 'np-text-error'} np-h-full np-w-32 np-font-sans np-font-medium np-text-sm focus:np-outline-none`} placeholder={`Set ${valueType}...`} onChange={handleChange} onKeyDown={handleKeyDown} />
             </form>
             <button className="np-h-full np-min-w-8 np-rounded-sm hover:np-bg-grey np-flex np-flex-col np-items-center np-justify-center" onClick={handleSubmit}>
                 <svg className="np-w-5 np-h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} vectorEffect="non-scaling-stroke">

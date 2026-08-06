@@ -1,4 +1,6 @@
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import type { PortContextMenuContext } from '../../../types'
+import { useStore } from '$'
 
 type PortContextMenuButtons = {
     enablePin: boolean
@@ -8,8 +10,15 @@ type PortContextMenuButtons = {
 }
 
 export const getPortContextMenuButtons = (context: PortContextMenuContext): PortContextMenuButtons => {
-    const { portTemplate } = context
+    const { portTemplate, nodeInstanceId } = context
     const { __direction: direction, typeName } = portTemplate
+
+    const nodeType = getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId])
+
+    const pinnableNodeTypes: (typeof nodeType)[] = [
+        'generic-parameter',
+        // 'number-slider' TODO: SOOOOON
+    ]
 
     const supportedPrimitiveTypeNames = [
         'number',
@@ -30,7 +39,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
         'brep'
     ]
 
-    const enablePin = direction === 'input'
+    const enablePin = direction === 'input' && supportedPrimitiveTypeNames.includes(typeName) && pinnableNodeTypes.includes(nodeType)
     const enableSetValue = direction === 'input' && supportedPrimitiveTypeNames.includes(typeName)
 
     const enablePickGeometry = direction === 'input' && supportedGeometricTypeNames.includes(typeName)

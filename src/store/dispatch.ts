@@ -16,6 +16,7 @@ import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 import { createList } from '@/utils/data-trees'
 import { clamp } from 'three/src/math/MathUtils'
+import { tryGetControl } from '@/utils/controls'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -582,6 +583,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     state.registry.tooltips = {}
 
                     state.ui.sidebar = {
+                        ...state.ui.sidebar,
                         isComponentLibraryOpen: false,
                         isParameterLibraryOpen: false
                     }
@@ -680,6 +682,84 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 },
                 false,
                 'port/commitModelSelection'
+            ),
+        addControl: (controlType: 'input' | 'output', nodeInstanceId: string, portInstanceId: string) =>
+            set(
+                (state) => {
+                    if (tryGetControl(state.document.controls, controlType, nodeInstanceId, portInstanceId)) {
+                        // Already controlled, nothing to do.
+                        return
+                    }
+
+                    const list = state.document.controls[controlType]
+
+                    const nextOrder = list.length ? Math.max(...list.map((control) => control.order)) + 1 : 0
+
+                    list.push({
+                        order: nextOrder,
+                        ref: {
+                            nodeInstanceId,
+                            portInstanceId
+                        }
+                    })
+
+                    state.ui.sidebar.isDocumentControlsOpen = true
+                },
+                false,
+                'controls/addControl'
+            ),
+        removeControl: (controlType: 'input' | 'output', nodeInstanceId: string, portInstanceId: string) =>
+            set(
+                (state) => {
+                    const list = state.document.controls[controlType]
+
+                    const control = tryGetControl(state.document.controls, controlType, nodeInstanceId, portInstanceId)
+
+                    if (!control) {
+                        return
+                    }
+
+                    list.splice(list.indexOf(control), 1)
+
+                    // Re-pack remaining orders so they stay contiguous from 0.
+                    const sorted = [...list].sort((a, b) => a.order - b.order)
+                    sorted.forEach((control, i) => {
+                        control.order = i
+                    })
+
+                    state.ui.sidebar.isDocumentControlsOpen = true
+                },
+                false,
+                'controls/removeControl'
+            ),
+        moveControl: (controlType: 'input' | 'output', nodeInstanceId: string, portInstanceId: string, delta: number) =>
+            set(
+                (state) => {
+                    const list = state.document.controls[controlType]
+
+                    const control = tryGetControl(state.document.controls, controlType, nodeInstanceId, portInstanceId)
+
+                    if (!control) {
+                        return
+                    }
+
+                    const sorted = [...list].sort((a, b) => a.order - b.order)
+                    const currentIndex = sorted.indexOf(control)
+                    const targetIndex = currentIndex + delta
+
+                    if (targetIndex < 0 || targetIndex >= sorted.length) {
+                        // Nothing to swap with, leave order as-is.
+                        return
+                    }
+
+                    const targetControl = sorted[targetIndex]
+
+                    const currentOrder = control.order
+                    control.order = targetControl.order
+                    targetControl.order = currentOrder
+                },
+                false,
+                'controls/moveControl'
             )
     }
 
