@@ -24,6 +24,9 @@ export const getValidGeometryForType = (typeName: string): ModelGeometryType[] =
         case 'extrusion': {
             return ['Extrusion']
         }
+        case 'brep': {
+            return ['Brep']
+        }
         default: {
             console.log(`🐍 Unhandled value type: ${typeName}`)
             return []

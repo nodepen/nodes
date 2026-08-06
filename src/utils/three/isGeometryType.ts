@@ -10,7 +10,7 @@ export const isGeometryType = (o: THREE.Object3D<THREE.Event>, type: ModelGeomet
         case 'Extrusion':
             return objectType === type
         case 'Brep':
-            return o.userData?.attributes?.geometry?.hasBrepFrom
+            return o.userData?.attributes?.geometry?.hasBrepForm && o.userData?.objectType !== 'Extrusion'
         case 'Circle':
             return o.userData?.attributes?.geometry?.isCompleteCircle
         case 'Surface':

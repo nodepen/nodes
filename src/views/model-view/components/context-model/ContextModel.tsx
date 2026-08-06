@@ -75,6 +75,10 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
 
         const modelState = useStore.getState().ui.model
 
+        if (e.ctrlKey) {
+            console.log(o)
+        }
+
         const guid = o.userData?.attributes?.id
         const type = o.userData?.objectType
 

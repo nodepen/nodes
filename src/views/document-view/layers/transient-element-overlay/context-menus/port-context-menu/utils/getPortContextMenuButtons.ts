@@ -27,6 +27,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
         'mesh',
         'surface',
         'extrusion',
+        'brep'
     ]
 
     const enablePin = direction === 'input'
