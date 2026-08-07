@@ -21,7 +21,22 @@ const {
 export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => {
     const { position } = useNodeInternalState()
 
-    const currentValue = useStore((state) => tryGetSingleValue(state.document.nodes[node.instanceId].values['output'])?.value)
+    const currentValue = useStore((state) => {
+        const { values, nodeConfiguration } = state.document.nodes[node.instanceId]
+
+        if (!nodeConfiguration) {
+            return
+        }
+
+        const value = tryGetSingleValue(values['input'])?.value ?? tryGetSingleValue(values['output'])?.value
+        const config = nodeConfiguration as NodePen.NumberSliderConfig
+
+        if (!value) {
+            return
+        }
+
+        return Number.parseFloat(value).toFixed(config.precision)
+    })
 
     const { x, y, width, height } = useNumberSliderValuePosition(position)
 

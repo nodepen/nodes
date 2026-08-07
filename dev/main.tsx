@@ -2,6 +2,7 @@ import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import { NodesApp, type Document as NodePenDocument } from "../dist/index.mjs"
 import "../dist/styles.css";
+import templates from "./templates.json";
 
 const rootEl = document.getElementById("root")!
 const root = createRoot(rootEl)
@@ -75,8 +76,8 @@ const doc: NodePenDocument = {
             },
         },
         // Text
-        '62509613-274a-4fc0-a382-caeb7704ab9f': {
-            instanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
+        '52509613-274a-4fc0-a382-caeb7704ab9f': {
+            instanceId: '52509613-274a-4fc0-a382-caeb7704ab9f',
             templateId: '3ede854e-c753-40eb-84cb-b48008f14fd4',
             position: { x: 450, y: 244 },
             dimensions: { width: 152, height: 32 },
@@ -121,7 +122,7 @@ const doc: NodePenDocument = {
             sources: { input: [] },
             values: {
                 // `createInstance` defaults Boolean params to a `true` value.
-                output: {
+                input: {
                     branches: [
                         {
                             order: 0,
@@ -151,7 +152,7 @@ const doc: NodePenDocument = {
         'd352057a-fa2d-423a-b8ad-3f9880900b9b': {
             instanceId: 'd352057a-fa2d-423a-b8ad-3f9880900b9b',
             templateId: '57da07bd-ecab-415d-9d86-af36d7073abc',
-            position: { x: 450, y: 388 },
+            position: { x: 850, y: 100 },
             dimensions: { width: 201, height: 36 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
@@ -161,7 +162,7 @@ const doc: NodePenDocument = {
             },
             sources: {},
             values: {
-                output: {
+                input: {
                     branches: [
                         {
                             order: 0,
@@ -188,167 +189,271 @@ const doc: NodePenDocument = {
                 output: { label: null, flags: [] },
             },
         },
+        // Point
+        '62509613-274a-4fc0-a382-caeb7704ab9f': {
+            instanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
+            templateId: 'fbac3e32-f100-4292-8692-77240a42fd1a',
+            position: { x: 650, y: 100 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Line
+        '5328049d-b1db-41d4-ba74-a23ccf89bafe': {
+            instanceId: '5328049d-b1db-41d4-ba74-a23ccf89bafe',
+            templateId: '8529dbdf-9b6f-42e9-8e1f-c7a2bde56a70',
+            position: { x: 650, y: 172 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Brep
+        '1200d2bd-aa00-486e-8e8a-fdda17426ef1': {
+            instanceId: '1200d2bd-aa00-486e-8e8a-fdda17426ef1',
+            templateId: '919e146f-30ae-4aae-be34-4d72f555e7da',
+            position: { x: 650, y: 244 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Mesh
+        'dc6e2acd-453a-4b94-983b-30237e49279a': {
+            instanceId: 'dc6e2acd-453a-4b94-983b-30237e49279a',
+            templateId: '1e936df3-0eea-4246-8549-514cb8862b7a',
+            position: { x: 650, y: 316 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Circle
+        '756ffe4e-3d91-451e-a95b-9021a528a2b2': {
+            instanceId: '756ffe4e-3d91-451e-a95b-9021a528a2b2',
+            templateId: 'd1028c72-ff86-4057-9eb0-36c687a4d98c',
+            position: { x: 650, y: 388 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Curve
+        '66c62c08-bec7-4f79-b35c-ce6a51f433fc': {
+            instanceId: '66c62c08-bec7-4f79-b35c-ce6a51f433fc',
+            templateId: 'd5967b9f-e8ee-436b-a8ad-29fdcecf32d5',
+            position: { x: 650, y: 460 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Surface
+        '2741a069-0f50-4b01-8449-47cf58c15567': {
+            instanceId: '2741a069-0f50-4b01-8449-47cf58c15567',
+            templateId: 'deaf8653-5528-4286-807c-3de8b8dad781',
+            position: { x: 650, y: 532 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
     },
     meta: {
         name: 'My Document',
     },
     controls: {
-        input: [{
-            order: 0,
-            ref: {
-                nodeInstanceId: "1f2b7a0a-6668-40cb-aca4-df10b483d01a",
-                portInstanceId: 'input'
+        input: [
+            {
+                order: 0,
+                ref: {
+                    nodeInstanceId: '52509613-274a-4fc0-a382-caeb7704ab9f',
+                    portInstanceId: 'input'
+                }
+            },
+            {
+                order: 1,
+                ref: {
+                    nodeInstanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
+                    portInstanceId: 'input'
+                }
+            },
+            {
+                order: 2,
+                ref: {
+                    nodeInstanceId: "d352057a-fa2d-423a-b8ad-3f9880900b9b",
+                    portInstanceId: 'input'
+                }
+            },
+            {
+                order: 3,
+                ref: {
+                    nodeInstanceId: '146313d8-f3ad-485d-913d-72c68b2bbeb4',
+                    portInstanceId: 'input'
+                }
             }
-        }],
+        ],
         output: []
     },
     settings: {
         units: 'mm'
     }
 }
-
-const templates = [
-    {
-        "guid": "2e3ab970-8545-46bb-836c-1c11e5610bce",
-        "name": "Integer",
-        "nickName": "Int",
-        "description": "Contains a collection of integer numbers",
-        "keywords": [],
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOdSURBVEhL1VU5SGNRFI2KQSTuu3E37rvRuOGCCwhRAioOphPsbKxEUIIgDFiksbXQRsRCgjbaaBGwESdgZWWlMDPIDCl0Js5MOHPPS/7H0bhMNcyFS15+fs4995z73jP8q7BERUV9k0/8Rb6TfFvExcV9WF9fx8nJCbxeL46OjnBwcIDd3V1sbm5idXUVMzMzsNvt6OrqQllZGYTQR/mrMYTwQsTExDjkjz83NjbQ1tam0mazoaWlBc3NzWhoaEBtbS0qKysVcHFxMaqrq2EymW6jo6MXwzDPhjEpKenL9vY2xsfHFTtmZ2enKsQiTU1NqKurU6Dl5eUoLS1VWVJSAilwJxjmEFSEiI2NfT89Pf1reXkZ3d3d2Nrawktxfn6uwIuKilQnQu5epPKE4Z6EJTs7O7C2toaBgQH09vbi4uIiDBU5VlZWYLFYVIH8/Hzk5eXRC3ZhDUE+CNHeOzY2hqmpKSXL6OgogsEgfD4f9vf3sbe3B4/Ho4y+vr5Wv1E2rQDBc3JykJKSEpQivjCsHvb09PTvk5OT6k/UfH5+HktLS6oTysVnNLu1tRU3Nzc4Pj5GRUWFLhELiAIoKCiATOGtYDpD0GKssP/U3t4OJo3UikQyeXZ2VskzNzenm1xYWAiz2YysrCxVhAWli6+CbTKI8660tLTvBOcIchQJRLYEZT4c08PDQ/j9fjQ2NupjSv1zc3ORmZmJ1NRUVVTW3Khug1TyV1VVqdlmsghH0Wq1/pF8xm4CgQB2dnZ09g/1z8jIoAeqUH19PXe3nwXcMl53nG2tENcsRJZMrvnM5XIpeZxOpzL3IXvKI0ogOTlZ4cjzUAfUiXrxZe5OJjdRTU2N3hXXfHZ6eoqrqysdnIZSe+pO9pSHnVBS8TXkQTicRqPxlm1TV35yQrSCXPf19Sn23CcauCYNJdHY0zP5zr2gT5EKzi5f5JantkwyZXLtdrtVAY4tZSHzx+B8V8Y4KHBP9gHDxrOEpkXKy8tLnJ2dKdbUnLJo4DSW8gwNDSExMZHaP93JDOnCIy/ekzGBtBwZGVHsFxYWFGsaSs015gKqRlgm54fAPHsWMczsgh5QBrLUkqBkrAGTsUwfEhIS1O+8G8THl0/TcCxKy3ecHDk+9NRAKYfGWu4AxMfHo7+/nz4R/NX7gGEUqT5zLDs6OtDT06MAqO/w8LBi6nA4wINxYmICPL8GBwfffqOFg/fr4zv3tXz7nfwfhcHwG4jlh0fOcQdLAAAAAElFTkSuQmCC",
-        "libraryName": "Grasshopper",
-        "category": "Params",
-        "subcategory": "Primitive",
-        "isObsolete": false,
-        "inputs": [],
-        "outputs": []
-    },
-    {
-        "guid": "3e8ca6be-fda8-4aaf-b5c0-3c54c8bb7312",
-        "name": "Number",
-        "nickName": "Num",
-        "description": "Contains a collection of floating point numbers",
-        "keywords": [],
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQiSURBVEhL1VVbKLVpFN7ITnI+s5HDdj6fz5QoUeSQiUgOF27dqb+GXIyo/0a4kUMhKfqLnENEOYWEFLlkxAwKGzN65n1ee+9+Y/7/N1fTrFrtr/1977PWetaz1qv4r0xtYGDwKH7xL/wn4R8zExOT7a6uLqyurmJ5eRnz8/OYmprC6Ogo+vr60NLSgpqaGuTk5CApKQk+Pj4QCZ2Lo8pXhO+YkZFRnjj4R29vL+Li4qTHxsYiOjoakZGRCAsLQ3BwMPz9/SWwp6cnAgMDYW5ufmdoaPhJC/NNU1paWv42NDSEwsJCmR09MTFRBmKQiIgIhISESFBfX194e3tL9/LygghwLzBUr1D/YMbGxr9UVlb+2djYiJSUFKSlpUnnM4OwkqioKFlFUFAQ/Pz8kJ6ejoaGBlmJSO5JUPVFC/fO1E5OTo9tbW3Izs5Ge3s7BgcHMTIyguHhYfkfq2CA8PBw5Obmor+/H6enp1hbW4ObmxtcXV3ZC1YR9Qr5lQnulwsKClBaWoqBgQFsbm4iIyMDWVlZuLy8xP7+PpKTk2WAmJgYVFdXo6enB+fn59jb25Pgzs7OsLa2fhFBtrWwesuxs7PTFBcXQ1AkM1pcXNRTdHBwAI1Gg9bW1jcUVVVV4erqCkdHRzKAYADu7u4QKrwTmKWv0KKxIvtf4+PjQW9ubsb29rYMoGsyAzw9PWFjY+NNkxng+voaJycnUKlUcHR0lEE8PDxI1e8C20whOv+zra2thuDMjLzu7u5iZmZGL1PS8/z8jIuLizcyJU03NzcygIuLCxwcHGBjYyNVJZ4fRIDPChHpJiAgQB6is6k7OzuYnp6WdNB1AR4fH+U3/J4SJZ26AOTf3t6ePZCBQkNDOd03DPBZyOueZfNgd3e3bPDExIRUC51NJDgr4DeUp1qtRkVFhaTo+PhY0iOYgJWVlfxGqIoVtApXmJEv6phl19fXY2VlBWNjY/qqWNHDwwOWlpZk5gTn92VlZVJhh4eHMnvSw0o4L6Kvrz3QWqlSqbzjYeqd4OPj4zIgfWtrC7e3t3KgyC/BqZaSkhKcnZ3JBHTZs2eCIs6CXkXSqF3x4oXZNTU1yeVGcMqRHDMIn7n8FhYWpGrYA75bX1+X4DwrZuRFwL2bA1osdwklxkrq6urQ0dEhe9LZ2SnlyWmdnZ3F5OQkamtr5XalpOfm5lBeXo78/HxYWFiQ+/eTTBNVfBE8PpEGDs7XzowpRXLMhpJzHS0CVG5aoZxnAfPNXURTsQpWwGw5NDonKOWnA2ZDhfq4puV73g2ij9/fplr7JLR8T77F+tC7DpQ612VtZmYGU1NTuVFF1QT/4X1AUwqqLrgKEhISkJqaKgEyMzPl4mOmeXl54GIsKioC9xeXojjzsRtNa7xf/37n/sg/fif/j0yh+AuVqtAmN2lbmQAAAABJRU5ErkJggg==",
-        "libraryName": "Grasshopper",
-        "category": "Params",
-        "subcategory": "Primitive",
-        "isObsolete": false,
-        "inputs": [],
-        "outputs": []
-    },
-    {
-        "guid": "3ede854e-c753-40eb-84cb-b48008f14fd4",
-        "name": "Text",
-        "nickName": "Txt",
-        "description": "Contains a collection of text fragments",
-        "keywords": [],
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAO8SURBVEhL1VVLLJxhFB3ERMT7zXgb71e8X/GId2IhQZTuJGwktjaNxqpYNAQbsWBHiDRsbNgIC4lWYiUs7LSVtLqY6UNNTu+58/9Caaurpie5md/85px7z733+yz/CnYPD4/P8om/iCcSj4OPj8/r+fl57O3tYWdnB9vb29jc3MTa2hoWFxcxMTGB/v5+tLW1oaqqCqmpqZCE3spPrW6G38DLy6tdfvh9YWEBZWVlGqWlpSguLkZhYSHy8/ORk5ODjIwMJU5KSkJWVhb8/Pwcnp6ezwyaX8IaGBj4YWlpCZ2dnZodo7KyEu3t7TBxcnKipGlpaUhJSdFITk6GCDiFw+amegDe3t4v+vr6rkdHR1FdXY3a2loNPs/NzcHlchkSQHNzM9LT05U8MTFRK5HkvolVrwy6e7BHRUV9nZ6eRkNDgxLX19dr8Pns7AwrKysGPTA5Oak22e12FYiLi0NsbCx7wSqK3JS3IN7vdHR0oLe3V225LTAwMIDj4+M7Nh0dHd0RIHl0dDSCg4NdIvLGoL1BW1hY2Jfu7m5tKj2/bdHy8jKmpqa02aenp4YEUFdXd2MRBcQBxMfHQ6bQIZxP3dTSWMn+XXl5ORicFlOElVDo4uICLS0t+m52dtagB8bGxlQgISEBNpsNkZGRKkJBqeKjcPtZpPPPQ0NDv5CcI8hRJBGzpdDQ0JDugjmmXV1dBj1wcHCgzaX/MTExiIiIQEhIiIrKMxf1pUWUPmVmZupsMyhSUFCAoqIijY2NDQwPD+t35g6cn58bEtBKTf/Dw8PZAxXKy8vjdn+iwEsZL2dubi5MIT6TjBU4HA6D6mGMjIxo9rRHnEBQUJDySFXuCugT/WKpnAoGlyg7O1szX11d1Wd+x3dcrp6eHoMe2N/fV9+ZPe1hJbRX+urugYGnVqvVwR9z/fnJJTo8PMTg4KA+m+/oL0fz8vJSBa6vr7VaM3tWLRZxF26mSMHZpXdceZKMj48rAQX4N4NVmku1u7ur74mZmRklp3BJSYlL6O7tAVHKs4QEXCITTqdTjwmOIonZo/X1dVxdXRn/4cbW1haampoQEBBA7+9vMiFVvBIfvzFbTsbt4JyzmfSYDaXnpi1CqiMsk3MlNL88iwgbq6DfzJbNM4OktNAkZkNl+uDv76/veTdIH39/mhp4JrPs5OTI8XETJinn3Mxa7gD4+vrqeSVVk/yP9wFhFavecywrKipQU1OjBPS3tbVVM+Whx4ORW83zq7Gx8fE3mgHerz/fuX+Kx9/J/xEslh9QdsIn89F0TQAAAABJRU5ErkJggg==",
-        "libraryName": "Grasshopper",
-        "category": "Params",
-        "subcategory": "Primitive",
-        "isObsolete": false,
-        "inputs": [],
-        "outputs": []
-    },
-    {
-        "guid": "cb95db89-6165-43b6-9c41-5702bc5bf137",
-        "name": "Boolean",
-        "nickName": "Bool",
-        "description": "Contains a collection of boolean values",
-        "keywords": [],
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOsSURBVEhL1VU5S1xhFB0VB5Fx3x0Vl3Hf9w0VXEARVFQM2gmCgvgLBqIWBg0IoqWFdlaS0spGsIwiLmjhgoImRYKFZjSJnNxz5z0Rxy1VyIHLvHnLufeee77vs/wrOLy8vH7IL/4i3km8DX5+fp/n5+exvr6OtbU1rK6uYmVlBcvLy1hcXMTU1BQGBgbQ2tqK6upqpKamQgq6kE+tboYX4OPj0y4f/lpYWEB5eblGWVkZSkpKUFRUhPz8fOTk5CAjI0OJk5KSkJWVBZvNduXt7e00aJ6FNSgo6NvS0hK6urq0OkZVVZUmYpLCwkLk5uYqaVpaGlJSUjSSk5MhCa6Fw+6megK+vr4f+vv7f4+NjaGmpgZ1dXUavGYSdlJcXKxdZGdnIz09XckTExO1EynuVqT6ZNB5wBEdHX0zOzuLhoYGJa6vr0dLSwvm5uawu7sLE9vb25icnERBQQEcDocmiI+PR1xcHGfBLordlA8g2q91dnait7dXZWGCnp4eHB0dGbSeODg40HeZgOQxMTEICQm5kyQbBu09WsPDw10kpNaUg9UfHh4aVJ5wuVz6u7+/r8NmAlEACQkJEBdeCWefm1oGK9V/qaioAIODZJKZmRkleArn5+fo6OjA2dmZ/h8fH4fdbkdUVJQmYUfSxXfhtllk8u/DwsJcJOfwaEUmYftP4eLiAk1NTWrTkZERvbezs4PY2FhERkYiNDRUBy/XXKjTFsl0mZmZqd5mMAmteHNzox8/hEnO92lRDpmgXNQ/IiKCM9BEeXl5XN2XTDAt9rqmt81EvH6cgLKY5LQn3UMSggkojyiB4OBgfUdcxQ4+Slhs1Is+ZtsMLqKHtiQ5rctnrJzkfH9oaEifb21tafWUh51wvchc3TMw0Ge1Wq/4MR3B34mJCf2YnbS1tek9PqO+JGf1p6en+o7T6byvngYRibgW7l2koHepHZc8SVgtLUicnJxgeHhYW+f9wcFBHB8f67O9vT2tmuTsrLS09E7oPNYBUca9hBYzg84ykzwFknNmHCzl4YwCAwOpvedKJqSLT/LiLTvgwmFQjtHRUWxubhq0wMbGhspC77NyIVV7i2w/hebZvYiwswvqzb2Fi8YMuoQScpjUmxWL+xAQEKDPeTbIHF/eTQ04peVr7payfdyHSUo5zKrlDIC/v79uK9I1yV89DwirSPWVVq2srERtba0SUN/m5mattL29HdwYu7u7dUNsbGx8+4lmgOfr4zP3tXj7mfwfwWL5Ayn3+7H9F88PAAAAAElFTkSuQmCC",
-        "libraryName": "Grasshopper",
-        "category": "Params",
-        "subcategory": "Primitive",
-        "isObsolete": false,
-        "inputs": [],
-        "outputs": []
-    },
-    {
-        "guid": "57da07bd-ecab-415d-9d86-af36d7073abc",
-        "name": "Number Slider",
-        "nickName": "",
-        "description": "Numeric slider for single values",
-        "keywords": [],
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARHSURBVEhLrVZZKKV9HD52yhJRlCXuZMqFciFSLtyQC0UpuZkyERFjJzvZiWxj3/d93/fs29gbiSGyXJGdZ97f//O+4xDfxfedejpH3vM8v/X5HRH3kuRevtLS0mfcZ/wfkJGROeP4/LjPksTu9vXr17vr62s8Pz8zPD094fHxkeHh4YHh/v6e4e7ujuH29lbAzc2NAOI5PT2Fk5PTLScSIOLUjq6urvDr1y/Mzc0xzM/PY2FhgWFxcRFLS0tYXl7GysoKVldX8fPnT6ytrWF9fR0bGxvY3NzE1tYWtre3sbOzg4ODA/z+/RuysrJnIgkJiSeKuq+vj6G/vx+Dg4MYGhrC8PAwRkZGMDo6ivHxcUxMTGBychJTU1OYnp7GzMwMZmdnhaBeB3N+fs6XTMRKUFdXh/r6ejQ2NqKpqQktLS1obW1Fe3s7Ojo60NXVhe7ubvT29rJABgYGWCB8EGNjYywIPoDj4+O/AlTbHz9+oLCwEMXFxSgtLUVZWRkqKipQVVWF6upq1NbWCgE0Nze/E+/p6REqQNlTiQQBak5KSgrS0tKQkZGBrKwsZGdnIzc3F/n5+SgoKICtra0YPhPt7OzE7u7uX4HLy0tEREQgKioKsbGxiI+PR0JCApKTk5GamspETUxMxPA6Wz7T14LUcEHg4uIC3KjC1dUVbm5u8PDwgJeXF3x8fODn54fAwED+YQEURGJiIss8PT0dmZmZLOu8vDyWMTX85VkRm9tv377B3d0dnp6e8Pb2FiMPCQkRIyckJSWx7N6SU2YlJSVsml6eFeHk5ESM3NfXF/7+/ggKCkJoaCjCw8PFyAl86ahfOTk5rFc8eXl5uXgGR0dHn5JTb3hiHp+RUz/EBA4PDz8kp4bypG9hbm7+jpyfLrES7e/v4/v37wgICEBwcDDCwsKEqSLo6OiIERP09fVZ9G/JaWFpimibX54VYW9v7x15dHQ04uLi2LhSJkpKSgK5srIyG+GioiJhTF+TkwuICdBSfERORLSAVD7OHRno2c/IadnEBMhJPyPnx9DZ2RkuLi4fktMm89ZBzisIkMVGRkbC0dGRNe7Lly+sxpqamlBVVYWioiLk5OQgJSXFvkTv8vLyrGzq6uqsR4aGhjAzM4O9vT0bErJ1QYC8PCYmho4ELC0tYWxsDAMDA2hpaUFNTY0RKSgo0KVi5PROf1MvNDQ0oKenByMjI1hYWMDBwYFVg26GIEAHg199a2trYTu1tbWF1acsyGErKysZOXkO2ToFQWUhK7eysmIWTvZNB0kQoKvE+4qdnZ1Qc8qCH0MqFS1QTU0NVFRUGDnVXFdXl1k12bSNjQ07TnSYBAE6a3Q0KLJ/205aoIaGBmbNbW1tzJZ5croBPDldOfof16czER1mU1PTa7pQ1BjqPoHG7DPwz/E3mkA3miKnknE9ueaCD6ASSdJPDHag/6nZfwZFzvFxP1tEkn8Am4lkKqvpHb8AAAAASUVORK5CYII=",
-        "libraryName": "Grasshopper",
-        "category": "Params",
-        "subcategory": "Input",
-        "isObsolete": false,
-        "inputs": [],
-        "outputs": []
-    },
-    {
-        "guid": "59e0b89a-e487-49f8-bab8-b5bab16be14c",
-        "name": "Panel",
-        "nickName": "",
-        "description": "A panel for custom notes and text values",
-        "keywords": [],
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAASqSURBVEhLrZYLUFRVHMb3wSOCDawJUkJNwUduUGpSvmrS0YzIhAwUtcTRzGqapjFpypphejlTCQ1MijOkVpBYpmHDxAgSII/dBXkuAgvJQ56LLCAsILtf37m7YLPaxDQwfHPunt37/f73O/9775GJPxcXxX6Vm7yLh5gKCS96xvBYKXNzVbwVEbZ62Gy6AliGqUFgrB+42Uv1AKOdwEg71QoMNwHmRmConqoFBvXAjQqqDBgoAfo1VCF6Gk4hdF3gkATxUilah3p5Ql00oJk9NdKHw2hIgYebvFOmkMusAP/v9MP/pYcA7RxYTbnjkckwJQAtjXVzgRJ/oHQeo8qbHMD0+wxUHfbCaN7M274bzvFD8/fesGjm0DjAZnx5AVC2kID8yQGE+W/RSuTGuGGsYJZ93haDPuE+6bu2NF+78cNA+SKg4hEu+qXJAUTlWe+4SkaaWA9YtbdiaEj2kearEu6nqRqoDASqgoDqx9hZBZMDCPVn+iFjr7NkVvH1tIkYhvLnIX2XEhmvu2BUx6qFsX4JULOUgML/AIhFYwzQsVrm2/7zgxJAyJA83RZDZRAq4r2lufI4bxo/DlwJBmqf4D1S9C+Af3TDaKE/apJ80J/Nz8xWRCHMzu92QncGF1W/GMO6IOkKxLzxAmOqXw4YVvJGLHYASNUK41vdUJ30AFK3KXBujwsG8xfAUh6EnPfcJyCtZ3h1rLbptL80l/WuOyx1q4DGpwjQOACEael8GrPFykU3qFGT7IsftirwEyFZB1SwVC5G359q5u4kGYqxLZ2/N6xC/sfTpLnGNHpcXcNHitYBIHpXajE1RrQc2Q1dmfNxIlIxAan4lu1Y9yT0x/wks/ErMaQEoCd3ifQ59yCboGU9AToHgLRogTi73xNHI53Qm7sI1uqlOB7lhBNbFEjdocSp7Qp0/KHGqH4Fc7e17rhy3veUxow37gKuPccHY4kDoOpR9F1SI+VNDxzeKEfqPuapD8b5A15IjlCgOM4XP0YpcGa3C0yFy1CeaLuKqqTZrPreCVBZIhul/QU+fUsdAOzdbyJdcChEhi9D5Ygj5OKh6ShKmIljmxWoS1sIXeIspBBydo8r8j/xxrmdSjSkcb3aQmAsWIH27GBY2zcCnWEEXHYAsBu+26fCpxtkEuQrO+T02544Ei5HsaiseR20HAUkjZH9Gs0odeyYDmG6CeiicfdLgHEz3yNlDoD6lSg5HoDY9TJ8RkjmF76ID1MinpCETXJojrCFWzcw3xB05C1HydG56C5abTcOtxu/DPREANe38GVV7gBg71obnkZ67Az88qEPxhrXoDl7GU7uvQcnX/NAX+UzzDbUXu2LtmqFsahWmPZEAr1bqSjAtJ2ACgeA6N2mtVIMaHl2olq0PW9btDvFMF6tMDZtA/po3P8Kn6Svwnqz0gZQ3a3sMt+4ypMOOhizWsmY1d4WA6uVjEW1wniH3XgnH3K7eA98DmPXBXh4OHeKHUVMVMRas3mAL3PrCGWm+OK3DFB91HXKSHVT3ABY2qhr3Bi0cOQmYOwviudaDFQdVYue7osIDQ0223cWMiUPPlK5O03dtkXlLLYtH8hkMuXf8c7a3j7t0egAAAAASUVORK5CYII=",
-        "libraryName": "Grasshopper",
-        "category": "Params",
-        "subcategory": "Input",
-        "isObsolete": false,
-        "inputs": [],
-        "outputs": []
-    },
-    {
-        "guid": "e64c5fb1-845c-4ab1-8911-5f338516ba67",
-        "name": "Series",
-        "nickName": "Series",
-        "description": "Create a series of numbers.",
-        "keywords": [],
-        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFtSURBVEhLzZQ9boQwEIVpkNgqRYQETYpUEVKK1HsGepA4Hh0SDUfYlpKeozjzRjvW4Kx/2KTIk55sY3ifdwY2+8/KE/yc2rY1MdNtL+SnIDkC1nX1+g54IwNyWhYwjqPpuo4DMWKtAB/kV34iQbquFwH0fW+WZeE5RqwV4JMcBzRNY2JG6DRNZhiG04AcAfu+e439eZ759Bj/BKCvYa7Dfw3A2gXo8BhAN5Mb6gIkVM8RKA4BcDFoH0Cf3gfAaU1I2PcB9C8Q0/2H78AC8LGUZcmBdV1zfSGsfQDau5K/yDg1jPDDl2wBRVGYbdt4frvdTFVVPMe+BIoVAOHv5IqMU8OH/yILkFGkr8upte8AnBrhFzKyxFZJAH16bdqTeh9CtZIAZLfWbr3jANQctYfcHpAf1fpHvR/JAvDW4O3B2n2LyL5aB8MhC/AJ+2QAgrX2iQEJjjbTJzyAOqJZCNFNFCc1MySB6Oa5PhmeZd81OYA7SLU5jgAAAABJRU5ErkJggg==",
-        "libraryName": "Math Components",
-        "category": "Sets",
-        "subcategory": "Sequence",
-        "isObsolete": false,
-        "inputs": [
-            {
-                "__order": 0,
-                "__direction": "input",
-                "name": "Start",
-                "nickName": "S",
-                "description": "First number in the series",
-                "typeName": "number",
-                "keywords": [],
-                "isOptional": false
-            },
-            {
-                "__order": 1,
-                "__direction": "input",
-                "name": "Step",
-                "nickName": "N",
-                "description": "Step size for each successive number",
-                "typeName": "number",
-                "keywords": [],
-                "isOptional": false
-            },
-            {
-                "__order": 2,
-                "__direction": "input",
-                "name": "Count",
-                "nickName": "C",
-                "description": "Number of values in the series",
-                "typeName": "integer",
-                "keywords": [],
-                "isOptional": false
-            }
-        ],
-        "outputs": [
-            {
-                "__order": 0,
-                "__direction": "output",
-                "name": "Series",
-                "nickName": "S",
-                "description": "Series of numbers",
-                "typeName": "number",
-                "keywords": [],
-                "isOptional": false
-            }
-        ]
-    },
-]
 
 const solution = {
     solutionModelUrl: null,
@@ -370,7 +475,9 @@ const solution = {
 }
 
 const assets = {
-    models: {}
+    models: {
+        'test-model': '/test.3dm'
+    }
 }
 
 let presence = {

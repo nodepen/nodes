@@ -31,7 +31,7 @@ const NumberSliderContextMenu = ({ context }: ContextMenuProps) => {
     const { width, height } = slider.dimensions
     const { min, max, precision } = slider.nodeConfiguration as NodePen.NumberSliderConfig
 
-    const currentValue = tryGetSingleValue(slider.values['output'])?.value
+    const currentValue = tryGetSingleValue(slider.values['input'])?.value ?? tryGetSingleValue(slider.values['output'])?.value
     const t = getDomainParameter([min, max], Number.parseFloat(currentValue ?? '0'))
 
     const topLeft = {
@@ -91,7 +91,7 @@ const NumberSliderContextMenu = ({ context }: ContextMenuProps) => {
 
         // Valid number
         apply((state) => {
-            state.document.nodes[context.nodeInstanceId].values['output'] = createSingleValue(clamp(numericValue, min, max).toFixed(precision), 'number')
+            state.document.nodes[context.nodeInstanceId].values['input'] = createSingleValue(clamp(numericValue, min, max).toFixed(precision), 'number')
             expireSolution(state)
         })
     }, [currentValue, min, max, precision])

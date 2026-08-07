@@ -1,13 +1,17 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import type * as NodePen from '@/types'
 import { COLORS } from '@/constants'
 import { useDispatch, useStore } from '@/store'
 import { usePortLabel } from '@/hooks/usePortLabel'
 import { usePortTemplate } from '@/hooks/usePortTemplate'
 import { getDataTreeValueString, tryCreateSingleValue, tryGetSingleValue } from '@/utils/data-trees'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { expireSolution } from '@/store/utils'
 import { saveDocument } from '@/store/utils/saveDocument'
 import { PortTypeIcon } from '@/components/icons'
+import { DocumentControlsNumberSlider } from './DocumentControlsNumberSlider'
+import { DocumentControlsBoolean } from './DocumentControlsBoolean'
+import { DocumentControlsGeometry } from './DocumentControlsGeometry'
 
 type DocumentControlsInputProps = {
     nodeInstanceId: string
@@ -22,6 +26,17 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
 
     const currentValue = useStore((state) => tryGetSingleValue(state.document.nodes[nodeInstanceId]?.values[portInstanceId]))
     const valueType = (currentValue?.type ?? portTemplate?.typeName ?? 'string') as NodePen.DataTreeValueType
+
+    const numberSliderConfig = useStore((state) => {
+        const node = state.document.nodes[nodeInstanceId]
+        const template = node ? state.templates[node.templateId] : undefined
+
+        if (!node || !template || getNodeTypeForTemplate(template) !== 'number-slider') {
+            return null
+        }
+
+        return node.nodeConfiguration as NodePen.NumberSliderConfig
+    })
 
     const [internalLabel, setInternalLabel] = useState(currentLabel)
     useEffect(() => {
@@ -133,10 +148,63 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
         moveControl('input', nodeInstanceId, portInstanceId, 1)
     }, [moveControl, nodeInstanceId, portInstanceId])
 
+    const nodeType = useStore((state) => {
+        return getNodeTypeForTemplate(state.templates[state.document.nodes[nodeInstanceId].templateId])
+    })
+
+    const getInputRow = () => {
+        switch (nodeType) {
+            case 'number-slider': {
+                if (!numberSliderConfig) {
+                    console.log(`🐍 Tried to render input for number slider with no config!`)
+                    return null
+                }
+                return <DocumentControlsNumberSlider nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} config={numberSliderConfig} />
+            }
+            case 'generic-node':
+            case 'generic-parameter': {
+                switch (valueType) {
+                    case 'boolean': {
+                        return <DocumentControlsBoolean nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+                    }
+                    case 'number':
+                    case 'integer':
+                    case 'text':
+                    case 'string': {
+                        return <input
+                            className="np-w-full np-h-5 np-pl-1 np-rounded-sm hover:np-bg-grey np-text-xs np-text-dark np-font-panel placeholder:np-text-grey-2 focus:np-outline-none -np-translate-y-1"
+                            value={internalValue}
+                            placeholder={`Set ${valueType} value`}
+                            onChange={handleChange}
+                            onKeyDown={handleKeyDown}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                        />
+                    }
+                    case 'point':
+                    case 'circle':
+                    case 'curve':
+                    case 'line':
+                    case 'mesh':
+                    case 'surface':
+                    case 'extrusion':
+                    case 'brep':
+                    case 'box':
+                        return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} />
+                    case 'reference':
+                    default:
+                        return null
+                }
+            }
+            default:
+                return null
+        }
+    }
+
     return (
         <div className="np-w-full np-flex np-flex-col np-pl-0.5 np-pr-0.5">
             <div className="np-w-full np-pl-3 np-flex np-items-center np-justify-start">
-                <PortTypeIcon r={16} />
+                <PortTypeIcon r={16} typeName={valueType} />
                 <input
                     className="np-ml-1 np-min-w-0 np-flex-grow np-h-5 np-pl-1 np-pt-0.5 np-rounded-sm hover:np-bg-grey np-text-xs np-text-dark np-font-panel focus:np-outline-none"
                     value={internalLabel}
@@ -163,16 +231,8 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     </div>
                 </div>
             </div>
-            <div className='np-w-full -np-translate-y-1 np-pl-8'>
-                <input
-                    className="np-w-full np-h-5 np-pl-1 np-rounded-sm hover:np-bg-grey np-text-xs np-text-dark np-font-panel placeholder:np-text-grey-2 focus:np-outline-none"
-                    value={internalValue}
-                    placeholder={`Set ${valueType} value`}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown}
-                    onFocus={handleFocus}
-                    onBlur={handleBlur}
-                />
+            <div className='np-w-full np-h-5 np-mb-1.5 np-pl-8'>
+                {getInputRow()}
             </div>
         </div>
     )

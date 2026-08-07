@@ -56,7 +56,7 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
             className="np-absolute np-w-48 np-p-1 np-flex np-flex-col np-bg-light np-shadow-main np-transition-all np-rounded-md"
             style={{ left, top }}
         >
-            <MenuSection title={currentLabel} icon={<PortTypeIcon />}>
+            <MenuSection title={currentLabel} icon={<PortTypeIcon typeName={template.typeName as any} />}>
                 <p className="np-mt-1 np-mb-2 np-font-sans np-font-medium np-text-dark np-text-xs -np-translate-y-px">
                     {template.description}
                 </p>

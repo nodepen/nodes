@@ -95,3 +95,23 @@ export const KEYS = {
         WIRES_MASK_ID: 'np-wires-mask',
     },
 } as const
+
+export const PARAMS = {
+    PRIMITIVE: [
+        'number',
+        'integer',
+        'boolean',
+        'text',
+        'string'
+    ] as const,
+    GEOMETRY: [
+        'point',
+        'circle',
+        'curve',
+        'line',
+        'mesh',
+        'surface',
+        'extrusion',
+        'brep'
+    ] as const
+}

@@ -11,7 +11,6 @@ import { clearMenus } from '@/store/utils/clearMenus'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import type { PortFlag } from '@/types'
 import { PickGeometryButton } from './buttons/PickGeometryButton'
-import { getValidGeometryForType } from '@/utils/geometry-types'
 import { ZoomToGeometryButton } from './buttons/ZoomToGeometryButton'
 
 type PortContextMenuProps = {
@@ -21,12 +20,12 @@ type PortContextMenuProps = {
 
 const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const { nodeInstanceId, portInstanceId, portTemplate } = context
-    const { name, nickName } = portTemplate
+    const { name, nickName, typeName } = portTemplate
 
     const nodeTemplate = useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId]
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
-    const { apply, toggleFlag, clearInterface } = useDispatch()
+    const { apply, toggleFlag, clearInterface, startModelSelection } = useDispatch()
 
     const handleSetValueClick = useCallback((pageY: number) => {
         apply((state) => {
@@ -72,24 +71,12 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry } = getPortContextMenuButtons(context)
 
     const handlePickGeometry = useCallback(() => {
-        const validGeometryTypes = getValidGeometryForType(portTemplate.typeName)
-        apply((state) => {
-            state.ui.model = {
-                mode: 'select',
-                selection: {},
-                selectionFilter: validGeometryTypes,
-                source: {
-                    nodeInstanceId,
-                    portInstanceId
-                }
-            }
-        })
-        clearInterface()
-    }, [nodeInstanceId, portInstanceId, portTemplate])
+        startModelSelection(nodeInstanceId, portInstanceId, portTemplate.typeName)
+    }, [nodeInstanceId, portInstanceId, portTemplate, startModelSelection])
 
     return (
         <MenuBody position={position}>
-            {nodeType === 'generic-parameter' ? null : <MenuHeader icon={<PortTypeIcon />} label={`${name} (${nickName})`} />}
+            {nodeType === 'generic-parameter' ? null : <MenuHeader icon={<PortTypeIcon typeName={typeName as any} />} label={`${name} (${nickName})`} />}
             {enableSetLabel ? <SetLabelButton onClick={handleEditNameClick} /> : null}
             {enableSetValue ? (
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />

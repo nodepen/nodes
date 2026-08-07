@@ -38,7 +38,7 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
     const start = x + padding + NUMBER_SLIDER_VALUE_WIDTH + NODE_INTERNAL_PADDING
     const end = x + width - padding
 
-    const currentValue = Number.parseFloat(tryGetSingleValue(node.values['output'])?.value ?? '0')
+    const currentValue = Number.parseFloat(tryGetSingleValue(node.values['input'])?.value ?? tryGetSingleValue(node.values['output'])?.value ?? '0')
 
     const t = getDomainParameter([config.min, config.max], currentValue)
     const dx = t * (end - start)
@@ -73,7 +73,7 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
         const { left, width } = handleRailElement.getBoundingClientRect()
         setSliderPageXDomain([left, left + width])
 
-        const currentValue = tryGetSingleValue(node.values['output'])?.value
+        const currentValue = tryGetSingleValue(node.values['input'])?.value ?? tryGetSingleValue(node.values['output'])?.value
 
         if (!currentValue) {
             console.log('🐍 Number slider has no value!')
@@ -104,7 +104,7 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
         const nextValue = clamp(Math.round((initialSliderValue.current + valueDelta) * p) / p, min, max)
 
         apply((state) => {
-            state.document.nodes[node.instanceId].values['output'] = createSingleValue(nextValue.toFixed(precision), 'number')
+            state.document.nodes[node.instanceId].values['input'] = createSingleValue(nextValue.toFixed(precision), 'number')
         })
     }, [isActive, sliderPageXDomain, max, min, dx, dy, x])
 

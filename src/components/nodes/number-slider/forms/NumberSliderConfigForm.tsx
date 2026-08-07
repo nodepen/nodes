@@ -23,7 +23,7 @@ type ConfigProps = {
 
 export const NumberSliderConfigForm = ({ node, config, onClose }: ConfigProps) => {
     const { min, max, precision } = config
-    const initialValue = tryGetSingleValue(node.values['output'])?.value ?? '0'
+    const initialValue = tryGetSingleValue(node.values['input'])?.value ?? tryGetSingleValue(node.values['output'])?.value ?? '0'
 
     const { apply } = useDispatch()
 
@@ -63,6 +63,9 @@ export const NumberSliderConfigForm = ({ node, config, onClose }: ConfigProps) =
         e.currentTarget.select()
     }, [])
     const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLInputElement>) => {
+        e.stopPropagation()
+        e.nativeEvent.stopImmediatePropagation()
+
         switch (e.key.toLowerCase()) {
             case 'enter': {
                 e.preventDefault();
@@ -112,7 +115,7 @@ export const NumberSliderConfigForm = ({ node, config, onClose }: ConfigProps) =
 
     const onSubmit: SubmitHandler<ConfigFormData> = (data) => {
         apply((state) => {
-            state.document.nodes[node.instanceId].values['output'] = createSingleValue(data.value, 'number')
+            state.document.nodes[node.instanceId].values['input'] = createSingleValue(data.value, 'number')
             state.document.nodes[node.instanceId].nodeConfiguration = {
                 min: Number.parseFloat(data.min),
                 max: Number.parseFloat(data.max),

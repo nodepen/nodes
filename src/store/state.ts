@@ -279,7 +279,7 @@ export const initialState: NodesAppState = {
         sidebar: {
             isComponentLibraryOpen: false,
             isParameterLibraryOpen: false,
-            isDocumentControlsOpen: false
+            isDocumentControlsOpen: true
         },
         model: {
             mode: 'default',

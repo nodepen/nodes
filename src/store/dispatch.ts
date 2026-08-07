@@ -17,6 +17,7 @@ import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 import { createList } from '@/utils/data-trees'
 import { clamp } from 'three/src/math/MathUtils'
 import { tryGetControl } from '@/utils/controls'
+import { getValidGeometryForType } from '@/utils/geometry-types'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -54,6 +55,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     input: [],
                     output: []
                 }
+                document.controls.input ??= []
+                document.controls.output ??= []
                 document.settings ??= {
                     units: 'mm'
                 }
@@ -642,6 +645,27 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 false,
                 'history/redo'
             ),
+        startModelSelection: (nodeInstanceId: string, portInstanceId: string, valueType: string) => {
+            const validGeometryTypes = getValidGeometryForType(valueType)
+
+            set(
+                (state) => {
+                    state.ui.model = {
+                        mode: 'select',
+                        selection: {},
+                        selectionFilter: validGeometryTypes,
+                        source: {
+                            nodeInstanceId,
+                            portInstanceId
+                        }
+                    }
+                },
+                false,
+                'ui/startModelSelection'
+            )
+
+            dispatch.clearInterface()
+        },
         commitModelSelection: () =>
             set(
                 (state) => {

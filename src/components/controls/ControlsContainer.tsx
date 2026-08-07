@@ -92,7 +92,7 @@ const ControlsContainer = (): React.ReactElement => {
         setDocumentControlsPosition([left + width / 2, top + height / 2])
     }, [])
     const documentControlsHeight = useStore((state) => {
-        return 2 + 32 + 8 + (clamp(state.document.controls.input.length, 1, 5) * 48) + 8 + 2
+        return 4 + 32 + 8 + (clamp(state.document.controls.input.length, 1, 6) * 46) + 8
     })
 
     const statusMessages = useStore((state) => {
@@ -183,9 +183,9 @@ const ControlsContainer = (): React.ReactElement => {
                             </CircleButton>
                         </div>
                         <div className='np-w-full np-p-3 np-pb-4 np-inline md:np-hidden'>
-                            {/* <div className='np-w-full np-h-32 np-rounded-md np-bg-light np-shadow-main'>
+                            <div className='np-w-full np-h-32 np-rounded-md np-bg-light np-shadow-main'>
                                 <DocumentControls hideHeader />
-                            </div> */}
+                            </div>
                         </div>
                     </div>
                 </div>

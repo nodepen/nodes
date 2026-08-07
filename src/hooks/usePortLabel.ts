@@ -1,22 +1,22 @@
 import { useStore } from '$'
-import { getPortDirection } from '@/utils/ports/getPortDirection'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { shallow } from 'zustand/shallow'
+import { usePortTemplate } from './usePortTemplate'
 
 export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { currentLabel: string, defaultLabel: string } => {
-  return useStore((state) => {
-    const node = state.document.nodes[nodeInstanceId]
-    const template = state.templates[node.templateId]
+    const portTemplate = usePortTemplate(nodeInstanceId, portInstanceId)
 
-    const nodeType = getNodeTypeForTemplate(template)
-    const direction = getPortDirection(node, portInstanceId)
+    return useStore((state) => {
+        const node = state.document.nodes[nodeInstanceId]
+        const template = state.templates[node.templateId]
 
-    const defaultLabel = nodeType === 'generic-parameter' ? template.name : template[`${direction}s`][node[`${direction}s`][portInstanceId]].nickName
-    const customLabel = node.portConfigurations[portInstanceId]?.label
+        const nodeType = getNodeTypeForTemplate(template)
 
-    return {
-      defaultLabel,
-      currentLabel: customLabel ?? defaultLabel
-    }
-  })
+        const defaultLabel = nodeType === 'generic-parameter' ? template.name : portTemplate?.name ?? template.name
+        const customLabel = node.portConfigurations[portInstanceId]?.label
+
+        return {
+            defaultLabel,
+            currentLabel: customLabel ?? defaultLabel
+        }
+    })
 }

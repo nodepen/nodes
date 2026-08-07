@@ -4,19 +4,19 @@ import { useStore } from '$'
 import { COLORS } from '@/constants'
 import { PortTypeIcon } from '@/components/icons'
 import { useNodeInternalState } from '../context/node-state'
+import { getGenericParameterPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 
 type GenericParameterIconProps = {
     node: NodePen.DocumentNode,
     template: NodePen.NodeTemplate
 }
 
-export const GenericParameterIcon = ({ node }: GenericParameterIconProps) => {
+export const GenericParameterIcon = ({ node, template }: GenericParameterIconProps) => {
     const { position } = useNodeInternalState()
+
+    const { typeName } = getGenericParameterPortTemplate(template, 'input')
 
     const { x, y } = position
 
-    // TODO: Get icon based on template type
-    // const icon = getParameterIcon()
-
-    return <PortTypeIcon position={{ x: x + 11, y: y + 6 }} />
+    return <PortTypeIcon position={{ x: x + 11, y: y + 6 }} typeName={typeName as NodePen.DataTreeValueType} />
 }
