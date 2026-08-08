@@ -100,7 +100,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
             }
             node.anchors = {
                 'labelDeltaX': {
-                    dx: node.dimensions.width / 2,
+                    dx: 21,
                     dy: 0
                 },
                 'output': {

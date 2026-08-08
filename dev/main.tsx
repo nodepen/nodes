@@ -19,7 +19,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -51,7 +51,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -83,7 +83,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -115,7 +115,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -189,6 +189,72 @@ const doc: NodePenDocument = {
                 output: { label: null, flags: [] },
             },
         },
+        // Series
+        'f48cf9d3-3388-4972-af4b-d496b6e7d86d': {
+            instanceId: 'f48cf9d3-3388-4972-af4b-d496b6e7d86d',
+            templateId: 'e64c5fb1-845c-4ab1-8911-5f338516ba67',
+            position: { x: 850, y: 172 },
+            dimensions: { width: 152, height: 130 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': { dx: 0, dy: 25 },
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': { dx: 0, dy: 65 },
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': { dx: 0, dy: 105 },
+                'b75e481e-f13c-41f0-a0b0-1ffe0e4f36d0': { dx: 152, dy: 65 },
+            },
+            sources: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': [],
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': [],
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': [],
+            },
+            values: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': 0,
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': 1,
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': 2,
+            },
+            outputs: {
+                'b75e481e-f13c-41f0-a0b0-1ffe0e4f36d0': 0,
+            },
+            portConfigurations: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': { label: null, flags: [] },
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': { label: null, flags: [] },
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': { label: null, flags: [] },
+                'b75e481e-f13c-41f0-a0b0-1ffe0e4f36d0': { label: null, flags: [] },
+            },
+        },
         // Point
         '62509613-274a-4fc0-a382-caeb7704ab9f': {
             instanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
@@ -197,7 +263,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -229,7 +295,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -261,7 +327,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -293,7 +359,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -325,7 +391,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -357,7 +423,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -389,7 +455,7 @@ const doc: NodePenDocument = {
             dimensions: { width: 152, height: 32 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
-                labelDeltaX: { dx: 76, dy: 0 },
+                labelDeltaX: { dx: 21, dy: 0 },
                 output: { dx: 152, dy: 16 },
                 input: { dx: 0, dy: 16 },
             },
@@ -412,7 +478,7 @@ const doc: NodePenDocument = {
                 input: { label: null, flags: [] },
                 output: { label: null, flags: [] },
             },
-        },
+        }
     },
     meta: {
         name: 'My Document',
@@ -471,7 +537,21 @@ const solution = {
         durationMs: 100,
         exceptionMessages: []
     },
-    nodeSolutionData: {}
+    nodeSolutionData: {
+        '62509613-274a-4fc0-a382-caeb7704ab9f': {
+            nodeInstanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
+            nodeRuntimeData: {
+                durationMs: 0,
+                messages: [
+                    {
+                        level: 'error',
+                        message: 'Failed to collect data!'
+                    }
+                ]
+            },
+            portSolutionData: {}
+        }
+    }
 }
 
 const assets = {

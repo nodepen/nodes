@@ -4,6 +4,7 @@ import { useStore } from '$'
 import { PARAMS } from '@/constants'
 
 type PortContextMenuButtons = {
+    enableSetLabel: boolean
     enablePin: boolean
     enableSetValue: boolean
     enablePickGeometry: boolean
@@ -16,20 +17,45 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
 
     const nodeType = getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId])
 
-    const pinnableNodeTypes: (typeof nodeType)[] = [
-        'generic-parameter',
-        'number-slider'
-    ]
-
     const supportedPrimitiveTypeNames: readonly string[] = PARAMS.PRIMITIVE
-
     const supportedGeometricTypeNames: readonly string[] = PARAMS.GEOMETRY
 
-    const enablePin = direction === 'input' && pinnableNodeTypes.includes(nodeType)
-    const enableSetValue = direction === 'input' && supportedPrimitiveTypeNames.includes(typeName)
-
-    const enablePickGeometry = direction === 'input' && supportedGeometricTypeNames.includes(typeName)
-    const enableZoomToGeometry = direction === 'output'
-
-    return { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry }
+    switch (nodeType) {
+        case 'generic-node': {
+            return {
+                enableSetLabel: false,
+                enablePin: false,
+                enableSetValue: false,
+                enablePickGeometry: false,
+                enableZoomToGeometry: direction === 'output'
+            }
+        }
+        case 'generic-parameter': {
+            return {
+                enableSetLabel: true,
+                enableSetValue: supportedPrimitiveTypeNames.includes(typeName),
+                enablePickGeometry: supportedGeometricTypeNames.includes(typeName),
+                enablePin: true,
+                enableZoomToGeometry: false,
+            }
+        }
+        case 'number-slider': {
+            return {
+                enableSetLabel: false,
+                enableSetValue: false,
+                enablePickGeometry: false,
+                enablePin: true,
+                enableZoomToGeometry: false
+            }
+        }
+        default: {
+            return {
+                enableSetLabel: false,
+                enablePin: false,
+                enableSetValue: false,
+                enablePickGeometry: false,
+                enableZoomToGeometry: false
+            }
+        }
+    }
 }

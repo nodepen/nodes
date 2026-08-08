@@ -22,7 +22,7 @@ export const GenericParameterLabel = ({ node, template }: GenericParameterLabelP
 
     return (
         <>
-            <path id={`param-label-path-${id}`} d={`M ${labelX},${labelY} L ${labelX + NODE_PORT_MINIMUM_WIDTH * 2},${labelY}`} />
+            <path id={`param-label-path-${id}`} d={`M ${labelX},${labelY} L ${labelX + dimensions.width - 50},${labelY}`} />
             <text className="np-font-panel np-select-none np-pointer-events-none" fill={COLORS.DARK} fontSize={NODE_LABEL_FONT_SIZE}>
                 <textPath href={`#param-label-path-${id}`} textAnchor="start">
                     {currentLabel}

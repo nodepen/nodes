@@ -15,22 +15,21 @@ export const getNodeRuntimeMessageBubble = (node: DocumentNode, fillColor: strin
 
     const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE
 
-    return (
-        <>
-            <rect
-                style={{
-                    transform: 'rotate(45deg)',
-                    transformOrigin: `${x + dx}px ${y + dy - s / 4}px`,
-                }}
-                x={x + dx - s / 4}
-                y={y + dy - s / 2}
-                width={s / 2}
-                height={s / 2}
-                fill={fillColor}
-                rx={2}
-                ry={2}
-            />
-            <rect x={x + dx - s / 2} y={y + dy - 6 - s} width={s} height={s} fill={fillColor} rx={6} ry={6} />
-        </>
-    )
+    const arrow = <rect
+        style={{
+            transform: 'rotate(45deg)',
+            transformOrigin: `${x + dx}px ${y + dy - s / 4}px`,
+        }}
+        x={x + dx - s / 4}
+        y={y + dy - s / 2}
+        width={s / 2}
+        height={s / 2}
+        fill={fillColor}
+        rx={2}
+        ry={2}
+    />
+
+    const bubble = <rect x={x + dx - s / 2} y={y + dy - 6 - s} width={s} height={s} fill={fillColor} rx={6} ry={6} />
+
+    return [arrow, bubble]
 }

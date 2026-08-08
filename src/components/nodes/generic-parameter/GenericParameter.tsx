@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { useDraggableNode, useSelectableNode } from '../hooks'
@@ -10,6 +10,9 @@ import { GenericParameterPorts } from './GenericParameterPorts'
 import { GenericParameterLabel } from './GenericParameterLabel'
 import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
 import { GenericNodeWires } from '../wire'
+import { GenericNodeRuntimeMessage } from '../generic-node/components'
+import { useResizableNode } from '../hooks/useResizableNode'
+import { GenericParameterResizeHandle } from './GenericParameterResizeHandle'
 
 type GenericParameterProps = {
     id: string
@@ -28,14 +31,18 @@ const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactE
 
     return (
         <NodeInternalStateProvider value={internalState}>
-            <g id={`generic-parameter-${id}`} ref={draggableTargetRef}>
-                <g ref={selectableTargetRef}>
-                    <GenericParameterShadow node={node} template={template} />
-                    <GenericParameterBody node={node} template={template} />
-                    <GenericParameterIcon node={node} template={template} />
-                    <GenericParameterLabel node={node} template={template} />
-                    <GenericParameterPorts node={node} />
+            <GenericNodeRuntimeMessage node={node} />
+            <g className='np-group'>
+                <g id={`generic-parameter-${id}`} ref={draggableTargetRef}>
+                    <g ref={selectableTargetRef}>
+                        <GenericParameterShadow node={node} template={template} />
+                        <GenericParameterBody node={node} template={template} />
+                        <GenericParameterIcon node={node} template={template} />
+                        <GenericParameterLabel node={node} template={template} />
+                        <GenericParameterPorts node={node} />
+                    </g>
                 </g>
+                <GenericParameterResizeHandle node={node} />
             </g>
             <GenericNodeWires node={node} />
         </NodeInternalStateProvider>

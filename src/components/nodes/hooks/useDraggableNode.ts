@@ -29,7 +29,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
     const setIsDragging = useCallback((isActive: boolean): void => {
         isDragging.current = isActive
         apply((state) => {
-            state.registry.drag.isActive = true
+            state.registry.drag.isActive = isActive
         })
     }, [])
 

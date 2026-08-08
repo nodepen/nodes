@@ -20,5 +20,5 @@ export const ZoomToGeometryButton = ({ nodeInstanceId, portInstanceId }: ButtonP
         </svg>
     )
 
-    return <MenuButton icon={icon} label={`Zoom to geometry`} action={handleClick} />
+    return <MenuButton icon={icon} label={`Zoom to output`} action={handleClick} />
 }

@@ -366,6 +366,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     state.registry.drag.isCopyActive = isCopyActive
 
                     if (isCopyActive) {
+                        // Create provisional drag copies
                         copySelectionToClipboard(state)
 
                         const { dx, dy } = state.registry.drag
@@ -373,8 +374,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         state.clipboard.nodes = state.clipboard.nodes.map((node) => ({
                             ...node,
                             position: {
-                                x: node.position.x - dx,
-                                y: node.position.y - dy
+                                x: node.position.x,
+                                y: node.position.y
                             }
                         }))
 
@@ -384,10 +385,10 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                             state.document.nodes[getProvisionalId(instanceId)] = {
                                 ...currentInstance,
                                 instanceId: getProvisionalId(instanceId),
-                                // position: {
-                                //     x: currentInstance.position.x + dx,
-                                //     y: currentInstance.position.y + dy
-                                // },
+                                position: {
+                                    x: currentInstance.position.x + dx,
+                                    y: currentInstance.position.y + dy
+                                },
                                 status: {
                                     ...currentInstance.status,
                                     isProvisional: true
@@ -395,30 +396,11 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                             }
                         }
                     } else {
+                        // Clear provisional drag copies
                         for (const instanceId of state.registry.selection.nodes) {
                             delete state.document.nodes[getProvisionalId(instanceId)]
                         }
                         clearClipboard(state)
-                    }
-
-                    const direction = isCopyActive ? -1 : 1
-
-                    const dx = state.registry.drag.dx * direction
-                    const dy = state.registry.drag.dy * direction
-
-                    // Apply or reset drag to selected nodes
-                    for (const nodeInstanceId of state.registry.selection.nodes) {
-                        const selectedNode = state.document.nodes[nodeInstanceId]
-
-                        if (!selectedNode) {
-                            console.log('🐍 Could not update position of node because node not found!')
-                            continue
-                        }
-
-                        state.document.nodes[nodeInstanceId].position = {
-                            x: selectedNode.position.x + dx,
-                            y: selectedNode.position.y + dy,
-                        }
                     }
                 },
                 false,
@@ -438,15 +420,16 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         }
                         clearClipboard(state)
                         expireSolution(state)
-                    }
+                    } else {
+                        // Apply drag as final position of nodes
+                        const { dx, dy } = state.registry.drag
 
-                    const { dx, dy } = state.registry.drag
-
-                    for (const nodeInstanceId of state.registry.selection.nodes) {
-                        const node = state.document.nodes[nodeInstanceId]
-                        node.position = {
-                            x: node.position.x + dx,
-                            y: node.position.y + dy
+                        for (const nodeInstanceId of state.registry.selection.nodes) {
+                            const node = state.document.nodes[nodeInstanceId]
+                            node.position = {
+                                x: node.position.x + dx,
+                                y: node.position.y + dy
+                            }
                         }
                     }
 

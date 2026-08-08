@@ -12,6 +12,10 @@ import { NumberSliderValue } from './components/NumberSliderValue'
 import { NumberSliderConfigForm } from './forms/NumberSliderConfigForm'
 import { useResizableNode } from '../hooks/useResizableNode'
 import { NodeInternalStateProvider, useNodeInternalState, usePresenceState } from '../context/node-state'
+import { useRightClick } from '@/hooks/useRightClick'
+import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
+import { usePageSpaceToOverlaySpace } from '@/hooks'
+import { getNumberSliderPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 
 type NumberSliderProps = {
     id: string
@@ -26,6 +30,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     const internalState = usePresenceState(id)
 
     const { apply } = useDispatch()
+
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
     // Attach debug behaviors
     useDebugRender(node, template)
@@ -48,7 +54,7 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)
-    const { left } = useResizableNode(id, { computeAnchors })
+    const { left } = useResizableNode(id, { computeAnchors, minWidth: 100 })
 
     const lastPointerType = useRef<'mouse' | 'pen' | 'touch'>('mouse')
     const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>) => {
@@ -70,11 +76,36 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
         setShowModal(true)
     }, [])
 
+    const handleRightClick = useCallback((e: PointerEvent): void => {
+        e.stopPropagation()
+
+        console.log('??')
+
+        const { pageX, pageY } = e
+        const key = getPortContextMenuKey(id, 'input')
+
+        const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+
+        apply((state) => {
+            state.registry.contextMenus[key] = {
+                position: { x, y },
+                context: {
+                    type: 'port',
+                    direction: 'input',
+                    nodeInstanceId: id,
+                    portInstanceId: 'input',
+                    portTemplate: getNumberSliderPortTemplate(template)
+                }
+            }
+        })
+    }, [])
+    const rightClickRef = useRightClick(handleRightClick)
+
     const s = 20
 
     return (
         <NodeInternalStateProvider value={internalState}>
-            <g id={`number-slider-${id}`} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown}>
+            <g id={`number-slider-${id}`} ref={rightClickRef} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown}>
                 <NumberSliderInteractionArea node={node} />
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>

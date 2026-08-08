@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { DocumentNode } from '@/types'
 import { useRuntimeMessages } from '../../hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
@@ -7,6 +7,8 @@ import { getNodeRuntimeMessageBubble } from '@/utils/node-geometry'
 import { WiresMaskPortal } from '@/components/annotations/wire/components'
 import { Dialog } from '@/views/components'
 import { useNodeInternalState } from '../../context/node-state'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { useDispatch, useStore } from '@/store'
 
 type GenericNodeRuntimeMessageProps = {
     node: DocumentNode
@@ -14,6 +16,10 @@ type GenericNodeRuntimeMessageProps = {
 
 export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessageProps) => {
     const { position } = useNodeInternalState()
+
+    const nodeType = useMemo(() => {
+        return getNodeTypeForTemplate(useStore.getState().templates[node.templateId])
+    }, [node.templateId])
 
     const instanceId = node?.instanceId ?? ''
     const anchors = node?.anchors
@@ -60,11 +66,14 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
         info: COLORS.GREEN,
     }
 
-    const tx = isVisible ? 0 : 80
+    const tx = isVisible ? 0 : 50
+    const bubbleTx = isVisible ? 0 : nodeType === 'generic-node' ? 0 : -10
 
     if (!node || node.status.isProvisional) {
         return null
     }
+
+    const [arrow, bubble] = getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])
 
     return (
         <>
@@ -73,7 +82,12 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
                 className="np-transition-transform np-duration-300 np-ease-out"
                 style={{ transform: `translateY(${tx}px)` }}
             >
-                {getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])}
+                <g
+                    className='np-transition-transform np-duration-300 np-ease-out'
+                    style={{ transform: `translateY(${bubbleTx}px)` }}>
+                    {arrow}
+                </g>
+                {bubble}
                 <rect
                     className={`${visibleMessageLevel === 'error'
                         ? 'np-fill-error hover:np-fill-error-2'
@@ -92,7 +106,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
                     width={24}
                     height={24}
                     style={{
-                        transform: `translate(${position.x + node.anchors['labelDeltaX'].dx - 12}px, ${position.y - 44
+                        transform: `translate(${position.x + dx - 12}px, ${position.y - 44
                             }px)`,
                     }}
                     aria-hidden="true"
@@ -112,7 +126,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
             </g>
             <WiresMaskPortal>
                 <g className="np-transition-transform np-duration-300 np-ease-out" style={{ transform: `translateY(${tx}px)` }}>
-                    {getNodeRuntimeMessageBubble(node, '#FFFFFF')}
+                    {...getNodeRuntimeMessageBubble(node, '#FFFFFF')}
                 </g>
             </WiresMaskPortal>
             {showDialog ? (

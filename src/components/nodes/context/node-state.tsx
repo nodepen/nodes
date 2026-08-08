@@ -39,12 +39,15 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
     const [presencePosition, setPresencePosition] = useInterpolatedState(node?.position ?? { x: 0, y: 0 }, lerpPoint2d)
 
     // Position of instance based on active session drags
-    const internalPosition = useStore((state) => {
+    // (Split into primitive selectors so an idle store doesn't get a fresh
+    // object identity on every publish, which would defeat zustand's equality
+    // check and force a re-render on every unrelated state change.)
+    const internalPositionX = useStore((state) => {
         if (!state.registry.selection.nodes.includes(nodeInstanceId ?? '')) {
-            return
+            return null
         }
 
-        const { isActive, isCopyActive, dx, dy } = state.registry.drag
+        const { isActive, isCopyActive, dx } = state.registry.drag
 
         if (!isActive || isCopyActive) {
             return null
@@ -56,11 +59,32 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
             return null
         }
 
-        return {
-            x: node.position.x + dx,
-            y: node.position.y + dy
-        }
+        return node.position.x + dx
     })
+
+    const internalPositionY = useStore((state) => {
+        if (!state.registry.selection.nodes.includes(nodeInstanceId ?? '')) {
+            return null
+        }
+
+        const { isActive, isCopyActive, dy } = state.registry.drag
+
+        if (!isActive || isCopyActive) {
+            return null
+        }
+
+        const node = state.document.nodes[nodeInstanceId ?? '']
+
+        if (!node) {
+            return null
+        }
+
+        return node.position.y + dy
+    })
+
+    const internalPosition = internalPositionX !== null && internalPositionY !== null
+        ? { x: internalPositionX, y: internalPositionY }
+        : null
 
     // Position of instance based on external drag presence state
     const latestPresencePosition = useStore((state) => {
@@ -89,10 +113,6 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
             }
         })
     }, [node, node?.position?.x, node?.position?.y])
-
-    // console.log(latestPresencePosition?.x, latestPresencePosition?.y)
-    // console.log(presencePosition.x, presencePosition.y)
-    // console.log({ presencePosition, position: presencePosition })
 
     return { position: internalPosition ?? (latestPresencePosition && presencePosition) ?? node?.position ?? { x: 0, y: 0 } }
 }
