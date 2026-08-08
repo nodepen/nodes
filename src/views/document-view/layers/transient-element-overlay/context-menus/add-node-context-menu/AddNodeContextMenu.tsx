@@ -117,7 +117,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
             }
             case 'number-slider': {
                 node = createInstance(template)
-                node.values['output'] = createSingleValue(shortcutMatch.value, 'number')
+                node.values['input'] = createSingleValue(shortcutMatch.value, 'number')
                 node.nodeConfiguration = shortcutMatch.config
 
                 break

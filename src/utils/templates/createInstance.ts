@@ -135,6 +135,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
             break
         }
         case 'number-slider': {
+            node.inputs['input'] = 0
             node.outputs['output'] = 0
             node.portConfigurations = {
                 input: {
@@ -164,7 +165,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
                     dy: 0
                 }
             }
-            node.values['output'] = createSingleValue('5', 'number')
+            node.values['input'] = createSingleValue('5', 'number')
             node.nodeConfiguration = {
                 min: 0,
                 max: 10,
@@ -209,7 +210,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
                 multilineData: false
             } as NodePen.PanelConfig
             node.sources['input'] = []
-            node.values['output'] = createSingleValue('', 'string')
+            node.values['input'] = createSingleValue('', 'string')
 
             break
         }

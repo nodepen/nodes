@@ -50,17 +50,6 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         apply: (callback: (state: NodesAppState, get: BaseGetter) => void) => set((state) => callback(state, get)),
         loadDocument: (document: NodePen.Document) =>
             set((state) => {
-                // Budget migrations
-                document.controls ??= {
-                    input: [],
-                    output: []
-                }
-                document.controls.input ??= []
-                document.controls.output ??= []
-                document.settings ??= {
-                    units: 'mm'
-                }
-
                 // Apply to internal state
                 state.document = document
             }),
