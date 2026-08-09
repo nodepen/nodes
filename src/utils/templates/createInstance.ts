@@ -4,6 +4,7 @@ import { getNodeDimensions } from '../node-dimensions'
 import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
 import { DIMENSIONS } from '@/constants'
 import { createSingleValue } from '../data-trees/createSingleValue'
+import { createEmptyTree } from '../data-trees/createEmptyTree'
 
 export const createInstance = (template: NodePen.NodeTemplate): NodePen.DocumentNode => {
     const { guid, category, inputs: templateInputs, outputs: templateOutputs } = template
@@ -211,6 +212,58 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
             } as NodePen.PanelConfig
             node.sources['input'] = []
             node.values['input'] = createSingleValue('', 'string')
+
+            break
+        }
+        case 'value-list': {
+            node.inputs['input'] = 0
+            node.outputs['output'] = 0
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
+            }
+            node.dimensions = {
+                width: DIMENSIONS.VALUE_LIST_WIDTH,
+                height: DIMENSIONS.VALUE_LIST_HEIGHT
+            },
+                node.anchors = {
+                    'labelDeltaX': {
+                        dx: 0,
+                        dy: 0
+                    },
+                    'output': {
+                        dx: node.dimensions.width,
+                        dy: node.dimensions.height / 2
+                    },
+                },
+                node.nodeConfiguration = {
+                    listMode: 'dropdown',
+                    items: [
+                        {
+                            name: 'Ladybug',
+                            expression: "\"Ladybug\"",
+                            isSelected: true,
+                        },
+                        {
+                            name: 'Pufferfish',
+                            expression: "\"Pufferfish\"",
+                            isSelected: false
+                        },
+                        {
+                            name: 'Weaverbird',
+                            expression: "\"Weaverbird\"",
+                            isSelected: false
+                        }
+                    ]
+                } as NodePen.ValueListConfig
+            node.sources['input'] = []
+            node.values['input'] = createEmptyTree()
 
             break
         }

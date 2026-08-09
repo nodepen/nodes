@@ -1,3 +1,4 @@
+import type { ValueListConfig } from './config'
 import type { NumberSliderConfig } from './config/NumberSliderConfig'
 import type { PanelConfig } from './config/PanelConfig'
 import type { DataTree } from './data'
@@ -55,7 +56,7 @@ export type DocumentNode = {
     outputs: {
         [outputInstanceId: string]: number
     }
-    nodeConfiguration?: NumberSliderConfig | PanelConfig
+    nodeConfiguration?: NumberSliderConfig | PanelConfig | ValueListConfig
     portConfigurations: {
         [portInstanceId: string]: PortConfiguration
     }

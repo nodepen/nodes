@@ -1,7 +1,13 @@
 import { COMPONENTS } from '@/constants'
 import type * as NodePen from '@/types'
 
-type NodePenNodeType = 'generic-node' | 'generic-parameter' | 'number-slider' | 'panel' | 'unknown'
+type NodePenNodeType =
+    | 'generic-node'
+    | 'generic-parameter'
+    | 'number-slider'
+    | 'panel'
+    | 'value-list'
+    | 'unknown'
 
 export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
     if (!template) {
@@ -16,6 +22,9 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
                 }
                 case COMPONENTS.PANEL: {
                     return 'panel'
+                }
+                case COMPONENTS.VALUE_LIST: {
+                    return 'value-list'
                 }
                 default: {
                     return 'generic-parameter'

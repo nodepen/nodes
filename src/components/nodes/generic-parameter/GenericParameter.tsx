@@ -10,7 +10,7 @@ import { GenericParameterPorts } from './GenericParameterPorts'
 import { GenericParameterLabel } from './GenericParameterLabel'
 import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
 import { GenericNodeWires } from '../wire'
-import { GenericNodeRuntimeMessage } from '../generic-node/components'
+import { GenericNodeRuntimeMessage, GenericNodeSkeleton } from '../generic-node/components'
 import { useResizableNode } from '../hooks/useResizableNode'
 import { GenericParameterResizeHandle } from './GenericParameterResizeHandle'
 
@@ -35,11 +35,16 @@ const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactE
             <g className='np-group'>
                 <g id={`generic-parameter-${id}`} ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
-                        <GenericParameterShadow node={node} template={template} />
-                        <GenericParameterBody node={node} template={template} />
-                        <GenericParameterIcon node={node} template={template} />
-                        <GenericParameterLabel node={node} template={template} />
-                        <GenericParameterPorts node={node} />
+                        {node.status.isProvisional ? (<>
+                            <GenericNodeSkeleton node={node} template={template} />
+
+                        </>) : (<>
+                            <GenericParameterShadow node={node} template={template} />
+                            <GenericParameterBody node={node} template={template} />
+                            <GenericParameterIcon node={node} template={template} />
+                            <GenericParameterLabel node={node} template={template} />
+                            <GenericParameterPorts node={node} />
+                        </>)}
                     </g>
                 </g>
                 <GenericParameterResizeHandle node={node} />

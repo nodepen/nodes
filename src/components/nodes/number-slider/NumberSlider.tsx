@@ -16,6 +16,7 @@ import { useRightClick } from '@/hooks/useRightClick'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
 import { getNumberSliderPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
+import { GenericNodeSkeleton } from '../generic-node/components'
 
 type NumberSliderProps = {
     id: string
@@ -79,8 +80,6 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     const handleRightClick = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
 
-        console.log('??')
-
         const { pageX, pageY } = e
         const key = getPortContextMenuKey(id, 'input')
 
@@ -106,16 +105,22 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     return (
         <NodeInternalStateProvider value={internalState}>
             <g id={`number-slider-${id}`} ref={rightClickRef} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick} onPointerDown={handlePointerDown}>
-                <NumberSliderInteractionArea node={node} />
+                {/* <NumberSliderInteractionArea node={node} /> */}
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
-                        <NumberSliderShadow node={node} />
-                        <NumberSliderBody node={node} />
+                        {node.status.isProvisional ? (<>
+                            <GenericNodeSkeleton node={node} template={template} />
+                        </>) : (<>
+                            <NumberSliderShadow node={node} />
+                            <NumberSliderBody node={node} />
+                        </>)}
                     </g>
                 </g>
-                <NumberSliderSlider node={node} config={config} />
-                <NumberSliderPorts node={node} />
-                <NumberSliderValue node={node} onClick={() => setShowModal(true)} />
+                {!node.status.isProvisional ? (<>
+                    <NumberSliderSlider node={node} config={config} />
+                    <NumberSliderPorts node={node} />
+                    <NumberSliderValue node={node} onClick={() => setShowModal(true)} />
+                </>) : null}
                 <g ref={left}>
                     <rect
                         x={internalState.position.x - s / 2}

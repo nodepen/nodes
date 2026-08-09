@@ -8,7 +8,8 @@ export const ParameterLibrary = () => {
     const [primitiveParams, geometricParams, specialParams] = useStore((state) => {
         const specialParamGuids = [
             COMPONENTS.NUMBER_SLIDER,
-            COMPONENTS.PANEL
+            COMPONENTS.PANEL,
+            COMPONENTS.VALUE_LIST
         ]
 
         const p: NodeTemplate[] = []

@@ -69,11 +69,12 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
     const tx = isVisible ? 0 : 50
     const bubbleTx = isVisible ? 0 : nodeType === 'generic-node' ? 0 : -10
 
+    const [arrow, bubble] = getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])
+    const bubbleMask = getNodeRuntimeMessageBubble(node, '#FFFFFF')
+
     if (!node || node.status.isProvisional) {
         return null
     }
-
-    const [arrow, bubble] = getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])
 
     return (
         <>
@@ -126,7 +127,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
             </g>
             <WiresMaskPortal>
                 <g className="np-transition-transform np-duration-300 np-ease-out" style={{ transform: `translateY(${tx}px)` }}>
-                    {...getNodeRuntimeMessageBubble(node, '#FFFFFF')}
+                    {...bubbleMask}
                 </g>
             </WiresMaskPortal>
             {showDialog ? (

@@ -57,10 +57,10 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
         }
     }, [])
 
-    const x = position.x + NODE_INTERNAL_PADDING * 2
-    const y = position.y + NODE_INTERNAL_PADDING * 2
-    const width = dimensions.width - NODE_INTERNAL_PADDING * 4
-    const height = dimensions.height - NODE_INTERNAL_PADDING * 4
+    const x = position.x + NODE_INTERNAL_PADDING
+    const y = position.y + NODE_INTERNAL_PADDING
+    const width = dimensions.width - NODE_INTERNAL_PADDING * 2
+    const height = dimensions.height - NODE_INTERNAL_PADDING * 2
 
     return isActive
         ? (

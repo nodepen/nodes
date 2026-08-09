@@ -182,6 +182,20 @@
         "outputs": []
     },
     {
+    "guid": "00027467-0d24-4fa7-b178-8dc0ac5f42ec",
+    "name": "Value List",
+    "nickName": "List",
+    "description": "Provides a list of preset values to choose from",
+    "keywords": [],
+    "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAIpSURBVEhLrZZNq2lRGIA3iYEJwsQfMZav41s+BvgF7oi6Tmdo5mRiYGBgYuCUgSQTAynFRKIIA/JdUlyXpBxX793vrntWt2twz7HUU3u3ds+z99praTPsjy8UCr+LRKKf7DHQAF2s85k95jPsyTeXy/Wr1+vBarX6i+Vy+d8sFosPOp0OmM3mKxt5YcRi8Xo6nXIDk8mECrPZDIbDIT7JjuHxeLfj8Qjj8Zgqm83mz5QxcLlcYDQawevrKxXQtdvtSOB2u0G/34dwOPzPe/gs6EDXdrslgev1Cq1WC/x+Pzd/j4AOdK3XaxLAKarVaqDT6e7O52dAB7rm8zkJnM9nyOfzoFQqqYCuwWBAAqfTCXK5HFW63S4JHA4HyGazd+/mK6Cr3W6TwH6/h0wmww3ijn4EdKCr2WySAC6pdDpNLYCuRqNBArjrUqkUtQC6cCV9BHDNJpNJbpAG6KpUKiSAOzCRSFClXC6TAO7AeDx+926+ArpKpRIJ4NxFo1FQKBTc238EdKDr7e2NBOr1OkQiEZDL5VCtVh8CHejCF/0RKBaLEAwGQSaTQaFQeAh0oCsWi5EArttAIAASiYQK6MKn4AICgeBHKBQCn88HT09PVHA6nRzoxsCLSqV6t1qt4PV6wePxgNvtBvZDgLvI4XCA3W4Hm80GeI3FYgGTycSJjEYjGAwG0Ov13N+0VqsFjUYDarUapFLpO7pxivjswTMLtc8WdKGTYRj+b5WudMtkR+iMAAAAAElFTkSuQmCC",
+    "libraryName": "Grasshopper",
+    "category": "Params",
+    "subcategory": "Input",
+    "isObsolete": false,
+    "inputs": [],
+    "outputs": []
+  },
+    {
         "guid": "e64c5fb1-845c-4ab1-8911-5f338516ba67",
         "name": "Series",
         "nickName": "Series",

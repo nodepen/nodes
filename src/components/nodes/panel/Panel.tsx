@@ -11,6 +11,7 @@ import { GenericNodeWires } from '../wire'
 import { PanelResizeTargets } from './components/PanelResizeTargets'
 import { PanelDataTree } from './components/PanelDataTree'
 import { NodeInternalStateProvider, useNodeInternalState, usePresenceState } from '../context/node-state'
+import { GenericNodeSkeleton } from '../generic-node/components'
 
 type PanelProps = {
     id: string
@@ -70,16 +71,20 @@ const Panel = ({ id, template }: PanelProps) => {
             <g id={`panel-${id}`} ref={containerRef} style={{ pointerEvents: 'all' }} onDoubleClick={handleDoubleClick}>
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
-                        <PanelShadow node={node} />
-                        <PanelBody node={node} />
-                        {node.sources['input'].length
-                            ? <PanelDataTree node={node} onScrollStart={handleScrollStart} onScrollEnd={handleScrollEnd} />
-                            : <PanelInput node={node} isActive={isActive} onSubmit={handleSubmit} />
-                        }
+                        {node.status.isProvisional ? (<>
+                            <GenericNodeSkeleton node={node} template={template} />
+                        </>) : (<>
+                            <PanelShadow node={node} />
+                            <PanelBody node={node} />
+                            {node.sources['input'].length
+                                ? <PanelDataTree node={node} onScrollStart={handleScrollStart} onScrollEnd={handleScrollEnd} />
+                                : <PanelInput node={node} isActive={isActive} onSubmit={handleSubmit} />
+                            }
+                        </>)}
                     </g>
                 </g>
                 <PanelResizeTargets node={node} />
-                <PanelPorts node={node} template={template} />
+                {!node.status.isProvisional ? <PanelPorts node={node} template={template} /> : null}
             </g>
             <GenericNodeWires node={node} />
         </NodeInternalStateProvider>
