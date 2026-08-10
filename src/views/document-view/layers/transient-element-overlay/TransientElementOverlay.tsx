@@ -11,6 +11,8 @@ import { PortValueContextMenu } from './context-menus/port-value-context-menu'
 import { PortLabelContextMenu } from './context-menus/port-label-context.menu/PortLabelContextMenu'
 import { NumberSliderContextMenu } from './context-menus/number-slider-context-menu'
 import { GenericTextTooltip } from './tooltips/generic-text/GenericTextTooltip'
+import { ValueListContextMenu } from './context-menus/value-list-context-menu'
+import { ValueListOptionsContextMenu } from './context-menus/value-list-options-context-menu'
 
 const TransientElementOverlay = () => {
     const cursor = useCursorState()
@@ -101,6 +103,12 @@ const TransientElementOverlay = () => {
                     }
                     case 'number-slider-value': {
                         return <NumberSliderContextMenu key={`number-slider-context-menu-${key}`} context={menu.context} />
+                    }
+                    case 'value-list': {
+                        return <ValueListContextMenu key={`value-list-context-menu-${key}`} position={menu.position} context={menu.context} />
+                    }
+                    case 'value-list-options': {
+                        return <ValueListOptionsContextMenu key={`value-list-options-context-menu-${key}`} position={menu.position} context={menu.context} />
                     }
                     default: {
                         console.log(`🐍 Unhandled context menu type [${contextType}]`)

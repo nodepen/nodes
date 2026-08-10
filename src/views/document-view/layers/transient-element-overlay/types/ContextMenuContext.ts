@@ -9,6 +9,8 @@ export type ContextMenuContext =
     | PortValueContextMenuContext
     | PortLabelContextMenuContext
     | NumberSliderValueContextMenuContext
+    | ValueListContextMenuContext
+    | ValueListOptionsContextMenuContext
 
 export type AddNodeContextMenu = {
     type: 'add-node'
@@ -51,5 +53,15 @@ export type PortLabelContextMenuContext = {
 
 export type NumberSliderValueContextMenuContext = {
     type: 'number-slider-value'
+    nodeInstanceId: string
+}
+
+export type ValueListContextMenuContext = {
+    type: 'value-list'
+    nodeInstanceId: string
+}
+
+export type ValueListOptionsContextMenuContext = {
+    type: 'value-list-options'
     nodeInstanceId: string
 }

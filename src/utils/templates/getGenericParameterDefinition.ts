@@ -56,3 +56,20 @@ export const getPanelPortTemplate = (template: NodePen.NodeTemplate, direction: 
         isOptional: false
     }
 }
+
+export const getValueListPortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
+    if (getNodeTypeForTemplate(template) !== 'value-list') {
+        throw new Error(`Cannot generate implicit port template for this thing that isn't a value list!`)
+    }
+
+    return {
+        __order: 0,
+        __direction: direction,
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: template.name.toLowerCase(),
+        keywords: [],
+        isOptional: false
+    }
+}

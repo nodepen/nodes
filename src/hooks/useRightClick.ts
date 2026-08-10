@@ -3,7 +3,8 @@ import React, { useCallback, useRef } from "react"
 import { useImperativeEvent } from "./useImperativeEvent"
 
 export const useRightClick = <T extends SVGGElement | null>(
-    onRightClick: (e: PointerEvent) => void
+    onRightClick: (e: PointerEvent) => void,
+    capture?: boolean
 ): React.RefObject<T | null> => {
     const targetRef = useRef<T>(null)
 
@@ -16,10 +17,19 @@ export const useRightClick = <T extends SVGGElement | null>(
 
     const handlePointerDown = useCallback(
         (e: PointerEvent): void => {
-            const { pageX, pageY, pointerType, pointerId } = e
+            const { pageX, pageY, pointerType, pointerId, button } = e
 
-            if (pointerType !== 'mouse') {
+            console.log('right click pointer down')
+
+            if (pointerType !== 'mouse' || button !== 2) {
                 return
+            }
+
+            if (capture) {
+                e.stopPropagation()
+                e.stopImmediatePropagation()
+
+                    ; (e.target as SVGGElement).setPointerCapture(e.pointerId)
             }
 
             currentPointerId.current = pointerId
@@ -31,11 +41,15 @@ export const useRightClick = <T extends SVGGElement | null>(
 
     const handlePointerUp = useCallback(
         (e: PointerEvent): void => {
-            const { pageX, pageY, pointerType, pointerId } = e
+            const { pageX, pageY, pointerType, pointerId, button } = e
 
-            if (pointerType !== 'mouse' || currentPointerId.current !== pointerId) {
+            console.log('right click pointer up')
+
+            if (pointerType !== 'mouse' || button !== 2 || currentPointerId.current !== pointerId) {
                 return
             }
+
+            currentPointerId.current = null
 
             const timeDelta = Date.now() - startTime.current
             const distanceDelta = distance([pageX, pageY], [startPosition.current.pageX, startPosition.current.pageY])

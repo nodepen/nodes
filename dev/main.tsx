@@ -189,11 +189,50 @@ const doc: NodePenDocument = {
                 output: { label: null, flags: [] },
             },
         },
+        // Value List
+        'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7': {
+            instanceId: 'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7',
+            templateId: '00027467-0d24-4fa7-b178-8dc0ac5f42ec',
+            position: { x: 850, y: 172 },
+            dimensions: { width: 180, height: 36 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 180, dy: 18 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            nodeConfiguration: {
+                listMode: 'dropdown',
+                items: [
+                    { name: 'Ladybug', expression: '"Ladybug"', isSelected: true },
+                    { name: 'Pufferfish', expression: '"Pufferfish"', isSelected: false },
+                    { name: 'Weaverbird', expression: '"Weaverbird"', isSelected: false },
+                ],
+            },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
         // Series
         'f48cf9d3-3388-4972-af4b-d496b6e7d86d': {
             instanceId: 'f48cf9d3-3388-4972-af4b-d496b6e7d86d',
             templateId: 'e64c5fb1-845c-4ab1-8911-5f338516ba67',
-            position: { x: 850, y: 172 },
+            position: { x: 1100, y: 100 },
             dimensions: { width: 152, height: 130 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
@@ -510,6 +549,13 @@ const doc: NodePenDocument = {
                 order: 3,
                 ref: {
                     nodeInstanceId: '146313d8-f3ad-485d-913d-72c68b2bbeb4',
+                    portInstanceId: 'input'
+                }
+            },
+            {
+                order: 4,
+                ref: {
+                    nodeInstanceId: 'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7',
                     portInstanceId: 'input'
                 }
             }

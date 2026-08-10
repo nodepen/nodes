@@ -12,6 +12,7 @@ import { PortTypeIcon } from '@/components/icons'
 import { DocumentControlsNumberSlider } from './DocumentControlsNumberSlider'
 import { DocumentControlsBoolean } from './DocumentControlsBoolean'
 import { DocumentControlsGeometry } from './DocumentControlsGeometry'
+import { DocumentControlsValueList } from './DocumentControlsValueList'
 
 type DocumentControlsInputProps = {
     nodeInstanceId: string
@@ -36,6 +37,17 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
         }
 
         return node.nodeConfiguration as NodePen.NumberSliderConfig
+    })
+
+    const valueListConfig = useStore((state) => {
+        const node = state.document.nodes[nodeInstanceId]
+        const template = node ? state.templates[node.templateId] : undefined
+
+        if (!node || !template || getNodeTypeForTemplate(template) !== 'value-list') {
+            return null
+        }
+
+        return node.nodeConfiguration as NodePen.ValueListConfig
     })
 
     const [internalLabel, setInternalLabel] = useState(currentLabel)
@@ -160,6 +172,13 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     return null
                 }
                 return <DocumentControlsNumberSlider nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} config={numberSliderConfig} />
+            }
+            case 'value-list': {
+                if (!valueListConfig) {
+                    console.log(`🐍 Tried to render input for value list with no config!`)
+                    return null
+                }
+                return <DocumentControlsValueList nodeInstanceId={nodeInstanceId} config={valueListConfig} />
             }
             case 'generic-node':
             case 'generic-parameter': {
