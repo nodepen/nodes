@@ -1,15 +1,24 @@
 import { STYLES } from "@/constants"
+import { clearMenus } from "@/store/utils/clearMenus"
 import React, { useCallback } from "react"
+import { useCallbacks, useDispatch, useStore } from "$"
 import { MenuButton } from "../../../common"
 
 type Props = {
     documentId: string
 }
 
-export const NewDocumentButton = ({ documentId }: Props) => {
-    const handleClick = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+export const NewScriptButton = ({ documentId }: Props) => {
+    const { apply } = useDispatch()
+    const { onClickNewScript } = useCallbacks()
 
-    }, [])
+    const handleClick = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+        onClickNewScript?.(useStore.getState())
+
+        apply((state) => {
+            clearMenus(state)
+        })
+    }, [onClickNewScript, apply])
 
     const icon = (
         <svg {...STYLES.BUTTON.MEDIUM}>

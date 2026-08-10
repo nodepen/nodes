@@ -1,15 +1,24 @@
 import { STYLES } from "@/constants"
+import { clearMenus } from "@/store/utils/clearMenus"
 import React, { useCallback } from "react"
+import { useCallbacks, useDispatch, useStore } from "$"
 import { MenuButton } from "../../../common"
 
 type Props = {
     documentId: string
 }
 
-export const ExportModelButton = ({ documentId }: Props) => {
-    const handleClick = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+export const ExportButton = ({ documentId }: Props) => {
+    const { apply } = useDispatch()
+    const { onClickExport } = useCallbacks()
 
-    }, [])
+    const handleClick = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
+        onClickExport?.(useStore.getState())
+
+        apply((state) => {
+            clearMenus(state)
+        })
+    }, [onClickExport, apply])
 
     const icon = (
         <svg {...STYLES.BUTTON.MEDIUM}>
@@ -17,5 +26,5 @@ export const ExportModelButton = ({ documentId }: Props) => {
         </svg>
     )
 
-    return <MenuButton icon={icon} label="Export .3dm" action={handleClick} />
+    return <MenuButton icon={icon} label="Export..." action={handleClick} />
 }
