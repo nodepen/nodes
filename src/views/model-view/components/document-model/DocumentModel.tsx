@@ -14,6 +14,7 @@ type DocumentModel = {
 
 const DocumentModel = ({ modelUrl }: DocumentModel) => {
     const { apply } = useDispatch()
+    const { camera } = useThree()
 
     const loader = useRef(new Rhino3dmLoader())
 
@@ -32,7 +33,12 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
         loader.current.load(modelUrl, (documentObject) => {
             const res: Record<string, THREE.Object3D[]> = {}
 
+            const bounds = new THREE.Box3()
+            const tempBounds = new THREE.Box3()
+
             let objectCount = 0
+
+            documentObject.updateMatrixWorld(true)
 
             documentObject.traverse((object) => {
                 objectCount++
@@ -41,7 +47,30 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                     res[nodeInstanceId] ??= []
                     res[nodeInstanceId].push(object)
                 }
+
+                const geometry = (object as THREE.Object3D & { geometry?: THREE.BufferGeometry }).geometry
+                if (geometry) {
+                    if (!geometry.boundingBox) {
+                        geometry.computeBoundingBox()
+                    }
+
+                    if (geometry.boundingBox) {
+                        tempBounds.copy(geometry.boundingBox).applyMatrix4(object.matrixWorld)
+                        bounds.union(tempBounds)
+                    }
+                }
             })
+
+            if (!bounds.isEmpty() && camera instanceof THREE.PerspectiveCamera) {
+                const sphere = new THREE.Sphere()
+                bounds.getBoundingSphere(sphere)
+
+                const distance = camera.position.distanceTo(sphere.center)
+
+                camera.near = Math.max(0.01, distance - sphere.radius * 2)
+                camera.far = Math.max(distance + sphere.radius * 4, sphere.radius * 10)
+                camera.updateProjectionMatrix()
+            }
 
             apply((state) => {
                 state.solution.flags.isModelExpired = false
