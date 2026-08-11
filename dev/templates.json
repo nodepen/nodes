@@ -250,5 +250,19 @@
                 "isOptional": false
             }
         ]
+    },
+    {
+        "guid": "2e78987b-9dfb-42a2-8b76-3923ac8bd91a",
+        "name": "Boolean Toggle",
+        "nickName": "Toggle",
+        "description": "Boolean (true/false) toggle",
+        "keywords": [],
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAOGSURBVEhLrVZHSyxdEB3HgBtXbtwI7t37X1wriqIg6HNQFHNAMWHOCYyYMGLOC3NOKGIYFMNGYcye16c+uqf7o58MvDdw4F6q5py6davqtkX5WZVfrIeHx72yxr+Ap6fnvcL3S1lbyR4REhLy5nA48P39Lfj6+sLn56fg4+ND8P7+Lnh7exO8vr5qeHl50UCeu7s7BAcHvyoiNouiZn96esLp6SlWV1cFa2tr2lrdr6+vY2NjA5ubm9ja2sL29rZgZ2cH+/v7ODo6wvHxMU5OTnB5eYmrqyt4eXndW9zc3L4Y9fj4uGBiYgJTU1Oy/v/R/4Tl5WUJQh/Aw8ODardICrq6utDd3Y2enh709vbKmjZG9hPow2Dm5+exsLCApaUlEby5uXEKMLe1tbWor69HY2MjmpubUVdXJw6M7PDw0BS00YcBjY2NaRmYnp6WFGkCvJyCggIUFRWhpKQEZWVlsqZtZmZGiMxAG31aW1vR19eHgYEBDA4OYnh4GGdnZ06B5+dnpKamIj09HVlZWcjJyUFaWpo48E8kMgNt9KmurkZbWxs6Ozu1NPPCNYHHx0copYqwsDBEREQgKioKoaGh4lBVVYWOjg5T0EYfBlZaWoqKigoRY3p54ZoA6zY8PByRkZGIjo5GTEyM7GljyngnZqCNPjy1Ss57bGpqkmrSBG5vbw3ksbGxsnd3d0d+fj5qampMQRt9cnNzZa+S804MJ7Db7Qby+Ph42Xt7e0t0P4E+FNKT8z4MAtfX1wbyhIQE2fv4+LiEwsJCjby9vV0u25Cii4sLxMXFwWazITExEcnJySLm6+vrEoqLizVyNiyriN2sCZyfnxvIWbI8iZ+fn0tg3+jJ+/v7jQJsCj15RkaGpMnf398lVFZWGsjZbAYBTlI9eXZ2NpKSkhAQEOASWJ4kZ+MNDQ1hZGREJq0mwBHLzs3MzJQuzsvLQ0pKiimZGdhYKvno6KjMJI5xTYBTUU/OucTuNCMzAytIT85xv7u76xTgZNSTsypY42ZkZmhpaTGQz87OYm9vzylwcHBgIOdcYXeakZmBFaSO6bm5OSwuLjoF+KxRld2njmpWRXl5uYxsVZCzhsON70ZDQ4PMIrX2mR49+crKioxspcvvLXyYg4KCHJOTk3Ix6lvLMvsJ+jeZ+Sb4NjNyCgYGBjqU4G1MkZWfGPJA/5ezvwYjV/iUzxaL9TedIkWp8YAIqgAAAABJRU5ErkJggg==",
+        "libraryName": "Grasshopper",
+        "category": "Params",
+        "subcategory": "Input",
+        "isObsolete": false,
+        "inputs": [],
+        "outputs": []
     }
 ]

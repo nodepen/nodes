@@ -1,4 +1,3 @@
-/* TODO: Current implementation requires base reset, which is no good if/when this is a shared library. */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -28,24 +27,29 @@
     --np-active-menu-height: 100%;
 }
 
-.no-scrollbar {
+#np-app-root .no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
-.no-scrollbar::-webkit-scrollbar {
+#np-app-root .no-scrollbar::-webkit-scrollbar {
     display: none;
 }
 
-.no-focus:focus {
+#np-app-root .no-focus:focus {
     outline: none;
 }
 
-.no-drag {
+#np-app-root.no-drag {
     user-select: none;
     -webkit-user-drag: none;
 }
 
-input:focus {
+#np-app-root .no-drag {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#np-app-root input:focus {
     outline: 1px solid #7bbfa5;
 }

@@ -7,6 +7,7 @@ type NodePenNodeType =
     | 'number-slider'
     | 'panel'
     | 'value-list'
+    | 'boolean-toggle'
     | 'unknown'
 
 export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
@@ -25,6 +26,9 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
                 }
                 case COMPONENTS.VALUE_LIST: {
                     return 'value-list'
+                }
+                case COMPONENTS.BOOLEAN_TOGGLE: {
+                    return 'boolean-toggle'
                 }
                 default: {
                     return 'generic-parameter'

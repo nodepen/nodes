@@ -73,3 +73,20 @@ export const getValueListPortTemplate = (template: NodePen.NodeTemplate, directi
         isOptional: false
     }
 }
+
+export const getBooleanTogglePortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
+    if (getNodeTypeForTemplate(template) !== 'boolean-toggle') {
+        throw new Error(`Cannot generate implicit port template for this thing that isn't a boolean toggle!`)
+    }
+
+    return {
+        __order: 0,
+        __direction: direction,
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: 'boolean',
+        keywords: [],
+        isOptional: false
+    }
+}

@@ -22,7 +22,7 @@
     "./styles.css": "./dist/styles.css"
   },
   "scripts": {
-    "postbuild": "tailwindcss build -i tailwind.css -o dist/styles.css",
+    "postbuild": "tailwindcss build -i tailwind.css -o dist/styles.css && node postbuild.js",
     "build": "tsup",
     "compile": "tsc",
     "dev": "rm -rf dist && tsup --watch",

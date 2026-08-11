@@ -13,6 +13,7 @@ import { DocumentControlsNumberSlider } from './DocumentControlsNumberSlider'
 import { DocumentControlsBoolean } from './DocumentControlsBoolean'
 import { DocumentControlsGeometry } from './DocumentControlsGeometry'
 import { DocumentControlsValueList } from './DocumentControlsValueList'
+import { DocumentControlsBooleanToggle } from './DocumentControlsBooleanToggle'
 
 type DocumentControlsInputProps = {
     nodeInstanceId: string
@@ -179,6 +180,9 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     return null
                 }
                 return <DocumentControlsValueList nodeInstanceId={nodeInstanceId} config={valueListConfig} />
+            }
+            case 'boolean-toggle': {
+                return <DocumentControlsBooleanToggle nodeInstanceId={nodeInstanceId} />
             }
             case 'generic-node':
             case 'generic-parameter': {

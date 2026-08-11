@@ -48,6 +48,10 @@ export const DIMENSIONS = {
     PANEL_DEFAULT_WIDTH: 200,
     VALUE_LIST_WIDTH: 180,
     VALUE_LIST_HEIGHT: 36,
+    /** ~75% as wide as a default generic parameter (152), same height (32). */
+    BOOLEAN_TOGGLE_WIDTH: 125,
+    BOOLEAN_TOGGLE_HEIGHT: 40,
+    BOOLEAN_TOGGLE_SWITCH_SIZE: 22,
     INTERACTION_BUFFER: 12
 } as const
 
@@ -79,6 +83,7 @@ export const COMPONENTS = {
     NUMBER_SLIDER: '57da07bd-ecab-415d-9d86-af36d7073abc',
     PANEL: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
     VALUE_LIST: '00027467-0d24-4fa7-b178-8dc0ac5f42ec',
+    BOOLEAN_TOGGLE: '2e78987b-9dfb-42a2-8b76-3923ac8bd91a',
     ADDITION: 'a0d62394-a118-422d-abb3-6af115c75b25',
     SUBTRACTION: '9c007a04-d0d9-48e4-9da3-9ba142bc4d46',
     MULTIPLICATION: 'ce46b74e-00c9-43c4-805a-193b69ea4a11',

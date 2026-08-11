@@ -48,6 +48,15 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableZoomToGeometry: false
             }
         }
+        case 'boolean-toggle': {
+            return {
+                enableSetLabel: false,
+                enableSetValue: false,
+                enablePickGeometry: false,
+                enablePin: true,
+                enableZoomToGeometry: false
+            }
+        }
         default: {
             return {
                 enableSetLabel: false,

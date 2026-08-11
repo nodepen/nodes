@@ -1,12 +1,12 @@
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { getGenericParameterPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
+import { getBooleanTogglePortTemplate, getGenericParameterPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 import { useNodePortTemplate } from './useNodePortTemplate'
 
 /**
  * Given a port reference, return its `PortTemplate`.
- * @remarks Params, sliders, and panels don't emit real port templates for their own value port
+ * @remarks Params, sliders, panels, and boolean toggles don't emit real port templates for their own value port
  * (`template.inputs`/`template.outputs` are empty for those templates), so this falls back to a
  * synthesized template for those node types when {@link useNodePortTemplate} comes up empty.
  */
@@ -36,6 +36,9 @@ export const usePortTemplate = (nodeInstanceId: string, portInstanceId: string):
             }
             case 'panel': {
                 return getPanelPortTemplate(template, direction)
+            }
+            case 'boolean-toggle': {
+                return getBooleanTogglePortTemplate(template, direction)
             }
             default: {
                 return null

@@ -267,6 +267,41 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
 
             break
         }
+        case 'boolean-toggle': {
+            node.inputs['input'] = 0
+            node.outputs['output'] = 0
+            node.portConfigurations = {
+                input: {
+                    label: 'Toggle',
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
+            }
+            node.dimensions = {
+                width: DIMENSIONS.BOOLEAN_TOGGLE_WIDTH,
+                height: DIMENSIONS.BOOLEAN_TOGGLE_HEIGHT
+            }
+            node.anchors = {
+                'labelDeltaX': {
+                    dx: 0,
+                    dy: 0
+                },
+                'output': {
+                    dx: node.dimensions.width,
+                    dy: node.dimensions.height / 2
+                },
+            }
+            node.nodeConfiguration = {
+                value: false
+            } as NodePen.BooleanToggleConfig
+            node.sources['input'] = []
+            node.values['input'] = createEmptyTree()
+
+            break
+        }
     }
 
     return node

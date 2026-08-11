@@ -19,8 +19,6 @@ export const useRightClick = <T extends SVGGElement | null>(
         (e: PointerEvent): void => {
             const { pageX, pageY, pointerType, pointerId, button } = e
 
-            console.log('right click pointer down')
-
             if (pointerType !== 'mouse' || button !== 2) {
                 return
             }
@@ -42,8 +40,6 @@ export const useRightClick = <T extends SVGGElement | null>(
     const handlePointerUp = useCallback(
         (e: PointerEvent): void => {
             const { pageX, pageY, pointerType, pointerId, button } = e
-
-            console.log('right click pointer up')
 
             if (pointerType !== 'mouse' || button !== 2 || currentPointerId.current !== pointerId) {
                 return

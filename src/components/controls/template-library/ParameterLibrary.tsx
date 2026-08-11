@@ -9,7 +9,8 @@ export const ParameterLibrary = () => {
         const specialParamGuids = [
             COMPONENTS.NUMBER_SLIDER,
             COMPONENTS.PANEL,
-            COMPONENTS.VALUE_LIST
+            COMPONENTS.VALUE_LIST,
+            COMPONENTS.BOOLEAN_TOGGLE
         ]
 
         const p: NodeTemplate[] = []

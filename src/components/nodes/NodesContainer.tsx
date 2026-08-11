@@ -9,6 +9,7 @@ import { GenericParameter } from './generic-parameter'
 import NumberSlider from './number-slider/NumberSlider'
 import Panel from './panel/Panel'
 import ValueList from './value-list/ValueList'
+import BooleanToggle from './boolean-toggle/BooleanToggle'
 
 const NodesContainer = (): React.ReactElement => {
     const nodes = useDocumentNodes()
@@ -32,6 +33,8 @@ const NodesContainer = (): React.ReactElement => {
                         return <Panel key={`panel-${instanceId}`} id={instanceId} template={template} />
                     case 'value-list':
                         return <ValueList key={`value-list-${instanceId}`} id={instanceId} template={template} />
+                    case 'boolean-toggle':
+                        return <BooleanToggle key={`boolean-toggle-${instanceId}`} id={instanceId} template={template} />
                     // TODO: `unknown-node` type
                     case 'unknown':
                     default:

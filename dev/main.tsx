@@ -228,6 +228,38 @@ const doc: NodePenDocument = {
                 output: { label: null, flags: [] },
             },
         },
+        // Boolean Toggle
+        'b2c3d4e5-6f7a-4890-b1c2-d3e4f5a6b7c8': {
+            instanceId: 'b2c3d4e5-6f7a-4890-b1c2-d3e4f5a6b7c8',
+            templateId: '2e78987b-9dfb-42a2-8b76-3923ac8bd91a',
+            position: { x: 850, y: 224 },
+            dimensions: { width: 114, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 114, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            nodeConfiguration: { value: false },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
         // Series
         'f48cf9d3-3388-4972-af4b-d496b6e7d86d': {
             instanceId: 'f48cf9d3-3388-4972-af4b-d496b6e7d86d',
