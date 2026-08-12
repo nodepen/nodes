@@ -3,11 +3,10 @@ import { execSync } from 'child_process'
 import fs from "node:fs"
 
 export default defineConfig({
-    entry: ["src/index.ts"],
+    entry: ["src/index.ts", "src/constants.ts"],
     format: ["esm"],
     dts: true,
     sourcemap: false,
-    //   clean: true,
     treeshake: true,
     external: [
         "react",

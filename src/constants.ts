@@ -123,3 +123,30 @@ export const PARAMS = {
         'brep'
     ] as const
 }
+
+export const UNITS = {
+    angstrom: 'Angstroms',
+    nm: 'Nanometers',
+    um: 'Microns',
+    mm: 'Millimeters',
+    cm: 'Centimeters',
+    dm: 'Decimeters',
+    m: 'Meters',
+    dam: 'Dekameters',
+    hm: 'Hectometers',
+    km: 'Kilometers',
+    megameter: 'Megameters',
+    gigameter: 'Gigameters',
+    microinch: 'Microinches',
+    mil: 'Mils',
+    in: 'Inches',
+    ft: 'Feet',
+    yd: 'Yards',
+    mi: 'Miles',
+    pt: 'Printer points',
+    pica: 'Printer picas',
+    nmi: 'Nautical miles',
+    au: 'Astronomical units',
+    ly: 'Light years',
+    pc: 'Parsecs',
+} as const

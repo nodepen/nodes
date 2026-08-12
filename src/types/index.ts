@@ -1,5 +1,6 @@
 export type { Document } from './Document'
 export type { DocumentNode } from './DocumentNode'
+export type { DocumentSettings, DocumentUnits } from './settings/DocumentSettings'
 export type { DocumentControls, DocumentControl } from './controls/DocumentControls'
 export type { BooleanToggleConfig, NumberSliderConfig, PanelConfig, ValueListConfig } from './config'
 export type {
