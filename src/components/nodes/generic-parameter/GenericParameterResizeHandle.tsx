@@ -4,6 +4,7 @@ import { useResizableNode } from '../hooks/useResizableNode'
 import { useNodeInternalState } from '../context/node-state'
 import { COLORS } from '@/constants'
 import { useSelectionColor } from '@/hooks/useSelectionColor'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type ResizeHandleProps = {
     node: NodePen.DocumentNode

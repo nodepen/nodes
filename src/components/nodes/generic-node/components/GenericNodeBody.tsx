@@ -7,6 +7,7 @@ import { GenericNodeLabel } from '.'
 import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
 import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type GenericNodeBodyProps = {
     node: NodePen.DocumentNode
@@ -15,6 +16,8 @@ type GenericNodeBodyProps = {
 
 export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
     const { position } = useNodeInternalState()
+
+    const isEditable = useIsEditable()
 
     const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
@@ -28,6 +31,10 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
     const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
         e.stopPropagation()
         e.preventDefault()
+
+        if (!isEditable) {
+            return
+        }
 
         const { pageX, pageY } = e
 

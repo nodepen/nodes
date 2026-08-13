@@ -3,6 +3,7 @@ import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useNodeInternalState } from '../../context/node-state'
 import { useDraggableNode, useSelectableNode } from '../../hooks'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 const { NODE_INTERNAL_PADDING, NODE_LABEL_FONT_SIZE } = DIMENSIONS
 
@@ -13,6 +14,8 @@ type ValueListInputProps = {
 
 export const ValueListInput = ({ node, onClick }: ValueListInputProps) => {
     const { position } = useNodeInternalState()
+
+    const isEditable = useIsEditable()
 
     const { dimensions, instanceId: id } = node
     const { items } = node.nodeConfiguration as NodePen.ValueListConfig
@@ -39,7 +42,7 @@ export const ValueListInput = ({ node, onClick }: ValueListInputProps) => {
             <g ref={draggableRef}>
                 <g ref={selectableRef}>
                     <rect
-                        className="hover:np-fill-grey np-fill-none hover:np-cursor-pointer"
+                        className={`${isEditable ? 'hover:np-fill-grey hover:np-cursor-pointer' : ''} np-fill-none`}
                         x={x}
                         y={y}
                         width={width}

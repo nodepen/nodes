@@ -13,6 +13,7 @@ import { GenericNodeWires } from '../wire'
 import { GenericNodeRuntimeMessage, GenericNodeSkeleton } from '../generic-node/components'
 import { useResizableNode } from '../hooks/useResizableNode'
 import { GenericParameterResizeHandle } from './GenericParameterResizeHandle'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type GenericParameterProps = {
     id: string
@@ -22,6 +23,8 @@ type GenericParameterProps = {
 const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactElement => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
+
+    const isEditable = useIsEditable()
 
     const internalState = usePresenceState(id)
 
@@ -47,7 +50,7 @@ const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactE
                         </>)}
                     </g>
                 </g>
-                <GenericParameterResizeHandle node={node} />
+                {isEditable ? <GenericParameterResizeHandle node={node} /> : null}
             </g>
             <GenericNodeWires node={node} />
         </NodeInternalStateProvider>

@@ -9,15 +9,22 @@ import { clamp } from "@/utils"
 import { CircleButton } from "@/components/layout/CircleButton"
 import { COLORS } from "@/constants"
 import ModelErrorBoundary from "./ModelErrorBoundary"
+import { useFlag } from "@/hooks/useFlag"
+import { useIsEditable } from "@/hooks/useIsEditable"
 
 const ModelView = () => {
     const solutionModelUrl = useStore((state) => state.solution.data?.solutionModelUrl ?? null)
 
+    const isEditable = useIsEditable()
+    const isGeometryOnly = useFlag('isGeometryOnly')
+
     const { apply } = useDispatch()
     const { onModelUpload } = useCallbacks()
 
-    const [isExpanded, setIsExpanded] = useState(false)
+    const [isExpandedInternal, setIsExpandedInternal] = useState(false)
     const [isSceneVisible, setIsSceneVisible] = useState(true)
+
+    const isExpanded = isExpandedInternal || isGeometryOnly
 
     const handleTransitionStart = useCallback((e: React.TransitionEvent<HTMLDivElement>) => {
         switch (e.nativeEvent.propertyName) {
@@ -44,6 +51,12 @@ const ModelView = () => {
     const [width, setWidth] = useState(0.5)
     const isDragging = useRef(false)
 
+    useEffect(() => {
+        if (isGeometryOnly) {
+            setWidth(1)
+        }
+    }, [isGeometryOnly])
+
     const previousExpanded = useRef<boolean | null>(null)
     const previousWidth = useRef<number | null>(null)
 
@@ -52,7 +65,7 @@ const ModelView = () => {
     useEffect(() => {
         if (activeMode === 'default') {
             if (previousExpanded.current !== null) {
-                setIsExpanded(previousExpanded.current)
+                setIsExpandedInternal(previousExpanded.current)
                 previousExpanded.current = null
             }
 
@@ -66,7 +79,7 @@ const ModelView = () => {
             if (!isExpanded) {
                 previousExpanded.current = isExpanded
                 previousWidth.current = width
-                setIsExpanded(true)
+                setIsExpandedInternal(true)
                 setWidth(1)
             }
         }
@@ -171,11 +184,11 @@ const ModelView = () => {
 
     return (
         <Layer id="np-model-layer" z={85}>
-            <div className="np-w-full np-h-full np-p-0 md:np-p-4 np-flex np-flex-col np-justify-end np-pointer-events-none">
+            <div className={`${isGeometryOnly ? '' : 'md:np-p-4'} np-w-full np-h-full np-p-0 np-flex np-flex-col np-justify-end np-pointer-events-none`}>
                 <div className="np-w-full np-h-full np-relative md:np-hidden">
                     <div className="np-w-full np-h-full np-p-5 np-absolute np-top-0 np-flex np-flex-col np-justify-end np-z-20">
                         <div className="np-w-full np-flex np-justify-start np-gap-1">
-                            <CircleButton size="sm" shadow onClick={() => setIsExpanded((value) => !value)}>
+                            <CircleButton size="sm" shadow onClick={() => setIsExpandedInternal((value) => !value)}>
                                 {isExpanded ? (
                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                                         <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -204,10 +217,10 @@ const ModelView = () => {
                     </div>
                 </div>
                 <div ref={windowContainerRef} className={`${isExpanded ? 'np-h-full' : 'np-h-20'} np-hidden md:np-inline np-ease-out np-w-full np-relative np-transition-all np-duration-[350ms] `} onTransitionStart={handleTransitionStart} onTransitionEnd={handleTransitionEnd}>
-                    <div className={`${isExpanded ? 'np-rounded-[34px]' : 'np-rounded-lg'} np-ease-out np-h-full np-bg-pale np-p-0.5 np-absolute np-transition-all np-duration-[350ms] np-pointer-events-auto np-group/container`} style={{ width: isExpanded ? `${width * 100}%` : '102px', bottom: isExpanded ? "0px" : "8px", right: isExpanded ? "0" : "calc(50% - 51px)" }}>
-                        <div className={`${isExpanded ? 'np-rounded-[32px]' : 'np-rounded-lg'} np-w-full np-h-full np-p-0.5 np-border-2 np-border-green np-transition-all np-duration-[350ms]`}>
-                            <div className={`${isExpanded ? 'np-rounded-[30px]' : 'np-rounded-md'} np-w-full np-h-full np-relative`}>
-                                <div className={`${isExpanded ? 'np-rounded-[28px]' : 'np-rounded-[4px]'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden`} onPointerDownCapture={(e) => {
+                    <div className={`${isExpanded ? isGeometryOnly ? '' : 'np-rounded-[34px]' : 'np-rounded-lg'} np-ease-out np-h-full np-bg-pale np-p-0.5 np-absolute np-transition-all np-duration-[350ms] np-pointer-events-auto np-group/container`} style={{ width: isExpanded ? `${width * 100}%` : '102px', bottom: isExpanded ? "0px" : "8px", right: isExpanded ? "0" : "calc(50% - 51px)" }}>
+                        <div className={`${isExpanded ? isGeometryOnly ? '' : 'np-rounded-[32px]' : 'np-rounded-lg'} ${isGeometryOnly ? 'np-border-pale' : 'np-border-green'} np-w-full np-h-full np-p-0.5 np-border-2 np-transition-all np-duration-[350ms]`}>
+                            <div className={`${isExpanded ? isGeometryOnly ? '' : 'np-rounded-[30px]' : 'np-rounded-md'} np-w-full np-h-full np-relative`}>
+                                <div className={`${isExpanded ? isGeometryOnly ? '' : 'np-rounded-[28px]' : 'np-rounded-[4px]'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden`} onPointerDownCapture={(e) => {
                                     if (isExpanded) {
                                         return
                                     }
@@ -219,9 +232,9 @@ const ModelView = () => {
                                     </ModelErrorBoundary>
                                 </div>
                                 <div className="np-w-full np-h-full np-absolute np-flex np-flex-col np-items-start np-justify-end np-invisible group-hover/container:np-visible np-z-30 np-pointer-events-none">
-                                    <div className={`${isExpanded ? 'np-w-full np-pl-6 np-pb-6' : 'np-w-16 np-pl-[29px] np-pb-4'} np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5`} style={{ marginLeft: `${controlsMarginLeft}px` }}>
+                                    {!isGeometryOnly ? (<div className={`${isExpanded ? 'np-w-full np-pl-6 np-pb-6' : 'np-w-16 np-pl-[29px] np-pb-4'} np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5`} style={{ marginLeft: `${controlsMarginLeft}px` }}>
                                         <div className="np-flex np-items-center np-gap-1">
-                                            <CircleButton shadow tooltip={isExpanded ? 'Hide 3D Model' : 'Show 3D Model'} onClick={() => setIsExpanded((value) => !value)}>
+                                            <CircleButton shadow tooltip={isExpanded ? 'Hide 3D Model' : 'Show 3D Model'} onClick={() => setIsExpandedInternal((value) => !value)}>
                                                 {isExpanded ? (
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                                                         <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -233,11 +246,6 @@ const ModelView = () => {
                                                 )}
                                             </CircleButton>
                                             {isExpanded ? (<>
-                                                <CircleButton shadow onClick={() => onModelUpload?.(useStore.getState())} tooltip={'Upload Model'}>
-                                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
-                                                        <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect='non-scaling-stroke' />
-                                                    </svg>
-                                                </CircleButton>
                                                 <CircleButton shadow onClick={toggleGrid} tooltip={gridButtonTooltip}>
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-5">
                                                         <path d="M5.25 7.5A2.25 2.25 0 0 1 7.5 5.25h9a2.25 2.25 0 0 1 2.25 2.25v9a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-9Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -250,9 +258,14 @@ const ModelView = () => {
                                                         <path d="M7.5 3.75H6A2.25 2.25 0 0 0 3.75 6v1.5M16.5 3.75H18A2.25 2.25 0 0 1 20.25 6v1.5m0 9V18A2.25 2.25 0 0 1 18 20.25h-1.5m-9 0H6A2.25 2.25 0 0 1 3.75 18v-1.5M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                                     </svg>
                                                 </CircleButton>
+                                                {isEditable ? (<CircleButton shadow onClick={() => onModelUpload?.(useStore.getState())} tooltip={'Upload Model'}>
+                                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
+                                                        <path d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5m-13.5-9L12 3m0 0 4.5 4.5M12 3v13.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect='non-scaling-stroke' />
+                                                    </svg>
+                                                </CircleButton>) : null}
                                             </>) : null}
                                         </div>
-                                    </div>
+                                    </div>) : null}
                                 </div>
                                 <div className="np-w-full np-h-full np-absolute np-flex np-justify-start np-items-center np-z-50 np-pointer-events-none">
                                     <div className={`${isExpanded ? 'np-pointer-events-auto' : 'np-pointer-events-none'} np-w-8 np-h-[85%] np-relative np-group/resize`} style={{ transform: 'translateX(-19px)' }} onPointerEnter={handleDragAreaPointerEnter} onPointerMove={handleDragAreaPointerMove} onPointerLeave={handleDragAreaPointerLeave} onPointerCancel={handleDragAreaPointerLeave}>

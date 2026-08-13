@@ -16,6 +16,7 @@ export type { DocumentSolutionData, DocumentSolutionFlags, DocumentSolutionStatu
 export type { NodeTemplate, PortTemplate } from './templates'
 export type { DocumentAssets } from './assets'
 export type { DocumentPresence } from './presence'
+export type { AppFlags, AppFeatures } from './App'
 
 export type NodePortReference = {
     nodeInstanceId: string

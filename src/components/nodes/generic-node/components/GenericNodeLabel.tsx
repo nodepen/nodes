@@ -5,6 +5,7 @@ import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { useDispatch } from '$'
 import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 const { NODE_INTERNAL_PADDING, NODE_LABEL_FONT_SIZE, NODE_LABEL_WIDTH } = DIMENSIONS
 

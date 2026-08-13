@@ -8,6 +8,7 @@ import { createSingleValue } from '@/utils/data-trees/createSingleValue'
 import { expireSolution } from '@/store/utils'
 import { clamp } from '@/utils'
 import { useNodeInternalState } from '../../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type NumberSliderSliderProps = {
     node: NodePen.DocumentNode
@@ -24,6 +25,8 @@ const {
 // ComponentBuilderBuilder
 export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) => {
     const { position } = useNodeInternalState()
+
+    const isEditable = useIsEditable()
 
     const { x, y } = position
     const { width, height } = node.dimensions
@@ -53,6 +56,10 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
 
     const handlePointerDown = useCallback((e: React.PointerEvent<SVGRectElement>) => {
         if (isActive) {
+            return
+        }
+
+        if (!isEditable) {
             return
         }
 
@@ -86,7 +93,7 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
         activePointerId.current = pointerId
         initialSliderValue.current = currentNumericValue
         initialPointerPageX.current = pageX
-    }, [isActive, currentValue, dy, dy, start, x])
+    }, [isEditable, isActive, currentValue, dy, dy, start, x])
 
     const handlePointerMove = useCallback((e: React.PointerEvent<SVGRectElement>) => {
         if (!isActive || e.pointerId !== activePointerId.current) {
@@ -130,7 +137,7 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
     return (
         <g>
             <line ref={handleRailRef} x1={start} y1={y + height / 2} x2={end} y2={y + height / 2} stroke={COLORS.DARK} strokeWidth={2} />
-            <rect ref={handleRef} className='np-pointer-events-all hover:np-cursor-pointer' x={start + dx - NUMBER_SLIDER_HANDLE_WIDTH / 2} y={y + dy - NUMBER_SLIDER_HANDLE_HEIGHT / 2} width={NUMBER_SLIDER_HANDLE_WIDTH} height={NUMBER_SLIDER_HANDLE_HEIGHT} rx={2} ry={2} fill={COLORS.LIGHT} stroke={COLORS.DARK} strokeWidth={2} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} />
+            <rect ref={handleRef} className={`${isEditable ? 'np-pointer-events-all hover:np-cursor-pointer' : ''}`} x={start + dx - NUMBER_SLIDER_HANDLE_WIDTH / 2} y={y + dy - NUMBER_SLIDER_HANDLE_HEIGHT / 2} width={NUMBER_SLIDER_HANDLE_WIDTH} height={NUMBER_SLIDER_HANDLE_HEIGHT} rx={2} ry={2} fill={COLORS.LIGHT} stroke={COLORS.DARK} strokeWidth={2} onPointerDown={handlePointerDown} onPointerMove={handlePointerMove} onPointerUp={handlePointerUp} />
         </g>
     )
 }

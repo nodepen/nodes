@@ -14,6 +14,7 @@ import { DocumentControlsBoolean } from './DocumentControlsBoolean'
 import { DocumentControlsGeometry } from './DocumentControlsGeometry'
 import { DocumentControlsValueList } from './DocumentControlsValueList'
 import { DocumentControlsBooleanToggle } from './DocumentControlsBooleanToggle'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type DocumentControlsInputProps = {
     nodeInstanceId: string
@@ -22,6 +23,8 @@ type DocumentControlsInputProps = {
 
 export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: DocumentControlsInputProps) => {
     const { apply, moveControl } = useDispatch()
+
+    const isEditable = useIsEditable()
 
     const { currentLabel } = usePortLabel(nodeInstanceId, portInstanceId)
     const portTemplate = usePortTemplate(nodeInstanceId, portInstanceId)
@@ -229,29 +232,32 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
             <div className="np-w-full np-pl-3 np-flex np-items-center np-justify-start">
                 <PortTypeIcon r={16} typeName={valueType} />
                 <input
-                    className="np-ml-1 np-min-w-0 np-flex-grow np-h-5 np-pl-1 np-pt-0.5 np-rounded-sm hover:np-bg-grey np-text-xs np-text-dark np-font-panel focus:np-outline-none"
+                    className={`${isEditable ? 'hover:np-bg-grey ' : ''} np-ml-1 np-min-w-0 np-flex-grow np-h-5 np-pl-1 np-pt-0.5 np-rounded-sm np-text-xs np-text-dark np-font-panel focus:np-outline-none`}
                     value={internalLabel}
+                    disabled={!isEditable}
                     onChange={handleLabelChange}
                     onKeyDown={handleLabelKeyDown}
                     onFocus={handleLabelFocus}
                     onBlur={handleLabelBlur}
                 />
-                <div className="np-mr-0.5 np-flex np-items-center">
+                <div className="np-mr-0.5 np-pr-1 np-flex np-items-center">
                     <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleLocateSource}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
                             <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                         </svg>
                     </div>
-                    <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleMoveUp}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" vectorEffect="non-scaling-stroke" />
-                        </svg>
-                    </div>
-                    <div className="np-w-5 np-h-5 np-mr-1 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleMoveDown}>
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
-                            <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" vectorEffect="non-scaling-stroke" />
-                        </svg>
-                    </div>
+                    {isEditable ? (<>
+                        <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleMoveUp}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 15.75 7.5-7.5 7.5 7.5" vectorEffect="non-scaling-stroke" />
+                            </svg>
+                        </div>
+                        <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleMoveDown}>
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
+                                <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" vectorEffect="non-scaling-stroke" />
+                            </svg>
+                        </div>
+                    </>) : null}
                 </div>
             </div>
             <div className='np-w-full np-h-5 np-mb-1.5 np-pl-8'>

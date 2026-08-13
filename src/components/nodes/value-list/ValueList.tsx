@@ -11,6 +11,7 @@ import { ValueListPorts } from "./components/ValueListPorts"
 import { GenericNodeWires } from "../wire"
 import { useLongHover, usePageSpaceToOverlaySpace } from "@/hooks"
 import { useRightClick } from "@/hooks/useRightClick"
+import { useIsEditable } from "@/hooks/useIsEditable"
 
 type ValueListProps = {
     id: string
@@ -20,6 +21,8 @@ type ValueListProps = {
 const ValueList = ({ id, template }: ValueListProps) => {
     const node = useStore((store) => store.document.nodes[id])
     const internalState = usePresenceState(id)
+
+    const isEditable = useIsEditable()
 
     useDebugRender(node, template)
 
@@ -56,6 +59,10 @@ const ValueList = ({ id, template }: ValueListProps) => {
     const handleRightClick = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
 
+        if (!isEditable) {
+            return
+        }
+
         const { pageX, pageY } = e
         const key = `value-list-context-menu-${id}`
 
@@ -70,7 +77,7 @@ const ValueList = ({ id, template }: ValueListProps) => {
                 }
             }
         })
-    }, [pageSpaceToOverlaySpace, id])
+    }, [isEditable, pageSpaceToOverlaySpace, id])
 
     const rightClickRef = useRightClick(handleRightClick, true)
 
@@ -80,6 +87,10 @@ const ValueList = ({ id, template }: ValueListProps) => {
         }
 
         e.stopPropagation()
+
+        if (!isEditable) {
+            return
+        }
 
         const { pageX, pageY } = e
         const key = `value-list-options-context-menu-${id}`
@@ -95,7 +106,7 @@ const ValueList = ({ id, template }: ValueListProps) => {
                 }
             }
         })
-    }, [pageSpaceToOverlaySpace, id])
+    }, [isEditable, pageSpaceToOverlaySpace, id])
 
     if (!node) {
         return null

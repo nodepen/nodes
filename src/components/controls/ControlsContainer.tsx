@@ -17,9 +17,15 @@ import { ParameterLibrary } from './template-library/ParameterLibrary'
 import { DocumentControls } from './document/DocumentControls'
 import SessionUsers from './presence/SessionUsers'
 import { clamp } from '@/utils'
+import { useIsEditable } from '@/hooks/useIsEditable'
+import { useFlag } from '@/hooks/useFlag'
 
-const ControlsContainer = (): React.ReactElement => {
+const ControlsContainer = (): React.ReactElement | null => {
     const { apply } = useDispatch()
+
+    const isGeometryOnly = useFlag('isGeometryOnly')
+
+    const isEditable = useIsEditable()
 
     const { onClickHome, onClickProfile, onClickFeedback } = useCallbacks()
 
@@ -108,6 +114,10 @@ const ControlsContainer = (): React.ReactElement => {
         'error': COLORS.ERROR
     }
 
+    if (isGeometryOnly) {
+        return null
+    }
+
     return (
         <Layer id="np-controls-layer" z={90}>
             <div className="np-w-full np-h-full np-relative">
@@ -182,17 +192,17 @@ const ControlsContainer = (): React.ReactElement => {
                                 </span>
                             </CircleButton>
                         </div>
-                        <div className='np-w-full np-p-3 np-pb-4 np-inline md:np-hidden'>
+                        {/* <div className='np-w-full np-p-3 np-pb-4 np-inline md:np-hidden'>
                             <div className='np-w-full np-h-32 np-rounded-md np-bg-light np-shadow-main'>
                                 <DocumentControls hideHeader />
                             </div>
-                        </div>
+                        </div> */}
                     </div>
                 </div>
                 <div className="np-w-full np-h-full np-overflow-hidden np-absolute np-flex np-flex-col np-justify-end np-items-center np-pointer-events-none np-z-40">
                     <div className='np-w-full np-pb-4 np-pl-3 np-pr-3 np-hidden md:np-grid np-grid-cols-3'>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-start np-items-center'>
-                            <div className='np-p-8 np-flex np-items-center np-gap-1'>
+                            {isEditable ? (<div className='np-p-8 np-flex np-items-center np-gap-1'>
                                 <CircleButton shadow tooltip='Component Library' onClick={handleClickComponentLibrary} >
                                     <svg ref={componentLibraryButtonRef} aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6 np-mb-0.5'>
                                         <path d="M5.25 11.75A2.25 2.25 0 0 1 7.5 9.5h9a2.25 2.25 0 0 1 2.25 2.25v4.5a2.25 2.25 0 0 1-2.25 2.25h-9a2.25 2.25 0 0 1-2.25-2.25v-4.5Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -205,14 +215,14 @@ const ControlsContainer = (): React.ReactElement => {
                                         <path d="M9.443 5.072 L14.557 5.072 A2.5 2.5 0 0 1 16.722 6.322 L19.278 10.75 A2.5 2.5 0 0 1 19.278 13.25 L16.722 17.678 A2.5 2.5 0 0 1 14.557 18.928 L9.443 18.928 A2.5 2.5 0 0 1 7.278 17.678 L4.722 13.25 A2.5 2.5 0 0 1 4.722 10.75 L7.278 6.322 A2.5 2.5 0 0 1 9.443 5.072 Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" fill={COLORS.PALE} />
                                     </svg>
                                 </CircleButton>
-                            </div>
+                            </div>) : null}
                             {/* <ActiveUserControl /> */}
                         </div>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-center np-items-center'>
                             {/* <DocumentToolsControl /> */}
                         </div>
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-end np-items-center'>
-                            <div className='np-p-8 np-flex np-items-center np-justify-end'>
+                            {isEditable ? (<div className='np-p-8 np-flex np-items-center np-justify-end'>
                                 <div className='np-h-8 np-flex np-items-center np-mr-0.5 np-rounded-full np-bg-pale'>
                                     {activeStatusMessage ? (<p className='np-text-xs np-pl-2 np-pr-2 np-font-panel np-font-semibold np-text-dark'>
                                         {activeStatusMessage}
@@ -231,7 +241,7 @@ const ControlsContainer = (): React.ReactElement => {
                                         </svg>
                                     </CircleButton>
                                 </div>
-                            </div>
+                            </div>) : null}
                             {/* <div className='np-flex np-flex-col np-pr-0.5'>
                                 <div className='np-ml-2 np-mb-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
                                     <div className='np-flex np-items-center np-justify-center np-rounded-full np-overflow-hidden'>

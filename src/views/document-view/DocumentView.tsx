@@ -4,9 +4,12 @@ import { Layer } from '../common'
 import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay, SelectionRegionOverlay } from './layers'
 import { DocumentViewContent } from './DocumentViewContent'
 import { PresenceOverlay } from './layers/presence-overlay'
+import { useFlag } from '@/hooks/useFlag'
 
 const DocumentView = (): React.ReactElement | null => {
     const canvasRootRef = useStore((state) => state.registry.canvasRoot)
+
+    const isGeometryOnly = useFlag('isGeometryOnly')
 
     const { setCameraPosition } = useDispatch()
 
@@ -30,6 +33,10 @@ const DocumentView = (): React.ReactElement | null => {
 
         setCameraPosition(width / 2 + offset, height / -2 - offset)
     }, [])
+
+    if (isGeometryOnly) {
+        return null
+    }
 
     return (
         <>

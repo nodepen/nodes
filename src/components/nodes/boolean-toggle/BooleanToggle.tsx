@@ -14,6 +14,7 @@ import { GenericNodeWires } from "../wire"
 import { usePageSpaceToOverlaySpace } from "@/hooks"
 import { useRightClick } from "@/hooks/useRightClick"
 import { getBooleanTogglePortTemplate } from "@/utils/templates/getGenericParameterDefinition"
+import { useIsEditable } from "@/hooks/useIsEditable"
 
 type BooleanToggleProps = {
     id: string
@@ -23,6 +24,8 @@ type BooleanToggleProps = {
 const BooleanToggle = ({ id, template }: BooleanToggleProps) => {
     const node = useStore((store) => store.document.nodes[id])
     const internalState = usePresenceState(id)
+
+    const isEditable = useIsEditable()
 
     useDebugRender(node, template)
 
@@ -40,6 +43,10 @@ const BooleanToggle = ({ id, template }: BooleanToggleProps) => {
 
         e.stopPropagation()
 
+        if (!isEditable) {
+            return
+        }
+
         apply((state) => {
             const config = state.document.nodes[id].nodeConfiguration as NodePen.BooleanToggleConfig
 
@@ -52,11 +59,15 @@ const BooleanToggle = ({ id, template }: BooleanToggleProps) => {
 
             expireSolution(state)
         })
-    }, [apply, id])
+    }, [isEditable, apply, id])
 
     const handleRightClick = useCallback((e: PointerEvent) => {
         e.stopPropagation()
         e.preventDefault()
+
+        if (!isEditable) {
+            return
+        }
 
         const { pageX, pageY } = e
 
@@ -79,7 +90,8 @@ const BooleanToggle = ({ id, template }: BooleanToggleProps) => {
                 }
             }
         })
-    }, [])
+    }, [isEditable])
+
     const rightClickRef = useRightClick(handleRightClick, true)
 
     if (!node) {

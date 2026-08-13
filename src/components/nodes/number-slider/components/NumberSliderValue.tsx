@@ -5,6 +5,7 @@ import { COLORS, DIMENSIONS } from '@/constants'
 import { tryGetSingleValue } from '@/utils/data-trees'
 import { useNumberSliderValuePosition } from '@/utils/node-dimensions/getNumberSliderValueExtents'
 import { useNodeInternalState } from '../../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type NumberSliderValueProps = {
     node: NodePen.DocumentNode
@@ -20,6 +21,8 @@ const {
 
 export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => {
     const { position } = useNodeInternalState()
+
+    const isEditable = useIsEditable()
 
     const currentValue = useStore((state) => {
         const { values, nodeConfiguration } = state.document.nodes[node.instanceId]
@@ -52,6 +55,10 @@ export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => 
     const pathId = `number-slider-value-${node.instanceId}`
 
     const handlePointerDown = useCallback((e: React.PointerEvent<SVGRectElement>) => {
+        if (!isEditable) {
+            return
+        }
+
         switch (e.pointerType) {
             case 'mouse': {
                 onClick()
@@ -62,11 +69,11 @@ export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => 
                 break
             }
         }
-    }, [onClick])
+    }, [isEditable, onClick])
 
     return <>
         <rect x={x} y={y} width={width} height={height} rx={4} ry={4} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} />
-        <rect x={x} y={y + 1} width={width} height={height} rx={4} ry={4} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} className='hover:cursor-pointer hover:np-fill-grey' onPointerDown={handlePointerDown} />
+        <rect x={x} y={y + 1} width={width} height={height} rx={4} ry={4} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} className={`${isEditable ? 'hover:cursor-pointer hover:np-fill-grey' : ''}`} onPointerDown={handlePointerDown} />
         <path id={pathId} d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`} stroke="none" className='np-pointer-events-none' />
         <text
             className="np-font-panel np-select-none np-pointer-events-none"

@@ -7,6 +7,7 @@ import { getGenericParameterPortTemplate } from '@/utils/templates/getGenericPar
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type GenericParameterBodyProps = {
     node: NodePen.DocumentNode
@@ -15,6 +16,8 @@ type GenericParameterBodyProps = {
 
 export const GenericParameterBody = ({ node, template }: GenericParameterBodyProps) => {
     const { position } = useNodeInternalState()
+
+    const isEditable = useIsEditable()
 
     const { width, height } = node.dimensions
 
@@ -31,6 +34,10 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
     const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
         e.stopPropagation()
         e.preventDefault()
+
+        if (!isEditable) {
+            return
+        }
 
         if (lastPointerType.current !== 'mouse') {
             return
@@ -54,7 +61,7 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
                 }
             }
         })
-    }, [])
+    }, [isEditable])
 
     const handleLongHover = useCallback((e: PointerEvent): void => {
         const { pageX, pageY } = e

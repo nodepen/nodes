@@ -6,6 +6,7 @@ import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getWireEditModalityFromEvent } from '@/utils/wires'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { current } from 'immer'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 export const usePort = (
     nodeInstanceId: string,
@@ -13,6 +14,8 @@ export const usePort = (
     portTemplate: NodePen.PortTemplate
 ): React.RefObject<SVGGElement | null> => {
     const portRef = useRef<SVGGElement>(null)
+
+    const isEditable = useIsEditable()
 
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
@@ -22,6 +25,10 @@ export const usePort = (
     const handleContextMenu = useCallback((e: MouseEvent): void => {
         e.stopPropagation()
         e.preventDefault()
+
+        if (!isEditable) {
+            return
+        }
 
         const { pageX, pageY } = e
 
@@ -44,7 +51,7 @@ export const usePort = (
                 },
             }
         })
-    }, [])
+    }, [isEditable])
 
     const handlePointerDown = useCallback((e: PointerEvent): void => {
         const { pageX, pageY, pointerId } = e
@@ -60,6 +67,11 @@ export const usePort = (
                     case 0: {
                         // Handle left mouse button
                         e.stopPropagation()
+
+
+                        if (!isEditable) {
+                            return
+                        }
 
                         apply((state) => {
                             state.registry.wires.live = {
@@ -102,9 +114,13 @@ export const usePort = (
                 break
             }
         }
-    }, [])
+    }, [isEditable])
 
     const handlePointerEnter = useCallback((e: PointerEvent): void => {
+        if (!isEditable) {
+            return
+        }
+
         switch (e.pointerType) {
             case 'pen':
             case 'touch': {
@@ -135,10 +151,14 @@ export const usePort = (
                 })
             }
         }
-    }, [])
+    }, [isEditable])
 
     const handlePointerMove = useCallback((e: PointerEvent): void => {
         const { pageX, pageY } = e
+
+        if (!isEditable) {
+            return
+        }
 
         switch (e.pointerType) {
             case 'pen':
@@ -157,7 +177,7 @@ export const usePort = (
                 })
             }
         }
-    }, [])
+    }, [isEditable])
 
     const handlePointerLeave = useCallback((e: PointerEvent): void => {
         switch (e.pointerType) {

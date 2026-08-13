@@ -14,6 +14,8 @@ type NodesAppProps = {
     templates: NodePen.NodeTemplate[]
     assets: NodePen.DocumentAssets
     presence?: NodePen.DocumentPresence
+    flags?: NodePen.AppFlags
+    features?: NodePen.AppFlags
 } & NodesAppCallbacks
 
 export const NodesApp = ({
@@ -22,6 +24,8 @@ export const NodesApp = ({
     solution,
     assets,
     presence,
+    flags,
+    features,
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
     const { apply, loadDocument, loadTemplates, loadSolutionData } = useDispatch()
@@ -31,7 +35,9 @@ export const NodesApp = ({
     }, [document])
 
     useEffect(() => {
-        // Resets on new document
+        apply((state) => {
+            state.ui.sidebar.isDocumentControlsOpen = (document.controls.input.length > 0) || (document.controls.output.length > 0)
+        })
     }, [document.id])
 
     useEffect(() => {
@@ -49,6 +55,19 @@ export const NodesApp = ({
             state.callbacks = callbacks
         })
     }, [callbacks])
+
+    useEffect(() => {
+        apply((state) => {
+            state.app.features = {
+                ...state.app.features,
+                ...features
+            }
+            state.app.flags = {
+                ...state.app.flags,
+                ...flags
+            }
+        })
+    }, [features, flags])
 
     useEffect(() => {
         loadSolutionData(solution)

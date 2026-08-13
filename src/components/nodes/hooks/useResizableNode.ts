@@ -3,6 +3,7 @@ import type * as NodePen from '@/types'
 import { useCallbacks, useDispatch, useStore, useStoreRef } from "$"
 import { clamp } from "@/utils"
 import { saveDocument } from "@/store/utils/saveDocument"
+import { useIsEditable } from "@/hooks/useIsEditable"
 
 type ResizeConfig = {
     minWidth?: number
@@ -47,6 +48,8 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
         return cursorsByType[type]
     }, [])
 
+    const isEditable = useIsEditable()
+
     const { apply, clearSelection } = useDispatch()
 
     const zoom = useStoreRef((state) => state.camera.zoom)
@@ -65,8 +68,12 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
     const minDy = useRef(0)
 
     const setDocumentCursor = useCallback((type: keyof typeof handles) => {
+        if (!isEditable) {
+            return
+        }
+
         document.body.style.cursor = getCursor(type)
-    }, [])
+    }, [isEditable])
 
     const resetDocumentCursor = useCallback(() => {
         document.body.style.cursor = 'auto'
@@ -82,6 +89,10 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
 
     const handlePointerDown = useCallback((e: PointerEvent, type: keyof typeof handles) => {
         const { pageX, pageY } = e
+
+        if (!isEditable) {
+            return
+        }
 
         if (isResizing.current) {
             return
@@ -167,7 +178,7 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
             }
         }
 
-    }, [setDocumentCursor])
+    }, [isEditable, setDocumentCursor])
 
     const handlePointerMove = useCallback((e: PointerEvent, type: keyof typeof handles) => {
         const { pageX: currentPointerX, pageY: currentPointerY, pointerId } = e

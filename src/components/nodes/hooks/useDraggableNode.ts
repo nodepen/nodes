@@ -7,9 +7,12 @@ import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
 import { targetIsScrolling } from '@/utils/dom/targetIsScrolling'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 import { current } from 'immer'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
     const nodeRef = useRef<SVGGElement>(null)
+
+    const isEditable = useIsEditable()
 
     const { apply, endDrag, setNodePosition } = useDispatch()
 
@@ -63,6 +66,10 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
                         initialPointerId.current = pointerId
                         container.setPointerCapture(pointerId)
 
+                        if (!isEditable) {
+                            return
+                        }
+
                         // Begin motion
                         setIsDragging(true)
                         initialNodePosition.current = getCurrentNodePosition(nodeInstanceId)
@@ -76,13 +83,12 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
                     }
                     case 2: {
                         // Handle right mouse down
-                        console.log('draggable pointer down right mouse')
                         return
                     }
                 }
             }
         }
-    }, [])
+    }, [isEditable])
 
     const handlePointerMove = useCallback((e: PointerEvent): void => {
         const { pageX: currentPointerX, pageY: currentPointerY, pointerId } = e

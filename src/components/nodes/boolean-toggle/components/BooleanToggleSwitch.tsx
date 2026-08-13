@@ -3,6 +3,8 @@ import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useNodeInternalState } from '../../context/node-state'
 import { useDraggableNode, useSelectableNode } from '../../hooks'
+import { useIsEditable } from '@/hooks/useIsEditable'
+import { useCallback } from 'react'
 
 const { NODE_INTERNAL_PADDING, BOOLEAN_TOGGLE_SWITCH_SIZE } = DIMENSIONS
 
@@ -13,6 +15,15 @@ type BooleanToggleSwitchProps = {
 
 export const BooleanToggleSwitch = ({ node, onClick }: BooleanToggleSwitchProps) => {
     const { position } = useNodeInternalState()
+
+    const isEditable = useIsEditable()
+
+    const handleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
+        if (!isEditable) {
+            return
+        }
+        onClick(e)
+    }, [onClick, isEditable])
 
     const { dimensions, instanceId: id } = node
     const { value } = node.nodeConfiguration as NodePen.BooleanToggleConfig
@@ -25,11 +36,11 @@ export const BooleanToggleSwitch = ({ node, onClick }: BooleanToggleSwitchProps)
     const selectableRef = useSelectableNode(node.instanceId)
 
     return (
-        <g id={`boolean-toggle-switch-${id}`} style={{ pointerEvents: 'all' }} onClick={onClick}>
+        <g id={`boolean-toggle-switch-${id}`} style={{ pointerEvents: 'all' }} onClick={handleClick}>
             <g ref={draggableRef}>
                 <g ref={selectableRef}>
                     <rect
-                        className="hover:np-cursor-pointer"
+                        className={`${isEditable ? 'hover:np-cursor-pointer' : ''}`}
                         x={x}
                         y={y}
                         width={size}

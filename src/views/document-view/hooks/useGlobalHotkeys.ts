@@ -7,6 +7,7 @@ import { current } from 'immer'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { saveDocument } from '@/store/utils/saveDocument'
 import { isCtrl } from '@/utils/dom/isCtrl'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 export const useGlobalHotkeys = () => {
     const {
@@ -21,7 +22,10 @@ export const useGlobalHotkeys = () => {
         redo
     } = useDispatch()
 
+    const isEditable = useIsEditable()
+
     const handleKeyDown = useCallback((e: KeyboardEvent): void => {
+        // Actions available in all cases (i.e. debug)
         switch (e.key) {
             case ' ': {
                 console.log({
@@ -30,35 +34,6 @@ export const useGlobalHotkeys = () => {
                     presence: useStore.getState().presence
                 })
 
-                break
-            }
-            case 'Control':
-            case 'Meta':
-                break
-            case 'Delete':
-            case 'Backspace': {
-                apply((state) => {
-                    if (Object.keys(state.registry.contextMenus ?? {}).length > 0) {
-                        return
-                    }
-
-                    if (state.registry.selection.nodes.length === 0) {
-                        return
-                    }
-
-                    for (const id of state.registry.selection.nodes) {
-                        state.document.controls.input = state.document.controls.input.filter((control) => control.ref.nodeInstanceId !== id)
-                        state.document.controls.output = state.document.controls.output.filter((control) => control.ref.nodeInstanceId !== id)
-                        delete state.document.nodes[id]
-                    }
-
-                    expireSolution(state)
-                })
-
-                break
-            }
-            case 'Enter': {
-                commitModelSelection()
                 break
             }
             case 'Esc':
@@ -91,6 +66,43 @@ export const useGlobalHotkeys = () => {
                     state.registry.selection.nodes = selection
                 })
 
+                break
+            }
+        }
+
+        if (!isEditable) {
+            return
+        }
+
+        // Actions that require edit to be enabled
+        switch (e.key) {
+            case 'Control':
+            case 'Meta':
+                break
+            case 'Delete':
+            case 'Backspace': {
+                apply((state) => {
+                    if (Object.keys(state.registry.contextMenus ?? {}).length > 0) {
+                        return
+                    }
+
+                    if (state.registry.selection.nodes.length === 0) {
+                        return
+                    }
+
+                    for (const id of state.registry.selection.nodes) {
+                        state.document.controls.input = state.document.controls.input.filter((control) => control.ref.nodeInstanceId !== id)
+                        state.document.controls.output = state.document.controls.output.filter((control) => control.ref.nodeInstanceId !== id)
+                        delete state.document.nodes[id]
+                    }
+
+                    expireSolution(state)
+                })
+
+                break
+            }
+            case 'Enter': {
+                commitModelSelection()
                 break
             }
             case 'c':
@@ -167,7 +179,7 @@ export const useGlobalHotkeys = () => {
                 // console.log(`Unhandled keypress [${e.key}]`)
             }
         }
-    }, [])
+    }, [isEditable])
 
     const handleKeyUp = useCallback((e: KeyboardEvent): void => {
         switch (e.key) {
@@ -181,7 +193,7 @@ export const useGlobalHotkeys = () => {
                 break
             }
         }
-    }, [])
+    }, [isEditable])
 
     const documentRef = useDocumentRef()
 

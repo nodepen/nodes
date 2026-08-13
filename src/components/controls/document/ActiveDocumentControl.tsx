@@ -1,5 +1,6 @@
 import { CircleButton } from '@/components/layout/CircleButton'
 import { COLORS } from '@/constants'
+import { useIsEditable } from '@/hooks/useIsEditable'
 import { useCallbacks, useDispatch, useStore } from '@/store'
 import { saveDocument } from '@/store/utils/saveDocument'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -7,6 +8,8 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 const ActiveDocumentControl = () => {
     const documentMeta = useStore((state) => state.document.meta)
     const [internalName, setInternalName] = useState(documentMeta.name ?? '')
+
+    const isEditable = useIsEditable()
 
     const { apply } = useDispatch()
     const { onClickHome } = useCallbacks()
@@ -90,8 +93,9 @@ const ActiveDocumentControl = () => {
                 </CircleButton>
                 <div className='np-h-full md:np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
                     <input
-                        className="np-h-5 np-hidden md:np-inline np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm hover:np-bg-grey np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3"
+                        className={`${isEditable ? 'hover:np-bg-grey' : ''} np-h-5 np-hidden md:np-inline np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3`}
                         ref={inputRef}
+                        disabled={!isEditable}
                         value={internalName}
                         style={{ textDecorationThickness: '2px' }}
                         onChange={handleChange}
@@ -124,23 +128,16 @@ const ActiveDocumentControl = () => {
                                 {documentOwner}
                             </p>
                         </>) : null}
-                        {/* <div className='np-w-3 np-h-3 np-ml-2 np-mr-0.5 np-rounded-sm np-bg-dark np-flex np-items-center np-justify-center'>
-                            <svg aria-hidden="true" fill={COLORS.LIGHT} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" />
-                                <path clipRule="evenodd" d="M1.38 8.28a.87.87 0 0 1 0-.566 7.003 7.003 0 0 1 13.238.006.87.87 0 0 1 0 .566A7.003 7.003 0 0 1 1.379 8.28ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" fillRule="evenodd" />
-                            </svg>
-                        </div>
-                        <p className='np-text-xs np-text-dark np-font-panel np-translate-y-px'>
-                            24
-                        </p> */}
                     </div>
                 </div>
                 <div className='np-h-full np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>
-                    <div ref={menuButtonRef} className='np-w-6 np-h-6 np-hidden md:np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
+                    {isEditable ? (<div ref={menuButtonRef} className='np-w-6 np-h-6 np-hidden md:np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
                         <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="2" stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                             <path d="m19.5 8.25-7.5 7.5-7.5-7.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"></path>
                         </svg>
-                    </div>
+                    </div>) : (
+                        <div className='np-w-6' />
+                    )}
                 </div>
             </div>
         </div>

@@ -12,6 +12,7 @@ import { PanelResizeTargets } from './components/PanelResizeTargets'
 import { PanelDataTree } from './components/PanelDataTree'
 import { NodeInternalStateProvider, useNodeInternalState, usePresenceState } from '../context/node-state'
 import { GenericNodeSkeleton } from '../generic-node/components'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type PanelProps = {
     id: string
@@ -22,6 +23,8 @@ const Panel = ({ id, template }: PanelProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
     const config = node.nodeConfiguration as NodePen.NumberSliderConfig
+
+    const isEditable = useIsEditable()
 
     const internalState = usePresenceState(id)
 
@@ -39,8 +42,13 @@ const Panel = ({ id, template }: PanelProps) => {
     const [isActive, setIsActive] = useState(false)
     const handleDoubleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
         e.stopPropagation()
+
+        if (!isEditable) {
+            return
+        }
+
         setIsActive(true)
-    }, [])
+    }, [isEditable])
 
     const handleSubmit = useCallback((value: string) => {
         apply((state) => {

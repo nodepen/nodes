@@ -24,13 +24,6 @@ export type NodesAppState = {
         }
     }
     assets: NodePen.DocumentAssets
-
-    user?: {
-        name?: string
-        email?: string
-        image?: string
-        token?: string
-    }
     camera: {
         /** container div innerWidth / innerHeight in screen space */
         aspect: number
@@ -41,6 +34,10 @@ export type NodesAppState = {
         }
         /** ratio of screen space pixel to graph space unit */
         zoom: number
+    }
+    app: {
+        flags: NodePen.AppFlags
+        features: NodePen.AppFeatures
     }
     ui: {
         cursor: {
@@ -275,6 +272,23 @@ export const initialState: NodesAppState = {
             y: 0,
         },
         zoom: 1
+    },
+    app: {
+        features: {
+            saveNew: true,
+            saveCopy: true,
+            share: true,
+            export: true,
+            feedback: true,
+            versions: true
+        },
+        flags: {
+            isEditable: true,
+            isTemporaryFork: false,
+            isPublicPreview: false,
+            isGeometryOnly: false,
+            isThumbnail: false
+        }
     },
     ui: {
         cursor: {

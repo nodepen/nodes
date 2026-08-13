@@ -17,6 +17,7 @@ import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
 import { getNumberSliderPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 import { GenericNodeSkeleton } from '../generic-node/components'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type NumberSliderProps = {
     id: string
@@ -27,6 +28,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
     const config = node.nodeConfiguration as NodePen.NumberSliderConfig
+
+    const isEditable = useIsEditable()
 
     const internalState = usePresenceState(id)
 
@@ -68,6 +71,10 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
         e.stopPropagation()
         e.nativeEvent.stopImmediatePropagation()
 
+        if (!isEditable) {
+            return
+        }
+
         if (lastPointerType.current !== 'mouse') {
             return
         }
@@ -75,10 +82,14 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
         useStore.getState().registry.numberSliderInputRef.current?.focus?.()
 
         setShowModal(true)
-    }, [])
+    }, [isEditable])
 
     const handleRightClick = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
+
+        if (!isEditable) {
+            return
+        }
 
         const { pageX, pageY } = e
         const key = getPortContextMenuKey(id, 'input')
@@ -97,7 +108,8 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
                 }
             }
         })
-    }, [])
+    }, [isEditable])
+
     const rightClickRef = useRightClick(handleRightClick)
 
     const s = 20

@@ -6,6 +6,7 @@ import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { distance } from '@/utils/numerics'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
 import { current } from 'immer'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type CameraControlProps = {
     children?: React.ReactNode
@@ -13,6 +14,8 @@ type CameraControlProps = {
 
 const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => {
     const cameraControlOverlayRef = useRef<HTMLDivElement>(null)
+
+    const isEditable = useIsEditable()
 
     const { apply, clearInterface, clearSelection, setCameraPosition, setCameraZoom } = useDispatch()
     const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
@@ -396,6 +399,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
     const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
         if (lastPointerType.current !== 'mouse') {
+            return
+        }
+
+        if (!isEditable) {
             return
         }
 

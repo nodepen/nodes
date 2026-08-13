@@ -3,6 +3,7 @@ import { useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useNodeInternalState } from '../../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 const {
     NODE_INTERNAL_PADDING
@@ -16,6 +17,8 @@ type PanelInputProps = {
 
 export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
     const { position } = useNodeInternalState()
+
+    const isEditable = useIsEditable()
 
     const { dimensions } = node
     const { textContent, multilineData } = node.nodeConfiguration as NodePen.PanelConfig
@@ -82,7 +85,7 @@ export const PanelInput = ({ node, isActive, onSubmit }: PanelInputProps) => {
         : (
             <>
                 <rect
-                    className={`${isSelected ? 'hover:np-fill-swampgreen' : 'hover:np-fill-grey'} np-fill-none hover:np-cursor-pointer`}
+                    className={`${isEditable ? isSelected ? 'hover:np-fill-swampgreen hover:np-cursor-pointer' : 'hover:np-fill-grey hover:np-cursor-pointer' : ''} np-fill-none`}
                     style={{ pointerEvents: 'all' }}
                     x={x}
                     y={y}

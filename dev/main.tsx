@@ -655,8 +655,15 @@ let presence = {
     cameras: {}
 }
 
+const flags = {
+    isEditable: true,
+    isTemporaryFork: false,
+    isPublicPreview: true,
+    isGeometryOnly: false
+}
+
 root.render(<StrictMode>
     <div style={{ width: '100vw', height: '100vh' }}>
-        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} />
+        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} flags={flags} />
     </div>
 </StrictMode>)
