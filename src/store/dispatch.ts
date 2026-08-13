@@ -15,7 +15,6 @@ import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 import { createList } from '@/utils/data-trees'
-import { clamp } from 'three/src/math/MathUtils'
 import { tryGetControl } from '@/utils/controls'
 import { getValidGeometryForType } from '@/utils/geometry-types'
 

@@ -1,26 +1,33 @@
 {
-  "compilerOptions": {
-    "target": "es6",
-    "module": "esnext",
-    "moduleResolution": "node",
-    "lib": ["dom", "esnext"],
-    "declaration": true,
-    "declarationMap": false,
-    "sourceMap": false,
-    "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "jsx": "react-jsx",
-    "jsxImportSource": "react",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noImplicitReturns": true,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
-    "strict": true,
-    "strictFunctionTypes": true,
-    "strictNullChecks": true,
-    "stripInternal": true,
-    "types": ["node", "jest"],
-    "verbatimModuleSyntax": true
-  }
+    "compilerOptions": {
+        "ignoreDeprecations": "6.0",
+        "target": "es6",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "lib": [
+            "dom",
+            "esnext"
+        ],
+        "declaration": true,
+        "declarationMap": false,
+        "sourceMap": false,
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "strict": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "stripInternal": true,
+        "types": [
+            "node",
+            "jest"
+        ],
+        "verbatimModuleSyntax": true
+    }
 }

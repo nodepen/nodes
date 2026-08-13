@@ -10,12 +10,12 @@ export type NodesAppStore = NodesAppState & NodesAppDispatch
 
 type NodesAppMiddleware = [['zustand/immer', never]]
 
-export const useStore: UseBoundStore<StoreApi<NodesAppStore>> = create<NodesAppStore, NodesAppMiddleware>(
+export const useStore = create<NodesAppStore, NodesAppMiddleware>(
   immer((set, get) => ({
     ...initialState,
-    ...createDispatch(set, get),
+    ...createDispatch(set as any, get as any),
   }))
-)
+) as UseBoundStore<StoreApi<NodesAppStore>>
 
 export const useCallbacks = () => {
   return useStore((state) => state.callbacks)
