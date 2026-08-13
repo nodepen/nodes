@@ -4,7 +4,7 @@ import * as THREE from 'three'
 import type { OrbitControls } from '@react-three/drei'
 import DocumentNodeModel from './DocumentNodeModel'
 import { useLoader, useThree } from '@react-three/fiber'
-import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader'
+import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js'
 import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
 import { shallow } from 'zustand/shallow'
 
@@ -14,11 +14,28 @@ type DocumentModel = {
 
 const DocumentModel = ({ modelUrl }: DocumentModel) => {
     const { apply } = useDispatch()
-    const { camera } = useThree()
+    const { camera, scene } = useThree()
 
     const loader = useRef(new Rhino3dmLoader())
 
     const [objectsByDocumentNodeId, setObjectsByDocumentNodeId] = useState<Record<string, THREE.Object3D[]>>({})
+
+    // Helper function to accumulate bounds from an object hierarchy
+    const accumulateBounds = (root: THREE.Object3D, bounds: THREE.Box3, tempBounds: THREE.Box3) => {
+        root.traverse((object) => {
+            const geometry = (object as THREE.Object3D & { geometry?: THREE.BufferGeometry }).geometry
+            if (geometry) {
+                if (!geometry.boundingBox) {
+                    geometry.computeBoundingBox()
+                }
+
+                if (geometry.boundingBox) {
+                    tempBounds.copy(geometry.boundingBox).applyMatrix4(object.matrixWorld)
+                    bounds.union(tempBounds)
+                }
+            }
+        })
+    }
 
     useEffect(() => {
         if (!modelUrl) {
@@ -40,6 +57,10 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
 
             documentObject.updateMatrixWorld(true)
 
+            // First accumulate bounds from existing scene geometry
+            // accumulateBounds(scene, bounds, tempBounds)
+
+            // Then accumulate bounds from the new model
             documentObject.traverse((object) => {
                 objectCount++
                 const { nodeInstanceId } = tryParseUserStrings(object)
@@ -61,16 +82,16 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                 }
             })
 
-            if (!bounds.isEmpty() && camera instanceof THREE.PerspectiveCamera) {
-                const sphere = new THREE.Sphere()
-                bounds.getBoundingSphere(sphere)
+            // if (!bounds.isEmpty() && camera instanceof THREE.PerspectiveCamera) {
+            //     const sphere = new THREE.Sphere()
+            //     bounds.getBoundingSphere(sphere)
 
-                const distance = camera.position.distanceTo(sphere.center)
+            //     const distance = camera.position.distanceTo(sphere.center)
 
-                camera.near = Math.max(0.01, distance - sphere.radius * 2)
-                camera.far = Math.max(distance + sphere.radius * 4, sphere.radius * 10)
-                camera.updateProjectionMatrix()
-            }
+            //     camera.near = Math.max(0.01, distance - sphere.radius * 2)
+            //     camera.far = Math.max(distance + sphere.radius * 4, sphere.radius * 10)
+            //     camera.updateProjectionMatrix()
+            // }
 
             apply((state) => {
                 state.solution.flags.isModelExpired = false
@@ -81,9 +102,8 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
 
                 setObjectsByDocumentNodeId(res)
             })
-
         })
-    }, [modelUrl])
+    }, [modelUrl, scene, camera])
 
     const nodeIds = useStore((state) => Object.keys(state.document.nodes), shallow)
 

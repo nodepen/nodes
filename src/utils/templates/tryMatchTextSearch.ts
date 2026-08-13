@@ -80,7 +80,7 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
 
         return {
             type: 'point',
-            templateId: COMPONENTS.CONSTRUCT_POINT,
+            templateId: COMPONENTS.POINT_PARAMETER,
             value: [x, y, 0]
         }
     }
@@ -92,7 +92,7 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
 
         return {
             type: 'point',
-            templateId: COMPONENTS.CONSTRUCT_POINT,
+            templateId: COMPONENTS.POINT_PARAMETER,
             value: [x, y, z]
         }
     }

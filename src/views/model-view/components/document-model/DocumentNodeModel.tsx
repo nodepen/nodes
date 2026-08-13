@@ -8,7 +8,7 @@ import { useThree } from '@react-three/fiber'
 
 type DocumentNodeModelProps = {
     id: string
-    objects: THREE.Object3D<THREE.Event>[]
+    objects: THREE.Object3D<THREE.Object3DEventMap>[]
 }
 
 const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {

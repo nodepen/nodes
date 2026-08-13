@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { useDispatch, useStore } from '@/store'
 import { useLoader, type ThreeEvent } from '@react-three/fiber'
 import React, { act, memo, useCallback, useEffect, useState } from 'react'
-import { Rhino3dmLoader } from 'three/examples/jsm/loaders/3DMLoader'
+import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js'
 import { LINE, MESH } from '../../materials'
 import { DARK, DARKGREY, GREEN } from '../../materials/colors'
 import { isGeometryType } from '@/utils/three/isGeometryType'
@@ -70,7 +70,7 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
         setSceneObjects(objects)
     }, [documentObject])
 
-    const handleClickGeometry = useCallback((e: ThreeEvent<MouseEvent>, o: THREE.Object3D<THREE.Event>) => {
+    const handleClickGeometry = useCallback((e: ThreeEvent<MouseEvent>, o: THREE.Object3D<THREE.Object3DEventMap>) => {
         e.stopPropagation()
 
         const modelState = useStore.getState().ui.model

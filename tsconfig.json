@@ -32,7 +32,8 @@
             ],
         },
         "lib": [
-            "DOM"
+            "DOM",
+            "ES2022",
         ],
         "module": "esnext",
         "target": "esnext",

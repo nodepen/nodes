@@ -11,13 +11,9 @@ export const getDataTreeValueString = (value?: NodePen.DataTreeValue): string =>
 
     switch (value.type) {
         case 'string':
-        case 'text': {
-            return value.value
-        }
+        case 'text':
         case 'number':
-        case 'integer': {
-            return value.value
-        }
+        case 'integer':
         case 'boolean': {
             return value.value
         }
