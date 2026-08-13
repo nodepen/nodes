@@ -101,6 +101,48 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                 }
 
                 setObjectsByDocumentNodeId(res)
+
+                if (state.app.flags.isThumbnail) {
+                    setTimeout(() => {
+                        scene.updateMatrixWorld(true)
+
+                        const bounds = new THREE.Box3()
+                        const tempBounds = new THREE.Box3()
+                        const center = new THREE.Vector3()
+                        const size = new THREE.Vector3()
+
+                        scene.traverse((object) => {
+                            const geometry = (object as THREE.Object3D & { geometry?: THREE.BufferGeometry }).geometry
+                            if (!geometry) {
+                                return
+                            }
+
+                            if (!geometry.boundingBox) {
+                                geometry.computeBoundingBox()
+                            }
+
+                            if (geometry.boundingBox) {
+                                tempBounds.copy(geometry.boundingBox).applyMatrix4(object.matrixWorld)
+                                bounds.union(tempBounds)
+                            }
+                        })
+
+                        if (!bounds.isEmpty()) {
+                            bounds.getCenter(center)
+                            bounds.getSize(size)
+
+                            const maxDim = Math.max(size.x, size.y, size.z, 1)
+                            const distance = Math.max(maxDim * 1.8, 4)
+                            const neutralOffset = new THREE.Vector3(-distance, -distance, distance * 0.9)
+
+                            camera.position.copy(center).add(neutralOffset)
+                            camera.lookAt(center)
+                            camera.updateProjectionMatrix()
+                        }
+
+                        state.callbacks.onThumbnailReady?.(state)
+                    }, 250);
+                }
             })
         })
     }, [modelUrl, scene, camera])

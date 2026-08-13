@@ -19,11 +19,13 @@ import SessionUsers from './presence/SessionUsers'
 import { clamp } from '@/utils'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useFlag } from '@/hooks/useFlag'
+import { useFeatureFlag } from '@/hooks/useFeatureFlag'
 
 const ControlsContainer = (): React.ReactElement | null => {
     const { apply } = useDispatch()
 
     const isGeometryOnly = useFlag('isGeometryOnly')
+    const enableDocumentControls = useFeatureFlag('controls')
 
     const isEditable = useIsEditable()
 
@@ -184,13 +186,13 @@ const ControlsContainer = (): React.ReactElement | null => {
                     </div>
                     <div className='np-w-full np-flex-grow np-flex np-flex-col np-justify-end md:np-justify-start'>
                         <div className='np-w-full np-pl-11 np-pt-4 np-hidden md:np-flex np-justify-start'>
-                            <CircleButton size="sm" shadow tooltip='Show Controls' tooltipDirection='right' onClick={handleClickDocumentControls}>
+                            {enableDocumentControls ? (<CircleButton size="sm" shadow tooltip='Show Controls' tooltipDirection='right' onClick={handleClickDocumentControls}>
                                 <span ref={documentControlsButtonRef}>
                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-4'>
                                         <path d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                     </svg>
                                 </span>
-                            </CircleButton>
+                            </CircleButton>) : null}
                         </div>
                         {/* <div className='np-w-full np-p-3 np-pb-4 np-inline md:np-hidden'>
                             <div className='np-w-full np-h-32 np-rounded-md np-bg-light np-shadow-main'>

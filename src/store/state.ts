@@ -212,6 +212,7 @@ export type NodesAppCallbacks = {
     onSelectionUpdated?: (state: NodesAppState) => void,
     onSelectionRegionUpdated?: (state: NodesAppState) => void,
     onWiresUpdated?: (state: NodesAppState) => void,
+    onThumbnailReady?: (state: NodesAppState) => void,
     onUndo?: (state: NodesAppState) => void
     onRedo?: (state: NodesAppState) => void
 }
@@ -280,6 +281,7 @@ export const initialState: NodesAppState = {
             share: true,
             export: true,
             feedback: true,
+            controls: true,
             versions: true
         },
         flags: {
