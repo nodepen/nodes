@@ -25,9 +25,8 @@ export const CONTEXT = new THREE.LineBasicMaterial({
 
 export const GRID = new THREE.LineBasicMaterial({
     color: HEX.DARKGREY,
-    depthTest: false,
-    depthWrite: false,
-    transparent: true
+    depthTest: true,
+    depthWrite: false
 })
 
 // export const DEFAULT = {
