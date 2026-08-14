@@ -141,7 +141,7 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                         }
 
                         state.callbacks.onThumbnailReady?.(state)
-                    }, 250);
+                    }, 500);
                 }
             })
         })

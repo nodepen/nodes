@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect } from 'react'
 import type * as NodePen from '@/types'
 import { freeze } from 'immer'
 import { useDispatch, useStore } from '$'
@@ -56,7 +56,7 @@ export const NodesApp = ({
         })
     }, [callbacks])
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         apply((state) => {
             state.app.features = {
                 ...state.app.features,

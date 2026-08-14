@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useCallback, useEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Layer } from "../common"
 import ModelCanvas from "./ModelCanvas"
 import { useCallbacks, useDispatch, useStore } from "@/store"
@@ -17,14 +17,19 @@ const ModelView = () => {
 
     const isEditable = useIsEditable()
     const isGeometryOnly = useFlag('isGeometryOnly')
+    const isPublicPreview = useFlag('isPublicPreview')
 
     const { apply } = useDispatch()
     const { onModelUpload } = useCallbacks()
 
-    const [isExpandedInternal, setIsExpandedInternal] = useState(false)
+    const [isExpanded, setIsExpanded] = useState(false)
     const [isSceneVisible, setIsSceneVisible] = useState(true)
 
-    const isExpanded = isExpandedInternal || isGeometryOnly
+    useLayoutEffect(() => {
+        if (isGeometryOnly || isPublicPreview) {
+            setIsExpanded(true)
+        }
+    }, [isGeometryOnly, isPublicPreview])
 
     const handleTransitionStart = useCallback((e: React.TransitionEvent<HTMLDivElement>) => {
         switch (e.nativeEvent.propertyName) {
@@ -46,7 +51,6 @@ const ModelView = () => {
         }
     }, [])
 
-
     // Ratio between 0 and 1
     const [width, setWidth] = useState(0.5)
     const isDragging = useRef(false)
@@ -65,7 +69,7 @@ const ModelView = () => {
     useEffect(() => {
         if (activeMode === 'default') {
             if (previousExpanded.current !== null) {
-                setIsExpandedInternal(previousExpanded.current)
+                setIsExpanded(previousExpanded.current)
                 previousExpanded.current = null
             }
 
@@ -79,7 +83,7 @@ const ModelView = () => {
             if (!isExpanded) {
                 previousExpanded.current = isExpanded
                 previousWidth.current = width
-                setIsExpandedInternal(true)
+                setIsExpanded(true)
                 setWidth(1)
             }
         }
@@ -188,7 +192,7 @@ const ModelView = () => {
                 <div className="np-w-full np-h-full np-relative md:np-hidden">
                     <div className="np-w-full np-h-full np-p-5 np-absolute np-top-0 np-flex np-flex-col np-justify-end np-z-20">
                         <div className="np-w-full np-flex np-justify-start np-gap-1">
-                            <CircleButton size="sm" shadow onClick={() => setIsExpandedInternal((value) => !value)}>
+                            <CircleButton size="sm" shadow onClick={() => setIsExpanded((value) => !value)}>
                                 {isExpanded ? (
                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                                         <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -234,7 +238,7 @@ const ModelView = () => {
                                 <div className="np-w-full np-h-full np-absolute np-flex np-flex-col np-items-start np-justify-end np-invisible group-hover/container:np-visible np-z-30 np-pointer-events-none">
                                     {!isGeometryOnly ? (<div className={`${isExpanded ? 'np-w-full np-pl-6 np-pb-6' : 'np-w-16 np-pl-[29px] np-pb-4'} np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5`} style={{ marginLeft: `${controlsMarginLeft}px` }}>
                                         <div className="np-flex np-items-center np-gap-1">
-                                            <CircleButton shadow tooltip={isExpanded ? 'Hide 3D Model' : 'Show 3D Model'} onClick={() => setIsExpandedInternal((value) => !value)}>
+                                            <CircleButton shadow tooltip={isExpanded ? 'Hide 3D Model' : 'Show 3D Model'} onClick={() => setIsExpanded((value) => !value)}>
                                                 {isExpanded ? (
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                                                         <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
