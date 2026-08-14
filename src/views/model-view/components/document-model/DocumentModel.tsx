@@ -7,6 +7,7 @@ import { useLoader, useThree } from '@react-three/fiber'
 import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js'
 import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
 import { shallow } from 'zustand/shallow'
+import { current } from 'immer'
 
 type DocumentModel = {
     modelUrl: string | null
@@ -14,7 +15,7 @@ type DocumentModel = {
 
 const DocumentModel = ({ modelUrl }: DocumentModel) => {
     const { apply } = useDispatch()
-    const { camera, scene } = useThree()
+    const { camera, scene, size } = useThree()
 
     const loader = useRef(new Rhino3dmLoader())
 
@@ -57,10 +58,6 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
 
             documentObject.updateMatrixWorld(true)
 
-            // First accumulate bounds from existing scene geometry
-            // accumulateBounds(scene, bounds, tempBounds)
-
-            // Then accumulate bounds from the new model
             documentObject.traverse((object) => {
                 objectCount++
                 const { nodeInstanceId } = tryParseUserStrings(object)
@@ -82,17 +79,6 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                 }
             })
 
-            // if (!bounds.isEmpty() && camera instanceof THREE.PerspectiveCamera) {
-            //     const sphere = new THREE.Sphere()
-            //     bounds.getBoundingSphere(sphere)
-
-            //     const distance = camera.position.distanceTo(sphere.center)
-
-            //     camera.near = Math.max(0.01, distance - sphere.radius * 2)
-            //     camera.far = Math.max(distance + sphere.radius * 4, sphere.radius * 10)
-            //     camera.updateProjectionMatrix()
-            // }
-
             apply((state) => {
                 state.solution.flags.isModelExpired = false
                 state.solution.messages.model = {
@@ -103,44 +89,33 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                 setObjectsByDocumentNodeId(res)
 
                 if (state.app.flags.isThumbnail) {
+                    const s = current(state)
+                    const callback = s.callbacks.onThumbnailReady
+
                     setTimeout(() => {
-                        scene.updateMatrixWorld(true)
-
-                        const bounds = new THREE.Box3()
-                        const tempBounds = new THREE.Box3()
-                        const center = new THREE.Vector3()
-                        const size = new THREE.Vector3()
-
-                        scene.traverse((object) => {
-                            const geometry = (object as THREE.Object3D & { geometry?: THREE.BufferGeometry }).geometry
-                            if (!geometry) {
-                                return
-                            }
-
-                            if (!geometry.boundingBox) {
-                                geometry.computeBoundingBox()
-                            }
-
-                            if (geometry.boundingBox) {
-                                tempBounds.copy(geometry.boundingBox).applyMatrix4(object.matrixWorld)
-                                bounds.union(tempBounds)
-                            }
-                        })
-
-                        if (!bounds.isEmpty()) {
+                        if (!bounds.isEmpty() && camera instanceof THREE.OrthographicCamera) {
+                            const center = new THREE.Vector3()
                             bounds.getCenter(center)
-                            bounds.getSize(size)
 
-                            const maxDim = Math.max(size.x, size.y, size.z, 1)
-                            const distance = Math.max(maxDim * 1.8, 4)
-                            const neutralOffset = new THREE.Vector3(-distance, -distance, distance * 0.9)
+                            const boundingSphere = new THREE.Sphere()
+                            bounds.getBoundingSphere(boundingSphere)
+                            const radius = Math.max(boundingSphere.radius, 0.5)
 
-                            camera.position.copy(center).add(neutralOffset)
+                            const viewDirection = new THREE.Vector3(0, -1, 0.5).normalize()
+
+                            const distance = Math.max(radius * 2, 10)
+
+                            camera.position.copy(center).addScaledVector(viewDirection, distance)
                             camera.lookAt(center)
+
+                            const padding = 1.3
+                            const zoomForHeight = (size.height / 2) / (radius * padding)
+                            const zoomForWidth = (size.width / 2) / (radius * padding)
+                            camera.zoom = Math.min(zoomForHeight, zoomForWidth)
                             camera.updateProjectionMatrix()
                         }
 
-                        state.callbacks.onThumbnailReady?.(state)
+                        callback?.(s)
                     }, 500);
                 }
             })

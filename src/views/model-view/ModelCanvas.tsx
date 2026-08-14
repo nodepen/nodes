@@ -6,10 +6,8 @@ import DocumentModel from "./components/document-model/DocumentModel"
 import GridModel from "./components/grid-model/GridModel"
 import { useDispatch, useStore } from "@/store"
 import ContextModel from "./components/context-model/ContextModel"
-import { Rhino3dmLoader } from "three/examples/jsm/loaders/3DMLoader"
 import { tryParseUserStrings } from "@/utils/three/tryParseUserStrings"
 
-// @ts-expect-error This is correct actually
 THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
 
 type ModelCanvasProps = {
@@ -19,13 +17,12 @@ type ModelCanvasProps = {
 const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
     const { clearInterface } = useDispatch()
 
-    // useLoader.preload(Rhino3dmLoader, solutionModelUrl, (loader) => {
-    //     loader.setLibraryPath('https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1/')
-    // })
+    const isThumbnail = useStore((state) => state.app.flags.isThumbnail)
 
     return <Canvas
         className="np-w-full np-h-full"
         // style={{ display: 'block' }}
+        orthographic={isThumbnail}
         onCreated={({ camera, scene, controls }) => {
             scene.up.set(0, 0, 1)
             camera.up.set(0, 0, 1)
@@ -112,7 +109,6 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
             clearInterface()
         }}
     >
-        {/* <color attach="background" args={[0.9333333333, 0.9490196078, 0.9490196078]} /> */}
         <ambientLight intensity={0.4} />
         <directionalLight
             color={0xffffff}
@@ -120,14 +116,14 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
             position={[4, -6, 8]}
             castShadow={false}
         />
-        <GridModel />
+        {isThumbnail ? null : <GridModel />}
         <Suspense fallback={null}>
             <ContextModel />
         </Suspense>
         <Suspense fallback={null}>
             <DocumentModel modelUrl={solutionModelUrl} />
         </Suspense>
-        <OrbitControls />
+        {isThumbnail ? null : <OrbitControls />}
     </Canvas>
 }
 
