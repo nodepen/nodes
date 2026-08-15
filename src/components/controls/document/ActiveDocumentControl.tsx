@@ -1,5 +1,6 @@
 import { CircleButton } from '@/components/layout/CircleButton'
 import { COLORS } from '@/constants'
+import { useFlag } from '@/hooks/useFlag'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useCallbacks, useDispatch, useStore } from '@/store'
 import { saveDocument } from '@/store/utils/saveDocument'
@@ -10,6 +11,8 @@ const ActiveDocumentControl = () => {
     const [internalName, setInternalName] = useState(documentMeta.name ?? '')
 
     const isEditable = useIsEditable()
+
+    const hideDocumentMenu = useFlag('hideDocumentMenu')
 
     const { apply } = useDispatch()
     const { onClickHome } = useCallbacks()
@@ -131,13 +134,11 @@ const ActiveDocumentControl = () => {
                     </div>
                 </div>
                 <div className='np-h-full np-mr-2 np-flex np-flex-col np-justify-center np-items-center'>
-                    {isEditable ? (<div ref={menuButtonRef} className='np-w-6 np-h-6 np-hidden md:np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
+                    {!hideDocumentMenu ? (<div ref={menuButtonRef} className='np-w-6 np-h-6 np-hidden md:np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleOpenMenu}>
                         <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width="2" stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                             <path d="m19.5 8.25-7.5 7.5-7.5-7.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke"></path>
                         </svg>
-                    </div>) : (
-                        <div className='np-w-6' />
-                    )}
+                    </div>) : <div className='np-w-6' />}
                 </div>
             </div>
         </div>

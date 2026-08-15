@@ -276,20 +276,21 @@ export const initialState: NodesAppState = {
     },
     app: {
         features: {
-            saveNew: true,
-            saveCopy: true,
-            share: true,
-            export: true,
-            feedback: true,
-            controls: true,
-            versions: true
+            enableFileSave: true,
+            enableFileExport: true,
+            enableDocumentControls: true,
+            enableDocumentVersions: true,
+            enableShareButton: true,
+            enableFeedbackButton: true,
+            enableProfileButton: true
         },
         flags: {
             isEditable: true,
-            isTemporaryFork: false,
-            isPublicPreview: false,
-            isGeometryOnly: false,
-            isThumbnail: false
+            isThumbnail: false,
+            hideInterface: false,
+            hideDocumentMenu: false,
+            hideScript: false,
+            hideControls: false
         }
     },
     ui: {
@@ -300,7 +301,7 @@ export const initialState: NodesAppState = {
         sidebar: {
             isComponentLibraryOpen: false,
             isParameterLibraryOpen: false,
-            isDocumentControlsOpen: false
+            isDocumentControlsOpen: true
         },
         model: {
             mode: 'default',

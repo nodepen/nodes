@@ -657,9 +657,9 @@ let presence = {
 
 const flags = {
     isEditable: true,
-    isTemporaryFork: false,
-    isPublicPreview: true,
-    isGeometryOnly: false
+    // isThumbnail: true,
+    hideInterface: true,
+    hideScript: true
 }
 
 root.render(<StrictMode>

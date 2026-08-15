@@ -9,8 +9,6 @@ import { useFlag } from '@/hooks/useFlag'
 const DocumentView = (): React.ReactElement | null => {
     const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
-    const isGeometryOnly = useFlag('isGeometryOnly')
-
     const { setCameraPosition } = useDispatch()
 
     useEffect(() => {
@@ -33,10 +31,6 @@ const DocumentView = (): React.ReactElement | null => {
 
         setCameraPosition(width / 2 + offset, height / -2 - offset)
     }, [])
-
-    if (isGeometryOnly) {
-        return null
-    }
 
     return (
         <>

@@ -10,10 +10,17 @@ import NumberSlider from './number-slider/NumberSlider'
 import Panel from './panel/Panel'
 import ValueList from './value-list/ValueList'
 import BooleanToggle from './boolean-toggle/BooleanToggle'
+import { useFlag } from '@/hooks/useFlag'
 
-const NodesContainer = (): React.ReactElement => {
+const NodesContainer = (): React.ReactElement | null => {
     const nodes = useDocumentNodes()
     const templates = useStore((store) => store.templates, shallow)
+
+    const hideScript = useFlag('hideScript')
+
+    if (hideScript) {
+        return null
+    }
 
     return (
         <g id="np-nodes" className="np-pointer-events-auto">
