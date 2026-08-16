@@ -15,6 +15,7 @@ import { DocumentControlsGeometry } from './DocumentControlsGeometry'
 import { DocumentControlsValueList } from './DocumentControlsValueList'
 import { DocumentControlsBooleanToggle } from './DocumentControlsBooleanToggle'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { useFlag } from '@/hooks/useFlag'
 
 type DocumentControlsInputProps = {
     nodeInstanceId: string
@@ -25,6 +26,10 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
     const { apply, moveControl } = useDispatch()
 
     const isEditable = useIsEditable()
+
+    const isControlsEditable = useFlag('isControlsEditable')
+
+    const hideScript = useFlag('hideScript')
 
     const { currentLabel } = usePortLabel(nodeInstanceId, portInstanceId)
     const portTemplate = usePortTemplate(nodeInstanceId, portInstanceId)
@@ -175,32 +180,33 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     console.log(`🐍 Tried to render input for number slider with no config!`)
                     return null
                 }
-                return <DocumentControlsNumberSlider nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} config={numberSliderConfig} />
+                return <DocumentControlsNumberSlider nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} config={numberSliderConfig} isDisabled={!isControlsEditable} />
             }
             case 'value-list': {
                 if (!valueListConfig) {
                     console.log(`🐍 Tried to render input for value list with no config!`)
                     return null
                 }
-                return <DocumentControlsValueList nodeInstanceId={nodeInstanceId} config={valueListConfig} />
+                return <DocumentControlsValueList nodeInstanceId={nodeInstanceId} config={valueListConfig} isDisabled={!isControlsEditable} />
             }
             case 'boolean-toggle': {
-                return <DocumentControlsBooleanToggle nodeInstanceId={nodeInstanceId} />
+                return <DocumentControlsBooleanToggle nodeInstanceId={nodeInstanceId} isDisabled={!isControlsEditable} />
             }
             case 'generic-node':
             case 'generic-parameter': {
                 switch (valueType) {
                     case 'boolean': {
-                        return <DocumentControlsBoolean nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+                        return <DocumentControlsBoolean nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} isDisabled={!isControlsEditable} />
                     }
                     case 'number':
                     case 'integer':
                     case 'text':
                     case 'string': {
                         return <input
-                            className="np-w-full np-h-5 np-pl-1 np-rounded-sm hover:np-bg-grey np-text-xs np-text-dark np-font-panel placeholder:np-text-grey-2 focus:np-outline-none -np-translate-y-1"
+                            className={`${isControlsEditable ? 'hover:np-bg-grey np-text-dark' : 'np-text-grey-3'} np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1`}
                             value={internalValue}
-                            placeholder={`Set ${valueType} value`}
+                            placeholder={`${isControlsEditable ? 'Set' : 'Unset'} ${valueType} value`}
+                            disabled={!isControlsEditable}
                             onChange={handleChange}
                             onKeyDown={handleKeyDown}
                             onFocus={handleFocus}
@@ -216,7 +222,7 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     case 'extrusion':
                     case 'brep':
                     case 'box':
-                        return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} />
+                        return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isControlsEditable} />
                     case 'reference':
                     default:
                         return null
@@ -241,11 +247,11 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     onBlur={handleLabelBlur}
                 />
                 <div className="np-mr-0.5 np-pr-1 np-flex np-items-center">
-                    <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleLocateSource}>
+                    {!hideScript ? (<div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleLocateSource}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
                             <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                         </svg>
-                    </div>
+                    </div>) : null}
                     {isEditable ? (<>
                         <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleMoveUp}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">

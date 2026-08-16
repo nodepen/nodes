@@ -7,15 +7,20 @@ import { usePageSpaceToOverlaySpace } from '@/hooks'
 type DocumentControlsValueListProps = {
     nodeInstanceId: string
     config: NodePen.ValueListConfig
+    isDisabled?: boolean
 }
 
-export const DocumentControlsValueList = ({ nodeInstanceId, config }: DocumentControlsValueListProps) => {
+export const DocumentControlsValueList = ({ nodeInstanceId, config, isDisabled }: DocumentControlsValueListProps) => {
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
     const currentLabel = config.items.find((item) => item.isSelected)?.name ?? ''
 
     const handleClick = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        if (isDisabled) {
+            return
+        }
+
         if (e.button !== 0) {
             return
         }
@@ -36,19 +41,19 @@ export const DocumentControlsValueList = ({ nodeInstanceId, config }: DocumentCo
                 }
             }
         })
-    }, [apply, pageSpaceToOverlaySpace, nodeInstanceId])
+    }, [apply, pageSpaceToOverlaySpace, nodeInstanceId, isDisabled])
 
     return (
         <div
-            className="np-w-full np-h-5 np-pl-1 np-pr-2 np-flex np-items-center np-justify-between np-rounded-sm hover:np-bg-grey hover:np-cursor-pointer"
+            className={`np-w-full np-h-5 np-pl-1 np-pr-2 np-flex np-items-center np-justify-between np-rounded-sm ${isDisabled ? '' : 'hover:np-bg-grey hover:np-cursor-pointer'}`}
             onClick={handleClick}
         >
-            <p className="np-flex-grow np-min-w-0 np-truncate np-text-xs np-text-dark np-font-panel np-select-none">
+            <p className={`np-flex-grow np-min-w-0 np-truncate np-text-xs np-font-panel np-select-none ${isDisabled ? 'np-text-grey-3' : 'np-text-dark'}`}>
                 {currentLabel}
             </p>
-            <svg width="12" height="8" viewBox="0 0 12 8" className="np-flex-shrink-0 np-ml-1 np-mr-0.5">
+            {!isDisabled ? (<svg width="12" height="8" viewBox="0 0 12 8" className="np-flex-shrink-0 np-ml-1 np-mr-0.5">
                 <polygon points="0,1.33 12,1.33 6,6.67" fill={COLORS.DARK} stroke={COLORS.DARK} strokeWidth={2} strokeLinejoin="round" />
-            </svg>
+            </svg>) : null}
         </div>
     )
 }

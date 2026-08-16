@@ -1,8 +1,9 @@
 import { COLORS } from '@/constants'
-import { useDispatch, useStore } from '@/store'
+import { useCallbacks, useDispatch, useStore } from '@/store'
 import { useCallback, useRef } from 'react'
 import { shallow } from 'zustand/shallow'
 import { DocumentControlsInput } from './DocumentControlsInput'
+import { useFlag } from '@/hooks/useFlag'
 
 type ControlsProps = {
     isEditable?: boolean
@@ -10,6 +11,10 @@ type ControlsProps = {
 }
 export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
     const { apply } = useDispatch()
+
+    const { onClickRunDocument } = useCallbacks()
+
+    const hideRunButton = useFlag('hideControlsRunButton')
 
     const closeButtonRef = useRef<HTMLDivElement>(null)
 
@@ -20,6 +25,8 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
     }, [apply])
 
     const inputControls = useStore((state) => [...state.document.controls.input].sort((a, b) => a.order - b.order), shallow)
+
+    const showRunButton = inputControls.length > 0 && !hideRunButton
 
     return <div className="np-w-full np-h-full np-flex np-flex-col np-justify-start np-items-center">
         {!hideHeader ? (<div className="np-w-full np-pl-0.5 np-h-8 np-flex np-items-center np-justify-start">
@@ -39,7 +46,7 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
                 </svg>
             </div>
         </div>) : null}
-        <div className="np-w-full np-grow np-flex np-flex-col np-items-center np-pt-2 np-pb-2 np-overflow-y-auto">
+        <div className="np-w-full np-grow np-flex np-flex-col np-items-center np-pt-2 np-overflow-y-auto">
             {inputControls.length ? inputControls.map((control) => (
                 <DocumentControlsInput
                     key={`${control.ref.nodeInstanceId}-${control.ref.portInstanceId}`}
@@ -52,10 +59,20 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
                         No controls set.
                     </p>
                     <p className="np-text-xs np-text-dark np-font-panel">
-                        Try pinning a param or number slider!
+                        Try adding a param or number slider!
                     </p>
                 </div>
             )}
+            {showRunButton ? (<div className='np-w-full np-min-h-10 np-sticky np-bottom-0 np-flex np-flex-col np-justify-end np-bg-light'>
+                <div className='np-w-full np-h-8 np-rounded-md np-border-2 np-p-0.5 np-group hover:np-cursor-pointer' onClick={() => onClickRunDocument?.(useStore.getState())}>
+                    <div className='np-w-full np-h-full np-rounded-sm np-flex np-items-center np-justify-center group-hover:np-bg-grey'>
+                        <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-4'>
+                            <path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                        </svg>
+                        <p className='np-ml-1 np-pt-0.5 np-text-dark np-text-sm np-font-panel'>Launch Script</p>
+                    </div>
+                </div>
+            </div>) : null}
         </div>
     </div>
 }

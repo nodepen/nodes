@@ -7,6 +7,7 @@ import { expireSolution } from '@/store/utils'
 type DocumentControlsBooleanProps = {
     nodeInstanceId: string
     portInstanceId: string
+    isDisabled?: boolean
 }
 
 type RadioProps = {
@@ -26,20 +27,34 @@ const Radio = ({ label, selected, onClick }: RadioProps) => (
     </div>
 )
 
-export const DocumentControlsBoolean = ({ nodeInstanceId, portInstanceId }: DocumentControlsBooleanProps) => {
+export const DocumentControlsBoolean = ({ nodeInstanceId, portInstanceId, isDisabled }: DocumentControlsBooleanProps) => {
     const { apply } = useDispatch()
 
     const currentValue = useStore((state) => tryGetSingleValue(state.document.nodes[nodeInstanceId]?.values[portInstanceId])?.value)
 
     const commitValue = useCallback((next: 'true' | 'false') => {
+        if (isDisabled) {
+            return
+        }
+
         apply((state) => {
             state.document.nodes[nodeInstanceId].values[portInstanceId] = createSingleValue(next, 'boolean')
             expireSolution(state)
         })
-    }, [apply, nodeInstanceId, portInstanceId])
+    }, [apply, nodeInstanceId, portInstanceId, isDisabled])
 
     const handleSelectTrue = useCallback(() => commitValue('true'), [commitValue])
     const handleSelectFalse = useCallback(() => commitValue('false'), [commitValue])
+
+    if (isDisabled) {
+        return (
+            <div className="np-w-full np-pl-1 np-flex np-items-center">
+                <p className="np-text-xs np-text-grey-3 np-font-panel np-select-none">
+                    {currentValue === 'true' ? 'True' : 'False'}
+                </p>
+            </div>
+        )
+    }
 
     return (
         <div className="np-w-full np-pl-1 np-flex np-items-center np-gap-4">

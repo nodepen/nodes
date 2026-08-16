@@ -171,6 +171,10 @@ const ModelView = () => {
     }, [])
 
     const gutterLeft = useStore((state) => {
+        if (!state.app.flags.isEditable) {
+            return 0
+        }
+
         const { isComponentLibraryOpen, isParameterLibraryOpen } = state.ui.sidebar
         return isComponentLibraryOpen || isParameterLibraryOpen ? 280 : 74
     })
@@ -239,7 +243,7 @@ const ModelView = () => {
                                 <div className="np-w-full np-h-full np-absolute np-flex np-flex-col np-items-start np-justify-end np-invisible group-hover/container:np-visible np-z-30 np-pointer-events-none">
                                     {!isThumbnail ? (<div className={`${isExpanded ? 'np-w-full np-pl-6 np-pb-6' : 'np-w-16 np-pl-[29px] np-pb-4'} np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5`} style={{ marginLeft: `${controlsMarginLeft}px` }}>
                                         <div className="np-flex np-items-center np-gap-1">
-                                            <CircleButton shadow tooltip={isExpanded ? 'Hide 3D Model' : 'Show 3D Model'} onClick={() => setIsExpanded((value) => !value)}>
+                                            {!hideScript ? (<CircleButton shadow tooltip={isExpanded ? 'Hide 3D Model' : 'Show 3D Model'} onClick={() => setIsExpanded((value) => !value)}>
                                                 {isExpanded ? (
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-4">
                                                         <path d="M9 9V4.5M9 9H4.5M9 9 3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5 5.25 5.25" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -249,7 +253,7 @@ const ModelView = () => {
                                                         <path d="M3.75 3.75v4.5m0-4.5h4.5m-4.5 0L9 9M3.75 20.25v-4.5m0 4.5h4.5m-4.5 0L9 15M20.25 3.75h-4.5m4.5 0v4.5m0-4.5L15 9m5.25 11.25h-4.5m4.5 0v-4.5m0 4.5L15 15" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                                     </svg>
                                                 )}
-                                            </CircleButton>
+                                            </CircleButton>) : null}
                                             {isExpanded ? (<>
                                                 <CircleButton shadow onClick={toggleGrid} tooltip={gridButtonTooltip}>
                                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-5">

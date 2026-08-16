@@ -15,17 +15,18 @@ export const DocumentContextMenu = ({ position }: Props) => {
     const isEditable = useIsEditable()
 
     const enableFileSave = useFeatureFlag('enableFileSave')
+    const enableFileSaveCopy = useFeatureFlag('enableFileSaveCopy')
     const enableFileExport = useFeatureFlag('enableFileExport')
     const enableVersions = useFeatureFlag('enableDocumentVersions')
 
     return <MenuBody position={position}>
         {enableFileSave && <NewScriptButton documentId={documentId} />}
-        {enableFileSave && <SaveCopyButton documentId={documentId} />}
+        {enableFileSaveCopy && <SaveCopyButton documentId={documentId} />}
         {enableFileExport && <ExportButton documentId={documentId} />}
-        {(enableFileSave || enableFileExport) && <MenuDivider />}
+        {enableVersions && <MenuDivider />}
         {enableVersions && <ViewVersionsButton documentId={documentId} />}
         {enableVersions && <SaveVersionButton documentId={documentId} />}
-        {enableVersions && <MenuDivider />}
+        {isEditable && <MenuDivider />}
         {isEditable && <SettingsButton documentId={documentId} />}
     </MenuBody>
 }

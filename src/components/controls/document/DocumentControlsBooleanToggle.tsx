@@ -6,6 +6,7 @@ import type { BooleanToggleConfig } from '@/types'
 
 type DocumentControlsBooleanToggleProps = {
     nodeInstanceId: string
+    isDisabled?: boolean
 }
 
 type RadioProps = {
@@ -25,20 +26,34 @@ const Radio = ({ label, selected, onClick }: RadioProps) => (
     </div>
 )
 
-export const DocumentControlsBooleanToggle = ({ nodeInstanceId }: DocumentControlsBooleanToggleProps) => {
+export const DocumentControlsBooleanToggle = ({ nodeInstanceId, isDisabled }: DocumentControlsBooleanToggleProps) => {
     const { apply } = useDispatch()
 
     const currentValue = useStore((state) => (state.document.nodes[nodeInstanceId].nodeConfiguration as BooleanToggleConfig)?.value ?? false)
 
     const commitValue = useCallback((next: 'true' | 'false') => {
+        if (isDisabled) {
+            return
+        }
+
         apply((state) => {
             ; (state.document.nodes[nodeInstanceId].nodeConfiguration as BooleanToggleConfig).value = next === 'true'
             expireSolution(state)
         })
-    }, [apply, nodeInstanceId])
+    }, [apply, nodeInstanceId, isDisabled])
 
     const handleSelectTrue = useCallback(() => commitValue('true'), [commitValue])
     const handleSelectFalse = useCallback(() => commitValue('false'), [commitValue])
+
+    if (isDisabled) {
+        return (
+            <div className="np-w-full np-pl-1 np-flex np-items-center">
+                <p className="np-text-xs np-text-grey-3 np-font-panel np-select-none">
+                    {currentValue ? 'True' : 'False'}
+                </p>
+            </div>
+        )
+    }
 
     return (
         <div className="np-w-full np-pl-1 np-flex np-items-center np-gap-4">

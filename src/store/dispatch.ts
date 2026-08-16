@@ -17,6 +17,7 @@ import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 import { createList } from '@/utils/data-trees'
 import { tryGetControl } from '@/utils/controls'
 import { getValidGeometryForType } from '@/utils/geometry-types'
+import { saveDocument } from './utils/saveDocument'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -699,6 +700,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     })
 
                     state.ui.sidebar.isDocumentControlsOpen = true
+
+                    saveDocument(state)
                 },
                 false,
                 'controls/addControl'
@@ -723,6 +726,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     })
 
                     state.ui.sidebar.isDocumentControlsOpen = true
+
+                    saveDocument(state)
                 },
                 false,
                 'controls/removeControl'
@@ -752,6 +757,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     const currentOrder = control.order
                     control.order = targetControl.order
                     targetControl.order = currentOrder
+
+                    saveDocument(state)
                 },
                 false,
                 'controls/moveControl'

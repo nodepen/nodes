@@ -22,7 +22,7 @@ export const SaveVersionButton = ({ documentId }: Props) => {
 
     const icon = (
         <svg {...STYLES.BUTTON.MEDIUM}>
-            <path d="M17.593 3.322c1.1.128 2.192.297 3.223.55.34.083.647.324.647.706v14.36a.75.75 0 0 1-1.075.676L12 16.28l-8.388 4.334A.75.75 0 0 1 2.537 19.94V5.578c0-.382.306-.622.646-.706a48.11 48.11 0 0 1 3.334-.55m9.076 0a48.11 48.11 0 0 0-9.076 0" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+            <path d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
         </svg>
     )
 

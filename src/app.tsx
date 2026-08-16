@@ -35,9 +35,9 @@ export const NodesApp = ({
     }, [document])
 
     useEffect(() => {
-        apply((state) => {
-            state.ui.sidebar.isDocumentControlsOpen = (document.controls.input.length > 0) || (document.controls.output.length > 0)
-        })
+        // apply((state) => {
+        //     state.ui.sidebar.isDocumentControlsOpen = (document.controls.input.length > 0) || (document.controls.output.length > 0)
+        // })
     }, [document.id])
 
     useEffect(() => {

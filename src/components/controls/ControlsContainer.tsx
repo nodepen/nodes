@@ -27,6 +27,8 @@ const ControlsContainer = (): React.ReactElement | null => {
     const hideInterface = useFlag('hideInterface')
 
     const hideControls = useFlag('hideControls')
+    const hideControlsRunButton = useFlag('hideControlsRunButton')
+
     const enableDocumentControls = useFeatureFlag('enableDocumentControls')
 
     const isEditable = useIsEditable()
@@ -102,7 +104,7 @@ const ControlsContainer = (): React.ReactElement | null => {
         setDocumentControlsPosition([left + width / 2, top + height / 2])
     }, [])
     const documentControlsHeight = useStore((state) => {
-        return 4 + 32 + 8 + (clamp(state.document.controls.input.length, 1, 6) * 46) + 8
+        return 4 + 32 + 8 + (clamp(state.document.controls.input.length, 1, 6) * 46) + 8 + ((state.document.controls.input.length > 0 && !hideControlsRunButton) ? 32 : 0)
     })
 
     const statusMessages = useStore((state) => {

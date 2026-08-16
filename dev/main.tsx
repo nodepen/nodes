@@ -658,8 +658,8 @@ let presence = {
 const flags = {
     isEditable: true,
     // isThumbnail: true,
-    hideInterface: true,
-    hideScript: true
+    hideInterface: false,
+    hideScript: false
 }
 
 root.render(<StrictMode>

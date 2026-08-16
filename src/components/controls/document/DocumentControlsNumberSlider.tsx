@@ -11,9 +11,10 @@ type DocumentControlsNumberSliderProps = {
     nodeInstanceId: string
     portInstanceId: string
     config: NodePen.NumberSliderConfig
+    isDisabled?: boolean
 }
 
-export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, config }: DocumentControlsNumberSliderProps) => {
+export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, config, isDisabled }: DocumentControlsNumberSliderProps) => {
     const { min, max, precision } = config
 
     const { apply } = useDispatch()
@@ -129,6 +130,16 @@ export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, c
 
     const t = clamp(getDomainParameter([min, max], currentValue), 0, 1)
     const valueOnLeft = t > 0.5
+
+    if (isDisabled) {
+        return (
+            <div className="np-w-full np-pl-1 np-flex np-items-center">
+                <p className="np-text-xs np-text-grey-3 np-font-panel np-select-none">
+                    {currentValue.toFixed(precision)}
+                </p>
+            </div>
+        )
+    }
 
     return (
         <div className="np-w-full np-flex np-items-center np-gap-1">

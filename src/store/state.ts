@@ -194,8 +194,13 @@ export type NodesAppState = {
 }
 
 export type NodesAppCallbacks = {
+    // Document lifecycle
     onSaveDocument?: (state: NodesAppState) => void
     onModelUpload?: (state: NodesAppState) => void
+    onUndo?: (state: NodesAppState) => void
+    onRedo?: (state: NodesAppState) => void
+    onThumbnailReady?: (state: NodesAppState) => void,
+    // Interface buttons
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
@@ -206,15 +211,14 @@ export type NodesAppCallbacks = {
     onClickExport?: (state: NodesAppState) => void
     onClickViewVersions?: (state: NodesAppState) => void
     onClickSaveVersion?: (state: NodesAppState) => void
+    onClickRunDocument?: (state: NodesAppState) => void
+    // Presence
     onCursorMove?: (state: NodesAppState) => void,
     onDrag?: (state: NodesAppState) => void,
     onDragEnd?: (state: NodesAppState) => void,
     onSelectionUpdated?: (state: NodesAppState) => void,
     onSelectionRegionUpdated?: (state: NodesAppState) => void,
     onWiresUpdated?: (state: NodesAppState) => void,
-    onThumbnailReady?: (state: NodesAppState) => void,
-    onUndo?: (state: NodesAppState) => void
-    onRedo?: (state: NodesAppState) => void
 }
 
 export const initialState: NodesAppState = {
@@ -277,6 +281,7 @@ export const initialState: NodesAppState = {
     app: {
         features: {
             enableFileSave: true,
+            enableFileSaveCopy: true,
             enableFileExport: true,
             enableDocumentControls: true,
             enableDocumentVersions: true,
