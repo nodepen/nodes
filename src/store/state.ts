@@ -199,7 +199,8 @@ export type NodesAppCallbacks = {
     onModelUpload?: (state: NodesAppState) => void
     onUndo?: (state: NodesAppState) => void
     onRedo?: (state: NodesAppState) => void
-    onThumbnailReady?: (state: NodesAppState) => void,
+    onThumbnailReady?: (state: NodesAppState) => void
+    onHomePageReady?: (state: NodesAppState) => void
     // Interface buttons
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void

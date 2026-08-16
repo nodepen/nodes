@@ -88,6 +88,11 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
 
                 setObjectsByDocumentNodeId(res)
 
+                if (state.app.flags.isHomePage) {
+                    state.internalCallbacks.zoomToExtents?.()
+                    state.callbacks.onHomePageReady?.(state)
+                }
+
                 if (state.app.flags.isThumbnail) {
                     const s = current(state)
                     const callback = s.callbacks.onThumbnailReady
@@ -116,7 +121,7 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                         }
 
                         callback?.(s)
-                    }, 500);
+                    }, 1000);
                 }
             })
         })

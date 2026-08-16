@@ -28,7 +28,7 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
 
     const showRunButton = inputControls.length > 0 && !hideRunButton
 
-    return <div className="np-w-full np-h-full np-flex np-flex-col np-justify-start np-items-center">
+    return <div className="np-w-full np-h-full np-hidden md:np-flex np-flex-col np-justify-start np-items-center">
         {!hideHeader ? (<div className="np-w-full np-pl-0.5 np-h-8 np-flex np-items-center np-justify-start">
             <div className='np-w-8 np-h-8 np-ml-1 np-p-0.5'>
                 <div className='np-w-full np-h-full  np-rounded-full np-flex np-items-center np-justify-center np-border-2 np-border-dark'>

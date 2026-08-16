@@ -3,8 +3,10 @@ export type AppFlags = {
     isEditable?: boolean
     // If false, prevents all client-side
     isControlsEditable?: boolean
-    // If true, will adjust camera on load, set model view to full bleed, and fire `onThumbnailReady`
+    // If true, will adjust camera on load to isometric position, set model view to full bleed, and fire `onThumbnailReady`
     isThumbnail?: boolean
+    // If true, will zoom camera to extends on load, and set model view to full bleed
+    isHomePage?: boolean
     // If true, will hide all UI elements except for the graph or model view, if either is enabled.
     hideInterface?: boolean
     // If true, the document-level menu button will be hidden

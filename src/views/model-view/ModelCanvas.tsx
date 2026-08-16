@@ -7,6 +7,7 @@ import GridModel from "./components/grid-model/GridModel"
 import { useDispatch, useStore } from "@/store"
 import ContextModel from "./components/context-model/ContextModel"
 import { tryParseUserStrings } from "@/utils/three/tryParseUserStrings"
+import { useFlag } from "@/hooks/useFlag"
 
 THREE.Object3D.DEFAULT_UP.set(0, 0, 1)
 
@@ -17,7 +18,8 @@ type ModelCanvasProps = {
 const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
     const { clearInterface } = useDispatch()
 
-    const isThumbnail = useStore((state) => state.app.flags.isThumbnail)
+    const isThumbnail = useFlag('isThumbnail')
+    const isHomePage = useFlag('isHomePage')
 
     return <Canvas
         className="np-w-full np-h-full"
@@ -116,7 +118,7 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
             position={[4, -6, 8]}
             castShadow={false}
         />
-        {isThumbnail ? null : <GridModel />}
+        {isThumbnail || isHomePage ? null : <GridModel />}
         <Suspense fallback={null}>
             <ContextModel />
         </Suspense>
