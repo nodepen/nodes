@@ -49,7 +49,8 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
     const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
     const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
-    const flags = useStore((state) => state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.flags?.sort() ?? [])
+    const flags = useStore((state) => state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.flags ?? [])
+    const sortedFlags = [...flags].sort()
 
     if (!position) {
         console.log(`🐍 Missing port position for node [${nodeInstanceId}]`)
@@ -99,7 +100,7 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
             >
                 {template.nickName}
             </text>
-            {flags.map((flag, i) => {
+            {sortedFlags.map((flag, i) => {
                 const key = `${direction}-flag-${flag}`
 
                 const x = labelPosition.x + (direction === 'input' ? 4 : 0) + (((template.nickName.length * 15) + ((i + (direction === 'input' ? 0 : 1)) * 22)) * (direction === 'input' ? 1 : -1))

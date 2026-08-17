@@ -1,4 +1,5 @@
 import React, { useCallback, useLayoutEffect, useRef, useState } from 'react'
+import { shallow } from 'zustand/shallow'
 import { Layer } from '@/views/common'
 import { useCallbacks, useDispatch, useStore } from '$'
 import {
@@ -110,7 +111,7 @@ const ControlsContainer = (): React.ReactElement | null => {
     const statusMessages = useStore((state) => {
         const { document, model } = state.solution.messages ?? {}
         return [document, model].filter((message) => !!message)
-    })
+    }, shallow)
     const [activeStatusMessage, setActiveStatusMessage] = useState<string | null>(null)
 
     const statusColors = {

@@ -81,37 +81,109 @@ export const NodesApp = ({
 
     useEffect(() => {
         apply((state) => {
-            state.presence.sessions = presence?.sessions ?? {}
+            for (const key of Object.keys(state.presence.sessions)) {
+                const nextEntry = presence?.sessions?.[key]
+                if (nextEntry === undefined) {
+                    delete state.presence.sessions[key]
+                } else if (JSON.stringify(state.presence.sessions[key]) !== JSON.stringify(nextEntry)) {
+                    state.presence.sessions[key] = nextEntry
+                }
+            }
+            for (const [key, nextEntry] of Object.entries(presence?.sessions ?? {})) {
+                if (state.presence.sessions[key] === undefined) {
+                    state.presence.sessions[key] = nextEntry
+                }
+            }
         })
     }, [presence?.sessions])
 
     useEffect(() => {
         apply((state) => {
-            state.presence.cursors = presence?.cursors ?? {}
+            for (const key of Object.keys(state.presence.cursors)) {
+                const nextEntry = presence?.cursors?.[key]
+                if (nextEntry === undefined) {
+                    delete state.presence.cursors[key]
+                } else if (JSON.stringify(state.presence.cursors[key]) !== JSON.stringify(nextEntry)) {
+                    state.presence.cursors[key] = nextEntry
+                }
+            }
+            for (const [key, nextEntry] of Object.entries(presence?.cursors ?? {})) {
+                if (state.presence.cursors[key] === undefined) {
+                    state.presence.cursors[key] = nextEntry
+                }
+            }
         })
     }, [presence?.cursors])
 
     useEffect(() => {
         apply((state) => {
-            state.presence.cameras = presence?.cameras ?? {}
+            for (const key of Object.keys(state.presence.cameras)) {
+                const nextEntry = presence?.cameras?.[key]
+                if (nextEntry === undefined) {
+                    delete state.presence.cameras[key]
+                } else if (JSON.stringify(state.presence.cameras[key]) !== JSON.stringify(nextEntry)) {
+                    state.presence.cameras[key] = nextEntry
+                }
+            }
+            for (const [key, nextEntry] of Object.entries(presence?.cameras ?? {})) {
+                if (state.presence.cameras[key] === undefined) {
+                    state.presence.cameras[key] = nextEntry
+                }
+            }
         })
     }, [presence?.cameras])
 
     useEffect(() => {
         apply((state) => {
-            state.presence.selection = presence?.selection ?? {}
+            for (const key of Object.keys(state.presence.selection)) {
+                const nextEntry = presence?.selection?.[key]
+                if (nextEntry === undefined) {
+                    delete state.presence.selection[key]
+                } else if (JSON.stringify(state.presence.selection[key]) !== JSON.stringify(nextEntry)) {
+                    state.presence.selection[key] = nextEntry
+                }
+            }
+            for (const [key, nextEntry] of Object.entries(presence?.selection ?? {})) {
+                if (state.presence.selection[key] === undefined) {
+                    state.presence.selection[key] = nextEntry
+                }
+            }
         })
     }, [presence?.selection])
 
     useEffect(() => {
         apply((state) => {
-            state.presence.selectionRegions = presence?.selectionRegions ?? {}
+            for (const key of Object.keys(state.presence.selectionRegions)) {
+                const nextEntry = presence?.selectionRegions?.[key]
+                if (nextEntry === undefined) {
+                    delete state.presence.selectionRegions[key]
+                } else if (JSON.stringify(state.presence.selectionRegions[key]) !== JSON.stringify(nextEntry)) {
+                    state.presence.selectionRegions[key] = nextEntry
+                }
+            }
+            for (const [key, nextEntry] of Object.entries(presence?.selectionRegions ?? {})) {
+                if (state.presence.selectionRegions[key] === undefined) {
+                    state.presence.selectionRegions[key] = nextEntry
+                }
+            }
         })
     }, [presence?.selectionRegions])
 
     useEffect(() => {
         apply((state) => {
-            state.presence.wires = presence?.wires ?? {}
+            for (const key of Object.keys(state.presence.wires)) {
+                const nextEntry = presence?.wires?.[key]
+                if (nextEntry === undefined) {
+                    delete state.presence.wires[key]
+                } else if (JSON.stringify(state.presence.wires[key]) !== JSON.stringify(nextEntry)) {
+                    state.presence.wires[key] = nextEntry
+                }
+            }
+            for (const [key, nextEntry] of Object.entries(presence?.wires ?? {})) {
+                if (state.presence.wires[key] === undefined) {
+                    state.presence.wires[key] = nextEntry
+                }
+            }
         })
     }, [presence?.wires])
 

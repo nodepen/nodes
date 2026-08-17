@@ -38,8 +38,8 @@ export const commitPaste = (state: NodesAppState, config: PasteConfig): void => 
         // Update sources
         for (const inputInstanceId of Object.keys(node.sources)) {
             node.sources[inputInstanceId] = node.sources[inputInstanceId].map((source) => ({
-                nodeInstanceId: newInstanceIdMap[source.nodeInstanceId],
-                portInstanceId: newInstanceIdMap[source.portInstanceId]
+                nodeInstanceId: newInstanceIdMap[source.nodeInstanceId] ?? source.nodeInstanceId,
+                portInstanceId: newInstanceIdMap[source.portInstanceId] ?? source.portInstanceId
             }))
         }
 

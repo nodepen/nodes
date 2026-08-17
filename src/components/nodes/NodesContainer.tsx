@@ -59,10 +59,12 @@ const useDocumentNodes = (): NodePen.DocumentNode[] => {
             const previousNodeIds = Object.keys(previousNodes)
             const currentNodeIds = Object.keys(currentNodes)
 
-            const isSameLength = () => previousNodeIds.length === currentNodeIds.length
-            const isSameValues = () => previousNodeIds.every((id) => currentNodeIds.includes(id))
+            if (previousNodeIds.length !== currentNodeIds.length) {
+                return false
+            }
 
-            return isSameLength() && isSameValues()
+            const currentNodeIdSet = new Set(currentNodeIds)
+            return previousNodeIds.every((id) => currentNodeIdSet.has(id))
         }
     )
 

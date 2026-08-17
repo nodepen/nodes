@@ -3,9 +3,10 @@ import { COLORS } from '@/constants'
 import { useCallbacks, useStore } from '@/store'
 import { clamp } from '@/utils'
 import React, { useCallback } from 'react'
+import { shallow } from 'zustand/shallow'
 
 const SessionUsers = () => {
-    const sessions = useStore((state) => Object.entries((state.presence.sessions)).filter(([sessionId]) => state.presence.sessionId !== sessionId))
+    const sessions = useStore((state) => Object.entries((state.presence.sessions)).filter(([sessionId]) => state.presence.sessionId !== sessionId), shallow)
 
     const { onClickProfile, onClickShare } = useCallbacks()
 
