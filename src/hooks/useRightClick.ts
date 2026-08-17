@@ -4,9 +4,12 @@ import { useImperativeEvent } from "./useImperativeEvent"
 
 export const useRightClick = <T extends SVGGElement | null>(
     onRightClick: (e: PointerEvent) => void,
-    capture?: boolean
+    capture?: boolean,
+    externalRef?: React.RefObject<T>
 ): React.RefObject<T | null> => {
-    const targetRef = useRef<T>(null)
+    const internalRef = useRef<T>(null)
+
+    const targetRef = externalRef ?? internalRef
 
     const MAX_DISTANCE_DELTA = 15
     const MAX_TIME_DELTA_MS = 600

@@ -8,6 +8,7 @@ import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { useRightClick } from '@/hooks/useRightClick'
 
 type GenericParameterBodyProps = {
     node: NodePen.DocumentNode
@@ -31,7 +32,7 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
         lastPointerType.current = e.pointerType
     }, [])
 
-    const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
+    const handleContextMenu = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
         e.preventDefault()
 
@@ -63,6 +64,8 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
         })
     }, [isEditable])
 
+    const rightClickRef = useRightClick(handleContextMenu, true)
+
     const handleLongHover = useCallback((e: PointerEvent): void => {
         const { pageX, pageY } = e
 
@@ -90,19 +93,21 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
     const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
     return (
-        <g id={`generic-param-body-${node.instanceId}`} ref={longHoverTarget} onPointerDown={handlePointerDown} onContextMenu={handleContextMenu}>
-            <rect
-                x={position.x}
-                y={position.y}
-                width={width}
-                height={height}
-                rx={7}
-                ry={7}
-                fill={presenceColor ?? sessionColor}
-                stroke={COLORS.DARK}
-                strokeWidth={2}
-                pointerEvents="auto"
-            />
+        <g id={`generic-param-body-${node.instanceId}`} ref={longHoverTarget} onPointerDown={handlePointerDown}>
+            <g ref={rightClickRef}>
+                <rect
+                    x={position.x}
+                    y={position.y}
+                    width={width}
+                    height={height}
+                    rx={7}
+                    ry={7}
+                    fill={presenceColor ?? sessionColor}
+                    stroke={COLORS.DARK}
+                    strokeWidth={2}
+                    pointerEvents="auto"
+                />
+            </g>
         </g>
     )
 }

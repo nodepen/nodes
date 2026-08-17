@@ -7,6 +7,9 @@ import { getWireEditModalityFromEvent } from '@/utils/wires'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { current } from 'immer'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { useRightClick } from '@/hooks/useRightClick'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { useStore } from '$'
 
 export const usePort = (
     nodeInstanceId: string,
@@ -22,11 +25,17 @@ export const usePort = (
 
     const { __direction: direction, nickName } = portTemplate
 
-    const handleContextMenu = useCallback((e: MouseEvent): void => {
+    const handleContextMenu = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
         e.preventDefault()
 
         if (!isEditable) {
+            return
+        }
+
+        const nodeType = getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId])
+
+        if (nodeType !== 'generic-node') {
             return
         }
 
@@ -52,6 +61,8 @@ export const usePort = (
             }
         })
     }, [isEditable])
+
+    useRightClick(handleContextMenu, true, portRef)
 
     const handlePointerDown = useCallback((e: PointerEvent): void => {
         const { pageX, pageY, pointerId } = e

@@ -98,86 +98,95 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
             return
         }
 
-        const el = handles[type].current
-        const node = useStore.getState().document.nodes[nodeInstanceId]
+        switch (e.pointerType) {
+            case 'mouse': {
+                const el = handles[type].current
+                const node = useStore.getState().document.nodes[nodeInstanceId]
 
-        if (!el || !node) {
-            return
+                if (!el || !node) {
+                    return
+                }
+
+                e.stopPropagation()
+                clearSelection()
+
+                el.setPointerCapture(e.pointerId)
+
+                setDocumentCursor(type)
+
+                isResizing.current = true
+                activePointerId.current = e.pointerId
+                activeHandleType.current = type
+                initialPointerPosition.current = { pageX, pageY }
+                initialNodePosition.current = node.position
+                initialNodeDimensions.current = node.dimensions
+
+                switch (type) {
+                    case 'topRight': {
+                        maxDx.current = maxWidth - node.dimensions.width
+                        minDx.current = minWidth - node.dimensions.width
+                        maxDy.current = node.dimensions.height - minHeight
+                        minDy.current = node.dimensions.height - maxHeight
+                        break
+                    }
+                    case 'top': {
+                        maxDx.current = 0
+                        minDx.current = 0
+                        maxDy.current = node.dimensions.height - minHeight
+                        minDy.current = node.dimensions.height - maxHeight
+                        break
+                    }
+                    case 'topLeft': {
+                        maxDx.current = (minWidth - node.dimensions.width) * -1
+                        minDx.current = (maxWidth - node.dimensions.width) * -1
+                        maxDy.current = node.dimensions.height - minHeight
+                        minDy.current = node.dimensions.height - maxHeight
+                        break
+                    }
+                    case 'left': {
+                        maxDx.current = (minWidth - node.dimensions.width) * -1
+                        minDx.current = (maxWidth - node.dimensions.width) * -1
+                        maxDy.current = 0
+                        minDy.current = 0
+                        break
+                    }
+                    case 'bottomLeft': {
+                        maxDx.current = (minWidth - node.dimensions.width) * -1
+                        minDx.current = (maxWidth - node.dimensions.width) * -1
+                        maxDy.current = maxHeight - node.dimensions.height
+                        minDy.current = minHeight - node.dimensions.height
+                        break
+                    }
+                    case 'bottom': {
+                        maxDx.current = 0
+                        minDx.current = 0
+                        maxDy.current = maxHeight - node.dimensions.height
+                        minDy.current = minHeight - node.dimensions.height
+                        break
+                    }
+                    case 'bottomRight': {
+                        maxDx.current = maxWidth - node.dimensions.width
+                        minDx.current = minWidth - node.dimensions.width
+                        maxDy.current = maxHeight - node.dimensions.height
+                        minDy.current = minHeight - node.dimensions.height
+                        break
+                    }
+                    case 'right': {
+                        maxDx.current = maxWidth - node.dimensions.width
+                        minDx.current = minWidth - node.dimensions.width
+                        maxDy.current = 0
+                        minDy.current = 0
+                        break
+                    }
+                }
+
+                break
+            }
+            case 'pen':
+            case 'touch': {
+
+            }
         }
-
-        e.stopPropagation()
-        clearSelection()
-
-        el.setPointerCapture(e.pointerId)
-
-        setDocumentCursor(type)
-
-        isResizing.current = true
-        activePointerId.current = e.pointerId
-        activeHandleType.current = type
-        initialPointerPosition.current = { pageX, pageY }
-        initialNodePosition.current = node.position
-        initialNodeDimensions.current = node.dimensions
-
-        switch (type) {
-            case 'topRight': {
-                maxDx.current = maxWidth - node.dimensions.width
-                minDx.current = minWidth - node.dimensions.width
-                maxDy.current = node.dimensions.height - minHeight
-                minDy.current = node.dimensions.height - maxHeight
-                break
-            }
-            case 'top': {
-                maxDx.current = 0
-                minDx.current = 0
-                maxDy.current = node.dimensions.height - minHeight
-                minDy.current = node.dimensions.height - maxHeight
-                break
-            }
-            case 'topLeft': {
-                maxDx.current = (minWidth - node.dimensions.width) * -1
-                minDx.current = (maxWidth - node.dimensions.width) * -1
-                maxDy.current = node.dimensions.height - minHeight
-                minDy.current = node.dimensions.height - maxHeight
-                break
-            }
-            case 'left': {
-                maxDx.current = (minWidth - node.dimensions.width) * -1
-                minDx.current = (maxWidth - node.dimensions.width) * -1
-                maxDy.current = 0
-                minDy.current = 0
-                break
-            }
-            case 'bottomLeft': {
-                maxDx.current = (minWidth - node.dimensions.width) * -1
-                minDx.current = (maxWidth - node.dimensions.width) * -1
-                maxDy.current = maxHeight - node.dimensions.height
-                minDy.current = minHeight - node.dimensions.height
-                break
-            }
-            case 'bottom': {
-                maxDx.current = 0
-                minDx.current = 0
-                maxDy.current = maxHeight - node.dimensions.height
-                minDy.current = minHeight - node.dimensions.height
-                break
-            }
-            case 'bottomRight': {
-                maxDx.current = maxWidth - node.dimensions.width
-                minDx.current = minWidth - node.dimensions.width
-                maxDy.current = maxHeight - node.dimensions.height
-                minDy.current = minHeight - node.dimensions.height
-                break
-            }
-            case 'right': {
-                maxDx.current = maxWidth - node.dimensions.width
-                minDx.current = minWidth - node.dimensions.width
-                maxDy.current = 0
-                minDy.current = 0
-                break
-            }
-        }
-
     }, [isEditable, setDocumentCursor])
 
     const handlePointerMove = useCallback((e: PointerEvent, type: keyof typeof handles) => {

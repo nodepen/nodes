@@ -8,6 +8,7 @@ import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
 import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { useRightClick } from '@/hooks/useRightClick'
 
 type GenericNodeBodyProps = {
     node: NodePen.DocumentNode
@@ -28,7 +29,7 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
 
-    const handleContextMenu = useCallback((e: React.MouseEvent<SVGGElement>): void => {
+    const handleContextMenu = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
         e.preventDefault()
 
@@ -57,10 +58,12 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
         })
     }, [])
 
+    const rightClickRef = useRightClick(handleContextMenu, true)
+
     const o = 4
 
     return (
-        <g id={`generic-node-body-${node.instanceId}`} onContextMenu={handleContextMenu}>
+        <g id={`generic-node-body-${node.instanceId}`} ref={rightClickRef}>
             <rect
                 x={position.x}
                 y={position.y}
