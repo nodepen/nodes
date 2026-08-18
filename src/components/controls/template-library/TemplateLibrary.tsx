@@ -71,7 +71,7 @@ export const TemplateLibrary = () => {
             </div> */}
             <div className="np-h-full np-grow np-flex np-items-center np-overflow-x-auto no-scrollbar">
                 {subcategories.map((subcategory) => (<>
-                    <div key={`cat-${subcategory}`} className="np-rounded-full np-p-0.5 np-group" onClick={() => setActiveSubcategory(subcategory)}>
+                    <div key={`subcat-${subcategory}`} className="np-rounded-full np-p-0.5 np-group" onClick={() => setActiveSubcategory(subcategory)}>
                         <div className={`${activeSubcategory === subcategory ? 'np-border-dark' : 'np-border-light group-hover:np-border-grey group-hover:np-bg-grey'} np-rounded-full np-p-0.5 np-border-2`}>
                             <div className="np-pl-1 np-pr-1 np-rounded-full np-text-xs np-font-panel np-font-semibold np-whitespace-nowrap group-hover:np-bg-grey group-hover:np-cursor-pointer">
                                 {subcategory}

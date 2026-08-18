@@ -17,6 +17,8 @@ const ModelView = () => {
 
     const isEditable = useIsEditable()
 
+    const defaultOpenModel = useFlag('defaultOpenModel')
+
     const hideScript = useFlag('hideScript')
 
     const isThumbnail = useFlag('isThumbnail')
@@ -27,14 +29,14 @@ const ModelView = () => {
     const { apply } = useDispatch()
     const { onModelUpload } = useCallbacks()
 
-    const [isExpanded, setIsExpanded] = useState(() => isThumbnail || isHomePage)
+    const [isExpanded, setIsExpanded] = useState(() => isThumbnail || isHomePage || defaultOpenModel)
     const [isSceneVisible, setIsSceneVisible] = useState(true)
 
     useLayoutEffect(() => {
-        if (hideScript || isThumbnail) {
+        if (hideScript || isThumbnail || defaultOpenModel) {
             setIsExpanded(true)
         }
-    }, [hideScript || isThumbnail])
+    }, [hideScript, isThumbnail, defaultOpenModel])
 
     const handleTransitionStart = useCallback((e: React.TransitionEvent<HTMLDivElement>) => {
         switch (e.nativeEvent.propertyName) {
@@ -57,14 +59,14 @@ const ModelView = () => {
     }, [])
 
     // Ratio between 0 and 1
-    const [width, setWidth] = useState(() => hideScript || isThumbnail ? 1 : 0.5)
+    const [width, setWidth] = useState(() => hideScript || isThumbnail || defaultOpenModel ? 1 : 0.5)
     const isDragging = useRef(false)
 
     useLayoutEffect(() => {
-        if (hideScript || isThumbnail) {
+        if (hideScript || isThumbnail || defaultOpenModel) {
             setWidth(1)
         }
-    }, [hideScript, isThumbnail])
+    }, [hideScript, isThumbnail, defaultOpenModel])
 
     const previousExpanded = useRef<boolean | null>(null)
     const previousWidth = useRef<number | null>(null)

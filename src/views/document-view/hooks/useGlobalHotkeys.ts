@@ -36,6 +36,10 @@ export const useGlobalHotkeys = () => {
 
                 break
             }
+            case 'Enter': {
+                commitModelSelection()
+                break
+            }
             case 'Esc':
             case 'Escape': {
                 clearInterface()
@@ -99,10 +103,6 @@ export const useGlobalHotkeys = () => {
                     expireSolution(state)
                 })
 
-                break
-            }
-            case 'Enter': {
-                commitModelSelection()
                 break
             }
             case 'c':

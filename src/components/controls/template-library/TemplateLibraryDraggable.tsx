@@ -91,7 +91,7 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
     const longHoverTarget = useLongHover<HTMLDivElement>(handleLongHover)
 
     return (
-        <div ref={longHoverTarget} className="np-w-full np-pt-[100%] np-relative np-rounded-sm hover:np-bg-grey">
+        <div ref={longHoverTarget} key={`drag-${template.guid}`} className="np-w-full np-pt-[100%] np-relative np-rounded-sm hover:np-bg-grey">
             <button
                 key={`template-library-template-icon-${template.guid}`}
                 ref={buttonRef}

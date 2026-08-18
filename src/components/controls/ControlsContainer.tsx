@@ -31,6 +31,9 @@ const ControlsContainer = (): React.ReactElement | null => {
     const hideControlsRunButton = useFlag('hideControlsRunButton')
 
     const enableDocumentControls = useFeatureFlag('enableDocumentControls')
+    const enableShareButton = useFeatureFlag('enableShareButton')
+    const enableFeedbackButton = useFeatureFlag('enableFeedbackButton')
+    const enableProfileButton = useFeatureFlag('enableProfileButton')
 
     const isEditable = useIsEditable()
 
@@ -129,7 +132,7 @@ const ControlsContainer = (): React.ReactElement | null => {
         <Layer id="np-controls-layer" z={90}>
             <div className="np-w-full np-h-full np-relative">
                 <div className='np-w-full np-h-full np-absolute np-z-50 np-top-0 np-left-0'>
-                    <div className='np-w-full np-h-full np-relative'>
+                    <div className='np-invisible md:np-visible np-w-full np-h-full np-relative'>
                         <SidebarPanel isOpen={showComponentLibraryPanel} from={componentLibraryPosition} height={220} bottom={38}>
                             <TemplateLibrary />
                         </SidebarPanel>
@@ -153,11 +156,6 @@ const ControlsContainer = (): React.ReactElement | null => {
                             </div> */}
                             <ActiveDocumentControl />
                             <div className='np-flex md:np-hidden np-items-center np-ml-1 np-gap-1'>
-                                <CircleButton size="lg" shadow onClick={() => useStore.getState().callbacks?.onClickShare?.(useStore.getState())}>
-                                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-6'>
-                                        <path d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
-                                    </svg>
-                                </CircleButton>
                                 <CircleButton size="lg" shadow onClick={() => useStore.getState().callbacks?.onClickProfile?.(useStore.getState())}>
                                     <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-6">
                                         <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
@@ -166,7 +164,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                             </div>
                         </div>
                         <div className='np-hidden md:np-flex np-items-center'>
-                            <div className='np-ml-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
+                            {enableFeedbackButton ? (<div className={`${enableShareButton ? '' : 'np-mr-2'} np-ml-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto`}>
                                 <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer' onClick={handleClickFeedback}>
                                     <div className='np-h-full np-flex np-items-center np-justify-center np-rounded-full group-hover:np-bg-grey'>
                                         <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
@@ -175,8 +173,8 @@ const ControlsContainer = (): React.ReactElement | null => {
                                         <p className='np-text-xs np-text-dark np-font-panel np-pr-2 np-translate-y-px'>Feedback</p>
                                     </div>
                                 </div>
-                            </div>
-                            <div className='np-ml-2 np-mr-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
+                            </div>) : null}
+                            {enableShareButton ? (<div className='np-ml-2 np-mr-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
                                 <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer' onClick={() => useStore.getState().callbacks?.onClickShare?.(useStore.getState())}>
                                     <div className='np-h-full np-flex np-items-center np-justify-center np-rounded-full group-hover:np-bg-grey'>
                                         <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
@@ -185,8 +183,17 @@ const ControlsContainer = (): React.ReactElement | null => {
                                         <p className='np-text-xs np-text-dark np-font-panel np-pr-2 np-translate-y-px'>Share</p>
                                     </div>
                                 </div>
-                            </div>
-                            <SessionUsers />
+                            </div>) : null}
+                            {enableProfileButton ? <SessionUsers /> : (<div className='np-ml-2 np-mr-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
+                                <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer' onClick={() => useStore.getState().callbacks?.onClickProfile?.(useStore.getState())}>
+                                    <div className='np-h-full np-flex np-items-center np-justify-center np-rounded-full group-hover:np-bg-grey'>
+                                        <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
+                                            <path clipRule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-5-2a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM8 9c-1.825 0-3.422.977-4.295 2.437A5.49 5.49 0 0 0 8 13.5a5.49 5.49 0 0 0 4.294-2.063A4.997 4.997 0 0 0 8 9Z" fillRule="evenodd" />
+                                        </svg>
+                                        <p className='np-text-xs np-text-dark np-font-panel np-pr-2 np-translate-y-px'>Sign up</p>
+                                    </div>
+                                </div>
+                            </div>)}
                         </div>
                     </div>
                     <div className='np-w-full np-flex-grow np-flex np-flex-col np-justify-end md:np-justify-start'>

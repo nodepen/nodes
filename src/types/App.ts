@@ -7,6 +7,8 @@ export type AppFlags = {
     isThumbnail?: boolean
     // If true, will zoom camera to extends on load, and set model view to full bleed
     isHomePage?: boolean
+    // If true, will open the editor with the model already expanded full-width (not full bleed)
+    defaultOpenModel?: boolean
     // If true, will hide all UI elements except for the graph or model view, if either is enabled.
     hideInterface?: boolean
     // If true, the document-level menu button will be hidden
