@@ -94,10 +94,23 @@ export const useGlobalHotkeys = () => {
                         return
                     }
 
+                    const deletedIds = new Set(state.registry.selection.nodes)
+
+                    // Delete selected nodes
                     for (const id of state.registry.selection.nodes) {
                         state.document.controls.input = state.document.controls.input.filter((control) => control.ref.nodeInstanceId !== id)
                         state.document.controls.output = state.document.controls.output.filter((control) => control.ref.nodeInstanceId !== id)
                         delete state.document.nodes[id]
+                    }
+
+                    // Remove deleted nodes from sources throughout the document
+                    for (const node of Object.values(state.document.nodes)) {
+                        for (const inputInstanceId of Object.keys(node.sources)) {
+                            const filtered = node.sources[inputInstanceId].filter((source) => !deletedIds.has(source.nodeInstanceId))
+                            if (filtered.length !== node.sources[inputInstanceId].length) {
+                                node.sources[inputInstanceId] = filtered
+                            }
+                        }
                     }
 
                     expireSolution(state)
