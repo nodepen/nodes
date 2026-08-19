@@ -11,8 +11,9 @@ type WirePortalProps = {
  */
 export const WirePortal = ({ children }: WirePortalProps): React.ReactElement | null => {
   const wiresContainerRef = useStore((state) => state.registry.wires.underlayContainerRef)
+  const isReady = useStore((state) => state.registry.wires.underlayContainerReady)
 
-  if (!wiresContainerRef || !wiresContainerRef.current) {
+  if (!isReady || !wiresContainerRef.current) {
     return null
   }
 

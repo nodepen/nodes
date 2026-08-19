@@ -11,8 +11,9 @@ type WiresMaskPortalProps = {
  */
 export const WiresMaskPortal = ({ children }: WiresMaskPortalProps): React.ReactElement | null => {
   const wiresMaskRef = useStore((state) => state.registry.wires.maskRef)
+  const isReady = useStore((state) => state.registry.wires.maskReady)
 
-  if (!wiresMaskRef || !wiresMaskRef.current) {
+  if (!isReady || !wiresMaskRef.current) {
     return null
   }
 

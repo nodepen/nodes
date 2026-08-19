@@ -158,7 +158,9 @@ export type NodesAppState = {
         }
         wires: {
             underlayContainerRef: React.RefObject<SVGGElement | null>
+            underlayContainerReady: boolean
             maskRef: React.RefObject<SVGMaskElement | null>
+            maskReady: boolean
             live: {
                 /** The current position of the cursor pointer in page space. */
                 cursor: {
@@ -184,7 +186,9 @@ export type NodesAppState = {
         }
         annotations: {
             overlayContainerRef: React.RefObject<SVGGElement | null>
+            overlayContainerReady: boolean
             underlayContainerRef: React.RefObject<SVGGElement | null>
+            underlayContainerReady: boolean
         }
     }
     callbacks: NodesAppCallbacks
@@ -372,7 +376,9 @@ export const initialState: NodesAppState = {
         views: {},
         wires: {
             underlayContainerRef: React.createRef<SVGGElement>(),
+            underlayContainerReady: false,
             maskRef: React.createRef<SVGMaskElement>(),
+            maskReady: false,
             live: {
                 cursor: null,
                 target: null,
@@ -382,7 +388,9 @@ export const initialState: NodesAppState = {
         },
         annotations: {
             overlayContainerRef: React.createRef<SVGGElement>(),
-            underlayContainerRef: React.createRef<SVGGElement>()
+            overlayContainerReady: false,
+            underlayContainerRef: React.createRef<SVGGElement>(),
+            underlayContainerReady: false
         }
     },
     callbacks: {},
