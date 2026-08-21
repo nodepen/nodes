@@ -25,6 +25,7 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
         className="np-w-full np-h-full"
         // style={{ display: 'block' }}
         orthographic={isThumbnail}
+        frameloop="demand"
         onCreated={({ camera, scene, controls }) => {
             scene.up.set(0, 0, 1)
             camera.up.set(0, 0, 1)
