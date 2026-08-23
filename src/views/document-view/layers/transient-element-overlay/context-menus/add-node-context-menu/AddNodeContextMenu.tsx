@@ -4,30 +4,52 @@ import { useDispatch, useStore } from '$'
 import type { ContextMenu } from '../../types'
 import { MenuBody } from '../../common'
 import { clamp } from '@/utils/numerics'
-import { createInstance } from '@/utils/templates'
+import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useTextSearch } from './hooks'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
 import { AddNodeButton, ShortcutMatchInfo } from './components'
 import { COMPONENTS, KEYS } from '@/constants'
 import { expireSolution } from '@/store/utils'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
-import { tryMatchTextSearch } from '@/utils/templates/tryMatchTextSearch'
+import { tryMatchTextSearch, type TemplateMatch } from '@/utils/templates/tryMatchTextSearch'
+import { AgentSparkleIcon } from '@/components/icons/AgentSparkleIcon'
+import { newGuid } from '@/utils/common'
+import { current } from 'immer'
+import { useFeatureFlag } from '@/hooks/useFeatureFlag'
 
 type AddNodeContextMenuProps = {
     position: ContextMenu['position']
 }
 
+type SearchOption =
+    | {
+        type: 'add-node'
+        template: NodePen.NodeTemplate
+    }
+    | {
+        type: 'add-shortcut'
+        match: TemplateMatch
+    }
+    | {
+        type: 'agent-action'
+        action: 'ask' | 'edit'
+    }
+
 export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMenuProps) => {
     const templates = useStore((state) => Object.values(state.templates))
     const { apply } = useDispatch()
+
+    const enableAgent = useFeatureFlag('enableAgentButton')
 
     const overlaySpaceToWorldSpace = useOverlaySpaceToWorldSpace()
 
     const numberSlider = useMemo(() => templates.find((template) => template.guid === COMPONENTS.NUMBER_SLIDER), [templates])
 
+    const menuWidth = 300
+    const menuHeight = 40
     const menuPosition = {
-        x: eventPosition.x - 192 / 2,
-        y: eventPosition.y - 185 - 5,
+        x: eventPosition.x - (menuWidth / 2),
+        y: eventPosition.y - (menuHeight / 2) - 2,
     }
 
     const searchQueryInputRef = useRef<HTMLInputElement>(null)
@@ -158,8 +180,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     }, [shortcutMatch, templates])
 
     const searchResults = useMemo(() => {
-        return [...keywordMatches, ...candidates].slice(0, 4).reverse()
-        // return candidates.slice(0, 4).reverse()
+        return [...keywordMatches, ...candidates].slice(0, 4)
     }, [candidates])
 
     useEffect(() => {
@@ -174,48 +195,37 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         })
     }, [])
 
-    const [internalSelection, setInternalSelection] = useState<number>(3)
+    const [internalSelection, setInternalSelection] = useState<number>(0)
     const [preferHoverSelection, setPreferHoverSelection] = useState(false)
     const visibleSelection = preferHoverSelection ? null : internalSelection
 
-    const handleKeyDown = useCallback(
-        (e: React.KeyboardEvent<HTMLDivElement>): void => {
-            e.stopPropagation()
-            e.nativeEvent.stopImmediatePropagation()
-
-            switch (e.key) {
-                case 'ArrowUp': {
-                    e.preventDefault()
-
-                    setInternalSelection(clamp(internalSelection - 1, 0, 3))
-
-                    break
-                }
-                case 'ArrowDown': {
-                    e.preventDefault()
-
-                    setInternalSelection(clamp(internalSelection + 1, 0, 3))
-
-                    break
-                }
-                case 'Enter': {
-                    if (shortcutMatch) {
-                        handleAddNodeFromShortcut()
-                        return
-                    }
-
-                    if (preferHoverSelection) {
-                        return
-                    }
-
-                    handleAddNode(searchResults[internalSelection] ?? searchResults.at(0))
-
-                    break
-                }
+    const currentOptions: SearchOption[] = searchQuery?.length && activeSearchQuery?.length ?
+        !!shortcutMatch ? [
+            // Shortcut result
+            {
+                type: 'add-shortcut',
+                match: shortcutMatch
             }
-        },
-        [internalSelection, searchResults, handleAddNodeFromShortcut]
-    )
+        ] :
+            (searchResults.length && activeSearchQuery && activeSearchQuery.length < 14) ?
+                // Normal results
+                searchResults.map((template) => ({
+                    type: 'add-node',
+                    template
+                })) :
+                enableAgent ? [
+                    // Agent options
+                    {
+                        type: 'agent-action',
+                        action: 'ask'
+                    },
+                    {
+                        type: 'agent-action',
+                        action: 'edit'
+                    }
+                ] : [] : [
+            // No options
+        ]
 
     const handleAddNode = (template: NodePen.NodeTemplate): void => {
         const nodeInstance = createInstance(template)
@@ -245,6 +255,85 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         })
     }
 
+    const handleSelectOption = useCallback((option: SearchOption) => {
+        switch (option.type) {
+            case 'add-node': {
+                handleAddNode(option.template)
+                break
+            }
+            case 'add-shortcut': {
+                handleAddNodeFromShortcut()
+                break
+            }
+            case 'agent-action': {
+                const { action } = option
+
+                const bubbleId = newGuid()
+
+                apply((state) => {
+                    state.ui.search.action = action === 'ask' ? 'agent-ask' : 'agent-edit'
+                    state.ui.search.actionId = bubbleId
+
+                    const [x, y] = overlaySpaceToWorldSpace(eventPosition.x, eventPosition.y)
+
+                    state.registry.agent.bubbles[bubbleId] = {
+                        type: action,
+                        ref: React.createRef<HTMLDivElement>(),
+                        message: activeSearchQuery ?? '',
+                        position: { x, y }
+                    }
+
+                    // Clear menu from interface
+                    state.registry.contextMenus = {}
+                    state.registry.tooltips = {}
+
+                    state.callbacks.onSubmitSearch?.(current(state))
+                })
+                break
+            }
+        }
+    }, [handleAddNode, handleAddNodeFromShortcut, activeSearchQuery, eventPosition])
+
+    const handleKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLDivElement>): void => {
+            e.stopPropagation()
+            e.nativeEvent.stopImmediatePropagation()
+
+            switch (e.key) {
+                case 'ArrowUp': {
+                    e.preventDefault()
+
+                    setInternalSelection(clamp(internalSelection - 1, 0, 3))
+
+                    break
+                }
+                case 'ArrowDown': {
+                    e.preventDefault()
+
+                    setInternalSelection(clamp(internalSelection + 1, 0, 3))
+
+                    break
+                }
+                case 'Enter': {
+                    if (preferHoverSelection) {
+                        return
+                    }
+
+                    const selectedOption = currentOptions[internalSelection]
+
+                    if (!selectedOption) {
+                        return
+                    }
+
+                    handleSelectOption(selectedOption)
+
+                    break
+                }
+            }
+        },
+        [internalSelection, searchResults, handleAddNodeFromShortcut, currentOptions, handleSelectOption, preferHoverSelection]
+    )
+
     const handlePointerEnterOptions = useCallback(() => {
         setPreferHoverSelection(true)
     }, [])
@@ -258,38 +347,200 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         setPreferHoverSelection(false)
     }, [])
 
-    return (
-        <MenuBody position={menuPosition} animate={false}>
-            {
-                !!shortcutMatch
-                    ? <>
-                        <AddNodeButton
-                            key={`add-node-shortcut`}
-                            template={templates.find((t) => t.guid === shortcutMatch.templateId)!}
-                            isSelected={false}
-                            action={handleAddNodeFromShortcut}
-                        />
-                        <ShortcutMatchInfo match={shortcutMatch} />
-                    </>
-                    : <div onPointerEnter={handlePointerEnterOptions} onPointerLeave={handlePointerLeaveOptions}>
-                        {searchResults.map((template, i) => (
-                            <AddNodeButton
-                                key={`add-node-menu-entry-${i}-${template.guid}`}
-                                template={template}
-                                isSelected={i === visibleSelection}
-                                action={() => handleAddNode(template)}
-                            />
-                        ))}
-                    </div>}
-            <input
-                ref={searchQueryInputRef}
-                className="np-w-full np-h-8 np-pl-2 np-pr-2 np-mt-1 np-font-sans np-text-md np-text-dark np-text-left np-bg-pale np-shadow-input no-focus"
-                type="text"
-                onChange={updateSearchQuery}
-                onKeyDown={handleKeyDown}
-            />
-        </MenuBody>
-    )
+    return <div className='np-absolute np-p-0.5 np-rounded-[22px] np-flex np-flex-col np-items-center np-bg-light np-shadow-main np-pointer-events-auto' style={{ width: `${menuWidth}px`, left: `${menuPosition.x}px`, top: `${menuPosition.y}px` }}>
+        <input
+            ref={searchQueryInputRef}
+            placeholder='Search or ask a question...'
+            className={`np-w-full np-h-10 np-pl-3 np-pr-3 np-rounded-full np-font-sans np-text-sm np-text-dark np-border-2 np-border-dark np-text-left np-bg-white no-focus`}
+            type="text"
+            onChange={updateSearchQuery}
+            onKeyDown={handleKeyDown}
+        />
+        <div className='np-w-full np-flex np-flex-col np-items-center' onPointerEnter={handlePointerEnterOptions} onPointerLeave={handlePointerLeaveOptions}>
+            {currentOptions.map((option, i) => {
+                return <SearchEntry key={`${option.type}-${i}`} option={option} isSelected={i === visibleSelection} onClick={() => handleSelectOption(option)} />
+            })}
+        </div>
+    </div>
+
+    // return (
+    //     <MenuBody position={menuPosition} animate={false}>
+    //         {
+    //             !!shortcutMatch
+    //                 ? <>
+    //                     <AddNodeButton
+    //                         key={`add-node-shortcut`}
+    //                         template={templates.find((t) => t.guid === shortcutMatch.templateId)!}
+    //                         isSelected={false}
+    //                         action={handleAddNodeFromShortcut}
+    //                     />
+    //                     <ShortcutMatchInfo match={shortcutMatch} />
+    //                 </>
+    //                 : <div onPointerEnter={handlePointerEnterOptions} onPointerLeave={handlePointerLeaveOptions}>
+    //                     {searchResults.map((template, i) => (
+    //                         <AddNodeButton
+    //                             key={`add-node-menu-entry-${i}-${template.guid}`}
+    //                             template={template}
+    //                             isSelected={i === visibleSelection}
+    //                             action={() => handleAddNode(template)}
+    //                         />
+    //                     ))}
+    //                 </div>}
+
+    //     </MenuBody>
+    // )
+}
+
+type SearchEntryProps = {
+    option: SearchOption
+    isSelected: boolean
+    onClick: () => void
+}
+
+const SearchEntry = ({ option, isSelected, onClick }: SearchEntryProps) => {
+    const emptyMessage = useMemo(() => {
+        const messages = [
+            'Limitless potential!',
+            'Could be anything!',
+            'How mysterious!',
+            'What happens now?'
+        ]
+
+        const selectedMessage = messages[Math.floor(Math.random() * messages.length)]
+
+        return selectedMessage
+    }, [])
+
+    const getIcon = () => {
+        switch (option.type) {
+            case 'add-node': {
+                const { icon } = option.template
+                return <img src={getIconAsImage(option.template)} />
+            }
+            case 'add-shortcut': {
+                const { type, templateId } = option.match
+
+                const template = useStore.getState().templates[templateId]
+
+                if (!template) {
+                    return ''
+                }
+
+                return <img src={getIconAsImage(template)} />
+            }
+            case 'agent-action': {
+                return <AgentSparkleIcon />
+            }
+            default: {
+                return null
+            }
+        }
+    }
+
+    const getLabel = () => {
+        switch (option.type) {
+            case 'add-node': {
+                const { name } = option.template
+                return name
+            }
+            case 'add-shortcut': {
+                const { type, templateId } = option.match
+
+                const template = useStore.getState().templates[templateId]
+
+                if (!template) {
+                    return ''
+                }
+
+                return template.name
+            }
+            case 'agent-action': {
+                return option.action === 'ask' ? 'Ask a question...' : 'Ask to make something...'
+            }
+        }
+    }
+
+    const getDetails = () => {
+        switch (option.type) {
+            case 'add-node': {
+                const { category, subcategory } = option.template
+                return `${category} - ${subcategory}`
+            }
+            case 'add-shortcut': {
+                const { type, templateId } = option.match
+
+                switch (type) {
+                    case 'panel': {
+                        const { textContent } = option.match.config
+                        const isSmall = textContent?.length ?? 0 < 8
+
+                        return textContent?.length ? `A${isSmall ? ' small' : ''} panel that says: ${textContent}` : `An empty panel. ${emptyMessage}`
+                    }
+                    case 'number-slider': {
+                        const { min, max, precision } = option.match.config
+
+                        return `Value: ${option.match.value} - Domain: ${min} to ${max} - Precision: ${precision}`
+                    }
+                    case 'point': {
+                        const [x, y, z] = option.match.value
+
+                        return `Coordinates: ${x}, ${y}, ${z}`
+                    }
+                    case 'addition':
+                    case 'subtraction':
+                    case 'multiplication':
+                    case 'division': {
+                        const { value } = option.match
+
+                        const messages = {
+                            'addition': 'Add',
+                            'subtraction': 'Subtract',
+                            'multiplication': 'Multiply by',
+                            'division': 'Divide by'
+                        }
+
+                        if (!value) {
+                            return `${messages[type].replace(' by', '')} two numbers`
+                        }
+
+                        return `${messages[type]} ${value}`
+                    }
+                    default: {
+                        const template = useStore.getState().templates[templateId]
+
+                        if (!template) {
+                            return ''
+                        }
+
+                        const { category, subcategory } = template
+
+                        return `${category} - ${subcategory}`
+                    }
+                }
+
+            }
+            case 'agent-action': {
+                switch (option.action) {
+                    case 'ask': {
+                        return 'Agent will give you some tips.'
+                    }
+                    case 'edit': {
+                        return 'Agent will join you in the document.'
+                    }
+                }
+            }
+        }
+    }
+
+    return <div className={`${isSelected ? 'np-bg-grey' : ''} np-w-full np-flex np-items-center np-mt-0.5 np-px-2 np-py-1 np-rounded-[20px] hover:np-bg-grey hover:np-cursor-pointer np-pointer-events-auto`} onClick={onClick}>
+        <div className='np-w-8 np-h-8 np-mr-1 np-flex np-items-center np-justify-center'>
+            {getIcon()}
+        </div>
+        <div className='np-grow np-ml-1 np-flex np-flex-col np-items-start np-justify-center'>
+            <p className="np-text-sm np-text-dark np-font-panel">{getLabel()}</p>
+            <p className='np-text-xs np-text-dark np-font-panel'>{getDetails()}</p>
+        </div>
+    </div>
 }
 
 const useDebounceCallback = (callback: () => void, delay: number): (() => void) => {

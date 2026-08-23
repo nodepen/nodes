@@ -4,6 +4,8 @@ import { Region } from './region'
 import { LiveConnectionWire } from './wire'
 import { useLiveWireCursor } from './wire/hooks'
 import { createPortal } from 'react-dom'
+import { shallow } from 'zustand/shallow'
+import AgentBubble from './bubble/AgentBubble'
 
 const AnnotationsOverlayContainer = () => {
     const { apply } = useDispatch()
@@ -15,6 +17,8 @@ const AnnotationsOverlayContainer = () => {
 
     const liveWires = useStore((state) => Object.entries(state.registry.wires.live.connections))
     useLiveWireCursor(liveWires.map(([_key, connection]) => connection.portAnchor))
+
+    const bubbleIds = useStore((state) => Object.keys(state.registry.agent.bubbles), shallow)
 
     const setContainerRef = useCallback(
         (node: SVGGElement | null) => {
@@ -41,6 +45,9 @@ const AnnotationsOverlayContainer = () => {
                 {selectionRegionState.isActive ? (
                     <Region isBorder isDashed={isDashed} from={selectionRegionState.from} to={selectionRegionState.to} />
                 ) : null}
+            </g>
+            <g id="np-agent-bubble-overlay">
+                {bubbleIds.map((id) => <AgentBubble key={`agent-bubble-${id}`} bubbleId={id} />)}
             </g>
         </g>
     )

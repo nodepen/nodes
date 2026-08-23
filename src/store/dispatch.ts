@@ -8,7 +8,7 @@ import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
-import { expireSolution } from './utils'
+import { expireSolution, resetNodePlacement } from './utils'
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
@@ -577,6 +577,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                             delete state.document.nodes[nodeId]
                         }
                     }
+
+                    resetNodePlacement(state)
                 },
                 false,
                 'ui/clearInterface'

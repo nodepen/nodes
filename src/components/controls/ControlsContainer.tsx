@@ -30,6 +30,7 @@ const ControlsContainer = (): React.ReactElement | null => {
 
     const hideControls = useFlag('hideControls')
     const hideControlsRunButton = useFlag('hideControlsRunButton')
+    const defaultOpenControls = useFlag('defaultOpenControls')
 
     const enableDocumentControls = useFeatureFlag('enableDocumentControls')
     const enableShareButton = useFeatureFlag('enableShareButton')
@@ -109,6 +110,13 @@ const ControlsContainer = (): React.ReactElement | null => {
         const { left, width, top, height } = el.getBoundingClientRect()
         setDocumentControlsPosition([left + width / 2, top + height / 2])
     }, [])
+    useLayoutEffect(() => {
+        if (defaultOpenControls) {
+            apply((state) => {
+                state.ui.sidebar.isDocumentControlsOpen = true
+            })
+        }
+    }, [defaultOpenControls])
     const documentControlsHeight = useStore((state) => {
         return 4 + 32 + 8 + (clamp(state.document.controls.input?.length ?? 0, 1, 6) * 46) + 8 + (((state.document.controls.input?.length ?? 0) > 0 && !hideControlsRunButton) ? 32 : 0)
     })

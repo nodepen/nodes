@@ -44,6 +44,7 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
                         state.layout.nodePlacement = {
                             isActive: true,
                             activeNodeId: node.instanceId,
+                            openOnEnd: state.ui.sidebar.isAgentOpen ? ['agent'] : [],
                         }
                     })
                     break

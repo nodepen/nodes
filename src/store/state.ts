@@ -45,6 +45,14 @@ export type NodesAppState = {
             x: number
             y: number
         }
+        search: {
+            target: {
+                x: number
+                y: number
+            }
+            action: 'agent-ask' | 'agent-edit' | 'add-node'
+            actionId: string
+        }
         sidebar: {
             isComponentLibraryOpen: boolean
             isParameterLibraryOpen: boolean
@@ -82,6 +90,7 @@ export type NodesAppState = {
         nodePlacement: {
             isActive: boolean
             activeNodeId: string | null
+            openOnEnd: ('agent')[]
         }
         viewConfiguration: Record<number, number>
         // activeView: string | null
@@ -192,6 +201,19 @@ export type NodesAppState = {
             underlayContainerRef: React.RefObject<SVGGElement | null>
             underlayContainerReady: boolean
         }
+        agent: {
+            bubbles: {
+                [bubbleId: string]: {
+                    type: 'ask' | 'edit'
+                    ref: React.RefObject<HTMLDivElement | null>
+                    position: {
+                        x: number
+                        y: number
+                    }
+                    message: string
+                }
+            }
+        }
         interface: Record<InterfacePanelTarget, React.RefObject<HTMLDivElement | null> | null>
     }
     callbacks: NodesAppCallbacks
@@ -221,6 +243,7 @@ export type NodesAppCallbacks = {
     onClickViewVersions?: (state: NodesAppState) => void
     onClickSaveVersion?: (state: NodesAppState) => void
     onClickRunDocument?: (state: NodesAppState) => void
+    onSubmitSearch?: (state: NodesAppState) => void,
     // Presence
     onCameraMove?: (state: NodesAppState) => void,
     onCursorMove?: (state: NodesAppState) => void,
@@ -315,6 +338,14 @@ export const initialState: NodesAppState = {
             x: 0,
             y: 0
         },
+        search: {
+            target: {
+                x: 0,
+                y: 0
+            },
+            action: 'add-node',
+            actionId: ''
+        },
         sidebar: {
             isComponentLibraryOpen: false,
             isParameterLibraryOpen: false,
@@ -338,6 +369,7 @@ export const initialState: NodesAppState = {
         nodePlacement: {
             isActive: false,
             activeNodeId: null,
+            openOnEnd: [],
         },
         viewConfiguration: {
             0: 1,
@@ -398,7 +430,10 @@ export const initialState: NodesAppState = {
             overlayContainerRef: React.createRef<SVGGElement>(),
             overlayContainerReady: false,
             underlayContainerRef: React.createRef<SVGGElement>(),
-            underlayContainerReady: false
+            underlayContainerReady: false,
+        },
+        agent: {
+            bubbles: {}
         },
         interface: {
             agent: null,

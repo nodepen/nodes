@@ -1,10 +1,16 @@
 
 import React, { useContext, useLayoutEffect, useState } from "react"
 import type * as NodePen from '@/types'
-import { useDispatch } from "@/store"
+import { useDispatch, useStore } from "@/store"
+import { usePageSpaceToWorldSpace } from "@/hooks"
+
+const useNode = (instanceId: string): NodePen.DocumentNode | undefined =>
+    useStore((state) => state.document.nodes[instanceId])
 
 export type InterfacePanelCallbacks = {
     apply: ReturnType<typeof useDispatch>['apply']
+    pageSpaceToWorldSpace: ReturnType<typeof usePageSpaceToWorldSpace>
+    useNode: typeof useNode
 }
 
 const InterfacePanelCallbacksContext = React.createContext<InterfacePanelCallbacks | undefined>(undefined)
@@ -16,9 +22,11 @@ export const InterfacePanelCallbacksProvider = ({ children }: ProviderProps) => 
 
     const [callbacks, setCallbacks] = useState<InterfacePanelCallbacks>()
 
+    const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
+
     useLayoutEffect(() => {
-        setCallbacks({ apply })
-    }, [apply])
+        setCallbacks({ apply, pageSpaceToWorldSpace, useNode })
+    }, [apply, pageSpaceToWorldSpace])
 
     if (!callbacks) {
         return null

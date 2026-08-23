@@ -411,11 +411,18 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                 // Handle left mouse double click
                 const { pageX, pageY } = e
 
-                const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+                const [sx, sy] = pageSpaceToOverlaySpace(pageX, pageY)
+
+                const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
                 apply((state) => {
+                    state.ui.search = {
+                        target: { x, y },
+                        action: 'add-node',
+                        actionId: ''
+                    }
                     state.registry.contextMenus['add-node'] = {
-                        position: { x, y },
+                        position: { x: sx, y: sy },
                         context: {
                             type: 'add-node',
                         },

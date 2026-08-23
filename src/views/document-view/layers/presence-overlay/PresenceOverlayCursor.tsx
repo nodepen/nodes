@@ -18,6 +18,10 @@ const PresenceOverlayCursor = ({ sessionId }: Props) => {
     const sessionData = useStoreRef((state) => state.presence.sessions[sessionId])
     const sessionChirp = useStore((state) => state.presence.sessions[sessionId].chirp)
 
+    // DO NOT DELETE: This keeps the cursor illusion up when the camera moves, even though the cursors don't care
+    const cameraPosition = useStore((state) => state.camera.position)
+    const cameraZoom = useStore((state) => state.camera.zoom)
+
     const cursor = useStore((state) => state.presence.cursors[sessionId])
     const [visibleCursor, setVisibleCursor] = useInterpolatedState(cursor ?? { x: 0, y: 0 }, lerpPoint2d)
 

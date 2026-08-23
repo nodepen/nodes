@@ -6,9 +6,10 @@ import { shallow } from "zustand/shallow"
 
 type InterfacePanelProps = React.PropsWithChildren<{
     target: InterfacePanelTarget
+    targetId?: string
 }>
 
-export const InterfacePanel = ({ target, children }: InterfacePanelProps) => {
+export const InterfacePanel = ({ target, targetId, children }: InterfacePanelProps) => {
     const targetRef = useStore((state) => state.registry.interface[target], shallow)
 
     if (!targetRef || !targetRef.current) {

@@ -1,7 +1,7 @@
 import React, { useCallback, useMemo } from 'react'
 import { useDispatch, useStore } from '$'
 import { usePageSpaceToWorldSpace } from '@/hooks'
-import { expireSolution } from '@/store/utils'
+import { expireSolution, resetNodePlacement } from '@/store/utils'
 
 const NodePlacementOverlay = () => {
   const { apply } = useDispatch()
@@ -21,10 +21,7 @@ const NodePlacementOverlay = () => {
 
   const resetOverlayState = useCallback(() => {
     apply((state) => {
-      state.layout.nodePlacement = {
-        isActive: false,
-        activeNodeId: null,
-      }
+      resetNodePlacement(state)
     })
   }, [])
 
