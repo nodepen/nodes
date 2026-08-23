@@ -45,7 +45,7 @@ const HelpButton = ({ onClick, isOpen }: Props) => {
     }
 
     return (
-        <div ref={circleAnnotationRef} className='np-w-12 np-h-12 -np-mr-2 np-mb-2 np-relative np-overflow-visible np-z-10'>
+        <div ref={circleAnnotationRef} className='np-w-12 np-h-12 -np-mr-2 np-relative np-overflow-visible np-z-10' style={{ transform: 'translateY(-8px)' }}>
             <div className="np-absolute np-z-0 np-w-full np-h-full">
                 <svg className="np-w-12 np-h-12 np-overflow-visible np-animate-march-rotate" viewBox="0 0 10 10" style={{ animationDuration: '20000ms' }}>
                     <circle cx={5} cy={5} r={r + 1} fill={COLORS.PALE} stroke="none" />
