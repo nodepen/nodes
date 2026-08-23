@@ -4,6 +4,7 @@ import type * as NodePen from '@/types'
 import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transient-element-overlay/types'
 import type { NodePortReference, WireEditMode } from '@/types'
 import type { ModelGeometryType } from '@/types/geometry'
+import type { InterfacePanelTarget } from '@/types/Interface'
 
 export type NodesAppState = {
     document: NodePen.Document
@@ -48,6 +49,7 @@ export type NodesAppState = {
             isComponentLibraryOpen: boolean
             isParameterLibraryOpen: boolean
             isDocumentControlsOpen: boolean
+            isAgentOpen: boolean
         }
         model: {
             selection: {
@@ -190,6 +192,7 @@ export type NodesAppState = {
             underlayContainerRef: React.RefObject<SVGGElement | null>
             underlayContainerReady: boolean
         }
+        interface: Record<InterfacePanelTarget, React.RefObject<HTMLDivElement | null> | null>
     }
     callbacks: NodesAppCallbacks
     internalCallbacks: {
@@ -206,6 +209,7 @@ export type NodesAppCallbacks = {
     onThumbnailReady?: (state: NodesAppState) => void
     onHomePageReady?: (state: NodesAppState) => void
     // Interface buttons
+    onClickAgent?: (state: NodesAppState) => void
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
@@ -218,6 +222,7 @@ export type NodesAppCallbacks = {
     onClickSaveVersion?: (state: NodesAppState) => void
     onClickRunDocument?: (state: NodesAppState) => void
     // Presence
+    onCameraMove?: (state: NodesAppState) => void,
     onCursorMove?: (state: NodesAppState) => void,
     onDrag?: (state: NodesAppState) => void,
     onDragEnd?: (state: NodesAppState) => void,
@@ -273,7 +278,8 @@ export const initialState: NodesAppState = {
         selection: {},
         selectionRegions: {},
         drag: {},
-        wires: {}
+        wires: {},
+        ghostNodes: {}
     },
     camera: {
         aspect: 1.5,
@@ -292,7 +298,8 @@ export const initialState: NodesAppState = {
             enableDocumentVersions: true,
             enableShareButton: true,
             enableFeedbackButton: true,
-            enableProfileButton: true
+            enableProfileButton: true,
+            enableAgentButton: false
         },
         flags: {
             isEditable: true,
@@ -311,7 +318,8 @@ export const initialState: NodesAppState = {
         sidebar: {
             isComponentLibraryOpen: false,
             isParameterLibraryOpen: false,
-            isDocumentControlsOpen: true
+            isDocumentControlsOpen: false,
+            isAgentOpen: false
         },
         model: {
             mode: 'default',
@@ -391,6 +399,11 @@ export const initialState: NodesAppState = {
             overlayContainerReady: false,
             underlayContainerRef: React.createRef<SVGGElement>(),
             underlayContainerReady: false
+        },
+        interface: {
+            agent: null,
+            controls: React.createRef<HTMLDivElement>(),
+            versions: React.createRef<HTMLDivElement>()
         }
     },
     callbacks: {},

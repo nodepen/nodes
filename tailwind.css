@@ -23,6 +23,20 @@
     src: url('assets/overpassmono-bold.ttf');
 }
 
+@keyframes sparkle-march {
+    0% {
+        stroke-dashoffset: var(--dash);
+    }
+
+    50% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: calc(var(--dash) * -1);
+    }
+}
+
 :root {
     --np-active-menu-height: 100%;
 }

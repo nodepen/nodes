@@ -1,8 +1,9 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
-import { NodesApp, type Document as NodePenDocument } from "../dist/index.mjs"
+import { NodesApp, type Document as NodePenDocument, NodesAppPanel, useNodesApp } from "../dist/index.mjs"
 import "../dist/styles.css";
 import templates from "./templates.json";
+import { Agent } from "./agent";
 
 const rootEl = document.getElementById("root")!
 const root = createRoot(rootEl)
@@ -644,12 +645,24 @@ let presence = {
             userId: 'fake-id',
             color: '#79D3F6',
             name: 'John Grasshopper'
+        },
+        ['demo-agent']: {
+            userId: 'agent',
+            color: '#79D3F6',
+            name: "Agent Blue",
+            kind: 'agent',
+            status: 'working',
+            chirp: 'Howdy!'
         }
     },
     cursors: {
         ['demo-id']: {
             x: 100,
             y: 100
+        },
+        ['demo-agent']: {
+            x: 1000,
+            y: 600
         }
     },
     cameras: {}
@@ -662,8 +675,14 @@ const flags = {
     hideScript: false
 }
 
+const features = {
+    enableAgentButton: true
+}
+
 root.render(<StrictMode>
     <div style={{ width: '100vw', height: '100vh' }}>
-        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} flags={flags} />
+        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} flags={flags} features={features}>
+            <Agent />
+        </NodesApp>
     </div>
 </StrictMode>)

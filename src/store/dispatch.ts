@@ -9,7 +9,6 @@ import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersecti
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution } from './utils'
-import { createInstance } from '@/utils/templates'
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
@@ -325,6 +324,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 (state) => {
                     startTransition(() => {
                         state.camera.position = { x, y }
+                        state.callbacks?.onCameraMove?.(current(state))
                     })
                 },
                 false,
@@ -564,7 +564,15 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     }
 
                     // TODO: This is sloppy. It should not be possible for provisional nodes to get left on the canvas.
+                    const remoteGhostIds = new Set(
+                        Object.values(state.presence.ghostNodes).flatMap((nodes) => nodes.map((node) => node.instanceId))
+                    )
                     for (const nodeId of Object.keys(state.document.nodes)) {
+                        if (remoteGhostIds.has(nodeId)) {
+                            // Belongs to another session's presence, not this canvas's own
+                            // abandoned placement — leave it for that session to clean up.
+                            continue
+                        }
                         if (state.document.nodes[nodeId].status.isProvisional) {
                             delete state.document.nodes[nodeId]
                         }

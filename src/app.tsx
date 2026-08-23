@@ -7,6 +7,7 @@ import { ControlsContainer } from '@/components'
 import { PseudoShadowsContainer } from './views/common'
 import { StaticDialogLayer } from './views/static/dialog-layer'
 import { DocumentView, ModelView } from './views'
+import { InterfacePanelCallbacksProvider } from './components/layout/panel/InterfacePanelContext'
 
 type NodesAppProps = {
     document: NodePen.Document
@@ -16,7 +17,9 @@ type NodesAppProps = {
     presence?: NodePen.DocumentPresence
     flags?: NodePen.AppFlags
     features?: NodePen.AppFlags
-} & NodesAppCallbacks
+} & NodesAppCallbacks & {
+    children?: React.ReactNode
+}
 
 export const NodesApp = ({
     document,
@@ -26,6 +29,7 @@ export const NodesApp = ({
     presence,
     flags,
     features,
+    children,
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
     const { apply, loadDocument, loadTemplates, loadSolutionData } = useDispatch()
@@ -204,10 +208,57 @@ export const NodesApp = ({
         })
     }, [presence?.drag])
 
-    return <NodesAppInternal />
+    useEffect(() => {
+        apply((state) => {
+            const nextGhostNodes = presence?.ghostNodes ?? {}
+
+            const previousGhostIds = new Set<string>()
+            for (const nodes of Object.values(state.presence.ghostNodes)) {
+                for (const node of nodes) {
+                    previousGhostIds.add(node.instanceId)
+                }
+            }
+
+            for (const key of Object.keys(state.presence.ghostNodes)) {
+                const nextEntry = nextGhostNodes[key]
+                if (nextEntry === undefined) {
+                    delete state.presence.ghostNodes[key]
+                } else if (JSON.stringify(state.presence.ghostNodes[key]) !== JSON.stringify(nextEntry)) {
+                    state.presence.ghostNodes[key] = nextEntry
+                }
+            }
+            for (const [key, nextEntry] of Object.entries(nextGhostNodes)) {
+                if (state.presence.ghostNodes[key] === undefined) {
+                    state.presence.ghostNodes[key] = nextEntry
+                }
+            }
+
+            const liveGhostIds = new Set<string>()
+            for (const nodes of Object.values(state.presence.ghostNodes)) {
+                for (const node of nodes) {
+                    liveGhostIds.add(node.instanceId)
+                    state.document.nodes[node.instanceId] = {
+                        ...node,
+                        status: {
+                            ...node.status,
+                            isProvisional: true
+                        }
+                    }
+                }
+            }
+
+            for (const nodeId of previousGhostIds) {
+                if (!liveGhostIds.has(nodeId)) {
+                    delete state.document.nodes[nodeId]
+                }
+            }
+        })
+    }, [presence?.ghostNodes, document])
+
+    return <NodesAppInternal>{children}</NodesAppInternal>
 }
 
-const NodesAppInternal = React.memo(() => {
+const NodesAppInternal = React.memo(({ children }: React.PropsWithChildren<{}>) => {
     const canvasRootRef = useStore((state) => state.registry.canvasRoot)
 
     const { apply } = useDispatch()
@@ -226,7 +277,7 @@ const NodesAppInternal = React.memo(() => {
         })
     }, [])
 
-    return (
+    return (<InterfacePanelCallbacksProvider>
         <div
             id="np-app-root"
             className="np-w-full np-h-full np-relative np-overflow-hidden no-drag"
@@ -239,6 +290,8 @@ const NodesAppInternal = React.memo(() => {
             <StaticDialogLayer />
             <DocumentView />
             <ModelView />
+            {children}
         </div>
+    </InterfacePanelCallbacksProvider>
     )
 })

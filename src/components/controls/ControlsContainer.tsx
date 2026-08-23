@@ -21,6 +21,7 @@ import { clamp } from '@/utils'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useFlag } from '@/hooks/useFlag'
 import { useFeatureFlag } from '@/hooks/useFeatureFlag'
+import { AgentPanel } from './panels/AgentPanel'
 
 const ControlsContainer = (): React.ReactElement | null => {
     const { apply } = useDispatch()
@@ -34,6 +35,7 @@ const ControlsContainer = (): React.ReactElement | null => {
     const enableShareButton = useFeatureFlag('enableShareButton')
     const enableFeedbackButton = useFeatureFlag('enableFeedbackButton')
     const enableProfileButton = useFeatureFlag('enableProfileButton')
+    const enableAgentButton = useFeatureFlag('enableAgentButton')
 
     const isEditable = useIsEditable()
 
@@ -111,6 +113,20 @@ const ControlsContainer = (): React.ReactElement | null => {
         return 4 + 32 + 8 + (clamp(state.document.controls.input?.length ?? 0, 1, 6) * 46) + 8 + (((state.document.controls.input?.length ?? 0) > 0 && !hideControlsRunButton) ? 32 : 0)
     })
 
+    const showAgentPanel = useStore((state) => state.ui.sidebar.isAgentOpen)
+    const [agentPanelPosition, setAgentPanelPosition] = useState<[number, number]>([0, 0])
+    const handleClickAgentButton = useCallback(() => {
+        apply((state) => {
+            state.ui.sidebar.isAgentOpen = true
+        })
+    }, [])
+    useLayoutEffect(() => {
+        const el = document.documentElement
+        const { clientWidth, clientHeight } = el
+        const padding = 40
+        setAgentPanelPosition([clientWidth - padding, clientHeight - padding])
+    }, [])
+
     const statusMessages = useStore((state) => {
         const { document, model } = state.solution.messages ?? {}
         return [document, model].filter((message) => !!message)
@@ -141,6 +157,9 @@ const ControlsContainer = (): React.ReactElement | null => {
                         </SidebarPanel>
                         <SidebarPanel isOpen={showDocumentControlsPanel} from={documentControlsPosition} height={documentControlsHeight} top={96}>
                             <DocumentControls />
+                        </SidebarPanel>
+                        <SidebarPanel isOpen={showAgentPanel} from={agentPanelPosition} height={400} width={300} bottom={38} side='right'>
+                            <AgentPanel />
                         </SidebarPanel>
                     </div>
                 </div>
@@ -243,8 +262,8 @@ const ControlsContainer = (): React.ReactElement | null => {
                         <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-center np-items-center'>
                             {/* <DocumentToolsControl /> */}
                         </div>
-                        <div className='np-w-full np-h-full np-flex np-flex-grow np-justify-end np-items-center'>
-                            {isEditable ? (<div className='np-p-8 np-flex np-items-center np-justify-end'>
+                        <div className='np-w-full np-h-full np-p-8 np-pb-4 np-mb-0.5 np-flex np-flex-grow np-justify-end np-items-center'>
+                            {/* {isEditable ? (<div className='np-flex np-items-center np-justify-end np-z-20'>
                                 <div className='np-h-8 np-flex np-items-center np-mr-0.5 np-rounded-full np-bg-pale'>
                                     {activeStatusMessage ? (<p className='np-text-xs np-pl-2 np-pr-2 np-font-panel np-font-semibold np-text-dark'>
                                         {activeStatusMessage}
@@ -263,7 +282,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                                         </svg>
                                     </CircleButton>
                                 </div>
-                            </div>) : null}
+                            </div>) : null} */}
                             {/* <div className='np-flex np-flex-col np-pr-0.5'>
                                 <div className='np-ml-2 np-mb-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
                                     <div className='np-flex np-items-center np-justify-center np-rounded-full np-overflow-hidden'>
@@ -277,7 +296,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                                     </div>
                                 </div>
                             </div> */}
-                            {/* <HelpButton /> */}
+                            {enableAgentButton ? <HelpButton onClick={handleClickAgentButton} isOpen={showAgentPanel} /> : null}
                         </div>
                     </div>
                 </div>

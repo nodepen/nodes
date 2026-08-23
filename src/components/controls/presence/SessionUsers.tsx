@@ -1,4 +1,5 @@
 import { CircleButton } from '@/components/layout/CircleButton'
+import { AgentSparkleIcon } from '@/components/icons/AgentSparkleIcon'
 import { COLORS } from '@/constants'
 import { useCallbacks, useStore } from '@/store'
 import { clamp } from '@/utils'
@@ -24,9 +25,13 @@ const SessionUsers = () => {
                 <div key={`session-presence-${sessionId}`} className='np-w-8 np-h-8 np-absolute' style={{ top: '0px', left: `${clamp(i, 0, 2) * 16}px`, zIndex: i }}>
                     <CircleButton size="sm" onClick={handleClickPresence}>
                         <div className='np-w-full np-h-full np-rounded-full np-flex np-items-center np-justify-center' style={{ background: session.color }}>
-                            <p className='np-m-0 np-font-mono np-text-[15px] np-font-semibold np-text-dark np-leading-none np-translate-y-px'>
-                                {session.name.at(0)?.toUpperCase() ?? 'X'}
-                            </p>
+                            {session.kind === 'agent' ? (
+                                <AgentSparkleIcon width={16} height={16} fill={COLORS.DARK} />
+                            ) : (
+                                <p className='np-m-0 np-font-mono np-text-[15px] np-font-semibold np-text-dark np-leading-none np-translate-y-px'>
+                                    {session.name.at(0)?.toUpperCase() ?? 'X'}
+                                </p>
+                            )}
                         </div>
                     </CircleButton>
                 </div>

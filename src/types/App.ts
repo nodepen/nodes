@@ -30,4 +30,5 @@ export type AppFeatures = {
     enableShareButton: boolean
     enableFeedbackButton: boolean
     enableProfileButton: boolean
+    enableAgentButton: boolean
 }
