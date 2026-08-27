@@ -6,12 +6,11 @@ export default defineConfig({
     entry: ["src/index.ts", "src/constants.ts"],
     format: ["esm"],
     dts: true,
-    sourcemap: false,
+    sourcemap: true,
     treeshake: true,
     external: [
         "react",
         "react-dom",
-        "@speckle/viewer",
     ],
     esbuildPlugins: [],
     esbuildOptions: (options) => {
