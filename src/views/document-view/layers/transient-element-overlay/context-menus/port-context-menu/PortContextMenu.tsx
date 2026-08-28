@@ -22,9 +22,6 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const { nodeInstanceId, portInstanceId, portTemplate } = context
     const { name, nickName, typeName } = portTemplate
 
-    const nodeTemplate = useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId]
-    const nodeType = getNodeTypeForTemplate(nodeTemplate)
-
     const { apply, toggleFlag, clearInterface, startModelSelection } = useDispatch()
 
     const handleSetValueClick = useCallback((pageY: number) => {
@@ -67,12 +64,21 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
         toggleFlag(nodeInstanceId, portInstanceId, flag)
     }, [])
 
-    const enableSetLabel = nodeType === 'generic-parameter'
-    const { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry } = getPortContextMenuButtons(context)
-
     const handlePickGeometry = useCallback(() => {
         startModelSelection(nodeInstanceId, portInstanceId, portTemplate.typeName)
     }, [nodeInstanceId, portInstanceId, portTemplate, startModelSelection])
+
+    const node = useStore.getState().document.nodes[nodeInstanceId]
+
+    if (!node) {
+        return null
+    }
+
+    const nodeTemplate = useStore.getState().templates[node.templateId]
+    const nodeType = getNodeTypeForTemplate(nodeTemplate)
+
+    const enableSetLabel = nodeType === 'generic-parameter'
+    const { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry } = getPortContextMenuButtons(context)
 
     return (
         <MenuBody position={position}>

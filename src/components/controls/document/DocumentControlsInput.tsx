@@ -79,7 +79,13 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
         }
 
         apply((state) => {
-            state.document.nodes[nodeInstanceId].values[portInstanceId] = dataTree
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.values[portInstanceId] = dataTree
             expireSolution(state)
         })
     }, [apply, currentValue, nodeInstanceId, portInstanceId, valueType])
@@ -133,11 +139,17 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
         }
 
         apply((state) => {
-            state.document.nodes[nodeInstanceId].portConfigurations[portInstanceId] ??= {
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.portConfigurations[portInstanceId] ??= {
                 label: null,
                 flags: []
             }
-            state.document.nodes[nodeInstanceId].portConfigurations[portInstanceId].label = nextLabel
+            node.portConfigurations[portInstanceId].label = nextLabel
             saveDocument(state)
         })
     }, [apply, currentLabel, nodeInstanceId, portInstanceId])
@@ -170,7 +182,8 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
     }, [moveControl, nodeInstanceId, portInstanceId])
 
     const nodeType = useStore((state) => {
-        return getNodeTypeForTemplate(state.templates[state.document.nodes[nodeInstanceId].templateId])
+        const node = state.document.nodes[nodeInstanceId]
+        return node ? getNodeTypeForTemplate(state.templates[node.templateId]) : 'unknown'
     })
 
     const getInputRow = () => {

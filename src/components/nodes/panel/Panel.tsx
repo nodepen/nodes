@@ -22,7 +22,6 @@ type PanelProps = {
 const Panel = ({ id, template }: PanelProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
-    const config = node.nodeConfiguration as NodePen.NumberSliderConfig
 
     const isEditable = useIsEditable()
 
@@ -52,7 +51,7 @@ const Panel = ({ id, template }: PanelProps) => {
 
     const handleSubmit = useCallback((value: string) => {
         apply((state) => {
-            const config = state.document.nodes[id].nodeConfiguration as NodePen.PanelConfig
+            const config = state.document.nodes[id]?.nodeConfiguration as NodePen.PanelConfig | undefined
 
             if (!config) {
                 console.log(`🐍 Could not find config for panel ${id}`)
@@ -73,6 +72,10 @@ const Panel = ({ id, template }: PanelProps) => {
     const handleScrollEnd = useCallback(() => {
         containerRef.current?.removeAttribute('data-scrolling')
     }, [])
+
+    if (!node) {
+        return null
+    }
 
     return (
         <NodeInternalStateProvider value={internalState}>

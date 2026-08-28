@@ -29,7 +29,7 @@ const Radio = ({ label, selected, onClick }: RadioProps) => (
 export const DocumentControlsBooleanToggle = ({ nodeInstanceId, isDisabled }: DocumentControlsBooleanToggleProps) => {
     const { apply } = useDispatch()
 
-    const currentValue = useStore((state) => (state.document.nodes[nodeInstanceId].nodeConfiguration as BooleanToggleConfig)?.value ?? false)
+    const currentValue = useStore((state) => (state.document.nodes[nodeInstanceId]?.nodeConfiguration as BooleanToggleConfig | undefined)?.value ?? false)
 
     const commitValue = useCallback((next: 'true' | 'false') => {
         if (isDisabled) {
@@ -37,7 +37,13 @@ export const DocumentControlsBooleanToggle = ({ nodeInstanceId, isDisabled }: Do
         }
 
         apply((state) => {
-            ; (state.document.nodes[nodeInstanceId].nodeConfiguration as BooleanToggleConfig).value = next === 'true'
+            const config = state.document.nodes[nodeInstanceId]?.nodeConfiguration as BooleanToggleConfig | undefined
+
+            if (!config) {
+                return
+            }
+
+            config.value = next === 'true'
             expireSolution(state)
         })
     }, [apply, nodeInstanceId, isDisabled])

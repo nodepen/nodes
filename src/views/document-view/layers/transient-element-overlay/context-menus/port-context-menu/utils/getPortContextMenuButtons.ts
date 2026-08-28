@@ -15,7 +15,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
     const { portTemplate, nodeInstanceId } = context
     const { __direction: direction, typeName } = portTemplate
 
-    const nodeType = getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId])
+    const node = useStore.getState().document.nodes[nodeInstanceId]
+    const nodeType = getNodeTypeForTemplate(node ? useStore.getState().templates[node.templateId] : undefined)
 
     const supportedPrimitiveTypeNames: readonly string[] = PARAMS.PRIMITIVE
     const supportedGeometricTypeNames: readonly string[] = PARAMS.GEOMETRY

@@ -17,11 +17,17 @@ const ValueListOptionsContextMenu = ({ position, context }: ValueListOptionsCont
 
     const { apply, clearInterface } = useDispatch()
 
-    const { items } = useStore((state) => state.document.nodes[nodeInstanceId].nodeConfiguration as NodePen.ValueListConfig)
+    const node = useStore((state) => state.document.nodes[nodeInstanceId])
 
     const handleSelect = useCallback((index: number) => {
         apply((state) => {
-            const config = state.document.nodes[nodeInstanceId].nodeConfiguration as NodePen.ValueListConfig
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            const config = node.nodeConfiguration as NodePen.ValueListConfig
 
             config.items.forEach((item, i) => {
                 item.isSelected = i === index
@@ -37,6 +43,12 @@ const ValueListOptionsContextMenu = ({ position, context }: ValueListOptionsCont
             <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" />
         </svg>
     )
+
+    if (!node) {
+        return null
+    }
+
+    const { items } = node.nodeConfiguration as NodePen.ValueListConfig
 
     return (
         <MenuBody position={position}>

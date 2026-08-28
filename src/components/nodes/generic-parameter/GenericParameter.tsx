@@ -20,7 +20,7 @@ type GenericParameterProps = {
     template: NodePen.NodeTemplate
 }
 
-const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactElement => {
+const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactElement | null => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
 
@@ -31,6 +31,10 @@ const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactE
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)
+
+    if (!node) {
+        return null
+    }
 
     return (
         <NodeInternalStateProvider value={internalState}>

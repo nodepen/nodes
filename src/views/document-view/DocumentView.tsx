@@ -5,9 +5,12 @@ import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay, Sele
 import { DocumentViewContent } from './DocumentViewContent'
 import { PresenceOverlay } from './layers/presence-overlay'
 import { useFlag } from '@/hooks/useFlag'
+import DocumentViewErrorBoundary from './DocumentViewErrorBoundary'
 
 const DocumentView = (): React.ReactElement | null => {
     const canvasRootRef = useStore((state) => state.registry.canvasRoot)
+
+    const currentDocument = useStore((state) => state.document)
 
     const { setCameraPosition } = useDispatch()
 
@@ -33,7 +36,7 @@ const DocumentView = (): React.ReactElement | null => {
     }, [])
 
     return (
-        <>
+        <DocumentViewErrorBoundary resetKeys={[currentDocument]}>
             <Layer id="np-transient-element-overlay-layer" z={90}>
                 <TransientElementOverlay />
             </Layer>
@@ -52,7 +55,7 @@ const DocumentView = (): React.ReactElement | null => {
             <Layer id="np-grid-canvas-layer" z={20}>
                 <CanvasGridUnderlay />
             </Layer>
-        </>
+        </DocumentViewErrorBoundary>
     )
 }
 

@@ -30,9 +30,15 @@ export const useSelectionColor = (nodeInstanceId: string): SelectionColorData =>
 
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(nodeInstanceId))
     const isHidden = useStore((state) => {
+        const node = state.document.nodes[nodeInstanceId]
+
+        if (!node) {
+            return false
+        }
+
         switch (nodeType) {
             case 'generic-node': {
-                return !state.document.nodes[nodeInstanceId].status.isVisible
+                return !node.status.isVisible
             }
             case 'generic-parameter':
             case 'number-slider':

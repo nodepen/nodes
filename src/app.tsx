@@ -248,9 +248,17 @@ export const NodesApp = ({
             }
 
             for (const nodeId of previousGhostIds) {
-                if (!liveGhostIds.has(nodeId)) {
-                    delete state.document.nodes[nodeId]
+                if (liveGhostIds.has(nodeId)) {
+                    continue
                 }
+
+                const placed = state.document.nodes[nodeId]
+
+                if (placed && !placed.status.isProvisional) {
+                    continue
+                }
+
+                delete state.document.nodes[nodeId]
             }
         })
     }, [presence?.ghostNodes, document])

@@ -48,7 +48,7 @@ const BooleanToggle = ({ id, template }: BooleanToggleProps) => {
         }
 
         apply((state) => {
-            const config = state.document.nodes[id].nodeConfiguration as NodePen.BooleanToggleConfig
+            const config = state.document.nodes[id]?.nodeConfiguration as NodePen.BooleanToggleConfig | undefined
 
             if (!config) {
                 console.log(`🐍 Could not find config for boolean toggle ${id}`)

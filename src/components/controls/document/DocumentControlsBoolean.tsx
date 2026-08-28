@@ -38,7 +38,13 @@ export const DocumentControlsBoolean = ({ nodeInstanceId, portInstanceId, isDisa
         }
 
         apply((state) => {
-            state.document.nodes[nodeInstanceId].values[portInstanceId] = createSingleValue(next, 'boolean')
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.values[portInstanceId] = createSingleValue(next, 'boolean')
             expireSolution(state)
         })
     }, [apply, nodeInstanceId, portInstanceId, isDisabled])

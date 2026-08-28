@@ -12,10 +12,11 @@ type PinButtonProps = {
 export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) => {
     const { addControl, removeControl, clearInterface } = useDispatch()
 
-    const portDirection = getPortDirection(useStore.getState().document.nodes[nodeInstanceId], portInstanceId)
+    const node = useStore.getState().document.nodes[nodeInstanceId]
+    const portDirection = node ? getPortDirection(node, portInstanceId) : null
 
     const isPinned = useStore((state) =>
-        state.document.controls[portDirection].some(
+        !!portDirection && state.document.controls[portDirection].some(
             (control) => control.ref.nodeInstanceId === nodeInstanceId && control.ref.portInstanceId === portInstanceId
         )
     )
@@ -41,6 +42,10 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
         removeControl('input', nodeInstanceId, portInstanceId)
         clearInterface()
     }, [])
+
+    if (!portDirection) {
+        return null
+    }
 
     return isPinned ? (
         <MenuButton icon={unpinIcon} label="Remove from controls" action={handleUnpin} />

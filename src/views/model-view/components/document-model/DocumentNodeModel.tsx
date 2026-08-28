@@ -16,7 +16,6 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
 
     const { size } = useThree()
 
-    const isVisible = node.status.isVisible
     const isSelected = useStore((state) => state.registry.selection.nodes.includes(id))
     const isExpired = useStore((state) => state.solution.flags.isModelExpired)
 
@@ -24,7 +23,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
 
     const isHoverActive = !!currentHover.branch
 
-    if (!isVisible) {
+    if (!node || !node.status.isVisible) {
         return null
     }
 

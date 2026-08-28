@@ -13,7 +13,13 @@ export const VisibilityButton = ({ nodeInstanceId }: ButtonProps) => {
 
     const handleToggleVisibility = () => {
         apply((state) => {
-            state.document.nodes[nodeInstanceId].status.isVisible = !state.document.nodes[nodeInstanceId].status.isVisible
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.status.isVisible = !node.status.isVisible
         })
         clearInterface()
     }

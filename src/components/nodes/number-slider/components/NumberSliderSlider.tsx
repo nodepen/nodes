@@ -111,7 +111,13 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
         const nextValue = clamp(Math.round((initialSliderValue.current + valueDelta) * p) / p, min, max)
 
         apply((state) => {
-            state.document.nodes[node.instanceId].values['input'] = createSingleValue(nextValue.toFixed(precision), 'number')
+            const currentNode = state.document.nodes[node.instanceId]
+
+            if (!currentNode) {
+                return
+            }
+
+            currentNode.values['input'] = createSingleValue(nextValue.toFixed(precision), 'number')
         })
     }, [isActive, sliderPageXDomain, max, min, dx, dy, x])
 
@@ -124,7 +130,13 @@ export const NumberSliderSlider = ({ node, config }: NumberSliderSliderProps) =>
 
         // Commit value
         apply((state) => {
-            state.document.nodes[node.instanceId].anchors['handle'] = {
+            const currentNode = state.document.nodes[node.instanceId]
+
+            if (!currentNode) {
+                return
+            }
+
+            currentNode.anchors['handle'] = {
                 dx: start + dx + NUMBER_SLIDER_HANDLE_WIDTH / 2,
                 dy: y + dy - NUMBER_SLIDER_HANDLE_HEIGHT / 2
             }

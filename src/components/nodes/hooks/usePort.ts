@@ -33,7 +33,8 @@ export const usePort = (
             return
         }
 
-        const nodeType = getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId])
+        const node = useStore.getState().document.nodes[nodeInstanceId]
+        const nodeType = getNodeTypeForTemplate(node ? useStore.getState().templates[node.templateId] : undefined)
 
         if (nodeType !== 'generic-node') {
             return

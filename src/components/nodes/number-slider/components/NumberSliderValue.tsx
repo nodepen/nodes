@@ -25,7 +25,13 @@ export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => 
     const isEditable = useIsEditable()
 
     const currentValue = useStore((state) => {
-        const { values, nodeConfiguration } = state.document.nodes[node.instanceId]
+        const currentNode = state.document.nodes[node.instanceId]
+
+        if (!currentNode) {
+            return
+        }
+
+        const { values, nodeConfiguration } = currentNode
 
         if (!nodeConfiguration) {
             return

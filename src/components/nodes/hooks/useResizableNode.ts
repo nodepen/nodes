@@ -274,17 +274,23 @@ export const useResizableNode = (nodeInstanceId: string, config?: ResizeConfig) 
         }
 
         apply((state) => {
-            state.document.nodes[nodeInstanceId].position = {
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.position = {
                 x: next.x,
                 y: next.y
             }
-            state.document.nodes[nodeInstanceId].dimensions = {
+            node.dimensions = {
                 width: next.width,
                 height: next.height
             }
-            state.document.nodes[nodeInstanceId].anchors = {
-                ...state.document.nodes[nodeInstanceId].anchors,
-                ...computeAnchors?.(state.document.nodes[nodeInstanceId])
+            node.anchors = {
+                ...node.anchors,
+                ...computeAnchors?.(node)
             }
         })
     }, [])

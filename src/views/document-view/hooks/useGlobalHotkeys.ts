@@ -126,7 +126,9 @@ export const useGlobalHotkeys = () => {
 
                 apply((state) => {
                     state.clipboard.pasteCount = 0
-                    state.clipboard.nodes = state.registry.selection.nodes.map((id) => current(state.document.nodes[id]))
+                    state.clipboard.nodes = state.registry.selection.nodes
+                        .filter((id) => !!state.document.nodes[id])
+                        .map((id) => current(state.document.nodes[id]))
                 })
 
                 break
@@ -140,11 +142,16 @@ export const useGlobalHotkeys = () => {
                 apply((state) => {
                     for (const nodeInstanceId of state.registry.selection.nodes) {
                         const node = state.document.nodes[nodeInstanceId]
+
+                        if (!node) {
+                            continue
+                        }
+
                         const template = state.templates[node.templateId]
 
                         switch (getNodeTypeForTemplate(template)) {
                             case 'generic-node': {
-                                state.document.nodes[nodeInstanceId].status.isVisible = !state.document.nodes[nodeInstanceId].status.isVisible
+                                node.status.isVisible = !node.status.isVisible
                                 break;
                             }
                             default: {

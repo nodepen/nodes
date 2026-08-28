@@ -27,6 +27,10 @@ const NumberSliderContextMenu = ({ context }: ContextMenuProps) => {
     const zoom = useStore((state) => state.camera.zoom)
     const slider = useStore((state) => state.document.nodes[context.nodeInstanceId])
 
+    if (!slider) {
+        return null
+    }
+
     const { x, y } = slider.position
     const { width, height } = slider.dimensions
     const { min, max, precision } = slider.nodeConfiguration as NodePen.NumberSliderConfig
@@ -91,7 +95,13 @@ const NumberSliderContextMenu = ({ context }: ContextMenuProps) => {
 
         // Valid number
         apply((state) => {
-            state.document.nodes[context.nodeInstanceId].values['input'] = createSingleValue(clamp(numericValue, min, max).toFixed(precision), 'number')
+            const node = state.document.nodes[context.nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.values['input'] = createSingleValue(clamp(numericValue, min, max).toFixed(precision), 'number')
             expireSolution(state)
         })
     }, [currentValue, min, max, precision])

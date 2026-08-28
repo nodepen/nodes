@@ -19,17 +19,29 @@ export const PortValueContextMenu = ({ position, context }: PortValueContextMenu
 
     const { apply, clearInterface } = useDispatch()
 
-    const initialDataTree = useStore.getState().document.nodes[nodeInstanceId].values[portInstanceId]
-    const initialSingleValue = tryGetSingleValue(initialDataTree)
-    const initialValue = getDataTreeValueString(initialSingleValue)
+    const node = useStore.getState().document.nodes[nodeInstanceId]
 
     const handleSubmit = useCallback((val: string) => {
         apply((state) => {
-            state.document.nodes[nodeInstanceId].values[portInstanceId] = createSingleValue(val, valueType as NodePen.DataTreeValueType)
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.values[portInstanceId] = createSingleValue(val, valueType as NodePen.DataTreeValueType)
             expireSolution(state)
         })
         clearInterface()
     }, [])
+
+    if (!node) {
+        return null
+    }
+
+    const initialDataTree = node.values[portInstanceId]
+    const initialSingleValue = tryGetSingleValue(initialDataTree)
+    const initialValue = getDataTreeValueString(initialSingleValue)
 
     return (
         <MenuBody position={position} animate={false}>

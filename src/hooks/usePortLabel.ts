@@ -7,7 +7,11 @@ export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { 
 
     return useStore((state) => {
         const node = state.document.nodes[nodeInstanceId]
-        const template = state.templates[node.templateId]
+        const template = node ? state.templates[node.templateId] : undefined
+
+        if (!node || !template) {
+            return { defaultLabel: '', currentLabel: '' }
+        }
 
         const nodeType = getNodeTypeForTemplate(template)
 

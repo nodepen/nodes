@@ -8,7 +8,7 @@ import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
-import { expireSolution, resetNodePlacement } from './utils'
+import { expireSolution, resetNodePlacement, pruneDocumentReferences } from './utils'
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
@@ -49,8 +49,24 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         apply: (callback: (state: NodesAppState, get: BaseGetter) => void) => set((state) => callback(state, get)),
         loadDocument: (document: NodePen.Document) =>
             set((state) => {
+                // Preserve local provisional nodes
+                const provisionalNodes = Object.values(state.document.nodes).filter(
+                    (node) => node.status.isProvisional
+                )
+
+                const nextNodes = { ...document.nodes }
+
+                for (const node of provisionalNodes) {
+                    nextNodes[node.instanceId] = current(node)
+                }
+
                 // Apply to internal state
-                state.document = document
+                state.document = {
+                    ...document,
+                    nodes: nextNodes
+                }
+
+                pruneDocumentReferences(state)
             }),
         loadTemplates: (templates: NodePen.NodeTemplate[]) =>
             set(
@@ -69,7 +85,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         loadSolutionData: (data: NodePen.DocumentSolutionData | null) =>
             set(
                 (state) => {
-                    if (!data && !state.solution.data) {
+                    if (!data && !state.solution?.data) {
                         return
                     }
 
@@ -380,7 +396,13 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         }))
 
                         for (const instanceId of state.registry.selection.nodes) {
-                            const currentInstance = current(state.document.nodes[instanceId])
+                            const node = state.document.nodes[instanceId]
+
+                            if (!node) {
+                                continue
+                            }
+
+                            const currentInstance = current(node)
 
                             state.document.nodes[getProvisionalId(instanceId)] = {
                                 ...currentInstance,
@@ -426,6 +448,11 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
                         for (const nodeInstanceId of state.registry.selection.nodes) {
                             const node = state.document.nodes[nodeInstanceId]
+
+                            if (!node) {
+                                continue
+                            }
+
                             node.position = {
                                 x: node.position.x + dx,
                                 y: node.position.y + dy
@@ -530,6 +557,12 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             // Recompute node dimensions based on flag placement
             const node = state.document.nodes[nodeInstanceId]
             const template = state.templates[node.templateId]
+
+            if (!template) {
+                console.log('🐍 Could not find template for node when recomputing dimensions!')
+                expireSolution(state)
+                return
+            }
 
             const { anchors, dimensions } = getNodeDimensions(node, template)
 
@@ -656,6 +689,16 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         case 'select': {
                             const { selection, source } = current(modelState)
 
+                            const sourceNode = state.document.nodes[source.nodeInstanceId]
+
+                            if (!sourceNode) {
+                                state.ui.model = {
+                                    mode: 'default',
+                                    selection: {}
+                                }
+                                break
+                            }
+
                             const values: NodePen.DataTreeValue[] = []
 
                             for (const [sourceKey, guids] of Object.entries(selection)) {
@@ -670,7 +713,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                                 }
                             }
 
-                            state.document.nodes[source.nodeInstanceId].values[source.portInstanceId] = createList(values)
+                            sourceNode.values[source.portInstanceId] = createList(values)
 
                             state.ui.model = {
                                 mode: 'default',

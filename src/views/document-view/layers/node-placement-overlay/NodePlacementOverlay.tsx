@@ -14,6 +14,10 @@ const NodePlacementOverlay = () => {
 
     const activeNode = useStore.getState().document.nodes[activeNodeId]
 
+    if (!activeNode) {
+      return [0, 0]
+    }
+
     return [activeNode.dimensions.width, activeNode.dimensions.height]
   }, [activeNodeId])
 
@@ -36,7 +40,13 @@ const NodePlacementOverlay = () => {
       const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
       apply((state) => {
-        state.document.nodes[activeNodeId].position = {
+        const activeNode = state.document.nodes[activeNodeId]
+
+        if (!activeNode) {
+          return
+        }
+
+        activeNode.position = {
           x: x - activeNodeWidth / 2,
           y: y - activeNodeHeight / 2,
         }
@@ -52,7 +62,13 @@ const NodePlacementOverlay = () => {
       }
 
       apply((state) => {
-        state.document.nodes[activeNodeId].status.isProvisional = false
+        const activeNode = state.document.nodes[activeNodeId]
+
+        if (!activeNode) {
+          return
+        }
+
+        activeNode.status.isProvisional = false
         expireSolution(state)
       })
 

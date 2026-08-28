@@ -115,8 +115,14 @@ export const NumberSliderConfigForm = ({ node, config, onClose }: ConfigProps) =
 
     const onSubmit: SubmitHandler<ConfigFormData> = (data) => {
         apply((state) => {
-            state.document.nodes[node.instanceId].values['input'] = createSingleValue(data.value, 'number')
-            state.document.nodes[node.instanceId].nodeConfiguration = {
+            const currentNode = state.document.nodes[node.instanceId]
+
+            if (!currentNode) {
+                return
+            }
+
+            currentNode.values['input'] = createSingleValue(data.value, 'number')
+            currentNode.nodeConfiguration = {
                 min: Number.parseFloat(data.min),
                 max: Number.parseFloat(data.max),
                 precision: internalPrecision

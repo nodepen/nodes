@@ -65,7 +65,12 @@ export const ValueListOptionsForm = ({ node, config, onClose }: ValueListOptions
         const selectedIndex = Math.max(0, trimmedRows.findIndex((row) => row.wasSelected))
 
         apply((state) => {
-            const nextConfig = state.document.nodes[node.instanceId].nodeConfiguration as NodePen.ValueListConfig
+            const nextConfig = state.document.nodes[node.instanceId]?.nodeConfiguration as NodePen.ValueListConfig | undefined
+
+            if (!nextConfig) {
+                console.log(`🐍 Could not find config for value list ${node.instanceId}`)
+                return
+            }
 
             nextConfig.items = trimmedRows.map((row, i) => ({
                 name: row.name,

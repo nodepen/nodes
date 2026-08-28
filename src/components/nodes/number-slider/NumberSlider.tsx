@@ -27,7 +27,6 @@ type NumberSliderProps = {
 const NumberSlider = ({ id, template }: NumberSliderProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
-    const config = node.nodeConfiguration as NodePen.NumberSliderConfig
 
     const isEditable = useIsEditable()
 
@@ -111,6 +110,12 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
     }, [isEditable])
 
     const rightClickRef = useRightClick(handleRightClick)
+
+    if (!node) {
+        return null
+    }
+
+    const config = node.nodeConfiguration as NodePen.NumberSliderConfig
 
     const s = 20
 

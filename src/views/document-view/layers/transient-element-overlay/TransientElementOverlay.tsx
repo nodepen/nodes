@@ -2,7 +2,7 @@ import React from 'react'
 import { useStore } from '$'
 import { AddNodeContextMenu, DocumentContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
 import { CursorContainer } from './cursors'
-import { getMenuHeight } from './utils'
+import { getMenuHeight, shallowEntries } from './utils'
 import { usePageSpaceToOverlaySpace, useReducedMotion, useWorldSpaceToPageSpace } from '@/hooks'
 import { NodeTemplateSummaryTooltip, PortTooltip } from './tooltips'
 import { useCursorState } from './cursors/hooks'
@@ -16,8 +16,8 @@ import { ValueListOptionsContextMenu } from './context-menus/value-list-options-
 
 const TransientElementOverlay = () => {
     const cursor = useCursorState()
-    const menus = useStore((state) => Object.entries(state.registry.contextMenus))
-    const tooltips = useStore((state) => Object.entries(state.registry.tooltips))
+    const menus = useStore((state) => Object.entries(state.registry.contextMenus), shallowEntries)
+    const tooltips = useStore((state) => Object.entries(state.registry.tooltips), shallowEntries)
 
     const prefersReducedMotion = true
 

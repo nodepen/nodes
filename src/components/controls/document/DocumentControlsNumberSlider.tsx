@@ -32,7 +32,13 @@ export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, c
 
     const commitNumericValue = useCallback((nextValue: number) => {
         apply((state) => {
-            state.document.nodes[nodeInstanceId].values[portInstanceId] = createSingleValue(nextValue.toFixed(precision), 'number')
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.values[portInstanceId] = createSingleValue(nextValue.toFixed(precision), 'number')
             expireSolution(state)
         })
     }, [apply, nodeInstanceId, portInstanceId, precision])
@@ -110,7 +116,13 @@ export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, c
         const nextValue = clamp(Math.round((initialSliderValue.current + valueDelta) * p) / p, min, max)
 
         apply((state) => {
-            state.document.nodes[nodeInstanceId].values[portInstanceId] = createSingleValue(nextValue.toFixed(precision), 'number')
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.values[portInstanceId] = createSingleValue(nextValue.toFixed(precision), 'number')
         })
     }, [isActive, max, min, precision, apply, nodeInstanceId, portInstanceId])
 

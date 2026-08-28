@@ -33,6 +33,10 @@ const ValueListContextMenu = ({ position, context }: ValueListContextMenuProps) 
         clearInterface()
     }, [clearInterface])
 
+    if (!node) {
+        return null
+    }
+
     return (
         <>
             {!showEditDialog ? (

@@ -24,7 +24,12 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
         })
     }, [apply])
 
-    const inputControls = useStore((state) => [...state.document.controls.input].sort((a, b) => a.order - b.order), shallow)
+    const inputControls = useStore((state) =>
+        [...state.document.controls.input]
+            .filter((control) => !!state.document.nodes[control.ref.nodeInstanceId])
+            .sort((a, b) => a.order - b.order),
+        shallow
+    )
 
     const showRunButton = inputControls.length > 0 && !hideRunButton
 

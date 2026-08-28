@@ -18,19 +18,31 @@ export const PortLabelContextMenu = ({ position, context }: PortLabelContextMenu
 
     const { apply, clearInterface } = useDispatch()
 
+    const node = useStore((state) => state.document.nodes[nodeInstanceId])
+
     const { currentLabel } = usePortLabel(nodeInstanceId, portInstanceId)
 
     const handleSubmit = useCallback((val: string) => {
         apply((state) => {
-            state.document.nodes[nodeInstanceId].portConfigurations[portInstanceId] ??= {
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                return
+            }
+
+            node.portConfigurations[portInstanceId] ??= {
                 label: null,
                 flags: []
             }
-            state.document.nodes[nodeInstanceId].portConfigurations[portInstanceId].label = val
+            node.portConfigurations[portInstanceId].label = val
             saveDocument(state)
         })
         clearInterface()
     }, [])
+
+    if (!node) {
+        return null
+    }
 
     return (
         <MenuBody position={position} animate={false}>
