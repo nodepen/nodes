@@ -48,7 +48,7 @@ const HelpButton = ({ onClick, isOpen }: Props) => {
         <div ref={circleAnnotationRef} className='np-w-12 np-h-12 -np-mr-2 np-relative np-overflow-visible np-z-10' style={{ transform: 'translateY(-8px)' }}>
             <div className="np-absolute np-z-0 np-w-full np-h-full">
                 <svg className="np-w-12 np-h-12 np-overflow-visible np-animate-march-rotate" viewBox="0 0 10 10" style={{ animationDuration: '20000ms' }}>
-                    <circle cx={5} cy={5} r={r + 1} fill={COLORS.PALE} stroke="none" />
+                    {/* <circle cx={5} cy={5} r={r + 1} fill={COLORS.PALE} stroke="none" /> */}
                     <circle cx={5} cy={5} r={r} fill="none" stroke={COLORS.DARK} strokeWidth={2 + (circleScale - 1) * 10} strokeDasharray={dashArray} vectorEffect="non-scaling-stroke" />
                 </svg>
             </div>

@@ -1,5 +1,5 @@
 export type { ContextMenu } from './ContextMenu'
-export type { ContextMenuContext, PortContextMenuContext, ValueListContextMenuContext, ValueListOptionsContextMenuContext } from './ContextMenuContext'
+export type { ContextMenuContext, PortContextMenuContext, ValueListContextMenuContext, ValueListOptionsContextMenuContext, ColorSwatchContextMenuContext, ColorParameterContextMenuContext, GradientContextMenuContext } from './ContextMenuContext'
 export type { Cursor, CursorConfiguration, CursorContext, WireEditCursorContext } from './Cursor'
 export type { Tooltip } from './Tooltip'
 export type { TooltipConfiguration } from './TooltipConfiguration'

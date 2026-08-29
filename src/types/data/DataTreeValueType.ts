@@ -3,6 +3,7 @@ export type DataTreeValueType =
     | 'box'
     | 'brep'
     | 'circle'
+    | 'color'
     | 'curve'
     | 'extrusion'
     | 'integer'

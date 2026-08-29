@@ -11,6 +11,9 @@ export type ContextMenuContext =
     | NumberSliderValueContextMenuContext
     | ValueListContextMenuContext
     | ValueListOptionsContextMenuContext
+    | ColorSwatchContextMenuContext
+    | ColorParameterContextMenuContext
+    | GradientContextMenuContext
 
 export type AddNodeContextMenu = {
     type: 'add-node'
@@ -63,5 +66,21 @@ export type ValueListContextMenuContext = {
 
 export type ValueListOptionsContextMenuContext = {
     type: 'value-list-options'
+    nodeInstanceId: string
+}
+
+export type ColorSwatchContextMenuContext = {
+    type: 'color-swatch'
+    nodeInstanceId: string
+}
+
+export type ColorParameterContextMenuContext = {
+    type: 'color-parameter'
+    nodeInstanceId: string
+    portInstanceId: string
+}
+
+export type GradientContextMenuContext = {
+    type: 'gradient'
     nodeInstanceId: string
 }

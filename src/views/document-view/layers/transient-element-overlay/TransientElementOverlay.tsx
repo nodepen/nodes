@@ -13,6 +13,9 @@ import { NumberSliderContextMenu } from './context-menus/number-slider-context-m
 import { GenericTextTooltip } from './tooltips/generic-text/GenericTextTooltip'
 import { ValueListContextMenu } from './context-menus/value-list-context-menu'
 import { ValueListOptionsContextMenu } from './context-menus/value-list-options-context-menu'
+import { ColorSwatchContextMenu } from './context-menus/color-swatch-context-menu'
+import { ColorParameterContextMenu } from './context-menus/color-parameter-context-menu'
+import { GradientContextMenu } from './context-menus/gradient-context-menu'
 
 const TransientElementOverlay = () => {
     const cursor = useCursorState()
@@ -109,6 +112,15 @@ const TransientElementOverlay = () => {
                     }
                     case 'value-list-options': {
                         return <ValueListOptionsContextMenu key={`value-list-options-context-menu-${key}`} position={menu.position} context={menu.context} />
+                    }
+                    case 'color-swatch': {
+                        return <ColorSwatchContextMenu key={`color-swatch-context-menu-${key}`} position={menu.position} context={menu.context} />
+                    }
+                    case 'color-parameter': {
+                        return <ColorParameterContextMenu key={`color-parameter-context-menu-${key}`} position={menu.position} context={menu.context} />
+                    }
+                    case 'gradient': {
+                        return <GradientContextMenu key={`gradient-context-menu-${key}`} position={menu.position} context={menu.context} />
                     }
                     default: {
                         console.log(`🐍 Unhandled context menu type [${contextType}]`)

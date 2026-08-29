@@ -14,6 +14,7 @@ import { DocumentControlsBoolean } from './DocumentControlsBoolean'
 import { DocumentControlsGeometry } from './DocumentControlsGeometry'
 import { DocumentControlsValueList } from './DocumentControlsValueList'
 import { DocumentControlsBooleanToggle } from './DocumentControlsBooleanToggle'
+import { DocumentControlsColorSwatch } from './DocumentControlsColorSwatch'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useFlag } from '@/hooks/useFlag'
 
@@ -57,6 +58,17 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
         }
 
         return node.nodeConfiguration as NodePen.ValueListConfig
+    })
+
+    const colorSwatchConfig = useStore((state) => {
+        const node = state.document.nodes[nodeInstanceId]
+        const template = node ? state.templates[node.templateId] : undefined
+
+        if (!node || !template || getNodeTypeForTemplate(template) !== 'color-swatch') {
+            return null
+        }
+
+        return node.nodeConfiguration as NodePen.ColorSwatchConfig
     })
 
     const [internalLabel, setInternalLabel] = useState(currentLabel)
@@ -205,8 +217,16 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
             case 'boolean-toggle': {
                 return <DocumentControlsBooleanToggle nodeInstanceId={nodeInstanceId} isDisabled={!isControlsEditable} />
             }
+            case 'color-swatch': {
+                if (!colorSwatchConfig) {
+                    console.log(`🐍 Tried to render input for color swatch with no config!`)
+                    return null
+                }
+                return <DocumentControlsColorSwatch nodeInstanceId={nodeInstanceId} config={colorSwatchConfig} isDisabled={!isControlsEditable} />
+            }
             case 'generic-node':
-            case 'generic-parameter': {
+            case 'generic-parameter':
+            case 'gradient': {
                 switch (valueType) {
                     case 'boolean': {
                         return <DocumentControlsBoolean nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} isDisabled={!isControlsEditable} />

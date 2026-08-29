@@ -5,6 +5,7 @@ type UserStringData = {
     portInstanceId?: string
     branchPath?: string
     branchEntryIndex?: string
+    previewColor?: string
 }
 
 type UserString = [key: string, value: string]

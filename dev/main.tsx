@@ -261,6 +261,38 @@ const doc: NodePenDocument = {
                 output: { label: null, flags: [] },
             },
         },
+        // Colour Swatch
+        'c3d4e5f6-7a8b-4901-c2d3-e4f5a6b7c8d9': {
+            instanceId: 'c3d4e5f6-7a8b-4901-c2d3-e4f5a6b7c8d9',
+            templateId: '9c53bac0-ba66-40bd-8154-ce9829b9db1a',
+            position: { x: 850, y: 280 },
+            dimensions: { width: 44, height: 44 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 44, dy: 22 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            nodeConfiguration: { r: 255, g: 159, b: 67 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
         // Series
         'f48cf9d3-3388-4972-af4b-d496b6e7d86d': {
             instanceId: 'f48cf9d3-3388-4972-af4b-d496b6e7d86d',
@@ -550,6 +582,38 @@ const doc: NodePenDocument = {
                 input: { label: null, flags: [] },
                 output: { label: null, flags: [] },
             },
+        },
+        // Colour
+        '3a2b1c9d-8e7f-4a6b-9c5d-2e1f0a9b8c7d': {
+            instanceId: '3a2b1c9d-8e7f-4a6b-9c5d-2e1f0a9b8c7d',
+            templateId: '203a91c3-287a-43b6-a9c5-ebb96240a650',
+            position: { x: 650, y: 604 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
         }
     },
     meta: {
@@ -589,6 +653,13 @@ const doc: NodePenDocument = {
                 order: 4,
                 ref: {
                     nodeInstanceId: 'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7',
+                    portInstanceId: 'input'
+                }
+            },
+            {
+                order: 5,
+                ref: {
+                    nodeInstanceId: 'c3d4e5f6-7a8b-4901-c2d3-e4f5a6b7c8d9',
                     portInstanceId: 'input'
                 }
             }

@@ -10,6 +10,8 @@ import NumberSlider from './number-slider/NumberSlider'
 import Panel from './panel/Panel'
 import ValueList from './value-list/ValueList'
 import BooleanToggle from './boolean-toggle/BooleanToggle'
+import ColorSwatch from './color-swatch/ColorSwatch'
+import Gradient from './gradient/Gradient'
 import { useFlag } from '@/hooks/useFlag'
 
 const NodesContainer = (): React.ReactElement | null => {
@@ -42,6 +44,10 @@ const NodesContainer = (): React.ReactElement | null => {
                         return <ValueList key={`value-list-${instanceId}`} id={instanceId} template={template} />
                     case 'boolean-toggle':
                         return <BooleanToggle key={`boolean-toggle-${instanceId}`} id={instanceId} template={template} />
+                    case 'color-swatch':
+                        return <ColorSwatch key={`color-swatch-${instanceId}`} id={instanceId} template={template} />
+                    case 'gradient':
+                        return <Gradient key={`gradient-${instanceId}`} id={instanceId} template={template} />
                     // TODO: `unknown-node` type
                     case 'unknown':
                     default:

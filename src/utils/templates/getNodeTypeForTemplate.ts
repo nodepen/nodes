@@ -8,6 +8,8 @@ type NodePenNodeType =
     | 'panel'
     | 'value-list'
     | 'boolean-toggle'
+    | 'color-swatch'
+    | 'color-gradient'
     | 'unknown'
 
 export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
@@ -29,6 +31,12 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
                 }
                 case COMPONENTS.BOOLEAN_TOGGLE: {
                     return 'boolean-toggle'
+                }
+                case COMPONENTS.COLOR_SWATCH: {
+                    return 'color-swatch'
+                }
+                case COMPONENTS.GRADIENT: {
+                    return 'color-gradient'
                 }
                 default: {
                     return 'generic-parameter'

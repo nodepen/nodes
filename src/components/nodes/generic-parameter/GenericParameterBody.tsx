@@ -1,7 +1,7 @@
 import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
-import { COLORS } from '@/constants'
+import { COLORS, COMPONENTS } from '@/constants'
 import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getGenericParameterPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
@@ -49,6 +49,20 @@ export const GenericParameterBody = ({ node, template }: GenericParameterBodyPro
         const key = getPortContextMenuKey(node.instanceId, 'input')
 
         const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+
+        if (template.guid === COMPONENTS.COLOR) {
+            apply((state) => {
+                state.registry.contextMenus[key] = {
+                    position: { x, y },
+                    context: {
+                        type: 'color-parameter',
+                        nodeInstanceId: node.instanceId,
+                        portInstanceId: 'input',
+                    }
+                }
+            })
+            return
+        }
 
         apply((state) => {
             state.registry.contextMenus[key] = {

@@ -58,6 +58,15 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableZoomToGeometry: false
             }
         }
+        case 'color-gradient': {
+            return {
+                enableSetLabel: true,
+                enableSetValue: false,
+                enablePickGeometry: false,
+                enablePin: false,
+                enableZoomToGeometry: false,
+            }
+        }
         default: {
             return {
                 enableSetLabel: false,

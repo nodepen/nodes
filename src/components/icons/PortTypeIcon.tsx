@@ -120,6 +120,24 @@ const PointGlyph = ({ s }: GlyphProps) => {
     return <circle cx={s} cy={s} r={r * 0.32} fill={COLORS.LIGHT} />
 }
 
+const ColorGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    // Scale the drop down so its extents sit within the circle glyph's (r * 0.8).
+    const dropScale = 0.8
+    const px = (fx: number) => s + fx * r * dropScale
+    const py = (fy: number) => s + fy * r * dropScale
+
+    const drop = `M ${px(0)} ${py(-1)} `
+        + `C ${px(-0.53)} ${py(-0.55)} ${px(-0.8)} ${py(-0.15)} ${px(-0.8)} ${py(0.18)} `
+        + `C ${px(-0.8)} ${py(0.68)} ${px(-0.42)} ${py(1)} ${px(0)} ${py(1)} `
+        + `C ${px(0.42)} ${py(1)} ${px(0.8)} ${py(0.68)} ${px(0.8)} ${py(0.18)} `
+        + `C ${px(0.8)} ${py(-0.15)} ${px(0.53)} ${py(-0.55)} ${px(0)} ${py(-1)} Z`
+
+    return (
+        <path d={drop} stroke={COLORS.LIGHT} strokeWidth={s * 0.2} strokeLinejoin="round" fill="none" />
+    )
+}
+
 const LineGlyph = ({ s }: GlyphProps) => {
     const r = s * 0.62
     const px = (fx: number) => s + fx * r
@@ -274,6 +292,7 @@ const portTypeGlyphs: Record<NodePen.DataTreeValueType, (props: GlyphProps) => R
     string: TextGlyph,
     text: TextGlyph,
     point: PointGlyph,
+    color: ColorGlyph,
     line: LineGlyph,
     box: BoxGlyph,
     brep: BrepGlyph,

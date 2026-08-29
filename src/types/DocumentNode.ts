@@ -1,5 +1,7 @@
 import type { ValueListConfig } from './config'
 import type { BooleanToggleConfig } from './config/BooleanToggleConfig'
+import type { ColorSwatchConfig } from './config/ColorSwatchConfig'
+import type { GradientConfig } from './config/GradientConfig'
 import type { NumberSliderConfig } from './config/NumberSliderConfig'
 import type { PanelConfig } from './config/PanelConfig'
 import type { DataTree } from './data'
@@ -57,7 +59,13 @@ export type DocumentNode = {
     outputs: {
         [outputInstanceId: string]: number
     }
-    nodeConfiguration?: NumberSliderConfig | PanelConfig | ValueListConfig | BooleanToggleConfig
+    nodeConfiguration?:
+    | NumberSliderConfig
+    | PanelConfig
+    | ValueListConfig
+    | BooleanToggleConfig
+    | ColorSwatchConfig
+    | GradientConfig
     portConfigurations: {
         [portInstanceId: string]: PortConfiguration
     }

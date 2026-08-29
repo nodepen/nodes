@@ -302,6 +302,105 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
 
             break
         }
+        case 'color-swatch': {
+            node.inputs['input'] = 0
+            node.outputs['output'] = 0
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
+            }
+            node.dimensions = {
+                width: DIMENSIONS.COLOR_SWATCH_WIDTH,
+                height: DIMENSIONS.COLOR_SWATCH_HEIGHT
+            }
+            node.anchors = {
+                'labelDeltaX': {
+                    dx: 0,
+                    dy: 0
+                },
+                'output': {
+                    dx: node.dimensions.width,
+                    dy: node.dimensions.height / 2
+                },
+            }
+            node.nodeConfiguration = {
+                r: 243,
+                g: 149,
+                b: 50
+            } as NodePen.ColorSwatchConfig
+            node.sources['input'] = []
+            node.values['input'] = createEmptyTree()
+
+            break
+        }
+        case 'color-gradient': {
+            for (const input of templateInputs) {
+                const { __order: order } = input
+
+                const inputInstanceId = newGuid()
+
+                node.sources[inputInstanceId] = []
+                node.inputs[inputInstanceId] = order
+                node.values[inputInstanceId] = {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                }
+                node.portConfigurations[inputInstanceId] = {
+                    label: null,
+                    flags: [],
+                }
+            }
+
+            for (const output of templateOutputs) {
+                const { __order: order } = output
+
+                const outputInstanceId = newGuid()
+
+                node.outputs[outputInstanceId] = order
+                node.portConfigurations[outputInstanceId] = {
+                    label: null,
+                    flags: [],
+                }
+            }
+
+            const { dimensions, anchors } = getNodeDimensions(node, template)
+
+            node.dimensions = {
+                width: Math.max(dimensions.width, DIMENSIONS.GRADIENT_WIDTH),
+                height: dimensions.height,
+            }
+            node.anchors = anchors
+
+            for (const outputInstanceId of Object.keys(node.outputs)) {
+                node.anchors[outputInstanceId] = {
+                    ...node.anchors[outputInstanceId],
+                    dx: node.dimensions.width,
+                }
+            }
+
+            node.nodeConfiguration = {
+                grips: [
+                    { position: 0, colorLeft: { r: 255, g: 255, b: 255 }, colorRight: { r: 255, g: 255, b: 255 } },
+                    { position: 1, colorLeft: { r: 0, g: 0, b: 0 }, colorRight: { r: 0, g: 0, b: 0 } },
+                ],
+                linear: false,
+                locked: false,
+            } as NodePen.GradientConfig
+
+            break
+        }
     }
 
     return node

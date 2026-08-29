@@ -264,5 +264,33 @@
         "isObsolete": false,
         "inputs": [],
         "outputs": []
+    },
+    {
+        "guid": "9c53bac0-ba66-40bd-8154-ce9829b9db1a",
+        "name": "Colour Swatch",
+        "nickName": "Swatch",
+        "description": "Colour (palette) swatch",
+        "keywords": [],
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQsSURBVEhLtZZtTFtVGMfvvS0QNMbNb0aj8Yua6BfNpjFRF/ziloKWlVZ0sIpBEKnQAIWJwCAQEMarLS8pg4LQUVDeSoFaAoGBicZPDuWLiUaQTjrikNe+0P4952C94J1GE3aTX+7tPef8/+d5nvO05eglCIJBLpevk0ccBxEREetE7xJ5llHxD0wFbwf9PzmB7e+OBf+PTtRmJQaYCXFz+270AMuTx4r3209pJLc4nudDuGHG3eDPlHGA+Vng+ofAl8X/D2c60K8g658Bah8UuXoamHjnkMHHhMb7yeQzwBcXAVfKnbErAevzQNujRCjqYN2/IBp8cgiTnOzoJGB5SKTtPsAoOzrvPyAaXL07iAbXDmHl4MnksZ7A4RetgECrOOZv5OB+S2Bjaxoe7lQZvFUcghYOoS4Ovhry/j0B7sSDOcxAxhNB8uL2JR4hG4ffCzl8HR+NF547hdIzD2P1ogB8RgwI7jcF6GOehEKhgPa8ApdfP4U51QNwqwXcJHylOYErqtPQJ59HV1eXGEG38Qocr51grt+o7oH6bAxiY2NxNuYleNRE/PMD1tQ8lK++gtTUVBQUFCA3NxeZmZlIS0tDeno69Ho9iouLUV1djaWlJdFgcXERSqUScXFxSEhIQEpKCrRaLZLOvYxVEh0GiQHhJgm/LvYJZGRkoKqqCo2Njaivr0dtbS27Nzc3o7OzE1arFRsbG6KBz+djiyhZWVnIyclhJpfPPQW3jhgMEQNCoIPURSPDuxfUKCkpYYJmsxkdHR0sJT09Pejr60N/fz82NzdFA3rl5eWxsAsLC2EwGJCcnAwXya+3/kA8zG/5PPpUj7H5JpNJIj4wMIDBwUGpQVic5pAuTkxMxM8aOYK9ZHxYJNDJ4Yc3oqDT6dDU1ITu7m709vYeER8ZGZEahMVLS0uRn5/PDDykqCGa/xER+pkWm6aTGtxJfGxsTGoQFi8vL2dmSUlJLN/BPjI+KhIkfULf01q1tLQcER8dHYXD4cDExITUoKysDBUVFex00Gd69K6rTsJLmgt2kVvZAmyax9mGLBaLRHxychIul0tqEBavqalh55gWukz9ItwXBBZFcIDDbQOP7zX3Qq97n6XHZrNhaGhIIj49PY2tra2jBmHxuro6NDQ0oLKyEtnZ2ejUPI1VkpJfSac6NI8gLzONzaO5/yfx2dlZqUFYnDaP0WhkR5BGQutBO5RSVFTExv8u7nQ6MTU1hZmZGczNzWF+fl40iIyM9Ozs7LBBGjYVbm1tZQ3U3t6OtrY21lD0Ts87baLh4WHY7XaMj49LxBcWFtjXxPLyMqKjo9c4+sNMCurd3t5GKBRCMBjE/v4+IxAIwO/3M2i3U7xeL/b29v5id3eXQTdJoTorKyuIj4/fI5un/yw4GTEpiYqK8rCQjgGycw8R/4jjONkfpJ+5nr65zmwAAAAASUVORK5CYII=",
+        "libraryName": "Grasshopper",
+        "category": "Params",
+        "subcategory": "Input",
+        "isObsolete": false,
+        "inputs": [],
+        "outputs": []
+    },
+    {
+        "guid": "203a91c3-287a-43b6-a9c5-ebb96240a650",
+        "name": "Colour",
+        "nickName": "Col",
+        "description": "Contains a collection of RGB colours",
+        "keywords": [],
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAQiSURBVEhL1VVHSKxnFB0VjMqz99577w17xYJYg7NREBVcKS4UhKCrB5EsRdCFG1FcyODKhRWjiChPREQXloWQPJGE2Dsn37njyHuaV7IKuXD5Z+af/5x7zz33+zX/VQQYGRndqiv+Rf6o8vvCzMzsw/DwMFZWVrC0tIS5uTlMT09jcnISExMTmJ+fR3t7O0pLS5Geno7AwECogn5Xj5rqEb4SJiYmFerBh5GRESQnJ0smJSUhISEBcXFx6Ovrw9raGnJycgTY19dX/hMUFHRlbGzc8wzzzxEQEPCDtbX1H+Pj46iurpbqmpqaUFdXJyAkmZqawubmJsLCwggKf39/NDY2Ii0tDYrgSsG469FeBQAjc3Pz921tbY+9vb3IyMhAfn4+9vf3sbq6KgDsZGNjAx0dHQgPD0dwcLAQ+Pj4SCequDslle4Z8k0EuLi43I2OjkrVWVlZKCwsxOHhIU5PT5GdnS1dbG1tITExEREREQgJCYHqWgg8PT3h4eHBWbCLJD3kJ6G0/7Wqqgr19fUiDQlyc3PR39+P8/NzaLVapKam4vj4GCUlJW8ICO7q6gpbW1uSfHiGfYlSBweHG4PWlIMSkYRJNy0vL8twHx4ecH9/j7Gxsc8kIoFSAF5eXlAuvFSYWj20spaq/mNKSgry8vJQW1uLzMzMFxIOkDYl6NPT00seHR1hcHAQra2t8Pb2hru7O5ydnYWEhKqLPxX2O42a/E/29vY3bL+mpgb0P72v0+mwt7eHi4sL3N7eSuUEZvDK7+vr62Jd6u/m5gYnJyfY2dlJV4rsWhH8olFMf4WGhoqmzOjoaMTGxiI+Pl4ISXRzc/NZB4+Pj/Kd7uIuGPR3dHSUGZAoKiqK231Ogp+Vva4iIyNhIOJnEsXExGBgYACXl5fSBUENMyApf+/u7pbqKY9SAjY2NoKjJGMH71Vq3lEv+piuYHKJ6HOS7e7uYnFxETs7O2LXk5MTXF9fY2ZmBgsLC2LjsrIyNDQ0SOXshPuipNfP4Dm0pqaml9xMtswrh93c3CyEdEtRUZG0XVFRgbOzM1RWVoo0HDJ3g0bgsOlCRcRdeHGRBL2rbjz5+flJ5eXl5ejp6RGfc2hMdkmHsIuhoSGpllXTgXQd90eZ5UnBvdkDRjzPEgKwCi4ZPxuS4IZtPTg4wPb2thRC3TlYuoebb2VlRe3j9ZCvQnWhUw/csWoCGZKycbF42LFqLt3s7CxaWlpkqApU7KokvFcwXzyLGO7sgjNgtVwaJheus7NTZKIVu7q65H3AuVhaWsp/+G5Qc/zyafpJ9KiWr+gidXxIkozglIFyUDLDfQsLC5FT3Sf4198Hz2GqpPpIq3K7eWwQoKCgAMXFxVIpncSDkYvI84vHunrmNz6rh/h28P36+p37rfz+d/L/KDSavwHpj9jOYnz2uwAAAABJRU5ErkJggg==",
+        "libraryName": "Grasshopper",
+        "category": "Params",
+        "subcategory": "Primitive",
+        "isObsolete": false,
+        "inputs": [],
+        "outputs": []
     }
 ]

@@ -36,7 +36,7 @@ export const usePort = (
         const node = useStore.getState().document.nodes[nodeInstanceId]
         const nodeType = getNodeTypeForTemplate(node ? useStore.getState().templates[node.templateId] : undefined)
 
-        if (nodeType !== 'generic-node') {
+        if (nodeType !== 'generic-node' && nodeType !== 'gradient') {
             return
         }
 

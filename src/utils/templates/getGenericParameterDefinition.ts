@@ -11,13 +11,16 @@ export const getGenericParameterPortTemplate = (template: NodePen.NodeTemplate, 
         throw new Error(`Cannot generate implicit port template from non-parameter node`)
     }
 
+    const rawTypeName = template.name.toLowerCase()
+    const typeName = rawTypeName === 'colour' ? 'color' : rawTypeName
+
     return {
         __order: 0,
         __direction: direction,
         name: template.name,
         nickName: template.nickName,
         description: template.description,
-        typeName: template.name.toLowerCase(),
+        typeName,
         keywords: [],
         isOptional: false
     }
@@ -86,6 +89,23 @@ export const getBooleanTogglePortTemplate = (template: NodePen.NodeTemplate, dir
         nickName: template.nickName,
         description: template.description,
         typeName: 'boolean',
+        keywords: [],
+        isOptional: false
+    }
+}
+
+export const getColorSwatchPortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
+    if (getNodeTypeForTemplate(template) !== 'color-swatch') {
+        throw new Error(`Cannot generate implicit port template for this thing that isn't a color swatch!`)
+    }
+
+    return {
+        __order: 0,
+        __direction: direction,
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: 'color',
         keywords: [],
         isOptional: false
     }

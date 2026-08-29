@@ -2,7 +2,7 @@ import * as THREE from 'three'
 import { useStore, useStoreRef } from "@/store"
 import React from 'react'
 import { Line } from '@react-three/drei'
-import { LINE, MESH } from '../../materials'
+import { LINE, MESH, getPreviewMeshMaterial, getPreviewLineMaterial } from '../../materials'
 import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
 import { useThree } from '@react-three/fiber'
 
@@ -29,7 +29,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
 
     // Meshes and stuff here
     return objects.map((o) => {
-        const { nodeInstanceId, portInstanceId, branchPath, branchEntryIndex } = tryParseUserStrings(o)
+        const { nodeInstanceId, portInstanceId, branchPath, branchEntryIndex, previewColor } = tryParseUserStrings(o)
 
         const isHovered = isHoverActive
             && nodeInstanceId === currentHover.nodeInstanceId
@@ -57,7 +57,7 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
                 ? 0xFCFCFC
                 : isSelected
                     ? 0x4caf7d
-                    : 0xe05a5a
+                    : previewColor ? `rgb(${previewColor})` : 0xe05a5a
 
             return (
                 <points key={`${id}-${o.id}`} geometry={o.geometry} userData={userData}>
@@ -73,14 +73,16 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
                 out.push(new THREE.Vector3(array[i], array[i + 1], array[i + 2]))
             }
 
+            const defaultLineMaterial = previewColor ? getPreviewLineMaterial(previewColor) : LINE.DEFAULT
+
             const material =
                 isExpired
                     ? LINE.EXPIRED
                     : isHoverActive
-                        ? isHovered ? LINE.SELECTED : isPortHovered ? LINE.DEFAULT : LINE.EXPIRED
+                        ? isHovered ? LINE.SELECTED : isPortHovered ? defaultLineMaterial : LINE.EXPIRED
                         : isSelected
                             ? LINE.SELECTED
-                            : LINE.DEFAULT
+                            : defaultLineMaterial
 
             // return <Line
             //     key={`${id}-${o.id}`}
@@ -99,14 +101,16 @@ const DocumentNodeModelProps = ({ id, objects }: DocumentNodeModelProps) => {
         }
 
         if (o instanceof THREE.Mesh) {
+            const defaultMeshMaterial = previewColor ? getPreviewMeshMaterial(previewColor) : MESH.DEFAULT
+
             const material =
                 isExpired
                     ? MESH.EXPIRED
                     : isHoverActive
-                        ? isHovered ? MESH.SELECTED : isPortHovered ? MESH.DEFAULT : MESH.GHOSTED
+                        ? isHovered ? MESH.SELECTED : isPortHovered ? defaultMeshMaterial : MESH.GHOSTED
                         : isSelected
                             ? MESH.SELECTED
-                            : MESH.DEFAULT
+                            : defaultMeshMaterial
 
             return <mesh key={`${id}-${o.id}`} geometry={o.geometry} material={material} userData={userData} />
         }
