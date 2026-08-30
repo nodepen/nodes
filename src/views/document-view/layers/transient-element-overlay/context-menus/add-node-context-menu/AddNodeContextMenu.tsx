@@ -12,7 +12,7 @@ import { COMPONENTS, KEYS } from '@/constants'
 import { expireSolution } from '@/store/utils'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
 import { tryMatchTextSearch, type TemplateMatch } from '@/utils/templates/tryMatchTextSearch'
-import { AgentSparkleIcon } from '@/components/icons/AgentSparkleIcon'
+import { AgentIcon } from '@/components/icons/AgentIcon'
 import { newGuid } from '@/utils/common'
 import { current } from 'immer'
 import { useFeatureFlag } from '@/hooks/useFeatureFlag'
@@ -37,6 +37,7 @@ type SearchOption =
 
 export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMenuProps) => {
     const templates = useStore((state) => Object.values(state.templates))
+    const preferences = useStore((state) => state.ui.preferences)
     const { apply } = useDispatch()
 
     const enableAgent = useFeatureFlag('enableAgentButton')
@@ -137,7 +138,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
             case 'subtraction':
             case 'multiplication':
             case 'division': {
-                node = createInstance(template)
+                node = createInstance(template, preferences)
 
                 if (shortcutMatch.value) {
                     const inputInstanceId = Object.entries(node.inputs).find(([, i]) => i === 1)?.[0]
@@ -228,7 +229,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         ]
 
     const handleAddNode = (template: NodePen.NodeTemplate): void => {
-        const nodeInstance = createInstance(template)
+        const nodeInstance = createInstance(template, preferences)
 
         const nodeWidth = nodeInstance.dimensions.width
         const nodeHeight = nodeInstance.dimensions.height
@@ -429,7 +430,7 @@ const SearchEntry = ({ option, isSelected, onClick }: SearchEntryProps) => {
                 return <img src={getIconAsImage(template)} />
             }
             case 'agent-action': {
-                return <AgentSparkleIcon />
+                return <AgentIcon />
             }
             default: {
                 return null

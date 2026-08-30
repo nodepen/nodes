@@ -7,6 +7,7 @@ import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { divideDomain, remap } from '@/utils/numerics'
 import { expireSolution, resetNodePlacement, pruneDocumentReferences, getNodesIncludedInDrag } from './utils'
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
@@ -81,6 +82,36 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 },
                 false,
                 'templates/loadTemplates'
+            ),
+        loadPreferences: (preferences: NodePen.DocumentPreferences) =>
+            set(
+                (state) => {
+                    const currentPreferences = state.ui.preferences
+
+                    if (
+                        currentPreferences.componentLabels === preferences.componentLabels &&
+                        currentPreferences.parameterLabels === preferences.parameterLabels
+                    ) {
+                        return
+                    }
+
+                    state.ui.preferences = preferences
+
+                    for (const node of Object.values(state.document.nodes)) {
+                        const template = state.templates[node.templateId]
+
+                        if (!template || getNodeTypeForTemplate(template) !== 'generic-node') {
+                            continue
+                        }
+
+                        const { anchors, dimensions } = getNodeDimensions(node, template, preferences)
+
+                        node.anchors = { ...node.anchors, ...anchors }
+                        node.dimensions = { ...node.dimensions, ...dimensions }
+                    }
+                },
+                false,
+                'preferences/load'
             ),
         loadSolutionData: (data: NodePen.DocumentSolutionData | null) =>
             set(

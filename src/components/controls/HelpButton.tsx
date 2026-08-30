@@ -3,7 +3,7 @@ import { useDocumentRef, useImperativeEvent } from "@/hooks"
 import { useLerpState } from "@/hooks/useLerpState"
 import { distance } from "@/utils/numerics"
 import React, { useCallback, useRef, useState } from "react"
-import { AgentSparkleIcon } from "../icons/AgentSparkleIcon"
+import { AgentIcon } from "../icons/AgentIcon"
 import { CircleButton } from "../layout/CircleButton"
 
 type Props = {
@@ -54,7 +54,7 @@ const HelpButton = ({ onClick, isOpen }: Props) => {
             </div>
             <div className='np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-10 np-overflow-visible'>
                 <CircleButton shadow tooltip="Agent" onClick={handleClick}>
-                    <AgentSparkleIcon width={16} height={16} fill={COLORS.DARK} />
+                    <AgentIcon width={16} height={16} fill={COLORS.DARK} />
                 </CircleButton>
             </div>
         </div>

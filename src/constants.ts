@@ -1,3 +1,10 @@
+import type { DocumentPreferences } from './types/settings/DocumentPreferences'
+
+export const DEFAULT_DOCUMENT_PREFERENCES: DocumentPreferences = {
+    componentLabels: 'names',
+    parameterLabels: 'nickname',
+}
+
 export const CAMERA = {
     MINIMUM_ZOOM: 0.1,
     MAXIMUM_ZOOM: 4,
@@ -29,6 +36,8 @@ export const DIMENSIONS = {
     NODE_LABEL_FONT_SIZE: 16,
     NODE_VALUE_FONT_SIZE: 12,
     NODE_LABEL_WIDTH: 32,
+    /** Size of the `template.icon` image drawn in a `GenericNode`'s label area when `componentLabels` is `'icons'`. */
+    NODE_LABEL_ICON_SIZE: 24,
     NODE_MINIMUM_HEIGHT: 80,
     NODE_PORT_LABEL_FONT_SIZE: 18,
     NODE_PORT_LABEL_OFFSET: 12,

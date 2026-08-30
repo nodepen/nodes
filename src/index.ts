@@ -3,6 +3,7 @@ export { DocumentView, ModelView } from './views'
 export { Dialog as NodesDialog } from './views/components'
 export { Layer as NodesLayer } from './views/common'
 
+export { AgentIcon } from './components/icons/AgentIcon'
 export { InterfacePanel as NodesAppPanel } from './components/layout/panel/InterfacePanel'
 export { AgentBubbleContent as NodesAppBubble } from './components/layout/bubble/AgentBubbleContent'
 export { useInterfacePanelCallbacks as useNodesApp } from './components/layout/panel/InterfacePanelContext'

@@ -1,67 +1,74 @@
 import type * as NodePen from '@/types'
 import { DIMENSIONS } from '@/constants'
 import { clamp } from '@/utils/numerics'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { getNodeHeight, getNodeWidth } from '.'
 
 export const getNodeDimensions = (
-  node: NodePen.DocumentNode,
-  nodeTemplate: NodePen.NodeTemplate
+    node: NodePen.DocumentNode,
+    nodeTemplate: NodePen.NodeTemplate,
+    preferences?: NodePen.DocumentPreferences
 ): Pick<NodePen.DocumentNode, 'anchors' | 'dimensions'> => {
-  const nodeDimensions: Pick<NodePen.DocumentNode, 'anchors' | 'dimensions'> = {
-    anchors: {
-      labelDeltaX: {
-        dx: 0,
-        dy: 0,
-      },
-    },
-    dimensions: {
-      width: 0,
-      height: 0,
-    },
-  }
+    const isGenericNode = getNodeTypeForTemplate(nodeTemplate) === 'generic-node'
 
-  // Calculate current extents
-  const { totalWidth: nodeWidth, anchors } = getNodeWidth(node, nodeTemplate)
-  nodeDimensions.dimensions.width = nodeWidth
+    const useIconLabel = isGenericNode && preferences?.componentLabels === 'icons'
+    const useFullParameterNames = isGenericNode && preferences?.parameterLabels === 'fullname'
 
-  nodeDimensions.anchors = { ...nodeDimensions.anchors, labelDeltaX: { dx: anchors.labelDeltaX, dy: 0 } }
+    const nodeDimensions: Pick<NodePen.DocumentNode, 'anchors' | 'dimensions'> = {
+        anchors: {
+            labelDeltaX: {
+                dx: 0,
+                dy: 0,
+            },
+        },
+        dimensions: {
+            width: 0,
+            height: 0,
+        },
+    }
 
-  const nodeHeight = getNodeHeight(nodeTemplate)
-  nodeDimensions.dimensions.height = nodeHeight
+    // Calculate current extents
+    const { totalWidth: nodeWidth, anchors } = getNodeWidth(node, nodeTemplate, useFullParameterNames)
+    nodeDimensions.dimensions.width = nodeWidth
 
-  // Calculate port anchors (center based on height)
-  const inputInstanceIds = Object.keys(node.inputs)
-  const outputInstanceIds = Object.keys(node.outputs)
+    nodeDimensions.anchors = { ...nodeDimensions.anchors, labelDeltaX: { dx: anchors.labelDeltaX, dy: 0 } }
 
-  const deltaYMax = (portCount: number): number => {
-    return ((clamp(portCount - 1, 0, Number.MAX_SAFE_INTEGER) - 1) * DIMENSIONS.NODE_PORT_HEIGHT) / 2
-  }
+    const nodeHeight = getNodeHeight(nodeTemplate, useIconLabel)
+    nodeDimensions.dimensions.height = nodeHeight
 
-  const deltaYStart = (portCount: number): number => {
-    return nodeHeight / 2 - deltaYMax(portCount) - DIMENSIONS.NODE_PORT_HEIGHT / 2
-  }
+    // Calculate port anchors (center based on height)
+    const inputInstanceIds = Object.keys(node.inputs)
+    const outputInstanceIds = Object.keys(node.outputs)
 
-  const dyStartInputs = deltaYStart(inputInstanceIds.length)
+    const deltaYMax = (portCount: number): number => {
+        return ((clamp(portCount - 1, 0, Number.MAX_SAFE_INTEGER) - 1) * DIMENSIONS.NODE_PORT_HEIGHT) / 2
+    }
 
-  for (let i = 0; i < inputInstanceIds.length; i++) {
-    const instanceId = inputInstanceIds[i]
+    const deltaYStart = (portCount: number): number => {
+        return nodeHeight / 2 - deltaYMax(portCount) - DIMENSIONS.NODE_PORT_HEIGHT / 2
+    }
 
-    const dx = 0
-    const dy = dyStartInputs + DIMENSIONS.NODE_PORT_HEIGHT * i
+    const dyStartInputs = deltaYStart(inputInstanceIds.length)
 
-    nodeDimensions.anchors[instanceId] = { dx, dy }
-  }
+    for (let i = 0; i < inputInstanceIds.length; i++) {
+        const instanceId = inputInstanceIds[i]
 
-  const dyStartOutputs = deltaYStart(outputInstanceIds.length)
+        const dx = 0
+        const dy = dyStartInputs + DIMENSIONS.NODE_PORT_HEIGHT * i
 
-  for (let i = 0; i < outputInstanceIds.length; i++) {
-    const instanceId = outputInstanceIds[i]
+        nodeDimensions.anchors[instanceId] = { dx, dy }
+    }
 
-    const dx = nodeWidth
-    const dy = dyStartOutputs + DIMENSIONS.NODE_PORT_HEIGHT * i
+    const dyStartOutputs = deltaYStart(outputInstanceIds.length)
 
-    nodeDimensions.anchors[instanceId] = { dx, dy }
-  }
+    for (let i = 0; i < outputInstanceIds.length; i++) {
+        const instanceId = outputInstanceIds[i]
 
-  return nodeDimensions
+        const dx = nodeWidth
+        const dy = dyStartOutputs + DIMENSIONS.NODE_PORT_HEIGHT * i
+
+        nodeDimensions.anchors[instanceId] = { dx, dy }
+    }
+
+    return nodeDimensions
 }

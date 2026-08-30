@@ -7,6 +7,7 @@ import { useCallbacks, useDispatch, useStore } from "@/store"
 import { getDomainParameter } from "@/utils/numerics/domain"
 import { clamp } from "@/utils"
 import { CircleButton } from "@/components/layout/CircleButton"
+import { SelvaLogoIcon } from "@/components/icons/SelvaLogoIcon"
 import { COLORS } from "@/constants"
 import ModelErrorBoundary from "./ModelErrorBoundary"
 import { useFlag } from "@/hooks/useFlag"
@@ -198,6 +199,8 @@ const ModelView = () => {
 
     const controlsMarginLeft = clamp((containerWidth - modelWindowWidth - gutterLeft) * -1, 0, gutterLeft)
 
+    const brandingMarginLeft = clamp((containerWidth - modelWindowWidth - 270) * -1, 0, 270)
+
     const gridButtonTooltip = useStore((state) => state.geometry.showGrid ? 'Hide Grid' : 'Show Grid')
     const toggleGrid = useCallback(() => {
         apply((state) => {
@@ -292,6 +295,14 @@ const ModelView = () => {
                                         </div>
                                     </div>) : null}
                                 </div>
+                                {!isFullBleed && isExpanded ? (<div className="np-w-full np-h-full np-absolute np-flex np-flex-col np-items-start np-justify-start np-z-30 np-pointer-events-none">
+                                    <div className="np-w-full np-pl-6 np-pt-7 np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5" style={{ marginLeft: `${brandingMarginLeft}px` }}>
+                                        <a href="https://selvadev.com" target="_blank" className="np-flex np-items-center np-gap-1.5 np-pl-0.5 np-pr-1 np-py-0.5 np-pointer-events-auto np-rounded-full np-bg-pale hover:np-cursor-pointer hover:np-bg-grey">
+                                            <SelvaLogoIcon width={20} height={20} />
+                                            <p className="np-text-xs np-text-darkgreen np-font-panel np-pr-2 np-translate-y-px">Selva Viewer</p>
+                                        </a>
+                                    </div>
+                                </div>) : null}
                                 <div className="np-w-full np-h-full np-absolute np-flex np-justify-start np-items-center np-z-50 np-pointer-events-none">
                                     <div className={`${isExpanded ? 'np-pointer-events-auto' : 'np-pointer-events-none'} np-w-8 np-h-[85%] np-relative np-group/resize`} style={{ transform: 'translateX(-19px)' }} onPointerEnter={handleDragAreaPointerEnter} onPointerMove={handleDragAreaPointerMove} onPointerLeave={handleDragAreaPointerLeave} onPointerCancel={handleDragAreaPointerLeave}>
                                         <div className="np-w-8 np-h-8 np-absolute np-flex np-justify-center np-items-center np-invisible hover:np-cursor-ew-resize group-hover/resize:np-visible" style={{ top: `${handleTop}px` }}>

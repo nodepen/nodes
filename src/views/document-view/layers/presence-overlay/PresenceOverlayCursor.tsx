@@ -5,7 +5,7 @@ import { useEffect, useState } from "react"
 import { useLerpState } from '@/hooks/useLerpState'
 import { COLORS } from '@/constants'
 import { lerpPoint2d, useInterpolatedState } from '@/hooks/useInteroplatedState'
-import { AgentSparkleIcon } from '@/components/icons/AgentSparkleIcon'
+import { AgentIcon } from '@/components/icons/AgentIcon'
 import { getRandomInteger } from '@/utils/numerics'
 import { getRandomFloat, pickRandomItem } from '@/utils/numerics/random'
 import { newGuid } from '@/utils/common'

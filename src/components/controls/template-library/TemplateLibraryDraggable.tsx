@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@/types'
 import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useLongHover, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
-import { useDispatch } from '@/store'
+import { useDispatch, useStore } from '@/store'
 import { KEYS } from '@/constants'
 
 type TemplateDraggableProps = {
@@ -30,7 +30,7 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
 
                     const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
-                    const node = createInstance(template)
+                    const node = createInstance(template, useStore.getState().ui.preferences)
 
                     apply((state) => {
                         node.status.isProvisional = true

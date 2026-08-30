@@ -6,7 +6,10 @@ import { DIMENSIONS } from '@/constants'
 import { createSingleValue } from '../data-trees/createSingleValue'
 import { createEmptyTree } from '../data-trees/createEmptyTree'
 
-export const createInstance = (template: NodePen.NodeTemplate): NodePen.DocumentNode => {
+export const createInstance = (
+    template: NodePen.NodeTemplate,
+    preferences?: NodePen.DocumentPreferences
+): NodePen.DocumentNode => {
     const { guid, category, inputs: templateInputs, outputs: templateOutputs } = template
 
     const node: NodePen.DocumentNode = {
@@ -75,7 +78,7 @@ export const createInstance = (template: NodePen.NodeTemplate): NodePen.Document
                 }
             }
 
-            const { dimensions, anchors } = getNodeDimensions(node, template)
+            const { dimensions, anchors } = getNodeDimensions(node, template, preferences)
 
             node.dimensions = dimensions
             node.anchors = anchors

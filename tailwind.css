@@ -37,6 +37,28 @@
     }
 }
 
+/* One ray darts in to touch the circle, then returns, then holds until its turn comes again. */
+@keyframes agent-icon-ray-thinking {
+    0%, 25%, 100% {
+        transform: translate(0, 0);
+    }
+
+    12.5% {
+        transform: translate(var(--np-ray-dx), var(--np-ray-dy));
+    }
+}
+
+/* A ray's group eases in to touch the circle, then eases back out, with no hold in between. */
+@keyframes agent-icon-ray-idle {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(var(--np-ray-dx), var(--np-ray-dy));
+    }
+}
+
 :root {
     --np-active-menu-height: 100%;
 }

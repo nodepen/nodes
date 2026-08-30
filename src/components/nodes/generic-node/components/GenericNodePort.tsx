@@ -4,6 +4,7 @@ import { useLongHover, useNodeAnchorPosition, usePageSpaceToOverlaySpace } from 
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePort } from '../../hooks'
 import { useDispatch, useStore } from '$'
+import type { NodePenNodeType } from '@/utils/templates/getNodeTypeForTemplate'
 import { FlattenFlagIcon } from '@/components/icons/FlattenFlagIcon'
 import { GraftFlagIcon } from '@/components/icons/GraftFlagIcon'
 import { SimplifyFlagIcon } from '@/components/icons/SimplifyFlagIcon'
@@ -14,10 +15,15 @@ type GenericNodePortProps = {
     nodeInstanceId: string
     portInstanceId: string
     template: NodePen.PortTemplate
+    nodeType: NodePenNodeType
 }
 
-const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNodePortProps) => {
+const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }: GenericNodePortProps) => {
     const portRef = usePort(nodeInstanceId, portInstanceId, template)
+
+    const parameterLabels = useStore((state) => state.ui.preferences.parameterLabels)
+    const useFullName = nodeType === 'generic-node' && parameterLabels === 'fullname'
+    const labelText = useFullName ? template.name : template.nickName
 
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
@@ -98,12 +104,12 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template }: GenericNo
                 fill={COLORS.DARK}
                 textAnchor={labelTextAnchor}
             >
-                {template.nickName}
+                {labelText}
             </text>
             {sortedFlags.map((flag, i) => {
                 const key = `${direction}-flag-${flag}`
 
-                const x = labelPosition.x + (direction === 'input' ? 4 : 0) + (((template.nickName.length * 15) + ((i + (direction === 'input' ? 0 : 1)) * 22)) * (direction === 'input' ? 1 : -1))
+                const x = labelPosition.x + (direction === 'input' ? 4 : 0) + (((labelText.length * 15) + ((i + (direction === 'input' ? 0 : 1)) * 22)) * (direction === 'input' ? 1 : -1))
                 const y = labelPosition.y - 15
 
                 return (

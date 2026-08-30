@@ -1,7 +1,7 @@
 import { COMPONENTS } from '@/constants'
 import type * as NodePen from '@/types'
 
-type NodePenNodeType =
+export type NodePenNodeType =
     | 'generic-node'
     | 'generic-parameter'
     | 'number-slider'

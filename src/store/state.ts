@@ -5,6 +5,7 @@ import type { ContextMenu, Tooltip } from '@/views/document-view/layers/transien
 import type { NodePortReference, WireEditMode } from '@/types'
 import type { ModelGeometryType } from '@/types/geometry'
 import type { InterfacePanelTarget } from '@/types/Interface'
+import { DEFAULT_DOCUMENT_PREFERENCES } from '@/constants'
 
 export type NodesAppState = {
     document: NodePen.Document
@@ -41,6 +42,7 @@ export type NodesAppState = {
         features: NodePen.AppFeatures
     }
     ui: {
+        preferences: NodePen.DocumentPreferences
         cursor: {
             x: number
             y: number
@@ -336,6 +338,7 @@ export const initialState: NodesAppState = {
         }
     },
     ui: {
+        preferences: DEFAULT_DOCUMENT_PREFERENCES,
         cursor: {
             x: 0,
             y: 0

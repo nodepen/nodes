@@ -7,10 +7,14 @@ import { usePageSpaceToWorldSpace } from "@/hooks"
 const useNode = (instanceId: string): NodePen.DocumentNode | undefined =>
     useStore((state) => state.document.nodes[instanceId])
 
+const usePreferences = (): NodePen.DocumentPreferences =>
+    useStore((state) => state.ui.preferences)
+
 export type InterfacePanelCallbacks = {
     apply: ReturnType<typeof useDispatch>['apply']
     pageSpaceToWorldSpace: ReturnType<typeof usePageSpaceToWorldSpace>
     useNode: typeof useNode
+    usePreferences: typeof usePreferences
 }
 
 const InterfacePanelCallbacksContext = React.createContext<InterfacePanelCallbacks | undefined>(undefined)
@@ -25,7 +29,7 @@ export const InterfacePanelCallbacksProvider = ({ children }: ProviderProps) => 
     const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
 
     useLayoutEffect(() => {
-        setCallbacks({ apply, pageSpaceToWorldSpace, useNode })
+        setCallbacks({ apply, pageSpaceToWorldSpace, useNode, usePreferences })
     }, [apply, pageSpaceToWorldSpace])
 
     if (!callbacks) {

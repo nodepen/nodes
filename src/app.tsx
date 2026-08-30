@@ -3,6 +3,7 @@ import type * as NodePen from '@/types'
 import { freeze } from 'immer'
 import { useDispatch, useStore } from '$'
 import type { NodesAppCallbacks } from '$'
+import { DEFAULT_DOCUMENT_PREFERENCES } from '@/constants'
 import { ControlsContainer } from '@/components'
 import { PseudoShadowsContainer } from './views/common'
 import { StaticDialogLayer } from './views/static/dialog-layer'
@@ -14,6 +15,7 @@ type NodesAppProps = {
     solution: NodePen.DocumentSolutionData | null
     templates: NodePen.NodeTemplate[]
     assets: NodePen.DocumentAssets
+    preferences?: NodePen.DocumentPreferences
     presence?: NodePen.DocumentPresence
     flags?: NodePen.AppFlags
     features?: NodePen.AppFlags
@@ -27,12 +29,13 @@ export const NodesApp = ({
     solution,
     assets,
     presence,
+    preferences,
     flags,
     features,
     children,
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
-    const { apply, loadDocument, loadTemplates, loadSolutionData } = useDispatch()
+    const { apply, loadDocument, loadTemplates, loadSolutionData, loadPreferences } = useDispatch()
 
     useEffect(() => {
         loadDocument(document)
@@ -53,6 +56,10 @@ export const NodesApp = ({
     useEffect(() => {
         loadTemplates(templates ?? [])
     }, [templates])
+
+    useEffect(() => {
+        loadPreferences({ ...DEFAULT_DOCUMENT_PREFERENCES, ...preferences })
+    }, [preferences])
 
     useEffect(() => {
         apply((state) => {

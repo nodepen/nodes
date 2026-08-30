@@ -2,6 +2,7 @@ export type { Document } from './Document'
 export type { DocumentGroup } from './DocumentGroup'
 export type { DocumentNode } from './DocumentNode'
 export type { DocumentSettings, DocumentUnits } from './settings/DocumentSettings'
+export type { DocumentPreferences } from './settings/DocumentPreferences'
 export type { DocumentControls, DocumentControl } from './controls/DocumentControls'
 export type { BooleanToggleConfig, ColorSwatchConfig, GradientConfig, GradientGrip, GradientGripColor, NumberSliderConfig, PanelConfig, ValueListConfig } from './config'
 export type {
