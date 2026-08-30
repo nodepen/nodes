@@ -8,6 +8,8 @@ import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate
 import { saveDocument } from '@/store/utils/saveDocument'
 import { isCtrl } from '@/utils/dom/isCtrl'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { newGuid } from '@/utils/common'
+import { COLORS } from '@/constants'
 
 export const useGlobalHotkeys = () => {
     const {
@@ -58,14 +60,12 @@ export const useGlobalHotkeys = () => {
                     for (const node of Object.values(state.document.nodes)) {
                         const template = state.templates[node.templateId]
 
-                        switch (getNodeTypeForTemplate(template)) {
-                            case 'generic-node':
-                            case 'generic-parameter':
-                            case 'number-slider':
-                            case 'panel': {
-                                selection.push(node.instanceId)
-                            }
+                        if (getNodeTypeForTemplate(template) === 'unknown') {
+                            console.log(`🐍 Could not select unknown node`)
+                            continue
                         }
+
+                        selection.push(node.instanceId)
                     }
                     state.registry.selection.nodes = selection
                 })
@@ -90,7 +90,7 @@ export const useGlobalHotkeys = () => {
                         return
                     }
 
-                    if (state.registry.selection.nodes.length === 0) {
+                    if (state.registry.selection.nodes.length === 0 && state.registry.selection.groups.length === 0) {
                         return
                     }
 
@@ -113,6 +113,29 @@ export const useGlobalHotkeys = () => {
                         }
                     }
 
+                    // Delete selected groups
+                    for (const id of state.registry.selection.groups) {
+                        delete state.document.groups[id]
+                    }
+
+                    // Remove deleted nodes from groups
+                    for (const [groupId, group] of Object.entries(state.document.groups ?? {})) {
+                        const currentNodes = group.items?.nodes ?? []
+                        const nextNodes = currentNodes.filter((nodeInstanceId) => !deletedIds.has(nodeInstanceId))
+
+                        if (nextNodes.length === currentNodes.length) {
+                            continue
+                        }
+
+                        if (nextNodes.length === 0) {
+                            // Nothing left to draw a box around, and nothing left to select.
+                            delete state.document.groups[groupId]
+                            continue
+                        }
+
+                        group.items.nodes = nextNodes
+                    }
+
                     expireSolution(state)
                 })
 
@@ -133,6 +156,53 @@ export const useGlobalHotkeys = () => {
 
                 break
             }
+            case 'g':
+            case 'G': {
+                if (!isCtrl(e)) {
+                    return
+                }
+
+                e.preventDefault()
+
+                if (e.shiftKey) {
+                    // Remove selected nodes from all group memberships
+                    apply((state) => {
+                        const currentSelection = state.registry.selection.nodes
+
+                        if (currentSelection.length === 0) {
+                            return
+                        }
+
+                        for (const group of Object.values(state.document.groups)) {
+                            group.items.nodes = group.items.nodes.filter((nodeId) => !currentSelection.includes(nodeId))
+                        }
+
+                        saveDocument(state)
+                    })
+
+                    return
+                }
+
+                // Create group from current selection
+                apply((state) => {
+                    const currentSelection = state.registry.selection.nodes
+
+                    if (currentSelection.length === 0) {
+                        return
+                    }
+
+                    state.document.groups[newGuid()] = {
+                        color: COLORS.DARK,
+                        items: {
+                            nodes: currentSelection
+                        }
+                    }
+
+                    saveDocument(state)
+                })
+
+                break
+            }
             case 'q':
             case 'Q': {
                 if (!isCtrl(e)) {
@@ -140,26 +210,21 @@ export const useGlobalHotkeys = () => {
                 }
 
                 apply((state) => {
-                    for (const nodeInstanceId of state.registry.selection.nodes) {
-                        const node = state.document.nodes[nodeInstanceId]
+                    const eligibleNodeTypes: ReturnType<typeof getNodeTypeForTemplate>[] = ['generic-node', 'generic-parameter']
+                    const eligibleNodes = state.registry.selection.nodes
+                        .map((nodeInstanceId) => state.document.nodes[nodeInstanceId])
+                        .filter((node) => !!node && eligibleNodeTypes.includes(getNodeTypeForTemplate(state.templates[node.templateId])))
 
-                        if (!node) {
-                            continue
-                        }
-
-                        const template = state.templates[node.templateId]
-
-                        switch (getNodeTypeForTemplate(template)) {
-                            case 'generic-node': {
-                                node.status.isVisible = !node.status.isVisible
-                                break;
-                            }
-                            default: {
-                                // Cannot enable/disable some components
-                                break;
-                            }
-                        }
+                    if (eligibleNodes.length === 0) {
+                        return
                     }
+
+                    const allSameVisibility = eligibleNodes.every((node) => node.status.isVisible === eligibleNodes[0].status.isVisible)
+
+                    for (const node of eligibleNodes) {
+                        node.status.isVisible = allSameVisibility ? !node.status.isVisible : false
+                    }
+
                     saveDocument(state)
                 })
 

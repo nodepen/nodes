@@ -1,6 +1,7 @@
 import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInteroplatedState";
 import { useLerpState } from "@/hooks/useLerpState";
 import { useDispatch, useStore } from "@/store";
+import { isNodeIncludedInDrag } from "@/store/utils";
 import React, { startTransition, useEffect } from "react"
 import type * as NodePen from '@/types'
 
@@ -43,7 +44,7 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
     // object identity on every publish, which would defeat zustand's equality
     // check and force a re-render on every unrelated state change.)
     const internalPositionX = useStore((state) => {
-        if (!state.registry.selection.nodes.includes(nodeInstanceId ?? '')) {
+        if (!isNodeIncludedInDrag(state, nodeInstanceId ?? '')) {
             return null
         }
 
@@ -63,7 +64,7 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
     })
 
     const internalPositionY = useStore((state) => {
-        if (!state.registry.selection.nodes.includes(nodeInstanceId ?? '')) {
+        if (!isNodeIncludedInDrag(state, nodeInstanceId ?? '')) {
             return null
         }
 

@@ -616,6 +616,7 @@ const doc: NodePenDocument = {
             },
         }
     },
+    groups: {},
     meta: {
         name: 'My Document',
     },
@@ -741,6 +742,7 @@ let presence = {
 
 const flags = {
     isEditable: true,
+    isControlsEditable: true,
     // isThumbnail: true,
     hideInterface: false,
     hideScript: false

@@ -16,6 +16,7 @@ import { ValueListOptionsContextMenu } from './context-menus/value-list-options-
 import { ColorSwatchContextMenu } from './context-menus/color-swatch-context-menu'
 import { ColorParameterContextMenu } from './context-menus/color-parameter-context-menu'
 import { GradientContextMenu } from './context-menus/gradient-context-menu'
+import { GroupContextMenu } from './context-menus/group-context-menu'
 
 const TransientElementOverlay = () => {
     const cursor = useCursorState()
@@ -121,6 +122,9 @@ const TransientElementOverlay = () => {
                     }
                     case 'gradient': {
                         return <GradientContextMenu key={`gradient-context-menu-${key}`} position={menu.position} context={menu.context} />
+                    }
+                    case 'group': {
+                        return <GroupContextMenu key={`group-context-menu-${key}`} position={menu.position} context={menu.context} />
                     }
                     default: {
                         console.log(`🐍 Unhandled context menu type [${contextType}]`)

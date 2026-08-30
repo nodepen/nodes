@@ -8,7 +8,7 @@ import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { divideDomain, remap } from '@/utils/numerics'
-import { expireSolution, resetNodePlacement, pruneDocumentReferences } from './utils'
+import { expireSolution, resetNodePlacement, pruneDocumentReferences, getNodesIncludedInDrag } from './utils'
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
@@ -446,7 +446,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         // Apply drag as final position of nodes
                         const { dx, dy } = state.registry.drag
 
-                        for (const nodeInstanceId of state.registry.selection.nodes) {
+                        for (const nodeInstanceId of getNodesIncludedInDrag(state)) {
                             const node = state.document.nodes[nodeInstanceId]
 
                             if (!node) {
@@ -620,6 +620,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             set(
                 (state) => {
                     state.registry.selection.nodes = []
+                    state.registry.selection.groups = []
                     state.registry.hover.branch = null
 
                     state.callbacks.onSelectionUpdated?.(current(state))

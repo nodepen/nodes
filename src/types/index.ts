@@ -1,4 +1,5 @@
 export type { Document } from './Document'
+export type { DocumentGroup } from './DocumentGroup'
 export type { DocumentNode } from './DocumentNode'
 export type { DocumentSettings, DocumentUnits } from './settings/DocumentSettings'
 export type { DocumentControls, DocumentControl } from './controls/DocumentControls'

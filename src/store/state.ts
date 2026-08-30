@@ -139,6 +139,7 @@ export type NodesAppState = {
         }
         selection: {
             nodes: string[]
+            groups: string[]
             region:
             | {
                 isActive: false
@@ -261,6 +262,7 @@ export const initialState: NodesAppState = {
             name: 'default'
         },
         nodes: {},
+        groups: {},
         controls: {
             input: [],
             output: [],
@@ -408,6 +410,7 @@ export const initialState: NodesAppState = {
         },
         selection: {
             nodes: [],
+            groups: [],
             region: {
                 isActive: false,
             },

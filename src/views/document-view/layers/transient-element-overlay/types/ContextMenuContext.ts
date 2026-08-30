@@ -14,6 +14,7 @@ export type ContextMenuContext =
     | ColorSwatchContextMenuContext
     | ColorParameterContextMenuContext
     | GradientContextMenuContext
+    | GroupContextMenuContext
 
 export type AddNodeContextMenu = {
     type: 'add-node'
@@ -83,4 +84,9 @@ export type ColorParameterContextMenuContext = {
 export type GradientContextMenuContext = {
     type: 'gradient'
     nodeInstanceId: string
+}
+
+export type GroupContextMenuContext = {
+    type: 'group'
+    groupId: string
 }

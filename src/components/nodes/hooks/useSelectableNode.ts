@@ -67,8 +67,9 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
                             return
                         }
 
-                        // Bail out if we are in a multi-select mode
-                        if (useStore.getState().registry.selection.nodes.length > 1) {
+                        // Bail out if node is already selected
+                        // Prevents setting selection to node _in_ selection at start of drag
+                        if (useStore.getState().registry.selection.nodes.includes(nodeInstanceId)) {
                             return
                         }
 
@@ -83,6 +84,7 @@ export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGE
 
                             // Set node as selected in registry
                             state.registry.selection.nodes = [nodeInstanceId]
+                            state.registry.selection.groups = []
 
                             state.callbacks.onSelectionUpdated?.(current(state))
                         })

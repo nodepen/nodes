@@ -16,6 +16,7 @@ import { SidebarPanel } from './common/SidebarPanel'
 import { TemplateLibrary } from './template-library/TemplateLibrary'
 import { ParameterLibrary } from './template-library/ParameterLibrary'
 import { DocumentControls } from './document/DocumentControls'
+import { DocumentSelection } from './selection/DocumentSelection'
 import SessionUsers from './presence/SessionUsers'
 import { clamp } from '@/utils'
 import { useIsEditable } from '@/hooks/useIsEditable'
@@ -148,6 +149,9 @@ const ControlsContainer = (): React.ReactElement | null => {
         'error': COLORS.ERROR
     }
 
+    const isSelectionMenuOpen = useStore((state) => state.registry.selection.groups.length === 1)
+    const selectionMenuTop = 96 + (showDocumentControlsPanel ? documentControlsHeight : 32) + 16
+
     if (hideInterface) {
         return null
     }
@@ -165,6 +169,9 @@ const ControlsContainer = (): React.ReactElement | null => {
                         </SidebarPanel>
                         <SidebarPanel isOpen={showDocumentControlsPanel} from={documentControlsPosition} height={documentControlsHeight} top={96}>
                             <DocumentControls />
+                        </SidebarPanel>
+                        <SidebarPanel showImmediate isOpen={isSelectionMenuOpen} from={documentControlsPosition} height={196} top={selectionMenuTop}>
+                            <DocumentSelection />
                         </SidebarPanel>
                         <SidebarPanel isOpen={showAgentPanel} from={agentPanelPosition} height={400} width={300} bottom={38} side='right'>
                             <AgentPanel />

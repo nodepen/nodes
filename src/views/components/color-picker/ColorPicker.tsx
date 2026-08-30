@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import { COLORS } from '@/constants'
 import { hexToRgb, rgbToHex, type RGB } from '@/utils/color'
+import { ColorWheel } from './ColorWheel'
 
 type ColorPickerProps = {
     value: RGB
@@ -21,6 +22,11 @@ export const ColorPicker = ({ value, onSubmit, onClose }: ColorPickerProps) => {
             setHex(rgbToHex(updated))
             return updated
         })
+    }, [])
+
+    const handleWheelChange = useCallback((next: RGB) => {
+        setRgb(next)
+        setHex(rgbToHex(next))
     }, [])
 
     const handleHexChange = useCallback((raw: string) => {
@@ -65,18 +71,19 @@ export const ColorPicker = ({ value, onSubmit, onClose }: ColorPickerProps) => {
     return (
         <div className="np-w-64 np-p-0.5">
             <form onSubmit={handleSubmit}>
-                <div className="np-w-full np-p-2 np-flex np-flex-col np-rounded-md np-border-2 np-border-dark">
-                    <div
-                        className="np-w-full np-h-12 np-mb-2 np-rounded-sm np-border-2 np-border-dark"
-                        style={{ backgroundColor: `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` }}
-                    />
+                <div className="np-w-full np-p-2 np-flex np-flex-col np-items-center np-rounded-md np-border-2 np-border-dark">
+                    <div className="np-w-48">
+                        <ColorWheel value={rgb} onChange={handleWheelChange} />
+                    </div>
+                </div>
+                <div className="np-w-full np-mt-0.5 np-p-1.5 np-flex np-items-center np-justify-between np-rounded-md np-border-2 np-border-dark">
                     {(['r', 'g', 'b'] as const).map((channel) => (
-                        <div key={channel} className="np-w-full np-mt-2 first:np-mt-0 np-flex np-items-center np-justify-between">
-                            <div className="np-text-sm np-text-dark np-font-sans np-uppercase">
+                        <div key={channel} className="np-flex np-items-center">
+                            <div className="np-text-xs np-text-dark np-font-sans np-uppercase np-mr-1">
                                 {channel}
                             </div>
                             <input
-                                className="np-h-8 np-w-36 np-ml-2 np-p-2 np-text-right np-text-xs np-font-sans np-rounded-sm np-border-2 np-border-dark no-focus"
+                                className="np-h-6 np-w-12 np-p-1 np-text-right np-text-xs np-font-sans np-rounded-sm np-border-2 np-border-dark no-focus"
                                 type="number"
                                 min={0}
                                 max={255}
@@ -88,12 +95,12 @@ export const ColorPicker = ({ value, onSubmit, onClose }: ColorPickerProps) => {
                         </div>
                     ))}
                 </div>
-                <div className="np-w-full np-mt-0.5 np-p-2 np-flex np-items-center np-justify-between np-rounded-md np-border-2 np-border-dark">
-                    <div className="np-text-sm np-text-dark np-font-sans">
+                <div className="np-w-full np-mt-0.5 np-p-1.5 np-flex np-items-center np-justify-between np-rounded-md np-border-2 np-border-dark">
+                    <div className="np-text-xs np-text-dark np-font-sans">
                         Hex
                     </div>
                     <input
-                        className="np-h-8 np-w-36 np-ml-2 np-p-2 np-text-right np-text-xs np-font-sans np-rounded-sm np-border-2 np-border-dark no-focus"
+                        className="np-h-6 np-w-28 np-ml-2 np-p-1 np-text-right np-text-xs np-font-sans np-rounded-sm np-border-2 np-border-dark no-focus"
                         value={hex}
                         onChange={(e) => handleHexChange(e.currentTarget.value)}
                         onBlur={handleHexBlur}

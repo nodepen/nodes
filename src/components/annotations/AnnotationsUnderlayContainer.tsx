@@ -3,6 +3,8 @@ import { useDispatch, useStore } from '$'
 import { Region } from './region'
 import { KEYS } from '@/constants'
 import { createPortal } from 'react-dom'
+import { shallow } from 'zustand/shallow'
+import Group from './group/Group'
 
 /**
  * Renders SVG annotation elements meant to be drawn behind nodes in all cases.
@@ -16,6 +18,8 @@ const AnnotationsUnderlayContainer = (): React.ReactElement => {
     const maskRef = useStore((state) => state.registry.wires.maskRef)
 
     const selectionRegionState = useStore((state) => state.registry.selection.region)
+
+    const groupIds = useStore((state) => Object.keys(state.document.groups ?? {}), shallow)
 
     const setContainerRef = useCallback(
         (node: SVGGElement | null) => {
@@ -50,6 +54,9 @@ const AnnotationsUnderlayContainer = (): React.ReactElement => {
     return (
         <g id="np-annotations-underlay">
             <g ref={setContainerRef} />
+            <g id="np-groups-underlay">
+                {groupIds.map((groupId) => <Group key={`group-${groupId}`} id={groupId} />)}
+            </g>
             <g id="np-regions-underlay">
                 {selectionRegionState.isActive ? (
                     <Region isFill from={selectionRegionState.from} to={selectionRegionState.to} />

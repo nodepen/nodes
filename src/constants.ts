@@ -54,6 +54,16 @@ export const DIMENSIONS = {
     COLOR_SWATCH_WIDTH: 48,
     COLOR_SWATCH_HEIGHT: 36,
     GRADIENT_WIDTH: 300,
+    GROUP_PADDING: 24,
+    /** Matches the selection Region's corner radius -- the group's outer border reads as the same "kind" of rounding, just around a bigger area. */
+    GROUP_BORDER_RADIUS: 6,
+    GROUP_BORDER_WIDTH: 2,
+    GROUP_FILL_OPACITY: 0.1,
+    /** Height of the group name tab drawn above the group's top-left corner. */
+    GROUP_LABEL_HEIGHT: 24,
+    GROUP_LABEL_PADDING_X: 8,
+    /** Gap between the bottom of the group name tab and the group's top edge. */
+    GROUP_LABEL_GAP: 4,
     INTERACTION_BUFFER: 12
 } as const
 

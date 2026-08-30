@@ -1,4 +1,5 @@
 import type { NodesAppState } from '../state'
+import { getNodesIncludedInDrag } from './getNodesIncludedInDrag'
 import { resetNodePlacement } from './resetNodePlacement'
 
 /** Removes references in various local state to nodes that no longer exist. */
@@ -9,7 +10,7 @@ export const pruneDocumentReferences = (state: NodesAppState): void => {
     state.registry.selection.nodes = state.registry.selection.nodes.filter((id) => !!nodes[id])
 
     // Drag
-    if (state.registry.drag.isActive && state.registry.selection.nodes.length === 0) {
+    if (state.registry.drag.isActive && getNodesIncludedInDrag(state).length === 0) {
         state.registry.drag = {
             isActive: false,
             isCopyActive: false,
