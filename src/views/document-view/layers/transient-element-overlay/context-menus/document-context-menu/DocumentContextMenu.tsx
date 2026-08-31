@@ -1,7 +1,7 @@
 import { useStore } from "@/store"
 import { MenuBody, MenuDivider } from "../../common"
 import type { ContextMenu } from "../../types"
-import { ExportButton, NewScriptButton, SaveCopyButton, SaveVersionButton, SettingsButton, ViewVersionsButton } from "./buttons"
+import { ExportButton, ImportButton, NewScriptButton, SaveCopyButton, SaveVersionButton, SettingsButton, ViewVersionsButton } from "./buttons"
 import { useFeatureFlag } from "@/hooks/useFeatureFlag"
 import { useIsEditable } from "@/hooks/useIsEditable"
 
@@ -17,11 +17,13 @@ export const DocumentContextMenu = ({ position }: Props) => {
     const enableFileSave = useFeatureFlag('enableFileSave')
     const enableFileSaveCopy = useFeatureFlag('enableFileSaveCopy')
     const enableFileExport = useFeatureFlag('enableFileExport')
+    const enableFileImport = useFeatureFlag('enableFileImport')
     const enableVersions = useFeatureFlag('enableDocumentVersions')
 
     return <MenuBody position={position}>
         {enableFileSave && <NewScriptButton documentId={documentId} />}
         {enableFileSaveCopy && <SaveCopyButton documentId={documentId} />}
+        {enableFileImport && <ImportButton documentId={documentId} />}
         {enableFileExport && <ExportButton documentId={documentId} />}
         {enableVersions && <MenuDivider />}
         {enableVersions && <ViewVersionsButton documentId={documentId} />}

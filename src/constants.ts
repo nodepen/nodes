@@ -44,6 +44,8 @@ export const DIMENSIONS = {
     NODE_PORT_HEIGHT: 40,
     NODE_PORT_MINIMUM_WIDTH: 50,
     NODE_PORT_RADIUS: 5,
+    /** Gap between the label's right edge and a `GenericNode`'s right edge when it has zero output params (e.g. Custom Preview) -- keeps an unused output-port zone from being drawn. */
+    NODE_NO_OUTPUT_MARGIN: 5,
     /** NODE_LABEL_WIDTH + 2 */
     NODE_RUNTIME_MESSAGE_BUBBLE_SIZE: 34,
     CONTEXT_MENU_WIDTH: 192,

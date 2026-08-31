@@ -27,6 +27,7 @@ export type AppFeatures = {
     enableFileSave: boolean
     enableFileSaveCopy: boolean
     enableFileExport: boolean
+    enableFileImport: boolean
     enableDocumentControls: boolean
     enableDocumentVersions: boolean
     enableShareButton: boolean

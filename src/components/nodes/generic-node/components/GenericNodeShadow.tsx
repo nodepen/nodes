@@ -3,6 +3,7 @@ import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
+import { getLeftRoundedRectanglePath } from '@/utils/geometry'
 
 const { NODE_PORT_RADIUS } = DIMENSIONS
 
@@ -21,21 +22,32 @@ export const GenericNodeShadow = ({ node, template }: GenericNodeShadowProps) =>
 
     const nodePortInstanceIds = [...Object.keys(inputs), ...Object.keys(outputs)]
 
+    const hasOutputs = Object.keys(outputs).length > 0
+
     // const stroke = usePresenceSelectionColor(node.instanceId)
 
     return (
         <>
-            <rect
-                x={position.x}
-                y={position.y + 2}
-                width={nodeWidth}
-                height={nodeHeight}
-                rx={7}
-                ry={7}
-                fill={COLORS.DARK}
-                stroke={COLORS.DARK}
-                strokeWidth={2}
-            />
+            {hasOutputs ? (
+                <rect
+                    x={position.x}
+                    y={position.y + 2}
+                    width={nodeWidth}
+                    height={nodeHeight}
+                    rx={7}
+                    ry={7}
+                    fill={COLORS.DARK}
+                    stroke={COLORS.DARK}
+                    strokeWidth={2}
+                />
+            ) : (
+                <path
+                    d={getLeftRoundedRectanglePath(position.x, position.y + 2, nodeWidth, nodeHeight, 7)}
+                    fill={COLORS.DARK}
+                    stroke={COLORS.DARK}
+                    strokeWidth={2}
+                />
+            )}
             {nodePortInstanceIds.map((portInstanceId) => {
                 const portAnchor = anchors[portInstanceId]
 

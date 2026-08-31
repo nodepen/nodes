@@ -1,4 +1,5 @@
 export { ExportButton } from './ExportButton'
+export { ImportButton } from './ImportButton'
 export { NewScriptButton } from './NewScriptButton'
 export { SaveCopyButton } from './SaveCopyButton'
 export { SaveVersionButton } from './SaveVersionButton'

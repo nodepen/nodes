@@ -1,11 +1,13 @@
-import React, { useCallback, useLayoutEffect, useRef, useState } from "react"
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useDispatch, useStore, useStoreRef } from "$"
+import type { NodesAppStore } from "$"
 import { COLORS, DIMENSIONS } from "@/constants"
 import { getNodeExtents } from "@/utils/node-dimensions"
 import { shallow } from "zustand/shallow"
 import { useImperativeEvent, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from "@/hooks"
 import { useIsEditable } from "@/hooks/useIsEditable"
 import { useRightClick } from "@/hooks/useRightClick"
+import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInteroplatedState"
 import { isCtrl } from "@/utils/dom/isCtrl"
 import { targetIsScrolling } from "@/utils/dom/targetIsScrolling"
 import { isNodeIncludedInDrag } from "@/store/utils"
@@ -34,6 +36,11 @@ type Rect = {
     height: number
 }
 
+type Point = {
+    x: number
+    y: number
+}
+
 /** Expands all four sides of a rect. */
 const cellAt = (rect: Rect, amount: number): Rect => ({
     x: rect.x - amount,
@@ -58,6 +65,60 @@ const mergeRects = (rects: Rect[]): Rect => {
 
     return { x: minX, y: minY, width: maxX - minX, height: maxY - minY }
 }
+
+/** First session currently dragging a node via presence, if any. */
+const getPresenceDragPosition = (state: NodesAppStore, nodeInstanceId: string) => {
+    const drags = state.presence.drag[nodeInstanceId]
+
+    if (!drags) {
+        return null
+    }
+
+    for (const sessionId of Object.keys(state.presence.sessions)) {
+        const drag = drags[sessionId]
+
+        if (drag) {
+            return drag
+        }
+    }
+
+    return null
+}
+
+type PresenceDragOverrideProps = {
+    nodeInstanceId: string
+    onChange: (nodeInstanceId: string, position: Point | null) => void
+}
+
+const GroupPresenceDragOverride = React.memo(({ nodeInstanceId, onChange }: PresenceDragOverrideProps) => {
+    const rawDrag = useStore((state) => {
+        const drag = getPresenceDragPosition(state, nodeInstanceId)
+        return drag ? { x: drag.x, y: drag.y } : null
+    }, shallow)
+
+    const [position, setPosition] = useInterpolatedState(rawDrag ?? { x: 0, y: 0 }, lerpPoint2d)
+    const previousRawDrag = useRef(rawDrag)
+
+    useEffect(() => {
+        if (!rawDrag) {
+            previousRawDrag.current = null
+            return
+        }
+
+        setPosition(rawDrag, { immediate: previousRawDrag.current === null })
+        previousRawDrag.current = rawDrag
+    }, [rawDrag?.x, rawDrag?.y])
+
+    useEffect(() => {
+        onChange(nodeInstanceId, position)
+    }, [nodeInstanceId, position.x, position.y, onChange])
+
+    useEffect(() => {
+        return () => onChange(nodeInstanceId, null)
+    }, [nodeInstanceId, onChange])
+
+    return null
+})
 
 const useSelectableGroup = (groupId: string) => {
     const selectableRef = useRef<SVGGElement>(null)
@@ -317,14 +378,15 @@ const Group = ({ id }: GroupProps) => {
         setLabelTextWidth(labelTextRef.current?.getComputedTextLength() ?? 0)
     }, [groupLabel])
 
-    const nodeRectValues = useStore((state) => {
+    // Rects based on in-session sync values
+    const baseNodeValues = useStore((state) => {
         const group = state.document.groups[id]
 
         if (!group) {
             return []
         }
 
-        const values: number[] = []
+        const values: (string | number)[] = []
 
         for (const nodeInstanceId of group.items.nodes) {
             const node = state.document.nodes[nodeInstanceId]
@@ -339,120 +401,167 @@ const Group = ({ id }: GroupProps) => {
             let y = from.y
 
             if (state.registry.drag.isActive && isNodeIncludedInDrag(state, nodeInstanceId)) {
-                // Include active drags in group calculation
+                // Include active local drags in group calculation
                 const { dx, dy } = state.registry.drag
 
                 x += dx
                 y += dy
             }
 
-            // TODO: Make work with useInterpolatedState
-            const presenceDrag = Object.keys(state.presence.sessions).map((sessionId) => (state.presence.drag[nodeInstanceId ?? '']?.[sessionId] ?? null)).filter((drag) => !!drag).at(0) ?? null
-            if (presenceDrag) {
-                const { x: dx, y: dy } = presenceDrag
-
-                x = dx
-                y = dy
-            }
-
-            values.push(x, y, to.x - from.x, to.y - from.y)
+            values.push(nodeInstanceId, x, y, to.x - from.x, to.y - from.y)
         }
 
         return values
     }, shallow)
 
-    if (!color || nodeRectValues.length === 0) {
+    // Rects based on presence, only active is there is any presence data
+    const [dragOverrides, setDragOverrides] = useState<Record<string, Point>>({})
+
+    const presenceDraggedNodeIds = useStore((state) => {
+        const group = state.document.groups[id]
+
+        if (!group) {
+            return []
+        }
+
+        const ids: string[] = []
+
+        for (const nodeInstanceId of group.items.nodes) {
+            if (state.document.nodes[nodeInstanceId] && getPresenceDragPosition(state, nodeInstanceId)) {
+                ids.push(nodeInstanceId)
+            }
+        }
+
+        return ids
+    }, shallow)
+
+
+    const handleDragOverrideChange = useCallback((nodeInstanceId: string, position: Point | null) => {
+        setDragOverrides((prev) => {
+            if (!position) {
+                if (!(nodeInstanceId in prev)) {
+                    return prev
+                }
+
+                const next = { ...prev }
+                delete next[nodeInstanceId]
+                return next
+            }
+
+            const existing = prev[nodeInstanceId]
+
+            if (existing && existing.x === position.x && existing.y === position.y) {
+                return prev
+            }
+
+            return { ...prev, [nodeInstanceId]: position }
+        })
+    }, [])
+
+    if (!color || baseNodeValues.length === 0) {
         return null
     }
 
     const nodeRects: Rect[] = []
 
-    for (let i = 0; i < nodeRectValues.length; i += 4) {
+    for (let i = 0; i < baseNodeValues.length; i += 5) {
+        const nodeInstanceId = baseNodeValues[i] as string
+        const override = dragOverrides[nodeInstanceId]
+
         nodeRects.push({
-            x: nodeRectValues[i],
-            y: nodeRectValues[i + 1],
-            width: nodeRectValues[i + 2],
-            height: nodeRectValues[i + 3],
+            x: override ? override.x : (baseNodeValues[i + 1] as number),
+            y: override ? override.y : (baseNodeValues[i + 2] as number),
+            width: baseNodeValues[i + 3] as number,
+            height: baseNodeValues[i + 4] as number,
         })
     }
 
     const groupRect = cellAt(mergeRects(nodeRects), GROUP_PADDING)
 
     return (
-        <g ref={rightClickRef} className="np-pointer-events-auto">
-            <g ref={draggableRef} className="np-pointer-events-auto">
-                <g ref={selectableRef} className="np-pointer-events-auto">
-                    <rect
-                        x={groupRect.x}
-                        y={groupRect.y}
-                        width={groupRect.width}
-                        height={groupRect.height}
-                        rx={GROUP_BORDER_RADIUS}
-                        ry={GROUP_BORDER_RADIUS}
-                        fill={COLORS.PALE}
-                        fillOpacity={0.5}
-                    />
-                    <rect
-                        x={groupRect.x}
-                        y={groupRect.y}
-                        width={groupRect.width}
-                        height={groupRect.height}
-                        rx={GROUP_BORDER_RADIUS}
-                        ry={GROUP_BORDER_RADIUS}
-                        fill={color}
-                        fillOpacity={GROUP_FILL_OPACITY}
-                    />
-                    <rect
-                        x={groupRect.x - 1}
-                        y={groupRect.y - 1}
-                        width={groupRect.width + 2}
-                        height={groupRect.height + 2}
-                        rx={GROUP_BORDER_RADIUS + 1}
-                        ry={GROUP_BORDER_RADIUS + 1}
-                        fill="none"
-                        stroke={COLORS.PALE}
-                        strokeWidth={2}
-                    />
-                    <rect
-                        x={groupRect.x}
-                        y={groupRect.y}
-                        width={groupRect.width}
-                        height={groupRect.height}
-                        rx={GROUP_BORDER_RADIUS}
-                        ry={GROUP_BORDER_RADIUS}
-                        fill="none"
-                        stroke={color}
-                        strokeWidth={GROUP_BORDER_WIDTH}
-                        vectorEffect="non-scaling-stroke"
-                    />
-                    {groupLabel?.trim() ? (
-                        <>
-                            <rect
-                                x={groupRect.x}
-                                y={groupRect.y - GROUP_LABEL_GAP - GROUP_LABEL_HEIGHT}
-                                width={labelTextWidth + GROUP_LABEL_PADDING_X * 2}
-                                height={GROUP_LABEL_HEIGHT}
-                                rx={GROUP_BORDER_RADIUS}
-                                ry={GROUP_BORDER_RADIUS}
-                                fill={groupColor}
-                                fillOpacity={GROUP_FILL_OPACITY}
-                            />
-                            <text
-                                ref={labelTextRef}
-                                className="np-font-panel np-select-none np-pointer-events-none"
-                                x={groupRect.x + GROUP_LABEL_PADDING_X}
-                                y={groupRect.y - GROUP_LABEL_GAP - GROUP_LABEL_HEIGHT / 2}
-                                dominantBaseline="middle"
-                                fill={groupColor}
-                                fontSize={NODE_LABEL_FONT_SIZE}
-                            >
-                                {groupLabel}
-                            </text>
-                        </>
-                    ) : null}
+        <>
+            {presenceDraggedNodeIds.map((nodeInstanceId) => (
+                <GroupPresenceDragOverride
+                    key={nodeInstanceId}
+                    nodeInstanceId={nodeInstanceId}
+                    onChange={handleDragOverrideChange}
+                />
+            ))}
+            <g ref={rightClickRef} className="np-pointer-events-auto">
+                <g ref={draggableRef} className="np-pointer-events-auto">
+                    <g ref={selectableRef} className="np-pointer-events-auto">
+                        <rect
+                            x={groupRect.x}
+                            y={groupRect.y}
+                            width={groupRect.width}
+                            height={groupRect.height}
+                            rx={GROUP_BORDER_RADIUS}
+                            ry={GROUP_BORDER_RADIUS}
+                            fill={COLORS.PALE}
+                            fillOpacity={0.5}
+                        />
+                        <rect
+                            x={groupRect.x}
+                            y={groupRect.y}
+                            width={groupRect.width}
+                            height={groupRect.height}
+                            rx={GROUP_BORDER_RADIUS}
+                            ry={GROUP_BORDER_RADIUS}
+                            fill={color}
+                            fillOpacity={GROUP_FILL_OPACITY}
+                        />
+                        <rect
+                            x={groupRect.x - 1}
+                            y={groupRect.y - 1}
+                            width={groupRect.width + 2}
+                            height={groupRect.height + 2}
+                            rx={GROUP_BORDER_RADIUS + 1}
+                            ry={GROUP_BORDER_RADIUS + 1}
+                            fill="none"
+                            stroke={COLORS.PALE}
+                            strokeWidth={2}
+                        />
+                        <rect
+                            x={groupRect.x}
+                            y={groupRect.y}
+                            width={groupRect.width}
+                            height={groupRect.height}
+                            rx={GROUP_BORDER_RADIUS}
+                            ry={GROUP_BORDER_RADIUS}
+                            fill="none"
+                            stroke={color}
+                            strokeWidth={GROUP_BORDER_WIDTH}
+                            vectorEffect="non-scaling-stroke"
+                        />
+                        {groupLabel?.trim() ? (
+                            <>
+                                <rect
+                                    x={groupRect.x}
+                                    y={groupRect.y - GROUP_LABEL_GAP - GROUP_LABEL_HEIGHT}
+                                    width={labelTextWidth + GROUP_LABEL_PADDING_X * 2}
+                                    height={GROUP_LABEL_HEIGHT}
+                                    rx={GROUP_BORDER_RADIUS}
+                                    ry={GROUP_BORDER_RADIUS}
+                                    fill={groupColor}
+                                    fillOpacity={GROUP_FILL_OPACITY}
+                                />
+                                <text
+                                    ref={labelTextRef}
+                                    className="np-font-panel np-select-none np-pointer-events-none"
+                                    x={groupRect.x + GROUP_LABEL_PADDING_X}
+                                    y={groupRect.y - GROUP_LABEL_GAP - GROUP_LABEL_HEIGHT / 2}
+                                    dominantBaseline="middle"
+                                    fill={groupColor}
+                                    fontSize={NODE_LABEL_FONT_SIZE}
+                                >
+                                    {groupLabel}
+                                </text>
+                            </>
+                        ) : null}
+                    </g>
                 </g>
             </g>
-        </g>
+        </>
     )
 }
 

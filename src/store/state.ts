@@ -243,6 +243,7 @@ export type NodesAppCallbacks = {
     onClickNewScript?: (state: NodesAppState) => void
     onClickSaveCopy?: (state: NodesAppState) => void
     onClickExport?: (state: NodesAppState) => void
+    onClickImport?: (state: NodesAppState) => void
     onClickViewVersions?: (state: NodesAppState) => void
     onClickSaveVersion?: (state: NodesAppState) => void
     onClickRunDocument?: (state: NodesAppState) => void
@@ -321,6 +322,7 @@ export const initialState: NodesAppState = {
             enableFileSave: true,
             enableFileSaveCopy: true,
             enableFileExport: true,
+            enableFileImport: true,
             enableDocumentControls: true,
             enableDocumentVersions: true,
             enableShareButton: true,

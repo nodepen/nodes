@@ -40,18 +40,28 @@ export const getNodeWidth = (
         outputLabelWidths[instanceId] = labelWidth
     }
 
-    const outputLabelColumnWidth = Math.max(...Object.values(outputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
+    const outputLabelColumnWidth =
+        outputs.length > 0 ? Math.max(...Object.values(outputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH) : 0
 
     // Calculate overall width
-    const nodeWidth = [
-        DIMENSIONS.NODE_INTERNAL_PADDING,
-        inputLabelColumnWidth,
-        DIMENSIONS.NODE_INTERNAL_PADDING,
-        DIMENSIONS.NODE_LABEL_WIDTH,
-        DIMENSIONS.NODE_INTERNAL_PADDING,
-        outputLabelColumnWidth,
-        DIMENSIONS.NODE_INTERNAL_PADDING,
-    ].reduce((sum, n) => sum + n, 0)
+    const nodeWidth =
+        outputs.length > 0
+            ? [
+                DIMENSIONS.NODE_INTERNAL_PADDING,
+                inputLabelColumnWidth,
+                DIMENSIONS.NODE_INTERNAL_PADDING,
+                DIMENSIONS.NODE_LABEL_WIDTH,
+                DIMENSIONS.NODE_INTERNAL_PADDING,
+                outputLabelColumnWidth,
+                DIMENSIONS.NODE_INTERNAL_PADDING,
+            ].reduce((sum, n) => sum + n, 0)
+            : [
+                DIMENSIONS.NODE_INTERNAL_PADDING,
+                inputLabelColumnWidth,
+                DIMENSIONS.NODE_INTERNAL_PADDING,
+                DIMENSIONS.NODE_LABEL_WIDTH,
+                DIMENSIONS.NODE_NO_OUTPUT_MARGIN,
+            ].reduce((sum, n) => sum + n, 0)
 
     // Calculate label dx
     const labelDeltaX = [

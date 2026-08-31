@@ -9,6 +9,7 @@ import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useRightClick } from '@/hooks/useRightClick'
+import { getLeftRoundedRectanglePath } from '@/utils/geometry'
 
 type GenericNodeBodyProps = {
     node: NodePen.DocumentNode
@@ -28,6 +29,8 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
 
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
+
+    const hasOutputs = Object.keys(node.outputs).length > 0
 
     const handleContextMenu = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
@@ -64,18 +67,28 @@ export const GenericNodeBody = ({ node, template }: GenericNodeBodyProps) => {
 
     return (
         <g id={`generic-node-body-${node.instanceId}`} ref={rightClickRef}>
-            <rect
-                x={position.x}
-                y={position.y}
-                width={nodeWidth}
-                height={nodeHeight}
-                rx={7}
-                ry={7}
-                fill={sessionColor}
-                stroke={COLORS.DARK}
-                strokeWidth={2}
-                pointerEvents="auto"
-            />
+            {hasOutputs ? (
+                <rect
+                    x={position.x}
+                    y={position.y}
+                    width={nodeWidth}
+                    height={nodeHeight}
+                    rx={7}
+                    ry={7}
+                    fill={sessionColor}
+                    stroke={COLORS.DARK}
+                    strokeWidth={2}
+                    pointerEvents="auto"
+                />
+            ) : (
+                <path
+                    d={getLeftRoundedRectanglePath(position.x, position.y, nodeWidth, nodeHeight, 7)}
+                    fill={sessionColor}
+                    stroke={COLORS.DARK}
+                    strokeWidth={2}
+                    pointerEvents="auto"
+                />
+            )}
             {presenceColor ? (
                 <rect
                     x={position.x + o}
