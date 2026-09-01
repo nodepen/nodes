@@ -1,6 +1,7 @@
 export { FlattenButton } from './FlattenButton'
 export { GraftButton } from './GraftButton'
 export { PinButton } from './PinButton'
+export { ReparameterizeButton } from './ReparameterizeButton'
 export { SetLabelButton } from './SetLabelButton'
 export { SetValueButton } from './SetValueButton'
 export { SimplifyButton } from './SimplifyButton'

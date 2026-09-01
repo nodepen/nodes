@@ -20,6 +20,7 @@ type WireProps = {
     drawNodeBackground?: boolean
     drawWireBackground?: boolean
     drawMask?: boolean
+    selected?: boolean
 }
 
 export const Wire = ({
@@ -30,7 +31,10 @@ export const Wire = ({
     drawNodeBackground = false,
     drawWireBackground = false,
     drawMask = false,
+    selected = false,
 }: WireProps) => {
+    const strokeColor = selected ? COLORS.GREEN : COLORS.DARK
+    const fillColor = selected ? COLORS.GREEN : COLORS.LIGHT
     const mid = {
         x: (start.x + end.x) / 2,
         y: (start.y + end.y) / 2,
@@ -80,16 +84,25 @@ export const Wire = ({
                 }
             }
         } else {
+            const selectionBackground = selected ? (
+                <path d={d} strokeWidth={6} stroke={COLORS.PALE} fill="none" strokeLinecap="round" />
+            ) : null
+
             switch (structure) {
                 case 'empty':
                 case 'single': {
-                    return <path d={d} strokeWidth={3} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
+                    return (
+                        <>
+                            {selectionBackground}
+                            <path d={d} strokeWidth={3} stroke={strokeColor} fill="none" strokeLinecap="round" />
+                        </>
+                    )
                 }
                 case 'list': {
                     return (
                         <>
                             <path d={d} strokeWidth={7} stroke={COLORS.DARK} fill="none" strokeLinecap="round" />
-                            <path d={d} strokeWidth={3} stroke={COLORS.LIGHT} fill="none" strokeLinecap="round" />
+                            <path d={d} strokeWidth={3} stroke={fillColor} fill="none" strokeLinecap="round" />
                         </>
                     )
                 }
@@ -107,7 +120,7 @@ export const Wire = ({
                             <path
                                 d={d}
                                 strokeWidth={3}
-                                stroke={COLORS.LIGHT}
+                                stroke={fillColor}
                                 strokeDasharray="6 10"
                                 strokeLinecap="round"
                                 fill="none"
@@ -145,7 +158,7 @@ export const Wire = ({
         return (
             <polyline
                 points={getArrowPolylinePoints(false)}
-                stroke={COLORS.DARK}
+                stroke={strokeColor}
                 strokeWidth={3}
                 strokeLinecap="round"
                 strokeLinejoin="round"

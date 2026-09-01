@@ -1,1 +1,1 @@
-export type PortFlag = 'graft' | 'flatten' | 'simplify'
+export type PortFlag = 'graft' | 'flatten' | 'simplify' | 'reparameterize'

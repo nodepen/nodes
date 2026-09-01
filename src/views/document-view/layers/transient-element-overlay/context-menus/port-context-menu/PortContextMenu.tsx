@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import type { ContextMenu, PortContextMenuContext } from '../../types'
 import { MenuBody, MenuDivider, MenuHeader } from '../../common'
 import { PortTypeIcon } from '@/components/icons'
-import { FlattenButton, GraftButton, PinButton, SetLabelButton, SetValueButton, SimplifyButton } from './buttons'
+import { FlattenButton, GraftButton, PinButton, ReparameterizeButton, SetLabelButton, SetValueButton, SimplifyButton } from './buttons'
 import { getPortContextMenuButtons } from './utils'
 import { useDispatch, useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
@@ -78,7 +78,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
     const enableSetLabel = nodeType === 'generic-parameter'
-    const { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry } = getPortContextMenuButtons(context)
+    const { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
 
     return (
         <MenuBody position={position}>
@@ -99,6 +99,12 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
                     <FlattenButton onClick={handleToggleFlag} />
                     <GraftButton onClick={handleToggleFlag} />
                     <SimplifyButton onClick={handleToggleFlag} />
+                    {enableReparameterize ? (
+                        <>
+                            <MenuDivider />
+                            <ReparameterizeButton onClick={handleToggleFlag} />
+                        </>
+                    ) : null}
                 </>
             ) : null}
         </MenuBody>

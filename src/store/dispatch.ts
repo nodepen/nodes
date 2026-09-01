@@ -511,6 +511,15 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     }
                     break
                 }
+                case 'reparameterize': {
+                    if (currentFlags.includes('reparameterize')) {
+                        nextFlags.push(...currentFlags.filter((flag) => flag !== 'reparameterize'))
+                    } else {
+                        nextFlags.push(...currentFlags)
+                        nextFlags.push('reparameterize')
+                    }
+                    break
+                }
                 case 'flatten': {
                     if (currentFlags.includes('flatten')) {
                         nextFlags.push(...currentFlags.filter((flag) => flag !== 'flatten'))

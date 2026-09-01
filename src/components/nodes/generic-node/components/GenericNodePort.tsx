@@ -8,6 +8,7 @@ import type { NodePenNodeType } from '@/utils/templates/getNodeTypeForTemplate'
 import { FlattenFlagIcon } from '@/components/icons/FlattenFlagIcon'
 import { GraftFlagIcon } from '@/components/icons/GraftFlagIcon'
 import { SimplifyFlagIcon } from '@/components/icons/SimplifyFlagIcon'
+import { ReparameterizeFlagIcon } from '@/components/icons/ReparameterizeFlagIcon'
 
 const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_LABEL_OFFSET, NODE_PORT_RADIUS, NODE_PORT_MINIMUM_WIDTH } = DIMENSIONS
 
@@ -126,6 +127,9 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
                                 }
                                 case 'simplify': {
                                     return <SimplifyFlagIcon key={key} position={position} />
+                                }
+                                case 'reparameterize': {
+                                    return <ReparameterizeFlagIcon key={key} position={position} />
                                 }
                                 default: {
                                     return <></>

@@ -2,6 +2,7 @@ import React, { useRef } from 'react'
 import type * as NodePen from '@/types'
 import type { NodePortReference } from '@/types'
 import { useNodeAnchorPosition, usePortValues } from '@/hooks'
+import { useStore } from '$'
 import { WirePortal, WiresMaskPortal } from './components'
 import { Wire } from './Wire'
 
@@ -17,6 +18,11 @@ const PortConnectionWire = ({ from, to }: PortConnectionWireProps): React.ReactE
 
   const fromPosition = useNodeAnchorPosition(fromNodeId, fromPortId)
   const toPosition = useNodeAnchorPosition(toNodeId, toPortId)
+
+  const isSelected = useStore((state) => {
+    const selection = state.registry.selection.nodes
+    return selection.includes(fromNodeId) || selection.includes(toNodeId)
+  })
 
   const sourceDataTree = usePortValues(fromNodeId, fromPortId)
 
@@ -37,7 +43,7 @@ const PortConnectionWire = ({ from, to }: PortConnectionWireProps): React.ReactE
   return (
     <>
       <WirePortal>
-        <Wire start={fromPosition} end={toPosition} structure={visibleStructure} />
+        <Wire start={fromPosition} end={toPosition} structure={visibleStructure} selected={isSelected} />
       </WirePortal>
       <WiresMaskPortal>
         <Wire start={fromPosition} end={toPosition} structure={visibleStructure} drawMask />

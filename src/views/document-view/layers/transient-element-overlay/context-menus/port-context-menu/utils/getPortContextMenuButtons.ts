@@ -2,6 +2,7 @@ import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate
 import type { PortContextMenuContext } from '../../../types'
 import { useStore } from '$'
 import { PARAMS } from '@/constants'
+import type * as NodePen from '@/types'
 
 type PortContextMenuButtons = {
     enableSetLabel: boolean
@@ -9,6 +10,7 @@ type PortContextMenuButtons = {
     enableSetValue: boolean
     enablePickGeometry: boolean
     enableZoomToGeometry: boolean
+    enableReparameterize: boolean
 }
 
 export const getPortContextMenuButtons = (context: PortContextMenuContext): PortContextMenuButtons => {
@@ -21,6 +23,9 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
     const supportedPrimitiveTypeNames: readonly string[] = PARAMS.PRIMITIVE
     const supportedGeometricTypeNames: readonly string[] = PARAMS.GEOMETRY
 
+    const supportedReparameterizeTypeNames: readonly NodePen.DataTreeValueType[] = ['curve', 'surface']
+    const enableReparameterize = supportedReparameterizeTypeNames.includes(typeName as NodePen.DataTreeValueType)
+
     switch (nodeType) {
         case 'generic-node': {
             return {
@@ -28,7 +33,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enablePin: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
-                enableZoomToGeometry: direction === 'output'
+                enableZoomToGeometry: direction === 'output',
+                enableReparameterize
             }
         }
         case 'generic-parameter': {
@@ -38,6 +44,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enablePickGeometry: supportedGeometricTypeNames.includes(typeName),
                 enablePin: true,
                 enableZoomToGeometry: false,
+                // TODO: This should be possible
+                enableReparameterize: false
             }
         }
         case 'number-slider': {
@@ -46,7 +54,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetValue: false,
                 enablePickGeometry: false,
                 enablePin: true,
-                enableZoomToGeometry: false
+                enableZoomToGeometry: false,
+                enableReparameterize: false
             }
         }
         case 'boolean-toggle': {
@@ -55,7 +64,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetValue: false,
                 enablePickGeometry: false,
                 enablePin: true,
-                enableZoomToGeometry: false
+                enableZoomToGeometry: false,
+                enableReparameterize: false
             }
         }
         case 'color-gradient': {
@@ -65,6 +75,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enablePickGeometry: false,
                 enablePin: false,
                 enableZoomToGeometry: false,
+                enableReparameterize: false
             }
         }
         default: {
@@ -73,7 +84,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enablePin: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
-                enableZoomToGeometry: false
+                enableZoomToGeometry: false,
+                enableReparameterize: false
             }
         }
     }
