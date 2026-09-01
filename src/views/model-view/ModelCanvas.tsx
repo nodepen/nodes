@@ -4,7 +4,7 @@ import { Canvas, useLoader } from "@react-three/fiber"
 import { OrbitControls } from "@react-three/drei"
 import DocumentModel from "./components/document-model/DocumentModel"
 import GridModel from "./components/grid-model/GridModel"
-import { useDispatch, useStore } from "@/store"
+import { internalCallbacksRef, useDispatch } from "@/store"
 import ContextModel from "./components/context-model/ContextModel"
 import { tryParseUserStrings } from "@/utils/three/tryParseUserStrings"
 import { useFlag } from "@/hooks/useFlag"
@@ -23,9 +23,8 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
 
     return <Canvas
         className="np-w-full np-h-full"
-        // style={{ display: 'block' }}
         orthographic={isThumbnail}
-        frameloop="demand"
+        frameloop={isHomePage ? 'always' : 'demand'}
         onCreated={({ camera, scene, controls }) => {
             scene.up.set(0, 0, 1)
             camera.up.set(0, 0, 1)
@@ -106,7 +105,7 @@ const ModelCanvas = ({ solutionModelUrl }: ModelCanvasProps) => {
                 }
             }
 
-            useStore.getState().internalCallbacks.zoomToExtents = fitCameraToScene
+            internalCallbacksRef.zoomToExtents = fitCameraToScene
         }}
         onPointerDown={() => {
             clearInterface()

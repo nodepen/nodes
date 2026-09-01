@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
-import { useDispatch, useStore, useStoreRef } from "$"
+import { rafBatcher, useDispatch, useStore, useStoreRef } from "$"
 import type { NodesAppStore } from "$"
 import { COLORS, DIMENSIONS } from "@/constants"
 import { getNodeExtents } from "@/utils/node-dimensions"
@@ -10,7 +10,6 @@ import { useRightClick } from "@/hooks/useRightClick"
 import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInteroplatedState"
 import { isCtrl } from "@/utils/dom/isCtrl"
 import { targetIsScrolling } from "@/utils/dom/targetIsScrolling"
-import { isNodeIncludedInDrag } from "@/store/utils"
 import { saveDocument } from "@/store/utils/saveDocument"
 import { current } from "immer"
 
@@ -74,8 +73,16 @@ const getPresenceDragPosition = (state: NodesAppStore, nodeInstanceId: string) =
         return null
     }
 
+    // Has this sessions already handled this node's drag?
+    const reconciled = state.registry.remoteDrags[nodeInstanceId]
+
     for (const sessionId of Object.keys(state.presence.sessions)) {
         const drag = drags[sessionId]
+
+        const resolved = reconciled?.[sessionId]
+        if (drag && resolved && resolved.x === drag.x && resolved.y === drag.y) {
+            continue
+        }
 
         if (drag) {
             return drag
@@ -181,7 +188,7 @@ const useDraggableGroup = (groupId: string): React.RefObject<SVGGElement | null>
 
     const isEditable = useIsEditable()
 
-    const { apply, endDrag } = useDispatch()
+    const { apply, beginDrag, endDrag } = useDispatch()
 
     const zoom = useStoreRef((state) => state.camera.zoom)
 
@@ -193,8 +200,14 @@ const useDraggableGroup = (groupId: string): React.RefObject<SVGGElement | null>
 
     const setIsDragging = useCallback((isActive: boolean): void => {
         isDragging.current = isActive
+
+        if (isActive) {
+            beginDrag()
+            return
+        }
+
         apply((state) => {
-            state.registry.drag.isActive = isActive
+            state.registry.drag.isActive = false
         })
     }, [])
 
@@ -267,23 +280,23 @@ const useDraggableGroup = (groupId: string): React.RefObject<SVGGElement | null>
         const dx = (currentPointerX - initialPointerX) / zoom.current
         const dy = (currentPointerY - initialPointerY) / zoom.current
 
-        apply((state) => {
-            state.registry.drag.dx = dx
-            state.registry.drag.dy = dy
+        const [cx, cy] = pageSpaceToWorldSpace(currentPointerX, currentPointerY)
 
-            const [cx, cy] = pageSpaceToWorldSpace(currentPointerX, currentPointerY)
-
-            state.ui.cursor = {
-                x: cx,
-                y: cy
+        rafBatcher.schedule('group-drag',
+            (state) => {
+                state.registry.drag.dx = dx
+                state.registry.drag.dy = dy
+                state.ui.cursor = { x: cx, y: cy }
+            },
+            (state) => {
+                state.callbacks.onCursorMove?.(current(state))
+                state.callbacks.onDrag?.(current(state))
             }
-
-            state.callbacks.onCursorMove?.(current(state))
-            state.callbacks.onDrag?.(current(state))
-        })
+        )
     }, [])
 
     const resetState = useCallback((): void => {
+        rafBatcher.cancel('group-drag')
         endDrag()
         setIsDragging(false)
         initialPointerId.current = undefined
@@ -400,7 +413,7 @@ const Group = ({ id }: GroupProps) => {
             let x = from.x
             let y = from.y
 
-            if (state.registry.drag.isActive && isNodeIncludedInDrag(state, nodeInstanceId)) {
+            if (state.registry.drag.isActive && state.registry.drag.includedNodeIds[nodeInstanceId]) {
                 // Include active local drags in group calculation
                 const { dx, dy } = state.registry.drag
 

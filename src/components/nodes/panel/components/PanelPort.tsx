@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import type * as NodePen from '@/types'
-import { useLongHover, useNodeAnchorPosition, usePageSpaceToOverlaySpace } from '@/hooks'
+import { useLongHover, useNodeContextAnchorPosition, usePageSpaceToOverlaySpace } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePort } from '../../hooks'
 import { useDispatch } from '$'
@@ -16,7 +16,7 @@ type PanelPortProps = {
 const PanelPort = ({ nodeInstanceId, portInstanceId, template }: PanelPortProps) => {
     const portRef = usePort(nodeInstanceId, portInstanceId, template)
 
-    const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
+    const position = useNodeContextAnchorPosition(nodeInstanceId, portInstanceId)
 
     if (!position) {
         console.log(`🐍 Missing port position for node [${nodeInstanceId}]`)

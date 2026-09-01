@@ -18,13 +18,3 @@ export const getNodesIncludedInDrag = (state: DragSelectionState): string[] => {
 
     return [...included]
 }
-
-export const isNodeIncludedInDrag = (state: DragSelectionState, nodeInstanceId: string): boolean => {
-    if (state.registry.selection.nodes.includes(nodeInstanceId)) {
-        return true
-    }
-
-    return state.registry.selection.groups.some(
-        (groupId) => state.document.groups[groupId]?.items.nodes.includes(nodeInstanceId) ?? false
-    )
-}

@@ -1,5 +1,3 @@
-import type { DocumentNode } from '../DocumentNode'
-
 export type DocumentPresence = {
     // Current session's id
     sessionId: string
@@ -65,16 +63,4 @@ export type DocumentPresence = {
             }
         }
     }
-    /**
-     * Nodes a session is provisionally placing, keyed by session id.
-     *
-     * Provisional nodes never reach the document — they get deleted if a placement is
-     * abandoned — so there is nothing for an id to point back at. This channel carries whole
-     * nodes rather than references, which is also why it is presence and not a document
-     * update.
-     */
-    ghostNodes: {
-        [sessionId: string]: DocumentNode[]
-    }
-
 }

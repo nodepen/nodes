@@ -14,8 +14,16 @@ export const pruneDocumentReferences = (state: NodesAppState): void => {
         state.registry.drag = {
             isActive: false,
             isCopyActive: false,
+            includedNodeIds: {},
             dx: 0,
             dy: 0
+        }
+    }
+
+    // Remote drags
+    for (const nodeInstanceId of Object.keys(state.registry.remoteDrags)) {
+        if (!nodes[nodeInstanceId]) {
+            delete state.registry.remoteDrags[nodeInstanceId]
         }
     }
 

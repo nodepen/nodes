@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import type * as NodePen from '@/types'
-import { useLongHover, useNodeAnchorPosition, usePageSpaceToOverlaySpace } from '@/hooks'
+import { useLongHover, useNodeContextAnchorPosition, usePageSpaceToOverlaySpace } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePort } from '../../hooks'
 import { useDispatch, useStore } from '$'
@@ -54,7 +54,7 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
 
     const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
 
-    const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
+    const position = useNodeContextAnchorPosition(nodeInstanceId, portInstanceId)
     const flags = useStore((state) => state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.flags ?? [])
     const sortedFlags = [...flags].sort()
 

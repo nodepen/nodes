@@ -9,6 +9,7 @@ export { AgentBubbleContent as NodesAppBubble } from './components/layout/bubble
 export { useInterfacePanelCallbacks as useNodesApp } from './components/layout/panel/InterfacePanelContext'
 
 export { createInstance } from './utils/templates/createInstance'
+export { addDocumentNode } from './store/utils'
 
 export type { NodesAppState, NodesAppCallbacks } from './store'
 

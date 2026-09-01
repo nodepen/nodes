@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import { useDispatch, useStore } from '$'
+import { rafBatcher, useDispatch, useStore } from '$'
 import { usePageSpaceToWorldSpace } from '@/hooks'
 import { current } from 'immer'
 
 const SelectionRegionOverlay = () => {
-    const { apply, commitRegionSelection } = useDispatch()
+    const { commitRegionSelection } = useDispatch()
     const selectionRegionState = useStore((state) => state.registry.selection.region)
 
     const overlayRef = useRef<HTMLDivElement>(null)
@@ -37,17 +37,20 @@ const SelectionRegionOverlay = () => {
 
                     const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
 
-                    apply((state) => {
-                        if (!state.registry.selection.region.isActive) {
-                            return
+                    rafBatcher.schedule('selection-region-drag',
+                        (state) => {
+                            if (!state.registry.selection.region.isActive) {
+                                return
+                            }
+
+                            state.registry.selection.region.to = { x, y }
+                            state.ui.cursor = { x, y }
+                        },
+                        (state) => {
+                            state.callbacks.onCursorMove?.(current(state))
+                            state.callbacks.onSelectionRegionUpdated?.(current(state))
                         }
-
-                        state.registry.selection.region.to = { x, y }
-                        state.ui.cursor = { x, y }
-
-                        state.callbacks.onCursorMove?.(current(state))
-                        state.callbacks.onSelectionRegionUpdated?.(current(state))
-                    })
+                    )
                 }
             }
         },
@@ -59,6 +62,8 @@ const SelectionRegionOverlay = () => {
             if (!selectionRegionState.isActive || selectionRegionState.pointerId !== e.pointerId) {
                 return
             }
+
+            rafBatcher.flushSync()
 
             switch (e.pointerType) {
                 case 'mouse': {

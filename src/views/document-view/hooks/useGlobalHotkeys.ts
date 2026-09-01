@@ -1,6 +1,6 @@
 import { useDocumentRef, useImperativeEvent } from '@/hooks'
 import { useDispatch } from '@/store'
-import { expireSolution } from '@/store/utils'
+import { expireSolution, removeDocumentNode } from '@/store/utils'
 import { useCallback, useRef } from 'react'
 import { useStore } from '$'
 import { current } from 'immer'
@@ -100,7 +100,7 @@ export const useGlobalHotkeys = () => {
                     for (const id of state.registry.selection.nodes) {
                         state.document.controls.input = state.document.controls.input.filter((control) => control.ref.nodeInstanceId !== id)
                         state.document.controls.output = state.document.controls.output.filter((control) => control.ref.nodeInstanceId !== id)
-                        delete state.document.nodes[id]
+                        removeDocumentNode(state, id)
                     }
 
                     // Remove deleted nodes from sources throughout the document

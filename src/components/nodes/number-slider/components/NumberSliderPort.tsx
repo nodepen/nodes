@@ -1,7 +1,7 @@
 import React from 'react'
 import type * as NodePen from '@/types'
 import { usePort } from '../../hooks'
-import { useNodeAnchorPosition } from '@/hooks'
+import { useNodeContextAnchorPosition } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 
 const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_RADIUS } = DIMENSIONS
@@ -15,7 +15,7 @@ type NumberSliderPortProps = {
 const NumberSliderPort = ({ nodeInstanceId, portInstanceId, template }: NumberSliderPortProps) => {
     const portRef = usePort(nodeInstanceId, portInstanceId, template)
 
-    const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
+    const position = useNodeContextAnchorPosition(nodeInstanceId, portInstanceId)
 
     if (!position) {
         console.log(`🐍 Missing port position for node [${nodeInstanceId}]`)

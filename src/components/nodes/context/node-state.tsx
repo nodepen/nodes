@@ -1,8 +1,6 @@
 import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInteroplatedState";
-import { useLerpState } from "@/hooks/useLerpState";
 import { useDispatch, useStore } from "@/store";
-import { isNodeIncludedInDrag } from "@/store/utils";
-import React, { startTransition, useEffect } from "react"
+import React, { useEffect } from "react"
 import type * as NodePen from '@/types'
 
 export type NodeInternalState = {
@@ -40,11 +38,8 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
     const [presencePosition, setPresencePosition] = useInterpolatedState(node?.position ?? { x: 0, y: 0 }, lerpPoint2d)
 
     // Position of instance based on active session drags
-    // (Split into primitive selectors so an idle store doesn't get a fresh
-    // object identity on every publish, which would defeat zustand's equality
-    // check and force a re-render on every unrelated state change.)
     const internalPositionX = useStore((state) => {
-        if (!isNodeIncludedInDrag(state, nodeInstanceId ?? '')) {
+        if (!state.registry.drag.includedNodeIds[nodeInstanceId ?? '']) {
             return null
         }
 
@@ -64,7 +59,7 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
     })
 
     const internalPositionY = useStore((state) => {
-        if (!isNodeIncludedInDrag(state, nodeInstanceId ?? '')) {
+        if (!state.registry.drag.includedNodeIds[nodeInstanceId ?? '']) {
             return null
         }
 
@@ -89,7 +84,23 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
 
     // Position of instance based on external drag presence state
     const latestPresencePosition = useStore((state) => {
-        return Object.keys(state.presence.sessions).map((sessionId) => (state.presence.drag[nodeInstanceId ?? '']?.[sessionId] ?? null)).filter((drag) => !!drag).at(0) ?? null
+        const reconciled = state.registry.remoteDrags[nodeInstanceId ?? '']
+
+        return Object.keys(state.presence.sessions).map((sessionId) => {
+            const drag = state.presence.drag[nodeInstanceId ?? '']?.[sessionId] ?? null
+
+            if (!drag) {
+                return null
+            }
+
+            // Ignore drags already handled by current session (i.e. no replay from multiplayer)
+            const resolved = reconciled?.[sessionId]
+            if (resolved && resolved.x === drag.x && resolved.y === drag.y) {
+                return null
+            }
+
+            return drag
+        }).filter((drag) => !!drag).at(0) ?? null
     })
 
     // Sync presence drags
@@ -100,7 +111,6 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
         setPresencePosition(latestPresencePosition)
     }, [latestPresencePosition?.x, latestPresencePosition?.y])
 
-    // Clean up session-based drag on next node update
     useEffect(() => {
         if (!node) {
             return
@@ -109,7 +119,10 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
         apply((state) => {
             for (const [sessionId, dragData] of Object.entries((state.presence.drag[nodeInstanceId ?? ''] ?? {}))) {
                 if (dragData?.isFinal) {
-                    delete state.presence.drag[nodeInstanceId ?? '']?.[sessionId]
+                    const key = nodeInstanceId ?? ''
+                    state.registry.remoteDrags[key] ??= {}
+                    state.registry.remoteDrags[key][sessionId] = { x: dragData.x, y: dragData.y }
+                    delete state.presence.drag[key]?.[sessionId]
                 }
             }
         })

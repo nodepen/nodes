@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import type * as NodePen from '@/types'
 import { MenuButton } from '../../../common'
 import { STYLES } from '@/constants'
-import { useStore } from '@/store'
+import { internalCallbacksRef } from '@/store'
 
 type ButtonProps = {
     nodeInstanceId: string
@@ -11,7 +11,7 @@ type ButtonProps = {
 
 export const ZoomToGeometryButton = ({ nodeInstanceId, portInstanceId }: ButtonProps) => {
     const handleClick = useCallback((e: React.PointerEvent<HTMLButtonElement>) => {
-        useStore.getState().internalCallbacks.zoomToExtents?.(nodeInstanceId, portInstanceId)
+        internalCallbacksRef.zoomToExtents?.(nodeInstanceId, portInstanceId)
     }, [nodeInstanceId, portInstanceId])
 
     const icon = (

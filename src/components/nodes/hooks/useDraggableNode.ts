@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useCallback, useRef } from 'react'
-import { useDispatch, useStore, useStoreRef } from '$'
+import { rafBatcher, useDispatch, useStore, useStoreRef } from '$'
 import { useImperativeEvent, usePageSpaceToWorldSpace } from '@/hooks'
 import { saveDocument } from '@/store/utils/saveDocument'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
@@ -14,7 +14,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
     const isEditable = useIsEditable()
 
-    const { apply, endDrag, setNodePosition } = useDispatch()
+    const { apply, beginDrag, endDrag } = useDispatch()
 
     const zoom = useStoreRef((state) => state.camera.zoom)
 
@@ -31,8 +31,14 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
 
     const setIsDragging = useCallback((isActive: boolean): void => {
         isDragging.current = isActive
+
+        if (isActive) {
+            beginDrag()
+            return
+        }
+
         apply((state) => {
-            state.registry.drag.isActive = isActive
+            state.registry.drag.isActive = false
         })
     }, [])
 
@@ -106,20 +112,19 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
         const dx = (currentPointerX - initialPointerX) / zoom.current
         const dy = (currentPointerY - initialPointerY) / zoom.current
 
-        apply((state) => {
-            state.registry.drag.dx = dx
-            state.registry.drag.dy = dy
+        const [cx, cy] = pageSpaceToWorldSpace(currentPointerX, currentPointerY)
 
-            const [cx, cy] = pageSpaceToWorldSpace(currentPointerX, currentPointerY)
-
-            state.ui.cursor = {
-                x: cx,
-                y: cy
+        rafBatcher.schedule('node-drag',
+            (state) => {
+                state.registry.drag.dx = dx
+                state.registry.drag.dy = dy
+                state.ui.cursor = { x: cx, y: cy }
+            },
+            (state) => {
+                state.callbacks.onCursorMove?.(current(state))
+                state.callbacks.onDrag?.(current(state))
             }
-
-            state.callbacks.onCursorMove?.(current(state))
-            state.callbacks.onDrag?.(current(state))
-        })
+        )
 
         const { x: initialNodeX, y: initialNodeY } = initialNodePosition.current
 
@@ -153,6 +158,7 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
     }, [])
 
     const resetState = useCallback((): void => {
+        rafBatcher.cancel('node-drag')
         endDrag()
         setIsDragging(false)
         initialPointerId.current = undefined

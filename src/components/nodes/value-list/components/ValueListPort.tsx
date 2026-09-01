@@ -1,6 +1,6 @@
 import React from 'react'
 import type * as NodePen from '@/types'
-import { useNodeAnchorPosition } from '@/hooks'
+import { useNodeContextAnchorPosition } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { usePort } from '../../hooks'
 
@@ -15,7 +15,7 @@ type ValueListPortProps = {
 const ValueListPort = ({ nodeInstanceId, portInstanceId, template }: ValueListPortProps) => {
     const portRef = usePort(nodeInstanceId, portInstanceId, template)
 
-    const position = useNodeAnchorPosition(nodeInstanceId, portInstanceId)
+    const position = useNodeContextAnchorPosition(nodeInstanceId, portInstanceId)
 
     if (!position) {
         console.log(`🐍 Missing port position for node [${nodeInstanceId}]`)

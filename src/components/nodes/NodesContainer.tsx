@@ -1,5 +1,4 @@
 import React from 'react'
-import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { shallow } from 'zustand/shallow'
 
@@ -15,7 +14,7 @@ import Gradient from './gradient/Gradient'
 import { useFlag } from '@/hooks/useFlag'
 
 const NodesContainer = (): React.ReactElement | null => {
-    const nodes = useDocumentNodes()
+    const nodeIds = useStore((store) => store.registry.documentNodeIds)
     const templates = useStore((store) => store.templates, shallow)
 
     const hideScript = useFlag('hideScript')
@@ -26,8 +25,14 @@ const NodesContainer = (): React.ReactElement | null => {
 
     return (
         <g id="np-nodes" className="np-pointer-events-auto">
-            {nodes.map((node) => {
-                const { instanceId, templateId } = node
+            {nodeIds.map((instanceId) => {
+                const node = useStore.getState().document.nodes[instanceId]
+
+                if (!node) {
+                    return null
+                }
+
+                const { templateId } = node
 
                 const template = templates[templateId]
 
@@ -46,7 +51,7 @@ const NodesContainer = (): React.ReactElement | null => {
                         return <BooleanToggle key={`boolean-toggle-${instanceId}`} id={instanceId} template={template} />
                     case 'color-swatch':
                         return <ColorSwatch key={`color-swatch-${instanceId}`} id={instanceId} template={template} />
-                    case 'gradient':
+                    case 'color-gradient':
                         return <Gradient key={`gradient-${instanceId}`} id={instanceId} template={template} />
                     // TODO: `unknown-node` type
                     case 'unknown':
@@ -56,25 +61,6 @@ const NodesContainer = (): React.ReactElement | null => {
             })}
         </g>
     )
-}
-
-const useDocumentNodes = (): NodePen.DocumentNode[] => {
-    const nodes = useStore<NodePen.Document['nodes']>(
-        (store) => store.document.nodes,
-        (previousNodes, currentNodes) => {
-            const previousNodeIds = Object.keys(previousNodes)
-            const currentNodeIds = Object.keys(currentNodes)
-
-            if (previousNodeIds.length !== currentNodeIds.length) {
-                return false
-            }
-
-            const currentNodeIdSet = new Set(currentNodeIds)
-            return previousNodeIds.every((id) => currentNodeIdSet.has(id))
-        }
-    )
-
-    return Object.values(nodes)
 }
 
 export default React.memo(NodesContainer)

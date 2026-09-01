@@ -15,7 +15,7 @@ const AnnotationsOverlayContainer = () => {
     const selectionRegionState = useStore((state) => state.registry.selection.region)
     const isDashed = selectionRegionState.isActive ? selectionRegionState.from.x > selectionRegionState.to.x : false
 
-    const liveWires = useStore((state) => Object.entries(state.registry.wires.live.connections))
+    const liveWires = useStore((state) => Object.entries(state.registry.wires.live.connections), shallow)
     useLiveWireCursor(liveWires.map(([_key, connection]) => connection.portAnchor))
 
     const bubbleIds = useStore((state) => Object.keys(state.registry.agent.bubbles), shallow)

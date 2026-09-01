@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useCallback } from 'react'
-import { useStore, useStoreRef, useDispatch } from '$'
+import { rafBatcher, useStore, useStoreRef, useDispatch } from '$'
 import { CAMERA } from '@/constants'
 import { clamp } from '@/utils'
 import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
@@ -17,7 +17,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
     const isEditable = useIsEditable()
 
-    const { apply, clearInterface, clearSelection, setCameraPosition, setCameraZoom } = useDispatch()
+    const { apply, clearInterface, clearSelection } = useDispatch()
     const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
@@ -124,21 +124,18 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
         }
     }
 
-    //   const handlePointerDownCapture = (_e: React.PointerEvent<HTMLDivElement>): void => {
-    //     clearInterface()
-    //   }
-
     const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>): void => {
         if (e.pointerType === 'mouse') {
             const { pageX, pageY } = e
             const [px, py] = pageSpaceToWorldSpace(pageX, pageY)
-            apply((state) => {
-                state.ui.cursor = {
-                    x: px,
-                    y: py
+            rafBatcher.schedule('cursor-move',
+                (state) => {
+                    state.ui.cursor = { x: px, y: py }
+                },
+                (state) => {
+                    state.callbacks?.onCursorMove?.(current(state))
                 }
-                state.callbacks?.onCursorMove?.(current(state))
-            })
+            )
         }
 
         switch (e.pointerType) {
@@ -161,7 +158,14 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
                 if (isPanActive.current) {
                     // Continue panning
-                    setCameraPosition(x + dx, y + dy)
+                    rafBatcher.schedule('camera-move',
+                        (state) => {
+                            state.camera.position = { x: x + dx, y: y + dy }
+                        },
+                        (state) => {
+                            state.callbacks?.onCameraMove?.(current(state))
+                        }
+                    )
                     break
                 }
 
@@ -225,7 +229,14 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                         const dx = -totalDeltaX / zoom.current
                         const dy = totalDeltaY / zoom.current
 
-                        setCameraPosition(x + dx, y + dy)
+                        rafBatcher.schedule('camera-move',
+                            (state) => {
+                                state.camera.position = { x: x + dx, y: y + dy }
+                            },
+                            (state) => {
+                                state.callbacks?.onCameraMove?.(current(state))
+                            }
+                        )
                         break
                     }
                     case 2: {
@@ -243,14 +254,24 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                         const dx = -totalDeltaX / zoom.current
                         const dy = totalDeltaY / zoom.current
 
-                        setCameraPosition(x + dx, y + dy)
+                        let nextZoom: number | null = null
 
                         if (previousPinch.current) {
                             const scaleDelta = dist / previousPinch.current.dist
-                            // console.log(scaleDelta)
-                            const nextZoom = clamp(zoom.current * scaleDelta, CAMERA.MINIMUM_ZOOM, CAMERA.MAXIMUM_ZOOM)
-                            setCameraZoom(nextZoom)
+                            nextZoom = clamp(zoom.current * scaleDelta, CAMERA.MINIMUM_ZOOM, CAMERA.MAXIMUM_ZOOM)
                         }
+
+                        rafBatcher.schedule('camera-move',
+                            (state) => {
+                                state.camera.position = { x: x + dx, y: y + dy }
+                                if (nextZoom !== null) {
+                                    state.camera.zoom = nextZoom
+                                }
+                            },
+                            (state) => {
+                                state.callbacks?.onCameraMove?.(current(state))
+                            }
+                        )
 
                         previousPinch.current = { dist, mid }
                         break
@@ -375,8 +396,15 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
             y: (vec.y / nextZoom) * -zoomDelta,
         }
 
-        setCameraZoom(nextZoom)
-        setCameraPosition(cameraWorldX + transform.x, cameraWorldY + transform.y)
+        rafBatcher.schedule('camera-move',
+            (state) => {
+                state.camera.zoom = nextZoom
+                state.camera.position = { x: cameraWorldX + transform.x, y: cameraWorldY + transform.y }
+            },
+            (state) => {
+                state.callbacks?.onCameraMove?.(current(state))
+            }
+        )
     }
 
     useEffect(() => {

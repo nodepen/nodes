@@ -3,6 +3,7 @@ import type * as NodePen from '@/types'
 import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useLongHover, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { useDispatch, useStore } from '@/store'
+import { addDocumentNode } from '@/store/utils'
 import { KEYS } from '@/constants'
 
 type TemplateDraggableProps = {
@@ -39,7 +40,7 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
                             y: y - node.dimensions.height / 2,
                         }
 
-                        state.document.nodes[node.instanceId] = node
+                        addDocumentNode(state, node)
 
                         state.layout.nodePlacement = {
                             isActive: true,

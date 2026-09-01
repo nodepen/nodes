@@ -1,6 +1,5 @@
 import type { NodesAppState } from './state'
-import { startTransition } from 'react'
-import { setAutoFreeze, freeze, current } from 'immer'
+import { freeze, current } from 'immer'
 import type * as NodePen from '@/types'
 import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
@@ -8,9 +7,7 @@ import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { divideDomain, remap } from '@/utils/numerics'
-import { expireSolution, resetNodePlacement, pruneDocumentReferences, getNodesIncludedInDrag } from './utils'
-import { duplicateInstance } from '@/utils/nodes/duplicateInstance'
+import { expireSolution, resetNodePlacement, pruneDocumentReferences, getNodesIncludedInDrag, addDocumentNode, removeDocumentNode, setDocumentNodes } from './utils'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
@@ -25,25 +22,7 @@ type BaseAction = string | ({ type: string } & Record<string, unknown>)
 type BaseSetter = (callback: (state: NodesAppState) => void, replace?: boolean, action?: BaseAction) => void
 type BaseGetter = () => NodesAppState
 
-// export type NodesAppDispatch = {
-//   dispatch: {
-//     apply(callback: (state: NodesAppState, get: BaseGetter) => void): void
-//     loadDocument(document: NodePen.Document): void
-//     loadTemplates(templates: NodePen.NodeTemplate[]): void
-//     commitRegionSelection: (selectionMode: 'set' | 'add' | 'remove') => void
-//     commitLiveWireEdit: () => void
-//     setCameraAspect: (aspect: number) => void
-//     setCameraPosition: (x: number, y: number) => void
-//     setCameraZoom: (zoom: number) => void
-//     setNodePosition: (id: string, x: number, y: number) => void
-//     clearInterface: () => void
-//     clearSelection: () => void
-//   }
-// }
-
 export type NodesAppDispatch = ReturnType<typeof createDispatch>
-
-setAutoFreeze(false)
 
 export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
     const dispatch = {
@@ -62,10 +41,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 }
 
                 // Apply to internal state
-                state.document = {
-                    ...document,
-                    nodes: nextNodes
-                }
+                state.document = { ...document, nodes: {} }
+                setDocumentNodes(state, nextNodes)
 
                 pruneDocumentReferences(state)
             }),
@@ -369,10 +346,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         setCameraPosition: (x: number, y: number) =>
             set(
                 (state) => {
-                    startTransition(() => {
-                        state.camera.position = { x, y }
-                        state.callbacks?.onCameraMove?.(current(state))
-                    })
+                    state.camera.position = { x, y }
+                    state.callbacks?.onCameraMove?.(current(state))
                 },
                 false,
                 'camera/setPosition'
@@ -380,9 +355,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         setCameraZoom: (zoom: number) =>
             set(
                 (state) => {
-                    startTransition(() => {
-                        state.camera.zoom = zoom
-                    })
+                    state.camera.zoom = zoom
                 },
                 false,
                 'camera/setZoom'
@@ -435,7 +408,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
                             const currentInstance = current(node)
 
-                            state.document.nodes[getProvisionalId(instanceId)] = {
+                            addDocumentNode(state, {
                                 ...currentInstance,
                                 instanceId: getProvisionalId(instanceId),
                                 position: {
@@ -446,18 +419,33 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                                     ...currentInstance.status,
                                     isProvisional: true
                                 }
-                            }
+                            })
                         }
                     } else {
                         // Clear provisional drag copies
                         for (const instanceId of state.registry.selection.nodes) {
-                            delete state.document.nodes[getProvisionalId(instanceId)]
+                            removeDocumentNode(state, getProvisionalId(instanceId))
                         }
                         clearClipboard(state)
                     }
                 },
                 false,
                 'clipboard/drag'
+            ),
+        beginDrag: () =>
+            set(
+                (state) => {
+                    state.registry.drag.isActive = true
+
+                    // Selection is ready before drag, and does not change during drag
+                    const included: Record<string, true> = {}
+                    for (const nodeInstanceId of getNodesIncludedInDrag(state)) {
+                        included[nodeInstanceId] = true
+                    }
+                    state.registry.drag.includedNodeIds = included
+                },
+                false,
+                'node/beginDrag'
             ),
         endDrag: () =>
             set(
@@ -469,7 +457,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                             dy: state.registry.drag.dy
                         })
                         for (const instanceId of state.clipboard.nodes.map((node) => node.instanceId)) {
-                            delete state.document.nodes[getProvisionalId(instanceId)]
+                            removeDocumentNode(state, getProvisionalId(instanceId))
                         }
                         clearClipboard(state)
                         expireSolution(state)
@@ -495,55 +483,14 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         isActive: false,
                         isCopyActive: false,
                         dx: 0,
-                        dy: 0
+                        dy: 0,
+                        includedNodeIds: {}
                     }
 
                     state.callbacks.onDragEnd?.(current(state))
                 },
                 false,
                 'node/endDrag'
-            ),
-        setNodePosition: (id: string, x: number, y: number) =>
-            set(
-                (state) => {
-                    const node = state.document.nodes[id]
-
-                    if (!node) {
-                        return
-                    }
-
-                    if (!state.registry.selection.nodes.includes(id)) {
-                        startTransition(() => {
-                            node.position.x = x
-                            node.position.y = y
-                        })
-
-                        return
-                    }
-
-                    const { x: currentX, y: currentY } = node.position
-
-                    const [dx, dy] = [x - currentX, y - currentY]
-
-                    for (const nodeInstanceId of state.registry.selection.nodes) {
-                        const selectedNode = state.document.nodes[nodeInstanceId]
-
-                        if (!selectedNode) {
-                            console.log('🐍 Could not move selected node position because node is not present in document!')
-                            continue
-                        }
-
-                        state.document.nodes[nodeInstanceId].position = {
-                            x: selectedNode.position.x + dx,
-                            y: selectedNode.position.y + dy,
-                        }
-                    }
-                },
-                false,
-                {
-                    type: 'node/setPosition',
-                    payload: { id, x, y },
-                }
             ),
         toggleFlag: (nodeInstanceId: string, portInstanceId: string, flag: NodePen.PortFlag) => set((state) => {
             const currentFlags = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.flags
@@ -627,18 +574,10 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         isParameterLibraryOpen: false
                     }
 
-                    // TODO: This is sloppy. It should not be possible for provisional nodes to get left on the canvas.
-                    const remoteGhostIds = new Set(
-                        Object.values(state.presence.ghostNodes).flatMap((nodes) => nodes.map((node) => node.instanceId))
-                    )
-                    for (const nodeId of Object.keys(state.document.nodes)) {
-                        if (remoteGhostIds.has(nodeId)) {
-                            // Belongs to another session's presence, not this canvas's own
-                            // abandoned placement — leave it for that session to clean up.
-                            continue
-                        }
-                        if (state.document.nodes[nodeId].status.isProvisional) {
-                            delete state.document.nodes[nodeId]
+                    // Drop provisional nodes
+                    for (const nodeId of [...state.registry.documentNodeIds]) {
+                        if (state.document.nodes[nodeId]?.status.isProvisional) {
+                            removeDocumentNode(state, nodeId)
                         }
                     }
 

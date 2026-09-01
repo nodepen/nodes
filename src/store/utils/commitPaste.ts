@@ -1,6 +1,7 @@
 import type * as NodePen from '@/types'
 import type { NodesAppState } from "../state";
 import { expireSolution } from './expireSolution';
+import { addDocumentNode } from './documentNodes';
 import { current } from 'immer';
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance';
 
@@ -44,7 +45,7 @@ export const commitPaste = (state: NodesAppState, config: PasteConfig): void => 
         }
 
         // Add final copies to document
-        state.document.nodes[node.instanceId] = node
+        addDocumentNode(state, node)
     }
 
     // Update selection to new copies

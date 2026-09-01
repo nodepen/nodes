@@ -1,12 +1,10 @@
-import { useDispatch, useStore } from '$'
+import { internalCallbacksRef, useDispatch, useStore } from '$'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import * as THREE from 'three'
-import type { OrbitControls } from '@react-three/drei'
 import DocumentNodeModel from './DocumentNodeModel'
 import { useLoader, useThree } from '@react-three/fiber'
 import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js'
 import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
-import { shallow } from 'zustand/shallow'
 import { current } from 'immer'
 
 type DocumentModel = {
@@ -89,8 +87,12 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                 setObjectsByDocumentNodeId(res)
 
                 if (state.app.flags.isHomePage) {
-                    state.internalCallbacks.zoomToExtents?.()
-                    state.callbacks.onHomePageReady?.(state)
+                    const s = current(state)
+
+                    setTimeout(() => {
+                        internalCallbacksRef.zoomToExtents?.()
+                        s.callbacks.onHomePageReady?.(s)
+                    }, 1000);
                 }
 
                 if (state.app.flags.isThumbnail) {
@@ -127,7 +129,7 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
         })
     }, [modelUrl, scene, camera])
 
-    const nodeIds = useStore((state) => Object.keys(state.document.nodes), shallow)
+    const nodeIds = useStore((state) => state.registry.documentNodeIds)
 
     if (!modelUrl) {
         return null

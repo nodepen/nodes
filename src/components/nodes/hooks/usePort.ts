@@ -1,6 +1,6 @@
 import type React from 'react'
 import { useCallback, useRef } from 'react'
-import { useDispatch } from '$'
+import { rafBatcher, useDispatch } from '$'
 import type * as NodePen from '@/types'
 import { useImperativeEvent, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getWireEditModalityFromEvent } from '@/utils/wires'
@@ -36,7 +36,7 @@ export const usePort = (
         const node = useStore.getState().document.nodes[nodeInstanceId]
         const nodeType = getNodeTypeForTemplate(node ? useStore.getState().templates[node.templateId] : undefined)
 
-        if (nodeType !== 'generic-node' && nodeType !== 'gradient') {
+        if (nodeType !== 'generic-node' && nodeType !== 'color-gradient') {
             return
         }
 
@@ -178,7 +178,7 @@ export const usePort = (
                 break
             }
             case 'mouse': {
-                apply((state) => {
+                rafBatcher.schedule('wire-cursor-move', (state) => {
                     state.registry.wires.live.cursor = {
                         pointerId: e.pointerId,
                         position: {

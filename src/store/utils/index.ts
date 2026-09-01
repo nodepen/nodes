@@ -1,4 +1,5 @@
 export { expireSolution } from './expireSolution'
 export { resetNodePlacement } from './resetNodePlacement'
 export { pruneDocumentReferences } from './pruneDocumentReferences'
-export { getNodesIncludedInDrag, isNodeIncludedInDrag } from './getNodesIncludedInDrag'
+export { getNodesIncludedInDrag } from './getNodesIncludedInDrag'
+export { addDocumentNode, removeDocumentNode, setDocumentNodes } from './documentNodes'

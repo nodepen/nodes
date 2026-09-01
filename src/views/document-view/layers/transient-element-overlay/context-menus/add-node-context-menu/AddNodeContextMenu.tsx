@@ -1,15 +1,14 @@
 import React, { useCallback, useState, useTransition, useRef, useEffect, useMemo } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
+import { shallow } from 'zustand/shallow'
 import type { ContextMenu } from '../../types'
-import { MenuBody } from '../../common'
 import { clamp } from '@/utils/numerics'
 import { createInstance, getIconAsImage } from '@/utils/templates'
 import { useTextSearch } from './hooks'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
-import { AddNodeButton, ShortcutMatchInfo } from './components'
 import { COMPONENTS, KEYS } from '@/constants'
-import { expireSolution } from '@/store/utils'
+import { expireSolution, addDocumentNode } from '@/store/utils'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
 import { tryMatchTextSearch, type TemplateMatch } from '@/utils/templates/tryMatchTextSearch'
 import { AgentIcon } from '@/components/icons/AgentIcon'
@@ -36,7 +35,7 @@ type SearchOption =
     }
 
 export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMenuProps) => {
-    const templates = useStore((state) => Object.values(state.templates))
+    const templates = useStore((state) => Object.values(state.templates), shallow)
     const preferences = useStore((state) => state.ui.preferences)
     const { apply } = useDispatch()
 
@@ -169,7 +168,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
         apply((state) => {
             // Add node to document
-            state.document.nodes[node.instanceId] = node
+            addDocumentNode(state, node)
 
             // Clear menu from interface
             state.registry.contextMenus = {}
@@ -206,7 +205,17 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
             {
                 type: 'add-shortcut',
                 match: shortcutMatch
-            }
+            },
+            ...(activeSearchQuery.length > 10 ? [
+                {
+                    type: 'agent-action' as const,
+                    action: 'ask' as const
+                },
+                {
+                    type: 'agent-action' as const,
+                    action: 'edit' as const
+                }
+            ] : [])
         ] :
             (searchResults.length && activeSearchQuery && activeSearchQuery.length < 14) ?
                 // Normal results
@@ -245,7 +254,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
         apply((state) => {
             // Add node to document
-            state.document.nodes[nodeInstance.instanceId] = nodeInstance
+            addDocumentNode(state, nodeInstance)
 
             // Clear menu from interface
             state.registry.contextMenus = {}

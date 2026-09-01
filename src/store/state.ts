@@ -102,6 +102,8 @@ export type NodesAppState = {
         nodes: NodePen.DocumentNode[]
     }
     registry: {
+        /** Performance optimization: kept in sync by `addDocumentNode`/`removeDocumentNode`/`setDocumentNodes` */
+        documentNodeIds: string[]
         canvasRoot: React.RefObject<HTMLDivElement | null>
         numberSliderInputRef: React.RefObject<HTMLInputElement | null>
         contextMenus: {
@@ -138,7 +140,10 @@ export type NodesAppState = {
             isCopyActive: boolean
             dx: number
             dy: number
+            /** Performance optimization: computed once when the drag begins. */
+            includedNodeIds: Record<string, true>
         }
+        remoteDrags: Record<string, Record<string, { x: number, y: number }>>
         selection: {
             nodes: string[]
             groups: string[]
@@ -220,9 +225,6 @@ export type NodesAppState = {
         interface: Record<InterfacePanelTarget, React.RefObject<HTMLDivElement | null> | null>
     }
     callbacks: NodesAppCallbacks
-    internalCallbacks: {
-        zoomToExtents?: (nodeInstanceId?: string, portInstanceId?: string) => void
-    }
 }
 
 export type NodesAppCallbacks = {
@@ -306,8 +308,7 @@ export const initialState: NodesAppState = {
         selection: {},
         selectionRegions: {},
         drag: {},
-        wires: {},
-        ghostNodes: {}
+        wires: {}
     },
     camera: {
         aspect: 1.5,
@@ -388,6 +389,7 @@ export const initialState: NodesAppState = {
         nodes: []
     },
     registry: {
+        documentNodeIds: [],
         canvasRoot: React.createRef<HTMLDivElement>(),
         numberSliderInputRef: React.createRef<HTMLInputElement>(),
         contextMenus: {},
@@ -411,8 +413,10 @@ export const initialState: NodesAppState = {
             isActive: false,
             isCopyActive: false,
             dx: 0,
-            dy: 0
+            dy: 0,
+            includedNodeIds: {}
         },
+        remoteDrags: {},
         selection: {
             nodes: [],
             groups: [],
@@ -449,6 +453,5 @@ export const initialState: NodesAppState = {
             versions: React.createRef<HTMLDivElement>()
         }
     },
-    callbacks: {},
-    internalCallbacks: {}
+    callbacks: {}
 }
