@@ -1,7 +1,7 @@
 import { AnnotationsOverlayPortal } from "@/components/annotations"
 import { Wire } from "@/components/annotations/wire/Wire"
 import { useNodeAnchorPosition } from "@/hooks"
-import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInteroplatedState"
+import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInterpolatedState"
 import { useStore, useStoreRef } from "@/store"
 import type { NodePortReference } from "@/types"
 import { getPortDirection } from "@/utils/ports/getPortDirection"

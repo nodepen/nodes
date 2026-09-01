@@ -1,6 +1,6 @@
 import { AnnotationsOverlayPortal, AnnotationsUnderlayPortal } from '@/components/annotations'
 import { Region } from '@/components/annotations/region'
-import { lerpPoint2d, useInterpolatedState } from '@/hooks/useInteroplatedState'
+import { lerpPoint2d, useInterpolatedState } from '@/hooks/useInterpolatedState'
 import { useStore, useStoreRef } from '@/store'
 import React, { useEffect, useRef, useState } from 'react'
 

@@ -1,4 +1,4 @@
-import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInteroplatedState";
+import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInterpolatedState";
 import { useDispatch, useStore } from "@/store";
 import React, { useEffect } from "react"
 import type * as NodePen from '@/types'
