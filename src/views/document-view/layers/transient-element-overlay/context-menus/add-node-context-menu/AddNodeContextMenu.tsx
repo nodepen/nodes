@@ -57,7 +57,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
 
     const [activeSearchQuery, setActiveSearchQuery] = useState<string>()
 
-    const candidates = useTextSearch(templates, activeSearchQuery ?? '', ['name', 'nickName'], 'jw')
+    const candidates = useTextSearch(templates, activeSearchQuery ?? '', ['name', 'nickName'], 'dice', 0.7)
     const keywordMatches = useMemo(() => {
         return templates.filter((template) => template.keywords.some((keyword) => keyword.toLowerCase() === activeSearchQuery?.toLowerCase()))
     }, [activeSearchQuery])

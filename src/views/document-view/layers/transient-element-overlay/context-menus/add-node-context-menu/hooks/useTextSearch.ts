@@ -1,4 +1,4 @@
-import { exactDistance, jaroWinklerDistance, levenshteinDistance } from '../utils'
+import { diceDistance, exactDistance, jaroWinklerDistance, levenshteinDistance } from '../utils'
 import { useMemo } from 'react'
 
 /**
@@ -25,7 +25,7 @@ type RequireStringKeys<T extends Record<string | number | symbol, unknown>> = ke
     Exclude<keyof T, number | symbol>
 >
 
-type SearchAlgorithmKey = 'lev' | 'jw' | 'exact'
+type SearchAlgorithmKey = 'lev' | 'jw' | 'exact' | 'dice'
 
 /**
  * @param items The collection of objects to run the search against.
@@ -81,6 +81,7 @@ export const useTextSearch = <T extends Record<string, unknown>>(
             lev: levenshteinDistance,
             jw: (a, b) => 1 - jaroWinklerDistance(a, b),
             exact: exactDistance,
+            dice: diceDistance,
         }
 
         const compare = searchAlgorithms[searchAlgorithm]

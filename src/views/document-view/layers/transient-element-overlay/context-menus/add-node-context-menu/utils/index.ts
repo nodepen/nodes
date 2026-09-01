@@ -1,3 +1,5 @@
+export { diceCoefficient } from './diceCoefficient'
+export { diceDistance } from './diceDistance'
 export { exactDistance } from './exactDistance'
 export { jaroWinklerDistance } from './jaroWinklerDistance'
 export { levenshteinDistance } from './levenshteinDistance'
