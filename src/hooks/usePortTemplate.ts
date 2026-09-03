@@ -1,7 +1,7 @@
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { getBooleanTogglePortTemplate, getGenericParameterPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
+import { getBooleanTogglePortTemplate, getGenericParameterPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate, getRelayPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 import { useNodePortTemplate } from './useNodePortTemplate'
 
 /**
@@ -39,6 +39,9 @@ export const usePortTemplate = (nodeInstanceId: string, portInstanceId: string):
             }
             case 'boolean-toggle': {
                 return getBooleanTogglePortTemplate(template, direction)
+            }
+            case 'relay': {
+                return getRelayPortTemplate(template, direction)
             }
             default: {
                 return null

@@ -297,7 +297,7 @@ const doc: NodePenDocument = {
         'f48cf9d3-3388-4972-af4b-d496b6e7d86d': {
             instanceId: 'f48cf9d3-3388-4972-af4b-d496b6e7d86d',
             templateId: 'e64c5fb1-845c-4ab1-8911-5f338516ba67',
-            position: { x: 1100, y: 100 },
+            position: { x: 1100, y: 500 },
             dimensions: { width: 152, height: 130 },
             status: { isVisible: true, isEnabled: true, isProvisional: false },
             anchors: {
@@ -308,7 +308,10 @@ const doc: NodePenDocument = {
                 'b75e481e-f13c-41f0-a0b0-1ffe0e4f36d0': { dx: 152, dy: 65 },
             },
             sources: {
-                '69b7b09c-b325-49d9-ab00-0c87f01556cc': [],
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': [{
+                    nodeInstanceId: '756ffe4e-3d91-451e-a95b-9021a528a2b2',
+                    portInstanceId: 'output'
+                }],
                 '12c671a4-36bc-4375-b3d2-e126fc74b153': [],
                 '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': [],
             },

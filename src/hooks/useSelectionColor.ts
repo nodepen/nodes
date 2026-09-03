@@ -37,7 +37,8 @@ export const useSelectionColor = (nodeInstanceId: string): SelectionColorData =>
         }
 
         switch (nodeType) {
-            case 'generic-node': {
+            case 'generic-node':
+            case 'relay': {
                 return !node.status.isVisible
             }
             case 'generic-parameter':

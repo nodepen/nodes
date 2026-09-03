@@ -21,6 +21,7 @@ type WireProps = {
     drawWireBackground?: boolean
     drawMask?: boolean
     selected?: boolean
+    onDoubleClick?: (e: React.MouseEvent<SVGPathElement>) => void
 }
 
 export const Wire = ({
@@ -32,6 +33,7 @@ export const Wire = ({
     drawWireBackground = false,
     drawMask = false,
     selected = false,
+    onDoubleClick,
 }: WireProps) => {
     const strokeColor = selected ? COLORS.GREEN : COLORS.DARK
     const fillColor = selected ? COLORS.GREEN : COLORS.LIGHT
@@ -163,6 +165,29 @@ export const Wire = ({
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 fill="none"
+            />
+        )
+    }
+
+    const getInteractionAreaGraphics = () => {
+        if (!onDoubleClick) {
+            return null
+        }
+
+        return (
+            <path
+                className='np-pointer-events-auto'
+                d={d}
+                strokeWidth={8}
+                stroke={COLORS.LIGHT}
+                fill="none"
+                opacity={0}
+                onPointerDown={(e) => {
+                    // Prevent pointer capture in camera overlay to allow double click
+                    // Note: prevents region select from starting directly on a wire
+                    e.stopPropagation()
+                }}
+                onDoubleClick={onDoubleClick}
             />
         )
     }
@@ -458,6 +483,7 @@ export const Wire = ({
             {getNodeBackgroundGraphics()}
             {getWireGraphics(structure)}
             {getArrowGraphics()}
+            {getInteractionAreaGraphics()}
         </>
     )
 }

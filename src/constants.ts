@@ -44,7 +44,6 @@ export const DIMENSIONS = {
     NODE_PORT_HEIGHT: 40,
     NODE_PORT_MINIMUM_WIDTH: 50,
     NODE_PORT_RADIUS: 5,
-    /** Gap between the label's right edge and a `GenericNode`'s right edge when it has zero output params (e.g. Custom Preview) -- keeps an unused output-port zone from being drawn. */
     NODE_NO_OUTPUT_MARGIN: 5,
     /** NODE_LABEL_WIDTH + 2 */
     NODE_RUNTIME_MESSAGE_BUBBLE_SIZE: 34,
@@ -64,16 +63,15 @@ export const DIMENSIONS = {
     BOOLEAN_TOGGLE_SWITCH_SIZE: 22,
     COLOR_SWATCH_WIDTH: 48,
     COLOR_SWATCH_HEIGHT: 36,
+    RELAY_WIDTH: 48,
+    RELAY_HEIGHT: 18,
     GRADIENT_WIDTH: 300,
     GROUP_PADDING: 24,
-    /** Matches the selection Region's corner radius -- the group's outer border reads as the same "kind" of rounding, just around a bigger area. */
     GROUP_BORDER_RADIUS: 6,
     GROUP_BORDER_WIDTH: 2,
     GROUP_FILL_OPACITY: 0.1,
-    /** Height of the group name tab drawn above the group's top-left corner. */
     GROUP_LABEL_HEIGHT: 24,
     GROUP_LABEL_PADDING_X: 8,
-    /** Gap between the bottom of the group name tab and the group's top edge. */
     GROUP_LABEL_GAP: 4,
     INTERACTION_BUFFER: 12
 } as const
@@ -115,6 +113,7 @@ export const COMPONENTS = {
     MULTIPLICATION: 'ce46b74e-00c9-43c4-805a-193b69ea4a11',
     DIVISION: '9c85271f-89fa-4e9f-9f4a-d75802120ccc',
     POINT_PARAMETER: 'fbac3e32-f100-4292-8692-77240a42fd1a',
+    RELAY: 'b6236720-8d88-4289-93c3-ac4c99f9b97b',
 }
 
 export const KEYS = {

@@ -110,3 +110,20 @@ export const getColorSwatchPortTemplate = (template: NodePen.NodeTemplate, direc
         isOptional: false
     }
 }
+
+export const getRelayPortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
+    if (getNodeTypeForTemplate(template) !== 'relay') {
+        throw new Error(`Cannot generate implicit port template for this thing that isn't a relay!`)
+    }
+
+    return {
+        __order: 0,
+        __direction: direction,
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: 'data',
+        keywords: [],
+        isOptional: false
+    }
+}

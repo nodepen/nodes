@@ -10,6 +10,7 @@ export type NodePenNodeType =
     | 'boolean-toggle'
     | 'color-swatch'
     | 'color-gradient'
+    | 'relay'
     | 'unknown'
 
 export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
@@ -37,6 +38,9 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
                 }
                 case COMPONENTS.GRADIENT: {
                     return 'color-gradient'
+                }
+                case COMPONENTS.RELAY: {
+                    return 'relay'
                 }
                 default: {
                     return 'generic-parameter'

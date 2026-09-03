@@ -11,6 +11,7 @@ import ValueList from './value-list/ValueList'
 import BooleanToggle from './boolean-toggle/BooleanToggle'
 import ColorSwatch from './color-swatch/ColorSwatch'
 import Gradient from './gradient/Gradient'
+import { Relay } from './relay'
 import { useFlag } from '@/hooks/useFlag'
 
 const NodesContainer = (): React.ReactElement | null => {
@@ -53,7 +54,8 @@ const NodesContainer = (): React.ReactElement | null => {
                         return <ColorSwatch key={`color-swatch-${instanceId}`} id={instanceId} template={template} />
                     case 'color-gradient':
                         return <Gradient key={`gradient-${instanceId}`} id={instanceId} template={template} />
-                    // TODO: `unknown-node` type
+                    case 'relay':
+                        return <Relay key={`relay-${instanceId}`} id={instanceId} template={template} />
                     case 'unknown':
                     default:
                         return null

@@ -342,6 +342,42 @@ export const createInstance = (
 
             break
         }
+        case 'relay': {
+            node.inputs['input'] = 0
+            node.outputs['output'] = 0
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
+            }
+            node.dimensions = {
+                width: DIMENSIONS.RELAY_WIDTH,
+                height: DIMENSIONS.RELAY_HEIGHT
+            }
+            node.anchors = {
+                'labelDeltaX': {
+                    dx: 0,
+                    dy: 0
+                },
+                'input': {
+                    dx: 0,
+                    dy: DIMENSIONS.RELAY_HEIGHT / 2
+                },
+                'output': {
+                    dx: DIMENSIONS.RELAY_WIDTH,
+                    dy: DIMENSIONS.RELAY_HEIGHT / 2
+                },
+            }
+            node.sources['input'] = []
+            node.values['input'] = createEmptyTree()
+
+            break
+        }
         case 'color-gradient': {
             for (const input of templateInputs) {
                 const { __order: order } = input
