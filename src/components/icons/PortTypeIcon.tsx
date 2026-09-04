@@ -200,17 +200,21 @@ const ExtrusionGlyph = ({ s }: GlyphProps) => {
     const px = (fx: number) => s + fx * r
     const py = (fy: number) => s + fy * r
 
-    const width = s * 0.16
+    const rx = 0.58
+    const ry = 0.18
+    const topY = -0.35
+    const bottomY = 1.05
+    const width = s * 0.15
 
-    const front = `M ${px(-0.75)} ${py(0.6)} Q ${px(-0.1)} ${py(0.85)} ${px(0.55)} ${py(0.6)}`
-    const back = `M ${px(-0.4)} ${py(-0.6)} Q ${px(0.25)} ${py(-0.35)} ${px(0.9)} ${py(-0.6)}`
+    // Body left open at the top (no closing "Z") so its stroke doesn't draw
+    // a straight top edge underneath the cap - the fill still auto-closes.
+    const body = `M ${px(-rx)} ${py(topY)} L ${px(-rx)} ${py(bottomY)} L ${px(rx)} ${py(bottomY)} L ${px(rx)} ${py(topY)}`
+    const cap = `M ${px(-rx)} ${py(topY)} L ${px(0)} ${py(topY - ry)} L ${px(rx)} ${py(topY)} L ${px(0)} ${py(topY + ry)} Z`
 
     return (
         <>
-            <path d={front} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" fill="none" />
-            <path d={back} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" fill="none" />
-            <line x1={px(-0.75)} y1={py(0.6)} x2={px(-0.4)} y2={py(-0.6)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" />
-            <line x1={px(0.55)} y1={py(0.6)} x2={px(0.9)} y2={py(-0.6)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" />
+            <path d={body} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill={COLORS.DARK} />
+            <path d={cap} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill={COLORS.DARK} />
         </>
     )
 }
@@ -220,6 +224,39 @@ const CircleGlyph = ({ s }: GlyphProps) => {
 
     return (
         <circle cx={s} cy={s} r={r * 0.8} stroke={COLORS.LIGHT} strokeWidth={s * 0.2} fill="none" />
+    )
+}
+
+const DomainGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const py = (fy: number) => s + fy * r
+
+    const width = s * 0.2
+    // End caps are dots - drawn as butt-capped line stubs the same length as the
+    // stroke width - held off the line by a gap of that same width: a dot, a gap,
+    // a line, a gap, a dot.
+    const dotHalf = width / 2
+    const gap = width
+    const dotOffset = r * 0.9
+    const lineHalf = dotOffset - dotHalf - gap
+
+    return (
+        <>
+            <line x1={s - lineHalf} y1={py(0)} x2={s + lineHalf} y2={py(0)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="butt" />
+            <line x1={s - dotOffset - dotHalf} y1={py(0)} x2={s - dotOffset + dotHalf} y2={py(0)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="butt" />
+            <line x1={s + dotOffset - dotHalf} y1={py(0)} x2={s + dotOffset + dotHalf} y2={py(0)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="butt" />
+        </>
+    )
+}
+
+const Domain2Glyph = ({ s }: GlyphProps) => {
+    return (
+        <>
+            <DomainGlyph s={s} />
+            <g transform={`rotate(90 ${s} ${s})`}>
+                <DomainGlyph s={s} />
+            </g>
+        </>
     )
 }
 
@@ -298,6 +335,8 @@ const portTypeGlyphs: Record<NodePen.DataTreeValueType, (props: GlyphProps) => R
     brep: BrepGlyph,
     extrusion: ExtrusionGlyph,
     circle: CircleGlyph,
+    domain: DomainGlyph,
+    'domain²': Domain2Glyph,
     curve: CurveGlyph,
     mesh: MeshGlyph,
     surface: SurfaceGlyph,

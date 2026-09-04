@@ -6,7 +6,7 @@ export type DataTreeValue =
         readonly description: string
         readonly order: number
         readonly value?: string
-        readonly geometry?: unknown
+        readonly geometry?: unknown[]
     }
     | {
         readonly type: 'reference'

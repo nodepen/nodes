@@ -5,6 +5,8 @@ export type DataTreeValueType =
     | 'circle'
     | 'color'
     | 'curve'
+    | 'domain'
+    | 'domain²'
     | 'extrusion'
     | 'integer'
     | 'line'
