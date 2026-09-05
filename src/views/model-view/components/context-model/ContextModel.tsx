@@ -6,6 +6,7 @@ import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js'
 import { LINE, MESH } from '../../materials'
 import { DARK, DARKGREY, GREEN } from '../../materials/colors'
 import { isGeometryType } from '@/utils/three/isGeometryType'
+import { useThumbnailShutter } from '../../hooks/useThumbnailShutter'
 
 const ContextModel = () => {
     const model = useStore((state) => {
@@ -47,8 +48,15 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
 
     const [sceneObjects, setSceneObjects] = useState<THREE.Object3D[]>([])
 
+    const offerThumbnailSubject = useThumbnailShutter(sceneObjects)
+
     useEffect(() => {
         const objects: THREE.Object3D[] = []
+
+        const bounds = new THREE.Box3()
+        const tempBounds = new THREE.Box3()
+
+        documentObject.updateMatrixWorld(true)
 
         documentObject.traverse((object) => {
             if (object instanceof THREE.Mesh && object.geometry) {
@@ -64,10 +72,31 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
                 }
             }
 
+            const geometry = (object as THREE.Object3D & { geometry?: THREE.BufferGeometry }).geometry
+
+            if (geometry) {
+                if (!geometry.boundingBox) {
+                    geometry.computeBoundingBox()
+                }
+
+                if (geometry.boundingBox) {
+                    tempBounds.copy(geometry.boundingBox).applyMatrix4(object.matrixWorld)
+                    bounds.union(tempBounds)
+                }
+            }
+
             objects.push(object)
         })
 
         setSceneObjects(objects)
+
+        const state = useStore.getState()
+
+        if (state.app.flags.isThumbnail) {
+            const callback = state.callbacks.onThumbnailReady
+
+            offerThumbnailSubject('context', bounds, () => callback?.(state))
+        }
     }, [documentObject])
 
     const handleClickGeometry = useCallback((e: ThreeEvent<MouseEvent>, o: THREE.Object3D<THREE.Object3DEventMap>) => {

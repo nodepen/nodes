@@ -6,6 +6,7 @@ import { useLoader, useThree } from '@react-three/fiber'
 import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js'
 import { tryParseUserStrings } from '@/utils/three/tryParseUserStrings'
 import { current } from 'immer'
+import { useThumbnailShutter } from '../../hooks/useThumbnailShutter'
 
 type DocumentModel = {
     modelUrl: string | null
@@ -13,11 +14,13 @@ type DocumentModel = {
 
 const DocumentModel = ({ modelUrl }: DocumentModel) => {
     const { apply } = useDispatch()
-    const { camera, scene, size } = useThree()
+    const { camera, scene } = useThree()
 
     const loader = useRef(new Rhino3dmLoader())
 
     const [objectsByDocumentNodeId, setObjectsByDocumentNodeId] = useState<Record<string, THREE.Object3D[]>>({})
+
+    const offerThumbnailSubject = useThumbnailShutter(objectsByDocumentNodeId)
 
     // Helper function to accumulate bounds from an object hierarchy
     const accumulateBounds = (root: THREE.Object3D, bounds: THREE.Box3, tempBounds: THREE.Box3) => {
@@ -99,31 +102,7 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                     const s = current(state)
                     const callback = s.callbacks.onThumbnailReady
 
-                    setTimeout(() => {
-                        if (!bounds.isEmpty() && camera instanceof THREE.OrthographicCamera) {
-                            const center = new THREE.Vector3()
-                            bounds.getCenter(center)
-
-                            const boundingSphere = new THREE.Sphere()
-                            bounds.getBoundingSphere(boundingSphere)
-                            const radius = Math.max(boundingSphere.radius, 0.5)
-
-                            const viewDirection = new THREE.Vector3(0, -1, 0.5).normalize()
-
-                            const distance = Math.max(radius * 2, 10)
-
-                            camera.position.copy(center).addScaledVector(viewDirection, distance)
-                            camera.lookAt(center)
-
-                            const padding = 1.3
-                            const zoomForHeight = (size.height / 2) / (radius * padding)
-                            const zoomForWidth = (size.width / 2) / (radius * padding)
-                            camera.zoom = Math.min(zoomForHeight, zoomForWidth)
-                            camera.updateProjectionMatrix()
-                        }
-
-                        callback?.(s)
-                    }, 1000);
+                    offerThumbnailSubject('solution', bounds, () => callback?.(s))
                 }
             })
         })
