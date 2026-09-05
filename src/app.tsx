@@ -18,7 +18,7 @@ type NodesAppProps = {
     preferences?: NodePen.DocumentPreferences
     presence?: NodePen.DocumentPresence
     flags?: NodePen.AppFlags
-    features?: NodePen.AppFlags
+    features?: NodePen.AppFeatures
 } & NodesAppCallbacks & {
     children?: React.ReactNode
 }

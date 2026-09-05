@@ -232,9 +232,6 @@ const DomainGlyph = ({ s }: GlyphProps) => {
     const py = (fy: number) => s + fy * r
 
     const width = s * 0.2
-    // End caps are dots - drawn as butt-capped line stubs the same length as the
-    // stroke width - held off the line by a gap of that same width: a dot, a gap,
-    // a line, a gap, a dot.
     const dotHalf = width / 2
     const gap = width
     const dotOffset = r * 0.9
