@@ -33,12 +33,12 @@ export const getNodeDimensions = (
 
     nodeDimensions.anchors = { ...nodeDimensions.anchors, labelDeltaX: { dx: anchors.labelDeltaX, dy: 0 } }
 
-    const nodeHeight = getNodeHeight(nodeTemplate, useIconLabel)
+    const nodeHeight = getNodeHeight(node, nodeTemplate, useIconLabel)
     nodeDimensions.dimensions.height = nodeHeight
 
     // Calculate port anchors (center based on height)
-    const inputInstanceIds = Object.keys(node.inputs)
-    const outputInstanceIds = Object.keys(node.outputs)
+    const inputInstanceIds = Object.keys(node.inputs).sort((a, b) => node.inputs[a] - node.inputs[b])
+    const outputInstanceIds = Object.keys(node.outputs).sort((a, b) => node.outputs[a] - node.outputs[b])
 
     const deltaYMax = (portCount: number): number => {
         return ((clamp(portCount - 1, 0, Number.MAX_SAFE_INTEGER) - 1) * DIMENSIONS.NODE_PORT_HEIGHT) / 2

@@ -1,4 +1,4 @@
-import type { NodesAppState } from './state'
+import type { NodesAppState, PortMutationContext } from './state'
 import { freeze, current } from 'immer'
 import type * as NodePen from '@/types'
 import { shallow } from 'zustand/shallow'
@@ -12,9 +12,11 @@ import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
 import { createList } from '@/utils/data-trees'
+import { createEmptyTree } from '@/utils/data-trees/createEmptyTree'
 import { tryGetControl } from '@/utils/controls'
 import { getValidGeometryForType } from '@/utils/geometry-types'
 import { saveDocument } from './utils/saveDocument'
+import { newGuid } from '@/utils/common'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -567,6 +569,140 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         },
             false,
             'port/toggleFlag'
+        ),
+        addParameter: (nodeInstanceId: string, portDirection: 'input' | 'output', portIndex: number) => set((state) => {
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                console.log('🐍 Tried to add a parameter to a node that does not exist!')
+                return
+            }
+
+            const key = portDirection === 'input' ? 'inputs' : 'outputs'
+            const entries = Object.entries(node[key]).sort(([, a], [, b]) => a - b)
+
+            if (portIndex < 0 || portIndex > entries.length) {
+                console.log('🐍 Tried to add a parameter at a non-contiguous index!')
+                return
+            }
+
+            const context: PortMutationContext = { nodeInstanceId, portDirection, portIndex }
+
+            const newPortInstanceId = newGuid()
+
+            // Shift every existing port at or after the insertion point up by one, then splice in the new port.
+            const nextEntries = entries.map(([id, order]): [string, number] => [id, order >= portIndex ? order + 1 : order])
+            nextEntries.splice(portIndex, 0, [newPortInstanceId, portIndex])
+
+            const nextPorts: Record<string, number> = {}
+            for (const [id, order] of nextEntries) {
+                nextPorts[id] = order
+            }
+
+            node[key] = nextPorts
+            node.portConfigurations[newPortInstanceId] = {
+                label: ' ',
+                flags: []
+            }
+
+            if (portDirection === 'input') {
+                node.sources[newPortInstanceId] = []
+                node.values[newPortInstanceId] = createEmptyTree()
+            }
+
+            // Recompute node dimensions based on new port placement
+            const template = state.templates[node.templateId]
+
+            if (!template) {
+                console.log('🐍 Could not find template for node when recomputing dimensions!')
+                state.callbacks.onPortAdded?.(current(state), context)
+                return
+            }
+
+            const { anchors, dimensions } = getNodeDimensions(node, template)
+
+            node.anchors = {
+                ...node.anchors,
+                ...anchors
+            }
+            node.dimensions = {
+                ...node.dimensions,
+                ...dimensions
+            }
+
+            state.solution.flags.isExpired = true
+            state.callbacks.onPortAdded?.(current(state), context)
+        },
+            false,
+            'port/addParameter'
+        ),
+        removeParameter: (nodeInstanceId: string, portDirection: 'input' | 'output', portIndex: number) => set((state) => {
+            const node = state.document.nodes[nodeInstanceId]
+
+            if (!node) {
+                console.log('🐍 Tried to remove a parameter from a node that does not exist!')
+                return
+            }
+
+            const key = portDirection === 'input' ? 'inputs' : 'outputs'
+            const entries = Object.entries(node[key]).sort(([, a], [, b]) => a - b)
+
+            const target = entries.find(([, order]) => order === portIndex)
+
+            if (!target) {
+                console.log('🐍 Tried to remove a parameter at an index that does not exist!')
+                return
+            }
+
+            const [removedPortInstanceId] = target
+
+            const context: PortMutationContext = { nodeInstanceId, portDirection, portIndex }
+
+            // Drop the removed port, then shift everything after it down by one so indices stay contiguous.
+            const nextEntries = entries
+                .filter(([id]) => id !== removedPortInstanceId)
+                .map(([id, order]): [string, number] => [id, order > portIndex ? order - 1 : order])
+
+            const nextPorts: Record<string, number> = {}
+            for (const [id, order] of nextEntries) {
+                nextPorts[id] = order
+            }
+
+            node[key] = nextPorts
+
+            delete node.portConfigurations[removedPortInstanceId]
+            delete node.anchors[removedPortInstanceId]
+
+            if (portDirection === 'input') {
+                delete node.sources[removedPortInstanceId]
+                delete node.values[removedPortInstanceId]
+            }
+
+            // Recompute node dimensions based on new port placement
+            const template = state.templates[node.templateId]
+
+            if (!template) {
+                console.log('🐍 Could not find template for node when recomputing dimensions!')
+                state.callbacks.onPortRemoved?.(current(state), context)
+                return
+            }
+
+            const { anchors, dimensions } = getNodeDimensions(node, template)
+
+            node.anchors = {
+                ...node.anchors,
+                ...anchors
+            }
+            node.dimensions = {
+                ...node.dimensions,
+                ...dimensions
+            }
+
+            state.solution.flags.isExpired = true
+            state.callbacks.onPortRemoved?.(current(state), context)
+        },
+            false,
+            'port/removeParameter'
         ),
         clearInterface: () =>
             set(

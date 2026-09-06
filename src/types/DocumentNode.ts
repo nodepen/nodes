@@ -10,6 +10,8 @@ import type { PortConfiguration } from './ports'
 export type DocumentNode = {
     instanceId: string
     templateId: string
+    /** Optional base64 encoded GH_Archive state for this node. */
+    internalState?: string
     /** Current top-left coordinate of node in world space. */
     position: {
         x: number

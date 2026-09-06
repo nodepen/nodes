@@ -1,4 +1,4 @@
-import type * as NodePen from '@/types'
+import * as NodePen from '@/types'
 import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
 
 /**
@@ -21,6 +21,19 @@ export const getGenericParameterPortTemplate = (template: NodePen.NodeTemplate, 
         nickName: template.nickName,
         description: template.description,
         typeName,
+        keywords: [],
+        isOptional: false
+    }
+}
+
+export const getFallbackPortTemplate = (_template: NodePen.NodeTemplate, direction: 'input' | 'output', index: number): NodePen.PortTemplate => {
+    return {
+        __order: index,
+        __direction: direction,
+        name: ' ',
+        nickName: ' ',
+        description: '',
+        typeName: 'data',
         keywords: [],
         isOptional: false
     }

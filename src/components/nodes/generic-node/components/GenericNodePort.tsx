@@ -24,7 +24,10 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
 
     const parameterLabels = useStore((state) => state.ui.preferences.parameterLabels)
     const useFullName = nodeType === 'generic-node' && parameterLabels === 'fullname'
-    const labelText = useFullName ? template.name : template.nickName
+    const labelText = useStore((state) => {
+        const internalLabel = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId].label
+        return internalLabel ?? (useFullName ? template.name : template.nickName)
+    })
 
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
@@ -110,12 +113,12 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
             {sortedFlags.map((flag, i) => {
                 const key = `${direction}-flag-${flag}`
 
-                const x = labelPosition.x + (direction === 'input' ? 4 : 0) + (((labelText.length * 15) + ((i + (direction === 'input' ? 0 : 1)) * 22)) * (direction === 'input' ? 1 : -1))
+                const x = labelPosition.x + (direction === 'input' ? 2 : 1) + (((labelText.length * 15) + ((i + (direction === 'input' ? 0 : 1)) * (DIMENSIONS.NODE_PORT_FLAG_SIZE + 3))) * (direction === 'input' ? 1 : -1))
                 const y = labelPosition.y - 15
 
                 return (
                     <>
-                        <rect x={x} y={y} width={18} height={18} stroke={COLORS.DARK} strokeWidth={2} rx={2} ry={2} fill={COLORS.LIGHT} />
+                        <rect x={x} y={y} width={DIMENSIONS.NODE_PORT_FLAG_SIZE} height={DIMENSIONS.NODE_PORT_FLAG_SIZE} stroke={COLORS.DARK} strokeWidth={2} rx={2} ry={2} fill={COLORS.LIGHT} />
                         {(() => {
                             const position = { x: x + 2, y: y + 2 }
                             switch (flag) {

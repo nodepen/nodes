@@ -5,6 +5,7 @@ import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { useNumberSliderValuePosition } from '@/utils/node-dimensions/getNumberSliderValueExtents'
+import { AnnotationsUnderlayPortal } from '../AnnotationsUnderlayContainer'
 
 type WireProps = {
     start: {
@@ -87,7 +88,9 @@ export const Wire = ({
             }
         } else {
             const selectionBackground = selected ? (
-                <path d={d} strokeWidth={6} stroke={COLORS.PALE} fill="none" strokeLinecap="round" />
+                <AnnotationsUnderlayPortal>
+                    <path d={d} strokeWidth={6} stroke={COLORS.PALE} fill="none" strokeLinecap="round" />
+                </AnnotationsUnderlayPortal>
             ) : null
 
             switch (structure) {

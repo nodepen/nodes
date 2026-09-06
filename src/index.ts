@@ -11,6 +11,6 @@ export { useInterfacePanelCallbacks as useNodesApp } from './components/layout/p
 export { createInstance } from './utils/templates/createInstance'
 export { addDocumentNode } from './store/utils'
 
-export type { NodesAppState, NodesAppCallbacks } from './store'
+export type { NodesAppState, NodesAppCallbacks, PortMutationContext } from './store'
 
 export * from './types'

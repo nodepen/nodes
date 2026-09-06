@@ -258,6 +258,15 @@ export type NodesAppCallbacks = {
     onSelectionUpdated?: (state: NodesAppState) => void,
     onSelectionRegionUpdated?: (state: NodesAppState) => void,
     onWiresUpdated?: (state: NodesAppState) => void,
+    // Dynamic components
+    onPortAdded?: (state: NodesAppState, context: PortMutationContext) => void,
+    onPortRemoved?: (state: NodesAppState, context: PortMutationContext) => void,
+}
+
+export type PortMutationContext = {
+    nodeInstanceId: string
+    portDirection: 'input' | 'output'
+    portIndex: number
 }
 
 export const initialState: NodesAppState = {

@@ -2,15 +2,17 @@ import type * as NodePen from '@/types'
 import { DIMENSIONS } from '@/constants'
 
 export const getNodeHeight = (
+    node: NodePen.DocumentNode,
     template: NodePen.NodeTemplate,
     useIcon = false
 ): number => {
-    const { inputs, outputs, nickName } = template
+    const { inputs, outputs } = node
+    const { nickName } = template
 
-    const inputPortsHeight = inputs.length * DIMENSIONS.NODE_PORT_HEIGHT
-    const outputPortsHeight = outputs.length * DIMENSIONS.NODE_PORT_HEIGHT
+    const inputPortsHeight = Object.keys(inputs).length * DIMENSIONS.NODE_PORT_HEIGHT
+    const outputPortsHeight = Object.keys(outputs).length * DIMENSIONS.NODE_PORT_HEIGHT
 
-    const minimumLabelHeight = useIcon ? 0 : nickName.length * 15 // not monospace, estimate
+    const minimumLabelHeight = useIcon ? 24 : nickName.length * 15 // not monospace, estimate
 
     const nodeContentHeight = Math.max(
         DIMENSIONS.NODE_MINIMUM_HEIGHT,
