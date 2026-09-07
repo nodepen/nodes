@@ -1,6 +1,8 @@
 export type DocumentPreferences = {
-    /** Whether a component is drawn as its icon or as its name. */
+    /** Whether the label is the component's name or stored icon */
     componentLabels: 'icons' | 'names'
-    /** Whether a parameter is labelled with its nickname (`Crv`) or its full name (`Curve`). */
+    /** Whether to show labels as nicknames (`C`) or full names (`Curve`) */
     parameterLabels: 'nickname' | 'fullname'
+    /** Whether to draw type icon next to generic-parameter inputs/outputs */
+    parameterTypeIcons: boolean
 }

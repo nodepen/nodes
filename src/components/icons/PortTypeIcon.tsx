@@ -1,5 +1,6 @@
-import React from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { COLORS } from '@/constants'
+import { useDispatch } from '@/store'
 import type * as NodePen from '@/types'
 import { newGuid } from '@/utils/common'
 
@@ -22,8 +23,78 @@ export const PortTypeIcon = ({ position, r = 20, typeName }: PortTypeIconProps):
     const f = (Math.sqrt(3) / 2) * s
     const points = `${a},0 ${b},-${f} -${b},-${f} -${a},0 -${b},${f} ${b},${f}`
 
+    const svgRef = useRef<SVGSVGElement>(null)
+    const tooltipKey = useRef(`port-type-icon-${newGuid()}`)
+
+    const { apply } = useDispatch()
+
+    const activeTimeout = useRef<ReturnType<typeof setTimeout>>(null)
+    const tooltipIsVisible = useRef(false)
+
+    const updateTooltip = useCallback(() => {
+        const svgEl = svgRef.current
+
+        if (!svgEl) {
+            return
+        }
+
+        if (!typeName) {
+            return
+        }
+
+        const { left, width, top, height } = svgEl.getBoundingClientRect()
+
+        const cx = left + (width / 2)
+        const cy = top + (height / 2)
+
+        const [a, ...rest] = typeName
+        const label = `${a.toUpperCase()}${rest.join('')}`
+
+        apply((state) => {
+            state.registry.tooltips[tooltipKey.current] = {
+                configuration: {
+                    position: {
+                        x: cx,
+                        y: cy + ((height / -2) - 10)
+                    },
+                    isSticky: true
+                },
+                context: {
+                    type: 'generic-text',
+                    textContent: label
+                }
+            }
+        })
+    }, [typeName])
+
+    useEffect(() => {
+        if (tooltipIsVisible.current) {
+            updateTooltip()
+        }
+    }, [typeName])
+
+    const handlePointerEnter = useCallback((_e: React.PointerEvent<SVGSVGElement>) => {
+        activeTimeout.current = setTimeout(() => {
+            tooltipIsVisible.current = true
+            updateTooltip()
+        }, 150);
+    }, [updateTooltip])
+
+    const handlePointerLeave = useCallback((_e: React.PointerEvent<SVGSVGElement>) => {
+        if (activeTimeout.current) {
+            clearTimeout(activeTimeout.current)
+            activeTimeout.current = null
+        }
+
+        apply((state) => {
+            delete state.registry.tooltips[tooltipKey.current]
+        })
+
+        tooltipIsVisible.current = false
+    }, [])
+
     return (
-        <svg x={x} y={y} width={px} height={px} viewBox={`0 0 ${s * 2} ${s * 2}`}>
+        <svg ref={svgRef} x={x} y={y} width={px} height={px} viewBox={`0 0 ${s * 2} ${s * 2}`} onPointerEnter={handlePointerEnter} onPointerLeave={handlePointerLeave} className='np-pointer-events-auto'>
             <defs>
                 <clipPath id={id}>
                     <polygon points={points} />

@@ -3,6 +3,7 @@ import type { DocumentPreferences } from './types/settings/DocumentPreferences'
 export const DEFAULT_DOCUMENT_PREFERENCES: DocumentPreferences = {
     componentLabels: 'names',
     parameterLabels: 'nickname',
+    parameterTypeIcons: false,
 }
 
 export const CAMERA = {
@@ -41,6 +42,7 @@ export const DIMENSIONS = {
     NODE_MINIMUM_HEIGHT: 80,
     NODE_PORT_LABEL_FONT_SIZE: 18,
     NODE_PORT_LABEL_OFFSET: 12,
+    NODE_PORT_TYPE_ICON_SIZE: 20,
     NODE_PORT_HEIGHT: 40,
     NODE_PORT_MINIMUM_WIDTH: 50,
     NODE_PORT_RADIUS: 5,

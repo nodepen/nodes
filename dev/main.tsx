@@ -755,9 +755,13 @@ const features = {
     enableAgentButton: true
 }
 
+const preferences = {
+    parameterTypeIcons: true
+}
+
 root.render(<StrictMode>
     <div style={{ width: '100vw', height: '100vh' }}>
-        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} flags={flags} features={features}>
+        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} flags={flags} features={features} preferences={preferences}>
             <Agent />
         </NodesApp>
     </div>

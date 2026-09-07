@@ -13,6 +13,7 @@ export const getNodeDimensions = (
 
     const useIconLabel = isGenericNode && preferences?.componentLabels === 'icons'
     const useFullParameterNames = isGenericNode && preferences?.parameterLabels === 'fullname'
+    const useParameterTypeIcons = isGenericNode && preferences?.parameterTypeIcons === true
 
     const nodeDimensions: Pick<NodePen.DocumentNode, 'anchors' | 'dimensions'> = {
         anchors: {
@@ -28,7 +29,7 @@ export const getNodeDimensions = (
     }
 
     // Calculate current extents
-    const { totalWidth: nodeWidth, anchors } = getNodeWidth(node, nodeTemplate, useFullParameterNames)
+    const { totalWidth: nodeWidth, anchors } = getNodeWidth(node, nodeTemplate, useFullParameterNames, useParameterTypeIcons)
     nodeDimensions.dimensions.width = nodeWidth
 
     nodeDimensions.anchors = { ...nodeDimensions.anchors, labelDeltaX: { dx: anchors.labelDeltaX, dy: 0 } }

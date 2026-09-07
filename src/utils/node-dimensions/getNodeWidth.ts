@@ -12,7 +12,8 @@ type NodeWidthDimensions = {
 export const getNodeWidth = (
     node: NodePen.DocumentNode,
     nodeTemplate: NodePen.NodeTemplate,
-    useFullNames = false
+    useFullNames = false,
+    useTypeIcons = false
 ): NodeWidthDimensions => {
     const inputs = Object.entries(node.inputs)
     const inputLabelWidths: Record<string, number> = {}
@@ -21,7 +22,7 @@ export const getNodeWidth = (
         const portTemplate = nodeTemplate.inputs[orderIndex]
         const portConfiguration = node.portConfigurations[instanceId]
 
-        const labelWidth = getLabelWidth(portTemplate, portConfiguration, useFullNames)
+        const labelWidth = getLabelWidth(portTemplate, portConfiguration, useFullNames, useTypeIcons)
 
         inputLabelWidths[instanceId] = labelWidth
     }
@@ -35,7 +36,7 @@ export const getNodeWidth = (
         const portTemplate = nodeTemplate.outputs[orderIndex]
         const portConfiguration = node.portConfigurations[instanceId]
 
-        const labelWidth = getLabelWidth(portTemplate, portConfiguration, useFullNames)
+        const labelWidth = getLabelWidth(portTemplate, portConfiguration, useFullNames, useTypeIcons)
 
         outputLabelWidths[instanceId] = labelWidth
     }

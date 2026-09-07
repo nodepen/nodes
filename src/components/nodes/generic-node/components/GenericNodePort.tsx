@@ -9,8 +9,9 @@ import { FlattenFlagIcon } from '@/components/icons/FlattenFlagIcon'
 import { GraftFlagIcon } from '@/components/icons/GraftFlagIcon'
 import { SimplifyFlagIcon } from '@/components/icons/SimplifyFlagIcon'
 import { ReparameterizeFlagIcon } from '@/components/icons/ReparameterizeFlagIcon'
+import { PortTypeIcon } from '@/components/icons'
 
-const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_LABEL_OFFSET, NODE_PORT_RADIUS, NODE_PORT_MINIMUM_WIDTH } = DIMENSIONS
+const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_LABEL_OFFSET, NODE_PORT_RADIUS, NODE_PORT_MINIMUM_WIDTH, NODE_PORT_TYPE_ICON_SIZE, NODE_INTERNAL_PADDING } = DIMENSIONS
 
 type GenericNodePortProps = {
     nodeInstanceId: string
@@ -28,6 +29,9 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
         const internalLabel = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId].label
         return internalLabel ?? (useFullName ? template.name : template.nickName)
     })
+
+    const parameterTypeIcons = useStore((state) => state.ui.preferences.parameterTypeIcons)
+    const useTypeIcon = nodeType === 'generic-node' && parameterTypeIcons
 
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
@@ -69,12 +73,21 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
 
     const { __direction: direction } = template
 
+    const anchorPositionX = direction === 'input' ? position.x + NODE_PORT_LABEL_OFFSET : position.x - NODE_PORT_LABEL_OFFSET
+
+    const typeIconOffset = useTypeIcon ? NODE_PORT_TYPE_ICON_SIZE + NODE_INTERNAL_PADDING : 0
+
     const labelPosition = {
-        x: direction === 'input' ? position.x + NODE_PORT_LABEL_OFFSET : position.x - NODE_PORT_LABEL_OFFSET,
+        x: direction === 'input' ? anchorPositionX + typeIconOffset : anchorPositionX - typeIconOffset,
         y: position.y + 1.5 + NODE_PORT_LABEL_FONT_SIZE / 4,
     }
 
     const labelTextAnchor = direction === 'input' ? 'start' : 'end'
+
+    const typeIconPosition = {
+        x: direction === 'input' ? anchorPositionX : anchorPositionX - NODE_PORT_TYPE_ICON_SIZE,
+        y: position.y - NODE_PORT_TYPE_ICON_SIZE / 2,
+    }
 
     const eventTargetAreaOffset = 18
 
@@ -100,6 +113,9 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
                 stroke={COLORS.DARK}
                 strokeWidth={2}
             />
+            {useTypeIcon && direction === 'input' ? (
+                <PortTypeIcon position={typeIconPosition} r={NODE_PORT_TYPE_ICON_SIZE} typeName={template.typeName as NodePen.DataTreeValueType} />
+            ) : null}
             <text
                 x={labelPosition.x}
                 y={labelPosition.y}
@@ -110,6 +126,9 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
             >
                 {labelText}
             </text>
+            {useTypeIcon && direction === 'output' ? (
+                <PortTypeIcon position={typeIconPosition} r={NODE_PORT_TYPE_ICON_SIZE} typeName={template.typeName as NodePen.DataTreeValueType} />
+            ) : null}
             {sortedFlags.map((flag, i) => {
                 const key = `${direction}-flag-${flag}`
 

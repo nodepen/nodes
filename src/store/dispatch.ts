@@ -69,7 +69,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
                     if (
                         currentPreferences.componentLabels === preferences.componentLabels &&
-                        currentPreferences.parameterLabels === preferences.parameterLabels
+                        currentPreferences.parameterLabels === preferences.parameterLabels &&
+                        currentPreferences.parameterTypeIcons === preferences.parameterTypeIcons
                     ) {
                         return
                     }
@@ -553,7 +554,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 return
             }
 
-            const { anchors, dimensions } = getNodeDimensions(node, template)
+            const { anchors, dimensions } = getNodeDimensions(node, template, state.ui.preferences)
 
             node.anchors = {
                 ...node.anchors,
@@ -619,7 +620,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 return
             }
 
-            const { anchors, dimensions } = getNodeDimensions(node, template)
+            const { anchors, dimensions } = getNodeDimensions(node, template, state.ui.preferences)
 
             node.anchors = {
                 ...node.anchors,
@@ -703,7 +704,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 return
             }
 
-            const { anchors, dimensions } = getNodeDimensions(node, template)
+            const { anchors, dimensions } = getNodeDimensions(node, template, state.ui.preferences)
 
             node.anchors = {
                 ...node.anchors,
