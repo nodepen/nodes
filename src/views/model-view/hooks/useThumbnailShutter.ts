@@ -9,6 +9,21 @@ const PADDING = 1.3
 /** Hot flattened isometric angle that went hard in undergrad */
 const VIEW_DIRECTION = new THREE.Vector3(0, -1, 0.5).normalize()
 
+/** Straight overhead, for a subject with no depth to show. */
+const FLAT_VIEW_DIRECTION = new THREE.Vector3(0, 0, 1)
+
+/** The scene's own up, which every view but the straight-down one is oriented by. */
+const UP = new THREE.Vector3(0, 0, 1)
+
+/** Up on screen when looking straight down. */
+const FLAT_UP = new THREE.Vector3(0, 1, 0)
+
+/** Smaller is flattier */
+const FLAT_TOLERANCE = 0.01
+
+/** Tighter than PADDING for 3D views */
+const FLAT_PADDING = 1.08
+
 type PendingThumbnail = {
     signal: () => void
     framesRemaining: number | null
@@ -41,11 +56,20 @@ export const useThumbnailShutter = (mountedGeometry: unknown) => {
             const center = new THREE.Vector3()
             bounds.getCenter(center)
 
+            const extents = new THREE.Vector3()
+            bounds.getSize(extents)
+
             const boundingSphere = new THREE.Sphere()
             bounds.getBoundingSphere(boundingSphere)
             const radius = Math.max(boundingSphere.radius, 0.5)
 
-            camera.position.copy(center).addScaledVector(VIEW_DIRECTION, Math.max(radius * 2, 10))
+            const isFlat = extents.z <= Math.max(extents.x, extents.y) * FLAT_TOLERANCE
+
+            camera.up.copy(isFlat ? FLAT_UP : UP)
+
+            camera.position
+                .copy(center)
+                .addScaledVector(isFlat ? FLAT_VIEW_DIRECTION : VIEW_DIRECTION, Math.max(radius * 2, 10))
             camera.lookAt(center)
 
             camera.updateMatrixWorld(true)
@@ -66,10 +90,11 @@ export const useThumbnailShutter = (mountedGeometry: unknown) => {
             }
 
             const MIN_HALF_EXTENT = 1e-3
+            const padding = isFlat ? FLAT_PADDING : PADDING
 
             camera.zoom = Math.min(
-                (size.width / 2) / (Math.max(halfWidth, MIN_HALF_EXTENT) * PADDING),
-                (size.height / 2) / (Math.max(halfHeight, MIN_HALF_EXTENT) * PADDING)
+                (size.width / 2) / (Math.max(halfWidth, MIN_HALF_EXTENT) * padding),
+                (size.height / 2) / (Math.max(halfHeight, MIN_HALF_EXTENT) * padding)
             )
             camera.updateProjectionMatrix()
         }
