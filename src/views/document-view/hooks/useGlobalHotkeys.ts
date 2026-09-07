@@ -98,8 +98,16 @@ export const useGlobalHotkeys = () => {
 
                     // Delete selected nodes
                     for (const id of state.registry.selection.nodes) {
-                        state.document.controls.input = state.document.controls.input.filter((control) => control.ref.nodeInstanceId !== id)
-                        state.document.controls.output = state.document.controls.output.filter((control) => control.ref.nodeInstanceId !== id)
+                        for (const [controlId, control] of Object.entries(state.document.controls.input)) {
+                            if (control.ref.nodeInstanceId === id) {
+                                delete state.document.controls.input[controlId]
+                            }
+                        }
+                        for (const [controlId, control] of Object.entries(state.document.controls.output)) {
+                            if (control.ref.nodeInstanceId === id) {
+                                delete state.document.controls.output[controlId]
+                            }
+                        }
                         removeDocumentNode(state, id)
                     }
 

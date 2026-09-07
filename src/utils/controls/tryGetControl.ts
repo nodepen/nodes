@@ -9,7 +9,7 @@ export const tryGetControl = (
     nodeInstanceId: string,
     portInstanceId: string
 ): NodePen.DocumentControl | undefined => {
-    return controls[controlType].find(
+    return Object.values(controls[controlType]).find(
         (control) => control.ref.nodeInstanceId === nodeInstanceId && control.ref.portInstanceId === portInstanceId
     )
 }

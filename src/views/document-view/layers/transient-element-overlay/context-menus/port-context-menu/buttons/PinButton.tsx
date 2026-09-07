@@ -16,7 +16,7 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
     const portDirection = node ? getPortDirection(node, portInstanceId) : null
 
     const isPinned = useStore((state) =>
-        !!portDirection && state.document.controls[portDirection].some(
+        !!portDirection && Object.values(state.document.controls[portDirection]).some(
             (control) => control.ref.nodeInstanceId === nodeInstanceId && control.ref.portInstanceId === portInstanceId
         )
     )

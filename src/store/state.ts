@@ -278,8 +278,8 @@ export const initialState: NodesAppState = {
         nodes: {},
         groups: {},
         controls: {
-            input: [],
-            output: [],
+            input: {},
+            output: {},
         },
         settings: {
             units: 'mm'

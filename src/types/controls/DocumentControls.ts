@@ -1,7 +1,11 @@
 
 export type DocumentControls = {
-    input: DocumentControl[]
-    output: DocumentControl[]
+    input: {
+        [id: string]: DocumentControl
+    }
+    output: {
+        [id: string]: DocumentControl
+    }
 }
 
 export type DocumentControl = {

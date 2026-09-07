@@ -872,17 +872,18 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         return
                     }
 
-                    const list = state.document.controls[controlType]
+                    const map = state.document.controls[controlType]
+                    const values = Object.values(map)
 
-                    const nextOrder = list.length ? Math.max(...list.map((control) => control.order)) + 1 : 0
+                    const nextOrder = values.length ? Math.max(...values.map((control) => control.order)) + 1 : 0
 
-                    list.push({
+                    map[newGuid()] = {
                         order: nextOrder,
                         ref: {
                             nodeInstanceId,
                             portInstanceId
                         }
-                    })
+                    }
 
                     state.ui.sidebar.isDocumentControlsOpen = true
 
@@ -894,18 +895,21 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         removeControl: (controlType: 'input' | 'output', nodeInstanceId: string, portInstanceId: string) =>
             set(
                 (state) => {
-                    const list = state.document.controls[controlType]
+                    const map = state.document.controls[controlType]
 
-                    const control = tryGetControl(state.document.controls, controlType, nodeInstanceId, portInstanceId)
+                    const entry = Object.entries(map).find(
+                        ([, control]) =>
+                            control.ref.nodeInstanceId === nodeInstanceId && control.ref.portInstanceId === portInstanceId
+                    )
 
-                    if (!control) {
+                    if (!entry) {
                         return
                     }
 
-                    list.splice(list.indexOf(control), 1)
+                    delete map[entry[0]]
 
                     // Re-pack remaining orders so they stay contiguous from 0.
-                    const sorted = [...list].sort((a, b) => a.order - b.order)
+                    const sorted = Object.values(map).sort((a, b) => a.order - b.order)
                     sorted.forEach((control, i) => {
                         control.order = i
                     })
@@ -920,7 +924,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
         moveControl: (controlType: 'input' | 'output', nodeInstanceId: string, portInstanceId: string, delta: number) =>
             set(
                 (state) => {
-                    const list = state.document.controls[controlType]
+                    const map = state.document.controls[controlType]
 
                     const control = tryGetControl(state.document.controls, controlType, nodeInstanceId, portInstanceId)
 
@@ -928,7 +932,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                         return
                     }
 
-                    const sorted = [...list].sort((a, b) => a.order - b.order)
+                    const sorted = Object.values(map).sort((a, b) => a.order - b.order)
                     const currentIndex = sorted.indexOf(control)
                     const targetIndex = currentIndex + delta
 

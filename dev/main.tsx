@@ -624,51 +624,51 @@ const doc: NodePenDocument = {
         name: 'My Document',
     },
     controls: {
-        input: [
-            {
+        input: {
+            'dc-0': {
                 order: 0,
                 ref: {
                     nodeInstanceId: '52509613-274a-4fc0-a382-caeb7704ab9f',
                     portInstanceId: 'input'
                 }
             },
-            {
+            'dc-1': {
                 order: 1,
                 ref: {
                     nodeInstanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
                     portInstanceId: 'input'
                 }
             },
-            {
+            'dc-2': {
                 order: 2,
                 ref: {
                     nodeInstanceId: "d352057a-fa2d-423a-b8ad-3f9880900b9b",
                     portInstanceId: 'input'
                 }
             },
-            {
+            'dc-3': {
                 order: 3,
                 ref: {
                     nodeInstanceId: '146313d8-f3ad-485d-913d-72c68b2bbeb4',
                     portInstanceId: 'input'
                 }
             },
-            {
+            'dc-4': {
                 order: 4,
                 ref: {
                     nodeInstanceId: 'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7',
                     portInstanceId: 'input'
                 }
             },
-            {
+            'dc-5': {
                 order: 5,
                 ref: {
                     nodeInstanceId: 'c3d4e5f6-7a8b-4901-c2d3-e4f5a6b7c8d9',
                     portInstanceId: 'input'
                 }
             }
-        ],
-        output: []
+        },
+        output: {}
     },
     settings: {
         units: 'mm'

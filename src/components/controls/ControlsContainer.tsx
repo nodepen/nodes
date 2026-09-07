@@ -119,7 +119,8 @@ const ControlsContainer = (): React.ReactElement | null => {
         }
     }, [defaultOpenControls])
     const documentControlsHeight = useStore((state) => {
-        return 4 + 32 + 8 + (clamp(state.document.controls.input?.length ?? 0, 1, 6) * 46) + 8 + (((state.document.controls.input?.length ?? 0) > 0 && !hideControlsRunButton) ? 32 : 0)
+        const inputCount = Object.keys(state.document.controls.input ?? {}).length
+        return 4 + 32 + 8 + (clamp(inputCount, 1, 6) * 46) + 8 + ((inputCount > 0 && !hideControlsRunButton) ? 32 : 0)
     })
 
     const showAgentPanel = useStore((state) => state.ui.sidebar.isAgentOpen)
