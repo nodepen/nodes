@@ -656,6 +656,8 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
             const [removedPortInstanceId] = target
 
+            console.log({ removedPortInstanceId })
+
             const context: PortMutationContext = { nodeInstanceId, portDirection, portIndex }
 
             // Drop the removed port, then shift everything after it down by one so indices stay contiguous.
@@ -673,9 +675,23 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             delete node.portConfigurations[removedPortInstanceId]
             delete node.anchors[removedPortInstanceId]
 
-            if (portDirection === 'input') {
-                delete node.sources[removedPortInstanceId]
-                delete node.values[removedPortInstanceId]
+            switch (portDirection) {
+                case 'input': {
+                    // Clear node data related to input port
+                    delete node.sources[removedPortInstanceId]
+                    delete node.values[removedPortInstanceId]
+                    break
+                }
+                case 'output': {
+                    // Remove all nodes with sources that reference this output port
+                    for (const documentNode of Object.values(state.document.nodes)) {
+                        for (const inputInstanceId of Object.keys(documentNode.sources)) {
+                            documentNode.sources[inputInstanceId] = documentNode.sources[inputInstanceId].filter(
+                                (source) => !(source.nodeInstanceId === nodeInstanceId && source.portInstanceId === removedPortInstanceId)
+                            )
+                        }
+                    }
+                }
             }
 
             // Recompute node dimensions based on new port placement
