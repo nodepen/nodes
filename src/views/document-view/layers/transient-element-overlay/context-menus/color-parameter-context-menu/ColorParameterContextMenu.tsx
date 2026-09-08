@@ -61,7 +61,8 @@ const ColorParameterContextMenu = ({ position, context }: ColorParameterContextM
         <>
             {!showColorPicker ? (
                 <MenuBody position={position}>
-                    <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
+                    <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} controlType="input" />
+                    <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="output" controlType="output" />
                     <PickColorButton onClick={handlePickColorClick} />
                 </MenuBody>
             ) : null}

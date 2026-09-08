@@ -6,7 +6,7 @@ export const getDataTreeValueString = (value?: NodePen.DataTreeValue): string =>
     }
 
     if (!value?.value) {
-        return ''
+        return value?.description ?? ''
     }
 
     switch (value.type) {

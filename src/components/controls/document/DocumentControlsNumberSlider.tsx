@@ -146,7 +146,7 @@ export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, c
     if (isDisabled) {
         return (
             <div className="np-w-full np-pl-1 np-flex np-items-center">
-                <p className="np-text-xs np-text-grey-3 np-font-panel np-select-none">
+                <p className="np-text-xs np-text-dark np-font-panel np-select-none">
                     {currentValue.toFixed(precision)}
                 </p>
             </div>

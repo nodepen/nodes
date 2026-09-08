@@ -78,7 +78,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
     const enableSetLabel = nodeType === 'generic-parameter'
-    const { enablePin, enableSetValue, enablePickGeometry, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
+    const { enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
 
     return (
         <MenuBody position={position}>
@@ -89,7 +89,8 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
             ) : null}
             {enablePickGeometry ? <PickGeometryButton portTemplate={portTemplate} onClick={handlePickGeometry} /> : null}
             {enableSetLabel || enableSetValue || enableSetValue ? <MenuDivider /> : null}
-            {enablePin ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} /> : null}
+            {enablePinInput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} controlType="input" /> : null}
+            {enablePinOutput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="output" controlType="output" /> : null}
             {enableZoomToGeometry ? (<>
                 <ZoomToGeometryButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
                 <MenuDivider />

@@ -6,7 +6,8 @@ import type * as NodePen from '@/types'
 
 type PortContextMenuButtons = {
     enableSetLabel: boolean
-    enablePin: boolean
+    enablePinInput: boolean
+    enablePinOutput: boolean
     enableSetValue: boolean
     enablePickGeometry: boolean
     enableZoomToGeometry: boolean
@@ -30,7 +31,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
         case 'generic-node': {
             return {
                 enableSetLabel: false,
-                enablePin: false,
+                enablePinInput: false,
+                enablePinOutput: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
                 enableZoomToGeometry: direction === 'output',
@@ -42,9 +44,10 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: true,
                 enableSetValue: supportedPrimitiveTypeNames.includes(typeName),
                 enablePickGeometry: supportedGeometricTypeNames.includes(typeName),
-                enablePin: true,
+                enablePinInput: true,
+                enablePinOutput: true,
                 enableZoomToGeometry: false,
-                // TODO: This should be possible
+                // TODO: Should be possible, need to see how to draw badge on param
                 enableReparameterize: false
             }
         }
@@ -53,7 +56,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
-                enablePin: true,
+                enablePinInput: true,
+                enablePinOutput: false,
                 enableZoomToGeometry: false,
                 enableReparameterize: false
             }
@@ -63,7 +67,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
-                enablePin: true,
+                enablePinInput: true,
+                enablePinOutput: false,
                 enableZoomToGeometry: false,
                 enableReparameterize: false
             }
@@ -73,7 +78,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: true,
                 enableSetValue: false,
                 enablePickGeometry: false,
-                enablePin: false,
+                enablePinInput: false,
+                enablePinOutput: false,
                 enableZoomToGeometry: false,
                 enableReparameterize: false
             }
@@ -81,7 +87,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
         default: {
             return {
                 enableSetLabel: false,
-                enablePin: false,
+                enablePinInput: false,
+                enablePinOutput: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
                 enableZoomToGeometry: false,

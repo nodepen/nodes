@@ -61,7 +61,7 @@ const ColorSwatchContextMenu = ({ position, context }: ColorSwatchContextMenuPro
         <>
             {!showColorPicker ? (
                 <MenuBody position={position}>
-                    <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="input" />
+                    <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="input" controlType="input" />
                     <PickColorButton onClick={handlePickColorClick} />
                 </MenuBody>
             ) : null}

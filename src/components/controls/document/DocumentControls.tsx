@@ -2,7 +2,7 @@ import { COLORS } from '@/constants'
 import { useCallbacks, useDispatch, useStore } from '@/store'
 import { useCallback, useRef } from 'react'
 import { shallow } from 'zustand/shallow'
-import { DocumentControlsInput } from './DocumentControlsInput'
+import { DocumentControlsRow } from './DocumentControlsRow'
 import { useFlag } from '@/hooks/useFlag'
 
 type ControlsProps = {
@@ -31,7 +31,16 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
         shallow
     )
 
-    const showRunButton = inputControls.length > 0 && !hideRunButton
+    const outputControls = useStore((state) =>
+        Object.values(state.document.controls.output)
+            .filter((control) => !!state.document.nodes[control.ref.nodeInstanceId])
+            .sort((a, b) => a.order - b.order),
+        shallow
+    )
+
+    const hasControls = inputControls.length > 0 || outputControls.length > 0
+
+    const showRunButton = hasControls && !hideRunButton
 
     return <div className="np-w-full np-h-full np-hidden md:np-flex np-flex-col np-justify-start np-items-center">
         {!hideHeader ? (<div className="np-w-full np-pl-0.5 np-h-8 np-flex np-items-center np-justify-start">
@@ -52,13 +61,29 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
             </div>
         </div>) : null}
         <div className="np-w-full np-grow np-flex np-flex-col np-items-center np-pt-2 np-overflow-y-auto">
-            {inputControls.length ? inputControls.map((control) => (
-                <DocumentControlsInput
-                    key={`${control.ref.nodeInstanceId}-${control.ref.portInstanceId}`}
-                    nodeInstanceId={control.ref.nodeInstanceId}
-                    portInstanceId={control.ref.portInstanceId}
-                />
-            )) : (
+            {hasControls ? (<>
+                {inputControls.map((control) => (
+                    <DocumentControlsRow
+                        key={`input-${control.ref.nodeInstanceId}-${control.ref.portInstanceId}`}
+                        controlType="input"
+                        nodeInstanceId={control.ref.nodeInstanceId}
+                        portInstanceId={control.ref.portInstanceId}
+                    />
+                ))}
+                {inputControls.length > 0 && outputControls.length > 0 ? (
+                    <div className='np-w-full np-pl-3 np-pr-3 np-pb-2'>
+                        <div className='np-w-full np-h-[2px] np-rounded-full np-bg-dark' />
+                    </div>
+                ) : null}
+                {outputControls.map((control) => (
+                    <DocumentControlsRow
+                        key={`output-${control.ref.nodeInstanceId}-${control.ref.portInstanceId}`}
+                        controlType="output"
+                        nodeInstanceId={control.ref.nodeInstanceId}
+                        portInstanceId={control.ref.portInstanceId}
+                    />
+                ))}
+            </>) : (
                 <div className='np-w-full np-h-full np-flex np-flex-col np-justify-center np-items-center'>
                     <p className="np-text-xs np-text-dark np-font-panel">
                         No controls set.

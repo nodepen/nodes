@@ -48,7 +48,7 @@ export const DocumentControlsValueList = ({ nodeInstanceId, config, isDisabled }
             className={`np-w-full np-h-5 np-pl-1 np-pr-2 np-flex np-items-center np-justify-between np-rounded-sm ${isDisabled ? '' : 'hover:np-bg-grey hover:np-cursor-pointer'}`}
             onClick={handleClick}
         >
-            <p className={`np-flex-grow np-min-w-0 np-truncate np-text-xs np-font-panel np-select-none ${isDisabled ? 'np-text-grey-3' : 'np-text-dark'}`}>
+            <p className="np-flex-grow np-min-w-0 np-truncate np-text-xs np-text-dark np-font-panel np-select-none">
                 {currentLabel}
             </p>
             {!isDisabled ? (<svg width="12" height="8" viewBox="0 0 12 8" className="np-flex-shrink-0 np-ml-1 np-mr-0.5">

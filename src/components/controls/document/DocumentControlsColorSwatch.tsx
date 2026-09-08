@@ -63,7 +63,7 @@ export const DocumentControlsColorSwatch = ({ nodeInstanceId, config, isDisabled
                     className="np-w-3 np-h-3 np-mr-1 np-flex-shrink-0 np-rounded-full"
                     style={{ background: `rgb(${config.r}, ${config.g}, ${config.b})` }}
                 />
-                <p className={`np-pt-0.5 np-min-w-0 np-truncate np-text-xs np-font-panel np-select-none ${isDisabled ? 'np-text-grey-3' : 'np-text-dark'}`}>
+                <p className="np-pt-0.5 np-min-w-0 np-truncate np-text-xs np-text-dark np-font-panel np-select-none">
                     {rgbToHex(config)}
                 </p>
 

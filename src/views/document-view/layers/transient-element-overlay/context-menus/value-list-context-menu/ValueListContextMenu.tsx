@@ -41,7 +41,7 @@ const ValueListContextMenu = ({ position, context }: ValueListContextMenuProps) 
         <>
             {!showEditDialog ? (
                 <MenuBody position={position}>
-                    <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="input" />
+                    <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="input" controlType="input" />
                     <EditOptionsButton onClick={handleEditOptionsClick} />
                 </MenuBody>
             ) : null}

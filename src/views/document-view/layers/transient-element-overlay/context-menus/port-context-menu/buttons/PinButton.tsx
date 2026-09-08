@@ -2,24 +2,23 @@ import React, { useCallback } from 'react'
 import { MenuButton } from '../../../common'
 import { useDispatch, useStore } from '$'
 import { STYLES } from '@/constants'
-import { getPortDirection } from '@/utils/ports/getPortDirection'
 
 type PinButtonProps = {
     nodeInstanceId: string
     portInstanceId: string
+    controlType: 'input' | 'output'
 }
 
-export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) => {
+export const PinButton = ({ nodeInstanceId, portInstanceId, controlType }: PinButtonProps) => {
     const { addControl, removeControl, clearInterface } = useDispatch()
 
-    const node = useStore.getState().document.nodes[nodeInstanceId]
-    const portDirection = node ? getPortDirection(node, portInstanceId) : null
-
     const isPinned = useStore((state) =>
-        !!portDirection && Object.values(state.document.controls[portDirection]).some(
+        Object.values(state.document.controls[controlType]).some(
             (control) => control.ref.nodeInstanceId === nodeInstanceId && control.ref.portInstanceId === portInstanceId
         )
     )
+
+    const label = controlType === 'output' ? 'outputs' : 'controls'
 
     const pinIcon = (
         <svg {...STYLES.BUTTON.SMALL}>
@@ -28,9 +27,9 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
     )
 
     const handlePin = useCallback(() => {
-        addControl('input', nodeInstanceId, portInstanceId)
+        addControl(controlType, nodeInstanceId, portInstanceId)
         clearInterface()
-    }, [])
+    }, [addControl, clearInterface, controlType, nodeInstanceId, portInstanceId])
 
     const unpinIcon = (
         <svg {...STYLES.BUTTON.SMALL}>
@@ -39,17 +38,13 @@ export const PinButton = ({ nodeInstanceId, portInstanceId }: PinButtonProps) =>
     )
 
     const handleUnpin = useCallback(() => {
-        removeControl('input', nodeInstanceId, portInstanceId)
+        removeControl(controlType, nodeInstanceId, portInstanceId)
         clearInterface()
-    }, [])
-
-    if (!portDirection) {
-        return null
-    }
+    }, [removeControl, clearInterface, controlType, nodeInstanceId, portInstanceId])
 
     return isPinned ? (
-        <MenuButton icon={unpinIcon} label="Remove from controls" action={handleUnpin} />
+        <MenuButton icon={unpinIcon} label={`Remove from ${label}`} action={handleUnpin} />
     ) : (
-        <MenuButton icon={pinIcon} label={`Add to controls`} action={handlePin} />
+        <MenuButton icon={pinIcon} label={`Add to ${label}`} action={handlePin} />
     )
 }

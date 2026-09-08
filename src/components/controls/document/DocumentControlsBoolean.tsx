@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import { COLORS } from '@/constants'
-import { useDispatch, useStore } from '@/store'
-import { createSingleValue, tryGetSingleValue } from '@/utils/data-trees'
+import { useDispatch } from '@/store'
+import { usePortValues } from '@/hooks'
+import { createSingleValue, getDataTreeSummary, tryGetSingleValue } from '@/utils/data-trees'
 import { expireSolution } from '@/store/utils'
 
 type DocumentControlsBooleanProps = {
@@ -30,7 +31,10 @@ const Radio = ({ label, selected, onClick }: RadioProps) => (
 export const DocumentControlsBoolean = ({ nodeInstanceId, portInstanceId, isDisabled }: DocumentControlsBooleanProps) => {
     const { apply } = useDispatch()
 
-    const currentValue = useStore((state) => tryGetSingleValue(state.document.nodes[nodeInstanceId]?.values[portInstanceId])?.value)
+    const currentDataTree = usePortValues(nodeInstanceId, portInstanceId)
+    const currentValue = tryGetSingleValue(currentDataTree ?? undefined)?.value
+
+    const hasMultipleValues = (currentDataTree?.stats?.valueCount ?? 0) > 1
 
     const commitValue = useCallback((next: 'true' | 'false') => {
         if (isDisabled) {
@@ -55,8 +59,8 @@ export const DocumentControlsBoolean = ({ nodeInstanceId, portInstanceId, isDisa
     if (isDisabled) {
         return (
             <div className="np-w-full np-pl-1 np-flex np-items-center">
-                <p className="np-text-xs np-text-grey-3 np-font-panel np-select-none">
-                    {currentValue === 'true' ? 'True' : 'False'}
+                <p className="np-min-w-0 np-truncate np-text-xs np-text-dark np-font-panel np-select-none">
+                    {hasMultipleValues ? getDataTreeSummary(currentDataTree) : (currentValue === 'true' ? 'True' : 'False')}
                 </p>
             </div>
         )

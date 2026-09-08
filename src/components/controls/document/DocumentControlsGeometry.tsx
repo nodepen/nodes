@@ -1,7 +1,8 @@
 import { useCallback } from 'react'
 import type * as NodePen from '@/types'
 import { COLORS } from '@/constants'
-import { useDispatch, useStore } from '@/store'
+import { useDispatch } from '@/store'
+import { usePortValues } from '@/hooks'
 import { getDataTreeSummary } from '@/utils/data-trees'
 
 type DocumentControlsGeometryProps = {
@@ -14,7 +15,7 @@ type DocumentControlsGeometryProps = {
 export const DocumentControlsGeometry = ({ nodeInstanceId, portInstanceId, valueType, isDisabled }: DocumentControlsGeometryProps) => {
     const { startModelSelection } = useDispatch()
 
-    const currentValue = useStore((state) => state.document.nodes[nodeInstanceId]?.values[portInstanceId])
+    const currentValue = usePortValues(nodeInstanceId, portInstanceId)
     const hasValue = (currentValue?.stats?.valueCount ?? 0) > 0
 
     const handlePickGeometry = useCallback(() => {
@@ -24,8 +25,8 @@ export const DocumentControlsGeometry = ({ nodeInstanceId, portInstanceId, value
     if (isDisabled) {
         return (
             <div className="np-w-full np-flex np-items-center">
-                <p className="np-pl-1 np-pt-1 np-min-w-0 np-truncate np-text-xs np-text-grey-3 np-font-panel np-select-none">
-                    {hasValue ? getDataTreeSummary(currentValue) : `Set ${valueType}`}
+                <p className="np-pl-1 np-pt-1 np-min-w-0 np-truncate np-text-xs np-text-dark np-font-panel np-select-none">
+                    {hasValue ? getDataTreeSummary(currentValue) : `Unset ${valueType}`}
                 </p>
             </div>
         )

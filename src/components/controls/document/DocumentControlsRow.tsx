@@ -4,7 +4,8 @@ import { COLORS } from '@/constants'
 import { useDispatch, useStore } from '@/store'
 import { usePortLabel } from '@/hooks/usePortLabel'
 import { usePortTemplate } from '@/hooks/usePortTemplate'
-import { getDataTreeValueString, tryCreateSingleValue, tryGetSingleValue } from '@/utils/data-trees'
+import { usePortValues } from '@/hooks'
+import { getDataTreeSummary, getDataTreeValueString, tryCreateSingleValue, tryGetSingleValue } from '@/utils/data-trees'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { expireSolution } from '@/store/utils'
 import { saveDocument } from '@/store/utils/saveDocument'
@@ -18,25 +19,32 @@ import { DocumentControlsColorSwatch } from './DocumentControlsColorSwatch'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useFlag } from '@/hooks/useFlag'
 
-type DocumentControlsInputProps = {
+type DocumentControlsRowProps = {
     nodeInstanceId: string
     portInstanceId: string
+    controlType: 'input' | 'output'
 }
 
-export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: DocumentControlsInputProps) => {
+export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlType }: DocumentControlsRowProps) => {
     const { apply, moveControl } = useDispatch()
 
     const isEditable = useIsEditable()
 
     const isControlsEditable = useFlag('isControlsEditable')
 
-    const hideScript = useFlag('hideScript')
+    const isValueEditable = controlType === 'input' && isControlsEditable
 
-    const { currentLabel } = usePortLabel(nodeInstanceId, portInstanceId)
+    const labelPortInstanceId = useMemo(() => getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId]) === 'generic-parameter' ? 'input' : portInstanceId, [nodeInstanceId])
+
+    const { currentLabel } = usePortLabel(nodeInstanceId, labelPortInstanceId)
     const portTemplate = usePortTemplate(nodeInstanceId, portInstanceId)
 
-    const currentValue = useStore((state) => tryGetSingleValue(state.document.nodes[nodeInstanceId]?.values[portInstanceId]))
+    const currentDataTree = usePortValues(nodeInstanceId, portInstanceId)
+    const currentValue = tryGetSingleValue(currentDataTree ?? undefined)
+
     const valueType = (currentValue?.type ?? portTemplate?.typeName ?? 'string') as NodePen.DataTreeValueType
+
+    const hasMultipleValues = (currentDataTree?.stats?.valueCount ?? 0) > 1
 
     const numberSliderConfig = useStore((state) => {
         const node = state.document.nodes[nodeInstanceId]
@@ -157,11 +165,11 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                 return
             }
 
-            node.portConfigurations[portInstanceId] ??= {
+            node.portConfigurations[labelPortInstanceId] ??= {
                 label: null,
                 flags: []
             }
-            node.portConfigurations[portInstanceId].label = nextLabel
+            node.portConfigurations[labelPortInstanceId].label = nextLabel
             saveDocument(state)
         })
     }, [apply, currentLabel, nodeInstanceId, portInstanceId])
@@ -186,12 +194,12 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
     }, [])
 
     const handleMoveUp = useCallback(() => {
-        moveControl('input', nodeInstanceId, portInstanceId, -1)
-    }, [moveControl, nodeInstanceId, portInstanceId])
+        moveControl(controlType, nodeInstanceId, portInstanceId, -1)
+    }, [moveControl, controlType, nodeInstanceId, portInstanceId])
 
     const handleMoveDown = useCallback(() => {
-        moveControl('input', nodeInstanceId, portInstanceId, 1)
-    }, [moveControl, nodeInstanceId, portInstanceId])
+        moveControl(controlType, nodeInstanceId, portInstanceId, 1)
+    }, [moveControl, controlType, nodeInstanceId, portInstanceId])
 
     const nodeType = useStore((state) => {
         const node = state.document.nodes[nodeInstanceId]
@@ -205,41 +213,41 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     console.log(`🐍 Tried to render input for number slider with no config!`)
                     return null
                 }
-                return <DocumentControlsNumberSlider nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} config={numberSliderConfig} isDisabled={!isControlsEditable} />
+                return <DocumentControlsNumberSlider nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} config={numberSliderConfig} isDisabled={!isValueEditable} />
             }
             case 'value-list': {
                 if (!valueListConfig) {
                     console.log(`🐍 Tried to render input for value list with no config!`)
                     return null
                 }
-                return <DocumentControlsValueList nodeInstanceId={nodeInstanceId} config={valueListConfig} isDisabled={!isControlsEditable} />
+                return <DocumentControlsValueList nodeInstanceId={nodeInstanceId} config={valueListConfig} isDisabled={!isValueEditable} />
             }
             case 'boolean-toggle': {
-                return <DocumentControlsBooleanToggle nodeInstanceId={nodeInstanceId} isDisabled={!isControlsEditable} />
+                return <DocumentControlsBooleanToggle nodeInstanceId={nodeInstanceId} isDisabled={!isValueEditable} />
             }
             case 'color-swatch': {
                 if (!colorSwatchConfig) {
                     console.log(`🐍 Tried to render input for color swatch with no config!`)
                     return null
                 }
-                return <DocumentControlsColorSwatch nodeInstanceId={nodeInstanceId} config={colorSwatchConfig} isDisabled={!isControlsEditable} />
+                return <DocumentControlsColorSwatch nodeInstanceId={nodeInstanceId} config={colorSwatchConfig} isDisabled={!isValueEditable} />
             }
             case 'generic-node':
             case 'generic-parameter':
-            case 'gradient': {
+            case 'color-gradient': {
                 switch (valueType) {
                     case 'boolean': {
-                        return <DocumentControlsBoolean nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} isDisabled={!isControlsEditable} />
+                        return <DocumentControlsBoolean nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} isDisabled={!isValueEditable} />
                     }
                     case 'number':
                     case 'integer':
                     case 'text':
                     case 'string': {
                         return <input
-                            className={`${isControlsEditable ? 'hover:np-bg-grey np-text-dark' : 'np-text-grey-3'} np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1`}
-                            value={internalValue}
-                            placeholder={`${isControlsEditable ? 'Set' : 'Unset'} ${valueType} value`}
-                            disabled={!isControlsEditable}
+                            className={`np-text-dark ${isValueEditable ? 'hover:np-bg-grey' : ''} np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1`}
+                            value={hasMultipleValues && controlType === 'output' ? getDataTreeSummary(currentDataTree) : internalValue}
+                            placeholder={`${isValueEditable ? 'Set' : 'Unset'} ${valueType} value`}
+                            disabled={!isValueEditable}
                             onChange={handleChange}
                             onKeyDown={handleKeyDown}
                             onFocus={handleFocus}
@@ -255,7 +263,7 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     case 'extrusion':
                     case 'brep':
                     case 'box':
-                        return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isControlsEditable} />
+                        return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isValueEditable} />
                     case 'reference':
                     default:
                         return null
@@ -280,11 +288,11 @@ export const DocumentControlsInput = ({ nodeInstanceId, portInstanceId }: Docume
                     onBlur={handleLabelBlur}
                 />
                 <div className="np-mr-0.5 np-pr-1 np-flex np-items-center">
-                    {!hideScript ? (<div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleLocateSource}>
+                    <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleLocateSource}>
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
                             <path d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                         </svg>
-                    </div>) : null}
+                    </div>
                     {isEditable ? (<>
                         <div className="np-w-5 np-h-5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer" onClick={handleMoveUp}>
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-3">
