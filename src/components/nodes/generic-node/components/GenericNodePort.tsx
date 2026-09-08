@@ -26,7 +26,7 @@ const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }:
     const parameterLabels = useStore((state) => state.ui.preferences.parameterLabels)
     const useFullName = nodeType === 'generic-node' && parameterLabels === 'fullname'
     const labelText = useStore((state) => {
-        const internalLabel = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId].label
+        const internalLabel = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.label
         return internalLabel ?? (useFullName ? template.name : template.nickName)
     })
 

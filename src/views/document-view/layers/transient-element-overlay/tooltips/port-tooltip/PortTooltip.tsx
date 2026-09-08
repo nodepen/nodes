@@ -23,7 +23,8 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
     useTooltip(tooltipKey, configuration)
 
     const shadowTarget = usePseudoShadow()
-    const { currentLabel } = usePortLabel(nodeInstanceId, portInstanceId)
+
+    const { currentLabel, currentDescription } = usePortLabel(nodeInstanceId, portInstanceId)
 
     const { x: left, y: top } = position
 
@@ -58,7 +59,7 @@ export const PortTooltip = ({ tooltipKey, configuration, context }: PortTooltipP
         >
             <MenuSection title={currentLabel} icon={<PortTypeIcon typeName={template.typeName as any} />}>
                 <p className="np-mt-1 np-mb-2 np-font-sans np-font-medium np-text-dark np-text-xs -np-translate-y-px">
-                    {template.description}
+                    {currentDescription}
                 </p>
             </MenuSection>
             <MenuSection

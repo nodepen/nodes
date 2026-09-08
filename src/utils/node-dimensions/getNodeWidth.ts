@@ -1,6 +1,7 @@
 import type * as NodePen from '@/types'
 import { DIMENSIONS } from '@/constants'
 import { getLabelWidth } from './getLabelWidth'
+import { getFallbackPortTemplate } from '../templates/getGenericParameterDefinition'
 
 type NodeWidthDimensions = {
     totalWidth: number
@@ -19,8 +20,8 @@ export const getNodeWidth = (
     const inputLabelWidths: Record<string, number> = {}
 
     for (const [instanceId, orderIndex] of inputs) {
-        const portTemplate = nodeTemplate.inputs[orderIndex]
-        const portConfiguration = node.portConfigurations[instanceId]
+        const portTemplate = nodeTemplate.inputs[orderIndex] ?? getFallbackPortTemplate(nodeTemplate, 'input', orderIndex)
+        const portConfiguration = node.portConfigurations[instanceId] ?? { label: null, flags: [] }
 
         const labelWidth = getLabelWidth(portTemplate, portConfiguration, useFullNames, useTypeIcons)
 
@@ -33,8 +34,8 @@ export const getNodeWidth = (
     const outputLabelWidths: Record<string, number> = {}
 
     for (const [instanceId, orderIndex] of outputs) {
-        const portTemplate = nodeTemplate.outputs[orderIndex]
-        const portConfiguration = node.portConfigurations[instanceId]
+        const portTemplate = nodeTemplate.outputs[orderIndex] ?? getFallbackPortTemplate(nodeTemplate, 'output', orderIndex)
+        const portConfiguration = node.portConfigurations[instanceId] ?? { label: null, flags: [] }
 
         const labelWidth = getLabelWidth(portTemplate, portConfiguration, useFullNames, useTypeIcons)
 

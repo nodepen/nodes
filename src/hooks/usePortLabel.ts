@@ -2,7 +2,7 @@ import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { usePortTemplate } from './usePortTemplate'
 
-export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { currentLabel: string, defaultLabel: string } => {
+export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { currentLabel: string, defaultLabel: string, currentDescription: string, defaultDescription: string } => {
     const portTemplate = usePortTemplate(nodeInstanceId, portInstanceId)
 
     return useStore((state) => {
@@ -10,17 +10,27 @@ export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { 
         const template = node ? state.templates[node.templateId] : undefined
 
         if (!node || !template) {
-            return { defaultLabel: '', currentLabel: '' }
+            return {
+                defaultLabel: '',
+                currentLabel: '',
+                defaultDescription: '',
+                currentDescription: ''
+            }
         }
 
         const nodeType = getNodeTypeForTemplate(template)
 
         const defaultLabel = nodeType === 'generic-parameter' ? template.name : portTemplate?.name ?? template.name
+        const defaultDescription = portTemplate?.description ?? template.description
+
         const customLabel = node.portConfigurations[portInstanceId]?.label
+        const customDescription = node.portConfigurations[portInstanceId]?.description
 
         return {
             defaultLabel,
-            currentLabel: customLabel ?? defaultLabel
+            currentLabel: customLabel ?? defaultLabel,
+            defaultDescription,
+            currentDescription: customDescription ?? defaultDescription
         }
     })
 }

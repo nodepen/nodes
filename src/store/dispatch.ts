@@ -603,6 +603,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             node[key] = nextPorts
             node.portConfigurations[newPortInstanceId] = {
                 label: ' ',
+                description: ' ',
                 flags: []
             }
 
@@ -656,8 +657,6 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             }
 
             const [removedPortInstanceId] = target
-
-            console.log({ removedPortInstanceId })
 
             const context: PortMutationContext = { nodeInstanceId, portDirection, portIndex }
 
