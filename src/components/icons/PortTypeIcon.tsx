@@ -193,6 +193,7 @@ const PointGlyph = ({ s }: GlyphProps) => {
 
 const ColorGlyph = ({ s }: GlyphProps) => {
     const r = s * 0.62
+
     // Scale the drop down so its extents sit within the circle glyph's (r * 0.8).
     const dropScale = 0.8
     const px = (fx: number) => s + fx * r * dropScale
@@ -225,6 +226,23 @@ const LineGlyph = ({ s }: GlyphProps) => {
     )
 }
 
+const VectorGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const width = s * 0.22
+
+    const head = `M ${px(0.55)} ${py(-0.19)} L ${px(0.75)} ${py(-0.65)} L ${px(0.27)} ${py(-0.52)}`
+
+    return (
+        <>
+            <line x1={px(-0.75)} y1={py(0.65)} x2={px(0.75)} y2={py(-0.65)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" />
+            <path d={head} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+        </>
+    )
+}
+
 const BoxGlyph = ({ s }: GlyphProps) => {
     const r = s * 0.62
     const px = (fx: number) => s + fx * r
@@ -232,16 +250,15 @@ const BoxGlyph = ({ s }: GlyphProps) => {
 
     const width = s * 0.15
 
-    const front = `M ${px(-0.6)} ${py(-0.1)} L ${px(0.15)} ${py(-0.1)} L ${px(0.15)} ${py(0.7)} L ${px(-0.6)} ${py(0.7)} Z`
-    const back = `M ${px(-0.25)} ${py(-0.55)} L ${px(0.5)} ${py(-0.55)} L ${px(0.5)} ${py(0.25)} L ${px(-0.25)} ${py(0.25)} Z`
+    const outline = `M ${px(0)} ${py(-0.787)} L ${px(0.707)} ${py(-0.433)} L ${px(0.707)} ${py(0.433)} L ${px(0)} ${py(0.787)} L ${px(-0.707)} ${py(0.433)} L ${px(-0.707)} ${py(-0.433)} Z`
+    const edges = `M ${px(0)} ${py(-0.079)} L ${px(0.707)} ${py(-0.433)} `
+        + `M ${px(0)} ${py(-0.079)} L ${px(0)} ${py(0.787)} `
+        + `M ${px(0)} ${py(-0.079)} L ${px(-0.707)} ${py(-0.433)}`
 
     return (
         <>
-            <path d={back} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill="none" />
-            <path d={front} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill={COLORS.DARK} />
-            <line x1={px(-0.6)} y1={py(-0.1)} x2={px(-0.25)} y2={py(-0.55)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" />
-            <line x1={px(0.15)} y1={py(-0.1)} x2={px(0.5)} y2={py(-0.55)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" />
-            <line x1={px(0.15)} y1={py(0.7)} x2={px(0.5)} y2={py(0.25)} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" />
+            <path d={outline} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill={COLORS.DARK} />
+            <path d={edges} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" fill="none" />
         </>
     )
 }
@@ -271,21 +288,17 @@ const ExtrusionGlyph = ({ s }: GlyphProps) => {
     const px = (fx: number) => s + fx * r
     const py = (fy: number) => s + fy * r
 
-    const rx = 0.58
-    const ry = 0.18
-    const topY = -0.35
-    const bottomY = 1.05
     const width = s * 0.15
 
-    // Body left open at the top (no closing "Z") so its stroke doesn't draw
-    // a straight top edge underneath the cap - the fill still auto-closes.
-    const body = `M ${px(-rx)} ${py(topY)} L ${px(-rx)} ${py(bottomY)} L ${px(rx)} ${py(bottomY)} L ${px(rx)} ${py(topY)}`
-    const cap = `M ${px(-rx)} ${py(topY)} L ${px(0)} ${py(topY - ry)} L ${px(rx)} ${py(topY)} L ${px(0)} ${py(topY + ry)} Z`
+    const outline = `M ${px(0)} ${py(-1.09)} L ${px(0.707)} ${py(-0.736)} L ${px(0.707)} ${py(0.736)} L ${px(0)} ${py(1.09)} L ${px(-0.707)} ${py(0.736)} L ${px(-0.707)} ${py(-0.736)} Z`
+    const edges = `M ${px(0)} ${py(-0.383)} L ${px(0.707)} ${py(-0.736)} `
+        + `M ${px(0)} ${py(-0.383)} L ${px(0)} ${py(1.09)} `
+        + `M ${px(0)} ${py(-0.383)} L ${px(-0.707)} ${py(-0.736)}`
 
     return (
         <>
-            <path d={body} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill={COLORS.DARK} />
-            <path d={cap} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill={COLORS.DARK} />
+            <path d={outline} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill={COLORS.DARK} />
+            <path d={edges} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" fill="none" />
         </>
     )
 }
@@ -296,6 +309,34 @@ const CircleGlyph = ({ s }: GlyphProps) => {
     return (
         <circle cx={s} cy={s} r={r * 0.8} stroke={COLORS.LIGHT} strokeWidth={s * 0.2} fill="none" />
     )
+}
+
+const PlaneGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const outline = `M ${px(-0.7)} ${py(-0.7)} L ${px(0.7)} ${py(-0.7)} L ${px(0.7)} ${py(0.7)} L ${px(-0.7)} ${py(0.7)} Z`
+
+    const crosshair = `M ${px(-0.22)} ${py(0)} L ${px(0.22)} ${py(0)} `
+        + `M ${px(0)} ${py(-0.22)} L ${px(0)} ${py(0.22)}`
+
+    return (
+        <>
+            <path d={outline} stroke={COLORS.LIGHT} strokeWidth={s * 0.18} strokeLinejoin="round" fill="none" />
+            <path d={crosshair} stroke={COLORS.LIGHT} strokeWidth={s * 0.1} strokeLinecap="round" fill="none" />
+        </>
+    )
+}
+
+const RectangleGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const outline = `M ${px(-0.8)} ${py(-0.55)} L ${px(0.8)} ${py(-0.55)} L ${px(0.8)} ${py(0.55)} L ${px(-0.8)} ${py(0.55)} Z`
+
+    return <path d={outline} stroke={COLORS.LIGHT} strokeWidth={s * 0.18} strokeLinejoin="round" fill="none" />
 }
 
 const DomainGlyph = ({ s }: GlyphProps) => {
@@ -324,6 +365,26 @@ const Domain2Glyph = ({ s }: GlyphProps) => {
             <g transform={`rotate(90 ${s} ${s})`}>
                 <DomainGlyph s={s} />
             </g>
+        </>
+    )
+}
+
+const MatrixGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const width = s * 0.18
+
+    const brackets = `M ${px(-0.35)} ${py(-0.7)} L ${px(-0.7)} ${py(-0.7)} L ${px(-0.7)} ${py(0.7)} L ${px(-0.35)} ${py(0.7)} `
+        + `M ${px(0.35)} ${py(-0.7)} L ${px(0.7)} ${py(-0.7)} L ${px(0.7)} ${py(0.7)} L ${px(0.35)} ${py(0.7)}`
+
+    return (
+        <>
+            <path d={brackets} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinecap="round" strokeLinejoin="round" fill="none" />
+            {[-0.3, 0.3].map((fy) => [-0.3, 0.3].map((fx) => (
+                <circle key={`${fx}-${fy}`} cx={px(fx)} cy={py(fy)} r={r * 0.2} fill={COLORS.LIGHT} />
+            )))}
         </>
     )
 }
@@ -379,10 +440,6 @@ const MeshGlyph = ({ s }: GlyphProps) => {
     )
 }
 
-/**
- * Generic data: a port that carries whatever the wire upstream produced. Drawn as an unnamed
- * handful of values, because that is all this port knows about what it holds.
- */
 const DataGlyph = ({ s }: GlyphProps) => {
     const r = s * 0.62
     const px = (fx: number) => s + fx * r
@@ -394,6 +451,108 @@ const DataGlyph = ({ s }: GlyphProps) => {
             <circle cx={px(0)} cy={py(0)} r={r * 0.2} fill={COLORS.LIGHT} />
             <circle cx={px(0.72)} cy={py(0)} r={r * 0.2} fill={COLORS.LIGHT} />
         </>
+    )
+}
+
+const MeshFaceGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const outline = `M ${px(-0.8)} ${py(-0.55)} L ${px(0.8)} ${py(-0.55)} L ${px(0.8)} ${py(0.55)} L ${px(-0.8)} ${py(0.55)} Z`
+    const diagonal = `M ${px(-0.8)} ${py(-0.55)} L ${px(0.8)} ${py(0.55)}`
+
+    return (
+        <>
+            <path d={outline} stroke={COLORS.LIGHT} strokeWidth={s * 0.18} strokeLinejoin="round" fill="none" />
+            <path d={diagonal} stroke={COLORS.LIGHT} strokeWidth={s * 0.1} strokeLinecap="round" fill="none" />
+        </>
+    )
+}
+
+const SubDGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const cage = `M ${px(-0.715)} ${py(-0.585)} `
+        + `L ${px(-0.585)} ${py(-0.715)} Q ${px(0)} ${py(-1.3)} ${px(0.585)} ${py(-0.715)} `
+        + `L ${px(0.715)} ${py(-0.585)} Q ${px(1.3)} ${py(0)} ${px(0.715)} ${py(0.585)} `
+        + `L ${px(0.585)} ${py(0.715)} Q ${px(0)} ${py(1.3)} ${px(-0.585)} ${py(0.715)} `
+        + `L ${px(-0.715)} ${py(0.585)} Q ${px(-1.3)} ${py(0)} ${px(-0.715)} ${py(-0.585)} Z`
+
+    const diagonals = `M ${px(-0.65)} ${py(-0.65)} L ${px(0.65)} ${py(0.65)} `
+        + `M ${px(-0.65)} ${py(0.65)} L ${px(0.65)} ${py(-0.65)}`
+
+    return (
+        <>
+            <path d={cage} stroke={COLORS.LIGHT} strokeWidth={s * 0.2} strokeLinejoin="round" fill="none" />
+            <path d={diagonals} stroke={COLORS.LIGHT} strokeWidth={s * 0.1} strokeLinecap="round" fill="none" />
+        </>
+    )
+}
+
+
+// BoxGlyph but all dark and twisted
+const TwistedBoxGlyph = ({ s }: GlyphProps) => {
+    return (
+        <g transform={`rotate(15 ${s} ${s})`}>
+            <BoxGlyph s={s} />
+        </g>
+    )
+}
+
+
+const TransformGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const width = s * 0.15
+
+    const before = `M ${px(-0.8)} ${py(0)} L ${px(0)} ${py(0)} L ${px(0)} ${py(0.8)} L ${px(-0.8)} ${py(0.8)} Z`
+    const after = `M ${px(0)} ${py(-0.8)} L ${px(0.8)} ${py(-0.8)} L ${px(0.8)} ${py(0)} L ${px(0)} ${py(0)} Z`
+
+    return (
+        <>
+            <path d={before} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill="none" />
+            <path d={after} stroke={COLORS.LIGHT} strokeWidth={width} strokeLinejoin="round" fill="none" />
+        </>
+    )
+}
+
+const FieldGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const dotR = r * 0.2
+    const ringRadius = 0.72
+
+    const ringAngles = [0, 45, 90, 135, 180, 225, 270, 315]
+
+    return (
+        <>
+            <circle cx={px(0)} cy={py(0)} r={dotR} fill={COLORS.LIGHT} />
+            {ringAngles.map((deg) => {
+                const rad = (deg * Math.PI) / 180
+                const fx = ringRadius * Math.cos(rad)
+                const fy = ringRadius * Math.sin(rad)
+                return <circle key={deg} cx={px(fx)} cy={py(fy)} r={dotR} fill={COLORS.LIGHT} />
+            })}
+        </>
+    )
+}
+
+const GeometryGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    const triangle = `M ${px(0)} ${py(-0.5625)} L ${px(0.6)} ${py(0.5625)} L ${px(-0.6)} ${py(0.5625)} Z`
+
+    return (
+        <path d={triangle} stroke={COLORS.LIGHT} strokeWidth={s * 0.2} strokeLinejoin="round" fill="none" />
     )
 }
 
@@ -425,7 +584,17 @@ const portTypeGlyphs: Record<NodePen.DataTreeValueType, (props: GlyphProps) => R
     'domain²': Domain2Glyph,
     curve: CurveGlyph,
     mesh: MeshGlyph,
+    'mesh face': MeshFaceGlyph,
+    subd: SubDGlyph,
     surface: SurfaceGlyph,
+    plane: PlaneGlyph,
+    rectangle: RectangleGlyph,
+    vector: VectorGlyph,
+    'twisted box': TwistedBoxGlyph,
+    transform: TransformGlyph,
+    matrix: MatrixGlyph,
+    field: FieldGlyph,
+    geometry: GeometryGlyph,
     data: DataGlyph,
     reference: ReferenceGlyph,
 }

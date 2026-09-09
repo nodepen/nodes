@@ -1,0 +1,1052 @@
+import type { Document as NodePenDocument } from "../dist/index.mjs";
+
+export const doc: NodePenDocument = {
+    id: 'voronoi',
+    version: 1 as const,
+    nodes: {
+        // Integer
+        '49db9cc7-28fe-4a93-ab45-ea7f3d847cb2': {
+            instanceId: '49db9cc7-28fe-4a93-ab45-ea7f3d847cb2',
+            templateId: '2e3ab970-8545-46bb-836c-1c11e5610bce',
+            position: { x: 450, y: 100 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Number
+        '1f2b7a0a-6668-40cb-aca4-df10b483d01a': {
+            instanceId: '1f2b7a0a-6668-40cb-aca4-df10b483d01a',
+            templateId: '3e8ca6be-fda8-4aaf-b5c0-3c54c8bb7312',
+            position: { x: 450, y: 172 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Text
+        '52509613-274a-4fc0-a382-caeb7704ab9f': {
+            instanceId: '52509613-274a-4fc0-a382-caeb7704ab9f',
+            templateId: '3ede854e-c753-40eb-84cb-b48008f14fd4',
+            position: { x: 450, y: 244 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Boolean
+        '146313d8-f3ad-485d-913d-72c68b2bbeb4': {
+            instanceId: '146313d8-f3ad-485d-913d-72c68b2bbeb4',
+            templateId: 'cb95db89-6165-43b6-9c41-5702bc5bf137',
+            position: { x: 450, y: 316 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                // `createInstance` defaults Boolean params to a `true` value.
+                input: {
+                    branches: [
+                        {
+                            order: 0,
+                            path: '{0}',
+                            values: [
+                                { type: 'boolean', description: 'true', order: 0, value: 'true' },
+                            ],
+                        },
+                    ],
+                    stats: {
+                        branchCount: 1,
+                        branchValueCountDomain: [1, 1],
+                        treeStructure: 'single',
+                        valueTypes: ['boolean'],
+                        valueCount: 1,
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Number Slider
+        'd352057a-fa2d-423a-b8ad-3f9880900b9b': {
+            instanceId: 'd352057a-fa2d-423a-b8ad-3f9880900b9b',
+            templateId: '57da07bd-ecab-415d-9d86-af36d7073abc',
+            position: { x: 850, y: 100 },
+            dimensions: { width: 201, height: 36 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 201, dy: 18 },
+                handle: { dx: 0, dy: 0 },
+            },
+            sources: {},
+            values: {
+                input: {
+                    branches: [
+                        {
+                            order: 0,
+                            path: '{0}',
+                            values: [
+                                { type: 'number', description: '5', order: 0, value: '5' },
+                            ],
+                        },
+                    ],
+                    stats: {
+                        branchCount: 1,
+                        branchValueCountDomain: [1, 1],
+                        treeStructure: 'single',
+                        valueTypes: ['number'],
+                        valueCount: 1,
+                    },
+                },
+            },
+            inputs: {},
+            outputs: { output: 0 },
+            nodeConfiguration: { min: 0, max: 10, precision: 2 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Value List
+        'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7': {
+            instanceId: 'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7',
+            templateId: '00027467-0d24-4fa7-b178-8dc0ac5f42ec',
+            position: { x: 850, y: 172 },
+            dimensions: { width: 180, height: 36 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 180, dy: 18 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            nodeConfiguration: {
+                listMode: 'dropdown',
+                items: [
+                    { name: 'Ladybug', expression: '"Ladybug"', isSelected: true },
+                    { name: 'Pufferfish', expression: '"Pufferfish"', isSelected: false },
+                    { name: 'Weaverbird', expression: '"Weaverbird"', isSelected: false },
+                ],
+            },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Boolean Toggle
+        'b2c3d4e5-6f7a-4890-b1c2-d3e4f5a6b7c8': {
+            instanceId: 'b2c3d4e5-6f7a-4890-b1c2-d3e4f5a6b7c8',
+            templateId: '2e78987b-9dfb-42a2-8b76-3923ac8bd91a',
+            position: { x: 850, y: 224 },
+            dimensions: { width: 114, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 114, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            nodeConfiguration: { value: false },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Colour Swatch
+        'c3d4e5f6-7a8b-4901-c2d3-e4f5a6b7c8d9': {
+            instanceId: 'c3d4e5f6-7a8b-4901-c2d3-e4f5a6b7c8d9',
+            templateId: '9c53bac0-ba66-40bd-8154-ce9829b9db1a',
+            position: { x: 850, y: 280 },
+            dimensions: { width: 44, height: 44 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 44, dy: 22 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            nodeConfiguration: { r: 255, g: 159, b: 67 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Series
+        'f48cf9d3-3388-4972-af4b-d496b6e7d86d': {
+            instanceId: 'f48cf9d3-3388-4972-af4b-d496b6e7d86d',
+            templateId: 'e64c5fb1-845c-4ab1-8911-5f338516ba67',
+            position: { x: 1100, y: 500 },
+            dimensions: { width: 152, height: 130 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 76, dy: 0 },
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': { dx: 0, dy: 25 },
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': { dx: 0, dy: 65 },
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': { dx: 0, dy: 105 },
+                'b75e481e-f13c-41f0-a0b0-1ffe0e4f36d0': { dx: 152, dy: 65 },
+            },
+            sources: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': [{
+                    nodeInstanceId: '756ffe4e-3d91-451e-a95b-9021a528a2b2',
+                    portInstanceId: 'output'
+                }],
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': [],
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': [],
+            },
+            values: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': 0,
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': 1,
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': 2,
+            },
+            outputs: {
+                'b75e481e-f13c-41f0-a0b0-1ffe0e4f36d0': 0,
+            },
+            portConfigurations: {
+                '69b7b09c-b325-49d9-ab00-0c87f01556cc': { label: null, flags: [] },
+                '12c671a4-36bc-4375-b3d2-e126fc74b153': { label: null, flags: [] },
+                '5b27c6cb-59d3-4cd5-bf74-def2dfdeab87': { label: null, flags: [] },
+                'b75e481e-f13c-41f0-a0b0-1ffe0e4f36d0': { label: null, flags: [] },
+            },
+        },
+        // Point — port type showcase, column 1
+        '62509613-274a-4fc0-a382-caeb7704ab9f': {
+            instanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
+            templateId: 'fbac3e32-f100-4292-8692-77240a42fd1a',
+            position: { x: -150, y: 100 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Line — column 1
+        '5328049d-b1db-41d4-ba74-a23ccf89bafe': {
+            instanceId: '5328049d-b1db-41d4-ba74-a23ccf89bafe',
+            templateId: '8529dbdf-9b6f-42e9-8e1f-c7a2bde56a70',
+            position: { x: -150, y: 172 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Brep — column 1
+        '1200d2bd-aa00-486e-8e8a-fdda17426ef1': {
+            instanceId: '1200d2bd-aa00-486e-8e8a-fdda17426ef1',
+            templateId: '919e146f-30ae-4aae-be34-4d72f555e7da',
+            position: { x: -150, y: 244 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Mesh — column 1
+        'dc6e2acd-453a-4b94-983b-30237e49279a': {
+            instanceId: 'dc6e2acd-453a-4b94-983b-30237e49279a',
+            templateId: '1e936df3-0eea-4246-8549-514cb8862b7a',
+            position: { x: -150, y: 316 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Circle — column 1
+        '756ffe4e-3d91-451e-a95b-9021a528a2b2': {
+            instanceId: '756ffe4e-3d91-451e-a95b-9021a528a2b2',
+            templateId: 'd1028c72-ff86-4057-9eb0-36c687a4d98c',
+            position: { x: -150, y: 388 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Curve — column 1
+        '66c62c08-bec7-4f79-b35c-ce6a51f433fc': {
+            instanceId: '66c62c08-bec7-4f79-b35c-ce6a51f433fc',
+            templateId: 'd5967b9f-e8ee-436b-a8ad-29fdcecf32d5',
+            position: { x: -150, y: 460 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Surface — column 1
+        '2741a069-0f50-4b01-8449-47cf58c15567': {
+            instanceId: '2741a069-0f50-4b01-8449-47cf58c15567',
+            templateId: 'deaf8653-5528-4286-807c-3de8b8dad781',
+            position: { x: -150, y: 532 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Colour — column 2
+        '3a2b1c9d-8e7f-4a6b-9c5d-2e1f0a9b8c7d': {
+            instanceId: '3a2b1c9d-8e7f-4a6b-9c5d-2e1f0a9b8c7d',
+            templateId: '203a91c3-287a-43b6-a9c5-ebb96240a650',
+            position: { x: 50, y: 100 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Vector — column 2
+        'd9ee9d32-ab60-43c8-a5b7-2b6d1f92c783': {
+            instanceId: 'd9ee9d32-ab60-43c8-a5b7-2b6d1f92c783',
+            templateId: '16ef3e75-e315-4899-b531-d3166b42dac9',
+            position: { x: 50, y: 172 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Plane — column 2
+        '0ea8d39e-c1a0-4663-924f-c15a8bc4cdb6': {
+            instanceId: '0ea8d39e-c1a0-4663-924f-c15a8bc4cdb6',
+            templateId: '4f8984c4-7c7a-4d69-b0a2-183cbb330d20',
+            position: { x: 50, y: 244 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Rectangle — column 2
+        'c38c56fc-a9c3-486c-b782-3fe991b2e166': {
+            instanceId: 'c38c56fc-a9c3-486c-b782-3fe991b2e166',
+            templateId: 'abf9c670-5462-4cd8-acb3-f1ab0256dbf3',
+            position: { x: 50, y: 316 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // SubD — column 2
+        'e61dcb3c-894b-4be3-99a8-f9c5f680ebac': {
+            instanceId: 'e61dcb3c-894b-4be3-99a8-f9c5f680ebac',
+            templateId: '89cd1a12-0007-4581-99ba-66578665e610',
+            position: { x: 50, y: 388 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Mesh Face — column 2
+        'b81ad412-a041-48a4-b577-2f311413b18e': {
+            instanceId: 'b81ad412-a041-48a4-b577-2f311413b18e',
+            templateId: 'e02b3da5-543a-46ac-a867-0ba6b0a524de',
+            position: { x: 50, y: 460 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Transform — column 2
+        'f283bb11-17cf-419a-a38f-484c0b37c53d': {
+            instanceId: 'f283bb11-17cf-419a-a38f-484c0b37c53d',
+            templateId: '28f40e48-e739-4211-91bd-f4aefa5965f8',
+            position: { x: 50, y: 532 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Matrix — column 3
+        'ba9d5701-ea1c-4a68-9fbf-9c2e941b3726': {
+            instanceId: 'ba9d5701-ea1c-4a68-9fbf-9c2e941b3726',
+            templateId: 'bd4a8a18-a3cc-40ba-965b-3be91fee563b',
+            position: { x: 250, y: 100 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Field — column 3
+        'a16c0a43-a972-4182-b1c5-5bd1cd3583be': {
+            instanceId: 'a16c0a43-a972-4182-b1c5-5bd1cd3583be',
+            templateId: '3175e3eb-1ae0-4d0b-9395-53fd3e8f8a28',
+            position: { x: 250, y: 172 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Geometry — column 3
+        '3b544f62-52f9-44d7-b961-745866b3c980': {
+            instanceId: '3b544f62-52f9-44d7-b961-745866b3c980',
+            templateId: 'ac2bc2cb-70fb-4dd5-9c78-7e1ea97fe278',
+            position: { x: 250, y: 244 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Twisted Box — column 3
+        '283bbae1-b5ee-49f9-8407-5f4f489a07a2': {
+            instanceId: '283bbae1-b5ee-49f9-8407-5f4f489a07a2',
+            templateId: '6db039c4-cad1-4549-bd45-e31cb0f71692',
+            position: { x: 250, y: 316 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Box — column 3
+        'd67dd3b5-4534-4cb2-8f08-6c373d3006cf': {
+            instanceId: 'd67dd3b5-4534-4cb2-8f08-6c373d3006cf',
+            templateId: 'c9482db6-bea9-448d-98ff-fed6d69a8efc',
+            position: { x: 250, y: 388 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+        // Extrusion — column 3
+        'd683672d-9e77-4767-bafc-33bf62f25ac4': {
+            instanceId: 'd683672d-9e77-4767-bafc-33bf62f25ac4',
+            templateId: 'f638f034-5ce2-4536-8fa5-2c6ab8e9456c',
+            position: { x: 250, y: 460 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: { input: [] },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        }
+    },
+    groups: {},
+    meta: {
+        name: 'My Document',
+    },
+    controls: {
+        input: {
+            'dc-0': {
+                order: 0,
+                ref: {
+                    nodeInstanceId: '52509613-274a-4fc0-a382-caeb7704ab9f',
+                    portInstanceId: 'input'
+                }
+            },
+            'dc-1': {
+                order: 1,
+                ref: {
+                    nodeInstanceId: '62509613-274a-4fc0-a382-caeb7704ab9f',
+                    portInstanceId: 'input'
+                }
+            },
+            'dc-2': {
+                order: 2,
+                ref: {
+                    nodeInstanceId: "d352057a-fa2d-423a-b8ad-3f9880900b9b",
+                    portInstanceId: 'input'
+                }
+            },
+            'dc-3': {
+                order: 3,
+                ref: {
+                    nodeInstanceId: '146313d8-f3ad-485d-913d-72c68b2bbeb4',
+                    portInstanceId: 'input'
+                }
+            },
+            'dc-4': {
+                order: 4,
+                ref: {
+                    nodeInstanceId: 'a1f2c3d4-5e6f-4789-a0b1-c2d3e4f5a6b7',
+                    portInstanceId: 'input'
+                }
+            },
+            'dc-5': {
+                order: 5,
+                ref: {
+                    nodeInstanceId: 'c3d4e5f6-7a8b-4901-c2d3-e4f5a6b7c8d9',
+                    portInstanceId: 'input'
+                }
+            }
+        },
+        output: {}
+    },
+    settings: {
+        units: 'mm'
+    }
+}
