@@ -2,7 +2,7 @@ import { useLayoutEffect, useRef, useState } from "react"
 import type { TooltipConfiguration } from "../../types"
 import type { GenericTextTooltipContext } from "../../types/TooltipContext"
 import { useTooltip } from "../hooks"
-import { clamp } from "@/utils"
+import { clamp } from '@/utils/numerics'
 
 type Props = {
     tooltipKey: string

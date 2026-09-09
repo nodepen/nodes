@@ -5,7 +5,7 @@ import { Layer } from "../common"
 import ModelCanvas from "./ModelCanvas"
 import { internalCallbacksRef, useCallbacks, useDispatch, useStore } from "@/store"
 import { getDomainParameter } from "@/utils/numerics/domain"
-import { clamp } from "@/utils"
+import { clamp } from '@/utils/numerics'
 import { CircleButton } from "@/components/layout/CircleButton"
 import { SelvaLogoIcon } from "@/components/icons/SelvaLogoIcon"
 import { COLORS } from "@/constants"

@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useCallback } from 'react'
 import { rafBatcher, useStore, useStoreRef, useDispatch } from '$'
 import { CAMERA } from '@/constants'
-import { clamp } from '@/utils'
+import { clamp } from '@/utils/numerics'
 import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { distance } from '@/utils/numerics'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef } from "react"
 import type * as NodePen from '@/types'
 import { useCallbacks, useDispatch, useStore, useStoreRef } from "$"
-import { clamp } from "@/utils"
+import { clamp } from "@/utils/numerics"
 import { saveDocument } from "@/store/utils/saveDocument"
 import { useIsEditable } from "@/hooks/useIsEditable"
 

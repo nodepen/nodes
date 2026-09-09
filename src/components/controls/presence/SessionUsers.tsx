@@ -2,7 +2,7 @@ import { CircleButton } from '@/components/layout/CircleButton'
 import { AgentIcon } from '@/components/icons/AgentIcon'
 import { COLORS } from '@/constants'
 import { useCallbacks, useStore } from '@/store'
-import { clamp } from '@/utils'
+import { clamp } from '@/utils/numerics'
 import React, { useCallback } from 'react'
 import { shallow } from 'zustand/shallow'
 

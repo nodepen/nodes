@@ -7,7 +7,7 @@ import { tryGetSingleValue } from "@/utils/data-trees"
 import { usePageSpaceToOverlaySpace, useWorldSpaceToPageSpace } from "@/hooks"
 import { DIMENSIONS } from "@/constants"
 import { createSingleValue } from "@/utils/data-trees/createSingleValue"
-import { clamp } from "@/utils"
+import { clamp } from '@/utils/numerics'
 import { expireSolution } from "@/store/utils"
 import { getDomainParameter } from "@/utils/numerics/domain"
 

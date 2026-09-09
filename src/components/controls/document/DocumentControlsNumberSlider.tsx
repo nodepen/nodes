@@ -4,7 +4,7 @@ import { COLORS } from '@/constants'
 import { useDispatch, useStore } from '@/store'
 import { tryGetSingleValue, createSingleValue } from '@/utils/data-trees'
 import { getDomainParameter } from '@/utils/numerics/domain'
-import { clamp } from '@/utils'
+import { clamp } from '@/utils/numerics'
 import { expireSolution } from '@/store/utils'
 
 type DocumentControlsNumberSliderProps = {

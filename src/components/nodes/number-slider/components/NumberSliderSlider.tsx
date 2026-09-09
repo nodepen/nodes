@@ -6,7 +6,7 @@ import { tryGetSingleValue } from '@/utils/data-trees'
 import { getDomainParameter } from '@/utils/numerics/domain'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
 import { expireSolution } from '@/store/utils'
-import { clamp } from '@/utils'
+import { clamp } from '@/utils/numerics'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
 

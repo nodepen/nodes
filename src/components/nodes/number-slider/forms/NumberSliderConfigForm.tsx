@@ -3,7 +3,7 @@ import { tryGetSingleValue } from '@/utils/data-trees'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useForm, type SubmitHandler } from "react-hook-form"
 import { PrecisionInput } from './PrecisionInput'
-import { clamp } from '@/utils'
+import { clamp } from '@/utils/numerics'
 import { useDispatch } from '@/store'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
 import { expireSolution } from '@/store/utils'

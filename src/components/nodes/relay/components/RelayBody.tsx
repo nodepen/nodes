@@ -6,6 +6,8 @@ import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { getRelayPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
+import { useRightClick } from '@/hooks/useRightClick'
 
 type RelayBodyProps = {
     node: NodePen.DocumentNode
@@ -17,6 +19,8 @@ export const RelayBody = ({ node, template }: RelayBodyProps) => {
 
     const { width, height } = node.dimensions
 
+    const isEditable = useIsEditable()
+
     const { apply } = useDispatch()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
@@ -26,6 +30,37 @@ export const RelayBody = ({ node, template }: RelayBodyProps) => {
     const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>): void => {
         lastPointerType.current = e.pointerType
     }, [])
+
+    const handleContextMenu = useCallback((e: PointerEvent): void => {
+        e.stopPropagation()
+        e.preventDefault()
+
+        if (!isEditable) {
+            return
+        }
+
+        const { pageX, pageY } = e
+
+        const key = `node-context-menu-${node.instanceId}`
+
+        const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
+
+        apply((state) => {
+            state.registry.contextMenus[key] = {
+                position: {
+                    x,
+                    y,
+                },
+                context: {
+                    type: 'node',
+                    nodeInstanceId: node.instanceId,
+                    nodeTemplate: template,
+                },
+            }
+        })
+    }, [])
+
+    const rightClickRef = useRightClick(handleContextMenu, true)
 
     const handleLongHover = useCallback((e: PointerEvent): void => {
         const { pageX, pageY } = e
@@ -55,21 +90,23 @@ export const RelayBody = ({ node, template }: RelayBodyProps) => {
 
     return (
         <g id={`relay-body-${node.instanceId}`} ref={longHoverTarget} onPointerDown={handlePointerDown}>
-            <rect
-                x={position.x}
-                y={position.y}
-                width={width}
-                height={height}
-                rx={4}
-                ry={4}
-                fill={presenceColor ?? sessionColor}
-                stroke={COLORS.DARK}
-                strokeWidth={2}
-                pointerEvents="auto"
-            />
-            <svg x={position.x + (width / 2) - (height / 2) - 1} y={position.y} width={height} height={height} viewBox='0 0 10 10' className='np-overflow-visible'>
-                <path d="M 5 3 L 7 5 L 5 7" stroke={COLORS.DARK} strokeWidth={1} strokeLinejoin='round' strokeLinecap='round' fill="none" />
-            </svg>
+            <g ref={rightClickRef}>
+                <rect
+                    x={position.x}
+                    y={position.y}
+                    width={width}
+                    height={height}
+                    rx={4}
+                    ry={4}
+                    fill={presenceColor ?? sessionColor}
+                    stroke={COLORS.DARK}
+                    strokeWidth={2}
+                    pointerEvents="auto"
+                />
+                <svg x={position.x + (width / 2) - (height / 2) - 1} y={position.y} width={height} height={height} viewBox='0 0 10 10' className='np-overflow-visible'>
+                    <path d="M 5 3 L 7 5 L 5 7" stroke={COLORS.DARK} strokeWidth={1} strokeLinejoin='round' strokeLinecap='round' fill="none" />
+                </svg>
+            </g>
         </g>
     )
 }

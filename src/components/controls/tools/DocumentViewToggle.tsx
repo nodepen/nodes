@@ -5,7 +5,7 @@ import { useDispatch } from '$'
 import { useDocumentRef, useImperativeEvent } from '@/hooks'
 import { CircleButton } from '@/components/layout/CircleButton'
 import { getDomainParameter } from '@/utils/numerics/domain'
-import { clamp } from '@/utils'
+import { clamp } from '@/utils/numerics'
 
 const {
     NUMBER_SLIDER_HANDLE_WIDTH,
