@@ -44,7 +44,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: true,
                 enableSetValue: supportedPrimitiveTypeNames.includes(typeName),
                 enablePickGeometry: supportedGeometricTypeNames.includes(typeName),
-                enablePinInput: true,
+                enablePinInput: [...supportedPrimitiveTypeNames, ...supportedGeometricTypeNames].includes(typeName),
                 enablePinOutput: true,
                 enableZoomToGeometry: false,
                 // TODO: Should be possible, need to see how to draw badge on param

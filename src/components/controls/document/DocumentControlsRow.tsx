@@ -264,6 +264,15 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                     case 'brep':
                     case 'box':
                         return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isValueEditable} />
+                    case 'data': {
+                        return <input
+                            className="np-text-dark np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1"
+                            value={hasMultipleValues ? getDataTreeSummary(currentDataTree) : internalValue}
+                            placeholder="No data"
+                            disabled
+                            readOnly
+                        />
+                    }
                     case 'reference':
                     default:
                         return null

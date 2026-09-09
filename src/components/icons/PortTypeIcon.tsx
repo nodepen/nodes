@@ -379,6 +379,24 @@ const MeshGlyph = ({ s }: GlyphProps) => {
     )
 }
 
+/**
+ * Generic data: a port that carries whatever the wire upstream produced. Drawn as an unnamed
+ * handful of values, because that is all this port knows about what it holds.
+ */
+const DataGlyph = ({ s }: GlyphProps) => {
+    const r = s * 0.62
+    const px = (fx: number) => s + fx * r
+    const py = (fy: number) => s + fy * r
+
+    return (
+        <>
+            <circle cx={px(-0.72)} cy={py(0)} r={r * 0.2} fill={COLORS.LIGHT} />
+            <circle cx={px(0)} cy={py(0)} r={r * 0.2} fill={COLORS.LIGHT} />
+            <circle cx={px(0.72)} cy={py(0)} r={r * 0.2} fill={COLORS.LIGHT} />
+        </>
+    )
+}
+
 const ReferenceGlyph = ({ s }: GlyphProps) => {
     const r = s * 0.62
 
@@ -408,6 +426,7 @@ const portTypeGlyphs: Record<NodePen.DataTreeValueType, (props: GlyphProps) => R
     curve: CurveGlyph,
     mesh: MeshGlyph,
     surface: SurfaceGlyph,
+    data: DataGlyph,
     reference: ReferenceGlyph,
 }
 

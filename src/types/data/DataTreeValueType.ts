@@ -16,4 +16,5 @@ export type DataTreeValueType =
     | 'string'
     | 'surface'
     | 'text'
+    | 'data'
     | 'reference'
