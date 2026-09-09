@@ -55,6 +55,8 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
             const bounds = new THREE.Box3()
             const tempBounds = new THREE.Box3()
 
+            const documentNodes = useStore.getState().document.nodes
+
             let objectCount = 0
 
             documentObject.updateMatrixWorld(true)
@@ -67,8 +69,10 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
                     res[nodeInstanceId].push(object)
                 }
 
+                const isVisible = !nodeInstanceId || documentNodes[nodeInstanceId]?.status.isVisible !== false
+
                 const geometry = (object as THREE.Object3D & { geometry?: THREE.BufferGeometry }).geometry
-                if (geometry) {
+                if (geometry && isVisible) {
                     if (!geometry.boundingBox) {
                         geometry.computeBoundingBox()
                     }
