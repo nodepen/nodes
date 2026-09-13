@@ -261,12 +261,25 @@ export type NodesAppCallbacks = {
     // Dynamic components
     onPortAdded?: (state: NodesAppState, context: PortMutationContext) => void,
     onPortRemoved?: (state: NodesAppState, context: PortMutationContext) => void,
+    // Clusters
+    onEditCluster?: (state: NodesAppState, context: ClusterEditContext) => void,
+    onViewCluster?: (state: NodesAppState, context: ClusterViewContext) => void,
 }
 
 export type PortMutationContext = {
     nodeInstanceId: string
     portDirection: 'input' | 'output'
     portIndex: number
+}
+
+export type ClusterEditContext = {
+    /** The id of the entry in `document.clusters` being edited -- not a node instance id. */
+    clusterId: string
+}
+
+export type ClusterViewContext = {
+    /** The id of the entry in `document.clusters` being viewed -- not a node instance id. */
+    clusterId: string
 }
 
 export const initialState: NodesAppState = {
@@ -277,6 +290,7 @@ export const initialState: NodesAppState = {
         },
         nodes: {},
         groups: {},
+        clusters: {},
         controls: {
             input: {},
             output: {},
@@ -338,7 +352,8 @@ export const initialState: NodesAppState = {
             enableShareButton: true,
             enableFeedbackButton: true,
             enableProfileButton: true,
-            enableAgentButton: false
+            enableAgentButton: false,
+            enableClusters: false
         },
         flags: {
             isEditable: true,

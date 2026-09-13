@@ -1,8 +1,27 @@
 import type { Document as NodePenDocument } from "../dist/index.mjs";
 
-export const doc: NodePenDocument = {
+const emptyDoc: NodePenDocument = {
+    id: 'empty',
+    version: 1 as const,
+    nodes: {},
+    groups: {},
+    clusters: {},
+    meta: {
+        name: 'Empty Document'
+    },
+    controls: {
+        input: {},
+        output: {}
+    },
+    settings: {
+        units: 'mm'
+    }
+}
+
+const demoDoc: NodePenDocument = {
     id: 'voronoi',
     version: 1 as const,
+    clusters: {},
     nodes: {
         // Integer
         '49db9cc7-28fe-4a93-ab45-ea7f3d847cb2': {
@@ -997,7 +1016,7 @@ export const doc: NodePenDocument = {
     },
     groups: {},
     meta: {
-        name: 'My Document',
+        name: 'Demo Document',
     },
     controls: {
         input: {
@@ -1050,3 +1069,5 @@ export const doc: NodePenDocument = {
         units: 'mm'
     }
 }
+
+export const doc = emptyDoc

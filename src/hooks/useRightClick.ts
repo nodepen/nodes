@@ -2,7 +2,7 @@ import { distance } from "@/utils/numerics"
 import React, { useCallback, useRef } from "react"
 import { useImperativeEvent } from "./useImperativeEvent"
 
-export const useRightClick = <T extends SVGGElement | null>(
+export const useRightClick = <T extends HTMLDivElement | SVGGElement | null>(
     onRightClick: (e: PointerEvent) => void,
     capture?: boolean,
     externalRef?: React.RefObject<T>

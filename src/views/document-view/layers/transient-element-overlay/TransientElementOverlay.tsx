@@ -1,6 +1,6 @@
 import React from 'react'
 import { useStore } from '$'
-import { AddNodeContextMenu, DocumentContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
+import { AddNodeContextMenu, DocumentContextMenu, DocumentCanvasContextMenu, NodeContextMenu, PortContextMenu } from './context-menus'
 import { CursorContainer } from './cursors'
 import { getMenuHeight, shallowEntries } from './utils'
 import { usePageSpaceToOverlaySpace, useReducedMotion, useWorldSpaceToPageSpace } from '@/hooks'
@@ -17,6 +17,7 @@ import { ColorSwatchContextMenu } from './context-menus/color-swatch-context-men
 import { ColorParameterContextMenu } from './context-menus/color-parameter-context-menu'
 import { GradientContextMenu } from './context-menus/gradient-context-menu'
 import { GroupContextMenu } from './context-menus/group-context-menu'
+import { ClusterContextMenu } from './context-menus/cluster-context-menu'
 
 const TransientElementOverlay = () => {
     const cursor = useCursorState()
@@ -91,7 +92,10 @@ const TransientElementOverlay = () => {
                         return <AddNodeContextMenu key={`add-node-menu`} position={menu.position} />
                     }
                     case 'document': {
-                        return <DocumentContextMenu key={`document-menu`} position={menu.position} />
+                        return <DocumentContextMenu key={`document-menu`} position={menu.position} context={menu.context} />
+                    }
+                    case 'document-canvas': {
+                        return <DocumentCanvasContextMenu key={`document-canvas-menu-${key}`} position={menu.position} context={menu.context} />
                     }
                     case 'node': {
                         return <NodeContextMenu key={`node-context-menu-${key}`} position={menu.position} context={menu.context} />
@@ -125,6 +129,9 @@ const TransientElementOverlay = () => {
                     }
                     case 'group': {
                         return <GroupContextMenu key={`group-context-menu-${key}`} position={menu.position} context={menu.context} />
+                    }
+                    case 'cluster': {
+                        return <ClusterContextMenu key={`cluster-context-menu-${key}`} position={menu.position} context={menu.context} />
                     }
                     default: {
                         console.log(`🐍 Unhandled context menu type [${contextType}]`)

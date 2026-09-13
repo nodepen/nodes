@@ -4,6 +4,7 @@ import { useDispatch, useStore } from '@/store'
 import { useNodeContextAnchorPosition } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import React, { useCallback } from 'react'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 const { NODE_PORT_HEIGHT, NODE_LABEL_WIDTH, NODE_PORT_CHIP_SIZE, NODE_INTERNAL_PADDING } = DIMENSIONS
 
@@ -32,10 +33,11 @@ export const GenericNodePortChip = ({ nodeInstanceId, portInstanceId, portDirect
     const isEnabled = useStore((state) => {
         if (state.solution.flags.isExpired) {
             // Do not show ZUI chips when solution is expired
+            // TODO: Show _something_, like this greyed out
             return false
         }
 
-        if (state.camera.zoom < 3) {
+        if (state.camera.zoom < 2.5) {
             return false
         }
 
@@ -48,6 +50,7 @@ export const GenericNodePortChip = ({ nodeInstanceId, portInstanceId, portDirect
             }
         }
     })
+    const isEditable = useIsEditable()
 
     const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>) => {
         e.stopPropagation()
@@ -69,7 +72,7 @@ export const GenericNodePortChip = ({ nodeInstanceId, portInstanceId, portDirect
         }
     }, [portOperation, addParameter, removeParameter, nodeInstanceId, portDirection, portIndex])
 
-    if (portIndex < 0 || !isEnabled) {
+    if (portIndex < 0 || !isEnabled || !isEditable) {
         return null
     }
 

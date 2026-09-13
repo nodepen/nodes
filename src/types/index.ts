@@ -4,7 +4,7 @@ export type { DocumentNode } from './DocumentNode'
 export type { DocumentSettings, DocumentUnits } from './settings/DocumentSettings'
 export type { DocumentPreferences } from './settings/DocumentPreferences'
 export type { DocumentControls, DocumentControl } from './controls/DocumentControls'
-export type { BooleanToggleConfig, ColorSwatchConfig, GradientConfig, GradientGrip, GradientGripColor, NumberSliderConfig, PanelConfig, ValueListConfig } from './config'
+export type { BooleanToggleConfig, ColorSwatchConfig, GenericConfiguration, GradientConfig, GradientGrip, GradientGripColor, NumberSliderConfig, PanelConfig, ValueListConfig } from './config'
 export type {
     DataTree,
     DataTreeBranch,
@@ -15,10 +15,11 @@ export type {
 } from './data'
 export type { PortConfiguration, PortFlag } from './ports'
 export type { DocumentSolutionData, DocumentSolutionFlags, DocumentSolutionStatusMessage, NodeSolutionData, PortSolutionData } from './solution'
-export type { NodeTemplate, PortTemplate } from './templates'
+export type { NodeTemplate, NodeToggle, PortTemplate } from './templates'
 export type { DocumentAssets } from './assets'
 export type { DocumentPresence } from './presence'
 export type { AppFlags, AppFeatures } from './App'
+export type { DocumentCluster } from './clusters'
 
 export type NodePortReference = {
     nodeInstanceId: string

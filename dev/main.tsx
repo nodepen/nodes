@@ -86,7 +86,8 @@ const flags = {
 }
 
 const features = {
-    enableAgentButton: true
+    enableAgentButton: true,
+    enableClusters: true
 }
 
 const preferences = {

@@ -12,11 +12,12 @@ import BooleanToggle from './boolean-toggle/BooleanToggle'
 import ColorSwatch from './color-swatch/ColorSwatch'
 import Gradient from './gradient/Gradient'
 import { Relay } from './relay'
+import { Cluster } from './cluster'
 import { useFlag } from '@/hooks/useFlag'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 
 const NodesContainer = (): React.ReactElement | null => {
     const nodeIds = useStore((store) => store.registry.documentNodeIds)
-    const templates = useStore((store) => store.templates, shallow)
 
     const hideScript = useFlag('hideScript')
 
@@ -33,15 +34,19 @@ const NodesContainer = (): React.ReactElement | null => {
                     return null
                 }
 
-                const { templateId } = node
+                const template = tryGetTemplate(node.templateId)
 
-                const template = templates[templateId]
+                if (!template) {
+                    return null
+                }
 
                 switch (getNodeTypeForTemplate(template)) {
                     case 'generic-node':
                         return <GenericNode key={`generic-node-${instanceId}`} id={instanceId} template={template} />
                     case 'generic-parameter':
                         return <GenericParameter key={`generic-parameter-${instanceId}`} id={instanceId} template={template} />
+                    case 'cluster':
+                        return <Cluster key={`cluster-${instanceId}`} id={instanceId} />
                     case 'number-slider':
                         return <NumberSlider key={`number-slider-${instanceId}`} id={instanceId} template={template} />
                     case 'panel':

@@ -1,12 +1,14 @@
 import { useStore } from "@/store"
 import { MenuBody, MenuDivider } from "../../common"
 import type { ContextMenu } from "../../types"
+import type { DocumentContextMenuContext } from "../../types/ContextMenuContext"
 import { ExportButton, ImportButton, NewScriptButton, SaveCopyButton, SaveVersionButton, SettingsButton, ViewVersionsButton } from "./buttons"
 import { useFeatureFlag } from "@/hooks/useFeatureFlag"
 import { useIsEditable } from "@/hooks/useIsEditable"
 
 type Props = {
     position: ContextMenu['position']
+    context: DocumentContextMenuContext
 }
 
 export const DocumentContextMenu = ({ position }: Props) => {

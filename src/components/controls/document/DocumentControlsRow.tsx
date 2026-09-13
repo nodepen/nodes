@@ -34,7 +34,10 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
 
     const isValueEditable = controlType === 'input' && isControlsEditable
 
-    const labelPortInstanceId = useMemo(() => getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId].templateId]) === 'generic-parameter' ? 'input' : portInstanceId, [nodeInstanceId])
+    const labelPortInstanceId = useMemo(() => {
+        const node = useStore.getState().document.nodes[nodeInstanceId]
+        return getNodeTypeForTemplate(useStore.getState().templates[node.templateId]) === 'generic-parameter' ? 'input' : portInstanceId
+    }, [nodeInstanceId])
 
     const { currentLabel } = usePortLabel(nodeInstanceId, labelPortInstanceId)
     const portTemplate = usePortTemplate(nodeInstanceId, portInstanceId)

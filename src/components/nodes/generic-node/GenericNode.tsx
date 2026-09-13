@@ -8,6 +8,7 @@ import {
     GenericNodeRuntimeMessage,
     GenericNodeShadow,
     GenericNodeSkeleton,
+    GenericNodeToggleLabel,
 } from './components'
 import { GenericNodeWires } from '../wire'
 import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
@@ -18,7 +19,8 @@ type GenericNodeProps = {
 }
 
 /**
- * Renders most common node types with a static number of inputs and outputs.
+ * Renders most standard nodes that don't require custom UI.
+ * ZUI (add/remove params) and custom menus (toggles) are inferred from template and solution data.
  */
 const GenericNode = ({ id, template }: GenericNodeProps) => {
     // Subscribe to current node state
@@ -48,6 +50,7 @@ const GenericNode = ({ id, template }: GenericNodeProps) => {
                         </>
                     ) : (
                         <>
+                            <GenericNodeToggleLabel node={node} template={template} />
                             <GenericNodeShadow node={node} template={template} />
                             <GenericNodeBody node={node} template={template} />
                             <GenericNodePorts node={node} template={template} />

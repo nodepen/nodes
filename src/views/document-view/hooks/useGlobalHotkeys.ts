@@ -5,11 +5,13 @@ import { useCallback, useRef } from 'react'
 import { useStore } from '$'
 import { current } from 'immer'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { saveDocument } from '@/store/utils/saveDocument'
 import { isCtrl } from '@/utils/dom/isCtrl'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { newGuid } from '@/utils/common'
 import { COLORS } from '@/constants'
+import { getClusterByNodeInstanceId } from '@/utils/clusters/getClusterForNode'
 
 export const useGlobalHotkeys = () => {
     const {
@@ -108,6 +110,15 @@ export const useGlobalHotkeys = () => {
                                 delete state.document.controls.output[controlId]
                             }
                         }
+
+                        if (state.document.nodes[id]?.templateId === 'cluster') {
+                            const cluster = getClusterByNodeInstanceId(state.document, id)
+
+                            if (cluster) {
+                                delete state.document.clusters[cluster.clusterId]
+                            }
+                        }
+
                         removeDocumentNode(state, id)
                     }
 
@@ -218,10 +229,10 @@ export const useGlobalHotkeys = () => {
                 }
 
                 apply((state) => {
-                    const eligibleNodeTypes: ReturnType<typeof getNodeTypeForTemplate>[] = ['generic-node', 'generic-parameter', 'relay']
+                    const eligibleNodeTypes: ReturnType<typeof getNodeTypeForTemplate>[] = ['generic-node', 'generic-parameter', 'relay', 'cluster']
                     const eligibleNodes = state.registry.selection.nodes
                         .map((nodeInstanceId) => state.document.nodes[nodeInstanceId])
-                        .filter((node) => !!node && eligibleNodeTypes.includes(getNodeTypeForTemplate(state.templates[node.templateId])))
+                        .filter((node) => !!node && eligibleNodeTypes.includes(getNodeTypeForTemplate(tryGetTemplate(node.templateId))))
 
                     if (eligibleNodes.length === 0) {
                         return

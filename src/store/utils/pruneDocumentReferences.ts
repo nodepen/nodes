@@ -9,6 +9,13 @@ export const pruneDocumentReferences = (state: NodesAppState): void => {
     // Selection
     state.registry.selection.nodes = state.registry.selection.nodes.filter((id) => !!nodes[id])
 
+    // Clusters
+    for (const [clusterId, cluster] of Object.entries(state.document.clusters ?? {})) {
+        if (!nodes[cluster.nodeInstanceId]) {
+            delete state.document.clusters[clusterId]
+        }
+    }
+
     // Drag
     if (state.registry.drag.isActive && getNodesIncludedInDrag(state).length === 0) {
         state.registry.drag = {

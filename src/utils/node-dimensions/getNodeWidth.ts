@@ -2,6 +2,7 @@ import type * as NodePen from '@/types'
 import { DIMENSIONS } from '@/constants'
 import { getLabelWidth } from './getLabelWidth'
 import { getFallbackPortTemplate } from '../templates/getGenericParameterDefinition'
+import { getNodeTypeForTemplate } from '../templates/getNodeTypeForTemplate'
 
 type NodeWidthDimensions = {
     totalWidth: number
@@ -18,6 +19,10 @@ export const getNodeWidth = (
 ): NodeWidthDimensions => {
     const inputs = Object.entries(node.inputs)
     const inputLabelWidths: Record<string, number> = {}
+
+    const nodeType = getNodeTypeForTemplate(nodeTemplate)
+
+    const nodeLabelWidth = nodeType === 'cluster' ? DIMENSIONS.CLUSTER_PREVIEW_WIDTH : DIMENSIONS.NODE_LABEL_WIDTH
 
     for (const [instanceId, orderIndex] of inputs) {
         const portTemplate = nodeTemplate.inputs[orderIndex] ?? getFallbackPortTemplate(nodeTemplate, 'input', orderIndex)
@@ -42,17 +47,16 @@ export const getNodeWidth = (
         outputLabelWidths[instanceId] = labelWidth
     }
 
-    const outputLabelColumnWidth =
-        outputs.length > 0 ? Math.max(...Object.values(outputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH) : 0
+    const outputLabelColumnWidth = Math.max(...Object.values(outputLabelWidths), DIMENSIONS.NODE_PORT_MINIMUM_WIDTH)
 
     // Calculate overall width
     const nodeWidth =
-        outputs.length > 0
+        outputs.length > 0 || nodeType === 'cluster'
             ? [
                 DIMENSIONS.NODE_INTERNAL_PADDING,
                 inputLabelColumnWidth,
                 DIMENSIONS.NODE_INTERNAL_PADDING,
-                DIMENSIONS.NODE_LABEL_WIDTH,
+                nodeLabelWidth,
                 DIMENSIONS.NODE_INTERNAL_PADDING,
                 outputLabelColumnWidth,
                 DIMENSIONS.NODE_INTERNAL_PADDING,
@@ -61,7 +65,7 @@ export const getNodeWidth = (
                 DIMENSIONS.NODE_INTERNAL_PADDING,
                 inputLabelColumnWidth,
                 DIMENSIONS.NODE_INTERNAL_PADDING,
-                DIMENSIONS.NODE_LABEL_WIDTH,
+                nodeLabelWidth,
                 DIMENSIONS.NODE_NO_OUTPUT_MARGIN,
             ].reduce((sum, n) => sum + n, 0)
 
@@ -70,7 +74,7 @@ export const getNodeWidth = (
         DIMENSIONS.NODE_INTERNAL_PADDING,
         inputLabelColumnWidth,
         DIMENSIONS.NODE_INTERNAL_PADDING,
-        DIMENSIONS.NODE_LABEL_WIDTH / 2,
+        nodeLabelWidth / 2,
     ].reduce((sum, n) => sum + n, 0)
 
     return {

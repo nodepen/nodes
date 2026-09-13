@@ -4,6 +4,7 @@ import { COLORS, DIMENSIONS, KEYS } from '@/constants'
 import { distance, pointAt } from '@/utils/numerics'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { useNumberSliderValuePosition } from '@/utils/node-dimensions/getNumberSliderValueExtents'
 import { AnnotationsUnderlayPortal } from '../AnnotationsUnderlayContainer'
 
@@ -218,7 +219,7 @@ export const Wire = ({
 
         const { dx } = node.anchors['labelDeltaX']
 
-        const nodeTemplate = useStore.getState().templates[node.templateId]
+        const nodeTemplate = tryGetTemplate(node.templateId)
         const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
         switch (nodeType) {

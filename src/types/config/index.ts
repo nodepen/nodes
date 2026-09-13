@@ -1,5 +1,6 @@
 export type { BooleanToggleConfig } from './BooleanToggleConfig'
 export type { ColorSwatchConfig } from './ColorSwatchConfig'
+export type { GenericConfiguration } from './GenericConfiguration'
 export type { GradientConfig, GradientGrip, GradientGripColor } from './GradientConfig'
 export type { NumberSliderConfig } from './NumberSliderConfig'
 export type { PanelConfig } from './PanelConfig'

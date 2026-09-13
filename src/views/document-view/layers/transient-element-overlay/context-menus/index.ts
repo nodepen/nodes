@@ -1,4 +1,5 @@
 export { AddNodeContextMenu } from './add-node-context-menu'
 export { DocumentContextMenu } from './document-context-menu'
+export { DocumentCanvasContextMenu } from './document-canvas-context-menu'
 export { NodeContextMenu } from './node-context-menu'
 export { PortContextMenu } from './port-context-menu'

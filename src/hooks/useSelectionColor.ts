@@ -1,6 +1,7 @@
 import { useStore } from '$'
 import { COLORS } from '@/constants'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 
 type SelectionColorData = {
     sessionColor: string
@@ -8,7 +9,7 @@ type SelectionColorData = {
 }
 
 export const useSelectionColor = (nodeInstanceId: string): SelectionColorData => {
-    const nodeType = getNodeTypeForTemplate(useStore.getState().templates[useStore.getState().document.nodes[nodeInstanceId]?.templateId])
+    const nodeType = getNodeTypeForTemplate(tryGetTemplate(useStore.getState().document.nodes[nodeInstanceId]?.templateId))
 
     const presenceColor = useStore((state) => {
         let color: string | null = null

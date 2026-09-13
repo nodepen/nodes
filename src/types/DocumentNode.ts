@@ -1,6 +1,7 @@
 import type { ValueListConfig } from './config'
 import type { BooleanToggleConfig } from './config/BooleanToggleConfig'
 import type { ColorSwatchConfig } from './config/ColorSwatchConfig'
+import type { GenericConfiguration } from './config/GenericConfiguration'
 import type { GradientConfig } from './config/GradientConfig'
 import type { NumberSliderConfig } from './config/NumberSliderConfig'
 import type { PanelConfig } from './config/PanelConfig'
@@ -68,6 +69,7 @@ export type DocumentNode = {
     | BooleanToggleConfig
     | ColorSwatchConfig
     | GradientConfig
+    | GenericConfiguration
     portConfigurations: {
         [portInstanceId: string]: PortConfiguration
     }

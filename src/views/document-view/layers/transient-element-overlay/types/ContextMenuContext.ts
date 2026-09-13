@@ -3,6 +3,7 @@ import type * as NodePen from '@/types'
 export type ContextMenuContext =
     | AddNodeContextMenu
     | DocumentContextMenuContext
+    | DocumentCanvasContextMenuContext
     | CanvasContextMenuContext
     | NodeContextMenuContext
     | PortContextMenuContext
@@ -15,6 +16,7 @@ export type ContextMenuContext =
     | ColorParameterContextMenuContext
     | GradientContextMenuContext
     | GroupContextMenuContext
+    | ClusterContextMenuContext
 
 export type AddNodeContextMenu = {
     type: 'add-node'
@@ -22,6 +24,15 @@ export type AddNodeContextMenu = {
 
 export type DocumentContextMenuContext = {
     type: 'document'
+}
+
+export type DocumentCanvasContextMenuContext = {
+    type: 'document-canvas',
+    // World units
+    position: {
+        x: number
+        y: number
+    }
 }
 
 export type CanvasContextMenuContext = {
@@ -89,4 +100,9 @@ export type GradientContextMenuContext = {
 export type GroupContextMenuContext = {
     type: 'group'
     groupId: string
+}
+
+export type ClusterContextMenuContext = {
+    type: 'cluster'
+    clusterId: string
 }

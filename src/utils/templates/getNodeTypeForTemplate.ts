@@ -4,6 +4,7 @@ import type * as NodePen from '@/types'
 export type NodePenNodeType =
     | 'generic-node'
     | 'generic-parameter'
+    | 'cluster'
     | 'number-slider'
     | 'panel'
     | 'value-list'
@@ -16,6 +17,10 @@ export type NodePenNodeType =
 export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
     if (!template) {
         return 'unknown'
+    }
+
+    if (template.guid === 'cluster') {
+        return 'cluster'
     }
 
     switch (template.category.toLowerCase()) {

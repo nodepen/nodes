@@ -7,9 +7,8 @@ export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { 
 
     return useStore((state) => {
         const node = state.document.nodes[nodeInstanceId]
-        const template = node ? state.templates[node.templateId] : undefined
 
-        if (!node || !template) {
+        if (!node) {
             return {
                 defaultLabel: '',
                 currentLabel: '',
@@ -18,13 +17,25 @@ export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { 
             }
         }
 
+        const customLabel = node.portConfigurations[portInstanceId]?.label
+        const customDescription = node.portConfigurations[portInstanceId]?.description
+
+        const template = state.templates[node.templateId]
+
+        // i.e. clusters with templateId 'cluster'
+        if (!template) {
+            return {
+                defaultLabel: '',
+                currentLabel: customLabel ?? '',
+                defaultDescription: '',
+                currentDescription: customDescription ?? ''
+            }
+        }
+
         const nodeType = getNodeTypeForTemplate(template)
 
         const defaultLabel = nodeType === 'generic-parameter' ? template.name : portTemplate?.name ?? template.name
         const defaultDescription = portTemplate?.description ?? template.description
-
-        const customLabel = node.portConfigurations[portInstanceId]?.label
-        const customDescription = node.portConfigurations[portInstanceId]?.description
 
         return {
             defaultLabel,

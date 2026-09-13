@@ -7,6 +7,7 @@ import { distance } from '@/utils/numerics'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
 import { current } from 'immer'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { useRightClick } from '@/hooks/useRightClick'
 
 type CameraControlProps = {
     children?: React.ReactNode
@@ -424,6 +425,34 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     const handleContextMenu = (e: React.MouseEvent<HTMLDivElement>): void => {
         e.preventDefault()
     }
+
+    const handleRightClick = useCallback((e: PointerEvent) => {
+        if (!isEditable) {
+            return
+        }
+
+        if (Object.keys(useStore.getState().registry.contextMenus).length > 0) {
+            // Someone else got there first ):
+            return
+        }
+
+        const { pageX, pageY } = e
+
+        const [sx, sy] = pageSpaceToOverlaySpace(pageX, pageY)
+        const [x, y] = pageSpaceToWorldSpace(pageX, pageY)
+
+        apply((state) => {
+            state.registry.contextMenus['document-menu'] = {
+                position: { x: sx, y: sy },
+                context: {
+                    type: 'document-canvas',
+                    position: { x, y },
+                },
+            }
+        })
+    }, [])
+
+    useRightClick(handleRightClick, false, cameraControlOverlayRef)
 
     const handleDoubleClick = (e: React.MouseEvent<HTMLDivElement>): void => {
         if (lastPointerType.current !== 'mouse') {

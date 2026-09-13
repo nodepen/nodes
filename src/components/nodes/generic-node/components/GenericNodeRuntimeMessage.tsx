@@ -8,7 +8,7 @@ import { WiresMaskPortal } from '@/components/annotations/wire/components'
 import { Dialog } from '@/views/components'
 import { useNodeInternalState } from '../../context/node-state'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { useDispatch, useStore } from '@/store'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 
 type GenericNodeRuntimeMessageProps = {
     node: DocumentNode
@@ -18,7 +18,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
     const { position } = useNodeInternalState()
 
     const nodeType = useMemo(() => {
-        return getNodeTypeForTemplate(useStore.getState().templates[node.templateId])
+        return getNodeTypeForTemplate(tryGetTemplate(node.templateId))
     }, [node.templateId])
 
     const instanceId = node?.instanceId ?? ''

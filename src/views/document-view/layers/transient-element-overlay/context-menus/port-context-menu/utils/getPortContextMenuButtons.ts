@@ -1,4 +1,5 @@
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import type { PortContextMenuContext } from '../../../types'
 import { useStore } from '$'
 import { PARAMS } from '@/constants'
@@ -19,7 +20,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
     const { __direction: direction, typeName } = portTemplate
 
     const node = useStore.getState().document.nodes[nodeInstanceId]
-    const nodeType = getNodeTypeForTemplate(node ? useStore.getState().templates[node.templateId] : undefined)
+    const nodeType = getNodeTypeForTemplate(tryGetTemplate(node.templateId))
 
     const supportedPrimitiveTypeNames: readonly string[] = PARAMS.PRIMITIVE
     const supportedGeometricTypeNames: readonly string[] = PARAMS.GEOMETRY
