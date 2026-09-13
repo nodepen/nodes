@@ -11,7 +11,8 @@
         "subcategory": "Primitive",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "3e8ca6be-fda8-4aaf-b5c0-3c54c8bb7312",
@@ -25,7 +26,8 @@
         "subcategory": "Primitive",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "3ede854e-c753-40eb-84cb-b48008f14fd4",
@@ -39,7 +41,8 @@
         "subcategory": "Primitive",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "cb95db89-6165-43b6-9c41-5702bc5bf137",
@@ -53,7 +56,8 @@
         "subcategory": "Primitive",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "fbac3e32-f100-4292-8692-77240a42fd1a",
@@ -67,7 +71,8 @@
         "subcategory": "Geometry",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "8529dbdf-9b6f-42e9-8e1f-c7a2bde56a70",
@@ -81,7 +86,8 @@
         "subcategory": "Geometry",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "919e146f-30ae-4aae-be34-4d72f555e7da",
@@ -95,7 +101,8 @@
         "subcategory": "Geometry",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "1e936df3-0eea-4246-8549-514cb8862b7a",
@@ -109,7 +116,8 @@
         "subcategory": "Geometry",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "d1028c72-ff86-4057-9eb0-36c687a4d98c",
@@ -123,7 +131,8 @@
         "subcategory": "Geometry",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "d5967b9f-e8ee-436b-a8ad-29fdcecf32d5",
@@ -137,7 +146,8 @@
         "subcategory": "Geometry",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "deaf8653-5528-4286-807c-3de8b8dad781",
@@ -151,7 +161,8 @@
         "subcategory": "Geometry",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "57da07bd-ecab-415d-9d86-af36d7073abc",
@@ -165,7 +176,8 @@
         "subcategory": "Input",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "59e0b89a-e487-49f8-bab8-b5bab16be14c",
@@ -179,7 +191,8 @@
         "subcategory": "Input",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "00027467-0d24-4fa7-b178-8dc0ac5f42ec",
@@ -193,7 +206,8 @@
         "subcategory": "Input",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "e64c5fb1-845c-4ab1-8911-5f338516ba67",
@@ -249,7 +263,8 @@
                 "keywords": [],
                 "isOptional": false
             }
-        ]
+        ],
+        "toggles": []
     },
     {
         "guid": "2e78987b-9dfb-42a2-8b76-3923ac8bd91a",
@@ -263,7 +278,8 @@
         "subcategory": "Input",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "9c53bac0-ba66-40bd-8154-ce9829b9db1a",
@@ -277,7 +293,8 @@
         "subcategory": "Input",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "203a91c3-287a-43b6-a9c5-ebb96240a650",
@@ -291,7 +308,8 @@
         "subcategory": "Primitive",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "b6236720-8d88-4289-93c3-ac4c99f9b97b",
@@ -304,7 +322,8 @@
         "subcategory": "Util",
         "isObsolete": false,
         "inputs": [],
-        "outputs": []
+        "outputs": [],
+        "toggles": []
     },
     {
         "guid": "16ef3e75-e315-4899-b531-d3166b42dac9",

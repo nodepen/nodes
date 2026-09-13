@@ -1,6 +1,5 @@
 import React from 'react'
 import { useStore } from '$'
-import { shallow } from 'zustand/shallow'
 
 import { GenericNode } from './generic-node'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'

@@ -1,13 +1,12 @@
 import type { NodesAppState, PortMutationContext } from './state'
 import { freeze, current } from 'immer'
 import type * as NodePen from '@/types'
-import { shallow } from 'zustand/shallow'
 import { useStore } from '$'
 import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { expireSolution, resetNodePlacement, pruneDocumentReferences, getNodesIncludedInDrag, addDocumentNode, removeDocumentNode, setDocumentNodes } from './utils'
+import { expireSolution, resetNodePlacement, pruneDocumentReferences, getNodesIncludedInDrag, addDocumentNode, removeDocumentNode, setDocumentNodes, commitCameraAnchor } from './utils'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
@@ -346,19 +345,25 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 false,
                 'camera/setAspect'
             ),
-        setCameraPosition: (x: number, y: number) =>
+        setCameraPosition: (x: number, y: number) => {
             set(
                 (state) => {
                     state.camera.position = { x, y }
-                    state.callbacks?.onCameraMove?.(current(state))
+                    commitCameraAnchor(state)
                 },
                 false,
                 'camera/setPosition'
-            ),
+            )
+
+            const state = get()
+
+            state.callbacks?.onCameraMove?.(state)
+        },
         setCameraZoom: (zoom: number) =>
             set(
                 (state) => {
                     state.camera.zoom = zoom
+                    commitCameraAnchor(state)
                 },
                 false,
                 'camera/setZoom'
@@ -958,5 +963,5 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 }
 
 export const useDispatch = () => {
-    return useStore((state) => state.dispatch, shallow)
+    return useStore((state) => state.dispatch)
 }

@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { commitCameraAnchor } from '@/store/utils'
 import type * as NodePen from '@/types'
 import { COLORS } from '@/constants'
 import { useDispatch, useStore } from '@/store'
@@ -192,6 +193,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                 x: position.x + dimensions.width / 2,
                 y: -(position.y + dimensions.width / 2)
             }
+            commitCameraAnchor(state)
             state.registry.selection.nodes = [nodeInstanceId]
         })
     }, [])

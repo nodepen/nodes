@@ -42,16 +42,6 @@ export const createInstance = (
     }
 
     switch (getNodeTypeForTemplate(template)) {
-        // A cluster's node has no `NodeTemplate` of its own registered anywhere -- `CLUSTER_TEMPLATE`
-        // is synthetic, built fresh by `createCluster`/`createEmptyCluster` from whatever the wrapped
-        // document's controls are -- but it still needs one generated port per template input/output
-        // for `createCluster`'s `remapClusterPortIds` to rename onto the wrapped document's control
-        // ids. Without a port to rename, `remapClusterPortIds` reads `generatedIdByOrder[control.order]`
-        // as `undefined` and writes `node.sources[controlId] = node.sources[undefined]`, which is
-        // `undefined` too -- silently dropped by `JSON.stringify` on the way to compute, which is what
-        // left `NodePen.Compute.Convert.BuildDefinition` unable to find a `sources` entry for the
-        // control's port and throwing `KeyNotFoundException`. Sharing the `generic-node` case is what
-        // keeps this in sync with it rather than a second, easily-diverging copy of the same loops.
         case 'generic-node':
         case 'cluster': {
             for (const input of templateInputs) {
@@ -94,10 +84,6 @@ export const createInstance = (
             node.dimensions = dimensions
             node.anchors = anchors
 
-            // Cull Duplicates and Bounding Box are the two components /compute knows how to
-            // apply bespoke context-menu options for (see `SUPPORTED_TOGGLE_TEMPLATES`). Their
-            // defaults here match what a fresh Grasshopper instance of each already has -- Cull
-            // Duplicates' `CullMode` starts at "Average", Bounding Box's "Union Box" starts off.
             if (guid === COMPONENTS.CULL_DUPLICATES) {
                 node.nodeConfiguration = {
                     toggles: {

@@ -6,7 +6,6 @@ import { saveDocument } from '@/store/utils/saveDocument'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
 import { targetIsScrolling } from '@/utils/dom/targetIsScrolling'
 import { getProvisionalId } from '@/utils/nodes/getProvisionalId'
-import { current } from 'immer'
 import { useIsEditable } from '@/hooks/useIsEditable'
 
 export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
@@ -121,8 +120,8 @@ export const useDraggableNode = (nodeInstanceId: string): React.RefObject<SVGGEl
                 state.ui.cursor = { x: cx, y: cy }
             },
             (state) => {
-                state.callbacks.onCursorMove?.(current(state))
-                state.callbacks.onDrag?.(current(state))
+                state.callbacks.onCursorMove?.(state)
+                state.callbacks.onDrag?.(state)
             }
         )
 

@@ -2,10 +2,10 @@ import React, { useRef, useEffect, useCallback } from 'react'
 import { rafBatcher, useStore, useStoreRef, useDispatch } from '$'
 import { CAMERA } from '@/constants'
 import { clamp } from '@/utils/numerics'
+import { commitCameraAnchor, handleOverdrawLimit } from '@/store/utils'
 import { usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { distance } from '@/utils/numerics'
 import { targetIsScrollable } from '@/utils/dom/targetIsScrollable'
-import { current } from 'immer'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useRightClick } from '@/hooks/useRightClick'
 
@@ -134,7 +134,7 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                     state.ui.cursor = { x: px, y: py }
                 },
                 (state) => {
-                    state.callbacks?.onCursorMove?.(current(state))
+                    state.callbacks?.onCursorMove?.(state)
                 }
             )
         }
@@ -162,9 +162,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                     rafBatcher.schedule('camera-move',
                         (state) => {
                             state.camera.position = { x: x + dx, y: y + dy }
+                            handleOverdrawLimit(state)
                         },
                         (state) => {
-                            state.callbacks?.onCameraMove?.(current(state))
+                            state.callbacks?.onCameraMove?.(state)
                         }
                     )
                     break
@@ -190,10 +191,12 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                                 x: bx,
                                 y: by
                             }
-
-                            state.callbacks.onCursorMove?.(current(state))
-                            state.callbacks.onSelectionRegionUpdated?.(current(state))
                         })
+
+                        const { callbacks } = useStore.getState()
+
+                        callbacks.onCursorMove?.(useStore.getState())
+                        callbacks.onSelectionRegionUpdated?.(useStore.getState())
 
                         resetLocalState()
                         break
@@ -233,9 +236,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                         rafBatcher.schedule('camera-move',
                             (state) => {
                                 state.camera.position = { x: x + dx, y: y + dy }
+                                handleOverdrawLimit(state)
                             },
                             (state) => {
-                                state.callbacks?.onCameraMove?.(current(state))
+                                state.callbacks?.onCameraMove?.(state)
                             }
                         )
                         break
@@ -268,9 +272,14 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
                                 if (nextZoom !== null) {
                                     state.camera.zoom = nextZoom
                                 }
+                                if (nextZoom === null) {
+                                    handleOverdrawLimit(state)
+                                } else {
+                                    commitCameraAnchor(state)
+                                }
                             },
                             (state) => {
-                                state.callbacks?.onCameraMove?.(current(state))
+                                state.callbacks?.onCameraMove?.(state)
                             }
                         )
 
@@ -284,9 +293,19 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
     }
 
     const resetLocalState = useCallback(() => {
+        const wasPanActive = isPanActive.current
+
         activePointerId.current = undefined
         isPanActive.current = false
         isRegionSelectActive.current = false
+
+        if (wasPanActive) {
+            // Redraw around where the camera actually ended up, so the scene is not left holding a
+            // transform between gestures.
+            rafBatcher.schedule('camera-anchor', (state) => {
+                commitCameraAnchor(state)
+            })
+        }
     }, [])
 
     const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>): void => {
@@ -308,6 +327,12 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
 
                 if (activeTouches.current.size < 2) {
                     previousPinch.current = null;
+                }
+
+                if (activeTouches.current.size === 0) {
+                    rafBatcher.schedule('camera-anchor', (state) => {
+                        commitCameraAnchor(state)
+                    })
                 }
 
                 if (activeTouches.current.size === 1) {
@@ -355,6 +380,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
             case 'pen':
             case 'touch': {
                 activeTouches.current.clear()
+                previousPinch.current = null
+                rafBatcher.schedule('camera-anchor', (state) => {
+                    commitCameraAnchor(state)
+                })
                 break
             }
         }
@@ -401,9 +430,10 @@ const CameraOverlay = ({ children }: CameraControlProps): React.ReactElement => 
             (state) => {
                 state.camera.zoom = nextZoom
                 state.camera.position = { x: cameraWorldX + transform.x, y: cameraWorldY + transform.y }
+                commitCameraAnchor(state)
             },
             (state) => {
-                state.callbacks?.onCameraMove?.(current(state))
+                state.callbacks?.onCameraMove?.(state)
             }
         )
     }

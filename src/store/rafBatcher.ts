@@ -26,10 +26,13 @@ const flush = (): void => {
         for (const entry of entries) {
             entry.update(state)
         }
-        for (const entry of entries) {
-            entry.after?.(state)
-        }
     })
+
+    const state = useStore.getState()
+
+    for (const entry of entries) {
+        entry.after?.(state)
+    }
 }
 
 // Batch operations by key, replacing calls within a frame

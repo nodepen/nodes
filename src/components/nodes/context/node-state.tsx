@@ -1,6 +1,6 @@
 import { lerpPoint2d, useInterpolatedState } from "@/hooks/useInterpolatedState";
 import { useDispatch, useStore } from "@/store";
-import React, { useEffect } from "react"
+import React, { useEffect, useMemo } from "react"
 import type * as NodePen from '@/types'
 
 export type NodeInternalState = {
@@ -9,6 +9,8 @@ export type NodeInternalState = {
         y: number
     };
 }
+
+const ORIGIN = { x: 0, y: 0 }
 
 const NodeInternalStateContext = React.createContext<NodeInternalState | undefined>(undefined)
 
@@ -128,5 +130,7 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
         })
     }, [node, node?.position?.x, node?.position?.y])
 
-    return { position: internalPosition ?? (latestPresencePosition && presencePosition) ?? node?.position ?? { x: 0, y: 0 } }
+    const position = internalPosition ?? (latestPresencePosition && presencePosition) ?? node?.position ?? ORIGIN
+
+    return useMemo(() => ({ position: { x: position.x, y: position.y } }), [position.x, position.y])
 }

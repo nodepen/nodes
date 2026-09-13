@@ -289,8 +289,8 @@ const useDraggableGroup = (groupId: string): React.RefObject<SVGGElement | null>
                 state.ui.cursor = { x: cx, y: cy }
             },
             (state) => {
-                state.callbacks.onCursorMove?.(current(state))
-                state.callbacks.onDrag?.(current(state))
+                state.callbacks.onCursorMove?.(state)
+                state.callbacks.onDrag?.(state)
             }
         )
     }, [])

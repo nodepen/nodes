@@ -1,7 +1,6 @@
 import React, { useCallback, useState, useTransition, useRef, useEffect, useMemo } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
-import { shallow } from 'zustand/shallow'
 import type { ContextMenu } from '../../types'
 import { clamp } from '@/utils/numerics'
 import { createInstance, getIconAsImage } from '@/utils/templates'
@@ -35,7 +34,8 @@ type SearchOption =
     }
 
 export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMenuProps) => {
-    const templates = useStore((state) => Object.values(state.templates), shallow)
+    const templateLibrary = useStore((state) => state.templates)
+    const templates = useMemo(() => Object.values(templateLibrary), [templateLibrary])
     const preferences = useStore((state) => state.ui.preferences)
     const { apply } = useDispatch()
 

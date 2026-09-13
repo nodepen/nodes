@@ -1,7 +1,6 @@
 import React, { useCallback, useEffect, useRef } from 'react'
 import { rafBatcher, useDispatch, useStore } from '$'
 import { usePageSpaceToWorldSpace } from '@/hooks'
-import { current } from 'immer'
 
 const SelectionRegionOverlay = () => {
     const { commitRegionSelection } = useDispatch()
@@ -47,8 +46,8 @@ const SelectionRegionOverlay = () => {
                             state.ui.cursor = { x, y }
                         },
                         (state) => {
-                            state.callbacks.onCursorMove?.(current(state))
-                            state.callbacks.onSelectionRegionUpdated?.(current(state))
+                            state.callbacks.onCursorMove?.(state)
+                            state.callbacks.onSelectionRegionUpdated?.(state)
                         }
                     )
                 }

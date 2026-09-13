@@ -34,6 +34,19 @@ export type NodesAppState = {
             x: number
             y: number
         }
+        /**
+         * camera position the currently rendered `viewBox` was computed for.
+         * @see `getCameraTranslation` and `commitCameraAnchor` in `@/store/utils/camera`.
+         */
+        anchor: {
+            x: number
+            y: number
+        }
+        /** dimensions of the container div in screen space */
+        viewport: {
+            width: number
+            height: number
+        }
         /** ratio of screen space pixel to graph space unit */
         zoom: number
     }
@@ -338,6 +351,14 @@ export const initialState: NodesAppState = {
         position: {
             x: 0,
             y: 0,
+        },
+        anchor: {
+            x: 0,
+            y: 0,
+        },
+        viewport: {
+            width: 1920,
+            height: 1080,
         },
         zoom: 1
     },

@@ -3,18 +3,24 @@ import { useCameraProps, useGlobalHotkeys } from './hooks'
 import { CameraOverlay } from './layers'
 import { AnnotationsOverlayContainer, AnnotationsUnderlayContainer, NodesContainer } from '@/components'
 
-export const DocumentViewContent = () => {
-    const cameraProps = useCameraProps()
+const DocumentViewCanvas = React.memo(function DocumentViewCanvas() {
+    const { extents: _extents, ...cameraProps } = useCameraProps()
 
+    return (
+        <svg {...cameraProps} className="np-overflow-hidden np-pointer-events-none">
+            <AnnotationsUnderlayContainer />
+            <NodesContainer />
+            <AnnotationsOverlayContainer />
+        </svg>
+    )
+})
+
+export const DocumentViewContent = () => {
     useGlobalHotkeys()
 
     return (
         <CameraOverlay>
-            <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none">
-                <AnnotationsUnderlayContainer />
-                <NodesContainer />
-                <AnnotationsOverlayContainer />
-            </svg>
+            <DocumentViewCanvas />
         </CameraOverlay>
     )
 }

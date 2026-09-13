@@ -5,8 +5,14 @@ import { useCameraProps } from '../../hooks'
 
 type GridDetailLevel = 'low' | 'medium' | 'high'
 
+const GRID_PATTERN_ID = 'np-grid-pattern'
+
+const GRID_LINE_WIDTH = 1.1
+
 const CanvasGridUnderlay = (): React.ReactElement | null => {
     const cameraProps = useCameraProps()
+
+    const zoom = useStore((state) => state.camera.zoom)
 
     const [detailLevel, setDetailLevel] = useState<GridDetailLevel>('medium')
 
@@ -63,33 +69,22 @@ const CanvasGridUnderlay = (): React.ReactElement | null => {
         }
     }
 
-    const GRID_SPACING = getGridSpacing(detailLevel)
-    const GRID_COUNT = getGridCount(detailLevel)
-
-    const lineProps: Partial<React.SVGProps<SVGLineElement>> = {
-        fill: 'none',
-        stroke: COLORS.GREEN,
-        strokeWidth: '0.3mm',
-        vectorEffect: 'non-scaling-stroke',
-    }
+    const spacing = getGridSpacing(detailLevel)
+    const extent = (spacing * getGridCount(detailLevel)) + GRID_LINE_WIDTH
 
     return (
-        <svg {...cameraProps} className="np-overflow-visible np-pointer-events-none np-bg-pale np-rounded-md">
-            <g id="np-grid">
-                {Array(GRID_COUNT + 1)
-                    .fill('')
-                    .map((_, i) => {
-                        const n = i * GRID_SPACING
-                        const extent = GRID_SPACING * GRID_COUNT
-
-                        return (
-                            <React.Fragment key={`grid-position-${i}`}>
-                                <line {...lineProps} x1={n} y1={0} x2={n} y2={extent} />
-                                <line {...lineProps} x1={0} y1={n} x2={extent} y2={n} />
-                            </React.Fragment>
-                        )
-                    })}
-            </g>
+        <svg {...cameraProps} className="np-overflow-hidden np-pointer-events-none np-bg-pale np-rounded-md">
+            <defs>
+                <pattern id={GRID_PATTERN_ID} width={spacing} height={spacing} patternUnits="userSpaceOnUse">
+                    <path
+                        d={`M ${spacing} 0 L 0 0 0 ${spacing}`}
+                        fill="none"
+                        stroke={COLORS.GREEN}
+                        strokeWidth={GRID_LINE_WIDTH / zoom}
+                    />
+                </pattern>
+            </defs>
+            <rect x={0} y={0} width={extent} height={extent} fill={`url(#${GRID_PATTERN_ID})`} />
         </svg>
     )
 }

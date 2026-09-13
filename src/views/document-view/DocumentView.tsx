@@ -5,6 +5,7 @@ import { TransientElementOverlay, CanvasGridUnderlay, NodePlacementOverlay, Sele
 import { DocumentViewContent } from './DocumentViewContent'
 import { PresenceOverlay } from './layers/presence-overlay'
 import { useFlag } from '@/hooks/useFlag'
+import { useCameraViewport } from './hooks'
 import DocumentViewErrorBoundary from './DocumentViewErrorBoundary'
 
 const DocumentView = (): React.ReactElement | null => {
@@ -13,6 +14,8 @@ const DocumentView = (): React.ReactElement | null => {
     const currentDocument = useStore((state) => state.document)
 
     const { setCameraPosition } = useDispatch()
+
+    useCameraViewport()
 
     useEffect(() => {
         const canvas = canvasRootRef.current

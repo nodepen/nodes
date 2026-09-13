@@ -11,6 +11,7 @@ export const CAMERA = {
     MAXIMUM_ZOOM: 4,
     ZOOM_BREAKPOINT_NEAR: 2.5,
     ZOOM_BREAKPOINT_FAR: 0.75,
+    OVERDRAW: 0.5,
 } as const
 
 export const COLORS = {
