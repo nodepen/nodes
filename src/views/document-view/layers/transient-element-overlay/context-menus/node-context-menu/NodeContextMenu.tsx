@@ -6,7 +6,7 @@ import { MenuBody, MenuButton, MenuDivider, MenuHeader } from '../../common'
 import { getIconAsImage } from '@/utils/templates'
 import { DisableButton, VisibilityButton } from './buttons'
 import { useDispatch, useStore } from '$'
-import { STYLES, SUPPORTED_TOGGLE_TEMPLATES } from '@/constants'
+import { STYLES } from '@/constants'
 import { expireSolution } from '@/store/utils'
 
 type NodeContextMenuProps = {
@@ -16,7 +16,7 @@ type NodeContextMenuProps = {
 
 export const NodeContextMenu = ({ position, context }: NodeContextMenuProps) => {
     const { nodeInstanceId, nodeTemplate } = context
-    const { guid, name, toggles } = nodeTemplate
+    const { name, toggles } = nodeTemplate
 
     const { apply, clearInterface } = useDispatch()
 
@@ -24,8 +24,7 @@ export const NodeContextMenu = ({ position, context }: NodeContextMenuProps) => 
         (state) => state.document.nodes[nodeInstanceId]?.nodeConfiguration
     ) as NodePen.GenericConfiguration | undefined
 
-    // TODO: Support them all in solver
-    const showToggles = SUPPORTED_TOGGLE_TEMPLATES.includes(guid) && toggles.length > 0
+    const showToggles = toggles.length > 0
 
     const handleSelectToggle = useCallback((group: NodePen.NodeToggle, value: string) => {
         apply((state) => {

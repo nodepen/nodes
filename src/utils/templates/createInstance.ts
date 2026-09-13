@@ -2,7 +2,8 @@ import type * as NodePen from '@/types'
 import { newGuid } from '../common'
 import { getNodeDimensions } from '../node-dimensions'
 import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
-import { COMPONENTS, DIMENSIONS } from '@/constants'
+import { getToggleDefaults } from './getToggleDefaults'
+import { DIMENSIONS } from '@/constants'
 import { createSingleValue } from '../data-trees/createSingleValue'
 import { createEmptyTree } from '../data-trees/createEmptyTree'
 
@@ -84,20 +85,10 @@ export const createInstance = (
             node.dimensions = dimensions
             node.anchors = anchors
 
-            if (guid === COMPONENTS.CULL_DUPLICATES) {
-                node.nodeConfiguration = {
-                    toggles: {
-                        'leave-one': false,
-                        'cull-all': false,
-                        'average': true,
-                    },
-                } as NodePen.GenericConfiguration
-            } else if (guid === COMPONENTS.BOUNDING_BOX) {
-                node.nodeConfiguration = {
-                    toggles: {
-                        'union-box': false,
-                    },
-                } as NodePen.GenericConfiguration
+            const toggleDefaults = getToggleDefaults(template)
+
+            if (toggleDefaults) {
+                node.nodeConfiguration = toggleDefaults
             }
 
             break
