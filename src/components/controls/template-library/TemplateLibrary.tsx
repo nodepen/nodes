@@ -11,6 +11,11 @@ export const TemplateLibrary = () => {
 
         for (const template of Object.values(state.templates)) {
             library[template.category] ??= {}
+
+            if (template.isHidden) {
+                continue
+            }
+
             library[template.category][template.subcategory] ??= []
             library[template.category][template.subcategory].push(template)
         }

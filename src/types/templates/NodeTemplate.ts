@@ -11,6 +11,7 @@ export type NodeTemplate = {
     category: string
     subcategory: string
     isObsolete: boolean
+    isHidden: boolean
     inputs: PortTemplate[]
     outputs: PortTemplate[]
     toggles: NodeToggle[]

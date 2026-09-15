@@ -35,7 +35,7 @@ type SearchOption =
 
 export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMenuProps) => {
     const templateLibrary = useStore((state) => state.templates)
-    const templates = useMemo(() => Object.values(templateLibrary), [templateLibrary])
+    const templates = useMemo(() => Object.values(templateLibrary).filter((template) => !template.isHidden), [templateLibrary])
     const preferences = useStore((state) => state.ui.preferences)
     const { apply } = useDispatch()
 
