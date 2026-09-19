@@ -376,7 +376,7 @@ const Group = ({ id }: GroupProps) => {
         })
     }, [isEditable, pageSpaceToOverlaySpace, id])
 
-    const rightClickRef = useRightClick(handleRightClick, true)
+    const rightClickRef = useRightClick<SVGGElement>(handleRightClick, true)
 
     const groupColor = useStore((state) => state.document.groups[id]?.color)
     const isSelected = useStore((state) => state.registry.selection.groups.includes(id))

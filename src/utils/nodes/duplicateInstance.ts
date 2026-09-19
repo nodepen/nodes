@@ -1,5 +1,8 @@
 import type * as NodePen from '@/types'
 import { newGuid } from '../common'
+import { CLUSTER_TEMPLATE } from '../clusters/clusterTemplate'
+import { getNodeTypeForTemplate } from '../templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '../templates/tryGetTemplate'
 
 type DuplicateInfo = {
     instance: NodePen.DocumentNode
@@ -30,13 +33,18 @@ export const duplicateInstance = (node: NodePen.DocumentNode): DuplicateInfo => 
     const newInstance = structuredClone(node)
     const newInstanceId = newGuid()
 
+    const nodeType = getNodeTypeForTemplate(tryGetTemplate(node.templateId))
+
     // Mutate top level instance id
     newInstance.instanceId = newInstanceId
     instanceIds[node.instanceId] = newInstanceId
 
+    // Port ids on clusters map to static document input/output control ids
+    const preservePortInstanceIds = nodeType === 'cluster'
+
     // Remap input instance ids
     for (const id of Object.keys(newInstance.inputs)) {
-        if (id === 'input') {
+        if (id === 'input' || preservePortInstanceIds) {
             continue
         }
 
@@ -48,7 +56,7 @@ export const duplicateInstance = (node: NodePen.DocumentNode): DuplicateInfo => 
 
     // Remap output instance ids
     for (const id of Object.keys(newInstance.outputs)) {
-        if (id === 'output') {
+        if (id === 'output' || preservePortInstanceIds) {
             continue
         }
 
@@ -80,7 +88,8 @@ export const duplicateInstance = (node: NodePen.DocumentNode): DuplicateInfo => 
         inputs: () => { },
         outputs: () => { },
         nodeConfiguration: () => { },
-        portConfigurations: () => swapAll(newInstance.portConfigurations)
+        portConfigurations: () => swapAll(newInstance.portConfigurations),
+        internalState: () => { },
     }
 
     for (const fn of Object.values(remapFn)) {

@@ -18,7 +18,7 @@ type ClusterLabelProps = {
 export const ClusterLabel = ({ node }: ClusterLabelProps) => {
     const { position } = useNodeInternalState()
 
-    const cluster = useStore((store) => getClusterByNodeInstanceId(store.document, node.instanceId)?.cluster ?? null)
+    const cluster = useStore((store) => getClusterByNodeInstanceId(store.document, node.instanceId))
 
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height

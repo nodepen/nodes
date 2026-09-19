@@ -1,4 +1,5 @@
 export type DocumentCluster = {
+    instanceId: string
     // A null ref means a new or unset cluster in the document
     ref: {
         documentId: string

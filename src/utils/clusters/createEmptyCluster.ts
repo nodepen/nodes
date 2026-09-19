@@ -1,6 +1,7 @@
 import type * as NodePen from '@/types'
 import { getNodeDimensions } from '../node-dimensions'
 import { createInstance } from '../templates'
+import { newGuid } from '../common'
 import { CLUSTER_TEMPLATE } from './clusterTemplate'
 
 // New cluster with null ref
@@ -26,6 +27,7 @@ export const createEmptyCluster = (): { cluster: NodePen.DocumentCluster; node: 
 
     return {
         cluster: {
+            instanceId: newGuid(),
             ref: null,
             meta: null,
             nodeInstanceId: node.instanceId

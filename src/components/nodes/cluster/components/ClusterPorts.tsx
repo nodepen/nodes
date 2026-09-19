@@ -25,7 +25,7 @@ export const ClusterPorts = ({ node }: ClusterPortsProps) => {
                         nodeInstanceId={id}
                         portInstanceId={inputPortInstanceId}
                         template={template}
-                        nodeType="generic-node"
+                        nodeType="cluster"
                     />
                 )
             })}
@@ -42,7 +42,7 @@ export const ClusterPorts = ({ node }: ClusterPortsProps) => {
                         nodeInstanceId={id}
                         portInstanceId={outputPortInstanceId}
                         template={template}
-                        nodeType="generic-node"
+                        nodeType="cluster"
                     />
                 )
             })}

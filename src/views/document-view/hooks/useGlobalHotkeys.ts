@@ -3,7 +3,6 @@ import { useDispatch } from '@/store'
 import { expireSolution, removeDocumentNode } from '@/store/utils'
 import { useCallback, useRef } from 'react'
 import { useStore } from '$'
-import { current } from 'immer'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { saveDocument } from '@/store/utils/saveDocument'
@@ -12,6 +11,7 @@ import { useIsEditable } from '@/hooks/useIsEditable'
 import { newGuid } from '@/utils/common'
 import { COLORS } from '@/constants'
 import { getClusterByNodeInstanceId } from '@/utils/clusters/getClusterForNode'
+import { copySelectionToClipboard } from '@/store/utils/clipboard'
 
 export const useGlobalHotkeys = () => {
     const {
@@ -60,7 +60,7 @@ export const useGlobalHotkeys = () => {
                 apply((state) => {
                     const selection: string[] = []
                     for (const node of Object.values(state.document.nodes)) {
-                        const template = state.templates[node.templateId]
+                        const template = tryGetTemplate(node.templateId)
 
                         if (getNodeTypeForTemplate(template) === 'unknown') {
                             console.log(`🐍 Could not select unknown node`)
@@ -115,7 +115,7 @@ export const useGlobalHotkeys = () => {
                             const cluster = getClusterByNodeInstanceId(state.document, id)
 
                             if (cluster) {
-                                delete state.document.clusters[cluster.clusterId]
+                                delete state.document.clusters[cluster.instanceId]
                             }
                         }
 
@@ -167,10 +167,7 @@ export const useGlobalHotkeys = () => {
                 }
 
                 apply((state) => {
-                    state.clipboard.pasteCount = 0
-                    state.clipboard.nodes = state.registry.selection.nodes
-                        .filter((id) => !!state.document.nodes[id])
-                        .map((id) => current(state.document.nodes[id]))
+                    copySelectionToClipboard(state)
                 })
 
                 break

@@ -4,6 +4,9 @@ import { expireSolution } from './expireSolution';
 import { addDocumentNode } from './documentNodes';
 import { current } from 'immer';
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance';
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate';
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate';
+import { getClusterByNodeInstanceId } from '@/utils/clusters/getClusterForNode';
 
 type PasteConfig = {
     dx: number
@@ -26,6 +29,28 @@ export const commitPaste = (state: NodesAppState, config: PasteConfig): void => 
         const { instance, instanceIds } = duplicateInstance(node)
         newInstances.push(instance)
         Object.assign(newInstanceIdMap, instanceIds)
+    }
+
+    // Recreate cluster side-table entries for pasted cluster nodes
+    for (const node of current(state.clipboard.nodes)) {
+        const nodeType = getNodeTypeForTemplate(tryGetTemplate(node.templateId))
+
+        if (nodeType !== 'cluster') {
+            continue
+        }
+
+        const cluster = getClusterByNodeInstanceId(state.document, node.instanceId)
+
+        if (!cluster) {
+            continue
+        }
+
+        state.document.clusters[newInstanceIdMap[node.instanceId]] = {
+            instanceId: newInstanceIdMap[node.instanceId],
+            ref: cluster.ref,
+            meta: cluster.meta,
+            nodeInstanceId: newInstanceIdMap[node.instanceId]
+        }
     }
 
     // Mutate new instances

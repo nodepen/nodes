@@ -8,7 +8,7 @@ import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { current } from 'immer'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useRightClick } from '@/hooks/useRightClick'
-import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { getNodeTypeForTemplate, type NodePenNodeType } from '@/utils/templates/getNodeTypeForTemplate'
 import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { useStore } from '$'
 
@@ -37,7 +37,13 @@ export const usePort = (
         const node = useStore.getState().document.nodes[nodeInstanceId]
         const nodeType = getNodeTypeForTemplate(node ? tryGetTemplate(node.templateId) : undefined)
 
-        if (nodeType !== 'generic-node' && nodeType !== 'color-gradient') {
+        const supportsContextMenus: NodePenNodeType[] = [
+            'generic-node',
+            'color-gradient',
+            'cluster'
+        ]
+
+        if (supportsContextMenus.includes(nodeType)) {
             return
         }
 

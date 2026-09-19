@@ -4,19 +4,19 @@ import { MenuButton } from '../../../common'
 import { STYLES } from '@/constants'
 
 type ButtonProps = {
-    clusterId: string
+    clusterInstanceId: string
 }
 
-export const ViewClusterButton = ({ clusterId }: ButtonProps) => {
+export const ViewClusterButton = ({ clusterInstanceId }: ButtonProps) => {
     const { clearInterface } = useDispatch()
 
     const handleClick = useCallback(() => {
         const state = useStore.getState()
 
-        state.callbacks.onViewCluster?.(state, { clusterId })
+        state.callbacks.onViewCluster?.(state, { clusterInstanceId })
 
         clearInterface()
-    }, [clusterId])
+    }, [clusterInstanceId])
 
     const icon = (
         <svg {...STYLES.BUTTON.SMALL} strokeWidth={2}>

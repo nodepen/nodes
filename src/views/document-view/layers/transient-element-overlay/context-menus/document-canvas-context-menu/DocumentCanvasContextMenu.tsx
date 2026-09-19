@@ -6,7 +6,6 @@ import { CreateClusterButton, ShowSelectionButton, HideSelectionButton } from '.
 import { useDispatch } from '@/store'
 import { addDocumentNode, expireSolution } from '@/store/utils'
 import { clearMenus } from '@/store/utils/clearMenus'
-import { newGuid } from '@/utils/common'
 import { createEmptyCluster } from '@/utils/clusters'
 import { useFeatureFlag } from '@/hooks/useFeatureFlag'
 
@@ -22,7 +21,6 @@ export const DocumentCanvasContextMenu = ({ position, context }: Props) => {
 
     const handleClick = useCallback(() => {
         const { cluster, node } = createEmptyCluster()
-        const clusterId = newGuid()
 
         apply((state) => {
             const center = context.position
@@ -34,7 +32,7 @@ export const DocumentCanvasContextMenu = ({ position, context }: Props) => {
 
             addDocumentNode(state, node)
 
-            state.document.clusters[clusterId] = cluster
+            state.document.clusters[cluster.instanceId] = cluster
 
             clearMenus(state)
 

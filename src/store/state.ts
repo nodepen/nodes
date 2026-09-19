@@ -286,13 +286,11 @@ export type PortMutationContext = {
 }
 
 export type ClusterEditContext = {
-    /** The id of the entry in `document.clusters` being edited -- not a node instance id. */
-    clusterId: string
+    clusterInstanceId: string
 }
 
 export type ClusterViewContext = {
-    /** The id of the entry in `document.clusters` being viewed -- not a node instance id. */
-    clusterId: string
+    clusterInstanceId: string
 }
 
 export const initialState: NodesAppState = {
@@ -431,7 +429,7 @@ export const initialState: NodesAppState = {
     },
     clipboard: {
         pasteCount: 0,
-        nodes: []
+        nodes: [],
     },
     registry: {
         documentNodeIds: [],

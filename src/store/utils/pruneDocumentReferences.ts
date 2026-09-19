@@ -10,9 +10,9 @@ export const pruneDocumentReferences = (state: NodesAppState): void => {
     state.registry.selection.nodes = state.registry.selection.nodes.filter((id) => !!nodes[id])
 
     // Clusters
-    for (const [clusterId, cluster] of Object.entries(state.document.clusters ?? {})) {
+    for (const cluster of Object.values(state.document.clusters ?? {})) {
         if (!nodes[cluster.nodeInstanceId]) {
-            delete state.document.clusters[clusterId]
+            delete state.document.clusters[cluster.instanceId]
         }
     }
 

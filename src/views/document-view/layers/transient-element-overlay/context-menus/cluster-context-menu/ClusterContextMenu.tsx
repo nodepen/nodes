@@ -11,17 +11,17 @@ type ClusterContextMenuProps = {
 }
 
 export const ClusterContextMenu = ({ position, context }: ClusterContextMenuProps) => {
-    const { clusterId } = context
+    const { clusterInstanceId } = context
 
-    const hasRef = useStore((state) => state.document.clusters[clusterId]?.ref !== null)
+    const hasRef = useStore((state) => state.document.clusters[clusterInstanceId]?.ref !== null)
 
     return (
         <MenuBody position={position}>
-            <EditClusterButton clusterId={clusterId} />
+            <EditClusterButton clusterInstanceId={clusterInstanceId} />
             {hasRef && (
                 <>
                     <MenuDivider />
-                    <ViewClusterButton clusterId={clusterId} />
+                    <ViewClusterButton clusterInstanceId={clusterInstanceId} />
                 </>
             )}
         </MenuBody>

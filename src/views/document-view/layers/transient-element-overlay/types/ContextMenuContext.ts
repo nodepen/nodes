@@ -104,5 +104,5 @@ export type GroupContextMenuContext = {
 
 export type ClusterContextMenuContext = {
     type: 'cluster'
-    clusterId: string
+    clusterInstanceId: string
 }

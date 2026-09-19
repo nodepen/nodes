@@ -4,6 +4,7 @@ import { createInstance } from '../templates'
 import { getNodeTypeForTemplate } from '../templates/getNodeTypeForTemplate'
 import { getPortTemplate } from '../ports/getPortTemplate'
 import { getPortLabel } from '../ports/getPortLabel'
+import { newGuid } from '../common'
 import { CLUSTER_TEMPLATE } from './clusterTemplate'
 
 type ClusterPortMeta = Pick<NodePen.PortConfiguration, 'label' | 'description' | 'typeName'>
@@ -124,6 +125,7 @@ export const createCluster = (
 
     return {
         cluster: {
+            instanceId: newGuid(),
             ref: null,
             meta: null,
             nodeInstanceId: node.instanceId

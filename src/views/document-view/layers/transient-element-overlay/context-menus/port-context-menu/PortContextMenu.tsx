@@ -6,6 +6,7 @@ import { FlattenButton, GraftButton, PinButton, ReparameterizeButton, SetLabelBu
 import { getPortContextMenuButtons } from './utils'
 import { useDispatch, useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { DIMENSIONS } from '@/constants'
 import { clearMenus } from '@/store/utils/clearMenus'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
@@ -74,7 +75,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
         return null
     }
 
-    const nodeTemplate = useStore.getState().templates[node.templateId]
+    const nodeTemplate = tryGetTemplate(node.templateId)
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
     const enableSetLabel = nodeType === 'generic-parameter'
@@ -95,7 +96,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
                 <ZoomToGeometryButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
                 <MenuDivider />
             </>) : null}
-            {nodeType === 'generic-node' ? (
+            {nodeType === 'generic-node' || nodeType === 'cluster' ? (
                 <>
                     <FlattenButton onClick={handleToggleFlag} />
                     <GraftButton onClick={handleToggleFlag} />

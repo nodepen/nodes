@@ -6,6 +6,7 @@ import { DIMENSIONS } from '@/constants'
 import { regionContainsRegion, regionIntersectsRegion } from '@/utils/intersection'
 import { getNodeDimensions, getNodeExtents } from '@/utils/node-dimensions'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { expireSolution, resetNodePlacement, pruneDocumentReferences, getNodesIncludedInDrag, addDocumentNode, removeDocumentNode, setDocumentNodes, commitCameraAnchor } from './utils'
 import { commitPaste } from './utils/commitPaste'
 import { clearClipboard, copySelectionToClipboard } from './utils/clipboard'
@@ -77,7 +78,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                     state.ui.preferences = preferences
 
                     for (const node of Object.values(state.document.nodes)) {
-                        const template = state.templates[node.templateId]
+                        const template = tryGetTemplate(node.templateId)
 
                         if (!template || getNodeTypeForTemplate(template) !== 'generic-node') {
                             continue
@@ -551,7 +552,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
 
             // Recompute node dimensions based on flag placement
             const node = state.document.nodes[nodeInstanceId]
-            const template = state.templates[node.templateId]
+            const template = tryGetTemplate(node.templateId)
 
             if (!template) {
                 console.log('🐍 Could not find template for node when recomputing dimensions!')
@@ -618,7 +619,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             }
 
             // Recompute node dimensions based on new port placement
-            const template = state.templates[node.templateId]
+            const template = tryGetTemplate(node.templateId)
 
             if (!template) {
                 console.log('🐍 Could not find template for node when recomputing dimensions!')
@@ -700,7 +701,7 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
             }
 
             // Recompute node dimensions based on new port placement
-            const template = state.templates[node.templateId]
+            const template = tryGetTemplate(node.templateId)
 
             if (!template) {
                 console.log('🐍 Could not find template for node when recomputing dimensions!')

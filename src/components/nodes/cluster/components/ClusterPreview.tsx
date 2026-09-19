@@ -15,7 +15,7 @@ export const ClusterPreview = ({ node }: ClusterPreviewProps) => {
     const { position } = useNodeInternalState()
 
     const cluster = useStore((state) => getClusterByNodeInstanceId(state.document, node.instanceId))
-    const previewUrl = cluster?.cluster.meta?.documentThumbnailUrl
+    const previewUrl = cluster?.meta?.documentThumbnailUrl
 
     const { anchors } = node
     const { dx } = anchors['labelDeltaX']

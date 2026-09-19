@@ -21,16 +21,12 @@ export const ClusterBody = ({ node }: ClusterBodyProps) => {
 
     const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
-    const label = useStore((store) => getClusterByNodeInstanceId(store.document, node.instanceId)?.cluster.meta?.documentName ?? 'Cluster')
-
     const { apply } = useDispatch()
 
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
 
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
-
-    const hasOutputs = Object.keys(node.outputs).length > 0
 
     const handleContextMenu = useCallback((e: PointerEvent): void => {
         e.stopPropagation()
@@ -49,7 +45,7 @@ export const ClusterBody = ({ node }: ClusterBodyProps) => {
 
         const { pageX, pageY } = e
 
-        const key = `cluster-context-menu-${found.clusterId}`
+        const key = `cluster-context-menu-${found.instanceId}`
 
         const [x, y] = pageSpaceToOverlaySpace(pageX + 6, pageY + 6)
 
@@ -61,13 +57,13 @@ export const ClusterBody = ({ node }: ClusterBodyProps) => {
                 },
                 context: {
                     type: 'cluster',
-                    clusterId: found.clusterId,
+                    clusterInstanceId: found.instanceId,
                 },
             }
         })
     }, [node.instanceId, isEditable])
 
-    const rightClickRef = useRightClick(handleContextMenu, true)
+    const rightClickRef = useRightClick<SVGGElement>(handleContextMenu, true)
 
     const o = 4
 

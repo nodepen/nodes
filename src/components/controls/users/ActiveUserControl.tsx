@@ -9,7 +9,7 @@ import React, { useCallback, useRef, useState } from "react"
 const ActiveUserControl = () => {
     const documentRef = useDocumentRef()
     const buttonRef = useRef<HTMLDivElement>(null)
-    const user = useStore((state) => state.user)
+    const user = useStore((state) => ({} as any))
     const callbacks = useStore((state) => state.callbacks)
 
     const [arrowAngle, setArrowAngle] = useLerpState(0, 0.2)
