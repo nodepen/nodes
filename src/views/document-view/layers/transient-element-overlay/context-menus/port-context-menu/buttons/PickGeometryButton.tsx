@@ -21,5 +21,7 @@ export const PickGeometryButton = ({ portTemplate, onClick }: PickGeometryButton
         </svg>
     )
 
-    return <MenuButton icon={icon} label={`Pick ${typeName} geometry`} action={handleClick} />
+    const label = typeName === 'geometry' ? 'Pick geometry' : `Pick ${typeName} geometry`
+
+    return <MenuButton icon={icon} label={label} action={handleClick} />
 }

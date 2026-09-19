@@ -268,6 +268,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                     case 'extrusion':
                     case 'brep':
                     case 'box':
+                    case 'geometry':
                         return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isValueEditable} />
                     case 'data': {
                         return <input

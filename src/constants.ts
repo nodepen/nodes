@@ -152,7 +152,8 @@ export const PARAMS = {
         'mesh',
         'surface',
         'extrusion',
-        'brep'
+        'brep',
+        'geometry'
     ] as const
 }
 
