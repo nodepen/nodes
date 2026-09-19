@@ -11,8 +11,9 @@ export type DataTreeValue =
     | {
         readonly type: 'reference'
         readonly description: string
-        readonly order: string
+        readonly order: number
         readonly value?: never
-        readonly sourceFileKey: string // Bucket key
-        readonly sourceFileGuid: string // Guid of geometry in file
+        /** bucket key */
+        readonly sourceFileKey: string
+        readonly sourceFileGuid: string
     }

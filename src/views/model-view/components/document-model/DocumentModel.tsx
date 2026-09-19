@@ -41,10 +41,19 @@ const DocumentModel = ({ modelUrl }: DocumentModel) => {
 
     useEffect(() => {
         if (!modelUrl) {
-            if (useStore.getState().solution.flags.isFailed) {
+            const state = useStore.getState()
+
+            if (state.solution.flags.isFailed) {
                 // Catastrophic failure, clear data
                 setObjectsByDocumentNodeId({})
             }
+
+            // Required to allow thumbnail camera to fire without solution models provided
+            if (state.app.flags.isThumbnail) {
+                const callback = state.callbacks.onThumbnailReady
+                offerThumbnailSubject('solution', new THREE.Box3(), () => callback?.(state))
+            }
+
             return
         }
 

@@ -1,33 +1,34 @@
 import * as THREE from 'three'
 import { useDispatch, useStore } from '@/store'
 import { useLoader, type ThreeEvent } from '@react-three/fiber'
-import React, { act, memo, useCallback, useEffect, useState } from 'react'
+import React, { memo, Suspense, useCallback, useEffect, useMemo, useState } from 'react'
+import { shallow } from 'zustand/shallow'
 import { Rhino3dmLoader } from 'three/addons/loaders/3DMLoader.js'
 import { LINE, MESH } from '../../materials'
 import { DARK, DARKGREY, GREEN } from '../../materials/colors'
 import { isGeometryType } from '@/utils/three/isGeometryType'
+import { registerModelObjects, unregisterModel } from '@/utils/three/referenceIndex'
 import { useThumbnailShutter } from '../../hooks/useThumbnailShutter'
 
+/** All reference models attached to current document. Drawn as background geometry. */
 const ContextModel = () => {
-    const model = useStore((state) => {
-        // One model for now
-        const entry = Object.entries(state.assets.models).at(0)
+    const models = useStore(
+        (state) => state.attachments.reference_model ?? EMPTY_MODELS,
+        shallow
+    )
 
-        if (!entry) {
-            return null
-        }
+    const entries = useMemo(() => Object.entries(models), [models])
 
-        return [entry[0], entry[1]]
-    })
-
-    if (!model) {
-        return null
-    }
-
-    const [modelKey, modelUrl] = model
-
-    return <ContextModelGeometry modelKey={modelKey} modelUrl={modelUrl} />
+    return <>
+        {entries.map(([modelKey, modelUrl]) => (
+            <Suspense key={modelKey} fallback={null}>
+                <ContextModelGeometry modelKey={modelKey} modelUrl={modelUrl} />
+            </Suspense>
+        ))}
+    </>
 }
+
+const EMPTY_MODELS: Record<string, string> = {}
 
 type ContextModelGeometryProps = {
     modelKey: string
@@ -44,7 +45,9 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
     const { apply } = useDispatch()
 
     const modelState = useStore((state) => state.ui.model)
-    const activeSelection = useStore((state) => state.ui.model.selection[modelKey] ?? [])
+    const activeSelection = useStore((state) => state.ui.model.selection[modelKey] ?? EMPTY_SELECTION, shallow)
+
+    const selectedGuids = useMemo(() => new Set(activeSelection), [activeSelection])
 
     const [sceneObjects, setSceneObjects] = useState<THREE.Object3D[]>([])
 
@@ -52,6 +55,7 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
 
     useEffect(() => {
         const objects: THREE.Object3D[] = []
+        const byGuid = new Map<string, THREE.Object3D>()
 
         const bounds = new THREE.Box3()
         const tempBounds = new THREE.Box3()
@@ -85,10 +89,18 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
                 }
             }
 
+            // Rhino guid
+            const guid = object.userData?.attributes?.id
+
+            if (typeof guid === 'string') {
+                byGuid.set(guid, object)
+            }
+
             objects.push(object)
         })
 
         setSceneObjects(objects)
+        registerModelObjects(modelKey, byGuid)
 
         const state = useStore.getState()
 
@@ -97,7 +109,14 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
 
             offerThumbnailSubject('context', bounds, () => callback?.(state))
         }
-    }, [documentObject])
+    }, [documentObject, modelKey])
+
+    // CLean up registry on model dismount
+    useEffect(() => {
+        return () => {
+            unregisterModel(modelKey)
+        }
+    }, [modelKey])
 
     const handleClickGeometry = useCallback((e: ThreeEvent<MouseEvent>, o: THREE.Object3D<THREE.Object3DEventMap>) => {
         e.stopPropagation()
@@ -109,7 +128,6 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
         }
 
         const guid = o.userData?.attributes?.id
-        const type = o.userData?.objectType
 
         switch (modelState.mode) {
             case 'default': {
@@ -160,7 +178,7 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
             const guid = o.userData?.attributes?.id
 
             const isSelectable = modelState.mode === 'select' ? modelState.selectionFilter.some((type) => isGeometryType(o, type)) : true
-            const isSelected = activeSelection.includes(guid)
+            const isSelected = selectedGuids.has(guid)
 
             if (o instanceof THREE.Points) {
                 const color = isSelected ? GREEN : isSelectable ? DARK : DARKGREY
@@ -188,5 +206,7 @@ const ContextModelGeometry = ({ modelKey, modelUrl }: ContextModelGeometryProps)
         })}
     </group>
 }
+
+const EMPTY_SELECTION: string[] = []
 
 export default memo(ContextModel)

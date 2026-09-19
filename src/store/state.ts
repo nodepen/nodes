@@ -25,7 +25,7 @@ export type NodesAppState = {
             model: NodePen.DocumentSolutionStatusMessage
         }
     }
-    assets: NodePen.DocumentAssets
+    attachments: NodePen.DocumentAttachments
     camera: {
         /** container div innerWidth / innerHeight in screen space */
         aspect: number
@@ -243,7 +243,7 @@ export type NodesAppState = {
 export type NodesAppCallbacks = {
     // Document lifecycle
     onSaveDocument?: (state: NodesAppState) => void
-    onModelUpload?: (state: NodesAppState) => void
+    onAttachModels?: (state: NodesAppState) => void
     onUndo?: (state: NodesAppState) => void
     onRedo?: (state: NodesAppState) => void
     onThumbnailReady?: (state: NodesAppState) => void
@@ -331,9 +331,7 @@ export const initialState: NodesAppState = {
             }
         }
     },
-    assets: {
-        models: {}
-    },
+    attachments: {},
     presence: {
         sessionId: '',
         sessions: {},

@@ -9,12 +9,13 @@ import { PseudoShadowsContainer } from './views/common'
 import { StaticDialogLayer } from './views/static/dialog-layer'
 import { DocumentView, ModelView } from './views'
 import { InterfacePanelCallbacksProvider } from './components/layout/panel/InterfacePanelContext'
+import { resetThumbnailShot } from './views/model-view/hooks/useThumbnailShutter'
 
 type NodesAppProps = {
     document: NodePen.Document
     solution: NodePen.DocumentSolutionData | null
     templates: NodePen.NodeTemplate[]
-    assets: NodePen.DocumentAssets
+    attachments: NodePen.DocumentAttachments
     preferences?: NodePen.DocumentPreferences
     presence?: NodePen.DocumentPresence
     flags?: NodePen.AppFlags
@@ -27,7 +28,7 @@ export const NodesApp = ({
     document,
     templates,
     solution,
-    assets,
+    attachments,
     presence,
     preferences,
     flags,
@@ -42,10 +43,12 @@ export const NodesApp = ({
     }, [document])
 
     useEffect(() => {
+        resetThumbnailShot()
+
         apply((state) => {
-            state.assets = assets
+            state.attachments = attachments
         })
-    }, [assets])
+    }, [attachments])
 
     useEffect(() => {
         loadTemplates(templates ?? [])
@@ -75,6 +78,8 @@ export const NodesApp = ({
     }, [features, flags])
 
     useEffect(() => {
+        resetThumbnailShot()
+
         loadSolutionData(solution)
     }, [solution])
 

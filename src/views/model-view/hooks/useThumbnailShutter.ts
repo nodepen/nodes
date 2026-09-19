@@ -36,14 +36,26 @@ type SubjectOffer = {
     signal: () => void
 }
 
-const shot: {
+type ThumbnailShot = {
     /** Set once the solution model has loaded and turned out to have no geometry in it. */
     isSolutionEmpty: boolean
-    /** Held while the solution model is still out, in case it comes back with nothing. */
-    heldContext: SubjectOffer | null
-} = {
+    /** Union of all context models bou ds */
+    currentContext: SubjectOffer | null
+    /** How many context offers have arrived, against how many models are attached. */
+    contextOffers: number
+}
+
+/** The state of the one thumbnail being taken.*/
+const thumbnailShot: ThumbnailShot = {
     isSolutionEmpty: false,
-    heldContext: null,
+    currentContext: null,
+    contextOffers: 0,
+}
+
+export const resetThumbnailShot = (): void => {
+    thumbnailShot.isSolutionEmpty = false
+    thumbnailShot.currentContext = null
+    thumbnailShot.contextOffers = 0
 }
 
 export const useThumbnailShutter = (mountedGeometry: unknown) => {
@@ -107,9 +119,10 @@ export const useThumbnailShutter = (mountedGeometry: unknown) => {
         bounds: THREE.Box3,
         signal: () => void
     ): void => {
-        const { solution, assets } = useStore.getState()
+        const { solution, attachments } = useStore.getState()
 
-        const isContextExpected = Object.keys(assets.models).length > 0
+        const expectedContextCount = Object.keys(attachments.reference_model ?? {}).length
+        const isContextExpected = expectedContextCount > 0
 
         if (subject === 'solution') {
             if (!bounds.isEmpty()) {
@@ -117,10 +130,10 @@ export const useThumbnailShutter = (mountedGeometry: unknown) => {
                 return
             }
 
-            shot.isSolutionEmpty = true
+            thumbnailShot.isSolutionEmpty = true
 
-            if (shot.heldContext) {
-                frameOn(shot.heldContext.bounds, shot.heldContext.signal)
+            if (thumbnailShot.currentContext) {
+                frameOn(thumbnailShot.currentContext.bounds, thumbnailShot.currentContext.signal)
                 return
             }
 
@@ -131,12 +144,29 @@ export const useThumbnailShutter = (mountedGeometry: unknown) => {
             return
         }
 
-        if (!solution.data?.solutionModelUrl || shot.isSolutionEmpty) {
-            frameOn(bounds, signal)
+        thumbnailShot.contextOffers += 1
+
+        const held = thumbnailShot.currentContext
+
+        if (held) {
+            held.bounds.union(bounds)
+        } else {
+            thumbnailShot.currentContext = { bounds: bounds.clone(), signal }
+        }
+
+        const context = thumbnailShot.currentContext!
+
+        const isSolutionComing = !!solution.data?.solutionModelUrl && !thumbnailShot.isSolutionEmpty
+
+        if (isSolutionComing) {
             return
         }
 
-        shot.heldContext = { bounds, signal }
+        if (thumbnailShot.contextOffers < expectedContextCount) {
+            return
+        }
+
+        frameOn(context.bounds, context.signal)
     }, [frameOn])
 
     useEffect(() => {
