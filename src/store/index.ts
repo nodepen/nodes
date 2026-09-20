@@ -5,4 +5,4 @@ export { internalCallbacksRef } from './internalCallbacksRef'
 export { rafBatcher } from './rafBatcher'
 
 export type { NodesAppStore } from './store'
-export type { NodesAppState, NodesAppCallbacks, PortMutationContext, ClusterEditContext } from './state'
+export type { NodesAppState, NodesAppCallbacks, PortMutationContext, ClusterEditContext, ClusterViewContext, ClusterDeleteContext } from './state'

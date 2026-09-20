@@ -1,4 +1,5 @@
 import type { NodesAppState } from '../state'
+import { removeDocumentCluster } from './clusters'
 import { getNodesIncludedInDrag } from './getNodesIncludedInDrag'
 import { resetNodePlacement } from './resetNodePlacement'
 
@@ -10,9 +11,9 @@ export const pruneDocumentReferences = (state: NodesAppState): void => {
     state.registry.selection.nodes = state.registry.selection.nodes.filter((id) => !!nodes[id])
 
     // Clusters
-    for (const cluster of Object.values(state.document.clusters ?? {})) {
+    for (const cluster of [...Object.values(state.document.clusters ?? {})]) {
         if (!nodes[cluster.nodeInstanceId]) {
-            delete state.document.clusters[cluster.instanceId]
+            removeDocumentCluster(state, cluster.instanceId)
         }
     }
 

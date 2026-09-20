@@ -1,7 +1,7 @@
 import type * as NodePen from '@/types'
 import type { NodesAppState } from "../state";
 import { expireSolution } from './expireSolution';
-import { addDocumentNode } from './documentNodes';
+import { addDocumentNode } from './nodes';
 import { current } from 'immer';
 import { duplicateInstance } from '@/utils/nodes/duplicateInstance';
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate';

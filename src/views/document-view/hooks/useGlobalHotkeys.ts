@@ -1,6 +1,6 @@
 import { useDocumentRef, useImperativeEvent } from '@/hooks'
 import { useDispatch } from '@/store'
-import { expireSolution, removeDocumentNode } from '@/store/utils'
+import { expireSolution, removeDocumentCluster, removeDocumentNode } from '@/store/utils'
 import { useCallback, useRef } from 'react'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
@@ -115,7 +115,7 @@ export const useGlobalHotkeys = () => {
                             const cluster = getClusterByNodeInstanceId(state.document, id)
 
                             if (cluster) {
-                                delete state.document.clusters[cluster.instanceId]
+                                removeDocumentCluster(state, cluster.instanceId)
                             }
                         }
 

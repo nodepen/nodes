@@ -277,6 +277,7 @@ export type NodesAppCallbacks = {
     // Clusters
     onEditCluster?: (state: NodesAppState, context: ClusterEditContext) => void,
     onViewCluster?: (state: NodesAppState, context: ClusterViewContext) => void,
+    onDeleteCluster?: (state: NodesAppState, context: ClusterDeleteContext) => void,
 }
 
 export type PortMutationContext = {
@@ -290,6 +291,20 @@ export type ClusterEditContext = {
 }
 
 export type ClusterViewContext = {
+    clusterInstanceId: string
+}
+
+/**
+ * Fired once per cluster as it leaves `document.clusters`, by `removeDocumentCluster` -- which
+ * is the only thing that takes one out, precisely so that this cannot be missed. The state
+ * handed over is the one the cluster has already gone from.
+ *
+ * Unlike `onEditCluster`/`onViewCluster` this is not a request for the host to open something:
+ * it is the only notice the host gets that a reference is over. The document itself is saved by
+ * the ordinary `onSaveDocument` path, so anything the host keeps *beside* the document -- a row
+ * recording which documents this one points at, in /app's case -- has nothing else to go on.
+ */
+export type ClusterDeleteContext = {
     clusterInstanceId: string
 }
 
