@@ -51,7 +51,7 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
                     </svg>
                 </div>
             </div>
-            <p className="np-ml-2 np-flex-grow np-text-[13px] np-text-dark np-font-panel np-leading-tight np-translate-y-px">
+            <p className="np-ml-2 np-flex-grow np-text-[13px] np-text-dark np-font-panel np-font-[800] np-leading-tight np-translate-y-px">
                 Script Controls
             </p>
             <div ref={closeButtonRef} className='np-w-6 np-h-6 np-mr-1.5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleClose}>
@@ -85,10 +85,10 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
                 ))}
             </>) : (
                 <div className='np-w-full np-h-full np-flex np-flex-col np-justify-center np-items-center'>
-                    <p className="np-text-xs np-text-dark np-font-panel">
+                    <p className="np-text-xs np-text-dark np-font-panel np-font-[800]">
                         No controls set.
                     </p>
-                    <p className="np-text-xs np-text-dark np-font-panel">
+                    <p className="np-text-xs np-text-dark np-font-panel np-font-[800]">
                         Try adding a param or number slider!
                     </p>
                 </div>
@@ -99,7 +99,7 @@ export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
                         <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-4'>
                             <path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                         </svg>
-                        <p className='np-ml-1 np-pt-0.5 np-text-dark np-text-sm np-font-panel'>Launch Script</p>
+                        <p className='np-ml-1 np-pt-0.5 np-text-dark np-text-sm np-font-panel np-font-[800]'>Launch Script</p>
                     </div>
                 </div>
             </div>) : null}

@@ -12,10 +12,10 @@ export const GradientEditor = ({ config, onClose }: GradientEditorProps) => {
     return (
         <div className="np-w-80 np-p-0.5">
             <div className="np-w-full np-h-32 np-p-4 np-flex np-flex-col np-items-center np-justify-center np-rounded-md np-border-2 np-border-dashed np-border-dark">
-                <p className="np-text-sm np-text-dark np-font-panel np-text-center">
+                <p className="np-text-sm np-text-dark np-font-panel np-font-[800] np-text-center">
                     Gradient editor not yet implemented.
                 </p>
-                <p className="np-mt-2 np-text-xs np-text-grey-3 np-font-panel np-text-center">
+                <p className="np-mt-2 np-text-xs np-text-grey-3 np-font-panel np-font-[800] np-text-center">
                     {config.grips.length} grip{config.grips.length === 1 ? '' : 's'} · {config.linear ? 'linear' : 'smooth'}
                 </p>
             </div>

@@ -104,7 +104,7 @@ const PresenceOverlayChirpMessage = ({ text }: ChirpProps) => {
     }
 
     return <div className='np-flex np-items-center np-px-2 np-py-1 np-rounded-full np-bg-pale'>
-        <p className='np-text-xs np-text-darkgreen np-font-panel'>{text}</p>
+        <p className='np-text-xs np-text-darkgreen np-font-panel np-font-[800]'>{text}</p>
     </div>
 }
 

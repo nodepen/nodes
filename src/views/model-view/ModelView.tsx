@@ -299,7 +299,7 @@ const ModelView = () => {
                                     <div className="np-w-full np-pl-6 np-pt-7 np-flex np-items-center np-justify-start np-overflow-hidden np-whitespace-nowrap np-transition-all np-duration-[350ms] np-ease-out -np-translate-y-0.5" style={{ marginLeft: `${brandingMarginLeft}px` }}>
                                         <a href="https://selvadev.com" target="_blank" className="np-flex np-items-center np-gap-1.5 np-pl-0.5 np-pr-1 np-py-0.5 np-pointer-events-auto np-rounded-full np-bg-pale hover:np-cursor-pointer hover:np-bg-grey">
                                             <SelvaLogoIcon width={20} height={20} />
-                                            <p className="np-text-xs np-text-darkgreen np-font-panel np-pr-2 np-translate-y-px">Selva Viewer</p>
+                                            <p className="np-text-xs np-text-darkgreen np-font-panel np-font-[800] np-pr-2 np-translate-y-px">Selva Viewer</p>
                                         </a>
                                     </div>
                                 </div>) : null}

@@ -152,13 +152,13 @@ export const DocumentSelection = () => {
                         </svg>
                     </div>
                 </div>
-                <p className="np-ml-2 np-flex-grow np-text-[13px] np-text-dark np-font-panel np-leading-tight np-translate-y-px">
+                <p className="np-ml-2 np-flex-grow np-text-[13px] np-text-dark np-font-panel np-font-[800] np-leading-tight np-translate-y-px">
                     Group
                 </p>
             </div>
             <div className="np-w-full np-grow np-flex np-flex-col np-items-center np-pt-1 np-pb-2 np-pl-2 np-pr-2">
                 <input
-                    className={`${isEditable ? 'hover:np-bg-grey' : ''} np-w-full np-h-6 np-mb-1 np-pl-1.5 np-pt-0.5 np-rounded-sm np-text-sm np-text-dark np-font-panel focus:np-outline-none`}
+                    className={`${isEditable ? 'hover:np-bg-grey' : ''} np-w-full np-h-6 np-mb-1 np-pl-1.5 np-pt-0.5 np-rounded-sm np-text-sm np-text-dark np-font-panel np-font-[800] focus:np-outline-none`}
                     value={internalLabel}
                     placeholder="Name"
                     disabled={!isEditable}
@@ -169,7 +169,7 @@ export const DocumentSelection = () => {
                     onBlur={(e) => handleLabelBlur(groupId, e)}
                 />
                 <textarea
-                    className={`${isEditable ? 'hover:np-bg-grey' : ''} np-w-full np-grow np-pl-1.5 np-pt-1 np-rounded-sm np-text-xs np-text-dark np-font-panel focus:np-outline-none`}
+                    className={`${isEditable ? 'hover:np-bg-grey' : ''} np-w-full np-grow np-pl-1.5 np-pt-1 np-rounded-sm np-text-xs np-text-dark np-font-panel np-font-[800] focus:np-outline-none`}
                     style={{ resize: 'none' }}
                     value={internalDescription}
                     placeholder="Description"

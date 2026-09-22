@@ -37,7 +37,7 @@ export const DataTreeTable = ({ nodeInstanceId, portInstanceId, data }: DataTree
                         <div className='np-grid np-grid-cols-subgrid np-col-span-full np-group' onPointerEnter={() => handlePointerEnter(branch.path, i.toString())} onPointerLeave={handlePointerLeave}>
                             {i === 0
                                 ? <div className='np-w-full np-h-8 np-sticky np-top-0 np-mt-1 np-border-l-2 np-border-dark'>
-                                    <div className='np-w-full np-mt-1 np-pl-2 np-pr-2 np-bg-light np-text-sm np-font-semibold np-font-panel np-text-dark'>
+                                    <div className='np-w-full np-mt-1 np-pl-2 np-pr-2 np-bg-light np-text-sm np-font-semibold np-font-panel np-font-[800] np-text-dark'>
                                         {branch.path}
                                     </div>
                                 </div>
@@ -49,7 +49,7 @@ export const DataTreeTable = ({ nodeInstanceId, portInstanceId, data }: DataTree
                                 </div>
                             </div>
                             <div className='np-w-full np-h-full np-pt-1 np-overflow-visible'>
-                                <div className='np-w-full np-h-full np-text-right np-pl-2 np-pr-2 np-flex np-items-center np-justify-end np-whitespace-nowrap np-border-r-2 np-border-dark np-text-sm np-font-panel np-text-dark group-hover:np-bg-grey'>
+                                <div className='np-w-full np-h-full np-text-right np-pl-2 np-pr-2 np-flex np-items-center np-justify-end np-whitespace-nowrap np-border-r-2 np-border-dark np-text-sm np-font-panel np-font-[800] np-text-dark group-hover:np-bg-grey'>
                                     {value.description}
                                 </div>
                             </div>

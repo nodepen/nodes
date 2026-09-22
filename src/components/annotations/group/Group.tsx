@@ -560,7 +560,7 @@ const Group = ({ id }: GroupProps) => {
                                 />
                                 <text
                                     ref={labelTextRef}
-                                    className="np-font-panel np-select-none np-pointer-events-none"
+                                    className="np-font-panel np-font-[800] np-select-none np-pointer-events-none"
                                     x={groupRect.x + GROUP_LABEL_PADDING_X}
                                     y={groupRect.y - GROUP_LABEL_GAP - GROUP_LABEL_HEIGHT / 2}
                                     dominantBaseline="middle"

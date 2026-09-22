@@ -28,16 +28,16 @@ export const ShortcutMatchInfo = ({ match }: Props) => {
 
                 return (
                     <>
-                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {'w/ domain'}
                         </div>
-                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`Min: ${min}`}
                         </div>
-                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`Max: ${max}`}
                         </div>
-                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`Value: ${match.value}`}
                         </div>
                     </>
@@ -48,16 +48,16 @@ export const ShortcutMatchInfo = ({ match }: Props) => {
 
                 return (
                     <>
-                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`w/ coordinates`}
                         </div>
-                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`X: ${x}`}
                         </div>
-                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`Y: ${y}`}
                         </div>
-                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`Z: ${z}`}
                         </div>
                     </>
@@ -69,10 +69,10 @@ export const ShortcutMatchInfo = ({ match }: Props) => {
                 const isEmpty = (textContent?.length ?? 0) === 0
                 return (
                     <>
-                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {isEmpty ? 'Empty panel' : 'w/ values'}
                         </div>
-                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-1 np-text-left np-text-xs np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {isEmpty ? emptyMessage : textContent}
                         </div>
                     </>
@@ -94,7 +94,7 @@ export const ShortcutMatchInfo = ({ match }: Props) => {
                 if (!value) {
                     return (
                         <>
-                            <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                            <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                                 {`${messages[match.type].replace(' by', '')} two numbers`}
                             </div>
                         </>
@@ -103,7 +103,7 @@ export const ShortcutMatchInfo = ({ match }: Props) => {
 
                 return (
                     <>
-                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-text-dark np-whitespace-nowrap">
+                        <div className="np-w-full np-mt-0.5 np-text-left np-text-sm np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap">
                             {`${messages[match.type]} ${value}`}
                         </div>
                     </>

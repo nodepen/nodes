@@ -39,7 +39,7 @@ export const ParameterLibrary = () => {
 
     return <div className="np-w-full np-h-full np-flex np-flex-col np-justify-start">
         <div className="np-w-full np-flex np-justify-between np-items-center">
-            <p className="np-ml-2 np-text[14px] np-text-dark np-font-panel">
+            <p className="np-ml-2 np-text[14px] np-text-dark np-font-panel np-font-[800]">
                 Geometry
             </p>
         </div>
@@ -47,7 +47,7 @@ export const ParameterLibrary = () => {
             {geometricParams.map((template) => <TemplateLibraryDraggable key={template.guid} template={template} showTooltip />)}
         </div>
         <div className="np-w-full np-flex np-justify-start np-items-center">
-            <p className="np-ml-2 np-text[14px] np-text-dark np-font-panel">
+            <p className="np-ml-2 np-text[14px] np-text-dark np-font-panel np-font-[800]">
                 Primitives
             </p>
         </div>
@@ -55,7 +55,7 @@ export const ParameterLibrary = () => {
             {primitiveParams.map((template) => <TemplateLibraryDraggable key={template.guid} template={template} showTooltip />)}
         </div>
         <div className="np-w-full np-flex np-justify-start np-items-center">
-            <p className="np-ml-2 np-text[14px] np-text-dark np-font-panel">
+            <p className="np-ml-2 np-text[14px] np-text-dark np-font-panel np-font-[800]">
                 Special
             </p>
         </div>

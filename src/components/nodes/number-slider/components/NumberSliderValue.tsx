@@ -82,7 +82,7 @@ export const NumberSliderValue = ({ node, onClick }: NumberSliderValueProps) => 
         <rect x={x} y={y + 1} width={width} height={height} rx={4} ry={4} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} className={`${isEditable ? 'hover:cursor-pointer hover:np-fill-grey' : ''}`} onPointerDown={handlePointerDown} />
         <path id={pathId} d={`M ${start.x} ${start.y} L ${end.x} ${end.y}`} stroke="none" className='np-pointer-events-none' />
         <text
-            className="np-font-panel np-select-none np-pointer-events-none"
+            className="np-font-panel np-font-[800] np-select-none np-pointer-events-none"
             fill={COLORS.DARK}
             fontSize={NODE_VALUE_FONT_SIZE}
         >

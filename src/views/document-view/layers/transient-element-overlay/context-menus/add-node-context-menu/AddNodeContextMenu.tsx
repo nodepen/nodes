@@ -547,8 +547,8 @@ const SearchEntry = ({ option, isSelected, onClick }: SearchEntryProps) => {
             {getIcon()}
         </div>
         <div className='np-grow np-ml-1 np-flex np-flex-col np-items-start np-justify-center'>
-            <p className="np-text-sm np-text-dark np-font-panel">{getLabel()}</p>
-            <p className='np-text-xs np-text-dark np-font-panel'>{getDetails()}</p>
+            <p className="np-text-sm np-text-dark np-font-panel np-font-[800]">{getLabel()}</p>
+            <p className='np-text-xs np-text-dark np-font-panel np-font-[800]'>{getDetails()}</p>
         </div>
     </div>
 }

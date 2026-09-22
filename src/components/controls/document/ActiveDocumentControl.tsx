@@ -96,7 +96,7 @@ const ActiveDocumentControl = () => {
                 </CircleButton>
                 <div className='np-h-full md:np-w-48 np-pl-1 np-pr-2 np-pt-1 np-pb-1 np-flex np-flex-col np-justify-between np-items-start'>
                     <input
-                        className={`${isEditable ? 'hover:np-bg-grey' : ''} np-h-5 np-hidden md:np-inline np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3`}
+                        className={`${isEditable ? 'hover:np-bg-grey' : ''} np-h-5 np-hidden md:np-inline np-w-full np-p-1 np-pt-1.5 np-pb-1 np-mb-0.5 np-rounded-sm np-text-sm np-text-dark np-font-panel np-font-[800] np-whitespace-nowrap np-leading-3`}
                         ref={inputRef}
                         disabled={!isEditable}
                         value={internalName}
@@ -107,7 +107,7 @@ const ActiveDocumentControl = () => {
                         onFocus={handleFocus}
                         onBlur={handleBlur}
                     />
-                    <p className='np-h-full np-inline md:np-hidden np-w-full np-p-1 np-pt-1.5 np-pb-1 mp-mb-0.5 np-text-sm np-font-light np-font-panel np-text-dark np-whitespace-nowrap np-leading-3'>
+                    <p className='np-h-full np-inline md:np-hidden np-w-full np-p-1 np-pt-1.5 np-pb-1 mp-mb-0.5 np-text-sm np-font-panel np-font-[800] np-text-dark np-whitespace-nowrap np-leading-3'>
                         {internalName}
                     </p>
                     <div className='np-pl-1 np-grow np-flex np-items-center np-justify-start -np-translate-y-px'>
@@ -117,7 +117,7 @@ const ActiveDocumentControl = () => {
                                     <path d="M2 3.5A1.5 1.5 0 0 1 3.5 2h2.879a1.5 1.5 0 0 1 1.06.44l1.122 1.12A1.5 1.5 0 0 0 9.62 4H12.5A1.5 1.5 0 0 1 14 5.5v1.401a2.986 2.986 0 0 0-1.5-.401h-9c-.546 0-1.059.146-1.5.401V3.5ZM2 9.5v3A1.5 1.5 0 0 0 3.5 14h9a1.5 1.5 0 0 0 1.5-1.5v-3A1.5 1.5 0 0 0 12.5 8h-9A1.5 1.5 0 0 0 2 9.5Z" />
                                 </svg>
                             </div>
-                            <p className='np-mr-2 np-whitespace-nowrap np-overflow-hidden np-text-xs np-text-dark np-font-panel np-translate-y-px'>
+                            <p className='np-mr-2 np-whitespace-nowrap np-overflow-hidden np-text-xs np-text-dark np-font-panel np-font-[800] np-translate-y-px'>
                                 Collection Name
                             </p>
                         </>) : null}
@@ -127,7 +127,7 @@ const ActiveDocumentControl = () => {
                                     <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM12.735 14c.618 0 1.093-.561.872-1.139a6.002 6.002 0 0 0-11.215 0c-.22.578.254 1.139.872 1.139h9.47Z" />
                                 </svg>
                             </div>
-                            <p className='np-whitespace-nowrap np-overflow-hidden np-text-xs np-text-dark np-font-panel np-translate-y-px'>
+                            <p className='np-whitespace-nowrap np-overflow-hidden np-text-xs np-text-dark np-font-panel np-font-[800] np-translate-y-px'>
                                 {documentOwner}
                             </p>
                         </>) : null}
@@ -152,13 +152,13 @@ const ActiveDocumentControl = () => {
         //     <div className="np-h-12 np-w-40 np-mr-4 np-p-1 np-rounded-md np-bg-light np-shadow-main">
         //         <div className='np-w-full np-h-full np-p-1 np-flex np-items-center np-rounded-sm np-pointer-events-auto'>
         //             <div className="np-h-full np-mr-2 np-flex-grow np-flex np-flex-col np-items-start np-justify-center np-overflow-hidden">
-        //                 <p className="np-text-sm np-text-dark np-font-light np-font-panel np-whitespace-nowrap np-leading-3" style={{ textDecorationThickness: '2px' }}>
+        //                 <p className="np-text-sm np-text-dark np-font-light np-font-panel np-font-[800] np-whitespace-nowrap np-leading-3" style={{ textDecorationThickness: '2px' }}>
         //                     {documentMeta.name}
         //                 </p>
-        //                 <p className='np-text-xs np-text-dark np-font-panel np-translate-y-1'>
+        //                 <p className='np-text-xs np-text-dark np-font-panel np-font-[800] np-translate-y-1'>
         //                     Made by you!
         //                 </p>
-        //                 {/* <div className="np-pr-2 np-text-xs np-font-panel np-flex np-items-center np-rounded-sm np-pointer-events-auto np-group hover:np-cursor-pointer">
+        //                 {/* <div className="np-pr-2 np-text-xs np-font-panel np-font-[800] np-flex np-items-center np-rounded-sm np-pointer-events-auto np-group hover:np-cursor-pointer">
         //                 You
         //             </div> */}
         //             </div>

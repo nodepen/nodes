@@ -96,7 +96,7 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
                             } ${position.y}`}
                     />
                     <text
-                        className="np-font-panel np-select-none np-pointer-events-none"
+                        className="np-font-panel np-font-[800] np-select-none np-pointer-events-none"
                         fill={COLORS.DARK}
                         fontSize={NODE_LABEL_FONT_SIZE}
                     >

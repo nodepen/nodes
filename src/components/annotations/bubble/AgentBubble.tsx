@@ -176,7 +176,7 @@ const AgentBubble = ({ bubbleId }: Props) => {
         <g ref={draggableRef} className="np-pointer-events-auto hover:np-cursor-grab">
             <path id={`bubble-title-path-${bubbleId}`} d={`M ${x + margin} ${y + 1} L ${x + width - margin} ${y + 1}`} />
             {/* <text
-                className="np-font-panel np-select-none np-pointer-events-none"
+                className="np-font-panel np-font-[800] np-select-none np-pointer-events-none"
                 fill={COLORS.DARK}
                 fontSize={16}
                 dominantBaseline="middle"

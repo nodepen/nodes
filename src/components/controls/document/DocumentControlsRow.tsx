@@ -249,7 +249,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                     case 'text':
                     case 'string': {
                         return <input
-                            className={`np-text-dark ${isValueEditable ? 'hover:np-bg-grey' : ''} np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1`}
+                            className={`np-text-dark ${isValueEditable ? 'hover:np-bg-grey' : ''} np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel np-font-[800] placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1`}
                             value={hasMultipleValues && controlType === 'output' ? getDataTreeSummary(currentDataTree) : internalValue}
                             placeholder={`${isValueEditable ? 'Set' : 'Unset'} ${valueType} value`}
                             disabled={!isValueEditable}
@@ -272,7 +272,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                         return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isValueEditable} />
                     case 'data': {
                         return <input
-                            className="np-text-dark np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1"
+                            className="np-text-dark np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel np-font-[800] placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1"
                             value={hasMultipleValues ? getDataTreeSummary(currentDataTree) : internalValue}
                             placeholder="No data"
                             disabled
@@ -294,7 +294,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
             <div className="np-w-full np-pl-3 np-flex np-items-center np-justify-start">
                 <PortTypeIcon r={16} typeName={valueType} />
                 <input
-                    className={`${isEditable ? 'hover:np-bg-grey ' : ''} np-ml-1 np-min-w-0 np-flex-grow np-h-5 np-pl-1 np-pt-0.5 np-rounded-sm np-text-xs np-text-dark np-font-panel focus:np-outline-none`}
+                    className={`${isEditable ? 'hover:np-bg-grey ' : ''} np-ml-1 np-min-w-0 np-flex-grow np-h-5 np-pl-1 np-pt-0.5 np-rounded-sm np-text-xs np-text-dark np-font-panel np-font-[800] focus:np-outline-none`}
                     value={internalLabel}
                     disabled={!isEditable}
                     onChange={handleLabelChange}

@@ -51,7 +51,7 @@ export const TemplateLibrary = () => {
                 {categories.map((category) => (<>
                     <div key={`cat-${category}`} className="np-rounded-full np-p-0.5 np-group" onClick={() => setActiveCategory(category)}>
                         <div className={`${activeCategory === category ? 'np-border-dark' : 'np-border-light group-hover:np-border-grey group-hover:np-bg-grey'} np-rounded-full np-p-0.5 np-border-2`}>
-                            <div className="np-pl-1 np-pr-1 np-rounded-full np-text-xs np-font-panel np-font-semibold np-whitespace-nowrap group-hover:np-bg-grey group-hover:np-cursor-pointer">
+                            <div className="np-pl-1 np-pr-1 np-rounded-full np-text-xs np-font-panel np-font-[800] np-font-semibold np-whitespace-nowrap group-hover:np-bg-grey group-hover:np-cursor-pointer">
                                 {category}
                             </div>
                         </div>
@@ -78,7 +78,7 @@ export const TemplateLibrary = () => {
                 {subcategories.map((subcategory) => (<>
                     <div key={`subcat-${subcategory}`} className="np-rounded-full np-p-0.5 np-group" onClick={() => setActiveSubcategory(subcategory)}>
                         <div className={`${activeSubcategory === subcategory ? 'np-border-dark' : 'np-border-light group-hover:np-border-grey group-hover:np-bg-grey'} np-rounded-full np-p-0.5 np-border-2`}>
-                            <div className="np-pl-1 np-pr-1 np-rounded-full np-text-xs np-font-panel np-font-semibold np-whitespace-nowrap group-hover:np-bg-grey group-hover:np-cursor-pointer">
+                            <div className="np-pl-1 np-pr-1 np-rounded-full np-text-xs np-font-panel np-font-[800] np-font-semibold np-whitespace-nowrap group-hover:np-bg-grey group-hover:np-cursor-pointer">
                                 {subcategory}
                             </div>
                         </div>

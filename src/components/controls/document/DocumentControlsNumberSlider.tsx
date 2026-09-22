@@ -146,7 +146,7 @@ export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, c
     if (isDisabled) {
         return (
             <div className="np-w-full np-pl-1 np-flex np-items-center">
-                <p className="np-text-xs np-text-dark np-font-panel np-select-none">
+                <p className="np-text-xs np-text-dark np-font-panel np-font-[800] np-select-none">
                     {currentValue.toFixed(precision)}
                 </p>
             </div>
@@ -156,20 +156,20 @@ export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, c
     return (
         <div className="np-w-full np-flex np-items-center np-gap-1">
             <input
-                className="np-w-12 np-flex-shrink-0 np-h-5 np-pt-1 np-pl-1 np-mr-1 np-rounded-sm hover:np-bg-grey np-text-xs np-text-dark np-font-panel focus:np-outline-none"
+                className="np-w-12 np-flex-shrink-0 np-h-5 np-pt-1 np-pl-1 np-mr-1 np-rounded-sm hover:np-bg-grey np-text-xs np-text-dark np-font-panel np-font-[800] focus:np-outline-none"
                 value={internalValueText}
                 onChange={handleValueChange}
                 onKeyDown={handleValueKeyDown}
                 onFocus={handleValueFocus}
                 onBlur={handleValueBlur}
             />
-            {/* <p className="np-text-[10px] np-text-dark np-font-panel np-select-none">
+            {/* <p className="np-text-[10px] np-text-dark np-font-panel np-font-[800] np-select-none">
                 {min.toFixed(precision)}
             </p> */}
             <div ref={trackRef} className="np-relative np-flex-grow np-h-5 np-flex np-items-center">
                 <div className="np-absolute np-left-0 np-right-0 np-top-1/2 np-h-[2px] -np-translate-y-1/2" style={{ background: COLORS.DARK }} />
                 {/* <p
-                    className="np-absolute np-top-1/2 -np-translate-y-1/2 np-text-[10px] np-text-dark np-font-panel np-whitespace-nowrap np-select-none np-pointer-events-none"
+                    className="np-absolute np-top-1/2 -np-translate-y-1/2 np-text-[10px] np-text-dark np-font-panel np-font-[800] np-whitespace-nowrap np-select-none np-pointer-events-none"
                     style={{
                         left: `${t * 100}%`,
                         transform: `translate(${valueOnLeft ? 'calc(-100% - 8px)' : '8px'}, -50%)`
@@ -191,7 +191,7 @@ export const DocumentControlsNumberSlider = ({ nodeInstanceId, portInstanceId, c
                 />
             </div>
             <div id="spacer" className='np-w-3' />
-            {/* <p className="np-text-[10px] np-text-dark np-font-panel np-select-none">
+            {/* <p className="np-text-[10px] np-text-dark np-font-panel np-font-[800] np-select-none">
                 {max.toFixed(precision)}
             </p> */}
         </div>

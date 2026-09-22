@@ -20,7 +20,7 @@ const Radio = ({ label, selected, onClick }: RadioProps) => (
         <div className="np-w-3 np-h-3 np-flex-shrink-0 np-rounded-full np-flex np-items-center np-justify-center" style={{ border: `2px solid ${COLORS.DARK}` }}>
             {selected ? <div className="np-w-1 np-h-1 np-rounded-full" style={{ background: COLORS.DARK }} /> : null}
         </div>
-        <p className="np-ml-1 np-pt-0.5 np-text-xs np-text-dark np-font-panel np-select-none">
+        <p className="np-ml-1 np-pt-0.5 np-text-xs np-text-dark np-font-panel np-font-[800] np-select-none">
             {label}
         </p>
     </div>
@@ -54,7 +54,7 @@ export const DocumentControlsBooleanToggle = ({ nodeInstanceId, isDisabled }: Do
     if (isDisabled) {
         return (
             <div className="np-w-full np-pl-1 np-flex np-items-center">
-                <p className="np-text-xs np-text-dark np-font-panel np-select-none">
+                <p className="np-text-xs np-text-dark np-font-panel np-font-[800] np-select-none">
                     {currentValue ? 'True' : 'False'}
                 </p>
             </div>

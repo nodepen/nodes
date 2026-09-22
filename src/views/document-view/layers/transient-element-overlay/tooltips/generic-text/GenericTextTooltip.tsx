@@ -39,7 +39,7 @@ export const GenericTextTooltip = ({ tooltipKey, config, context }: Props) => {
     }, [textContent])
 
     return <div ref={containerRef} className="np-absolute np-p-1 np-pl-2 np-pr-2 np-rounded-full np-bg-light np-shadow-main" style={{ left, top }}>
-        <p className="np-text-xs np-text-dark np-font-panel">
+        <p className="np-text-xs np-text-dark np-font-panel np-font-[800]">
             {textContent}
         </p>
     </div>

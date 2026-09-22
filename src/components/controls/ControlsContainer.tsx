@@ -174,7 +174,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                         <SidebarPanel isOpen={showComponentLibraryPanel} from={componentLibraryPosition} height={220} bottom={38}>
                             <TemplateLibrary />
                         </SidebarPanel>
-                        <SidebarPanel isOpen={showParameterLibraryPanel} from={parameterLibraryPosition} height={228} bottom={38}>
+                        <SidebarPanel isOpen={showParameterLibraryPanel} from={parameterLibraryPosition} height={260} bottom={38}>
                             <ParameterLibrary />
                         </SidebarPanel>
                         <SidebarPanel isOpen={showDocumentControlsPanel} from={documentControlsPosition} height={documentControlsHeight} top={96}>
@@ -214,7 +214,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                                         <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
                                             <path d="M2 6.342a3.375 3.375 0 0 1 6-2.088 3.375 3.375 0 0 1 5.997 2.26c-.063 2.134-1.618 3.76-2.955 4.784a14.437 14.437 0 0 1-2.676 1.61c-.02.01-.038.017-.05.022l-.014.006-.004.002h-.002a.75.75 0 0 1-.592.001h-.002l-.004-.003-.015-.006a5.528 5.528 0 0 1-.232-.107 14.395 14.395 0 0 1-2.535-1.557C3.564 10.22 1.999 8.558 1.999 6.38L2 6.342Z" />
                                         </svg>
-                                        <p className='np-text-xs np-text-dark np-font-panel np-pr-2 np-translate-y-px'>Feedback</p>
+                                        <p className='np-text-xs np-text-dark np-font-panel np-font-[800] np-pr-2 np-translate-y-px'>Feedback</p>
                                     </div>
                                 </div>
                             </div>) : null}
@@ -224,13 +224,13 @@ const ControlsContainer = (): React.ReactElement | null => {
                                         <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
                                             <path d="M2.87 2.298a.75.75 0 0 0-.812 1.021L3.39 6.624a1 1 0 0 0 .928.626H8.25a.75.75 0 0 1 0 1.5H4.318a1 1 0 0 0-.927.626l-1.333 3.305a.75.75 0 0 0 .811 1.022 24.89 24.89 0 0 0 11.668-5.115.75.75 0 0 0 0-1.175A24.89 24.89 0 0 0 2.869 2.298Z" />
                                         </svg>
-                                        <p className='np-text-xs np-text-dark np-font-panel np-pr-2 np-translate-y-px'>Share</p>
+                                        <p className='np-text-xs np-text-dark np-font-panel np-font-[800] np-pr-2 np-translate-y-px'>Share</p>
                                     </div>
                                 </div>
                             </div>) : null}
                             {enableProfileButton ? <SessionUsers /> : (<>
                                 <div className='np-rounded-full np-p-1.5 np-bg-pale flex'>
-                                    <p className='np-text-xs np-text-darkgreen np-font-panel np-pr-2 np-translate-y-px'>Create a free account to edit!</p>
+                                    <p className='np-text-xs np-text-darkgreen np-font-panel np-font-[800] np-pr-2 np-translate-y-px'>Create a free account to download or edit!</p>
                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARKGREEN} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-ml-1 np-size-4'>
                                         <path d="M17.25 8.25 21 12m0 0-3.75 3.75M21 12H3" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                     </svg>
@@ -241,7 +241,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                                             <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
                                                 <path clipRule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-5-2a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM8 9c-1.825 0-3.422.977-4.295 2.437A5.49 5.49 0 0 0 8 13.5a5.49 5.49 0 0 0 4.294-2.063A4.997 4.997 0 0 0 8 9Z" fillRule="evenodd" />
                                             </svg>
-                                            <p className='np-text-xs np-text-dark np-font-panel np-pr-2 np-translate-y-px'>Sign up</p>
+                                            <p className='np-text-xs np-text-dark np-font-panel np-font-[800] np-pr-2 np-translate-y-px'>Sign up</p>
                                         </div>
                                     </div>
                                 </div>
@@ -290,7 +290,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                         <div className='np-w-full np-h-full np-p-8 np-pb-4 np-mb-0.5 np-flex np-flex-grow np-justify-end np-items-center'>
                             {/* {isEditable ? (<div className='np-flex np-items-center np-justify-end np-z-20'>
                                 <div className='np-h-8 np-flex np-items-center np-mr-0.5 np-rounded-full np-bg-pale'>
-                                    {activeStatusMessage ? (<p className='np-text-xs np-pl-2 np-pr-2 np-font-panel np-font-semibold np-text-dark'>
+                                    {activeStatusMessage ? (<p className='np-text-xs np-pl-2 np-pr-2 np-font-panel np-font-[800] np-font-semibold np-text-dark'>
                                         {activeStatusMessage}
                                     </p>) : null}
                                 </div>

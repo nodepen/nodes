@@ -57,15 +57,15 @@ class DocumentViewErrorBoundary extends React.Component<DocumentViewErrorBoundar
                         <line x1={12} y1={5} x2={12} y2={10} stroke={COLORS.GREEN} stroke-width="2" vectorEffect="non-scaling-stroke" />
                     </svg>
 
-                    <div className="np-text-xs np-uppercase np-text-dark np-font-panel">
+                    <div className="np-text-xs np-uppercase np-text-dark np-font-panel np-font-[800]">
                         ERROR
                     </div>
 
-                    <p className="np-text-[11px] np-mt-2 np-text-dark np-font-panel">
+                    <p className="np-text-[11px] np-mt-2 np-text-dark np-font-panel np-font-[800]">
                         Error while drawing the active document.
                     </p>
 
-                    <p className="np-text-[11px] np-text-dark/60 np-font-panel">
+                    <p className="np-text-[11px] np-text-dark/60 np-font-panel np-font-[800]">
                         Refresh or wait for new changes.
                     </p>
                 </div>

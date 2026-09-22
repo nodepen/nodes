@@ -57,7 +57,7 @@ export const ValueListInput = ({ node, onClick }: ValueListInputProps) => {
                         d={`M ${x + NODE_INTERNAL_PADDING} ${y + height / 2} L ${caretCenter.x - caretWidth} ${y + height / 2}`}
                     />
                     <text
-                        className="np-font-panel np-select-none np-pointer-events-none"
+                        className="np-font-panel np-font-[800] np-select-none np-pointer-events-none"
                         fill={COLORS.DARK}
                         fontSize={NODE_LABEL_FONT_SIZE}
                         dominantBaseline="middle"
