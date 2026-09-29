@@ -33,7 +33,7 @@ const patterns = {
     // panel: /^"(.*)$/,
     panel2: /^\/\/(.*)$/,
     numberSliderValue: new RegExp(`${NUM}`),
-    numberSliderMaximum: new RegExp(`^${NUM}(?:<|\.\.)${NUM}$`),
+    numberSliderMaximum: new RegExp(`^${NUM}(?:<|\\.\\.)${NUM}$`),
     numberSliderRange: new RegExp(`^${NUM}<${NUM}<${NUM}$`),
     addition: /^\+(-?\d+(\.\d+)?)?$/,
     subraction: /^\-(-?\d+(\.\d+)?)?$/,
@@ -141,16 +141,16 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
         const n = Number.parseFloat(m[2])
         const min = Number.parseFloat(m[1])
         const max = Number.parseFloat(m[3])
-        const config = decomposeNumber(m[2])
+        const precision = getMaxPrecision(m[1], m[2], m[3])
 
         return {
             type: 'number-slider',
             templateId: COMPONENTS.NUMBER_SLIDER,
-            value: n.toFixed(config.precision),
+            value: n.toFixed(precision),
             config: {
                 min,
                 max,
-                precision: config.precision
+                precision
             }
         }
     }
@@ -159,16 +159,16 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
         const n = Number.parseFloat(m[1])
         const min = Number.parseFloat(m[1])
         const max = Number.parseFloat(m[2])
-        const config = decomposeNumber(m[1])
+        const precision = getMaxPrecision(m[1], m[2])
 
         return {
             type: 'number-slider',
             templateId: COMPONENTS.NUMBER_SLIDER,
-            value: n.toFixed(config.precision),
+            value: n.toFixed(precision),
             config: {
-                ...config,
                 min,
-                max
+                max,
+                precision
             }
         }
     }
@@ -186,6 +186,10 @@ export const tryMatchTextSearch = (search: string): TemplateMatch | null => {
     }
 
     return null
+}
+
+const getMaxPrecision = (...valueStrings: string[]): NodePen.NumberSliderConfig['precision'] => {
+    return Math.max(...valueStrings.map((valueString) => decomposeNumber(valueString).precision)) as NodePen.NumberSliderConfig['precision']
 }
 
 const decomposeNumber = (valueString: string): NodePen.NumberSliderConfig & { value: string } => {

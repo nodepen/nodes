@@ -15,20 +15,14 @@ export const ColorSwatchColor = ({ node }: ColorSwatchColorProps) => {
     const { width, height } = node.dimensions
     const { r, g, b } = node.nodeConfiguration as NodePen.ColorSwatchConfig
 
-    const x = position.x + NODE_INTERNAL_PADDING
-    const y = position.y + NODE_INTERNAL_PADDING
-    const w = width - NODE_INTERNAL_PADDING * 2
-    const h = height - NODE_INTERNAL_PADDING * 2
+    const radius = Math.min(width, height) / 2
 
     return (
-        <rect
+        <circle
             className="np-pointer-events-none"
-            x={x}
-            y={y}
-            width={w}
-            height={h}
-            rx={4}
-            ry={4}
+            cx={position.x + width - radius}
+            cy={position.y + height / 2}
+            r={radius - NODE_INTERNAL_PADDING}
             fill={`rgb(${r}, ${g}, ${b})`}
         />
     )

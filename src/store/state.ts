@@ -252,6 +252,7 @@ export type NodesAppCallbacks = {
     onClickAgent?: (state: NodesAppState) => void
     onClickHome?: (state: NodesAppState) => void
     onClickProfile?: (state: NodesAppState) => void
+    onClickSignUp?: (state: NodesAppState) => void
     onClickShare?: (state: NodesAppState) => void
     onClickFeedback?: (state: NodesAppState) => void
     onClickSettings?: (state: NodesAppState) => void
@@ -384,6 +385,7 @@ export const initialState: NodesAppState = {
             enableShareButton: true,
             enableFeedbackButton: true,
             enableProfileButton: true,
+            enableSignUpButton: false,
             enableAgentButton: false,
             enableClusters: false
         },

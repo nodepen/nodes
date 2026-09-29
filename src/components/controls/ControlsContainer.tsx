@@ -37,11 +37,12 @@ const ControlsContainer = (): React.ReactElement | null => {
     const enableShareButton = useFeatureFlag('enableShareButton')
     const enableFeedbackButton = useFeatureFlag('enableFeedbackButton')
     const enableProfileButton = useFeatureFlag('enableProfileButton')
+    const enableSignUpButton = useFeatureFlag('enableSignUpButton')
     const enableAgentButton = useFeatureFlag('enableAgentButton')
 
     const isEditable = useIsEditable()
 
-    const { onClickHome, onClickProfile, onClickFeedback } = useCallbacks()
+    const { onClickHome, onClickProfile, onClickSignUp, onClickFeedback } = useCallbacks()
 
     const handleClickHome = () => {
         onClickHome?.(useStore.getState())
@@ -49,6 +50,10 @@ const ControlsContainer = (): React.ReactElement | null => {
 
     const handleClickProfile = () => {
         onClickProfile?.(useStore.getState())
+    }
+
+    const handleClickSignUp = () => {
+        onClickSignUp?.(useStore.getState())
     }
 
     const handleClickFeedback = () => {
@@ -199,13 +204,13 @@ const ControlsContainer = (): React.ReactElement | null => {
                                 </CircleButton>
                             </div> */}
                             <ActiveDocumentControl />
-                            <div className='np-flex md:np-hidden np-items-center np-ml-1 np-gap-1'>
-                                <CircleButton size="lg" shadow onClick={() => useStore.getState().callbacks?.onClickProfile?.(useStore.getState())}>
+                            {enableProfileButton ? (<div className='np-flex md:np-hidden np-items-center np-ml-1 np-gap-1'>
+                                <CircleButton size="lg" shadow onClick={handleClickProfile}>
                                     <svg data-slot="icon" aria-hidden="true" fill="none" stroke-width={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className="np-size-6">
                                         <path d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
                                     </svg>
                                 </CircleButton>
-                            </div>
+                            </div>) : null}
                         </div>
                         <div className='np-hidden md:np-flex np-items-center'>
                             {enableFeedbackButton ? (<div className={`${enableShareButton ? '' : 'np-mr-2'} np-ml-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto`}>
@@ -228,7 +233,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                                     </div>
                                 </div>
                             </div>) : null}
-                            {enableProfileButton ? <SessionUsers /> : (<>
+                            {enableSignUpButton ? (<>
                                 <div className='np-rounded-full np-p-1.5 np-bg-pale flex'>
                                     <p className='np-text-xs np-text-darkgreen np-font-panel np-font-[800] np-pr-2 np-translate-y-px'>Create a free account to download or edit!</p>
                                     <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARKGREEN} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-ml-1 np-size-4'>
@@ -236,7 +241,7 @@ const ControlsContainer = (): React.ReactElement | null => {
                                     </svg>
                                 </div>
                                 <div className='np-ml-2 np-mr-2 np-p-0.5 np-rounded-full np-bg-light np-shadow-main np-z-10 np-pointer-events-auto'>
-                                    <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer' onClick={() => useStore.getState().callbacks?.onClickProfile?.(useStore.getState())}>
+                                    <div className='np-h-6 np-p-0.5 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark np-overflow-hidden np-group hover:np-cursor-pointer' onClick={handleClickSignUp}>
                                         <div className='np-h-full np-flex np-items-center np-justify-center np-rounded-full group-hover:np-bg-grey'>
                                             <svg aria-hidden="true" fill={COLORS.DARK} viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" className='np-w-4 np-h-4 np-ml-1 np-mr-1'>
                                                 <path clipRule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0Zm-5-2a2 2 0 1 1-4 0 2 2 0 0 1 4 0ZM8 9c-1.825 0-3.422.977-4.295 2.437A5.49 5.49 0 0 0 8 13.5a5.49 5.49 0 0 0 4.294-2.063A4.997 4.997 0 0 0 8 9Z" fillRule="evenodd" />
@@ -245,7 +250,8 @@ const ControlsContainer = (): React.ReactElement | null => {
                                         </div>
                                     </div>
                                 </div>
-                            </>)}
+                            </>) : null}
+                            {enableProfileButton ? <SessionUsers /> : null}
                         </div>
                     </div>
                     <div className='np-w-full np-flex-grow np-flex np-flex-col np-justify-end md:np-justify-start'>

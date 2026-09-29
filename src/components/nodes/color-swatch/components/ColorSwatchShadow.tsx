@@ -16,17 +16,16 @@ export const ColorSwatchShadow = ({ node }: ColorSwatchShadowProps) => {
     const nodeWidth = node.dimensions.width
     const nodeHeight = node.dimensions.height
 
+    const radius = Math.min(nodeWidth, nodeHeight) / 2
+
     const nodePortInstanceIds = ['output']
 
     return (
         <>
-            <rect
-                x={position.x}
-                y={position.y + 2}
-                width={nodeWidth}
-                height={nodeHeight}
-                rx={7}
-                ry={7}
+            <circle
+                cx={position.x + nodeWidth - radius}
+                cy={position.y + nodeHeight / 2 + 2}
+                r={radius}
                 fill={COLORS.DARK}
                 stroke={COLORS.DARK}
                 strokeWidth={2}

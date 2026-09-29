@@ -12,17 +12,16 @@ export const ColorSwatchBody = ({ node }: ColorSwatchBodyProps) => {
 
     const { width, height } = node.dimensions
 
+    const radius = Math.min(width, height) / 2
+
     const { sessionColor, presenceColor } = useSelectionColor(node.instanceId)
 
     return (
         <g id={`color-swatch-body-${node.instanceId}`}>
-            <rect
-                x={position.x}
-                y={position.y}
-                width={width}
-                height={height}
-                rx={7}
-                ry={7}
+            <circle
+                cx={position.x + width - radius}
+                cy={position.y + height / 2}
+                r={radius}
                 fill={presenceColor ?? sessionColor}
                 stroke={COLORS.DARK}
                 strokeWidth={2}

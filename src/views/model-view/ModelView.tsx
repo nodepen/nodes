@@ -248,7 +248,7 @@ const ModelView = () => {
                     <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[34px]' : 'np-rounded-lg'} np-ease-out np-h-full np-bg-pale np-p-0.5 np-absolute np-transition-all np-duration-[350ms] np-pointer-events-auto np-group/container`} style={{ width: isExpanded ? `${width * 100}%` : '102px', bottom: isExpanded ? "0px" : "8px", right: isExpanded ? "0" : "calc(50% - 51px)" }}>
                         <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[32px]' : 'np-rounded-lg'} ${isFullBleed ? 'np-border-pale' : 'np-border-green'} np-w-full np-h-full np-p-0.5 np-border-2 np-transition-all np-duration-[350ms]`}>
                             <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[28px]' : 'np-rounded-md'} np-w-full np-h-full np-relative`}>
-                                <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[28px]' : 'np-rounded-[4px]'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden`} onPointerDownCapture={(e) => {
+                                <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[28px]' : 'np-rounded-[4px]'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden np-isolate np-transform-gpu`} onPointerDownCapture={(e) => {
                                     if (isExpanded) {
                                         return
                                     }
