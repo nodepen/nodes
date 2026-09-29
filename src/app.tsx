@@ -10,6 +10,7 @@ import { StaticDialogLayer } from './views/static/dialog-layer'
 import { DocumentView, ModelView } from './views'
 import { InterfacePanelCallbacksProvider } from './components/layout/panel/InterfacePanelContext'
 import { resetThumbnailShot } from './views/model-view/hooks/useThumbnailShutter'
+import { initialState } from './store/state'
 
 type NodesAppProps = {
     document: NodePen.Document
@@ -37,6 +38,13 @@ export const NodesApp = ({
     ...callbacks
 }: NodesAppProps): React.ReactElement => {
     const { apply, loadDocument, loadTemplates, loadSolutionData, loadPreferences } = useDispatch()
+
+    useEffect(() => {
+        // Reset state on unmount
+        return () => {
+            useStore.setState(initialState)
+        }
+    }, [])
 
     useEffect(() => {
         loadDocument(document)
