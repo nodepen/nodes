@@ -1,0 +1,179 @@
+import React, { useCallback } from 'react'
+import type * as NodePen from '@/types'
+import { useLongHover, useNodeContextAnchorPosition, usePageSpaceToOverlaySpace } from '@/hooks'
+import { COLORS, DIMENSIONS } from '@/constants'
+import { usePort } from '../../hooks'
+import { useDispatch, useStore } from '$'
+import type { NodePenNodeType } from '@/utils/templates/getNodeTypeForTemplate'
+import { FlattenFlagIcon } from '@/components/icons/FlattenFlagIcon'
+import { GraftFlagIcon } from '@/components/icons/GraftFlagIcon'
+import { SimplifyFlagIcon } from '@/components/icons/SimplifyFlagIcon'
+import { ReparameterizeFlagIcon } from '@/components/icons/ReparameterizeFlagIcon'
+import { PortTypeIcon } from '@/components/icons'
+
+const { NODE_PORT_LABEL_FONT_SIZE, NODE_PORT_LABEL_OFFSET, NODE_PORT_RADIUS, NODE_PORT_MINIMUM_WIDTH, NODE_PORT_TYPE_ICON_SIZE, NODE_INTERNAL_PADDING } = DIMENSIONS
+
+type GenericNodePortProps = {
+    nodeInstanceId: string
+    portInstanceId: string
+    template: NodePen.PortTemplate
+    nodeType: NodePenNodeType
+}
+
+const GenericNodePort = ({ nodeInstanceId, portInstanceId, template, nodeType }: GenericNodePortProps) => {
+    const portRef = usePort(nodeInstanceId, portInstanceId, template)
+
+    const parameterLabels = useStore((state) => state.ui.preferences.parameterLabels)
+    const useFullName = nodeType === 'generic-node' && parameterLabels === 'fullname'
+    const labelText = useStore((state) => {
+        const internalLabel = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.label
+        return internalLabel ?? (useFullName ? template.name : template.nickName)
+    })
+
+    const parameterTypeIcons = useStore((state) => state.ui.preferences.parameterTypeIcons)
+    const useTypeIcon = nodeType === 'generic-node' && parameterTypeIcons
+
+    const { apply } = useDispatch()
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
+    const handleLongHover = useCallback((e: PointerEvent): void => {
+        const { pageX, pageY } = e
+
+        const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+
+        apply((state) => {
+            state.registry.tooltips[`port-tooltip-${nodeInstanceId}-${portInstanceId}`] = {
+                configuration: {
+                    position: {
+                        x: x + 8,
+                        y: y + 8,
+                    },
+                    isSticky: false,
+                },
+                context: {
+                    type: 'port',
+                    template,
+                    nodeInstanceId,
+                    portInstanceId,
+                },
+            }
+        })
+    }, [])
+
+    const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
+
+    const position = useNodeContextAnchorPosition(nodeInstanceId, portInstanceId)
+    const flags = useStore((state) => state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]?.flags ?? [])
+    const sortedFlags = [...flags].sort()
+
+    if (!position) {
+        console.log(`🐍 Missing port position for node [${nodeInstanceId}]`)
+        return null
+    }
+
+    const { __direction: direction } = template
+
+    const anchorPositionX = direction === 'input' ? position.x + NODE_PORT_LABEL_OFFSET : position.x - NODE_PORT_LABEL_OFFSET
+
+    const typeIconOffset = useTypeIcon ? NODE_PORT_TYPE_ICON_SIZE + NODE_INTERNAL_PADDING : 0
+
+    const labelPosition = {
+        x: direction === 'input' ? anchorPositionX + typeIconOffset : anchorPositionX - typeIconOffset,
+        y: position.y + 1.5 + NODE_PORT_LABEL_FONT_SIZE / 4,
+    }
+
+    const labelTextAnchor = direction === 'input' ? 'start' : 'end'
+
+    const typeIconPosition = {
+        x: direction === 'input' ? anchorPositionX : anchorPositionX - NODE_PORT_TYPE_ICON_SIZE,
+        y: position.y - NODE_PORT_TYPE_ICON_SIZE / 2,
+    }
+
+    const eventTargetAreaOffset = 18
+
+    const eventTargetAreaPosition = {
+        x:
+            direction === 'input'
+                ? position.x - NODE_PORT_RADIUS - eventTargetAreaOffset
+                : position.x - NODE_PORT_MINIMUM_WIDTH,
+        y: position.y - NODE_PORT_RADIUS - NODE_PORT_LABEL_FONT_SIZE,
+    }
+
+    const eventTargetAreaHeight = NODE_PORT_LABEL_FONT_SIZE * 2 + NODE_PORT_RADIUS * 2
+
+    const eventTargetAreaWidth = NODE_PORT_MINIMUM_WIDTH + NODE_PORT_RADIUS + eventTargetAreaOffset
+
+    return (
+        <g id={`generic-node-${direction}-port-${portInstanceId}`} ref={portRef}>
+            <circle
+                r={NODE_PORT_RADIUS}
+                cx={position.x}
+                cy={position.y}
+                fill={COLORS.LIGHT}
+                stroke={COLORS.DARK}
+                strokeWidth={2}
+            />
+            {useTypeIcon && direction === 'input' ? (
+                <PortTypeIcon position={typeIconPosition} r={NODE_PORT_TYPE_ICON_SIZE} typeName={template.typeName as NodePen.DataTreeValueType} />
+            ) : null}
+            <text
+                x={labelPosition.x}
+                y={labelPosition.y}
+                className="np-font-mono np-select-none"
+                fontSize={NODE_PORT_LABEL_FONT_SIZE}
+                fill={COLORS.DARK}
+                textAnchor={labelTextAnchor}
+            >
+                {labelText}
+            </text>
+            {useTypeIcon && direction === 'output' ? (
+                <PortTypeIcon position={typeIconPosition} r={NODE_PORT_TYPE_ICON_SIZE} typeName={template.typeName as NodePen.DataTreeValueType} />
+            ) : null}
+            {sortedFlags.map((flag, i) => {
+                const key = `${direction}-flag-${flag}`
+
+                const x = labelPosition.x + (direction === 'input' ? 2 : 1) + (((labelText.length * 15) + ((i + (direction === 'input' ? 0 : 1)) * (DIMENSIONS.NODE_PORT_FLAG_SIZE + 3))) * (direction === 'input' ? 1 : -1))
+                const y = labelPosition.y - 15
+
+                return (
+                    <>
+                        <rect x={x} y={y} width={DIMENSIONS.NODE_PORT_FLAG_SIZE} height={DIMENSIONS.NODE_PORT_FLAG_SIZE} stroke={COLORS.DARK} strokeWidth={2} rx={2} ry={2} fill={COLORS.LIGHT} />
+                        {(() => {
+                            const position = { x: x + 2, y: y + 2 }
+                            switch (flag) {
+                                case 'flatten': {
+                                    return <FlattenFlagIcon key={key} position={position} />
+                                }
+                                case 'graft': {
+                                    return <GraftFlagIcon key={key} position={position} />
+                                }
+                                case 'simplify': {
+                                    return <SimplifyFlagIcon key={key} position={position} />
+                                }
+                                case 'reparameterize': {
+                                    return <ReparameterizeFlagIcon key={key} position={position} />
+                                }
+                                default: {
+                                    return <></>
+                                }
+                            }
+                        })()}
+                    </>
+                )
+
+            })}
+            <g ref={longHoverTarget}>
+                <rect
+                    x={eventTargetAreaPosition.x}
+                    y={eventTargetAreaPosition.y}
+                    height={eventTargetAreaHeight}
+                    width={eventTargetAreaWidth}
+                    fill={'#FFFFFF'}
+                    opacity={0}
+                />
+            </g>
+        </g>
+    )
+}
+
+export default React.memo(GenericNodePort)

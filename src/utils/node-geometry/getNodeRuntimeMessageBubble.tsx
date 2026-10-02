@@ -1,0 +1,35 @@
+import React from 'react'
+import type { DocumentNode } from '@/types'
+import { DIMENSIONS } from '@/constants'
+import { useNodeInternalState } from '@/components/nodes/context/node-state'
+
+export const getNodeRuntimeMessageBubble = (node: DocumentNode, fillColor: string) => {
+    const { position } = useNodeInternalState()
+
+    const { anchors } = node
+    const { x, y } = position
+
+    // Position of bottom-middle arrow "point"
+    const dx = anchors?.['labelDeltaX']?.dx ?? 0
+    const dy = -9
+
+    const s = DIMENSIONS.NODE_RUNTIME_MESSAGE_BUBBLE_SIZE
+
+    const arrow = <rect
+        style={{
+            transform: 'rotate(45deg)',
+            transformOrigin: `${x + dx}px ${y + dy - s / 4}px`,
+        }}
+        x={x + dx - s / 4}
+        y={y + dy - s / 2}
+        width={s / 2}
+        height={s / 2}
+        fill={fillColor}
+        rx={2}
+        ry={2}
+    />
+
+    const bubble = <rect x={x + dx - s / 2} y={y + dy - 6 - s} width={s} height={s} fill={fillColor} rx={6} ry={6} />
+
+    return [arrow, bubble]
+}

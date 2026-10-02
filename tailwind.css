@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+    font-family: Barlow;
+    font-style: normal;
+    font-weight: 400;
+    src: url('assets/barlow-semibold.ttf');
+}
+
+@font-face {
+    font-family: Overpass;
+    font-style: normal;
+    font-weight: 800;
+    src: url('assets/overpass-bold.ttf');
+}
+
+@font-face {
+    font-family: Overpass Mono;
+    font-style: normal;
+    font-weight: 800;
+    src: url('assets/overpassmono-bold.ttf');
+}
+
+@keyframes sparkle-march {
+    0% {
+        stroke-dashoffset: var(--dash);
+    }
+
+    50% {
+        stroke-dashoffset: 0;
+    }
+
+    100% {
+        stroke-dashoffset: calc(var(--dash) * -1);
+    }
+}
+
+/* One ray darts in to touch the circle, then returns, then holds until its turn comes again. */
+@keyframes agent-icon-ray-thinking {
+    0%, 25%, 100% {
+        transform: translate(0, 0);
+    }
+
+    12.5% {
+        transform: translate(var(--np-ray-dx), var(--np-ray-dy));
+    }
+}
+
+/* A ray's group eases in to touch the circle, then eases back out, with no hold in between. */
+@keyframes agent-icon-ray-idle {
+    0%, 100% {
+        transform: translate(0, 0);
+    }
+
+    50% {
+        transform: translate(var(--np-ray-dx), var(--np-ray-dy));
+    }
+}
+
+:root {
+    --np-active-menu-height: 100%;
+}
+
+#np-app-root .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+#np-app-root .no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+
+#np-app-root .no-focus:focus {
+    outline: none;
+}
+
+#np-app-root.no-drag {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#np-app-root .no-drag {
+    user-select: none;
+    -webkit-user-drag: none;
+}
+
+#np-app-root input:focus {
+    outline: 1px solid #7bbfa5;
+}

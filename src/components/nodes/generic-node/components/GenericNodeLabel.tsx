@@ -1,0 +1,111 @@
+import React, { useCallback } from 'react'
+import type * as NodePen from '@/types'
+import { COLORS, DIMENSIONS } from '@/constants'
+import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
+import { useDispatch, useStore } from '$'
+import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
+import { useNodeInternalState } from '../../context/node-state'
+import { useIsEditable } from '@/hooks/useIsEditable'
+import { getIconAsImage } from '@/utils/templates'
+
+const { NODE_INTERNAL_PADDING, NODE_LABEL_FONT_SIZE, NODE_LABEL_WIDTH, NODE_LABEL_ICON_SIZE } = DIMENSIONS
+
+type GenericNodeLabelProps = {
+    node: NodePen.DocumentNode
+    template: NodePen.NodeTemplate
+}
+
+export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
+    const { position } = useNodeInternalState()
+
+    const { instanceId: id, anchors } = node
+
+    const { dx } = anchors['labelDeltaX']
+
+    const { apply } = useDispatch()
+
+    const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
+
+    const handleLongHover = useCallback(
+        (e: PointerEvent): void => {
+            const { pageX, pageY } = e
+
+            const [x, y] = pageSpaceToOverlaySpace(pageX, pageY)
+
+            apply((state) => {
+                state.registry.tooltips[`graph-node-${node.instanceId}`] = {
+                    configuration: {
+                        position: {
+                            x: x + 8,
+                            y: y + 8,
+                        },
+                        isSticky: false,
+                    },
+                    context: {
+                        type: 'node-template-summary',
+                        template,
+                    },
+                }
+            })
+        },
+        [pageSpaceToOverlaySpace]
+    )
+
+    // const stroke = usePresenceSelectionColor(node.instanceId)
+
+    const longHoverTarget = useLongHover<SVGGElement>(handleLongHover)
+
+    const nodeWidth = node.dimensions.width
+    const nodeHeight = node.dimensions.height
+
+    // Only `GenericNode` reads this -- every other node type keeps drawing its own fixed label.
+    const componentLabels = useStore((state) => state.ui.preferences.componentLabels)
+    const showIcon = componentLabels === 'icons' && !!template.icon
+
+    return (
+        <>
+            <g id={`node-label-${node.instanceId}`} ref={longHoverTarget} className=" np-pointer-events-auto">
+                <rect
+                    x={position.x + dx - NODE_LABEL_WIDTH / 2}
+                    y={position.y + NODE_INTERNAL_PADDING}
+                    width={NODE_LABEL_WIDTH}
+                    height={nodeHeight - NODE_INTERNAL_PADDING * 2}
+                    rx={7}
+                    ry={7}
+                    fill={COLORS.LIGHT}
+                    stroke={COLORS.DARK}
+                    strokeWidth={2}
+                />
+            </g>
+            {showIcon ? (
+                <image
+                    href={getIconAsImage(template)}
+                    x={position.x + dx - NODE_LABEL_ICON_SIZE / 2}
+                    y={position.y + nodeHeight / 2 - NODE_LABEL_ICON_SIZE / 2}
+                    width={NODE_LABEL_ICON_SIZE}
+                    height={NODE_LABEL_ICON_SIZE}
+                    className="np-pointer-events-none np-select-none"
+                    preserveAspectRatio="xMidYMid meet"
+                />
+            ) : (
+                <>
+                    <path
+                        id={`node-label-path-${id}`}
+                        fill="none"
+                        d={`M ${position.x + dx + NODE_LABEL_FONT_SIZE / 2 - 2} ${position.y + nodeHeight} L ${position.x + dx + NODE_LABEL_FONT_SIZE / 2 - 3
+                            } ${position.y}`}
+                    />
+                    <text
+                        className="np-font-panel np-font-[800] np-select-none np-pointer-events-none"
+                        fill={COLORS.DARK}
+                        fontSize={NODE_LABEL_FONT_SIZE}
+                    >
+                        <textPath href={`#node-label-path-${id}`} startOffset="50%" textAnchor="middle">
+                            {template.nickName.toUpperCase()}
+                        </textPath>
+                    </text>
+                </>
+            )}
+        </>
+    )
+}

@@ -1,47 +1,82 @@
 {
-  "name": "@nodepen/monorepo",
-  "private": true,
-  "version": "1.0.0",
-  "description": "same grasshopper, new digs",
-  "author": "@cdriesler",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/nodepen/nodes.git"
-  },
-  "packageManager": "npm@10.9.0",
-  "license": "MIT",
-  "scripts": {
-    "build": "npx turbo run build --no-daemon",
-    "build:ci": "npx turbo run build --filter=!./apps/*",
-    "dev": "npx turbo run dev --no-daemon",
-    "dev:speckle": "cd apps/speckle-server && yarn dev:docker:up && yarn dev",
-    "dev:rhino": "cd apps/rhino-compute-server && dotnet watch",
-    "lint": "npx turbo run lint --no-daemon --concurrency=1",
-    "lint:ci": "npx turbo run lint --no-daemon --concurrency=1 --filter=!./apps/*",
-    "test": "npx turbo run test --no-daemon",
-    "test:ci": "npx turbo run test --no-daemon --filter=./packages/nodes",
-    "install:ci": "npm install -D --arch=x64 --platform=linux turbo && npm install -D --arch=arm64 --platform=darwin turbo"
-  },
-  "devDependencies": {
-    "@types/jest": "^29.5.12",
-    "@types/node": "^22.7.6",
-    "@typescript-eslint/eslint-plugin": "^7.5.0",
-    "@typescript-eslint/parser": "^7.5.0",
-    "copyfiles": "^2.4.1",
-    "eslint": "^8.57.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-jsx-a11y": "^6.8.0",
-    "eslint-plugin-prettier": "^5.1.3",
-    "prettier": "^3.2.5",
-    "ts-jest": "^29.1.4",
-    "tsc-alias": "^1.8.10",
-    "tsc-watch": "^6.2.1",
-    "turbo": "^2.3.0",
-    "typescript": "^5.4.5"
-  },
-  "workspaces": [
-    "packages/core",
-    "packages/nodes",
-    "apps/nodepen-client"
-  ]
+    "name": "@nodepen/nodes",
+    "private": true,
+    "version": "1.0.0",
+    "description": "same grasshopper, new digs",
+    "author": "@cdriesler",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/nodepen/nodes.git"
+    },
+    "packageManager": "npm@10.9.0",
+    "license": "MIT",
+    "files": [
+        "dist/**/*"
+    ],
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/index.mjs",
+            "types": "./dist/index.d.mts"
+        },
+        "./constants": {
+            "import": "./dist/constants.mjs",
+            "types": "./dist/constants.d.mts"
+        },
+        "./utils": {
+            "import": "./dist/utils/index.mjs",
+            "types": "./dist/utils/index.d.mts"
+        },
+        "./styles.css": "./dist/styles.css"
+    },
+    "overrides": {
+        "esbuild": "^0.28.2"
+    },
+    "scripts": {
+        "postbuild": "tailwindcss build -i tailwind.css -o dist/styles.css && node postbuild.js",
+        "build": "tsup",
+        "compile": "tsc",
+        "dev": "rm -rf dist && tsup --watch",
+        "preview": "vite --config dev/vite.config.ts",
+        "lint": "eslint --ext .ts,.tsx .",
+        "lint:fix": "eslint --fix --ext .ts,.tsx .",
+        "test": "jest"
+    },
+    "dependencies": {
+        "@selvajs/visualization": "^1.3.0",
+        "immer": "^10.1.1",
+        "react-hook-form": "^7.72.1",
+        "three": "^0.185.1",
+        "zustand": "4.5.5"
+    },
+    "peerDependencies": {
+        "react": "^19.2.5",
+        "react-dom": "^19.2.5"
+    },
+    "devDependencies": {
+        "@types/jest": "^30.0.0",
+        "@types/node": "^26.2.0",
+        "@types/react": "^19.0.0",
+        "@types/react-dom": "^19.0.0",
+        "@types/three": "^0.185.4",
+        "@typescript-eslint/eslint-plugin": "^7.5.0",
+        "@typescript-eslint/parser": "^7.5.0",
+        "@vitejs/plugin-react": "^6.0.5",
+        "autoprefixer": "^10.4.20",
+        "concurrently": "^10.0.4",
+        "copyfiles": "^2.4.1",
+        "eslint": "^8.57.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-jsx-a11y": "^6.8.0",
+        "eslint-plugin-prettier": "^5.1.3",
+        "postcss": "^8.4.47",
+        "prettier": "^3.2.5",
+        "tailwindcss": "^3.4.14",
+        "ts-jest": "^29.1.4",
+        "tsc-alias": "^1.8.10",
+        "tsc-watch": "^7.2.1",
+        "tsup": "^8.5.1",
+        "typescript": "6.0.3",
+        "vite": "^8.2.1"
+    }
 }

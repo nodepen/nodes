@@ -1,0 +1,100 @@
+import type React from 'react'
+import { useCallback, useRef } from 'react'
+import { useStore, useDispatch } from '$'
+import { useImperativeEvent } from '@/hooks'
+import { current } from 'immer'
+
+export const useSelectableNode = (nodeInstanceId: string): React.RefObject<SVGGElement | null> => {
+    const nodeRef = useRef<SVGGElement>(null)
+
+    const { apply } = useDispatch()
+
+    const handlePointerDown = useCallback((e: PointerEvent): void => {
+        const container = nodeRef.current
+
+        if (!container) {
+            return
+        }
+
+        switch (e.pointerType) {
+            case 'pen':
+            case 'touch': {
+                return
+            }
+            case 'mouse': {
+                switch (e.button) {
+                    case 0: {
+                        // Do NOT stop propagation!
+
+                        // Handle remove from selection
+                        if (e.ctrlKey) {
+                            apply((state) => {
+                                const node = state.document.nodes[nodeInstanceId]
+
+                                if (!node) {
+                                    console.log('🐍 Could not find node for selection event!')
+                                    return
+                                }
+
+                                // Set node as selected in registry
+                                const currentSelection = state.registry.selection.nodes
+                                state.registry.selection.nodes = currentSelection.filter((id) => id !== nodeInstanceId)
+
+                                state.callbacks.onSelectionUpdated?.(current(state))
+                            })
+
+                            return
+                        }
+
+                        // Handle add to selection
+                        if (e.shiftKey) {
+                            apply((state) => {
+                                const node = state.document.nodes[nodeInstanceId]
+
+                                if (!node) {
+                                    console.log('🐍 Could not find node for selection event!')
+                                    return
+                                }
+
+                                // Set node as selected in registry
+                                if (!state.registry.selection.nodes.includes(nodeInstanceId)) {
+                                    state.registry.selection.nodes.push(nodeInstanceId)
+                                }
+
+                                state.callbacks.onSelectionUpdated?.(current(state))
+                            })
+
+                            return
+                        }
+
+                        // Bail out if node is already selected
+                        // Prevents setting selection to node _in_ selection at start of drag
+                        if (useStore.getState().registry.selection.nodes.includes(nodeInstanceId)) {
+                            return
+                        }
+
+                        // Handle set as selection
+                        apply((state) => {
+                            const node = state.document.nodes[nodeInstanceId]
+
+                            if (!node) {
+                                console.log('🐍 Could not find node for selection event!')
+                                return
+                            }
+
+                            // Set node as selected in registry
+                            state.registry.selection.nodes = [nodeInstanceId]
+                            state.registry.selection.groups = []
+
+                            state.callbacks.onSelectionUpdated?.(current(state))
+                        })
+                    }
+                }
+            }
+        }
+    }, [])
+
+    useImperativeEvent(nodeRef, 'pointerdown', handlePointerDown)
+
+    return nodeRef
+}

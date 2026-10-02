@@ -1,0 +1,108 @@
+import { COLORS } from '@/constants'
+import { useCallbacks, useDispatch, useStore } from '@/store'
+import { useCallback, useRef } from 'react'
+import { shallow } from 'zustand/shallow'
+import { DocumentControlsRow } from './DocumentControlsRow'
+import { useFlag } from '@/hooks/useFlag'
+
+type ControlsProps = {
+    isEditable?: boolean
+    hideHeader?: boolean
+}
+export const DocumentControls = ({ isEditable, hideHeader }: ControlsProps) => {
+    const { apply } = useDispatch()
+
+    const { onClickRunDocument } = useCallbacks()
+
+    const hideRunButton = useFlag('hideControlsRunButton')
+
+    const closeButtonRef = useRef<HTMLDivElement>(null)
+
+    const handleClose = useCallback(() => {
+        apply((state) => {
+            state.ui.sidebar.isDocumentControlsOpen = false
+        })
+    }, [apply])
+
+    const inputControls = useStore((state) =>
+        Object.values(state.document.controls.input)
+            .filter((control) => !!state.document.nodes[control.ref.nodeInstanceId])
+            .sort((a, b) => a.order - b.order),
+        shallow
+    )
+
+    const outputControls = useStore((state) =>
+        Object.values(state.document.controls.output)
+            .filter((control) => !!state.document.nodes[control.ref.nodeInstanceId])
+            .sort((a, b) => a.order - b.order),
+        shallow
+    )
+
+    const hasControls = inputControls.length > 0 || outputControls.length > 0
+
+    const showRunButton = hasControls && !hideRunButton
+
+    return <div className="np-w-full np-h-full np-hidden md:np-flex np-flex-col np-justify-start np-items-center">
+        {!hideHeader ? (<div className="np-w-full np-pl-0.5 np-h-8 np-flex np-items-center np-justify-start">
+            <div className='np-w-8 np-h-8 np-ml-1 np-p-0.5'>
+                <div className='np-w-full np-h-full  np-rounded-full np-flex np-items-center np-justify-center np-border-2 np-border-dark'>
+                    <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-4'>
+                        <path d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                    </svg>
+                </div>
+            </div>
+            <p className="np-ml-2 np-flex-grow np-text-[13px] np-text-dark np-font-panel np-font-[800] np-leading-tight np-translate-y-px">
+                Script Controls
+            </p>
+            <div ref={closeButtonRef} className='np-w-6 np-h-6 np-mr-1.5 np-flex np-justify-center np-items-center np-rounded-full hover:np-bg-grey hover:np-cursor-pointer' onClick={handleClose}>
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-4">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" vectorEffect="non-scaling-stroke" />
+                </svg>
+            </div>
+        </div>) : null}
+        <div className="np-w-full np-grow np-flex np-flex-col np-items-center np-pt-2 np-overflow-y-auto">
+            {hasControls ? (<>
+                {inputControls.map((control) => (
+                    <DocumentControlsRow
+                        key={`input-${control.ref.nodeInstanceId}-${control.ref.portInstanceId}`}
+                        controlType="input"
+                        nodeInstanceId={control.ref.nodeInstanceId}
+                        portInstanceId={control.ref.portInstanceId}
+                    />
+                ))}
+                {inputControls.length > 0 && outputControls.length > 0 ? (
+                    <div className='np-w-full np-pl-3 np-pr-3 np-pb-2'>
+                        <div className='np-w-full np-h-[2px] np-rounded-full np-bg-dark' />
+                    </div>
+                ) : null}
+                {outputControls.map((control) => (
+                    <DocumentControlsRow
+                        key={`output-${control.ref.nodeInstanceId}-${control.ref.portInstanceId}`}
+                        controlType="output"
+                        nodeInstanceId={control.ref.nodeInstanceId}
+                        portInstanceId={control.ref.portInstanceId}
+                    />
+                ))}
+            </>) : (
+                <div className='np-w-full np-h-full np-flex np-flex-col np-justify-center np-items-center'>
+                    <p className="np-text-xs np-text-dark np-font-panel np-font-[800]">
+                        No controls set.
+                    </p>
+                    <p className="np-text-xs np-text-dark np-font-panel np-font-[800]">
+                        Try adding a param or number slider!
+                    </p>
+                </div>
+            )}
+            {showRunButton ? (<div className='np-w-full np-min-h-10 np-sticky np-bottom-0 np-flex np-flex-col np-justify-end np-bg-light'>
+                <div className='np-w-full np-h-8 np-rounded-md np-border-2 np-p-0.5 np-group hover:np-cursor-pointer' onClick={() => onClickRunDocument?.(useStore.getState())}>
+                    <div className='np-w-full np-h-full np-rounded-sm np-flex np-items-center np-justify-center group-hover:np-bg-grey'>
+                        <svg aria-hidden="true" fill="none" strokeWidth={2} stroke={COLORS.DARK} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" className='np-size-4'>
+                            <path d="M5.25 5.653c0-.856.917-1.398 1.667-.986l11.54 6.347a1.125 1.125 0 0 1 0 1.972l-11.54 6.347a1.125 1.125 0 0 1-1.667-.986V5.653Z" strokeLinecap="round" strokeLinejoin="round" vectorEffect="non-scaling-stroke" />
+                        </svg>
+                        <p className='np-ml-1 np-pt-0.5 np-text-dark np-text-sm np-font-panel np-font-[800]'>Launch Script</p>
+                    </div>
+                </div>
+            </div>) : null}
+        </div>
+    </div>
+}
