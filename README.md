@@ -18,7 +18,7 @@ This will open the minimal preview site at `/dev` and allow you to work with a l
 
 A NodePen document is a JSON description of nodes, each with a reference to their "template" by id. Start from `Document.ts` in `/types` to understand the shape of each.
 
-While the schema borrows some naming and conventions from Grasshopper, it is capable of describing (and, eventally, being converted to) any other graph format. Give it a try with yours. (:)
+While the schema borrows some naming and conventions from Grasshopper, it is capable of describing (and, eventally, being converted to) any other graph format. Give it a try with yours. (:
 
 ## Attribution
 
@@ -32,9 +32,9 @@ NodePen was not built alone: it's built on years of iterations and conversations
 
 ### Lore
 
-The earliest drafts of NodePen included the ["RestHopper"](https://github.com/RESThopper/resthopper.grasshopper) headless Grasshopper prototype developed at the [2018 AEC Tech Hackathon](http://core.thorntontomasetti.com/aec-tech-2018/aec-tech-2018-hackathon/2018-aec-tech-hackathon-github-repos/).
+The earliest drafts of NodePen c. 2019 included the ["RestHopper"](https://github.com/RESThopper/resthopper.grasshopper) headless Grasshopper prototype developed at the [2018 AEC Tech Hackathon](http://core.thorntontomasetti.com/aec-tech-2018/aec-tech-2018-hackathon/2018-aec-tech-hackathon-github-repos/).
 
-[Failed 2022 launch]
+A previous version of NodePen was online c. 2022 for some time, thanks to a generous sponsorship from [Glide](https://www.glideapps.com/). It didn't work out! But there's some [fun videos](https://www.youtube.com/watch?v=CBJz96WdOvw) out there from the try.
 
 ### Legal
 
