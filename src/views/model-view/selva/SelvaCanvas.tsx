@@ -448,28 +448,13 @@ const SelvaCanvas = ({ solutionModelUrl }: SelvaCanvasProps) => {
 
         let isCurrent = true
 
-        if (!solutionModelUrl) {
+        // Solutions saved before Selva point at a .3dm, which isn't drawn. The next solve replaces it.
+        if (!solutionModelUrl || isRhinoModelUrl(solutionModelUrl)) {
             if (useStore.getState().solution.flags.isFailed) {
                 disposeSolutionObjects(content)
                 content.clear()
                 viewer.invalidate()
             }
-
-            isSolutionSettledRef.current = true
-            frameInitial()
-            offerThumbnail('solution', new THREE.Box3())
-
-            return
-        }
-
-        if (isRhinoModelUrl(solutionModelUrl)) {
-            apply((state) => {
-                state.solution.flags.isModelExpired = false
-                state.solution.messages.model = {
-                    status: 'error',
-                    message: 'This solution was saved before the Selva viewer. Re-solve to view it.'
-                }
-            })
 
             isSolutionSettledRef.current = true
             frameInitial()

@@ -10,57 +10,15 @@ updates:
       - dependency-type: "direct"
     open-pull-requests-limit: 3
     groups:
-      build:
+      dev:
         patterns:
+          - "@typescript-eslint/*"
           - "concurrently"
           - "tsc-alias"
           - "tsc-watch"
           - "turbo"
-      eslint:
-        patterns:
-          - "@typescript-eslint/*"
           - "eslint*"
           - "prettier"
-      gql:
-        patterns:
-          - "graphql"
-          - "graphql-tag"
-      next:
-        patterns:
-          - "@tanstack/react-query"
-          - "next"
-          - "next-images"
-      react:
-        patterns:
-          - "@types/react"
-          - "@types/react-dom"
-      tailwind:
-        patterns:
-          - "autoprefixer"
-          - "postcss"
-          - "tailwindcss"
-      test:
-        patterns:
-          - "@types/jest"
-          - "jest"
-          - "ts-jest"
-      state:
-        patterns:
-          - "immer"
-          - "zustand"
     ignore:
       - dependency-name: "@types/three"
     versioning-strategy: "increase"
-
-  - directory: "/packages/converters"
-    package-ecosystem: "nuget"
-    schedule:
-      interval: "weekly"
-      day: "friday"
-    allow:
-      - dependency-name: "Speckle*"
-    groups:
-      speckle:
-        patterns:
-          - "Speckle*"
-    open-pull-requests-limit: 1
