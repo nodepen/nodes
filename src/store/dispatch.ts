@@ -17,6 +17,7 @@ import { tryGetControl } from '@/utils/controls'
 import { getValidGeometryForType } from '@/utils/geometry-types'
 import { saveDocument } from './utils/saveDocument'
 import { newGuid } from '@/utils/common'
+import { getNextSelection, type SelectionMode } from '@/utils/selection'
 
 const { NODE_MINIMUM_HEIGHT } = DIMENSIONS
 
@@ -765,6 +766,25 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 false,
                 'ui/clearSelection'
             ),
+        selectNodes: (nodeInstanceIds: string[], mode: SelectionMode) => {
+            return set(
+                (state) => {
+                    const ids = nodeInstanceIds.filter((id) => {
+                        return !!state.document.nodes[id]
+                    })
+
+                    state.registry.selection.nodes = getNextSelection(state.registry.selection.nodes, ids, mode)
+
+                    if (mode === 'set') {
+                        state.registry.selection.groups = []
+                    }
+
+                    state.callbacks.onSelectionUpdated?.(current(state))
+                },
+                false,
+                'ui/selectNodes'
+            )
+        },
         clearModelState: () =>
             set(
                 (state) => {

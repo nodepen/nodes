@@ -43,7 +43,7 @@ export const usePort = (
             'cluster'
         ]
 
-        if (supportsContextMenus.includes(nodeType)) {
+        if (!supportsContextMenus.includes(nodeType)) {
             return
         }
 

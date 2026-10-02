@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { Layer } from "../common"
-import ModelCanvas from "./ModelCanvas"
+import SelvaCanvas from "./selva/SelvaCanvas"
 import { internalCallbacksRef, useCallbacks, useDispatch, useStore } from "@/store"
 import { getDomainParameter } from "@/utils/numerics/domain"
 import { clamp } from '@/utils/numerics'
@@ -15,6 +15,8 @@ import { useIsEditable } from "@/hooks/useIsEditable"
 
 const ModelView = () => {
     const solutionModelUrl = useStore((state) => state.solution.data?.solutionModelUrl ?? null)
+
+    const canvas = <SelvaCanvas solutionModelUrl={solutionModelUrl} />
 
     const isEditable = useIsEditable()
 
@@ -238,7 +240,7 @@ const ModelView = () => {
                         <div className="np-w-full np-rounded-lg np-p-0.5 np-border-2 np-border-green np-bg-pale np-overflow-hidden np-transition-[height] np-ease-out np-duration-[350ms]" style={{ height: isExpanded ? '100%' : '50%' }}>
                             <div className="np-w-full np-h-full np-rounded-md np-relative np-overflow-hidden">
                                 <ModelErrorBoundary resetKeys={[solutionModelUrl]}>
-                                    <ModelCanvas solutionModelUrl={solutionModelUrl} />
+                                    {canvas}
                                 </ModelErrorBoundary>
                             </div>
                         </div>
@@ -248,7 +250,7 @@ const ModelView = () => {
                     <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[34px]' : 'np-rounded-lg'} np-ease-out np-h-full np-bg-pale np-p-0.5 np-absolute np-transition-all np-duration-[350ms] np-pointer-events-auto np-group/container`} style={{ width: isExpanded ? `${width * 100}%` : '102px', bottom: isExpanded ? "0px" : "8px", right: isExpanded ? "0" : "calc(50% - 51px)" }}>
                         <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[32px]' : 'np-rounded-lg'} ${isFullBleed ? 'np-border-pale' : 'np-border-green'} np-w-full np-h-full np-p-0.5 np-border-2 np-transition-all np-duration-[350ms]`}>
                             <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[28px]' : 'np-rounded-md'} np-w-full np-h-full np-relative`}>
-                                <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[28px]' : 'np-rounded-[4px]'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden np-isolate np-transform-gpu`} onPointerDownCapture={(e) => {
+                                <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[28px] np-[clip-path:inset(0_round_28px)]' : 'np-rounded-[4px] np-[clip-path:inset(0_round_4px)]'} ${isSceneVisible ? 'np-opacity-100' : 'np-opacity-0'} np-w-full np-h-full np-absolute np-flex np-items-center np-justify-center np-z-20 np-bg-pale np-overflow-hidden`} onPointerDownCapture={(e) => {
                                     if (isExpanded) {
                                         return
                                     }
@@ -256,7 +258,7 @@ const ModelView = () => {
                                     e.stopPropagation()
                                 }}>
                                     <ModelErrorBoundary resetKeys={[solutionModelUrl]}>
-                                        <ModelCanvas solutionModelUrl={solutionModelUrl} />
+                                        {canvas}
                                     </ModelErrorBoundary>
                                 </div>
                                 <div className="np-w-full np-h-full np-absolute np-flex np-flex-col np-items-start np-justify-end np-invisible group-hover/container:np-visible np-z-30 np-pointer-events-none">

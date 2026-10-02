@@ -1,6 +1,7 @@
+import type * as THREE from "three";
 import type { ModelGeometryType } from "@/types/geometry";
 
-export const isGeometryType = (o: THREE.Object3D<THREE.Event>, type: ModelGeometryType): boolean => {
+export const isGeometryType = (o: THREE.Object3D, type: ModelGeometryType): boolean => {
     const objectType = o.userData?.objectType
 
     switch (type) {

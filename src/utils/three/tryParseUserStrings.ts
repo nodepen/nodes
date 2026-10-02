@@ -8,12 +8,17 @@ type UserStringData = {
     previewColor?: string
 }
 
-type UserString = [key: string, value: string]
+const PREFIX = 'nodepen:'
 
 export const tryParseUserStrings = (o: Three.Object3D): UserStringData => {
-    const userStrings: UserString[] = o.userData?.attributes?.userStrings ?? []
-    return userStrings.reduce((all, [k, v]) => {
-        all[k] = v
-        return all
-    }, {} as Record<string, string>)
+    const metadata: Record<string, unknown> = o.userData?.metadata ?? {}
+    const result: Record<string, string> = {}
+
+    for (const [key, value] of Object.entries(metadata)) {
+        if (key.startsWith(PREFIX) && typeof value === 'string') {
+            result[key.slice(PREFIX.length)] = value
+        }
+    }
+
+    return result
 }
