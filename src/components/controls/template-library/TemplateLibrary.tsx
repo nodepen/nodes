@@ -2,6 +2,7 @@ import { CircleButton } from "@/components/layout/CircleButton"
 import { COLORS } from "@/constants"
 import { useStore } from "@/store"
 import type { NodeTemplate } from "@/types"
+import { isTemplateVisible } from "@/utils/templates"
 import { useEffect, useMemo, useState } from "react"
 import TemplateLibraryDraggable from "./TemplateLibraryDraggable"
 
@@ -10,12 +11,11 @@ export const TemplateLibrary = () => {
         const library: Record<string, Record<string, NodeTemplate[]>> = {}
 
         for (const template of Object.values(state.templates)) {
-            library[template.category] ??= {}
-
-            if (template.isHidden) {
+            if (!isTemplateVisible(template)) {
                 continue
             }
 
+            library[template.category] ??= {}
             library[template.category][template.subcategory] ??= []
             library[template.category][template.subcategory].push(template)
         }

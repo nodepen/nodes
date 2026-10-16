@@ -3,7 +3,7 @@ import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import type { ContextMenu } from '../../types'
 import { clamp } from '@/utils/numerics'
-import { createInstance, getIconAsImage, applyFallbackIcon } from '@/utils/templates'
+import { createInstance, getIconAsImage, applyFallbackIcon, isTemplateVisible } from '@/utils/templates'
 import { useTextSearch } from './hooks'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
 import { COMPONENTS, KEYS } from '@/constants'
@@ -35,7 +35,7 @@ type SearchOption =
 
 export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMenuProps) => {
     const templateLibrary = useStore((state) => state.templates)
-    const templates = useMemo(() => Object.values(templateLibrary).filter((template) => !template.isHidden), [templateLibrary])
+    const templates = useMemo(() => Object.values(templateLibrary).filter(isTemplateVisible), [templateLibrary])
     const preferences = useStore((state) => state.ui.preferences)
     const { apply } = useDispatch()
 
