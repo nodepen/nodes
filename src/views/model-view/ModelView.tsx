@@ -12,6 +12,7 @@ import { COLORS } from "@/constants"
 import ModelErrorBoundary from "./ModelErrorBoundary"
 import { useFlag } from "@/hooks/useFlag"
 import { useIsEditable } from "@/hooks/useIsEditable"
+import { useMediaQuery } from "@/hooks/useMediaQuery"
 
 const ModelView = () => {
     const solutionModelUrl = useStore((state) => state.solution.data?.solutionModelUrl ?? null)
@@ -19,6 +20,8 @@ const ModelView = () => {
     const canvas = <SelvaCanvas solutionModelUrl={solutionModelUrl} />
 
     const isEditable = useIsEditable()
+
+    const isDesktop = useMediaQuery('(min-width: 768px)')
 
     const defaultOpenModel = useFlag('defaultOpenModel')
 
@@ -213,7 +216,7 @@ const ModelView = () => {
     return (
         <Layer id="np-model-layer" z={85}>
             <div className={`${isFullBleed ? '' : 'md:np-p-4'} np-w-full np-h-full np-p-0 np-flex np-flex-col np-justify-end np-pointer-events-none`}>
-                <div className="np-w-full np-h-full np-relative md:np-hidden">
+                {!isDesktop ? (<div className="np-w-full np-h-full np-relative">
                     <div className="np-w-full np-h-full np-p-5 np-absolute np-top-0 np-flex np-flex-col np-justify-end np-z-20">
                         <div className="np-w-full np-flex np-justify-start np-gap-1">
                             {isFullBleed ? null : (<>
@@ -237,7 +240,7 @@ const ModelView = () => {
                         </div>
                     </div>
                     <div className="np-w-full np-h-full np-p-1.5 np-absolute np-top-0 np-flex np-flex-col np-justify-end np-z-10">
-                        <div className="np-w-full np-rounded-lg np-p-0.5 np-border-2 np-border-green np-bg-pale np-overflow-hidden np-transition-[height] np-ease-out np-duration-[350ms]" style={{ height: isExpanded ? '100%' : '50%' }}>
+                        <div className="np-w-full np-rounded-lg np-p-0.5 np-border-2 np-border-green np-bg-pale np-overflow-hidden np-pointer-events-auto np-transition-[height] np-ease-out np-duration-[350ms]" style={{ height: isExpanded ? '100%' : '50%' }}>
                             <div className="np-w-full np-h-full np-rounded-md np-relative np-overflow-hidden">
                                 <ModelErrorBoundary resetKeys={[solutionModelUrl]}>
                                     {canvas}
@@ -245,8 +248,8 @@ const ModelView = () => {
                             </div>
                         </div>
                     </div>
-                </div>
-                <div ref={windowContainerRef} className={`${isExpanded ? 'np-h-full' : 'np-h-20'} np-hidden md:np-inline np-ease-out np-w-full np-relative np-transition-all np-duration-[350ms] `} onTransitionStart={handleTransitionStart} onTransitionEnd={handleTransitionEnd}>
+                </div>) : null}
+                {isDesktop ? (<div ref={windowContainerRef} className={`${isExpanded ? 'np-h-full' : 'np-h-20'} np-ease-out np-w-full np-relative np-transition-all np-duration-[350ms] `} onTransitionStart={handleTransitionStart} onTransitionEnd={handleTransitionEnd}>
                     <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[34px]' : 'np-rounded-lg'} np-ease-out np-h-full np-bg-pale np-p-0.5 np-absolute np-transition-all np-duration-[350ms] np-pointer-events-auto np-group/container`} style={{ width: isExpanded ? `${width * 100}%` : '102px', bottom: isExpanded ? "0px" : "8px", right: isExpanded ? "0" : "calc(50% - 51px)" }}>
                         <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[32px]' : 'np-rounded-lg'} ${isFullBleed ? 'np-border-pale' : 'np-border-green'} np-w-full np-h-full np-p-0.5 np-border-2 np-transition-all np-duration-[350ms]`}>
                             <div className={`${isExpanded ? isFullBleed ? '' : 'np-rounded-[28px]' : 'np-rounded-md'} np-w-full np-h-full np-relative`}>
@@ -315,7 +318,7 @@ const ModelView = () => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </div>) : null}
             </div>
         </Layer >
     )

@@ -1,5 +1,6 @@
 import type * as THREE from 'three'
 import { parseDisplayItems, parseMeshBatchObject, type DisplayBatch, type MeshBatchParsingOptions } from '@selvajs/visualization/parse'
+import { waitForIdle } from './idleWatcher'
 
 const batches = new Map<string, Promise<DisplayBatch>>()
 
@@ -32,6 +33,8 @@ const fetchBatch = async (url: string): Promise<DisplayBatch> => {
     if (isGzip(bytes)) {
         bytes = await gunzip(bytes)
     }
+
+    await waitForIdle()
 
     return JSON.parse(new TextDecoder().decode(bytes)) as DisplayBatch
 }

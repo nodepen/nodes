@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@/types'
-import { createInstance, getIconAsImage } from '@/utils/templates'
+import { createInstance, getIconAsImage, applyFallbackIcon } from '@/utils/templates'
 import { useLongHover, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { useDispatch, useStore } from '@/store'
 import { addDocumentNode } from '@/store/utils'
@@ -105,6 +105,7 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
                         width={22}
                         draggable={false}
                         src={getIconAsImage(template)}
+                        onError={applyFallbackIcon}
                         alt={`${template.name} (${template.nickName}): ${template.description}`}
                     />
                 </div>

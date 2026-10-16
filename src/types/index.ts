@@ -15,7 +15,7 @@ export type {
 } from './data'
 export type { PortConfiguration, PortFlag } from './ports'
 export type { DocumentSolutionData, DocumentSolutionFlags, DocumentSolutionStatusMessage, NodeSolutionData, PortSolutionData } from './solution'
-export type { NodeTemplate, NodeToggle, PortTemplate } from './templates'
+export type { NodeTemplate, NodeToggle, PortAccess, PortTemplate } from './templates'
 export type { DocumentAttachmentType, DocumentAttachments } from './attachments'
 export type { DocumentPresence } from './presence'
 export type { AppFlags, AppFeatures } from './App'

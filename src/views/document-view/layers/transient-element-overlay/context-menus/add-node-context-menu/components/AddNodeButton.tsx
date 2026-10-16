@@ -2,7 +2,7 @@ import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@/types'
 import { useLongHover, usePageSpaceToOverlaySpace } from '@/hooks'
 import { MenuButton } from '../../../common'
-import { getIconAsImage } from '@/utils/templates'
+import { getIconAsImage, applyFallbackIcon } from '@/utils/templates'
 import { useDispatch } from '@/store'
 import { KEYS } from '@/constants'
 
@@ -58,7 +58,7 @@ export const AddNodeButton = ({ template, isSelected, action }: AddNodeButtonPro
       <div ref={longHoverTarget}>
         <MenuButton
           label={template.name}
-          icon={<img src={getIconAsImage(template)} alt={template.name} />}
+          icon={<img src={getIconAsImage(template)} onError={applyFallbackIcon} alt={template.name} />}
           isSelected={isSelected}
           action={action}
         />

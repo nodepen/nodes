@@ -53,7 +53,8 @@ export const createCluster = (
                 description,
                 typeName,
                 keywords: [],
-                isOptional: false
+                isOptional: false,
+                access: 'item'
             })
 
             metaByControlId[controlId] = { label, description, typeName }
