@@ -20,6 +20,7 @@ import {
     loadReferenceModel
 } from './referenceModels'
 import { pickNearest } from './selvaPicking'
+import { waitForIdle } from './idleWatcher'
 
 type SelvaCanvasProps = {
     solutionModelUrl: string | null
@@ -410,7 +411,9 @@ const SelvaCanvas = ({ solutionModelUrl }: SelvaCanvasProps) => {
             loaded.set(modelKey, entry)
 
             loadReferenceModel(loader, modelKey, url)
-                .then((root) => {
+                .then(async (root) => {
+                    await waitForIdle()
+
                     // Replaced or unmounted while it loaded.
                     if (loaded.get(modelKey) !== entry || viewerRef.current !== viewer) {
                         disposeReferenceModel(root)
@@ -467,11 +470,15 @@ const SelvaCanvas = ({ solutionModelUrl }: SelvaCanvasProps) => {
             try {
                 const batch = await loadSelvaModel(solutionModelUrl)
 
+                await waitForIdle()
+
                 if (!isCurrent) {
                     return
                 }
 
                 const objects = await buildSelvaObjects(batch, viewer.getMaterialAppearance())
+
+                await waitForIdle()
 
                 if (!isCurrent) {
                     return
