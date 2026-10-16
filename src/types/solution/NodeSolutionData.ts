@@ -17,6 +17,7 @@ type NodeRuntimeData = {
 type NodeRuntimeDataMessage = {
     level: 'error' | 'warning' | 'info'
     message: string
+    portInstanceId?: string
 }
 
 // Per-solve information about available dynamic node operations (like list item param add/remove)

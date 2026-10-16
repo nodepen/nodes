@@ -24,6 +24,10 @@ While the schema borrows some naming and conventions from Grasshopper, it is cap
 
 NodePen was not built alone: it's built on years of iterations and conversations at the pub and daydreaming at conferences with friends and colleagues in the industry about what Grasshopper can be. Some of its best ideas came from people who have contributed no code, and I'd like to list some here:
 
+**Julian Raabe** for all things touchscreen, on-prem, and for introducing me to...
+
+**Felix Brunold** for the [Selva](https://selvadev.com/) viewer and format, which drives all 3D geometry and interactions.
+
 **Puja Bhagat** for suggesting various "re-displays" of the graph, like collapsing groups into a "meta" flow chart of the graph's logic.
 
 **Ivneet Singh** for pushing search to include more than components, including the content of panels or other commentary throughout the graph.

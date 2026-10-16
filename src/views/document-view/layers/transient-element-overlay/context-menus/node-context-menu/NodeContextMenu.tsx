@@ -3,7 +3,7 @@ import type * as NodePen from '@/types'
 import type { ContextMenu } from '../../types'
 import type { NodeContextMenuContext } from '../../types/ContextMenuContext'
 import { MenuBody, MenuButton, MenuDivider, MenuHeader } from '../../common'
-import { getIconAsImage } from '@/utils/templates'
+import { getIconAsImage, applyFallbackIcon } from '@/utils/templates'
 import { DisableButton, VisibilityButton } from './buttons'
 import { useDispatch, useStore } from '$'
 import { STYLES } from '@/constants'
@@ -55,6 +55,7 @@ export const NodeContextMenu = ({ position, context }: NodeContextMenuProps) => 
             width={20}
             height={20}
             src={getIconAsImage(nodeTemplate)}
+            onError={applyFallbackIcon}
             alt={`${nodeTemplate.name} (${nodeTemplate.nickName}): ${nodeTemplate.description}`}
         />
     )

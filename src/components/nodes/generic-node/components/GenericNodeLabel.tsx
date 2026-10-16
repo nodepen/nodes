@@ -6,7 +6,7 @@ import { useDispatch, useStore } from '$'
 import { usePresenceSelectionColor } from '@/hooks/usePresenceSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
-import { getIconAsImage } from '@/utils/templates'
+import { getIconAsImage, applyFallbackIcon } from '@/utils/templates'
 
 const { NODE_INTERNAL_PADDING, NODE_LABEL_FONT_SIZE, NODE_LABEL_WIDTH, NODE_LABEL_ICON_SIZE } = DIMENSIONS
 
@@ -60,7 +60,7 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
 
     // Only `GenericNode` reads this -- every other node type keeps drawing its own fixed label.
     const componentLabels = useStore((state) => state.ui.preferences.componentLabels)
-    const showIcon = componentLabels === 'icons' && !!template.icon
+    const showIcon = componentLabels === 'icons'
 
     return (
         <>
@@ -80,6 +80,7 @@ export const GenericNodeLabel = ({ node, template }: GenericNodeLabelProps) => {
             {showIcon ? (
                 <image
                     href={getIconAsImage(template)}
+                    onError={applyFallbackIcon}
                     x={position.x + dx - NODE_LABEL_ICON_SIZE / 2}
                     y={position.y + nodeHeight / 2 - NODE_LABEL_ICON_SIZE / 2}
                     width={NODE_LABEL_ICON_SIZE}
