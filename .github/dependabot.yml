@@ -5,20 +5,18 @@ updates:
     package-ecosystem: "npm"
     schedule:
       interval: "weekly"
-      day: "friday"
+      day: "sunday"
     allow:
       - dependency-type: "direct"
-    open-pull-requests-limit: 3
-    groups:
-      dev:
-        patterns:
-          - "@typescript-eslint/*"
-          - "concurrently"
-          - "tsc-alias"
-          - "tsc-watch"
-          - "turbo"
-          - "eslint*"
-          - "prettier"
+    open-pull-requests-limit: 5
     ignore:
-      - dependency-name: "@types/three"
+      # Tailwind 3
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@tailwindcss/*"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "postcss"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "autoprefixer"
+        update-types: ["version-update:semver-major"]
     versioning-strategy: "increase"
