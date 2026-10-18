@@ -5,7 +5,7 @@ updates:
     package-ecosystem: "npm"
     schedule:
       interval: "weekly"
-      day: "friday"
+      day: "sunday"
     allow:
       - dependency-type: "direct"
     open-pull-requests-limit: 5
