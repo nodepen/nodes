@@ -55,7 +55,7 @@
     },
     "devDependencies": {
         "@types/jest": "^30.0.0",
-        "@types/node": "^26.2.0",
+        "@types/node": "^26.6.5",
         "@types/react": "^19.0.0",
         "@types/react-dom": "^19.0.0",
         "@types/three": "^0.185.4",
