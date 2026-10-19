@@ -12,6 +12,7 @@ import { clearMenus } from '@/store/utils/clearMenus'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import type { PortFlag } from '@/types'
 import { PickGeometryButton } from './buttons/PickGeometryButton'
+import { PickFileButton } from './buttons/PickFileButton'
 import { ZoomToGeometryButton } from './buttons/ZoomToGeometryButton'
 
 type PortContextMenuProps = {
@@ -23,7 +24,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const { nodeInstanceId, portInstanceId, portTemplate } = context
     const { name, nickName, typeName } = portTemplate
 
-    const { apply, toggleFlag, clearInterface, startModelSelection } = useDispatch()
+    const { apply, toggleFlag, clearInterface, startModelSelection, setFileValue } = useDispatch()
 
     const handleSetValueClick = useCallback((pageY: number) => {
         apply((state) => {
@@ -69,6 +70,20 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
         startModelSelection(nodeInstanceId, portInstanceId, portTemplate.typeName)
     }, [nodeInstanceId, portInstanceId, portTemplate, startModelSelection])
 
+    const handlePickFile = useCallback(() => {
+        clearInterface()
+
+        const state = useStore.getState()
+
+        state.callbacks.onPickFile?.(state, { nodeInstanceId, portInstanceId })
+            .then((file) => {
+                if (file) {
+                    setFileValue(nodeInstanceId, portInstanceId, file)
+                }
+            })
+            .catch((e) => console.warn('🐍 Could not pick a file:', e))
+    }, [nodeInstanceId, portInstanceId, clearInterface, setFileValue])
+
     const node = useStore.getState().document.nodes[nodeInstanceId]
 
     if (!node) {
@@ -79,7 +94,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
     const enableSetLabel = nodeType === 'generic-parameter'
-    const { enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
+    const { enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enablePickFile, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
 
     return (
         <MenuBody position={position}>
@@ -89,6 +104,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
             ) : null}
             {enablePickGeometry ? <PickGeometryButton portTemplate={portTemplate} onClick={handlePickGeometry} /> : null}
+            {enablePickFile ? <PickFileButton onClick={handlePickFile} /> : null}
             {enableSetLabel || enableSetValue || enableSetValue ? <MenuDivider /> : null}
             {enablePinInput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} controlType="input" /> : null}
             {enablePinOutput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="output" controlType="output" /> : null}

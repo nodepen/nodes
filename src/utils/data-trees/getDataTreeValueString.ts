@@ -1,7 +1,7 @@
 import type * as NodePen from '@/types'
 
 export const getDataTreeValueString = (value?: NodePen.DataTreeValue): string => {
-    if (value?.type === 'reference') {
+    if (value?.type === 'reference' || value?.type === 'file') {
         return value.description
     }
 

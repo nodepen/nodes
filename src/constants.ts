@@ -121,6 +121,8 @@ export const COMPONENTS = {
     DIVISION: '9c85271f-89fa-4e9f-9f4a-d75802120ccc',
     POINT_PARAMETER: 'fbac3e32-f100-4292-8692-77240a42fd1a',
     RELAY: 'b6236720-8d88-4289-93c3-ac4c99f9b97b',
+    FILE_PATH: '06953bda-1d37-4d58-9b38-4b3c74e54c8f',
+    READ_FILE: '6587fcbf-e3cf-480a-b2f5-641794474194',
 }
 
 export const KEYS = {

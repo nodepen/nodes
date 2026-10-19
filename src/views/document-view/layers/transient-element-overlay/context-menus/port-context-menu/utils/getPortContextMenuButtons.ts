@@ -2,7 +2,7 @@ import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate
 import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import type { PortContextMenuContext } from '../../../types'
 import { useStore } from '$'
-import { PARAMS } from '@/constants'
+import { COMPONENTS, PARAMS } from '@/constants'
 import type * as NodePen from '@/types'
 
 type PortContextMenuButtons = {
@@ -11,6 +11,7 @@ type PortContextMenuButtons = {
     enablePinOutput: boolean
     enableSetValue: boolean
     enablePickGeometry: boolean
+    enablePickFile: boolean
     enableZoomToGeometry: boolean
     enableReparameterize: boolean
 }
@@ -36,6 +37,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enablePinOutput: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
+                enablePickFile: false,
                 enableZoomToGeometry: direction === 'output',
                 enableReparameterize
             }
@@ -45,8 +47,9 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: true,
                 enableSetValue: supportedPrimitiveTypeNames.includes(typeName),
                 enablePickGeometry: supportedGeometricTypeNames.includes(typeName),
+                enablePickFile: node.templateId === COMPONENTS.FILE_PATH && !!useStore.getState().callbacks.onPickFile,
                 enablePinInput: [...supportedPrimitiveTypeNames, ...supportedGeometricTypeNames].includes(typeName),
-                enablePinOutput: true,
+                enablePinOutput: node.templateId !== COMPONENTS.FILE_PATH,
                 enableZoomToGeometry: false,
                 // TODO: Should be possible, need to see how to draw badge on param
                 enableReparameterize: false
@@ -57,6 +60,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
+                enablePickFile: false,
                 enablePinInput: true,
                 enablePinOutput: false,
                 enableZoomToGeometry: false,
@@ -68,6 +72,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
+                enablePickFile: false,
                 enablePinInput: true,
                 enablePinOutput: false,
                 enableZoomToGeometry: false,
@@ -79,6 +84,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetLabel: true,
                 enableSetValue: false,
                 enablePickGeometry: false,
+                enablePickFile: false,
                 enablePinInput: false,
                 enablePinOutput: false,
                 enableZoomToGeometry: false,
@@ -92,6 +98,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enablePinOutput: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
+                enablePickFile: false,
                 enableZoomToGeometry: false,
                 enableReparameterize: false
             }
