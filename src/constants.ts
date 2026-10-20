@@ -156,6 +156,10 @@ export const PARAMS = {
         'extrusion',
         'brep',
         'geometry'
+    ] as const,
+    SPECIAL: [
+        'file',
+        'file path'
     ] as const
 }
 

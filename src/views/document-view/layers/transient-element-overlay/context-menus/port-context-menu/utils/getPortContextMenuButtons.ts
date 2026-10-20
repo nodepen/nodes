@@ -25,6 +25,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
 
     const supportedPrimitiveTypeNames: readonly string[] = PARAMS.PRIMITIVE
     const supportedGeometricTypeNames: readonly string[] = PARAMS.GEOMETRY
+    const supportedSpecialTypeNames: readonly string[] = PARAMS.SPECIAL
 
     const supportedReparameterizeTypeNames: readonly NodePen.DataTreeValueType[] = ['curve', 'surface']
     const enableReparameterize = supportedReparameterizeTypeNames.includes(typeName as NodePen.DataTreeValueType)
@@ -48,7 +49,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetValue: supportedPrimitiveTypeNames.includes(typeName),
                 enablePickGeometry: supportedGeometricTypeNames.includes(typeName),
                 enablePickFile: node.templateId === COMPONENTS.FILE_PATH && !!useStore.getState().callbacks.onPickFile,
-                enablePinInput: [...supportedPrimitiveTypeNames, ...supportedGeometricTypeNames].includes(typeName),
+                enablePinInput: [...supportedPrimitiveTypeNames, ...supportedGeometricTypeNames, ...supportedSpecialTypeNames].includes(typeName),
                 enablePinOutput: node.templateId !== COMPONENTS.FILE_PATH,
                 enableZoomToGeometry: false,
                 // TODO: Should be possible, need to see how to draw badge on param

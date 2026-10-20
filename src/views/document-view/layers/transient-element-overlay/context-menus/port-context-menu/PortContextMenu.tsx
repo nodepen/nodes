@@ -10,6 +10,7 @@ import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { DIMENSIONS } from '@/constants'
 import { clearMenus } from '@/store/utils/clearMenus'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
+import { usePickFile } from '@/hooks'
 import type { PortFlag } from '@/types'
 import { PickGeometryButton } from './buttons/PickGeometryButton'
 import { PickFileButton } from './buttons/PickFileButton'
@@ -24,7 +25,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const { nodeInstanceId, portInstanceId, portTemplate } = context
     const { name, nickName, typeName } = portTemplate
 
-    const { apply, toggleFlag, clearInterface, startModelSelection, setFileValue } = useDispatch()
+    const { apply, toggleFlag, clearInterface, startModelSelection } = useDispatch()
 
     const handleSetValueClick = useCallback((pageY: number) => {
         apply((state) => {
@@ -70,19 +71,12 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
         startModelSelection(nodeInstanceId, portInstanceId, portTemplate.typeName)
     }, [nodeInstanceId, portInstanceId, portTemplate, startModelSelection])
 
+    const pickFile = usePickFile(nodeInstanceId, portInstanceId)
+
     const handlePickFile = useCallback(() => {
         clearInterface()
-
-        const state = useStore.getState()
-
-        state.callbacks.onPickFile?.(state, { nodeInstanceId, portInstanceId })
-            .then((file) => {
-                if (file) {
-                    setFileValue(nodeInstanceId, portInstanceId, file)
-                }
-            })
-            .catch((e) => console.warn('🐍 Could not pick a file:', e))
-    }, [nodeInstanceId, portInstanceId, clearInterface, setFileValue])
+        pickFile?.()
+    }, [clearInterface, pickFile])
 
     const node = useStore.getState().document.nodes[nodeInstanceId]
 

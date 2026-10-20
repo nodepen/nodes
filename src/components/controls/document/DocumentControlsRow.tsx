@@ -14,6 +14,7 @@ import { PortTypeIcon } from '@/components/icons'
 import { DocumentControlsNumberSlider } from './DocumentControlsNumberSlider'
 import { DocumentControlsBoolean } from './DocumentControlsBoolean'
 import { DocumentControlsGeometry } from './DocumentControlsGeometry'
+import { DocumentControlsFile } from './DocumentControlsFile'
 import { DocumentControlsValueList } from './DocumentControlsValueList'
 import { DocumentControlsBooleanToggle } from './DocumentControlsBooleanToggle'
 import { DocumentControlsColorSwatch } from './DocumentControlsColorSwatch'
@@ -270,6 +271,9 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                     case 'box':
                     case 'geometry':
                         return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isValueEditable} />
+                    case 'file path' as NodePen.DataTreeValueType:
+                    case 'file':
+                        return <DocumentControlsFile nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} isDisabled={!isValueEditable} />
                     case 'data': {
                         return <input
                             className="np-text-dark np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel np-font-[800] placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1"
