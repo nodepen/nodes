@@ -72,7 +72,7 @@
         "postcss": "^8.4.47",
         "prettier": "^3.9.10",
         "tailwindcss": "^3.4.14",
-        "ts-jest": "^29.1.4",
+        "ts-jest": "^29.4.15",
         "tsc-alias": "^1.8.10",
         "tsc-watch": "^7.2.1",
         "tsup": "^9.0.0",
