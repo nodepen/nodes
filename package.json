@@ -76,7 +76,7 @@
         "tsc-alias": "^1.8.10",
         "tsc-watch": "^7.2.1",
         "tsup": "^9.0.0",
-        "typescript": "6.0.3",
+        "typescript": "7.0.2",
         "vite": "^8.3.5"
     }
 }
