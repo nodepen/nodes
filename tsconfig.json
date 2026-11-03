@@ -1,16 +1,6 @@
 {
-    "extends": "./tsconfig.base.json",
     "include": [
-        "src/**/*",
-        "packages/nodes/src/components",
-        "packages/nodes/src/hooks",
-        "packages/nodes/src/store",
-        "packages/nodes/src/utils",
-        "packages/nodes/src/views",
-        "packages/nodes/src/app.tsx",
-        "packages/nodes/src/constants.ts",
-        "packages/nodes/src/index.ts",
-        "packages/nodes/src/types.ts"
+        "src/**/*"
     ],
     "exclude": [
         "dist",
@@ -37,9 +27,28 @@
         ],
         "module": "esnext",
         "target": "esnext",
-        "declaration": true,
-        "resolveJsonModule": false,
         "moduleResolution": "bundler",
+        "declaration": true,
+        "declarationMap": false,
+        "sourceMap": false,
+        "esModuleInterop": true,
+        "resolveJsonModule": false,
+        "jsx": "react-jsx",
+        "jsxImportSource": "react",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noUnusedLocals": false,
+        "noUnusedParameters": false,
+        "strict": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true,
+        "stripInternal": true,
+        "types": [
+            "node",
+            "jest"
+        ],
+        "verbatimModuleSyntax": true,
         "skipLibCheck": true
     }
 }
