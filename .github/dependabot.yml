@@ -9,6 +9,13 @@ updates:
     allow:
       - dependency-type: "direct"
     open-pull-requests-limit: 5
+    groups:
+      lint:
+        patterns:
+          - "@typescript-eslint/*"
+          - "eslint"
+          - "eslint-*"
+          - "prettier"
     ignore:
       # Tailwind 3
       - dependency-name: "tailwindcss"
