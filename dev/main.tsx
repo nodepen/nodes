@@ -42,8 +42,8 @@ const solution = {
     }
 }
 
-const assets = {
-    models: {
+const attachments = {
+    reference_model: {
         'test-model': '/test.3dm'
     }
 }
@@ -96,7 +96,7 @@ const preferences = {
 
 root.render(<StrictMode>
     <div style={{ width: '100vw', height: '100vh' }}>
-        <NodesApp document={doc} templates={templates as any} solution={solution} assets={assets} presence={presence} flags={flags} features={features} preferences={preferences}>
+        <NodesApp document={doc} templates={templates as any} solution={solution} presence={presence} attachments={attachments} flags={flags} features={features} preferences={preferences}>
             <Agent />
         </NodesApp>
     </div>

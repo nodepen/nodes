@@ -48,6 +48,11 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
                     return 'relay'
                 }
                 default: {
+                    if (template.inputs.length > 0 || template.outputs.length > 0) {
+                        // Some params (Read File) have inputs and outputs
+                        return 'generic-node'
+                    }
+
                     return 'generic-parameter'
                 }
             }

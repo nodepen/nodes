@@ -890,6 +890,27 @@ export const createDispatch = (set: BaseSetter, get: BaseGetter) => {
                 false,
                 'port/commitModelSelection'
             ),
+        setFileValue: (nodeInstanceId: string, portInstanceId: string, file: { fileId: string; name: string }) =>
+            set(
+                (state) => {
+                    const node = state.document.nodes[nodeInstanceId]
+
+                    if (!node) {
+                        return
+                    }
+
+                    node.values[portInstanceId] = createList([{
+                        type: 'file',
+                        description: file.name,
+                        order: 0,
+                        fileId: file.fileId
+                    }])
+
+                    expireSolution(state)
+                },
+                false,
+                'port/setFileValue'
+            ),
         addControl: (controlType: 'input' | 'output', nodeInstanceId: string, portInstanceId: string) =>
             set(
                 (state) => {

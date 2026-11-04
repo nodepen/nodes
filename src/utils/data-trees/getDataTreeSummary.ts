@@ -11,6 +11,14 @@ export const getDataTreeSummary = (tree?: DataTree | null): string => {
 
     const valueCountString = branchValueCountDomain[0] === branchValueCountDomain[1] ? `${branchValueCountDomain[0]}` : `${branchValueCountDomain[0] - branchValueCountDomain[1]}`
 
+    if (valueTypes.includes('file') && valueCount === 1) {
+        return tree.branches[0]?.values[0]?.description ?? '1 file'
+    }
+
+    if (valueTypes.includes('file')) {
+        return `${valueCountString} file${valueCount === 1 ? '' : 's'}`
+    }
+
     if (valueTypes.includes('reference')) {
         return `${valueCountString} referenced item${valueCount === 1 ? '' : 's'}`
     }

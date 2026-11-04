@@ -567,6 +567,25 @@ const ReferenceGlyph = ({ s }: GlyphProps) => {
     )
 }
 
+/** A page with its corner folded: a team file, and the File Path param that holds one. */
+const FileGlyph = ({ s }: GlyphProps) => {
+    const w = s * 0.62
+    const h = s * 0.82
+    const fold = s * 0.24
+    const x = s - w / 2
+    const y = s - h / 2
+
+    return (
+        <path
+            d={`M ${x} ${y} H ${x + w - fold} L ${x + w} ${y + fold} V ${y + h} H ${x} Z M ${x + w - fold} ${y} V ${y + fold} H ${x + w}`}
+            stroke={COLORS.LIGHT}
+            strokeWidth={s * 0.14}
+            strokeLinejoin="round"
+            fill="none"
+        />
+    )
+}
+
 const portTypeGlyphs: Record<NodePen.DataTreeValueType, (props: GlyphProps) => React.ReactElement> = {
     boolean: BooleanGlyph,
     integer: IntegerGlyph,
@@ -597,6 +616,7 @@ const portTypeGlyphs: Record<NodePen.DataTreeValueType, (props: GlyphProps) => R
     geometry: GeometryGlyph,
     data: DataGlyph,
     reference: ReferenceGlyph,
+    file: FileGlyph,
 }
 
 export const getPortTypeGlyph = (typeName: NodePen.DataTreeValueType | undefined, s: number): React.ReactElement | null => {
@@ -604,7 +624,8 @@ export const getPortTypeGlyph = (typeName: NodePen.DataTreeValueType | undefined
         return null
     }
 
-    const Glyph = portTypeGlyphs[typeName]
+    // A File Path param's port is named for the param, not for a value type.
+    const Glyph = (typeName as string) === 'file path' ? FileGlyph : portTypeGlyphs[typeName]
 
     return Glyph ? <Glyph s={s} /> : null
 }

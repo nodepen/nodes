@@ -9,6 +9,13 @@ updates:
     allow:
       - dependency-type: "direct"
     open-pull-requests-limit: 5
+    groups:
+      lint:
+        patterns:
+          - "@typescript-eslint/*"
+          - "eslint"
+          - "eslint-*"
+          - "prettier"
     ignore:
       # Tailwind 3
       - dependency-name: "tailwindcss"
@@ -18,5 +25,11 @@ updates:
       - dependency-name: "postcss"
         update-types: ["version-update:semver-major"]
       - dependency-name: "autoprefixer"
+        update-types: ["version-update:semver-major"]
+      # TypeScript 6
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+      # Zustand 4
+      - dependency-name: "zustand"
         update-types: ["version-update:semver-major"]
     versioning-strategy: "increase"

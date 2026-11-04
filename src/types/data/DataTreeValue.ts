@@ -17,3 +17,10 @@ export type DataTreeValue =
         readonly sourceFileKey: string
         readonly sourceFileGuid: string
     }
+    | {
+        readonly type: 'file'
+        readonly description: string
+        readonly order: number
+        readonly value?: never
+        readonly fileId: string
+    }

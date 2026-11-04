@@ -279,6 +279,19 @@ export type NodesAppCallbacks = {
     onEditCluster?: (state: NodesAppState, context: ClusterEditContext) => void,
     onViewCluster?: (state: NodesAppState, context: ClusterViewContext) => void,
     onDeleteCluster?: (state: NodesAppState, context: ClusterDeleteContext) => void,
+    // Files
+    onPickFile?: (state: NodesAppState, context: FilePickContext) => Promise<FilePickResult | null>,
+}
+
+export type FilePickContext = {
+    nodeInstanceId: string
+    portInstanceId: string
+}
+
+export type FilePickResult = {
+    fileId: string
+    /** What the file is called in its folder, which is what the param shows. */
+    name: string
 }
 
 export type PortMutationContext = {

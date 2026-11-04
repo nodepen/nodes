@@ -10,8 +10,10 @@ import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 import { DIMENSIONS } from '@/constants'
 import { clearMenus } from '@/store/utils/clearMenus'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
+import { usePickFile } from '@/hooks'
 import type { PortFlag } from '@/types'
 import { PickGeometryButton } from './buttons/PickGeometryButton'
+import { PickFileButton } from './buttons/PickFileButton'
 import { ZoomToGeometryButton } from './buttons/ZoomToGeometryButton'
 
 type PortContextMenuProps = {
@@ -69,6 +71,13 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
         startModelSelection(nodeInstanceId, portInstanceId, portTemplate.typeName)
     }, [nodeInstanceId, portInstanceId, portTemplate, startModelSelection])
 
+    const pickFile = usePickFile(nodeInstanceId, portInstanceId)
+
+    const handlePickFile = useCallback(() => {
+        clearInterface()
+        pickFile?.()
+    }, [clearInterface, pickFile])
+
     const node = useStore.getState().document.nodes[nodeInstanceId]
 
     if (!node) {
@@ -79,7 +88,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
     const enableSetLabel = nodeType === 'generic-parameter'
-    const { enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
+    const { enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enablePickFile, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
 
     return (
         <MenuBody position={position}>
@@ -89,6 +98,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
             ) : null}
             {enablePickGeometry ? <PickGeometryButton portTemplate={portTemplate} onClick={handlePickGeometry} /> : null}
+            {enablePickFile ? <PickFileButton onClick={handlePickFile} /> : null}
             {enableSetLabel || enableSetValue || enableSetValue ? <MenuDivider /> : null}
             {enablePinInput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} controlType="input" /> : null}
             {enablePinOutput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="output" controlType="output" /> : null}

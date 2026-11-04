@@ -11,6 +11,20 @@ const { NODE_VALUE_FONT_SIZE } = DIMENSIONS
 const CLUSTER_LABEL_EXTRA_HEIGHT = 32
 const CLUSTER_LABEL_PADDING_X = 8
 
+const getVersionLabel = (cluster: NodePen.DocumentCluster | null | undefined): string => {
+    if (!cluster?.ref) {
+        return ''
+    }
+
+    if (cluster.ref.versionId === null) {
+        return 'Live'
+    }
+
+    const index = cluster.meta?.documentVersionIndex
+
+    return typeof index === 'number' ? `R${String(index).padStart(3, '0')}` : ''
+}
+
 type ClusterLabelProps = {
     node: NodePen.DocumentNode
 }
@@ -24,7 +38,7 @@ export const ClusterLabel = ({ node }: ClusterLabelProps) => {
     const nodeHeight = node.dimensions.height
 
     const name = cluster?.ref ? cluster.meta?.documentName ?? '' : 'Empty Cluster'
-    const versionLabel = cluster?.ref && cluster.meta ? `R${String(cluster.meta.documentVersionIndex).padStart(3, '0')}` : ''
+    const versionLabel = getVersionLabel(cluster)
 
     const centerY = position.y + nodeHeight + CLUSTER_LABEL_EXTRA_HEIGHT / 2
 
