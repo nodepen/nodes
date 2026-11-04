@@ -16,6 +16,10 @@ updates:
           - "eslint"
           - "eslint-*"
           - "prettier"
+      state:
+        patterns:
+          - "immer"
+          - "zustand"
     ignore:
       # Tailwind 3
       - dependency-name: "tailwindcss"
@@ -31,5 +35,10 @@ updates:
         update-types: ["version-update:semver-major"]
       # Zustand 4
       - dependency-name: "zustand"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "immer"
+        update-types: ["version-update:semver-major"]
+      # ESLint 8
+      - dependency-name: "eslint"
         update-types: ["version-update:semver-major"]
     versioning-strategy: "increase"
