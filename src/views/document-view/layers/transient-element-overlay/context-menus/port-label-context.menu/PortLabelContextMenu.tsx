@@ -2,11 +2,12 @@ import { MenuBody, MenuInput } from "../../common"
 import type { ContextMenu } from "../../types"
 import type { PortLabelContextMenuContext } from "../../types/ContextMenuContext"
 import { useDispatch, useStore } from '$'
-import { tryGetSingleValue } from "@/utils/data-trees"
-import { getDataTreeValueString } from "@/utils/data-trees/getDataTreeValueString"
 import { useCallback } from "react"
 import { usePortLabel } from "@/hooks/usePortLabel"
 import { saveDocument } from "@/store/utils/saveDocument"
+import { tryGetTemplate } from "@/utils/templates/tryGetTemplate"
+import { getNodeTypeForTemplate } from "@/utils/templates/getNodeTypeForTemplate"
+import { getNodeDimensions } from "@/utils/node-dimensions"
 
 type PortLabelContextMenuProps = {
     position: ContextMenu['position']
@@ -34,7 +35,22 @@ export const PortLabelContextMenu = ({ position, context }: PortLabelContextMenu
                 label: null,
                 flags: []
             }
-            node.portConfigurations[portInstanceId].label = val
+
+            // Clearing the label restores the default
+            node.portConfigurations[portInstanceId].label = val.trim().length > 0 ? val : null
+
+            // Generic component widths depend on port label lengths
+            const template = tryGetTemplate(node.templateId)
+
+            const nodeType = template ? getNodeTypeForTemplate(template) : 'unknown'
+
+            if (template && (nodeType === 'generic-node' || nodeType === 'expression')) {
+                const { anchors, dimensions } = getNodeDimensions(node, template, state.ui.preferences)
+
+                node.anchors = { ...node.anchors, ...anchors }
+                node.dimensions = { ...node.dimensions, ...dimensions }
+            }
+
             saveDocument(state)
         })
         clearInterface()

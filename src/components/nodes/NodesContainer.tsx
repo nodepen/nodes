@@ -12,6 +12,7 @@ import ColorSwatch from './color-swatch/ColorSwatch'
 import Gradient from './gradient/Gradient'
 import { Relay } from './relay'
 import { Cluster } from './cluster'
+import { Expression } from './expression'
 import { useFlag } from '@/hooks/useFlag'
 import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 
@@ -60,6 +61,8 @@ const NodesContainer = (): React.ReactElement | null => {
                         return <Gradient key={`gradient-${instanceId}`} id={instanceId} template={template} />
                     case 'relay':
                         return <Relay key={`relay-${instanceId}`} id={instanceId} template={template} />
+                    case 'expression':
+                        return <Expression key={`expression-${instanceId}`} id={instanceId} template={template} />
                     case 'unknown':
                     default:
                         return null

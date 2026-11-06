@@ -17,7 +17,12 @@ export const getNodeHeight = (
     const inputPortsHeight = Object.keys(inputs).length * DIMENSIONS.NODE_PORT_HEIGHT
     const outputPortsHeight = Object.keys(outputs).length * DIMENSIONS.NODE_PORT_HEIGHT
 
-    const minimumLabelHeight = useIcon || nodeType === 'cluster' ? 24 : nickName.length * 15 // not monospace, estimate
+    const minimumLabelHeight =
+        nodeType === 'expression'
+            ? DIMENSIONS.EXPRESSION_CONTENT_HEIGHT
+            : useIcon || nodeType === 'cluster'
+                ? 24
+                : nickName.length * 15 // not monospace, estimate
 
     const nodeContentHeight = Math.max(
         minimumNodeHeight,

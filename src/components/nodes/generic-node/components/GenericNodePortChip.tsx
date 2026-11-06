@@ -5,8 +5,10 @@ import { useNodeContextAnchorPosition } from '@/hooks'
 import { COLORS, DIMENSIONS } from '@/constants'
 import React, { useCallback } from 'react'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 
-const { NODE_PORT_HEIGHT, NODE_LABEL_WIDTH, NODE_PORT_CHIP_SIZE, NODE_INTERNAL_PADDING } = DIMENSIONS
+const { NODE_PORT_HEIGHT, NODE_LABEL_WIDTH, EXPRESSION_CONTENT_WIDTH, NODE_PORT_CHIP_SIZE, NODE_INTERNAL_PADDING } = DIMENSIONS
 
 type GenericNodePortChipProps = {
     nodeInstanceId: string
@@ -25,7 +27,14 @@ export const GenericNodePortChip = ({ nodeInstanceId, portInstanceId, portDirect
     const cx = useStore((state) => state.document.nodes[nodeInstanceId].anchors.labelDeltaX.dx)
     const cy = portAnchor?.y ?? 0
 
-    const xOffset = (NODE_LABEL_WIDTH / 2) + NODE_INTERNAL_PADDING + (portDirection === 'input' ? NODE_PORT_CHIP_SIZE : 0)
+    // Chips sit just outside the content drawn between the input and output columns
+    const labelWidth = useStore((state) => {
+        const templateId = state.document.nodes[nodeInstanceId]?.templateId
+        const nodeType = templateId ? getNodeTypeForTemplate(tryGetTemplate(templateId)) : 'unknown'
+        return nodeType === 'expression' ? EXPRESSION_CONTENT_WIDTH : NODE_LABEL_WIDTH
+    })
+
+    const xOffset = (labelWidth / 2) + NODE_INTERNAL_PADDING + (portDirection === 'input' ? NODE_PORT_CHIP_SIZE : 0)
     const dx = xOffset * (portDirection === 'output' ? 1 : -1)
     const dy = portOperation === 'add' ? (NODE_PORT_HEIGHT / (2 * (isLast ? 1 : -1))) - (NODE_PORT_CHIP_SIZE / 2) : (NODE_PORT_CHIP_SIZE / -2)
 

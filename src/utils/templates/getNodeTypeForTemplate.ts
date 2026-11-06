@@ -12,6 +12,7 @@ export type NodePenNodeType =
     | 'color-swatch'
     | 'color-gradient'
     | 'relay'
+    | 'expression'
     | 'unknown'
 
 export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
@@ -21,6 +22,10 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
 
     if (template.guid === 'cluster') {
         return 'cluster'
+    }
+
+    if (template.guid === COMPONENTS.EXPRESSION) {
+        return 'expression'
     }
 
     switch (template.category.toLowerCase()) {

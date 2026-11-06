@@ -87,26 +87,25 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const nodeTemplate = tryGetTemplate(node.templateId)
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
-    const enableSetLabel = nodeType === 'generic-parameter'
-    const { enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enablePickFile, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
+    const { enableSetLabel, enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enablePickFile, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
 
     return (
         <MenuBody position={position}>
-            {nodeType === 'generic-node' ? <MenuHeader icon={<PortTypeIcon typeName={typeName as any} />} label={`${name} (${nickName})`} /> : null}
+            {nodeType === 'generic-node' || nodeType === 'expression' ? <MenuHeader icon={<PortTypeIcon typeName={typeName as any} />} label={`${name} (${nickName})`} /> : null}
             {enableSetLabel ? <SetLabelButton onClick={handleEditNameClick} /> : null}
             {enableSetValue ? (
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
             ) : null}
             {enablePickGeometry ? <PickGeometryButton portTemplate={portTemplate} onClick={handlePickGeometry} /> : null}
             {enablePickFile ? <PickFileButton onClick={handlePickFile} /> : null}
-            {enableSetLabel || enableSetValue || enableSetValue ? <MenuDivider /> : null}
+            {enableSetLabel || enableSetValue || enablePickGeometry || enablePickFile ? <MenuDivider /> : null}
             {enablePinInput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} controlType="input" /> : null}
             {enablePinOutput ? <PinButton nodeInstanceId={nodeInstanceId} portInstanceId="output" controlType="output" /> : null}
             {enableZoomToGeometry ? (<>
                 <ZoomToGeometryButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
                 <MenuDivider />
             </>) : null}
-            {nodeType === 'generic-node' || nodeType === 'cluster' ? (
+            {nodeType === 'generic-node' || nodeType === 'expression' || nodeType === 'cluster' ? (
                 <>
                     <FlattenButton onClick={handleToggleFlag} />
                     <GraftButton onClick={handleToggleFlag} />

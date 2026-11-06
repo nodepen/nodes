@@ -18,7 +18,7 @@ export const PinButton = ({ nodeInstanceId, portInstanceId, controlType }: PinBu
         )
     )
 
-    const label = controlType === 'output' ? 'outputs' : 'controls'
+    const label = controlType === 'input' ? 'Add to inputs' : 'Add to outputs'
 
     const pinIcon = (
         <svg {...STYLES.BUTTON.SMALL}>

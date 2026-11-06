@@ -67,7 +67,7 @@ export const GenericNodeRuntimeMessage = ({ node }: GenericNodeRuntimeMessagePro
     }
 
     const tx = isVisible ? 0 : 50
-    const bubbleTx = isVisible ? 0 : nodeType === 'generic-node' ? 0 : -10
+    const bubbleTx = isVisible ? 0 : nodeType === 'generic-node' || nodeType === 'expression' ? 0 : -10
 
     const [arrow, bubble] = getNodeRuntimeMessageBubble(node, messageColors[visibleMessageLevel])
     const bubbleMask = getNodeRuntimeMessageBubble(node, '#FFFFFF')

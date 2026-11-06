@@ -239,6 +239,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                 return <DocumentControlsColorSwatch nodeInstanceId={nodeInstanceId} config={colorSwatchConfig} isDisabled={!isValueEditable} />
             }
             case 'generic-node':
+            case 'expression':
             case 'generic-parameter':
             case 'color-gradient': {
                 switch (valueType) {

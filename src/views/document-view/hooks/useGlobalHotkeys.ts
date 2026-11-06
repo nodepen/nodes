@@ -226,7 +226,7 @@ export const useGlobalHotkeys = () => {
                 }
 
                 apply((state) => {
-                    const eligibleNodeTypes: ReturnType<typeof getNodeTypeForTemplate>[] = ['generic-node', 'generic-parameter', 'relay', 'cluster']
+                    const eligibleNodeTypes: ReturnType<typeof getNodeTypeForTemplate>[] = ['generic-node', 'expression', 'generic-parameter', 'relay', 'cluster']
                     const eligibleNodes = state.registry.selection.nodes
                         .map((nodeInstanceId) => state.document.nodes[nodeInstanceId])
                         .filter((node) => !!node && eligibleNodeTypes.includes(getNodeTypeForTemplate(tryGetTemplate(node.templateId))))
