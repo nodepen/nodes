@@ -13,6 +13,7 @@ import Gradient from './gradient/Gradient'
 import { Relay } from './relay'
 import { Cluster } from './cluster'
 import { Expression } from './expression'
+import { ScriptNode } from './script'
 import { useFlag } from '@/hooks/useFlag'
 import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
 
@@ -63,6 +64,8 @@ const NodesContainer = (): React.ReactElement | null => {
                         return <Relay key={`relay-${instanceId}`} id={instanceId} template={template} />
                     case 'expression':
                         return <Expression key={`expression-${instanceId}`} id={instanceId} template={template} />
+                    case 'script':
+                        return <ScriptNode key={`script-${instanceId}`} id={instanceId} template={template} />
                     case 'unknown':
                     default:
                         return null

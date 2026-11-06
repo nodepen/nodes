@@ -1,6 +1,6 @@
 import type * as NodePen from '@/types'
 import { DIMENSIONS } from '@/constants'
-import { getNodeTypeForTemplate } from '../templates/getNodeTypeForTemplate'
+import { getNodeTypeForTemplate, type NodePenNodeType } from '../templates/getNodeTypeForTemplate'
 
 export const getNodeHeight = (
     node: NodePen.DocumentNode,
@@ -17,12 +17,7 @@ export const getNodeHeight = (
     const inputPortsHeight = Object.keys(inputs).length * DIMENSIONS.NODE_PORT_HEIGHT
     const outputPortsHeight = Object.keys(outputs).length * DIMENSIONS.NODE_PORT_HEIGHT
 
-    const minimumLabelHeight =
-        nodeType === 'expression'
-            ? DIMENSIONS.EXPRESSION_CONTENT_HEIGHT
-            : useIcon || nodeType === 'cluster'
-                ? 24
-                : nickName.length * 15 // not monospace, estimate
+    const minimumLabelHeight = getMinimumLabelHeight(nodeType, nickName, useIcon)
 
     const nodeContentHeight = Math.max(
         minimumNodeHeight,
@@ -34,4 +29,21 @@ export const getNodeHeight = (
     const nodeHeight = DIMENSIONS.NODE_INTERNAL_PADDING * 2 + nodeContentHeight
 
     return nodeHeight
+}
+
+const getMinimumLabelHeight = (
+    nodeType: NodePenNodeType,
+    nickName: string,
+    useIcon: boolean
+): number => {
+    switch (nodeType) {
+        case 'expression':
+            return DIMENSIONS.EXPRESSION_CONTENT_HEIGHT
+        case 'script':
+            return DIMENSIONS.NODE_LABEL_WIDTH
+        case 'cluster':
+            return 24
+        default:
+            return useIcon ? 24 : nickName.length * 15 // not monospace, estimate
+    }
 }

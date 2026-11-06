@@ -283,6 +283,12 @@ export type NodesAppCallbacks = {
     onPickFile?: (state: NodesAppState, context: FilePickContext) => Promise<FilePickResult | null>,
     // Templates
     onSelectLockedTemplate?: (state: NodesAppState, context: LockedTemplateContext) => void,
+    // Scripting
+    onOpenScriptEditor?: (state: NodesAppState, context: ScriptEditorContext) => void,
+}
+
+export type ScriptEditorContext = {
+    nodeInstanceId: string
 }
 
 export type LockedTemplateContext = {

@@ -40,6 +40,7 @@ export const useSelectionColor = (nodeInstanceId: string): SelectionColorData =>
         switch (nodeType) {
             case 'generic-node':
             case 'expression':
+            case 'script':
             case 'cluster':
             case 'relay': {
                 return !node.status.isVisible
