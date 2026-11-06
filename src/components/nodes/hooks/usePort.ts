@@ -39,6 +39,7 @@ export const usePort = (
 
         const supportsContextMenus: NodePenNodeType[] = [
             'generic-node',
+            'expression',
             'color-gradient',
             'cluster'
         ]

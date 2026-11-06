@@ -238,6 +238,21 @@ export const Wire = ({
                     />
                 )
             }
+            case 'expression': {
+                return (
+                    <rect
+                        x={position.x + dx - DIMENSIONS.EXPRESSION_CONTENT_WIDTH / 2 - 1}
+                        y={position.y + node.dimensions.height / 2 - DIMENSIONS.EXPRESSION_CONTENT_HEIGHT / 2 - 1}
+                        width={DIMENSIONS.EXPRESSION_CONTENT_WIDTH + 2}
+                        height={DIMENSIONS.EXPRESSION_CONTENT_HEIGHT + 3}
+                        rx={4}
+                        ry={4}
+                        fill={COLORS.LIGHT}
+                        stroke={COLORS.DARK}
+                        strokeWidth={2}
+                    />
+                )
+            }
             case 'number-slider': {
                 const { x, y, width, height } = useNumberSliderValuePosition(node.position)
                 const { dx, dy } = node.anchors['handle'] ?? { dx: 0, dy: 0 }

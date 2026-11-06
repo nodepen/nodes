@@ -91,7 +91,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
 
     return (
         <MenuBody position={position}>
-            {nodeType === 'generic-node' ? <MenuHeader icon={<PortTypeIcon typeName={typeName as any} />} label={`${name} (${nickName})`} /> : null}
+            {nodeType === 'generic-node' || nodeType === 'expression' ? <MenuHeader icon={<PortTypeIcon typeName={typeName as any} />} label={`${name} (${nickName})`} /> : null}
             {enableSetLabel ? <SetLabelButton onClick={handleEditNameClick} /> : null}
             {enableSetValue ? (
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
@@ -105,7 +105,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
                 <ZoomToGeometryButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
                 <MenuDivider />
             </>) : null}
-            {nodeType === 'generic-node' || nodeType === 'cluster' ? (
+            {nodeType === 'generic-node' || nodeType === 'expression' || nodeType === 'cluster' ? (
                 <>
                     <FlattenButton onClick={handleToggleFlag} />
                     <GraftButton onClick={handleToggleFlag} />

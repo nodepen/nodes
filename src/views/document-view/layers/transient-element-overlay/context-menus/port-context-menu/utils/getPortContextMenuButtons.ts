@@ -31,7 +31,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
     const enableReparameterize = supportedReparameterizeTypeNames.includes(typeName as NodePen.DataTreeValueType)
 
     switch (nodeType) {
-        case 'generic-node': {
+        case 'generic-node':
+        case 'expression': {
             return {
                 enableSetLabel: true,
                 enablePinInput: false,

@@ -22,7 +22,12 @@ export const getNodeWidth = (
 
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
-    const nodeLabelWidth = nodeType === 'cluster' ? DIMENSIONS.CLUSTER_PREVIEW_WIDTH : DIMENSIONS.NODE_LABEL_WIDTH
+    const nodeLabelWidth =
+        nodeType === 'cluster'
+            ? DIMENSIONS.CLUSTER_PREVIEW_WIDTH
+            : nodeType === 'expression'
+                ? DIMENSIONS.EXPRESSION_CONTENT_WIDTH
+                : DIMENSIONS.NODE_LABEL_WIDTH
 
     for (const [instanceId, orderIndex] of inputs) {
         const portTemplate = nodeTemplate.inputs[orderIndex] ?? getFallbackPortTemplate(nodeTemplate, 'input', orderIndex)

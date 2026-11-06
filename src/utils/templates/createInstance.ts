@@ -93,6 +93,49 @@ export const createInstance = (
 
             break
         }
+        case 'expression': {
+            const defaultInputLabels = ['x', 'y']
+            const defaultInputValues = ['9', '8']
+
+            for (const input of templateInputs) {
+                const { __order: order } = input
+
+                const inputInstanceId = newGuid()
+
+                node.sources[inputInstanceId] = []
+                node.inputs[inputInstanceId] = order
+                node.values[inputInstanceId] = defaultInputValues[order] !== undefined
+                    ? createSingleValue(defaultInputValues[order], 'number')
+                    : createEmptyTree()
+                node.portConfigurations[inputInstanceId] = {
+                    label: defaultInputLabels[order] ?? null,
+                    flags: [],
+                }
+            }
+
+            for (const output of templateOutputs) {
+                const { __order: order } = output
+
+                const outputInstanceId = newGuid()
+
+                node.outputs[outputInstanceId] = order
+                node.portConfigurations[outputInstanceId] = {
+                    label: null,
+                    flags: [],
+                }
+            }
+
+            node.nodeConfiguration = {
+                expression: 'x + y',
+            } as NodePen.ExpressionConfig
+
+            const { dimensions, anchors } = getNodeDimensions(node, template, preferences)
+
+            node.dimensions = dimensions
+            node.anchors = anchors
+
+            break
+        }
         case 'generic-parameter': {
             node.outputs['output'] = 0
             node.inputs['input'] = 0

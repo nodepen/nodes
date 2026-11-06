@@ -42,7 +42,9 @@ export const PortLabelContextMenu = ({ position, context }: PortLabelContextMenu
             // Generic component widths depend on port label lengths
             const template = tryGetTemplate(node.templateId)
 
-            if (template && getNodeTypeForTemplate(template) === 'generic-node') {
+            const nodeType = template ? getNodeTypeForTemplate(template) : 'unknown'
+
+            if (template && (nodeType === 'generic-node' || nodeType === 'expression')) {
                 const { anchors, dimensions } = getNodeDimensions(node, template, state.ui.preferences)
 
                 node.anchors = { ...node.anchors, ...anchors }
