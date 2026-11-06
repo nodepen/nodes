@@ -7,6 +7,7 @@ export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { 
 
     return useStore((state) => {
         const node = state.document.nodes[nodeInstanceId]
+        const mode = state.ui.preferences.parameterLabels
 
         if (!node) {
             return {
@@ -34,7 +35,7 @@ export const usePortLabel = (nodeInstanceId: string, portInstanceId: string): { 
 
         const nodeType = getNodeTypeForTemplate(template)
 
-        const defaultLabel = nodeType === 'generic-parameter' ? template.name : portTemplate?.name ?? template.name
+        const defaultLabel = nodeType === 'generic-parameter' ? template.name : (mode === 'fullname' ? portTemplate?.name : portTemplate?.nickName) ?? template.name
         const defaultDescription = portTemplate?.description ?? template.description
 
         return {

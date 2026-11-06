@@ -33,7 +33,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
     switch (nodeType) {
         case 'generic-node': {
             return {
-                enableSetLabel: false,
+                enableSetLabel: true,
                 enablePinInput: false,
                 enablePinOutput: false,
                 enableSetValue: false,
@@ -82,7 +82,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
         }
         case 'color-gradient': {
             return {
-                enableSetLabel: true,
+                enableSetLabel: false,
                 enableSetValue: false,
                 enablePickGeometry: false,
                 enablePickFile: false,

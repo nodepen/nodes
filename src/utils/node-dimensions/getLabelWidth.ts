@@ -9,7 +9,7 @@ export const getLabelWidth = (
     useTypeIcon = false
 ): number => {
     const labelText = portConfiguration.label ?? (useFullName ? portTemplate.name : portTemplate.nickName)
-    const labelTextWidth = labelText.length * 15 // monospace
+    const labelTextWidth = labelText.length * 14 // monospace
 
     const flagBadgesWidth = portConfiguration.flags.length * DIMENSIONS.NODE_PORT_FLAG_SIZE + 3 * clamp(portConfiguration.flags.length - 1, 0, 10)
 
