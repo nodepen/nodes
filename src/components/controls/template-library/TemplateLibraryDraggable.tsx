@@ -1,10 +1,10 @@
 import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@/types'
-import { createInstance, getIconAsImage, applyFallbackIcon } from '@/utils/templates'
+import { createInstance, getIconAsImage, applyFallbackIcon, isLocked } from '@/utils/templates'
 import { useLongHover, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
-import { useDispatch, useStore } from '@/store'
+import { useCallbacks, useDispatch, useStore } from '$'
 import { addDocumentNode } from '@/store/utils'
-import { KEYS } from '@/constants'
+import { COLORS, KEYS } from '@/constants'
 
 type TemplateDraggableProps = {
     template: NodePen.NodeTemplate
@@ -15,6 +15,7 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
     const buttonRef = useRef<HTMLButtonElement>(null)
 
     const { apply, clearInterface } = useDispatch()
+    const { onSelectLockedTemplate } = useCallbacks()
 
     const pageSpaceToWorldSpace = usePageSpaceToWorldSpace()
     const pageSpaceToOverlaySpace = usePageSpaceToOverlaySpace()
@@ -26,6 +27,11 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
                     e.stopPropagation()
 
                     clearInterface()
+
+                    if (isLocked(template.guid)) {
+                        onSelectLockedTemplate?.(useStore.getState(), { templateId: template.guid })
+                        return
+                    }
 
                     const { pageX, pageY } = e
 
@@ -56,7 +62,7 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
                 }
             }
         },
-        [apply, pageSpaceToWorldSpace]
+        [apply, onSelectLockedTemplate, pageSpaceToWorldSpace]
     )
 
     const handleLongHover = useCallback(
@@ -106,9 +112,17 @@ const TemplateDraggable = ({ template, showTooltip }: TemplateDraggableProps) =>
                         draggable={false}
                         src={getIconAsImage(template)}
                         onError={applyFallbackIcon}
-                        alt={`${template.name} (${template.nickName}): ${template.description}`}
+                        alt={`${template.name} (${template.nickName}): ${template.description}${template.isLocked ? ' (Locked)' : ''}`}
                     />
                 </div>
+                {template.isLocked ? (
+                    <div className="np-absolute np-top-0 np-right-0 np-pointer-events-none">
+                        <svg width={10} height={10} viewBox="0 0 24 24" fill="none" stroke={COLORS.DARK} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                            <rect x="5" y="11" width="14" height="10" rx="2" vectorEffect="non-scaling-stroke" />
+                            <path d="M8 11V7a4 4 0 0 1 8 0v4" vectorEffect="non-scaling-stroke" />
+                        </svg>
+                    </div>
+                ) : null}
             </button>
         </div>
     )

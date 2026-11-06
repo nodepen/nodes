@@ -281,6 +281,12 @@ export type NodesAppCallbacks = {
     onDeleteCluster?: (state: NodesAppState, context: ClusterDeleteContext) => void,
     // Files
     onPickFile?: (state: NodesAppState, context: FilePickContext) => Promise<FilePickResult | null>,
+    // Templates
+    onSelectLockedTemplate?: (state: NodesAppState, context: LockedTemplateContext) => void,
+}
+
+export type LockedTemplateContext = {
+    templateId: string
 }
 
 export type FilePickContext = {
