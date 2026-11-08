@@ -1,5 +1,6 @@
 import { COMPONENTS } from '@/constants'
 import type * as NodePen from '@/types'
+import { getScriptNodeLanguage } from './getScriptNodeLanguage'
 
 export type NodePenNodeType =
     | 'generic-node'
@@ -13,6 +14,7 @@ export type NodePenNodeType =
     | 'color-gradient'
     | 'relay'
     | 'expression'
+    | 'script'
     | 'unknown'
 
 export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePenNodeType => {
@@ -26,6 +28,10 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
 
     if (template.guid === COMPONENTS.EXPRESSION) {
         return 'expression'
+    }
+
+    if (getScriptNodeLanguage(template.guid)) {
+        return 'script'
     }
 
     switch (template.category.toLowerCase()) {

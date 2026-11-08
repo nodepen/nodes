@@ -10,7 +10,8 @@ export { useInterfacePanelCallbacks as useNodesApp } from './components/layout/p
 
 export { createInstance } from './utils/templates/createInstance'
 export { addDocumentNode } from './store/utils'
+export { isLocked } from './utils/templates/isLocked'
 
-export type { NodesAppState, NodesAppCallbacks, PortMutationContext, ClusterEditContext, ClusterViewContext, ClusterDeleteContext, FilePickContext, FilePickResult } from './store'
+export type { NodesAppState, NodesAppCallbacks, PortMutationContext, ClusterEditContext, ClusterViewContext, ClusterDeleteContext, FilePickContext, FilePickResult, LockedTemplateContext, ScriptEditorContext } from './store'
 
 export * from './types'

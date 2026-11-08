@@ -44,7 +44,7 @@ export const PortLabelContextMenu = ({ position, context }: PortLabelContextMenu
 
             const nodeType = template ? getNodeTypeForTemplate(template) : 'unknown'
 
-            if (template && (nodeType === 'generic-node' || nodeType === 'expression')) {
+            if (template && (nodeType === 'generic-node' || nodeType === 'expression' || nodeType === 'script')) {
                 const { anchors, dimensions } = getNodeDimensions(node, template, state.ui.preferences)
 
                 node.anchors = { ...node.anchors, ...anchors }

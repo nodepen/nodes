@@ -2,7 +2,7 @@ import React, { useCallback } from 'react'
 import type { ContextMenu, PortContextMenuContext } from '../../types'
 import { MenuBody, MenuDivider, MenuHeader } from '../../common'
 import { PortTypeIcon } from '@/components/icons'
-import { FlattenButton, GraftButton, PinButton, ReparameterizeButton, SetLabelButton, SetValueButton, SimplifyButton } from './buttons'
+import { AccessButtons, FlattenButton, GraftButton, PinButton, ReparameterizeButton, SetLabelButton, SetValueButton, SimplifyButton } from './buttons'
 import { getPortContextMenuButtons } from './utils'
 import { useDispatch, useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
@@ -11,7 +11,8 @@ import { DIMENSIONS } from '@/constants'
 import { clearMenus } from '@/store/utils/clearMenus'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { usePickFile } from '@/hooks'
-import type { PortFlag } from '@/types'
+import type { PortAccess, PortFlag } from '@/types'
+import { expireSolution } from '@/store/utils'
 import { PickGeometryButton } from './buttons/PickGeometryButton'
 import { PickFileButton } from './buttons/PickFileButton'
 import { ZoomToGeometryButton } from './buttons/ZoomToGeometryButton'
@@ -67,6 +68,21 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
         toggleFlag(nodeInstanceId, portInstanceId, flag)
     }, [])
 
+    const handleSetAccess = useCallback((access: PortAccess) => {
+        apply((state) => {
+            const configuration = state.document.nodes[nodeInstanceId]?.portConfigurations[portInstanceId]
+
+            if (!configuration) {
+                return
+            }
+
+            configuration.access = access
+
+            expireSolution(state)
+        })
+        clearInterface()
+    }, [nodeInstanceId, portInstanceId])
+
     const handlePickGeometry = useCallback(() => {
         startModelSelection(nodeInstanceId, portInstanceId, portTemplate.typeName)
     }, [nodeInstanceId, portInstanceId, portTemplate, startModelSelection])
@@ -87,11 +103,13 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
     const nodeTemplate = tryGetTemplate(node.templateId)
     const nodeType = getNodeTypeForTemplate(nodeTemplate)
 
+    const enableSetAccess = nodeType === 'script' && portTemplate.__direction === 'input'
+
     const { enableSetLabel, enablePinInput, enablePinOutput, enableSetValue, enablePickGeometry, enablePickFile, enableZoomToGeometry, enableReparameterize } = getPortContextMenuButtons(context)
 
     return (
         <MenuBody position={position}>
-            {nodeType === 'generic-node' || nodeType === 'expression' ? <MenuHeader icon={<PortTypeIcon typeName={typeName as any} />} label={`${name} (${nickName})`} /> : null}
+            {nodeType === 'generic-node' || nodeType === 'expression' || nodeType === 'script' ? <MenuHeader icon={<PortTypeIcon typeName={typeName as any} />} label={`${name} (${nickName})`} /> : null}
             {enableSetLabel ? <SetLabelButton onClick={handleEditNameClick} /> : null}
             {enableSetValue ? (
                 <SetValueButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} portTemplate={portTemplate} onClick={handleSetValueClick} />
@@ -105,7 +123,7 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
                 <ZoomToGeometryButton nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} />
                 <MenuDivider />
             </>) : null}
-            {nodeType === 'generic-node' || nodeType === 'expression' || nodeType === 'cluster' ? (
+            {nodeType === 'generic-node' || nodeType === 'expression' || nodeType === 'script' || nodeType === 'cluster' ? (
                 <>
                     <FlattenButton onClick={handleToggleFlag} />
                     <GraftButton onClick={handleToggleFlag} />
@@ -116,6 +134,12 @@ const PortContextMenu = ({ position, context }: PortContextMenuProps) => {
                             <ReparameterizeButton onClick={handleToggleFlag} />
                         </>
                     ) : null}
+                </>
+            ) : null}
+            {enableSetAccess ? (
+                <>
+                    <MenuDivider />
+                    <AccessButtons nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} onClick={handleSetAccess} />
                 </>
             ) : null}
         </MenuBody>

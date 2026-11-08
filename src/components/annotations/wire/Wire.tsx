@@ -238,6 +238,21 @@ export const Wire = ({
                     />
                 )
             }
+            case 'script': {
+                return (
+                    <rect
+                        x={position.x + dx - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
+                        y={position.y + node.dimensions.height / 2 - DIMENSIONS.NODE_LABEL_WIDTH / 2 - 1}
+                        width={DIMENSIONS.NODE_LABEL_WIDTH + 2}
+                        height={DIMENSIONS.NODE_LABEL_WIDTH + 2}
+                        rx={7}
+                        ry={7}
+                        fill={COLORS.LIGHT}
+                        stroke={COLORS.DARK}
+                        strokeWidth={2}
+                    />
+                )
+            }
             case 'expression': {
                 return (
                     <rect

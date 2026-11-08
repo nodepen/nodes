@@ -6,6 +6,7 @@ import type { GenericConfiguration } from './config/GenericConfiguration'
 import type { GradientConfig } from './config/GradientConfig'
 import type { NumberSliderConfig } from './config/NumberSliderConfig'
 import type { PanelConfig } from './config/PanelConfig'
+import type { ScriptNodeConfig } from './config/ScriptNodeConfig'
 import type { DataTree } from './data'
 import type { PortConfiguration } from './ports'
 
@@ -71,6 +72,7 @@ export type DocumentNode = {
     | ColorSwatchConfig
     | GradientConfig
     | ExpressionConfig
+    | ScriptNodeConfig
     | GenericConfiguration
     portConfigurations: {
         [portInstanceId: string]: PortConfiguration

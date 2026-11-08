@@ -12,6 +12,8 @@ export type NodeTemplate = {
     subcategory: string
     isObsolete: boolean
     isHidden: boolean
+    // Known but not usable in the current environment
+    isLocked?: boolean
     inputs: PortTemplate[]
     outputs: PortTemplate[]
     toggles: NodeToggle[]

@@ -24,6 +24,7 @@ export const getPortTemplate = (document: NodePen.Document, templates: NodePen.N
     switch (nodeType) {
         case 'generic-node':
         case 'expression':
+        case 'script':
         case 'color-gradient': {
             const order = document.nodes[nodeInstanceId][`${direction}s`][portInstanceId]
             return nodeTemplate[`${direction}s`][order] ?? getFallbackPortTemplate(nodeTemplate, direction, order)

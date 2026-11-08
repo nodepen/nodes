@@ -1,3 +1,4 @@
+export { AccessButtons } from './AccessButtons'
 export { FlattenButton } from './FlattenButton'
 export { GraftButton } from './GraftButton'
 export { PinButton } from './PinButton'

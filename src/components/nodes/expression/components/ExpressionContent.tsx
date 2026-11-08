@@ -1,9 +1,10 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
+import { ExpressionDialog } from './ExpressionDialog'
 
 const { NODE_INTERNAL_PADDING, EXPRESSION_CONTENT_WIDTH, EXPRESSION_CONTENT_HEIGHT, EXPRESSION_FONT_SIZE } = DIMENSIONS
 
@@ -12,13 +13,15 @@ const CHARACTER_WIDTH = EXPRESSION_FONT_SIZE * 0.6
 
 type ExpressionContentProps = {
     node: NodePen.DocumentNode
-    onClick: () => void
 }
 
-export const ExpressionContent = ({ node, onClick }: ExpressionContentProps) => {
+export const ExpressionContent = ({ node }: ExpressionContentProps) => {
     const { position } = useNodeInternalState()
 
     const isEditable = useIsEditable()
+
+    const [showModal, setShowModal] = useState(false)
+    const handleCloseModal = useCallback(() => setShowModal(false), [])
 
     const expression = useStore((state) => {
         const config = state.document.nodes[node.instanceId]?.nodeConfiguration as NodePen.ExpressionConfig | undefined
@@ -46,7 +49,7 @@ export const ExpressionContent = ({ node, onClick }: ExpressionContentProps) => 
 
         switch (e.pointerType) {
             case 'mouse': {
-                onClick()
+                setShowModal(true)
                 break
             }
             case 'pen':
@@ -54,7 +57,7 @@ export const ExpressionContent = ({ node, onClick }: ExpressionContentProps) => 
                 break
             }
         }
-    }, [isEditable, onClick])
+    }, [isEditable])
 
     return (
         <g id={`expression-content-${node.instanceId}`}>
@@ -83,6 +86,7 @@ export const ExpressionContent = ({ node, onClick }: ExpressionContentProps) => 
             >
                 {displayText}
             </text>
+            {showModal ? <ExpressionDialog node={node} onClose={handleCloseModal} /> : null}
         </g>
     )
 }

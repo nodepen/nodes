@@ -240,6 +240,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
             }
             case 'generic-node':
             case 'expression':
+            case 'script':
             case 'generic-parameter':
             case 'color-gradient': {
                 switch (valueType) {

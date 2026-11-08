@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
@@ -8,16 +8,16 @@ import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useRightClick } from '@/hooks/useRightClick'
+import { useDoubleClick } from '@/hooks/useDoubleClick'
 import { getLeftRoundedRectanglePath } from '@/utils/geometry'
+import { ExpressionDialog } from './ExpressionDialog'
 
 type ExpressionBodyProps = {
     node: NodePen.DocumentNode
     template: NodePen.NodeTemplate
-    onDoubleClick: (e: React.MouseEvent<SVGGElement>) => void
-    onPointerDownCapture: (e: React.PointerEvent<SVGGElement>) => void
 }
 
-export const ExpressionBody = ({ node, template, onDoubleClick, onPointerDownCapture }: ExpressionBodyProps) => {
+export const ExpressionBody = ({ node, template }: ExpressionBodyProps) => {
     const { position } = useNodeInternalState()
 
     const isEditable = useIsEditable()
@@ -64,10 +64,19 @@ export const ExpressionBody = ({ node, template, onDoubleClick, onPointerDownCap
 
     const rightClickRef = useRightClick<SVGGElement>(handleContextMenu, true)
 
+    const [showModal, setShowModal] = useState(false)
+    const handleCloseModal = useCallback(() => setShowModal(false), [])
+
+    const handleDoubleClick = useCallback(() => {
+        setShowModal(true)
+    }, [])
+
+    useDoubleClick<SVGGElement>(handleDoubleClick, rightClickRef)
+
     const o = 4
 
     return (
-        <g id={`expression-body-${node.instanceId}`} ref={rightClickRef} onDoubleClick={onDoubleClick} onPointerDownCapture={onPointerDownCapture}>
+        <g id={`expression-body-${node.instanceId}`} ref={rightClickRef}>
             {hasOutputs ? (
                 <rect
                     x={position.x}
@@ -102,6 +111,7 @@ export const ExpressionBody = ({ node, template, onDoubleClick, onPointerDownCap
                     pointerEvents={"auto"}
                 />
             ) : null}
+            {showModal ? <ExpressionDialog node={node} onClose={handleCloseModal} /> : null}
         </g>
     )
 }

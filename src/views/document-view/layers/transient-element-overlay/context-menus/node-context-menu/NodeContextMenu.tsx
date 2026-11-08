@@ -4,7 +4,8 @@ import type { ContextMenu } from '../../types'
 import type { NodeContextMenuContext } from '../../types/ContextMenuContext'
 import { MenuBody, MenuButton, MenuDivider, MenuHeader } from '../../common'
 import { getIconAsImage, applyFallbackIcon } from '@/utils/templates'
-import { DisableButton, VisibilityButton } from './buttons'
+import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
+import { DisableButton, EditScriptButton, VisibilityButton } from './buttons'
 import { useDispatch, useStore } from '$'
 import { STYLES } from '@/constants'
 import { expireSolution } from '@/store/utils'
@@ -25,6 +26,7 @@ export const NodeContextMenu = ({ position, context }: NodeContextMenuProps) => 
     ) as NodePen.GenericConfiguration | undefined
 
     const showToggles = toggles.length > 0
+    const isScriptNode = getNodeTypeForTemplate(nodeTemplate) === 'script'
 
     const handleSelectToggle = useCallback((group: NodePen.NodeToggle, value: string) => {
         apply((state) => {
@@ -69,6 +71,7 @@ export const NodeContextMenu = ({ position, context }: NodeContextMenuProps) => 
     return (
         <MenuBody position={position}>
             <MenuHeader icon={menuIcon} label={name} />
+            {isScriptNode ? <EditScriptButton nodeInstanceId={nodeInstanceId} /> : null}
             <VisibilityButton nodeInstanceId={nodeInstanceId} />
             {showToggles ? (
                 <>

@@ -32,7 +32,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
 
     switch (nodeType) {
         case 'generic-node':
-        case 'expression': {
+        case 'expression':
+        case 'script': {
             return {
                 enableSetLabel: true,
                 enablePinInput: false,

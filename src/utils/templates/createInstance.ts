@@ -3,6 +3,8 @@ import { newGuid } from '../common'
 import { getNodeDimensions } from '../node-dimensions'
 import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
 import { getToggleDefaults } from './getToggleDefaults'
+import { getScriptNodeLanguage } from './getScriptNodeLanguage'
+import { getScriptNodeDefaults } from './getScriptNodeDefaults'
 import { DIMENSIONS } from '@/constants'
 import { createSingleValue } from '../data-trees/createSingleValue'
 import { createEmptyTree } from '../data-trees/createEmptyTree'
@@ -90,6 +92,48 @@ export const createInstance = (
             if (toggleDefaults) {
                 node.nodeConfiguration = toggleDefaults
             }
+
+            break
+        }
+        case 'script': {
+            const language = getScriptNodeLanguage(guid)
+
+            if (!language) {
+                break
+            }
+
+            const { configuration, inputs, outputs } = getScriptNodeDefaults(language)
+
+            inputs.forEach((label, order) => {
+                const inputInstanceId = newGuid()
+
+                node.sources[inputInstanceId] = []
+                node.inputs[inputInstanceId] = order
+                node.values[inputInstanceId] = createEmptyTree()
+                // no type hint by default
+                node.portConfigurations[inputInstanceId] = {
+                    label,
+                    flags: [],
+                    access: 'item',
+                }
+            })
+
+            outputs.forEach((label, order) => {
+                const outputInstanceId = newGuid()
+
+                node.outputs[outputInstanceId] = order
+                node.portConfigurations[outputInstanceId] = {
+                    label,
+                    flags: [],
+                }
+            })
+
+            node.nodeConfiguration = configuration
+
+            const { dimensions, anchors } = getNodeDimensions(node, template, preferences)
+
+            node.dimensions = dimensions
+            node.anchors = anchors
 
             break
         }

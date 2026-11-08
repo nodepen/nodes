@@ -1,12 +1,13 @@
 import React, { useCallback, useState, useTransition, useRef, useEffect, useMemo } from 'react'
 import type * as NodePen from '@/types'
-import { useDispatch, useStore } from '$'
+import { useCallbacks, useDispatch, useStore } from '$'
 import type { ContextMenu } from '../../types'
 import { clamp } from '@/utils/numerics'
 import { createInstance, getIconAsImage, applyFallbackIcon, isTemplateVisible } from '@/utils/templates'
+import { isLocked } from '@/utils/templates/isLocked'
 import { useTextSearch } from './hooks'
 import { useOverlaySpaceToWorldSpace } from '@/hooks'
-import { COMPONENTS, KEYS } from '@/constants'
+import { COLORS, COMPONENTS, KEYS } from '@/constants'
 import { expireSolution, addDocumentNode } from '@/store/utils'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
 import { tryMatchTextSearch, type TemplateMatch } from '@/utils/templates/tryMatchTextSearch'
@@ -37,7 +38,9 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
     const templateLibrary = useStore((state) => state.templates)
     const templates = useMemo(() => Object.values(templateLibrary).filter(isTemplateVisible), [templateLibrary])
     const preferences = useStore((state) => state.ui.preferences)
+
     const { apply } = useDispatch()
+    const { onSelectLockedTemplate } = useCallbacks()
 
     const enableAgent = useFeatureFlag('enableAgentButton')
 
@@ -93,6 +96,17 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         const template = templates.find((t) => t.guid === shortcutMatch.templateId)
 
         if (!template) {
+            return
+        }
+
+        if (isLocked(template.guid)) {
+            apply((state) => {
+                state.registry.contextMenus = {}
+                state.registry.tooltips = {}
+            })
+
+            onSelectLockedTemplate?.(useStore.getState(), { templateId: template.guid })
+
             return
         }
 
@@ -177,7 +191,7 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
             // Expire solution
             expireSolution(state)
         })
-    }, [shortcutMatch, templates])
+    }, [shortcutMatch, templates, onSelectLockedTemplate])
 
     const searchResults = useMemo(() => {
         return [...keywordMatches, ...candidates].slice(0, 4)
@@ -238,6 +252,17 @@ export const AddNodeContextMenu = ({ position: eventPosition }: AddNodeContextMe
         ]
 
     const handleAddNode = (template: NodePen.NodeTemplate): void => {
+        if (isLocked(template.guid)) {
+            apply((state) => {
+                state.registry.contextMenus = {}
+                state.registry.tooltips = {}
+            })
+
+            onSelectLockedTemplate?.(useStore.getState(), { templateId: template.guid })
+
+            return
+        }
+
         const nodeInstance = createInstance(template, preferences)
 
         const nodeWidth = nodeInstance.dimensions.width
@@ -550,6 +575,14 @@ const SearchEntry = ({ option, isSelected, onClick }: SearchEntryProps) => {
             <p className="np-text-sm np-text-dark np-font-panel np-font-[800]">{getLabel()}</p>
             <p className='np-text-xs np-text-dark np-font-panel np-font-[800]'>{getDetails()}</p>
         </div>
+        {option.type === 'add-node' && option.template.isLocked ? (
+            <div className='np-ml-1 np-mr-1 np-flex np-items-center np-shrink-0'>
+                <svg width={12} height={12} viewBox="0 0 24 24" fill="none" stroke={COLORS.DARK} strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <rect x="5" y="11" width="14" height="10" rx="2" vectorEffect="non-scaling-stroke" />
+                    <path d="M8 11V7a4 4 0 0 1 8 0v4" vectorEffect="non-scaling-stroke" />
+                </svg>
+            </div>
+        ) : null}
     </div>
 }
 

@@ -22,7 +22,7 @@ export const getGenericParameterPortTemplate = (template: NodePen.NodeTemplate, 
         description: template.description,
         typeName,
         keywords: [],
-        isOptional: false
+        isOptional: false,
     }
 }
 
