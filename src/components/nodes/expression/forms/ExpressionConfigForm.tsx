@@ -4,6 +4,7 @@ import { useForm, type SubmitHandler } from 'react-hook-form'
 import { useDispatch } from '@/store'
 import { expireSolution } from '@/store/utils'
 import { COLORS } from '@/constants'
+import { useIsEditable } from '@/hooks/useIsEditable'
 
 type ExpressionFormData = {
     expression: string
@@ -17,6 +18,8 @@ type ExpressionConfigFormProps = {
 
 export const ExpressionConfigForm = ({ node, config, onClose }: ExpressionConfigFormProps) => {
     const { apply } = useDispatch()
+
+    const isEditable = useIsEditable()
 
     const { register, handleSubmit, setFocus } = useForm<ExpressionFormData>({
         defaultValues: {
@@ -38,6 +41,10 @@ export const ExpressionConfigForm = ({ node, config, onClose }: ExpressionConfig
     }, [])
 
     const onSubmit: SubmitHandler<ExpressionFormData> = (data) => {
+        if (!isEditable) {
+            return
+        }
+
         apply((state) => {
             const currentNode = state.document.nodes[node.instanceId]
 
@@ -62,6 +69,7 @@ export const ExpressionConfigForm = ({ node, config, onClose }: ExpressionConfig
                     className="np-h-10 np-w-full np-p-2 np-text-sm np-font-panel np-font-[800] np-text-dark np-rounded-md np-border-2 np-border-dark no-focus"
                     autoComplete="off"
                     spellCheck={false}
+                    readOnly={!isEditable}
                     {...register('expression')}
                     onFocus={handleFocus}
                     onKeyDown={handleKeyDown}
@@ -72,7 +80,11 @@ export const ExpressionConfigForm = ({ node, config, onClose }: ExpressionConfig
                             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18 18 6M6 6l12 12" vectorEffect="non-scaling-stroke" />
                         </svg>
                     </div>
-                    <button type="submit" className="np-w-6 np-h-6 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark hover:np-bg-grey hover:np-cursor-pointer">
+                    <button
+                        type="submit"
+                        disabled={!isEditable}
+                        className={`np-w-6 np-h-6 np-flex np-items-center np-justify-center np-rounded-full np-border-2 np-border-dark ${isEditable ? 'hover:np-bg-grey hover:np-cursor-pointer' : 'np-opacity-30 np-cursor-not-allowed'}`}
+                    >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke={COLORS.DARK} className="np-size-4">
                             <path strokeLinecap="round" strokeLinejoin="round" d="m4.5 12.75 6 6 9-13.5" vectorEffect="non-scaling-stroke" />
                         </svg>

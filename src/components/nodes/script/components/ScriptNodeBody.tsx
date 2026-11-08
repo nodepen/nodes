@@ -1,6 +1,6 @@
 import React, { useCallback } from 'react'
 import type * as NodePen from '@/types'
-import { useDispatch } from '$'
+import { useDispatch, useStore } from '$'
 import { COLORS } from '@/constants'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
 import { ScriptNodeLabel } from './ScriptNodeLabel'
@@ -8,16 +8,15 @@ import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useRightClick } from '@/hooks/useRightClick'
+import { useDoubleClick } from '@/hooks/useDoubleClick'
 import { getLeftRoundedRectanglePath } from '@/utils/geometry'
 
 type ScriptNodeBodyProps = {
     node: NodePen.DocumentNode
     template: NodePen.NodeTemplate
-    onDoubleClick: (e: React.MouseEvent<SVGGElement>) => void
-    onPointerDownCapture: (e: React.PointerEvent<SVGGElement>) => void
 }
 
-export const ScriptNodeBody = ({ node, template, onDoubleClick, onPointerDownCapture }: ScriptNodeBodyProps) => {
+export const ScriptNodeBody = ({ node, template }: ScriptNodeBodyProps) => {
     const { position } = useNodeInternalState()
 
     const isEditable = useIsEditable()
@@ -64,10 +63,17 @@ export const ScriptNodeBody = ({ node, template, onDoubleClick, onPointerDownCap
 
     const rightClickRef = useRightClick<SVGGElement>(handleContextMenu, true)
 
+    const handleDoubleClick = useCallback(() => {
+        const state = useStore.getState()
+        state.callbacks.onOpenScriptEditor?.(state, { nodeInstanceId: node.instanceId })
+    }, [node.instanceId])
+
+    useDoubleClick<SVGGElement>(handleDoubleClick, rightClickRef)
+
     const o = 4
 
     return (
-        <g id={`script-body-${node.instanceId}`} ref={rightClickRef} onDoubleClick={onDoubleClick} onPointerDownCapture={onPointerDownCapture}>
+        <g id={`script-body-${node.instanceId}`} ref={rightClickRef}>
             {hasOutputs ? (
                 <rect
                     x={position.x}

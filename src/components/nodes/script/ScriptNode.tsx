@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react'
+import React from 'react'
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
@@ -30,23 +30,6 @@ const ScriptNode = ({ id, template }: ScriptNodeProps) => {
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)
 
-    const lastPointerType = useRef<string>('mouse')
-    const handlePointerDown = useCallback((e: React.PointerEvent<SVGGElement>) => {
-        lastPointerType.current = e.pointerType
-    }, [])
-
-    const handleDoubleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
-        e.stopPropagation()
-
-        // Touch is not supported yet
-        if (lastPointerType.current !== 'mouse') {
-            return
-        }
-
-        const state = useStore.getState()
-        state.callbacks.onOpenScriptEditor?.(state, { nodeInstanceId: id })
-    }, [id])
-
     if (!node) {
         return null
     }
@@ -61,7 +44,7 @@ const ScriptNode = ({ id, template }: ScriptNodeProps) => {
                     ) : (
                         <>
                             <GenericNodeShadow node={node} template={template} />
-                            <ScriptNodeBody node={node} template={template} onDoubleClick={handleDoubleClick} onPointerDownCapture={handlePointerDown} />
+                            <ScriptNodeBody node={node} template={template} />
                             <GenericNodePorts node={node} template={template} />
                         </>
                     )}
