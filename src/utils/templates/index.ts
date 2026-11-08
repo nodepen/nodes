@@ -3,4 +3,3 @@ export { getIconAsImage, applyFallbackIcon, TEMPLATE_ICON_FALLBACK } from './get
 export { getToggleDefaults } from './getToggleDefaults'
 export { groupTemplatesByCategory } from './groupTemplatesByCategory'
 export { isTemplateVisible } from './isTemplateVisible'
-export { isLocked } from './isLocked'

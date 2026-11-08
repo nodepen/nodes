@@ -22,5 +22,6 @@ export const getPortTemplateFromConfiguration = (
         typeName: configuration.typeName ?? 'data',
         keywords: [],
         isOptional: false,
+        access: configuration.access ?? 'item',
     }
 }

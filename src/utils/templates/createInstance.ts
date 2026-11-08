@@ -114,6 +114,7 @@ export const createInstance = (
                 node.portConfigurations[inputInstanceId] = {
                     label,
                     flags: [],
+                    access: 'item',
                 }
             })
 

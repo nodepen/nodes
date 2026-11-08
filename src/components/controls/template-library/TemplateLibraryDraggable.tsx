@@ -1,6 +1,7 @@
 import React, { useCallback, useRef } from 'react'
 import type * as NodePen from '@/types'
-import { createInstance, getIconAsImage, applyFallbackIcon, isLocked } from '@/utils/templates'
+import { createInstance, getIconAsImage, applyFallbackIcon } from '@/utils/templates'
+import { isLocked } from '@/utils/templates/isLocked'
 import { useLongHover, usePageSpaceToOverlaySpace, usePageSpaceToWorldSpace } from '@/hooks'
 import { useCallbacks, useDispatch, useStore } from '$'
 import { addDocumentNode } from '@/store/utils'

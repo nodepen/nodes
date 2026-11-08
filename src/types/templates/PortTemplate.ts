@@ -7,7 +7,7 @@ export type PortTemplate = {
     typeName: string
     keywords: string[]
     isOptional: boolean
-    access: PortAccess
+    access?: PortAccess
     defaultValue?: string
 }
 
