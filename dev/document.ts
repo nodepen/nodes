@@ -1070,4 +1070,105 @@ const demoDoc: NodePenDocument = {
     }
 }
 
-export const doc = emptyDoc
+const mdSliderDoc: NodePenDocument = {
+    id: 'md-slider',
+    version: 1 as const,
+    clusters: {},
+    nodes: {
+        // MD Slider
+        '7c1e4a52-93b8-4f0d-a6e2-5d8f3b9c1a07': {
+            instanceId: '7c1e4a52-93b8-4f0d-a6e2-5d8f3b9c1a07',
+            templateId: '318dacd7-9073-4ede-b043-a0c132eb77e0',
+            position: { x: 300, y: 200 },
+            dimensions: { width: 196, height: 196 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 196, dy: 98 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [
+                        {
+                            order: 0,
+                            path: '{0}',
+                            values: [
+                                { type: 'point', description: '0.5,0.5,0', order: 0, value: '0.5,0.5,0' },
+                            ],
+                        },
+                    ],
+                    stats: {
+                        branchCount: 1,
+                        branchValueCountDomain: [1, 1],
+                        treeStructure: 'single',
+                        valueCount: 1,
+                        valueTypes: ['point'],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+            nodeConfiguration: {
+                mode: '2D',
+                x: { min: 0, max: 1 },
+                y: { min: 0, max: 1 },
+                z: { min: 0, max: 1 },
+            },
+        },
+        // Point
+        'e4b9d2f1-6a3c-4e85-9b17-0f2c8d5a6e34': {
+            instanceId: 'e4b9d2f1-6a3c-4e85-9b17-0f2c8d5a6e34',
+            templateId: 'fbac3e32-f100-4292-8692-77240a42fd1a',
+            position: { x: 600, y: 282 },
+            dimensions: { width: 152, height: 32 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 21, dy: 0 },
+                output: { dx: 152, dy: 16 },
+                input: { dx: 0, dy: 16 },
+            },
+            sources: {
+                input: [{
+                    nodeInstanceId: '7c1e4a52-93b8-4f0d-a6e2-5d8f3b9c1a07',
+                    portInstanceId: 'output'
+                }],
+            },
+            values: {
+                output: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueCount: 0,
+                        valueTypes: [],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+        },
+    },
+    groups: {},
+    meta: {
+        name: 'MD Slider Test',
+    },
+    controls: {
+        input: {},
+        output: {}
+    },
+    settings: {
+        units: 'mm'
+    }
+}
+
+export const doc = mdSliderDoc

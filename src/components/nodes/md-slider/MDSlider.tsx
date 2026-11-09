@@ -120,17 +120,17 @@ const MDSlider = ({ id, template }: MDSliderProps) => {
                         ) : (<>
                             <MDSliderShadow node={node} />
                             <MDSliderBody node={node} />
+                            <MDSliderCanvas
+                                node={node}
+                                value={point}
+                                domains={domains}
+                                onChange={setPoint}
+                                onCommit={handleCommit}
+                            />
                         </>)}
                     </g>
                 </g>
                 {!node.status.isProvisional ? (<>
-                    <MDSliderCanvas
-                        node={node}
-                        value={point}
-                        domains={domains}
-                        onChange={setPoint}
-                        onCommit={handleCommit}
-                    />
                     <MDSliderPorts node={node} template={template} />
                 </>) : null}
             </g>

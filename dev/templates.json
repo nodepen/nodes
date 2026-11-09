@@ -180,6 +180,21 @@
         "toggles": []
     },
     {
+        "guid": "318dacd7-9073-4ede-b043-a0c132eb77e0",
+        "name": "MD Slider",
+        "nickName": "MD Slider",
+        "description": "A multidimensional slider",
+        "keywords": [],
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAARHSURBVEhLrVZZKKV9HD52yhJRlCXuZMqFciFSLtyQC0UpuZkyERFjJzvZiWxj3/d93/fs29gbiSGyXJGdZ97f//O+4xDfxfedejpH3vM8v/X5HRH3kuRevtLS0mfcZ/wfkJGROeP4/LjPksTu9vXr17vr62s8Pz8zPD094fHxkeHh4YHh/v6e4e7ujuH29lbAzc2NAOI5PT2Fk5PTLScSIOLUjq6urvDr1y/Mzc0xzM/PY2FhgWFxcRFLS0tYXl7GysoKVldX8fPnT6ytrWF9fR0bGxvY3NzE1tYWtre3sbOzg4ODA/z+/RuysrJnIgkJiSeKuq+vj6G/vx+Dg4MYGhrC8PAwRkZGMDo6ivHxcUxMTGBychJTU1OYnp7GzMwMZmdnhaBeB3N+fs6XTMRKUFdXh/r6ejQ2NqKpqQktLS1obW1Fe3s7Ojo60NXVhe7ubvT29rJABgYGWCB8EGNjYywIPoDj4+O/AlTbHz9+oLCwEMXFxSgtLUVZWRkqKipQVVWF6upq1NbWCgE0Nze/E+/p6REqQNlTiQQBak5KSgrS0tKQkZGBrKwsZGdnIzc3F/n5+SgoKICtra0YPhPt7OzE7u7uX4HLy0tEREQgKioKsbGxiI+PR0JCApKTk5GamspETUxMxPA6Wz7T14LUcEHg4uIC3KjC1dUVbm5u8PDwgJeXF3x8fODn54fAwED+YQEURGJiIss8PT0dmZmZLOu8vDyWMTX85VkRm9tv377B3d0dnp6e8Pb2FiMPCQkRIyckJSWx7N6SU2YlJSVsml6eFeHk5ESM3NfXF/7+/ggKCkJoaCjCw8PFyAl86ahfOTk5rFc8eXl5uXgGR0dHn5JTb3hiHp+RUz/EBA4PDz8kp4bypG9hbm7+jpyfLrES7e/v4/v37wgICEBwcDDCwsKEqSLo6OiIERP09fVZ9G/JaWFpimibX54VYW9v7x15dHQ04uLi2LhSJkpKSgK5srIyG+GioiJhTF+TkwuICdBSfERORLSAVD7OHRno2c/IadnEBMhJPyPnx9DZ2RkuLi4fktMm89ZBzisIkMVGRkbC0dGRNe7Lly+sxpqamlBVVYWioiLk5OQgJSXFvkTv8vLyrGzq6uqsR4aGhjAzM4O9vT0bErJ1QYC8PCYmho4ELC0tYWxsDAMDA2hpaUFNTY0RKSgo0KVi5PROf1MvNDQ0oKenByMjI1hYWMDBwYFVg26GIEAHg199a2trYTu1tbWF1acsyGErKysZOXkO2ToFQWUhK7eysmIWTvZNB0kQoKvE+4qdnZ1Qc8qCH0MqFS1QTU0NVFRUGDnVXFdXl1k12bSNjQ07TnSYBAE6a3Q0KLJ/205aoIaGBmbNbW1tzJZ5croBPDldOfof16czER1mU1PTa7pQ1BjqPoHG7DPwz/E3mkA3miKnknE9ueaCD6ASSdJPDHag/6nZfwZFzvFxP1tEkn8Am4lkKqvpHb8AAAAASUVORK5CYII=",
+        "libraryName": "Grasshopper",
+        "category": "Params",
+        "subcategory": "Input",
+        "isObsolete": false,
+        "inputs": [],
+        "outputs": [],
+        "toggles": []
+    },
+    {
         "guid": "59e0b89a-e487-49f8-bab8-b5bab16be14c",
         "name": "Panel",
         "nickName": "",
