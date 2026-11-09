@@ -5,6 +5,7 @@ import { GenericNode } from './generic-node'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { GenericParameter } from './generic-parameter'
 import NumberSlider from './number-slider/NumberSlider'
+import MDSlider from './md-slider/MDSlider'
 import Panel from './panel/Panel'
 import ValueList from './value-list/ValueList'
 import BooleanToggle from './boolean-toggle/BooleanToggle'
@@ -50,6 +51,8 @@ const NodesContainer = (): React.ReactElement | null => {
                         return <Cluster key={`cluster-${instanceId}`} id={instanceId} />
                     case 'number-slider':
                         return <NumberSlider key={`number-slider-${instanceId}`} id={instanceId} template={template} />
+                    case 'md-slider':
+                        return <MDSlider key={`md-slider-${instanceId}`} id={instanceId} template={template} />
                     case 'panel':
                         return <Panel key={`panel-${instanceId}`} id={instanceId} template={template} />
                     case 'value-list':

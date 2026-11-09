@@ -7,6 +7,7 @@ export type NodePenNodeType =
     | 'generic-parameter'
     | 'cluster'
     | 'number-slider'
+    | 'md-slider'
     | 'panel'
     | 'value-list'
     | 'boolean-toggle'
@@ -39,6 +40,9 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
             switch (template.guid) {
                 case COMPONENTS.NUMBER_SLIDER: {
                     return 'number-slider'
+                }
+                case COMPONENTS.MD_SLIDER: {
+                    return 'md-slider'
                 }
                 case COMPONENTS.PANEL: {
                     return 'panel'
