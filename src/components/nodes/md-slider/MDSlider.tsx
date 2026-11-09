@@ -112,12 +112,12 @@ const MDSlider = ({ id, template }: MDSliderProps) => {
 
     return (
         <NodeInternalStateProvider value={internalState}>
-            <g id={`md-slider-${id}`} ref={doubleClickRef} style={{ pointerEvents: 'all' }}>
+            <g id={`md-slider-${id}`} style={{ pointerEvents: 'all' }}>
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
                         {node.status.isProvisional ? (
                             <GenericNodeSkeleton node={node} template={template} />
-                        ) : (<>
+                        ) : (<g ref={doubleClickRef}>
                             <MDSliderShadow node={node} />
                             <MDSliderBody node={node} />
                             <MDSliderCanvas
@@ -127,7 +127,7 @@ const MDSlider = ({ id, template }: MDSliderProps) => {
                                 onChange={setPoint}
                                 onCommit={handleCommit}
                             />
-                        </>)}
+                        </g>)}
                     </g>
                 </g>
                 {!node.status.isProvisional ? (<>
