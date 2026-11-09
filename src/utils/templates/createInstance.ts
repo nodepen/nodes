@@ -273,6 +273,44 @@ export const createInstance = (
 
             break
         }
+        case 'md-slider': {
+            node.inputs['input'] = 0
+            node.outputs['output'] = 0
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
+            }
+            node.dimensions = {
+                width: DIMENSIONS.MD_SLIDER_SIZE,
+                height: DIMENSIONS.MD_SLIDER_SIZE
+            }
+            node.anchors = {
+                'labelDeltaX': {
+                    dx: 0,
+                    dy: 0
+                },
+                'output': {
+                    dx: node.dimensions.width,
+                    dy: node.dimensions.height / 2
+                },
+            }
+            node.sources['input'] = []
+            node.values['input'] = createSingleValue('0.5,0.5,0', 'point')
+            node.nodeConfiguration = {
+                mode: '2D',
+                x: { min: 0, max: 1 },
+                y: { min: 0, max: 1 },
+                z: { min: 0, max: 1 },
+            } as NodePen.MDSliderConfig
+
+            break
+        }
         case 'panel': {
             node.inputs['input'] = 0
             node.outputs['output'] = 0

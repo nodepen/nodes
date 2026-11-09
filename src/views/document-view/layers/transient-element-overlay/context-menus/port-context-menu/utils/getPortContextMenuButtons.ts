@@ -58,7 +58,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableReparameterize: false
             }
         }
-        case 'number-slider': {
+        case 'number-slider':
+        case 'md-slider': {
             return {
                 enableSetLabel: false,
                 enableSetValue: false,

@@ -91,7 +91,7 @@ const features = {
 }
 
 const preferences = {
-    parameterTypeIcons: true
+    parameterTypeIcons: false
 }
 
 root.render(<StrictMode>

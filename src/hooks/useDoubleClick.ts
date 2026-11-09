@@ -88,9 +88,14 @@ export const useDoubleClick = <T extends HTMLDivElement | SVGGElement | null>(
         []
     )
 
+    const handleDoubleClick = useCallback((e: MouseEvent): void => {
+        e.stopPropagation()
+    }, [])
+
     useImperativeEvent(targetRef, 'pointerdown', handlePointerDown)
     useImperativeEvent(targetRef, 'pointerup', handlePointerUp)
     useImperativeEvent(targetRef, 'pointercancel', reset)
+    useImperativeEvent(targetRef, 'dblclick', handleDoubleClick)
 
     return targetRef
 }
