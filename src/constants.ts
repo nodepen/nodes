@@ -71,6 +71,7 @@ export const DIMENSIONS = {
     COLOR_SWATCH_WIDTH: 36,
     COLOR_SWATCH_HEIGHT: 36,
     MD_SLIDER_SIZE: 196,
+    GRAPH_MAPPER_SIZE: 196,
     RELAY_WIDTH: 48,
     RELAY_HEIGHT: 18,
     GRADIENT_WIDTH: 300,
@@ -115,6 +116,7 @@ export const STYLES = {
 export const COMPONENTS = {
     NUMBER_SLIDER: '57da07bd-ecab-415d-9d86-af36d7073abc',
     MD_SLIDER: '318dacd7-9073-4ede-b043-a0c132eb77e0',
+    GRAPH_MAPPER: 'bc984576-7aa6-491f-a91d-e444c33675a7',
     PANEL: '59e0b89a-e487-49f8-bab8-b5bab16be14c',
     VALUE_LIST: '00027467-0d24-4fa7-b178-8dc0ac5f42ec',
     BOOLEAN_TOGGLE: '2e78987b-9dfb-42a2-8b76-3923ac8bd91a',

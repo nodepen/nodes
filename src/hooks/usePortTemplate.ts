@@ -1,7 +1,7 @@
 import type * as NodePen from '@/types'
 import { useStore } from '$'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
-import { getBooleanTogglePortTemplate, getGenericParameterPortTemplate, getMDSliderPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate, getRelayPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
+import { getBooleanTogglePortTemplate, getGenericParameterPortTemplate, getGraphMapperPortTemplate, getMDSliderPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate, getRelayPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 import { useNodePortTemplate } from './useNodePortTemplate'
 
 /**
@@ -36,6 +36,9 @@ export const usePortTemplate = (nodeInstanceId: string, portInstanceId: string):
             }
             case 'md-slider': {
                 return getMDSliderPortTemplate(template, direction)
+            }
+            case 'graph-mapper': {
+                return getGraphMapperPortTemplate(template, direction)
             }
             case 'panel': {
                 return getPanelPortTemplate(template, direction)

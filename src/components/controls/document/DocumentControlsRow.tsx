@@ -243,6 +243,7 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
             case 'script':
             case 'generic-parameter':
             case 'md-slider':
+            case 'graph-mapper':
             case 'color-gradient': {
                 switch (valueType) {
                     case 'boolean': {

@@ -73,6 +73,23 @@ export const getMDSliderPortTemplate = (template: NodePen.NodeTemplate, directio
     }
 }
 
+export const getGraphMapperPortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
+    if (getNodeTypeForTemplate(template) !== 'graph-mapper') {
+        throw new Error(`Cannot generate implicit port template for this thing that isn't a graph mapper!`)
+    }
+
+    return {
+        __order: 0,
+        __direction: direction,
+        name: template.name,
+        nickName: template.nickName,
+        description: template.description,
+        typeName: 'number',
+        keywords: [],
+        isOptional: false
+    }
+}
+
 export const getPanelPortTemplate = (template: NodePen.NodeTemplate, direction: 'input' | 'output'): NodePen.PortTemplate => {
     if (getNodeTypeForTemplate(template) !== 'panel') {
         throw new Error('Cannot generate port template for non-panel thing here!')

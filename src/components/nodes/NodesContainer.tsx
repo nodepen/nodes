@@ -6,6 +6,7 @@ import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate
 import { GenericParameter } from './generic-parameter'
 import NumberSlider from './number-slider/NumberSlider'
 import MDSlider from './md-slider/MDSlider'
+import GraphMapper from './graph-mapper/GraphMapper'
 import Panel from './panel/Panel'
 import ValueList from './value-list/ValueList'
 import BooleanToggle from './boolean-toggle/BooleanToggle'
@@ -53,6 +54,8 @@ const NodesContainer = (): React.ReactElement | null => {
                         return <NumberSlider key={`number-slider-${instanceId}`} id={instanceId} template={template} />
                     case 'md-slider':
                         return <MDSlider key={`md-slider-${instanceId}`} id={instanceId} template={template} />
+                    case 'graph-mapper':
+                        return <GraphMapper key={`graph-mapper-${instanceId}`} id={instanceId} template={template} />
                     case 'panel':
                         return <Panel key={`panel-${instanceId}`} id={instanceId} template={template} />
                     case 'value-list':

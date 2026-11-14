@@ -4,7 +4,7 @@ export type { DocumentNode } from './DocumentNode'
 export type { DocumentSettings, DocumentUnits } from './settings/DocumentSettings'
 export type { DocumentPreferences } from './settings/DocumentPreferences'
 export type { DocumentControls, DocumentControl } from './controls/DocumentControls'
-export type { BooleanToggleConfig, ColorSwatchConfig, ExpressionConfig, GenericConfiguration, GradientConfig, GradientGrip, GradientGripColor, MDSliderConfig, MDSliderDomain, MDSliderMode, NumberSliderConfig, PanelConfig, ScriptNodeConfig, ScriptNodeLanguage, ValueListConfig } from './config'
+export type { BooleanToggleConfig, ColorSwatchConfig, ExpressionConfig, GenericConfiguration, GradientConfig, GradientGrip, GradientGripColor, GraphMapperConfig, GraphMapperDomain, GraphMapperGraphType, GraphMapperGrip, MDSliderConfig, MDSliderDomain, MDSliderMode, NumberSliderConfig, PanelConfig, ScriptNodeConfig, ScriptNodeLanguage, ValueListConfig } from './config'
 export type {
     DataTree,
     DataTreeBranch,

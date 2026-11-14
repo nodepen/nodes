@@ -4,6 +4,7 @@ import type { ColorSwatchConfig } from './config/ColorSwatchConfig'
 import type { ExpressionConfig } from './config/ExpressionConfig'
 import type { GenericConfiguration } from './config/GenericConfiguration'
 import type { GradientConfig } from './config/GradientConfig'
+import type { GraphMapperConfig } from './config/GraphMapperConfig'
 import type { MDSliderConfig } from './config/MDSliderConfig'
 import type { NumberSliderConfig } from './config/NumberSliderConfig'
 import type { PanelConfig } from './config/PanelConfig'
@@ -68,6 +69,7 @@ export type DocumentNode = {
     nodeConfiguration?:
     | NumberSliderConfig
     | MDSliderConfig
+    | GraphMapperConfig
     | PanelConfig
     | ValueListConfig
     | BooleanToggleConfig

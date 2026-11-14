@@ -311,6 +311,50 @@ export const createInstance = (
 
             break
         }
+        case 'graph-mapper': {
+            node.inputs['input'] = 0
+            node.outputs['output'] = 0
+            node.portConfigurations = {
+                input: {
+                    label: null,
+                    flags: []
+                },
+                output: {
+                    label: null,
+                    flags: []
+                }
+            }
+            node.dimensions = {
+                width: DIMENSIONS.GRAPH_MAPPER_SIZE,
+                height: DIMENSIONS.GRAPH_MAPPER_SIZE
+            }
+            node.anchors = {
+                'labelDeltaX': {
+                    dx: 0,
+                    dy: 0
+                },
+                'input': {
+                    dx: 0,
+                    dy: node.dimensions.height / 2
+                },
+                'output': {
+                    dx: node.dimensions.width,
+                    dy: node.dimensions.height / 2
+                },
+            }
+            node.sources['input'] = []
+            node.values['input'] = createEmptyTree()
+            node.nodeConfiguration = {
+                graphType: null,
+                grips: [],
+                domain: {
+                    source: { min: 0, max: 1 },
+                    target: { min: 0, max: 1 },
+                },
+            } as NodePen.GraphMapperConfig
+
+            break
+        }
         case 'panel': {
             node.inputs['input'] = 0
             node.outputs['output'] = 0

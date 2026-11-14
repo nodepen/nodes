@@ -15,6 +15,7 @@ export type ContextMenuContext =
     | ColorSwatchContextMenuContext
     | ColorParameterContextMenuContext
     | GradientContextMenuContext
+    | GraphMapperContextMenuContext
     | GroupContextMenuContext
     | ClusterContextMenuContext
 
@@ -94,6 +95,11 @@ export type ColorParameterContextMenuContext = {
 
 export type GradientContextMenuContext = {
     type: 'gradient'
+    nodeInstanceId: string
+}
+
+export type GraphMapperContextMenuContext = {
+    type: 'graph-mapper'
     nodeInstanceId: string
 }
 

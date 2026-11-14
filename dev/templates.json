@@ -195,6 +195,32 @@
         "toggles": []
     },
     {
+        "guid": "bc984576-7aa6-491f-a91d-e444c33675a7",
+        "name": "Graph Mapper",
+        "nickName": "Graph",
+        "description": "Represents a numeric mapping function",
+        "keywords": [],
+        "icon": "iVBORw0KGgoAAAANSUhEUgAAABgAAAAYCAYAAADgdz34AAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAAFiUAABYlAUlSJPAAAAQ0SURBVEhLrVZHS2NRFH6Gl0dWrtwqrnUp+AtcuHDjwkV0owSVEQRRh4CiqAiCICKIYgMLKjYUO/aOvffeYotdibHEM3wH7jUZhoEpwkHeued953vn++69URRF0el0ugRVVa2KotD/CL1eb1VV9Tuwgf7NZDK92mw2+vz85HA4HPTx8cHx/v7O8fb2xvH6+spht9tlvLy8yADO1dUVGY1Gu6qqZkWv11uen59pd3eXZmZmOGZnZ2lubo5jfn6eFhYWaHFxkZaWlmh5eZlWVlZodXWV1tbWaH19nTY2Nmhzc5O2trZoe3ubjo+P6eTkhDRNsypubm4OsO7p6eHo7e2l/v5+GhgYoMHBQRoaGqLh4WEaHR2lsbExGh8fp4mJCZqcnKSpqSmanp6WpJzJXF9fi5EpPIL6+npqaGig1NTUfwpB4Pz8/KsBZltSUkJlZWUUGRlJ4g9FQhOQOD095VqwKygooKioKK53DkwAX48RyQYQJycnh3JzcykoKIjBAYxZCpEh7MHBAR0eHlJ4eDjXBQcH83t9fX2sIXJtbW3U0dFBe3t7Xw2enp4oLS2NMjIyyM/PT7oIRcIxIAFxQ0JCuCY0NJR1ub+/p9vbW7q5ueE8xtzU1MSCywZYNJlM/Ml4hjvgErCBcyAaxDMajbzu6enJBoBumDfmDgNgraioiEpLS1lw2QC+jY6OppiYGE6CMfwMYHzd4+Mj17i7u/N6e3s7Pwsxz87OWB+sQcfy8nImJBtcXFwweGxsLCcBjr2BooeHBx5DVVUVr/n4+NDl5SW/A9YWi4XBoRfWAY5aly9AEcDj4uI4KVjD23d3dzxCCIi15ORkyXpkZITdcnR0xOJjHeA1NTWuDcAA4AkJCZzEDgY4xMJGgpgGg4HXkMMzwAEGLWBLOAnrtbW1VFdX5zoiMEhMTCSz2cxJwRo7FbPGC8h7e3szGcEa4Pv7++y2nZ0droHwIAH9ZAP4G+BJSUmcBLjVamURMeuIiAjOh4WF8awxDrwj/I/zR9gS4C0tLa4NwADgKSkpnARrCAn7AdDDw4PzhYWFDC5Y4+wCOA46HHioATjs7dIALACOzYZn4WuIhdEh5+XlRZWVlcwaxwHAYcmuri7q7Oxk66IO//GM/SMbgEV6ejplZmZyUvi6oqJCej8vL4/BMWvBGuBiU+IYRx1yaC6euQGKAZ6VlcVJMIyPj5fOCQgI4K/Ei5g1xoF7AGxxfIjdjlrU4LhHXjbACwAXX+AcgYGBDADW3d3dXOt8lIhjRPge4LhDsC4bgE12djafjD83+NPA5QT9ZANca/BzdXU1zzk/P5/dUlxcLM8VsTuxHxobG6m5uZlaW1v5WMZXiTtAgGNzYs1gMFgVXMz+/v42CAhhMA4x09+FqBN3NEKMDtr4+vraNE0zY0Q6/MTgC/oXn/w3AeaapvHPlh8Z8ORwKx33/AAAAABJRU5ErkJggg==",
+        "libraryName": "Grasshopper",
+        "category": "Params",
+        "subcategory": "Input",
+        "isObsolete": false,
+        "isHidden": false,
+        "inputs": [],
+        "outputs": [],
+        "toggles": [
+            {
+                "mode": "checkbox",
+                "items": [
+                    {
+                        "value": "none",
+                        "label": "None"
+                    }
+                ]
+            }
+        ]
+    },
+    {
         "guid": "59e0b89a-e487-49f8-bab8-b5bab16be14c",
         "name": "Panel",
         "nickName": "",
