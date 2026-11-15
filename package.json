@@ -43,7 +43,7 @@
         "test": "jest"
     },
     "dependencies": {
-        "@selvajs/visualization": "^1.5.0",
+        "@selvajs/visualization": "^1.7.0",
         "immer": "^10.1.1",
         "react-hook-form": "^7.91.0",
         "three": "^0.187.0",
