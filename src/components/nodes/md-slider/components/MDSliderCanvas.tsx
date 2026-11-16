@@ -71,11 +71,8 @@ export const MDSliderCanvas = ({ node, value, domains, onChange, onCommit }: MDS
         y + h - r
     ]
 
-    const innerW = worldDomainX[1] - worldDomainX[0]
-    const innerH = worldDomainY[1] - worldDomainY[0]
-
-    const px = x + r + innerW * tx
-    const py = y + r + innerH * ty
+    const px = getDomainValue(worldDomainX, tx)
+    const py = getDomainValue(worldDomainY, ty)
 
     // World coordinates to point value
     const worldToValue = (worldPoint: MDSliderPoint): MDSliderPoint => {

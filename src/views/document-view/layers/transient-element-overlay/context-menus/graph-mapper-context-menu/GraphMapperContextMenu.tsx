@@ -51,7 +51,7 @@ const GraphMapperContextMenu = ({ position, context }: GraphMapperContextMenuPro
             switch (graphType) {
                 case 'linear': {
                     config.grips = [
-                        { x: 0.45, y: 0.90 },
+                        { x: 0.25, y: 0.25 },
                         { x: 0.75, y: 0.75 }
                     ]
                     break

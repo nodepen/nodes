@@ -42,7 +42,7 @@ export const LinearGraph = ({ extents, grips }: Props) => {
     const by = getDomainValue(domainY, line.to.y)
 
     return <>
-        <line mask={`url(#${getMaskKey(nodeInstanceId)})`} x1={ax + x} y1={ay + y + h} x2={bx + x} y2={by + y + h} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap='round' />
-        <line x1={ax + x} y1={ay + y + h} x2={bx + x} y2={by + y + h} stroke={COLORS.DARK} strokeWidth={2} strokeLinecap='round' />
+        <line mask={`url(#${getMaskKey(nodeInstanceId)})`} x1={ax} y1={ay} x2={bx} y2={by} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap='round' />
+        <line x1={ax} y1={ay} x2={bx} y2={by} stroke={COLORS.DARK} strokeWidth={2} strokeLinecap='round' />
     </>
 }

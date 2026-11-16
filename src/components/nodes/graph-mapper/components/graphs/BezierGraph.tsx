@@ -34,8 +34,6 @@ export const BezierGraph = ({ extents, grips }: Props) => {
         return null
     }
 
-    console.log(grips)
-
     const [
         start,
         controlStart,
@@ -45,8 +43,8 @@ export const BezierGraph = ({ extents, grips }: Props) => {
 
     const remapPoint = (px: number, py: number): [x: number, y: number] => {
         return [
-            getDomainValue(domainX, px) + x,
-            getDomainValue(domainY, py) + y + h
+            getDomainValue(domainX, px),
+            getDomainValue(domainY, py)
         ]
     }
 

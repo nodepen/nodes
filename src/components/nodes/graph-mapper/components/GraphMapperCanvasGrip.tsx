@@ -107,11 +107,11 @@ export const GraphMapperCanvasGrip = ({ extents, limits, grip, onUpdate, onCommi
     const cy = getDomainValue([y + h, y], internalGrip.y)
 
     return <g>
-        <circle mask={`url(#${getMaskKey(nodeInstanceId)})`} cx={cx + x} cy={cy + y + h} r={NODE_PORT_RADIUS + 3} fill={COLORS.LIGHT} />
+        <circle mask={`url(#${getMaskKey(nodeInstanceId)})`} cx={cx} cy={cy} r={NODE_PORT_RADIUS + 3} fill={COLORS.LIGHT} />
         <circle
             ref={gripRef}
-            cx={cx + x}
-            cy={cy + y + h}
+            cx={cx}
+            cy={cy}
             r={NODE_PORT_RADIUS}
             stroke={COLORS.DARK}
             strokeWidth={2}
