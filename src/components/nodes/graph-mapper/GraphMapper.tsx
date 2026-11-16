@@ -14,6 +14,7 @@ import { GraphMapperBody } from './components/GraphMapperBody'
 import { GraphMapperCanvas } from './components/GraphMapperCanvas'
 import { GraphMapperPorts } from './components/GraphMapperPorts'
 import { GraphMapperConfigForm } from './forms/GraphMapperConfigForm'
+import { GenericNodeWires } from '../wire'
 
 type GraphMapperProps = {
     id: string
@@ -101,6 +102,7 @@ const GraphMapper = ({ id, template }: GraphMapperProps) => {
                 </g>
                 {!node.status.isProvisional ? (<>
                     <GraphMapperPorts node={node} template={template} />
+                    <GenericNodeWires node={node} />
                 </>) : null}
             </g>
             {showModal && config ? (
