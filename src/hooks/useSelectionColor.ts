@@ -48,6 +48,7 @@ export const useSelectionColor = (nodeInstanceId: string): SelectionColorData =>
             case 'generic-parameter':
             case 'number-slider':
             case 'md-slider':
+            case 'graph-mapper':
             case 'panel':
             default: {
                 return false

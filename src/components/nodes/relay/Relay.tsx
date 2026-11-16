@@ -5,7 +5,7 @@ import { useDraggableNode, useSelectableNode } from '../hooks'
 import { RelayShadow } from './components/RelayShadow'
 import { RelayBody } from './components/RelayBody'
 import { RelayPorts } from './components/RelayPorts'
-import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useBuildNodeInternalState } from '../context/node-state'
 import { GenericNodeWires } from '../wire'
 import { GenericNodeRuntimeMessage, GenericNodeSkeleton } from '../generic-node/components'
 
@@ -17,7 +17,7 @@ type RelayProps = {
 const Relay = ({ id, template }: RelayProps): React.ReactElement | null => {
     const node = useStore((store) => store.document.nodes[id])
 
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     const draggableTargetRef = useDraggableNode(id)
     const selectableTargetRef = useSelectableNode(id)

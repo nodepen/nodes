@@ -71,6 +71,18 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableReparameterize: false
             }
         }
+        case 'graph-mapper': {
+            return {
+                enableSetLabel: false,
+                enableSetValue: false,
+                enablePickGeometry: false,
+                enablePickFile: false,
+                enablePinInput: false,
+                enablePinOutput: false,
+                enableZoomToGeometry: false,
+                enableReparameterize: false
+            }
+        }
         case 'boolean-toggle': {
             return {
                 enableSetLabel: false,

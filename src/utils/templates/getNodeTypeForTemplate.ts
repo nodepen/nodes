@@ -8,6 +8,7 @@ export type NodePenNodeType =
     | 'cluster'
     | 'number-slider'
     | 'md-slider'
+    | 'graph-mapper'
     | 'panel'
     | 'value-list'
     | 'boolean-toggle'
@@ -43,6 +44,9 @@ export const getNodeTypeForTemplate = (template?: NodePen.NodeTemplate): NodePen
                 }
                 case COMPONENTS.MD_SLIDER: {
                     return 'md-slider'
+                }
+                case COMPONENTS.GRAPH_MAPPER: {
+                    return 'graph-mapper'
                 }
                 case COMPONENTS.PANEL: {
                     return 'panel'

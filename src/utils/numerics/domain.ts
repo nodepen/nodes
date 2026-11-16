@@ -14,7 +14,7 @@ export const getDomainParameter = (domain: [min: number, max: number], value: nu
 export const getDomainValue = (domain: [min: number, max: number], t: number): number => {
     const [min, max] = domain
     const range = max - min
-    return range * t
+    return min + range * t
 }
 
 export const remap = (sourceDomain: [min: number, max: number], targetDomain: [min: number, max: number], n: number): number => {

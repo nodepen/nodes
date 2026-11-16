@@ -71,11 +71,8 @@ export const MDSliderCanvas = ({ node, value, domains, onChange, onCommit }: MDS
         y + h - r
     ]
 
-    const innerW = worldDomainX[1] - worldDomainX[0]
-    const innerH = worldDomainY[1] - worldDomainY[0]
-
-    const px = x + r + innerW * tx
-    const py = y + r + innerH * ty
+    const px = getDomainValue(worldDomainX, tx)
+    const py = getDomainValue(worldDomainY, ty)
 
     // World coordinates to point value
     const worldToValue = (worldPoint: MDSliderPoint): MDSliderPoint => {
@@ -110,8 +107,7 @@ export const MDSliderCanvas = ({ node, value, domains, onChange, onCommit }: MDS
         circleRef.current?.setPointerCapture(e.pointerId)
 
         // Track initial position in world space
-        const [wx, wy] = pageSpaceToWorldSpace(e.pageX, e.pageY)
-        initialWorldPosition.current = { x: wx, y: wy }
+        initialWorldPosition.current = pageToValue({ x: e.pageX, y: e.pageY })
 
         isDraggingPoint.current = true
     }, [pageSpaceToWorldSpace])

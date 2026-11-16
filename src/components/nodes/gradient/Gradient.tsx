@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from "react"
 import type * as NodePen from '@/types'
 import { useStore } from "@/store"
-import { NodeInternalStateProvider, usePresenceState } from "../context/node-state"
+import { NodeInternalStateProvider, useBuildNodeInternalState } from "../context/node-state"
 import { useDebugRender, useDraggableNode, useSelectableNode } from "../hooks"
 import { GenericNodeSkeleton, GenericNodeShadow, GenericNodePorts, GenericNodeRuntimeMessage } from "../generic-node/components"
 import { GradientBody } from "./components/GradientBody"
@@ -16,7 +16,7 @@ type GradientProps = {
 
 const Gradient = ({ id, template }: GradientProps) => {
     const node = useStore((store) => store.document.nodes[id])
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     const isEditable = useIsEditable()
 

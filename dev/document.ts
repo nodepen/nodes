@@ -1171,4 +1171,108 @@ const mdSliderDoc: NodePenDocument = {
     }
 }
 
-export const doc = mdSliderDoc
+const graphMapperDoc: NodePenDocument = {
+    id: 'graph-mapper',
+    version: 1 as const,
+    clusters: {},
+    nodes: {
+        // Graph Mapper
+        '3f6a9c1e-8b2d-4e7a-a5c4-9d1b0e6f2a38': {
+            instanceId: '3f6a9c1e-8b2d-4e7a-a5c4-9d1b0e6f2a38',
+            templateId: 'bc984576-7aa6-491f-a91d-e444c33675a7',
+            position: { x: 300, y: 200 },
+            dimensions: { width: 196, height: 196 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                input: { dx: 0, dy: 98 },
+                output: { dx: 196, dy: 98 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueTypes: [],
+                        valueCount: 0,
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+            nodeConfiguration: {
+                graphType: null,
+                grips: [],
+                domain: {
+                    source: { min: 0, max: 1 },
+                    target: { min: 0, max: 1 },
+                },
+            },
+        },
+        // MD Slider
+        'a8d3e5b2-1c7f-4b96-8e0a-6f2d4c9b7e15': {
+            instanceId: 'a8d3e5b2-1c7f-4b96-8e0a-6f2d4c9b7e15',
+            templateId: '318dacd7-9073-4ede-b043-a0c132eb77e0',
+            position: { x: 556, y: 200 },
+            dimensions: { width: 196, height: 196 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 0, dy: 0 },
+                output: { dx: 196, dy: 98 },
+            },
+            sources: { input: [] },
+            values: {
+                input: {
+                    branches: [
+                        {
+                            order: 0,
+                            path: '{0}',
+                            values: [
+                                { type: 'point', description: '0.5,0.5,0', order: 0, value: '0.5,0.5,0' },
+                            ],
+                        },
+                    ],
+                    stats: {
+                        branchCount: 1,
+                        branchValueCountDomain: [1, 1],
+                        treeStructure: 'single',
+                        valueCount: 1,
+                        valueTypes: ['point'],
+                    },
+                },
+            },
+            inputs: { input: 0 },
+            outputs: { output: 0 },
+            portConfigurations: {
+                input: { label: null, flags: [] },
+                output: { label: null, flags: [] },
+            },
+            nodeConfiguration: {
+                mode: '2D',
+                x: { min: 0, max: 1 },
+                y: { min: 0, max: 1 },
+                z: { min: 0, max: 1 },
+            },
+        },
+    },
+    groups: {},
+    meta: {
+        name: 'Graph Mapper Test',
+    },
+    controls: {
+        input: {},
+        output: {}
+    },
+    settings: {
+        units: 'mm'
+    }
+}
+
+export const doc = graphMapperDoc

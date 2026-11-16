@@ -1,6 +1,6 @@
 import type * as NodePen from '@/types'
 import { getNodeTypeForTemplate } from '../templates/getNodeTypeForTemplate'
-import { getBooleanTogglePortTemplate, getColorSwatchPortTemplate, getFallbackPortTemplate, getGenericParameterPortTemplate, getMDSliderPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate, getRelayPortTemplate, getValueListPortTemplate } from '../templates/getGenericParameterDefinition'
+import { getBooleanTogglePortTemplate, getColorSwatchPortTemplate, getFallbackPortTemplate, getGenericParameterPortTemplate, getGraphMapperPortTemplate, getMDSliderPortTemplate, getNumberSliderPortTemplate, getPanelPortTemplate, getRelayPortTemplate, getValueListPortTemplate } from '../templates/getGenericParameterDefinition'
 import { getPortTemplateFromConfiguration } from './getPortTemplateFromConfiguration'
 
 export type PortReference = {
@@ -37,6 +37,9 @@ export const getPortTemplate = (document: NodePen.Document, templates: NodePen.N
         }
         case 'md-slider': {
             return getMDSliderPortTemplate(nodeTemplate, direction)
+        }
+        case 'graph-mapper': {
+            return getGraphMapperPortTemplate(nodeTemplate, direction)
         }
         case 'panel': {
             return getPanelPortTemplate(nodeTemplate, direction)

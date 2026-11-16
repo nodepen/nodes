@@ -8,7 +8,7 @@ import { GenericParameterIcon } from './GenericParameterIcon'
 import { GenericParameterShadow } from './GenericParameterShadow'
 import { GenericParameterPorts } from './GenericParameterPorts'
 import { GenericParameterLabel } from './GenericParameterLabel'
-import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useBuildNodeInternalState } from '../context/node-state'
 import { GenericNodeWires } from '../wire'
 import { GenericNodeRuntimeMessage, GenericNodeSkeleton } from '../generic-node/components'
 import { useResizableNode } from '../hooks/useResizableNode'
@@ -26,7 +26,7 @@ const GenericParameter = ({ id, template }: GenericParameterProps): React.ReactE
 
     const isEditable = useIsEditable()
 
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)
