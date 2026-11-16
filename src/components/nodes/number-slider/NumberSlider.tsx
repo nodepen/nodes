@@ -11,7 +11,7 @@ import { Dialog } from '@/views/components'
 import { NumberSliderValue } from './components/NumberSliderValue'
 import { NumberSliderConfigForm } from './forms/NumberSliderConfigForm'
 import { useResizableNode } from '../hooks/useResizableNode'
-import { NodeInternalStateProvider, useNodeInternalState, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useNodeInternalState, useBuildNodeInternalState } from '../context/node-state'
 import { useRightClick } from '@/hooks/useRightClick'
 import { getPortContextMenuKey } from '@/utils/keys/getPortContextMenuKey'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
@@ -30,7 +30,7 @@ const NumberSlider = ({ id, template }: NumberSliderProps) => {
 
     const isEditable = useIsEditable()
 
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     const { apply } = useDispatch()
 

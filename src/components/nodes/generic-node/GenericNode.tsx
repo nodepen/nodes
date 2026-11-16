@@ -11,7 +11,7 @@ import {
     GenericNodeToggleLabel,
 } from './components'
 import { GenericNodeWires } from '../wire'
-import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useBuildNodeInternalState } from '../context/node-state'
 
 type GenericNodeProps = {
     id: string
@@ -26,7 +26,7 @@ const GenericNode = ({ id, template }: GenericNodeProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
 
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     // Attach debug behaviors
     useDebugRender(node, template)

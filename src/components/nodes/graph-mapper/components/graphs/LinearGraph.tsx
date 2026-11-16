@@ -4,9 +4,9 @@ import type * as NodePen from '@/types'
 import { getLine } from '@/utils/geometry/lines/getLine'
 import { getSquareIntersection } from '@/utils/geometry/lines/getSquareIntersection'
 import { getDomainValue } from '@/utils/numerics/domain'
+import { getMaskKey } from '../../utils/getMaskKey'
 
 type Props = {
-    nodeInstanceId: string
     // World space
     extents: {
         x: number
@@ -18,8 +18,10 @@ type Props = {
     grips: NodePen.GraphMapperGrip[]
 }
 
-export const LinearGraph = ({ nodeInstanceId, extents, grips }: Props) => {
+export const LinearGraph = ({ extents, grips }: Props) => {
     const { x, y, w, h } = extents
+
+    const { nodeInstanceId } = useNodeInternalState()
 
     const domainX: [min: number, max: number] = [
         x,
@@ -40,7 +42,7 @@ export const LinearGraph = ({ nodeInstanceId, extents, grips }: Props) => {
     const by = getDomainValue(domainY, line.to.y)
 
     return <>
-        <line mask={`url(#graph-mapper-mask-${nodeInstanceId})`} x1={ax + x} y1={ay + y + h} x2={bx + x} y2={by + y + h} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap='round' />
+        <line mask={`url(#${getMaskKey(nodeInstanceId)})`} x1={ax + x} y1={ay + y + h} x2={bx + x} y2={by + y + h} stroke={COLORS.LIGHT} strokeWidth={6} strokeLinecap='round' />
         <line x1={ax + x} y1={ay + y + h} x2={bx + x} y2={by + y + h} stroke={COLORS.DARK} strokeWidth={2} strokeLinecap='round' />
     </>
 }

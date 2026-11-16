@@ -4,6 +4,7 @@ import React, { useEffect, useMemo } from "react"
 import type * as NodePen from '@/types'
 
 export type NodeInternalState = {
+    nodeInstanceId: string
     position: {
         x: number
         y: number
@@ -32,7 +33,8 @@ export const useNodeInternalState = () => {
     return context;
 }
 
-export const usePresenceState = (nodeInstanceId: string | null): NodeInternalState => {
+
+export const useBuildNodeInternalState = (nodeInstanceId: string | null): NodeInternalState => {
     const node = useStore<NodePen.DocumentNode | null>((state) => state.document.nodes[nodeInstanceId ?? ''] ?? null)
 
     const { apply } = useDispatch()
@@ -132,5 +134,8 @@ export const usePresenceState = (nodeInstanceId: string | null): NodeInternalSta
 
     const position = internalPosition ?? (latestPresencePosition && presencePosition) ?? node?.position ?? ORIGIN
 
-    return useMemo(() => ({ position: { x: position.x, y: position.y } }), [position.x, position.y])
+    return useMemo(() => ({
+        nodeInstanceId: node?.instanceId ?? '',
+        position: { x: position.x, y: position.y }
+    }), [position.x, position.y, node?.instanceId])
 }

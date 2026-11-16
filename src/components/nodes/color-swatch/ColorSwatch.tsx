@@ -2,7 +2,7 @@ import React, { useCallback, useState } from "react"
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from "@/store"
 import { expireSolution } from '@/store/utils'
-import { NodeInternalStateProvider, usePresenceState } from "../context/node-state"
+import { NodeInternalStateProvider, useBuildNodeInternalState } from "../context/node-state"
 import { useDebugRender, useDraggableNode, useSelectableNode } from "../hooks"
 import { GenericNodeSkeleton } from "../generic-node/components"
 import { ColorSwatchShadow } from "./components/ColorSwatchShadow"
@@ -25,7 +25,7 @@ type ColorSwatchProps = {
 
 const ColorSwatch = ({ id, template }: ColorSwatchProps) => {
     const node = useStore((store) => store.document.nodes[id])
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     const isEditable = useIsEditable()
 

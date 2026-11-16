@@ -4,7 +4,7 @@ import { useDispatch, useStore } from '$'
 import { expireSolution } from '@/store/utils'
 import { tryGetSingleValue } from '@/utils/data-trees'
 import { createSingleValue } from '@/utils/data-trees/createSingleValue'
-import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useBuildNodeInternalState } from '../context/node-state'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import { GenericNodeSkeleton } from '../generic-node/components'
 import { MDSliderShadow } from './components/MDSliderShadow'
@@ -45,7 +45,7 @@ const getDomains = (node?: NodePen.DocumentNode): MDSliderDomains => {
 
 const MDSlider = ({ id, template }: MDSliderProps) => {
     const node = useStore((store) => store.document.nodes[id])
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     useDebugRender(node, template)
 

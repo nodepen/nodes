@@ -10,7 +10,7 @@ import {
 } from '../generic-node/components'
 import { ScriptNodeBody } from './components'
 import { GenericNodeWires } from '../wire'
-import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useBuildNodeInternalState } from '../context/node-state'
 
 type ScriptNodeProps = {
     id: string
@@ -21,7 +21,7 @@ const ScriptNode = ({ id, template }: ScriptNodeProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
 
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     // Attach debug behaviors
     useDebugRender(node, template)

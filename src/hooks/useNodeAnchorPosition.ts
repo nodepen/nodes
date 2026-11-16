@@ -1,5 +1,5 @@
 import { useStore } from '$'
-import { usePresenceState } from '@/components/nodes/context/node-state';
+import { useBuildNodeInternalState } from '@/components/nodes/context/node-state';
 
 export const resolveAnchorPosition = (
     nodePosition: { x: number; y: number } | null,
@@ -23,7 +23,7 @@ export const resolveAnchorPosition = (
  * @returns `null` if anchor does not exist.
  */
 export const useNodeAnchorPosition = (nodeInstanceId: string | null, anchorId: string): { x: number; y: number } | null => {
-    const { position: nodePosition } = usePresenceState(nodeInstanceId)
+    const { position: nodePosition } = useBuildNodeInternalState(nodeInstanceId)
 
     const anchorDelta = useStore((state) => state.document.nodes[nodeInstanceId ?? '']?.anchors?.[anchorId])
 

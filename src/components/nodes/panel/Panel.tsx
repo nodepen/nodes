@@ -10,7 +10,7 @@ import { PanelPorts } from './components/PanelPorts'
 import { GenericNodeWires } from '../wire'
 import { PanelResizeTargets } from './components/PanelResizeTargets'
 import { PanelDataTree } from './components/PanelDataTree'
-import { NodeInternalStateProvider, useNodeInternalState, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useNodeInternalState, useBuildNodeInternalState } from '../context/node-state'
 import { GenericNodeSkeleton } from '../generic-node/components'
 import { useIsEditable } from '@/hooks/useIsEditable'
 
@@ -25,7 +25,7 @@ const Panel = ({ id, template }: PanelProps) => {
 
     const isEditable = useIsEditable()
 
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     const { apply } = useDispatch()
 

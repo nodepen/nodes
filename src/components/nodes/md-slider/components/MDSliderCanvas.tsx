@@ -110,8 +110,7 @@ export const MDSliderCanvas = ({ node, value, domains, onChange, onCommit }: MDS
         circleRef.current?.setPointerCapture(e.pointerId)
 
         // Track initial position in world space
-        const [wx, wy] = pageSpaceToWorldSpace(e.pageX, e.pageY)
-        initialWorldPosition.current = { x: wx, y: wy }
+        initialWorldPosition.current = pageToValue({ x: e.pageX, y: e.pageY })
 
         isDraggingPoint.current = true
     }, [pageSpaceToWorldSpace])

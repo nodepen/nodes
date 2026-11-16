@@ -3,7 +3,7 @@ import { useStore } from '$'
 import { useDraggableNode, useSelectableNode } from '../hooks'
 import { ClusterBody, ClusterLabel, ClusterPorts, ClusterShadow } from './components'
 import { GenericNodeWires } from '../wire'
-import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useBuildNodeInternalState } from '../context/node-state'
 
 type ClusterProps = {
     id: string
@@ -13,7 +13,7 @@ const Cluster = ({ id }: ClusterProps) => {
     // Subscribe to current node state
     const node = useStore((store) => store.document.nodes[id])
 
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     // Attach interactive behaviors
     const draggableTargetRef = useDraggableNode(id)

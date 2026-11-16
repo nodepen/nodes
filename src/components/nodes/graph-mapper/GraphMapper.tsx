@@ -1,7 +1,7 @@
 import React, { useCallback, useState } from 'react'
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from '$'
-import { NodeInternalStateProvider, usePresenceState } from '../context/node-state'
+import { NodeInternalStateProvider, useBuildNodeInternalState } from '../context/node-state'
 import { useDebugRender, useDraggableNode, useSelectableNode } from '../hooks'
 import { GenericNodeSkeleton } from '../generic-node/components'
 import { usePageSpaceToOverlaySpace } from '@/hooks'
@@ -22,7 +22,7 @@ type GraphMapperProps = {
 
 const GraphMapper = ({ id, template }: GraphMapperProps) => {
     const node = useStore((store) => { return store.document.nodes[id] })
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     useDebugRender(node, template)
 

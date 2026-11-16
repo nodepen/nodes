@@ -2,7 +2,7 @@ import React, { useCallback } from "react"
 import type * as NodePen from '@/types'
 import { useDispatch, useStore } from "@/store"
 import { expireSolution } from '@/store/utils'
-import { NodeInternalStateProvider, usePresenceState } from "../context/node-state"
+import { NodeInternalStateProvider, useBuildNodeInternalState } from "../context/node-state"
 import { useDebugRender, useDraggableNode, useSelectableNode } from "../hooks"
 import { GenericNodeSkeleton } from "../generic-node/components"
 import { BooleanToggleShadow } from "./components/BooleanToggleShadow"
@@ -23,7 +23,7 @@ type BooleanToggleProps = {
 
 const BooleanToggle = ({ id, template }: BooleanToggleProps) => {
     const node = useStore((store) => store.document.nodes[id])
-    const internalState = usePresenceState(id)
+    const internalState = useBuildNodeInternalState(id)
 
     const isEditable = useIsEditable()
 
