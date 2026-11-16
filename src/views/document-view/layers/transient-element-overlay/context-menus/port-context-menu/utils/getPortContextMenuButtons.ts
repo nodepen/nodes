@@ -77,8 +77,8 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enableSetValue: false,
                 enablePickGeometry: false,
                 enablePickFile: false,
-                enablePinInput: true,
-                enablePinOutput: true,
+                enablePinInput: false,
+                enablePinOutput: false,
                 enableZoomToGeometry: false,
                 enableReparameterize: false
             }

@@ -112,8 +112,4 @@ export const BezierGraph = ({ extents, grips }: Props) => {
             strokeLinecap='butt'
         />
     </g>
-
-
-
-    return null
 }

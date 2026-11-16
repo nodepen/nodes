@@ -97,7 +97,6 @@ const GraphMapperContextMenu = ({ position, context }: GraphMapperContextMenuPro
                         }
                         label={template.name}
                     />
-                    <MenuDivider />
                 </>
             ) : null}
             {GRAPH_TYPE_OPTIONS.map(({ graphType, label }) => {
