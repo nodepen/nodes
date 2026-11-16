@@ -120,7 +120,14 @@ export const GraphMapperCanvas = ({ node, config }: GraphMapperCanvasProps) => {
 
     return <g id={`graph-mapper-canvas-${node.instanceId}`}>
         <rect x={x} y={y} width={w} height={h} stroke={COLORS.DARK} strokeWidth={2} fill={COLORS.LIGHT} />
-        <mask id={getMaskKey(node.instanceId)}>
+        <mask
+            id={getMaskKey(node.instanceId)}
+            maskUnits="userSpaceOnUse"
+            x={x - 1}
+            y={y - 1}
+            width={w + 2}
+            height={h + 2}
+        >
             <rect x={x} y={y} width={w} height={h} fill={COLORS.LIGHT} stroke={COLORS.LIGHT} strokeWidth={2} />
         </mask>
         {(() => {

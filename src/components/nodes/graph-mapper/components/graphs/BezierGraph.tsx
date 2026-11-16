@@ -56,6 +56,26 @@ export const BezierGraph = ({ extents, grips }: Props) => {
     const d = `M ${ax} ${ay} C ${c1x} ${c1y} ${c2x} ${c2y} ${bx} ${by}`
 
     return <g>
+        <line
+            mask={`url(#${getMaskKey(nodeInstanceId)})`}
+            x1={ax}
+            y1={ay}
+            x2={c1x}
+            y2={c1y}
+            stroke={COLORS.LIGHT}
+            strokeWidth={6}
+            strokeLinecap='square'
+        />
+        <line
+            mask={`url(#${getMaskKey(nodeInstanceId)})`}
+            x1={bx}
+            y1={by}
+            x2={c2x}
+            y2={c2y}
+            stroke={COLORS.LIGHT}
+            strokeWidth={6}
+            strokeLinecap='square'
+        />
         <path
             mask={`url(#${getMaskKey(nodeInstanceId)})`}
             d={d}
@@ -70,6 +90,26 @@ export const BezierGraph = ({ extents, grips }: Props) => {
             strokeWidth={2}
             strokeLinecap='round'
             fill='none'
+        />
+        <line
+            x1={ax}
+            y1={ay}
+            x2={c1x}
+            y2={c1y}
+            stroke={COLORS.DARK}
+            strokeWidth={2}
+            strokeDasharray='2 4'
+            strokeLinecap='butt'
+        />
+        <line
+            x1={bx}
+            y1={by}
+            x2={c2x}
+            y2={c2y}
+            stroke={COLORS.DARK}
+            strokeWidth={2}
+            strokeDasharray='2 4'
+            strokeLinecap='butt'
         />
     </g>
 
