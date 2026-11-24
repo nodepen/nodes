@@ -263,7 +263,6 @@ export type NodesAppCallbacks = {
     onClickExport?: (state: NodesAppState) => void
     onClickImport?: (state: NodesAppState) => void
     onClickViewVersions?: (state: NodesAppState) => void
-    onClickSaveVersion?: (state: NodesAppState) => void
     onClickRunDocument?: (state: NodesAppState) => void
     onSubmitSearch?: (state: NodesAppState) => void,
     // Presence

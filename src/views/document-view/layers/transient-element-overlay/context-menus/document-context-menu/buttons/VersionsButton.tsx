@@ -8,7 +8,7 @@ type Props = {
     documentId: string
 }
 
-export const ViewVersionsButton = ({ documentId }: Props) => {
+export const VersionsButton = ({ documentId }: Props) => {
     const { apply } = useDispatch()
     const { onClickViewVersions } = useCallbacks()
 
@@ -26,5 +26,5 @@ export const ViewVersionsButton = ({ documentId }: Props) => {
         </svg>
     )
 
-    return <MenuButton icon={icon} label="View versions" action={handleClick} />
+    return <MenuButton icon={icon} label="Versions..." action={handleClick} />
 }
