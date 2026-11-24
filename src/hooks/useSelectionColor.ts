@@ -1,7 +1,8 @@
 import { useStore } from '$'
-import { COLORS } from '@/constants'
+import { COLORS, PARAMS } from '@/constants'
 import { getNodeTypeForTemplate } from '@/utils/templates/getNodeTypeForTemplate'
 import { tryGetTemplate } from '@/utils/templates/tryGetTemplate'
+import { getGenericParameterPortTemplate } from '@/utils/templates/getGenericParameterDefinition'
 
 type SelectionColorData = {
     sessionColor: string
@@ -45,7 +46,17 @@ export const useSelectionColor = (nodeInstanceId: string): SelectionColorData =>
             case 'relay': {
                 return !node.status.isVisible
             }
-            case 'generic-parameter':
+            case 'generic-parameter': {
+                const template = tryGetTemplate(node.templateId)
+
+                if (!template) {
+                    return false
+                }
+
+                const { typeName } = getGenericParameterPortTemplate(template, 'output')
+
+                return [...PARAMS.GEOMETRY, 'data'].includes(typeName) && !node.status.isVisible
+            }
             case 'number-slider':
             case 'md-slider':
             case 'graph-mapper':
