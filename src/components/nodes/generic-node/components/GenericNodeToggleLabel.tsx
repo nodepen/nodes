@@ -2,7 +2,7 @@ import React from 'react'
 import type * as NodePen from '@/types'
 import { COLORS, DIMENSIONS } from '@/constants'
 import { useNodeInternalState } from '../../context/node-state'
-import { AnnotationsUnderlayPortal } from '@/components/annotations'
+import { NodeLabelsUnderlayPortal } from '@/components/annotations'
 
 const { NODE_VALUE_FONT_SIZE } = DIMENSIONS
 
@@ -33,7 +33,7 @@ export const GenericNodeToggleLabel = ({ node, template }: GenericNodeToggleLabe
     const centerY = position.y + nodeHeight + TOGGLE_LABEL_EXTRA_HEIGHT / 2
 
     return (
-        <AnnotationsUnderlayPortal>
+        <NodeLabelsUnderlayPortal>
             <rect
                 x={position.x}
                 y={position.y}
@@ -55,6 +55,6 @@ export const GenericNodeToggleLabel = ({ node, template }: GenericNodeToggleLabe
             >
                 {selectedLabel}
             </text>
-        </AnnotationsUnderlayPortal>
+        </NodeLabelsUnderlayPortal>
     )
 }

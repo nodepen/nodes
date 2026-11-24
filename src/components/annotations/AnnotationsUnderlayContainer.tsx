@@ -13,6 +13,7 @@ const AnnotationsUnderlayContainer = (): React.ReactElement => {
     const { apply } = useDispatch()
 
     const containerRef = useStore((state) => state.registry.annotations.underlayContainerRef)
+    const nodeLabelsContainerRef = useStore((state) => state.registry.annotations.nodeLabelsContainerRef)
     const wiresUnderlayContainerRef = useStore((state) => state.registry.wires.underlayContainerRef)
 
     const maskRef = useStore((state) => state.registry.wires.maskRef)
@@ -29,6 +30,16 @@ const AnnotationsUnderlayContainer = (): React.ReactElement => {
             })
         },
         [apply, containerRef]
+    )
+
+    const setNodeLabelsRef = useCallback(
+        (node: SVGGElement | null) => {
+            nodeLabelsContainerRef.current = node
+            apply((state) => {
+                state.registry.annotations.nodeLabelsContainerReady = node !== null
+            })
+        },
+        [apply, nodeLabelsContainerRef]
     )
 
     const setWiresUnderlayRef = useCallback(
@@ -57,6 +68,7 @@ const AnnotationsUnderlayContainer = (): React.ReactElement => {
             <g id="np-groups-underlay">
                 {groupIds.map((groupId) => <Group key={`group-${groupId}`} id={groupId} />)}
             </g>
+            <g id="np-node-labels-underlay" ref={setNodeLabelsRef} />
             <g id="np-regions-underlay">
                 {selectionRegionState.isActive ? (
                     <Region isFill from={selectionRegionState.from} to={selectionRegionState.to} />
@@ -73,6 +85,17 @@ type PortalProps = React.PropsWithChildren<{}>
 export const AnnotationsUnderlayPortal = ({ children }: PortalProps) => {
     const containerRef = useStore((state) => state.registry.annotations.underlayContainerRef)
     const isReady = useStore((state) => state.registry.annotations.underlayContainerReady)
+
+    if (!isReady || !containerRef.current) {
+        return null
+    }
+
+    return createPortal(children, containerRef.current)
+}
+
+export const NodeLabelsUnderlayPortal = ({ children }: PortalProps) => {
+    const containerRef = useStore((state) => state.registry.annotations.nodeLabelsContainerRef)
+    const isReady = useStore((state) => state.registry.annotations.nodeLabelsContainerReady)
 
     if (!isReady || !containerRef.current) {
         return null

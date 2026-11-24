@@ -221,6 +221,8 @@ export type NodesAppState = {
             overlayContainerReady: boolean
             underlayContainerRef: React.RefObject<SVGGElement | null>
             underlayContainerReady: boolean
+            nodeLabelsContainerRef: React.RefObject<SVGGElement | null>
+            nodeLabelsContainerReady: boolean
         }
         agent: {
             bubbles: {
@@ -526,6 +528,8 @@ export const initialState: NodesAppState = {
             overlayContainerReady: false,
             underlayContainerRef: React.createRef<SVGGElement>(),
             underlayContainerReady: false,
+            nodeLabelsContainerRef: React.createRef<SVGGElement>(),
+            nodeLabelsContainerReady: false,
         },
         agent: {
             bubbles: {}
