@@ -555,5 +555,69 @@
         "inputs": [],
         "outputs": [],
         "toggles": []
+    },
+    {
+        "guid": "6da9f120-3ad0-4b6e-9fe0-f8cde3a649b7",
+        "name": "Gradient",
+        "nickName": "Gradient",
+        "description": "Represents a multiple colour gradient",
+        "keywords": [],
+        "icon": "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",
+        "libraryName": "Grasshopper",
+        "category": "Params",
+        "subcategory": "Input",
+        "isObsolete": false,
+        "isHidden": false,
+        "inputs": [
+            {
+                "__order": 0,
+                "__direction": "input",
+                "name": "Lower limit",
+                "nickName": "L0",
+                "description": "Lower limit of gradient range",
+                "typeName": "number",
+                "keywords": [],
+                "isOptional": false,
+                "access": "item",
+                "defaultValue": "0"
+            },
+            {
+                "__order": 1,
+                "__direction": "input",
+                "name": "Upper limit",
+                "nickName": "L1",
+                "description": "Upper limit of gradient range",
+                "typeName": "number",
+                "keywords": [],
+                "isOptional": false,
+                "access": "item",
+                "defaultValue": "1"
+            },
+            {
+                "__order": 2,
+                "__direction": "input",
+                "name": "Parameter",
+                "nickName": "t",
+                "description": "Parameter along gradient range",
+                "typeName": "number",
+                "keywords": [],
+                "isOptional": false,
+                "access": "item"
+            }
+        ],
+        "outputs": [
+            {
+                "__order": 0,
+                "__direction": "output",
+                "name": "Colour",
+                "nickName": "C",
+                "description": "Colour along gradient at parameter",
+                "typeName": "colour",
+                "keywords": [],
+                "isOptional": false,
+                "access": "item"
+            }
+        ],
+        "toggles": []
     }
 ]

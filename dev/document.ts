@@ -1275,4 +1275,101 @@ const graphMapperDoc: NodePenDocument = {
     }
 }
 
-export const doc = graphMapperDoc
+const gradientDoc: NodePenDocument = {
+    id: 'gradient',
+    version: 1 as const,
+    clusters: {},
+    nodes: {
+        // Gradient
+        '7c2e4b19-5a8d-4f3e-9b61-2d0f8a6c4e57': {
+            instanceId: '7c2e4b19-5a8d-4f3e-9b61-2d0f8a6c4e57',
+            templateId: '6da9f120-3ad0-4b6e-9fe0-f8cde3a649b7',
+            position: { x: 300, y: 200 },
+            dimensions: { width: 300, height: 130 },
+            status: { isVisible: true, isEnabled: true, isProvisional: false },
+            anchors: {
+                labelDeltaX: { dx: 150, dy: 0 },
+                // L0
+                'e1a7c3d5-0b2f-4e69-8d14-6f9a2c7b3e01': { dx: 0, dy: 25 },
+                // L1
+                'b4d8f2a6-3c1e-4a57-9e20-8a5c1d7f4b02': { dx: 0, dy: 65 },
+                // t
+                'f6c2a9e4-7d3b-4f18-a6e5-1b8d3f9c2a03': { dx: 0, dy: 105 },
+                // C
+                'a9e5d1c7-2f4a-4b83-b7d6-3c9e2a5f1d04': { dx: 300, dy: 65 },
+            },
+            sources: {
+                'e1a7c3d5-0b2f-4e69-8d14-6f9a2c7b3e01': [],
+                'b4d8f2a6-3c1e-4a57-9e20-8a5c1d7f4b02': [],
+                'f6c2a9e4-7d3b-4f18-a6e5-1b8d3f9c2a03': [],
+            },
+            values: {
+                'e1a7c3d5-0b2f-4e69-8d14-6f9a2c7b3e01': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueTypes: [],
+                        valueCount: 0,
+                    },
+                },
+                'b4d8f2a6-3c1e-4a57-9e20-8a5c1d7f4b02': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueTypes: [],
+                        valueCount: 0,
+                    },
+                },
+                'f6c2a9e4-7d3b-4f18-a6e5-1b8d3f9c2a03': {
+                    branches: [],
+                    stats: {
+                        branchCount: 0,
+                        branchValueCountDomain: [0, 0],
+                        treeStructure: 'empty',
+                        valueTypes: [],
+                        valueCount: 0,
+                    },
+                },
+            },
+            inputs: {
+                'e1a7c3d5-0b2f-4e69-8d14-6f9a2c7b3e01': 0,
+                'b4d8f2a6-3c1e-4a57-9e20-8a5c1d7f4b02': 1,
+                'f6c2a9e4-7d3b-4f18-a6e5-1b8d3f9c2a03': 2,
+            },
+            outputs: {
+                'a9e5d1c7-2f4a-4b83-b7d6-3c9e2a5f1d04': 0,
+            },
+            portConfigurations: {
+                'e1a7c3d5-0b2f-4e69-8d14-6f9a2c7b3e01': { label: null, flags: [] },
+                'b4d8f2a6-3c1e-4a57-9e20-8a5c1d7f4b02': { label: null, flags: [] },
+                'f6c2a9e4-7d3b-4f18-a6e5-1b8d3f9c2a03': { label: null, flags: [] },
+                'a9e5d1c7-2f4a-4b83-b7d6-3c9e2a5f1d04': { label: null, flags: [] },
+            },
+            nodeConfiguration: {
+                grips: [
+                    { position: 0, colorLeft: { r: 255, g: 255, b: 255 }, colorRight: { r: 255, g: 255, b: 255 } },
+                    { position: 1, colorLeft: { r: 0, g: 0, b: 0 }, colorRight: { r: 0, g: 0, b: 0 } },
+                ],
+                linear: false,
+                locked: false,
+            },
+        },
+    },
+    groups: {},
+    meta: {
+        name: 'Gradient'
+    },
+    controls: {
+        input: {},
+        output: {}
+    },
+    settings: {
+        units: 'mm'
+    }
+}
+
+export const doc = gradientDoc

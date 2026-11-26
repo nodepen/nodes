@@ -1,6 +1,7 @@
 import type * as NodePen from '@/types'
 import { newGuid } from '../common'
 import { getNodeDimensions } from '../node-dimensions'
+import { getGradientDimensions } from '../node-dimensions/getGradientDimensions'
 import { getNodeTypeForTemplate } from './getNodeTypeForTemplate'
 import { getToggleDefaults } from './getToggleDefaults'
 import { getScriptNodeLanguage } from './getScriptNodeLanguage'
@@ -591,20 +592,10 @@ export const createInstance = (
                 }
             }
 
-            const { dimensions, anchors } = getNodeDimensions(node, template)
+            const { dimensions, anchors } = getGradientDimensions(node, template)
 
-            node.dimensions = {
-                width: Math.max(dimensions.width, DIMENSIONS.GRADIENT_WIDTH),
-                height: dimensions.height,
-            }
+            node.dimensions = dimensions
             node.anchors = anchors
-
-            for (const outputInstanceId of Object.keys(node.outputs)) {
-                node.anchors[outputInstanceId] = {
-                    ...node.anchors[outputInstanceId],
-                    dx: node.dimensions.width,
-                }
-            }
 
             node.nodeConfiguration = {
                 grips: [

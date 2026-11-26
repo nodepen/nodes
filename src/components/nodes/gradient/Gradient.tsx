@@ -1,10 +1,14 @@
 import React, { useCallback, useState } from "react"
 import type * as NodePen from '@/types'
 import { useStore } from "@/store"
+import { useDispatch } from "$"
 import { NodeInternalStateProvider, useBuildNodeInternalState } from "../context/node-state"
 import { useDebugRender, useDraggableNode, useSelectableNode } from "../hooks"
-import { GenericNodeSkeleton, GenericNodeShadow, GenericNodePorts, GenericNodeRuntimeMessage } from "../generic-node/components"
+import { GenericNodeSkeleton, GenericNodeRuntimeMessage } from "../generic-node/components"
 import { GradientBody } from "./components/GradientBody"
+import { GradientShadow } from "./components/GradientShadow"
+import { GradientControlArea } from "./components/GradientControlArea"
+import { GradientPorts } from "./components/GradientPorts"
 import { GenericNodeWires } from "../wire"
 import { useIsEditable } from "@/hooks/useIsEditable"
 import { Dialog, GradientEditor } from "@/views/components"
@@ -27,7 +31,22 @@ const Gradient = ({ id, template }: GradientProps) => {
 
     const [showEditor, setShowEditor] = useState(false)
 
-    const handleDoubleClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
+    const { clearInterface } = useDispatch()
+
+    const handleDoubleClick = useCallback(() => {
+        if (!isEditable) {
+            return
+        }
+
+        setShowEditor(true)
+        clearInterface()
+    }, [isEditable])
+
+    const handleControlAreaClick = useCallback((e: React.MouseEvent<SVGGElement>) => {
+        if (e.button !== 0) {
+            return
+        }
+
         e.stopPropagation()
 
         if (!isEditable) {
@@ -45,32 +64,39 @@ const Gradient = ({ id, template }: GradientProps) => {
         return null
     }
 
-    const config = node.nodeConfiguration as NodePen.GradientConfig
+    const config = node.nodeConfiguration as NodePen.GradientConfig | undefined
 
     return (
         <NodeInternalStateProvider value={internalState}>
             <GenericNodeRuntimeMessage node={node} />
-            <g id={`gradient-${id}`}>
+            <g id={`gradient-${id}`} style={{ pointerEvents: 'all' }}>
                 <g ref={draggableTargetRef}>
                     <g ref={selectableTargetRef}>
                         {node.status.isProvisional ? (
                             <GenericNodeSkeleton node={node} template={template} />
                         ) : (<>
-                            <GenericNodeShadow node={node} template={template} />
+                            <GradientShadow node={node} />
                             <GradientBody node={node} onDoubleClick={handleDoubleClick} />
                         </>)}
                     </g>
                 </g>
-                {!node.status.isProvisional ? (
-                    <GenericNodePorts node={node} template={template} />
-                ) : null}
+                {!node.status.isProvisional ? (<>
+                    <GradientControlArea
+                        node={node}
+                        template={template}
+                        config={config}
+                        onClick={handleControlAreaClick}
+                        onDoubleClick={handleDoubleClick}
+                    />
+                    <GradientPorts node={node} template={template} />
+                    <GenericNodeWires node={node} />
+                </>) : null}
             </g>
-            {showEditor ? (
+            {showEditor && config ? (
                 <Dialog onClose={handleCloseEditor}>
                     <GradientEditor config={config} onClose={handleCloseEditor} />
                 </Dialog>
             ) : null}
-            <GenericNodeWires node={node} />
         </NodeInternalStateProvider>
     )
 }

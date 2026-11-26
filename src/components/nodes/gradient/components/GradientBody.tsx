@@ -7,13 +7,13 @@ import { useSelectionColor } from '@/hooks/useSelectionColor'
 import { useNodeInternalState } from '../../context/node-state'
 import { useIsEditable } from '@/hooks/useIsEditable'
 import { useRightClick } from '@/hooks/useRightClick'
+import { useDoubleClick } from '@/hooks/useDoubleClick'
 
 type GradientBodyProps = {
     node: NodePen.DocumentNode
-    onDoubleClick: (e: React.MouseEvent<SVGGElement>) => void
+    onDoubleClick: () => void
 }
 
-/** TODO */
 export const GradientBody = ({ node, onDoubleClick }: GradientBodyProps) => {
     const { position } = useNodeInternalState()
 
@@ -51,10 +51,12 @@ export const GradientBody = ({ node, onDoubleClick }: GradientBodyProps) => {
         })
     }, [isEditable, pageSpaceToOverlaySpace, node.instanceId])
 
-    const rightClickRef = useRightClick(handleContextMenu, true)
+    const rightClickRef = useRightClick<SVGGElement>(handleContextMenu, true)
+
+    useDoubleClick<SVGGElement>(onDoubleClick, rightClickRef)
 
     return (
-        <g id={`gradient-body-${node.instanceId}`} ref={rightClickRef} onDoubleClick={onDoubleClick}>
+        <g id={`gradient-body-${node.instanceId}`} ref={rightClickRef}>
             <rect
                 x={position.x}
                 y={position.y}
