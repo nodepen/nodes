@@ -52,7 +52,7 @@ export const getPortContextMenuButtons = (context: PortContextMenuContext): Port
                 enablePickGeometry: supportedGeometricTypeNames.includes(typeName),
                 enablePickFile: node.templateId === COMPONENTS.FILE_PATH && !!useStore.getState().callbacks.onPickFile,
                 enablePinInput: [...supportedPrimitiveTypeNames, ...supportedGeometricTypeNames, ...supportedSpecialTypeNames].includes(typeName),
-                enablePinOutput: node.templateId !== COMPONENTS.FILE_PATH,
+                enablePinOutput: true,
                 enableZoomToGeometry: false,
                 // TODO: Should be possible, need to see how to draw badge on param
                 enableReparameterize: false

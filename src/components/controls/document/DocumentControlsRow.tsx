@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { commitCameraAnchor } from '@/store/utils'
 import type * as NodePen from '@/types'
-import { COLORS } from '@/constants'
+import { COLORS, COMPONENTS } from '@/constants'
 import { useDispatch, useStore } from '@/store'
 import { usePortLabel } from '@/hooks/usePortLabel'
 import { usePortTemplate } from '@/hooks/usePortTemplate'
@@ -47,7 +47,9 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
     const currentDataTree = usePortValues(nodeInstanceId, portInstanceId)
     const currentValue = tryGetSingleValue(currentDataTree ?? undefined)
 
-    const valueType = (currentValue?.type ?? portTemplate?.typeName ?? 'string') as NodePen.DataTreeValueType
+    const isFilePathOutput = useStore((state) => controlType === 'output' && state.document.nodes[nodeInstanceId]?.templateId === COMPONENTS.FILE_PATH)
+
+    const valueType = (isFilePathOutput ? 'file path' : (currentValue?.type ?? portTemplate?.typeName ?? 'string')) as NodePen.DataTreeValueType
 
     const hasMultipleValues = (currentDataTree?.stats?.valueCount ?? 0) > 1
 
@@ -277,6 +279,16 @@ export const DocumentControlsRow = ({ nodeInstanceId, portInstanceId, controlTyp
                         return <DocumentControlsGeometry nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} valueType={valueType} isDisabled={!isValueEditable} />
                     case 'file path' as NodePen.DataTreeValueType:
                     case 'file':
+                        if (controlType === 'output') {
+                            return <input
+                                className="np-text-dark np-w-full np-h-5 np-pl-1 np-rounded-sm np-text-xs np-font-panel np-font-[800] placeholder:np-text-grey-3 focus:np-outline-none -np-translate-y-1"
+                                value={hasMultipleValues ? getDataTreeSummary(currentDataTree) : internalValue}
+                                placeholder="No file path"
+                                title={hasMultipleValues ? undefined : internalValue}
+                                disabled
+                                readOnly
+                            />
+                        }
                         return <DocumentControlsFile nodeInstanceId={nodeInstanceId} portInstanceId={portInstanceId} isDisabled={!isValueEditable} />
                     case 'data': {
                         return <input
